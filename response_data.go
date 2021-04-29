@@ -1,12 +1,41 @@
 package youtube
 
 type playerResponseData struct {
-   PlayabilityStatus struct {
-      Status          string `json:"status"`
-      Reason          string `json:"reason"`
-      PlayableInEmbed bool   `json:"playableInEmbed"`
-      ContextParams   string `json:"contextParams"`
-   } `json:"playabilityStatus"`
+   Microformat struct {
+      PlayerMicroformatRenderer struct {
+         Thumbnail struct {
+            Thumbnails []struct {
+               URL    string `json:"url"`
+               Width  int    `json:"width"`
+               Height int    `json:"height"`
+            } `json:"thumbnails"`
+         } `json:"thumbnail"`
+         Embed struct {
+            IframeURL      string `json:"iframeUrl"`
+            FlashURL       string `json:"flashUrl"`
+            Width          int    `json:"width"`
+            Height         int    `json:"height"`
+            FlashSecureURL string `json:"flashSecureUrl"`
+         } `json:"embed"`
+         Title struct {
+            SimpleText string `json:"simpleText"`
+         } `json:"title"`
+         Description struct {
+            SimpleText string `json:"simpleText"`
+         } `json:"description"`
+         LengthSeconds      string   `json:"lengthSeconds"`
+         OwnerProfileURL    string   `json:"ownerProfileUrl"`
+         ExternalChannelID  string   `json:"externalChannelId"`
+         AvailableCountries []string `json:"availableCountries"`
+         IsUnlisted         bool     `json:"isUnlisted"`
+         HasYpcMetadata     bool     `json:"hasYpcMetadata"`
+         ViewCount          string   `json:"viewCount"`
+         Category           string   `json:"category"`
+         PublishDate        string   `json:"publishDate"`
+         OwnerChannelName   string   `json:"ownerChannelName"`
+         UploadDate         string   `json:"uploadDate"`
+      } `json:"playerMicroformatRenderer"`
+   } `json:"microformat"`
    StreamingData struct {
       ExpiresInSeconds string   `json:"expiresInSeconds"`
       Formats          []Format `json:"formats"`
@@ -83,41 +112,6 @@ type playerResponseData struct {
          Spec string `json:"spec"`
       } `json:"playerStoryboardSpecRenderer"`
    } `json:"storyboards"`
-   Microformat struct {
-      PlayerMicroformatRenderer struct {
-         Thumbnail struct {
-            Thumbnails []struct {
-               URL    string `json:"url"`
-               Width  int    `json:"width"`
-               Height int    `json:"height"`
-            } `json:"thumbnails"`
-         } `json:"thumbnail"`
-         Embed struct {
-            IframeURL      string `json:"iframeUrl"`
-            FlashURL       string `json:"flashUrl"`
-            Width          int    `json:"width"`
-            Height         int    `json:"height"`
-            FlashSecureURL string `json:"flashSecureUrl"`
-         } `json:"embed"`
-         Title struct {
-            SimpleText string `json:"simpleText"`
-         } `json:"title"`
-         Description struct {
-            SimpleText string `json:"simpleText"`
-         } `json:"description"`
-         LengthSeconds      string   `json:"lengthSeconds"`
-         OwnerProfileURL    string   `json:"ownerProfileUrl"`
-         ExternalChannelID  string   `json:"externalChannelId"`
-         AvailableCountries []string `json:"availableCountries"`
-         IsUnlisted         bool     `json:"isUnlisted"`
-         HasYpcMetadata     bool     `json:"hasYpcMetadata"`
-         ViewCount          string   `json:"viewCount"`
-         Category           string   `json:"category"`
-         PublishDate        string   `json:"publishDate"`
-         OwnerChannelName   string   `json:"ownerChannelName"`
-         UploadDate         string   `json:"uploadDate"`
-      } `json:"playerMicroformatRenderer"`
-   } `json:"microformat"`
 }
 
 type Format struct {

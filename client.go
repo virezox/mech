@@ -199,8 +199,6 @@ func (v *Video) parseVideoInfo(body []byte) error {
    if err := json.Unmarshal([]byte(playerResponse), &prData); err != nil {
       return fmt.Errorf("unable to parse player response JSON: %w", err)
    }
-   err = v.isVideoDownloadable(prData, false)
-   if err != nil { return err }
    return v.extractDataFromPlayerResponse(prData)
 }
 
@@ -215,25 +213,7 @@ func (v *Video) parseVideoPage(body []byte) error {
    if err := json.Unmarshal(initialPlayerResponse[1], &prData); err != nil {
       return fmt.Errorf("unable to parse player response JSON: %w", err)
    }
-   err := v.isVideoDownloadable(prData, true)
-   if err != nil { return err }
    return v.extractDataFromPlayerResponse(prData)
-}
-
-func (v *Video) isVideoDownloadable(prData playerResponseData, isVideoPage bool) error {
-	// Check if video is downloadable
-	if prData.PlayabilityStatus.Status == "OK" {
-		return nil
-	}
-
-	if !isVideoPage && !prData.PlayabilityStatus.PlayableInEmbed {
-		return ErrNotPlayableInEmbed
-	}
-
-	return &ErrPlayabiltyStatus{
-		Status: prData.PlayabilityStatus.Status,
-		Reason: prData.PlayabilityStatus.Reason,
-	}
 }
 
 func (v *Video) extractDataFromPlayerResponse(prData playerResponseData) error {

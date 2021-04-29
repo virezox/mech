@@ -27,11 +27,6 @@ func sinceHours(left string) (float64, error) {
    return time.Since(t).Hours(), nil
 }
 
-type Player struct {
-   Description, Title struct { SimpleText string }
-   PublishDate, ViewCount string
-}
-
 func Info(id string) (Player, error) {
    req, err := http.NewRequest("GET", API, nil)
    if err != nil {
@@ -50,9 +45,22 @@ func Info(id string) (Player, error) {
    req.URL.RawQuery = buf.String()
    play := req.URL.Query().Get("player_response")
    buf = bytes.NewBufferString(play)
-   var video struct {
-      Microformat struct { PlayerMicroformatRenderer Player }
-   }
+   var video Player
    json.NewDecoder(buf).Decode(&video)
-   return video.Microformat.PlayerMicroformatRenderer, nil
+   return video, nil
+}
+
+type Player struct {
+   Microformat struct {
+      PlayerMicroformatRenderer struct {
+         PublishDate string
+         ViewCount string
+         Description struct {
+            SimpleText string
+         }
+         Title struct {
+            SimpleText string
+         }
+      }
+   }
 }
