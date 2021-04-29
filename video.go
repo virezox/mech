@@ -128,18 +128,6 @@ func (v *Video) SortBitrateDesc(i int, j int) bool {
 	return v.Formats[i].Bitrate > v.Formats[j].Bitrate
 }
 
-const (
-	playlistFetchURL string = "https://www.youtube.com/playlist?list=%s&hl=en"
-	// The following are used in tests but also for fetching test data
-	testPlaylistResponseDataFile = "./testdata/playlist_test_data.html"
-	testPlaylistID               = "PL59FEE129ADFF2B12"
-)
-
-var (
-	playlistIDRegex    = regexp.MustCompile("^[A-Za-z0-9_-]{24,42}$")
-	playlistInURLRegex = regexp.MustCompile("[&?]list=([A-Za-z0-9_-]{24,42})(&.*)?$")
-)
-
 type Playlist struct {
 	ID     string
 	Title  string
