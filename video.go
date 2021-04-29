@@ -1,14 +1,15 @@
 package youtube
 
 import (
-	"encoding/json"
-	"errors"
-	"fmt"
-	"net/url"
-	"regexp"
-	"sort"
-	"strconv"
-	"time"
+   "encoding/json"
+   "errors"
+   "fmt"
+   "net/url"
+   "regexp"
+   "sort"
+   "strconv"
+   "time"
+   sjson "github.com/bitly/go-simplejson"
 )
 
 type Video struct {
@@ -130,4 +131,66 @@ func (v *Video) SortBitrateDesc(i int, j int) bool {
 
 func (v *Video) SortBitrateAsc(i int, j int) bool {
 	return v.Formats[i].Bitrate < v.Formats[j].Bitrate
+}
+
+
+const (
+	playlistFetchURL string = "https://www.youtube.com/playlist?list=%s&hl=en"
+	// The following are used in tests but also for fetching test data
+	testPlaylistResponseDataFile = "./testdata/playlist_test_data.html"
+	testPlaylistID               = "PL59FEE129ADFF2B12"
+)
+
+var (
+	playlistIDRegex    = regexp.MustCompile("^[A-Za-z0-9_-]{24,42}$")
+	playlistInURLRegex = regexp.MustCompile("[&?]list=([A-Za-z0-9_-]{24,42})(&.*)?$")
+)
+
+type Playlist struct {
+	ID     string
+	Title  string
+	Author string
+	Videos []*PlaylistEntry
+}
+
+type PlaylistEntry struct {
+	ID       string
+	Title    string
+	Author   string
+	Duration time.Duration
+}
+
+type videosJSONExtractor struct {
+	Renderer *struct {
+		ID       string   `json:"videoId"`
+		Title    withRuns `json:"title"`
+		Author   withRuns `json:"shortBylineText"`
+		Duration string   `json:"lengthSeconds"`
+	} `json:"playlistVideoRenderer"`
+}
+
+func (vje videosJSONExtractor) PlaylistEntry() *PlaylistEntry {
+	ds, err := strconv.Atoi(vje.Renderer.Duration)
+	if err != nil {
+		panic("invalid video duration: " + vje.Renderer.Duration)
+	}
+	return &PlaylistEntry{
+		ID:       vje.Renderer.ID,
+		Title:    vje.Renderer.Title.String(),
+		Author:   vje.Renderer.Author.String(),
+		Duration: time.Second * time.Duration(ds),
+	}
+}
+
+type withRuns struct {
+	Runs []struct {
+		Text string `json:"text"`
+	} `json:"runs"`
+}
+
+func (wr withRuns) String() string {
+	if len(wr.Runs) > 0 {
+		return wr.Runs[0].Text
+	}
+	return ""
 }
