@@ -3,7 +3,7 @@ import "testing"
 
 func TestVideo(t *testing.T) {
    s := "https://www.youtube.com/watch?v=BnEn7X3Pr7o"
-   v, err := new(Client).GetVideo(s)
+   v, err := NewVideo(s)
    if err != nil {
       t.Error(err)
    }
