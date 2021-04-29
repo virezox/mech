@@ -169,17 +169,16 @@ func (err ErrUnexpectedStatusCode) Error() string {
 	return fmt.Sprintf("unexpected status code: %d", err)
 }
 
-
 type Video struct {
-	ID              string
-	Title           string
-	Description     string
-	Author          string
-	Duration        time.Duration
-	Formats         FormatList
-	Thumbnails      Thumbnails
-	DASHManifestURL string // URI of the DASH manifest file
-	HLSManifestURL  string // URI of the HLS manifest file
+   ID              string
+   Title           string
+   Description     string
+   Author          string
+   Duration        time.Duration
+   Formats         FormatList
+   Thumbnails      []Thumbnail
+   DASHManifestURL string // URI of the DASH manifest file
+   HLSManifestURL  string // URI of the HLS manifest file
 }
 
 func (v *Video) parseVideoInfo(body []byte) error {
