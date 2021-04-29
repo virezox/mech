@@ -1,42 +1,11 @@
 package youtube
 
 import (
-	"sort"
-	"strconv"
-	"strings"
+   "strconv"
+   "strings"
 )
 
 type FormatList []Format
-
-// FindByQuality returns the first format matching Quality or QualityLabel
-func (list FormatList) FindByQuality(quality string) *Format {
-	for i := range list {
-		if list[i].Quality == quality || list[i].QualityLabel == quality {
-			return &list[i]
-		}
-	}
-	return nil
-}
-
-// FindByItag returns the first format matching the itag number
-func (list FormatList) FindByItag(itagNo int) *Format {
-	for i := range list {
-		if list[i].ItagNo == itagNo {
-			return &list[i]
-		}
-	}
-	return nil
-}
-
-// Type returns a new FormatList filtered by mime type of video
-func (list FormatList) Type(t string) (result FormatList) {
-	for i := range list {
-		if strings.Contains(list[i].MimeType, t) {
-			result = append(result, list[i])
-		}
-	}
-	return result
-}
 
 // Quality returns a new FormatList filtered by quality, quality label or itag,
 // but not audio quality
@@ -48,29 +17,6 @@ func (list FormatList) Quality(quality string) (result FormatList) {
 		}
 	}
 	return result
-}
-
-// AudioChannels returns a new FormatList filtered by the matching AudioChannels
-func (list FormatList) AudioChannels(n int) (result FormatList) {
-	for _, f := range list {
-		if f.AudioChannels == n {
-			result = append(result, f)
-		}
-	}
-	return result
-}
-
-// FilterQuality reduces the format list to formats matching the quality
-func (v *Video) FilterQuality(quality string) {
-	v.Formats = v.Formats.Quality(quality)
-	v.Formats.Sort()
-}
-
-// Sort sorts all formats fields
-func (list FormatList) Sort() {
-	sort.SliceStable(list, func(i, j int) bool {
-		return sortFormat(i, j, list)
-	})
 }
 
 // sortFormat sorts video by resolution, FPS, codec (av01, vp9, avc1), bitrate
