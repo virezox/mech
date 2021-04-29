@@ -1,12 +1,11 @@
 package youtube
 
 import (
-	"context"
-	"encoding/json"
-	"fmt"
-	"io/ioutil"
-	"log"
-	"net/http"
+   "context"
+   "fmt"
+   "io/ioutil"
+   "log"
+   "net/http"
 )
 
 // Client offers methods to download video metadata and video streams.
@@ -61,75 +60,6 @@ func (c *Client) videoFromID(ctx context.Context, id string) (*Video, error) {
 	}
 
 	return v, err
-}
-
-// GetPlaylist fetches playlist metadata
-func (c *Client) GetPlaylist(url string) (*Playlist, error) {
-	return c.GetPlaylistContext(context.Background(), url)
-}
-
-// GetPlaylistContext fetches playlist metadata, with a context, along with a list of Videos, and some basic information
-// for these videos. Playlist entries cannot be downloaded, as they lack all the required metadata, but
-// can be used to enumerate all IDs, Authors, Titles, etc.
-func (c *Client) GetPlaylistContext(ctx context.Context, url string) (*Playlist, error) {
-	id, err := extractPlaylistID(url)
-	if err != nil {
-		return nil, fmt.Errorf("extractPlaylistID failed: %w", err)
-	}
-	requestURL := fmt.Sprintf(playlistFetchURL, id)
-	resp, err := c.httpGet(ctx, requestURL)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-	data, err := extractPlaylistJSON(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-	p := &Playlist{ID: id}
-	return p, json.Unmarshal(data, p)
-}
-
-func (c *Client) VideoFromPlaylistEntry(entry *PlaylistEntry) (*Video, error) {
-	return c.videoFromID(context.Background(), entry.ID)
-}
-
-func (c *Client) VideoFromPlaylistEntryContext(ctx context.Context, entry *PlaylistEntry) (*Video, error) {
-	return c.videoFromID(ctx, entry.ID)
-}
-
-// GetStream returns the HTTP response for a specific format
-func (c *Client) GetStream(video *Video, format *Format) (*http.Response, error) {
-	return c.GetStreamContext(context.Background(), video, format)
-}
-
-// GetStreamContext returns the HTTP response for a specific format with a context
-func (c *Client) GetStreamContext(ctx context.Context, video *Video, format *Format) (*http.Response, error) {
-	url, err := c.GetStreamURLContext(ctx, video, format)
-	if err != nil {
-		return nil, err
-	}
-
-	return c.httpGet(ctx, url)
-}
-
-// GetStreamURL returns the url for a specific format
-func (c *Client) GetStreamURL(video *Video, format *Format) (string, error) {
-	return c.GetStreamURLContext(context.Background(), video, format)
-}
-
-// GetStreamURLContext returns the url for a specific format with a context
-func (c *Client) GetStreamURLContext(ctx context.Context, video *Video, format *Format) (string, error) {
-	if format.URL != "" {
-		return format.URL, nil
-	}
-
-	cipher := format.Cipher
-	if cipher == "" {
-		return "", ErrCipherNotFound
-	}
-
-	return c.decipherURL(ctx, video.ID, cipher)
 }
 
 // httpGet does a HTTP GET request, checks the response to be a 200 OK and returns it
