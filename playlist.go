@@ -1,16 +1,12 @@
 package youtube
 
 import (
-	"encoding/json"
-	"fmt"
-	"io"
-	"regexp"
-	"strconv"
-	"strings"
-	"time"
-
-	sjson "github.com/bitly/go-simplejson"
-	"golang.org/x/net/html"
+   "encoding/json"
+   "fmt"
+   "regexp"
+   "strconv"
+   "time"
+   sjson "github.com/bitly/go-simplejson"
 )
 
 const (
@@ -37,45 +33,6 @@ type PlaylistEntry struct {
 	Title    string
 	Author   string
 	Duration time.Duration
-}
-
-func extractPlaylistID(url string) (string, error) {
-	if playlistIDRegex.Match([]byte(url)) {
-		return url, nil
-	}
-
-	matches := playlistInURLRegex.FindStringSubmatch(url)
-
-	if matches != nil {
-		return matches[1], nil
-	}
-
-	return "", ErrInvalidPlaylist
-}
-
-func extractPlaylistJSON(r io.Reader) ([]byte, error) {
-	const prefix = "var ytInitialData ="
-
-	doc, err := html.Parse(r)
-	if err != nil {
-		return nil, err
-	}
-	var data []byte
-	var f func(*html.Node)
-	f = func(n *html.Node) {
-		if n.Type == html.ElementNode && n.Data == "script" && n.FirstChild != nil {
-			script := n.FirstChild.Data
-			if strings.HasPrefix(script, prefix) {
-				script = strings.TrimPrefix(script, prefix)
-				data = []byte(strings.Trim(script, ";"))
-			}
-		}
-		for c := n.FirstChild; c != nil; c = c.NextSibling {
-			f(c)
-		}
-	}
-	f(doc)
-	return data, nil
 }
 
 // structs for playlist extraction

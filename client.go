@@ -3,7 +3,7 @@ package youtube
 import (
    "context"
    "fmt"
-   "io/ioutil"
+   "io"
    "log"
    "net/http"
    "strconv"
@@ -66,37 +66,21 @@ func (c *Client) videoFromID(ctx context.Context, id string) (*Video, error) {
 
 // httpGet does a HTTP GET request, checks the response to be a 200 OK and returns it
 func (c *Client) httpGet(ctx context.Context, url string) (resp *http.Response, err error) {
-	client := c.HTTPClient
-	if client == nil {
-		client = http.DefaultClient
-	}
-
-	if c.Debug {
-		log.Println("GET", url)
-	}
-
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	// Add range header to disable throttling
-	// see https://github.com/kkdai/youtube/pull/170
-	req.Header.Set("Range", "bytes=0-")
-
-	resp, err = client.Do(req)
-	if err != nil {
-		return nil, err
-	}
-
-	switch resp.StatusCode {
-	case http.StatusOK, http.StatusPartialContent:
-	default:
-		resp.Body.Close()
-		return nil, ErrUnexpectedStatusCode(resp.StatusCode)
-	}
-
-	return
+   client := c.HTTPClient
+   if client == nil { client = http.DefaultClient }
+   log.Println("GET", url)
+   req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+   if err != nil { return nil, err }
+   req.Header.Set("Range", "bytes=0-")
+   resp, err = client.Do(req)
+   if err != nil { return nil, err }
+   switch resp.StatusCode {
+   case http.StatusOK, http.StatusPartialContent:
+   default:
+      resp.Body.Close()
+      return nil, ErrUnexpectedStatusCode(resp.StatusCode)
+   }
+   return
 }
 
 // httpGetBodyBytes reads the whole HTTP body and returns it
@@ -107,7 +91,7 @@ func (c *Client) httpGetBodyBytes(ctx context.Context, url string) ([]byte, erro
 	}
 	defer resp.Body.Close()
 
-	return ioutil.ReadAll(resp.Body)
+	return io.ReadAll(resp.Body)
 }
 
 const (
