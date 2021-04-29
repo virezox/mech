@@ -1,56 +1,13 @@
 package youtube
 
 import (
-	"context"
-	"errors"
-	"fmt"
-	"log"
-	"net/url"
-	"regexp"
-	"strconv"
+   "context"
+   "errors"
+   "fmt"
+   "log"
+   "regexp"
+   "strconv"
 )
-
-func (c *Client) decipherURL(ctx context.Context, videoID string, cipher string) (string, error) {
-	queryParams, err := url.ParseQuery(cipher)
-	if err != nil {
-		return "", err
-	}
-
-	/* eg:
-	    extract decipher from  https://youtube.com/s/player/4fbb4d5b/player_ias.vflset/en_US/base.js
-
-	    var Mt={
-		splice:function(a,b){a.splice(0,b)},
-		reverse:function(a){a.reverse()},
-		EQ:function(a,b){var c=a[0];a[0]=a[b%a.length];a[b%a.length]=c}};
-
-		a=a.split("");
-		Mt.splice(a,3);
-		Mt.EQ(a,39);
-		Mt.splice(a,2);
-		Mt.EQ(a,1);
-		Mt.splice(a,1);
-		Mt.EQ(a,35);
-		Mt.EQ(a,51);
-		Mt.splice(a,2);
-		Mt.reverse(a,52);
-		return a.join("")
-	*/
-
-	operations, err := c.parseDecipherOpsWithCache(ctx, videoID)
-	if err != nil {
-		return "", err
-	}
-
-	// apply operations
-	bs := []byte(queryParams.Get("s"))
-	for _, op := range operations {
-		bs = op(bs)
-	}
-
-	decipheredURL := fmt.Sprintf("%s&%s=%s", queryParams.Get("url"), queryParams.Get("sp"), string(bs))
-	return decipheredURL, nil
-}
 
 const (
 	jsvarStr   = "[a-zA-Z_\\$][a-zA-Z_0-9]*"
@@ -143,22 +100,4 @@ func (c *Client) parseDecipherOps(ctx context.Context, videoID string) (operatio
 		}
 	}
 	return ops, nil
-}
-
-func (c *Client) parseDecipherOpsWithCache(ctx context.Context, videoID string) (operations []DecipherOperation, err error) {
-	if c.decipherOpsCache == nil {
-		c.decipherOpsCache = NewSimpleCache()
-	}
-
-	if ops := c.decipherOpsCache.Get(videoID); ops != nil {
-		return ops, nil
-	}
-
-	ops, err := c.parseDecipherOps(ctx, videoID)
-	if err != nil {
-		return nil, err
-	}
-
-	c.decipherOpsCache.Set(videoID, ops)
-	return ops, err
 }
