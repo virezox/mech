@@ -236,3 +236,98 @@ func (v *Video) extractDataFromPlayerResponse(prData playerResponseData) error {
 
 	return nil
 }
+
+type playerResponseData struct {
+   Microformat struct {
+      PlayerMicroformatRenderer struct {
+         Thumbnail struct {
+            Thumbnails []struct {
+               URL    string `json:"url"`
+               Width  int    `json:"width"`
+               Height int    `json:"height"`
+            }
+         } `json:"thumbnail"`
+         Embed struct {
+            IframeURL      string `json:"iframeUrl"`
+            FlashURL       string `json:"flashUrl"`
+            Width          int    `json:"width"`
+            Height         int    `json:"height"`
+            FlashSecureURL string `json:"flashSecureUrl"`
+         } `json:"embed"`
+         Title struct {
+            SimpleText string `json:"simpleText"`
+         } `json:"title"`
+         Description struct {
+            SimpleText string `json:"simpleText"`
+         } `json:"description"`
+         LengthSeconds      string   `json:"lengthSeconds"`
+         OwnerProfileURL    string   `json:"ownerProfileUrl"`
+         ExternalChannelID  string   `json:"externalChannelId"`
+         AvailableCountries []string `json:"availableCountries"`
+         IsUnlisted         bool     `json:"isUnlisted"`
+         HasYpcMetadata     bool     `json:"hasYpcMetadata"`
+         ViewCount          string   `json:"viewCount"`
+         Category           string   `json:"category"`
+         PublishDate        string   `json:"publishDate"`
+         OwnerChannelName   string   `json:"ownerChannelName"`
+         UploadDate         string   `json:"uploadDate"`
+      } `json:"playerMicroformatRenderer"`
+   } `json:"microformat"`
+   StreamingData struct {
+      ExpiresInSeconds string   `json:"expiresInSeconds"`
+      Formats          []Format `json:"formats"`
+      AdaptiveFormats  []Format `json:"adaptiveFormats"`
+      DashManifestURL  string   `json:"dashManifestUrl"`
+      HlsManifestURL   string   `json:"hlsManifestUrl"`
+   } `json:"streamingData"`
+   VideoDetails struct {
+      VideoID          string `json:"videoId"`
+      Title            string `json:"title"`
+      LengthSeconds    string `json:"lengthSeconds"`
+      ChannelID        string `json:"channelId"`
+      IsOwnerViewing   bool   `json:"isOwnerViewing"`
+      ShortDescription string `json:"shortDescription"`
+      IsCrawlable      bool   `json:"isCrawlable"`
+      Thumbnail        struct {
+         Thumbnails []Thumbnail
+      }
+      AverageRating     float64 `json:"averageRating"`
+      AllowRatings      bool    `json:"allowRatings"`
+      ViewCount         string  `json:"viewCount"`
+      Author            string  `json:"author"`
+      IsPrivate         bool    `json:"isPrivate"`
+      IsUnpluggedCorpus bool    `json:"isUnpluggedCorpus"`
+      IsLiveContent     bool    `json:"isLiveContent"`
+   } `json:"videoDetails"`
+}
+
+type Thumbnail struct {
+	URL    string
+	Width  uint
+	Height uint
+}
+
+type Format struct {
+   ItagNo           int    `json:"itag"`
+   URL              string `json:"url"`
+   MimeType         string `json:"mimeType"`
+   Quality          string `json:"quality"`
+   Cipher           string `json:"signatureCipher"`
+   Bitrate          int    `json:"bitrate"`
+   FPS              int    `json:"fps"`
+   Width            int    `json:"width"`
+   Height           int    `json:"height"`
+   LastModified     string `json:"lastModified"`
+   ContentLength    string `json:"contentLength"`
+   QualityLabel     string `json:"qualityLabel"`
+   ProjectionType   string `json:"projectionType"`
+   AverageBitrate   int    `json:"averageBitrate"`
+   AudioQuality     string `json:"audioQuality"`
+   ApproxDurationMs string `json:"approxDurationMs"`
+   AudioSampleRate  string `json:"audioSampleRate"`
+   AudioChannels    int    `json:"audioChannels"`
+   IndexRange *struct {
+      Start string `json:"start"`
+      End   string `json:"end"`
+   } `json:"indexRange"`
+}
