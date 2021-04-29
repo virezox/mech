@@ -24,35 +24,26 @@ type Video struct {
 }
 
 func (v *Video) parseVideoInfo(body []byte) error {
-	answer, err := url.ParseQuery(string(body))
-	if err != nil {
-		return err
-	}
-
-	status := answer.Get("status")
-	if status != "ok" {
-		return &ErrResponseStatus{
-			Status: status,
-			Reason: answer.Get("reason"),
-		}
-	}
-
-	// read the streams map
-	playerResponse := answer.Get("player_response")
-	if playerResponse == "" {
-		return errors.New("no player_response found in the server's answer")
-	}
-
-	var prData playerResponseData
-	if err := json.Unmarshal([]byte(playerResponse), &prData); err != nil {
-		return fmt.Errorf("unable to parse player response JSON: %w", err)
-	}
-
-	if err := v.isVideoFromInfoDownloadable(prData); err != nil {
-		return err
-	}
-
-	return v.extractDataFromPlayerResponse(prData)
+   answer, err := url.ParseQuery(string(body))
+   if err != nil { return err }
+   status := answer.Get("status")
+   if status != "ok" {
+      return &ErrResponseStatus{
+         Reason: answer.Get("reason"), Status: status,
+      }
+   }
+   playerResponse := answer.Get("player_response")
+   if playerResponse == "" {
+      return errors.New("no player_response found in the server's answer")
+   }
+   var prData playerResponseData
+   if err := json.Unmarshal([]byte(playerResponse), &prData); err != nil {
+      return fmt.Errorf("unable to parse player response JSON: %w", err)
+   }
+   if err := v.isVideoFromInfoDownloadable(prData); err != nil {
+      return err
+   }
+   return v.extractDataFromPlayerResponse(prData)
 }
 
 func (v *Video) isVideoFromInfoDownloadable(prData playerResponseData) error {

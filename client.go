@@ -7,7 +7,6 @@ import (
    "net/http"
    "regexp"
    "strings"
-   "time"
 )
 
 // Client offers methods to download video metadata and video streams.
@@ -22,7 +21,7 @@ type Client struct {
 
 // GetVideo fetches video metadata
 func (c *Client) GetVideo(url string) (*Video, error) {
-   id, err := ExtractVideoID(url)
+   id, err := extractVideoID(url)
    if err != nil {
       return nil, fmt.Errorf("extractVideoID failed: %w", err)
    }
@@ -88,15 +87,14 @@ func (c *Client) httpGetBodyBytes(url string) ([]byte, error) {
 
 type FormatList []Format
 
-
 var videoRegexpList = []*regexp.Regexp{
 	regexp.MustCompile(`(?:v|embed|watch\?v)(?:=|/)([^"&?/=%]{11})`),
 	regexp.MustCompile(`(?:=|/)([^"&?/=%]{11})`),
 	regexp.MustCompile(`([^"&?/=%]{11})`),
 }
 
-// ExtractVideoID extracts the videoID from the given string
-func ExtractVideoID(videoID string) (string, error) {
+// extractVideoID extracts the videoID from the given string
+func extractVideoID(videoID string) (string, error) {
 	if strings.Contains(videoID, "youtu") || strings.ContainsAny(videoID, "\"?&/<%=") {
 		for _, re := range videoRegexpList {
 			if isMatch := re.MatchString(videoID); isMatch {
@@ -164,53 +162,4 @@ type ErrUnexpectedStatusCode int
 
 func (err ErrUnexpectedStatusCode) Error() string {
 	return fmt.Sprintf("unexpected status code: %d", err)
-}
-
-
-var (
-	_ DecipherOperationsCache = NewSimpleCache()
-)
-
-const defaultCacheExpiration = time.Minute * time.Duration(5)
-
-type DecipherOperationsCache interface {
-	Get(videoID string) []DecipherOperation
-	Set(video string, operations []DecipherOperation)
-}
-
-type SimpleCache struct {
-	videoID    string
-	expiredAt  time.Time
-	operations []DecipherOperation
-}
-
-func NewSimpleCache() *SimpleCache {
-	return &SimpleCache{}
-}
-
-// Get : get cache  when it has same video id and not expired
-func (s SimpleCache) Get(videoID string) []DecipherOperation {
-	return s.GetCacheBefore(videoID, time.Now())
-}
-
-// GetCacheBefore : can pass time for testing
-func (s SimpleCache) GetCacheBefore(videoID string, time time.Time) []DecipherOperation {
-	if videoID == s.videoID && s.expiredAt.After(time) {
-		operations := make([]DecipherOperation, len(s.operations))
-		copy(operations, s.operations)
-		return operations
-	}
-	return nil
-}
-
-// Set : set cache with default expiration
-func (s *SimpleCache) Set(videoID string, operations []DecipherOperation) {
-	s.setWithExpiredTime(videoID, operations, time.Now().Add(defaultCacheExpiration))
-}
-
-func (s *SimpleCache) setWithExpiredTime(videoID string, operations []DecipherOperation, time time.Time) {
-	s.videoID = videoID
-	s.operations = make([]DecipherOperation, len(operations))
-	copy(s.operations, operations)
-	s.expiredAt = time
 }
