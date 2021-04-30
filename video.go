@@ -203,63 +203,63 @@ type playerResponseData struct {
       PlayerMicroformatRenderer struct {
          Thumbnail struct {
             Thumbnails []struct {
-               URL    string `json:"url"`
-               Width  int    `json:"width"`
-               Height int    `json:"height"`
+               URL    string
+               Width  int
+               Height int
             }
-         } `json:"thumbnail"`
+         }
          Embed struct {
-            IframeURL      string `json:"iframeUrl"`
-            FlashURL       string `json:"flashUrl"`
-            Width          int    `json:"width"`
-            Height         int    `json:"height"`
-            FlashSecureURL string `json:"flashSecureUrl"`
-         } `json:"embed"`
+            IframeURL      string
+            FlashURL       string
+            Width          int
+            Height         int
+            FlashSecureURL string
+         }
          Title struct {
-            SimpleText string `json:"simpleText"`
-         } `json:"title"`
+            SimpleText string
+         }
          Description struct {
-            SimpleText string `json:"simpleText"`
-         } `json:"description"`
-         LengthSeconds      string   `json:"lengthSeconds"`
-         OwnerProfileURL    string   `json:"ownerProfileUrl"`
-         ExternalChannelID  string   `json:"externalChannelId"`
-         AvailableCountries []string `json:"availableCountries"`
-         IsUnlisted         bool     `json:"isUnlisted"`
-         HasYpcMetadata     bool     `json:"hasYpcMetadata"`
-         ViewCount          string   `json:"viewCount"`
-         Category           string   `json:"category"`
-         PublishDate        string   `json:"publishDate"`
-         OwnerChannelName   string   `json:"ownerChannelName"`
-         UploadDate         string   `json:"uploadDate"`
-      } `json:"playerMicroformatRenderer"`
-   } `json:"microformat"`
+            SimpleText string
+         }
+         LengthSeconds      string
+         OwnerProfileURL    string
+         ExternalChannelID  string
+         AvailableCountries []string
+         IsUnlisted         bool
+         HasYpcMetadata     bool
+         ViewCount          string
+         Category           string
+         PublishDate        string
+         OwnerChannelName   string
+         UploadDate         string
+      }
+   }
    StreamingData struct {
-      ExpiresInSeconds string   `json:"expiresInSeconds"`
-      Formats          []Format `json:"formats"`
-      AdaptiveFormats  []Format `json:"adaptiveFormats"`
-      DashManifestURL  string   `json:"dashManifestUrl"`
-      HlsManifestURL   string   `json:"hlsManifestUrl"`
-   } `json:"streamingData"`
+      ExpiresInSeconds string
+      Formats          []Format
+      AdaptiveFormats  []Format
+      DashManifestURL  string
+      HlsManifestURL   string
+   }
    VideoDetails struct {
-      VideoID          string `json:"videoId"`
-      Title            string `json:"title"`
-      LengthSeconds    string `json:"lengthSeconds"`
-      ChannelID        string `json:"channelId"`
-      IsOwnerViewing   bool   `json:"isOwnerViewing"`
-      ShortDescription string `json:"shortDescription"`
-      IsCrawlable      bool   `json:"isCrawlable"`
+      VideoID          string
+      Title            string
+      LengthSeconds    string
+      ChannelID        string
+      IsOwnerViewing   bool
+      ShortDescription string
+      IsCrawlable      bool
       Thumbnail        struct {
          Thumbnails []Thumbnail
       }
-      AverageRating     float64 `json:"averageRating"`
-      AllowRatings      bool    `json:"allowRatings"`
-      ViewCount         string  `json:"viewCount"`
-      Author            string  `json:"author"`
-      IsPrivate         bool    `json:"isPrivate"`
-      IsUnpluggedCorpus bool    `json:"isUnpluggedCorpus"`
-      IsLiveContent     bool    `json:"isLiveContent"`
-   } `json:"videoDetails"`
+      AverageRating     float64
+      AllowRatings      bool
+      ViewCount         string
+      Author            string
+      IsPrivate         bool
+      IsUnpluggedCorpus bool
+      IsLiveContent     bool
+   }
 }
 
 type Thumbnail struct {
@@ -270,29 +270,28 @@ type Thumbnail struct {
 
 type Format struct {
    ItagNo           int    `json:"itag"`
-   URL              string `json:"url"`
-   MimeType         string `json:"mimeType"`
-   Quality          string `json:"quality"`
+   URL              string
+   MimeType         string
+   Quality          string
    Cipher           string `json:"signatureCipher"`
-   Bitrate          int    `json:"bitrate"`
-   FPS              int    `json:"fps"`
-   Width            int    `json:"width"`
-   Height           int    `json:"height"`
-   LastModified     string `json:"lastModified"`
-   ContentLength    string `json:"contentLength"`
-   QualityLabel     string `json:"qualityLabel"`
-   ProjectionType   string `json:"projectionType"`
-   AverageBitrate   int    `json:"averageBitrate"`
-   AudioQuality     string `json:"audioQuality"`
-   ApproxDurationMs string `json:"approxDurationMs"`
-   AudioSampleRate  string `json:"audioSampleRate"`
-   AudioChannels    int    `json:"audioChannels"`
+   Bitrate          int
+   FPS              int
+   Width            int
+   Height           int
+   LastModified     string
+   ContentLength    string
+   QualityLabel     string
+   ProjectionType   string
+   AverageBitrate   int
+   AudioQuality     string
+   ApproxDurationMs string
+   AudioSampleRate  string
+   AudioChannels    int
    IndexRange *struct {
-      Start string `json:"start"`
-      End   string `json:"end"`
-   } `json:"indexRange"`
+      Start string
+      End   string
+   }
 }
-
 
 const API = "https://www.youtube.com/get_video_info"
 
