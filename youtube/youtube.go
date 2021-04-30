@@ -2,6 +2,7 @@ package main
 
 import (
    "encoding/xml"
+   "github.com/89z/youtube"
    "net/http"
    "os"
 )
@@ -25,14 +26,18 @@ type mpd struct {
 }
 
 func main() {
-   f, e := os.Open("manifest.xml")
+   v, e := youtube.NewVideo("AI7ULzgf8RU")
    if e != nil {
       panic(e)
    }
-   defer f.Close()
+   r, e := http.Get(v.StreamingData.DashManifestURL)
+   if e != nil {
+      panic(e)
+   }
+   defer r.Body.Close()
    var m mpd
-   xml.NewDecoder(f).Decode(&m)
-   f, e = os.Create("file.webm")
+   xml.NewDecoder(r.Body).Decode(&m)
+   f, e := os.Create("file.webm")
    if e != nil {
       panic(e)
    }
@@ -40,7 +45,7 @@ func main() {
    rep := m.Period.AdaptationSet[3].Representation[0]
    // get init
    println(rep.SegmentList.Initialization.SourceURL)
-   r, e := http.Get(rep.BaseURL + rep.SegmentList.Initialization.SourceURL)
+   r, e = http.Get(rep.BaseURL + rep.SegmentList.Initialization.SourceURL)
    if e != nil {
       panic(e)
    }
