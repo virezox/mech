@@ -1,5 +1,8 @@
 package youtube
-import "testing"
+
+import (
+   "testing"
+)
 
 func TestVideo(t *testing.T) {
    s := "https://www.youtube.com/watch?v=BnEn7X3Pr7o"
@@ -7,8 +10,8 @@ func TestVideo(t *testing.T) {
    if err != nil {
       t.Error(err)
    }
-   if v.DASHManifestURL == "" {
-      t.Error()
+   if v.StreamingData.DashManifestURL == "" {
+      t.Errorf("%+v", v)
    }
 }
 
