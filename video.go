@@ -32,10 +32,10 @@ func extractVideoID(videoID string) (string, error) {
       }
    }
    if strings.ContainsAny(videoID, "?&/<%=") {
-      return "", constError("invalid characters in video id")
+      return "", errors.New("invalid characters in video id")
    }
    if len(videoID) < 10 {
-      return "", constError("the video id must be at least 10 characters long")
+      return "", errors.New("the video id must be at least 10 characters long")
    }
    return videoID, nil
 }
@@ -54,6 +54,31 @@ func httpGetBodyBytes(url string) ([]byte, error) {
       return nil, fmt.Errorf("unexpected status code: %v", res.StatusCode)
    }
    return io.ReadAll(res.Body)
+}
+
+type Format struct {
+   ItagNo           int    `json:"itag"`
+   URL              string
+   MimeType         string
+   Quality          string
+   Cipher           string `json:"signatureCipher"`
+   Bitrate          int
+   FPS              int
+   Width            int
+   Height           int
+   LastModified     string
+   ContentLength    string
+   QualityLabel     string
+   ProjectionType   string
+   AverageBitrate   int
+   AudioQuality     string
+   ApproxDurationMs string
+   AudioSampleRate  string
+   AudioChannels    int
+   IndexRange *struct {
+      Start string
+      End   string
+   }
 }
 
 type Video struct {
@@ -78,7 +103,7 @@ func NewVideo(url string) (*Video, error) {
    if err != nil { return nil, err }
    v := &Video{ID: id}
    err = v.parseVideoInfo(body)
-   if err == constError("embedding of this video has been disabled") {
+   if err == errors.New("embedding of this video has been disabled") {
       html, err := httpGetBodyBytes("https://www.youtube.com/watch?v="+id)
       if err != nil { return nil, err }
       return v, v.parseVideoPage(html)
@@ -86,12 +111,20 @@ func NewVideo(url string) (*Video, error) {
    return v, err
 }
 
-////////////////////////////////////////////////////////////////////////////////
-
-type constError string
-
-func (e constError) Error() string {
-   return string(e)
+func (v *Video) extractDataFromPlayerResponse(prData playerResponseData) error {
+   v.Title = prData.VideoDetails.Title
+   v.Description = prData.VideoDetails.ShortDescription
+   v.Author = prData.VideoDetails.Author
+   if seconds, _ := strconv.Atoi(prData.Microformat.PlayerMicroformatRenderer.LengthSeconds); seconds > 0 {
+      v.Duration = time.Duration(seconds) * time.Second
+   }
+   v.Formats = append(prData.StreamingData.Formats, prData.StreamingData.AdaptiveFormats...)
+   if len(v.Formats) == 0 {
+      return errors.New("no formats found in the server's answer")
+   }
+   v.HLSManifestURL = prData.StreamingData.HlsManifestURL
+   v.DASHManifestURL = prData.StreamingData.DashManifestURL
+   return nil
 }
 
 func (v *Video) parseVideoInfo(body []byte) error {
@@ -114,34 +147,55 @@ func (v *Video) parseVideoInfo(body []byte) error {
    return v.extractDataFromPlayerResponse(prData)
 }
 
-var playerResponsePattern = regexp.MustCompile(`var ytInitialPlayerResponse\s*=\s*(\{.+?\});`)
-
 func (v *Video) parseVideoPage(body []byte) error {
-   initialPlayerResponse := playerResponsePattern.FindSubmatch(body)
-   if initialPlayerResponse == nil || len(initialPlayerResponse) < 2 {
+   re := `var ytInitialPlayerResponse\s*=\s*(\{.+?\});`
+   playerResponse := regexp.MustCompile(re).FindSubmatch(body)
+   if playerResponse == nil || len(playerResponse) < 2 {
       return errors.New("no ytInitialPlayerResponse found in the server's answer")
    }
    var prData playerResponseData
-   if err := json.Unmarshal(initialPlayerResponse[1], &prData); err != nil {
+   if err := json.Unmarshal(playerResponse[1], &prData); err != nil {
       return fmt.Errorf("unable to parse player response JSON: %w", err)
    }
    return v.extractDataFromPlayerResponse(prData)
 }
 
-func (v *Video) extractDataFromPlayerResponse(prData playerResponseData) error {
-   v.Title = prData.VideoDetails.Title
-   v.Description = prData.VideoDetails.ShortDescription
-   v.Author = prData.VideoDetails.Author
-   if seconds, _ := strconv.Atoi(prData.Microformat.PlayerMicroformatRenderer.LengthSeconds); seconds > 0 {
-      v.Duration = time.Duration(seconds) * time.Second
+type player struct {
+   Microformat struct {
+      PlayerMicroformatRenderer struct {
+         PublishDate string
+         ViewCount string
+         Description struct {
+            SimpleText string
+         }
+         Title struct {
+            SimpleText string
+         }
+      }
    }
-   v.Formats = append(prData.StreamingData.Formats, prData.StreamingData.AdaptiveFormats...)
-   if len(v.Formats) == 0 {
-      return errors.New("no formats found in the server's answer")
+}
+
+func oldPlayer(id string) (player, error) {
+   api := "https://www.youtube.com/get_video_info"
+   req, err := http.NewRequest("GET", api, nil)
+   if err != nil {
+      return player{}, err
    }
-   v.HLSManifestURL = prData.StreamingData.HlsManifestURL
-   v.DASHManifestURL = prData.StreamingData.DashManifestURL
-   return nil
+   val := req.URL.Query()
+   val.Set("video_id", id)
+   req.URL.RawQuery = val.Encode()
+   res, err := new(http.Client).Do(req)
+   if err != nil {
+      return player{}, err
+   }
+   buf := new(bytes.Buffer)
+   buf.ReadFrom(res.Body)
+   req.URL.RawQuery = buf.String()
+   play := req.URL.Query().Get("player_response")
+   buf = bytes.NewBufferString(play)
+   var video player
+   json.NewDecoder(buf).Decode(&video)
+   return video, nil
 }
 
 type playerResponseData struct {
@@ -196,68 +250,4 @@ type playerResponseData struct {
       IsUnpluggedCorpus bool
       IsLiveContent     bool
    }
-}
-
-type Format struct {
-   ItagNo           int    `json:"itag"`
-   URL              string
-   MimeType         string
-   Quality          string
-   Cipher           string `json:"signatureCipher"`
-   Bitrate          int
-   FPS              int
-   Width            int
-   Height           int
-   LastModified     string
-   ContentLength    string
-   QualityLabel     string
-   ProjectionType   string
-   AverageBitrate   int
-   AudioQuality     string
-   ApproxDurationMs string
-   AudioSampleRate  string
-   AudioChannels    int
-   IndexRange *struct {
-      Start string
-      End   string
-   }
-}
-
-const API = "https://www.youtube.com/get_video_info"
-
-type player struct {
-   Microformat struct {
-      PlayerMicroformatRenderer struct {
-         PublishDate string
-         ViewCount string
-         Description struct {
-            SimpleText string
-         }
-         Title struct {
-            SimpleText string
-         }
-      }
-   }
-}
-
-func oldPlayer(id string) (player, error) {
-   req, err := http.NewRequest("GET", API, nil)
-   if err != nil {
-      return player{}, err
-   }
-   val := req.URL.Query()
-   val.Set("video_id", id)
-   req.URL.RawQuery = val.Encode()
-   res, err := new(http.Client).Do(req)
-   if err != nil {
-      return player{}, err
-   }
-   buf := new(bytes.Buffer)
-   buf.ReadFrom(res.Body)
-   req.URL.RawQuery = buf.String()
-   play := req.URL.Query().Get("player_response")
-   buf = bytes.NewBufferString(play)
-   var video player
-   json.NewDecoder(buf).Decode(&video)
-   return video, nil
 }
