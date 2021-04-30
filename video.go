@@ -21,8 +21,7 @@ type Video struct {
    Description     string
    Author          string
    Duration        time.Duration
-   Formats         FormatList
-   Thumbnails      []Thumbnail
+   Formats         []Format
    DASHManifestURL string // URI of the DASH manifest file
    HLSManifestURL  string // URI of the HLS manifest file
 }
@@ -33,10 +32,6 @@ func NewVideo(url string) (*Video, error) {
    if err != nil {
       return nil, fmt.Errorf("extractVideoID failed: %w", err)
    }
-   return videoFromID(id)
-}
-
-func videoFromID(id string) (*Video, error) {
    eurl := "https://youtube.googleapis.com/v/" + id
    body, err := httpGetBodyBytes("https://youtube.com/get_video_info?video_id="+id+"&eurl="+eurl)
    if err != nil { return nil, err }
@@ -63,23 +58,18 @@ func httpGet(url string) (resp *http.Response, err error) {
    case http.StatusOK, http.StatusPartialContent:
    default:
       resp.Body.Close()
-      return nil, ErrUnexpectedStatusCode(resp.StatusCode)
+      return nil, fmt.Errorf("unexpected status code: %v", resp.StatusCode)
    }
    return
 }
 
 // httpGetBodyBytes reads the whole HTTP body and returns it
 func httpGetBodyBytes(url string) ([]byte, error) {
-	resp, err := httpGet(url)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	return io.ReadAll(resp.Body)
+   resp, err := httpGet(url)
+   if err != nil { return nil, err }
+   defer resp.Body.Close()
+   return io.ReadAll(resp.Body)
 }
-
-type FormatList []Format
 
 var videoRegexpList = []*regexp.Regexp{
 	regexp.MustCompile(`(?:v|embed|watch\?v)(?:=|/)([^"&?/=%]{11})`),
@@ -108,8 +98,6 @@ func extractVideoID(videoID string) (string, error) {
 	return videoID, nil
 }
 
-type DecipherOperation func([]byte) []byte
-
 const (
 	ErrCipherNotFound             = constError("cipher not found")
 	ErrInvalidCharactersInVideoID = constError("invalid characters in video id")
@@ -125,22 +113,6 @@ func (e constError) Error() string {
 	return string(e)
 }
 
-
-type ErrPlayabiltyStatus struct {
-	Status string
-	Reason string
-}
-
-func (err ErrPlayabiltyStatus) Error() string {
-	return fmt.Sprintf("cannot playback and download, status: %s, reason: %s", err.Status, err.Reason)
-}
-
-// ErrUnexpectedStatusCode is returned on unexpected HTTP status codes
-type ErrUnexpectedStatusCode int
-
-func (err ErrUnexpectedStatusCode) Error() string {
-	return fmt.Sprintf("unexpected status code: %d", err)
-}
 
 func (v *Video) parseVideoInfo(body []byte) error {
    query, err := url.ParseQuery(string(body))
@@ -177,37 +149,24 @@ func (v *Video) parseVideoPage(body []byte) error {
 }
 
 func (v *Video) extractDataFromPlayerResponse(prData playerResponseData) error {
-	v.Title = prData.VideoDetails.Title
-	v.Description = prData.VideoDetails.ShortDescription
-	v.Author = prData.VideoDetails.Author
-	v.Thumbnails = prData.VideoDetails.Thumbnail.Thumbnails
-
-	if seconds, _ := strconv.Atoi(prData.Microformat.PlayerMicroformatRenderer.LengthSeconds); seconds > 0 {
-		v.Duration = time.Duration(seconds) * time.Second
-	}
-
-	// Assign Streams
-	v.Formats = append(prData.StreamingData.Formats, prData.StreamingData.AdaptiveFormats...)
-	if len(v.Formats) == 0 {
-		return errors.New("no formats found in the server's answer")
-	}
-
-	v.HLSManifestURL = prData.StreamingData.HlsManifestURL
-	v.DASHManifestURL = prData.StreamingData.DashManifestURL
-
-	return nil
+   v.Title = prData.VideoDetails.Title
+   v.Description = prData.VideoDetails.ShortDescription
+   v.Author = prData.VideoDetails.Author
+   if seconds, _ := strconv.Atoi(prData.Microformat.PlayerMicroformatRenderer.LengthSeconds); seconds > 0 {
+      v.Duration = time.Duration(seconds) * time.Second
+   }
+   v.Formats = append(prData.StreamingData.Formats, prData.StreamingData.AdaptiveFormats...)
+   if len(v.Formats) == 0 {
+      return errors.New("no formats found in the server's answer")
+   }
+   v.HLSManifestURL = prData.StreamingData.HlsManifestURL
+   v.DASHManifestURL = prData.StreamingData.DashManifestURL
+   return nil
 }
 
 type playerResponseData struct {
    Microformat struct {
       PlayerMicroformatRenderer struct {
-         Thumbnail struct {
-            Thumbnails []struct {
-               URL    string
-               Width  int
-               Height int
-            }
-         }
          Embed struct {
             IframeURL      string
             FlashURL       string
@@ -249,9 +208,6 @@ type playerResponseData struct {
       IsOwnerViewing   bool
       ShortDescription string
       IsCrawlable      bool
-      Thumbnail        struct {
-         Thumbnails []Thumbnail
-      }
       AverageRating     float64
       AllowRatings      bool
       ViewCount         string
@@ -260,12 +216,6 @@ type playerResponseData struct {
       IsUnpluggedCorpus bool
       IsLiveContent     bool
    }
-}
-
-type Thumbnail struct {
-	URL    string
-	Width  uint
-	Height uint
 }
 
 type Format struct {
