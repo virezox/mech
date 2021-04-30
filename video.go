@@ -9,11 +9,8 @@ import (
    "net/http"
    "net/url"
    "regexp"
-   "strconv"
    "strings"
-   "time"
 )
-
 
 // extractVideoID extracts the videoID from the given string
 func extractVideoID(videoID string) (string, error) {
@@ -56,42 +53,6 @@ func httpGetBodyBytes(url string) ([]byte, error) {
    return io.ReadAll(res.Body)
 }
 
-type Format struct {
-   ItagNo           int    `json:"itag"`
-   URL              string
-   MimeType         string
-   Quality          string
-   Cipher           string `json:"signatureCipher"`
-   Bitrate          int
-   FPS              int
-   Width            int
-   Height           int
-   LastModified     string
-   ContentLength    string
-   QualityLabel     string
-   ProjectionType   string
-   AverageBitrate   int
-   AudioQuality     string
-   ApproxDurationMs string
-   AudioSampleRate  string
-   AudioChannels    int
-   IndexRange *struct {
-      Start string
-      End   string
-   }
-}
-
-type Video struct {
-   ID              string
-   Title           string
-   Description     string
-   Author          string
-   Duration        time.Duration
-   Formats         []Format
-   DASHManifestURL string // URI of the DASH manifest file
-   HLSManifestURL  string // URI of the HLS manifest file
-}
-
 // NewVideo fetches video metadata
 func NewVideo(url string) (*Video, error) {
    id, err := extractVideoID(url)
@@ -114,15 +75,6 @@ func NewVideo(url string) (*Video, error) {
 func (v *Video) extractDataFromPlayerResponse(prData playerResponseData) error {
    v.Title = prData.VideoDetails.Title
    v.Description = prData.VideoDetails.ShortDescription
-   v.Author = prData.VideoDetails.Author
-   if seconds, _ := strconv.Atoi(prData.Microformat.PlayerMicroformatRenderer.LengthSeconds); seconds > 0 {
-      v.Duration = time.Duration(seconds) * time.Second
-   }
-   v.Formats = append(prData.StreamingData.Formats, prData.StreamingData.AdaptiveFormats...)
-   if len(v.Formats) == 0 {
-      return errors.New("no formats found in the server's answer")
-   }
-   v.HLSManifestURL = prData.StreamingData.HlsManifestURL
    v.DASHManifestURL = prData.StreamingData.DashManifestURL
    return nil
 }
@@ -158,21 +110,6 @@ func (v *Video) parseVideoPage(body []byte) error {
       return fmt.Errorf("unable to parse player response JSON: %w", err)
    }
    return v.extractDataFromPlayerResponse(prData)
-}
-
-type player struct {
-   Microformat struct {
-      PlayerMicroformatRenderer struct {
-         PublishDate string
-         ViewCount string
-         Description struct {
-            SimpleText string
-         }
-         Title struct {
-            SimpleText string
-         }
-      }
-   }
 }
 
 func oldPlayer(id string) (player, error) {
@@ -229,10 +166,7 @@ type playerResponseData struct {
    }
    StreamingData struct {
       ExpiresInSeconds string
-      Formats          []Format
-      AdaptiveFormats  []Format
       DashManifestURL  string
-      HlsManifestURL   string
    }
    VideoDetails struct {
       VideoID          string
