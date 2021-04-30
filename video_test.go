@@ -1,12 +1,8 @@
 package youtube
+import "testing"
 
-import (
-   "testing"
-)
-
-func TestVideo(t *testing.T) {
-   s := "https://www.youtube.com/watch?v=BnEn7X3Pr7o"
-   v, err := NewVideo(s)
+func TestNew(t *testing.T) {
+   v, err := NewVideo("BnEn7X3Pr7o")
    if err != nil {
       t.Error(err)
    }
@@ -31,7 +27,7 @@ var tests = []struct {in, out string} {
 
 func TestOld(t *testing.T) {
    for _, test := range tests {
-      p, err := oldPlayer(test.in)
+      p, err := oldVideo(test.in)
       if err != nil {
          t.Error(err)
       }
