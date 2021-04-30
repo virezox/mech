@@ -3,8 +3,7 @@ package youtube
 type Video struct {
    DASHManifestURL string // StreamingData.DASHManifestURL
    Description string // VideoDetails.ShortDescription
-   ID string
-   Title string
+   Title string // VideoDetails.Title
 }
 
 type player struct {

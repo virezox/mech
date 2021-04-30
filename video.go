@@ -62,7 +62,7 @@ func NewVideo(url string) (*Video, error) {
    eurl := "https://youtube.googleapis.com/v/" + id
    body, err := httpGetBodyBytes("https://youtube.com/get_video_info?video_id="+id+"&eurl="+eurl)
    if err != nil { return nil, err }
-   v := &Video{ID: id}
+   v := new(Video)
    err = v.parseVideoInfo(body)
    if err == errors.New("embedding of this video has been disabled") {
       html, err := httpGetBodyBytes("https://www.youtube.com/watch?v="+id)
