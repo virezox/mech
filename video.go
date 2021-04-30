@@ -1,6 +1,7 @@
 package youtube
 
 import (
+   "bytes"
    "encoding/json"
    "errors"
    "fmt"
@@ -290,4 +291,44 @@ type Format struct {
       Start string `json:"start"`
       End   string `json:"end"`
    } `json:"indexRange"`
+}
+
+
+const API = "https://www.youtube.com/get_video_info"
+
+type player struct {
+   Microformat struct {
+      PlayerMicroformatRenderer struct {
+         PublishDate string
+         ViewCount string
+         Description struct {
+            SimpleText string
+         }
+         Title struct {
+            SimpleText string
+         }
+      }
+   }
+}
+
+func oldPlayer(id string) (player, error) {
+   req, err := http.NewRequest("GET", API, nil)
+   if err != nil {
+      return player{}, err
+   }
+   val := req.URL.Query()
+   val.Set("video_id", id)
+   req.URL.RawQuery = val.Encode()
+   res, err := new(http.Client).Do(req)
+   if err != nil {
+      return player{}, err
+   }
+   buf := new(bytes.Buffer)
+   buf.ReadFrom(res.Body)
+   req.URL.RawQuery = buf.String()
+   play := req.URL.Query().Get("player_response")
+   buf = bytes.NewBufferString(play)
+   var video player
+   json.NewDecoder(buf).Decode(&video)
+   return video, nil
 }

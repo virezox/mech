@@ -1,6 +1,17 @@
 package youtube
 import "testing"
 
+func TestVideo(t *testing.T) {
+   s := "https://www.youtube.com/watch?v=BnEn7X3Pr7o"
+   v, err := NewVideo(s)
+   if err != nil {
+      t.Error(err)
+   }
+   if v.DASHManifestURL == "" {
+      t.Error()
+   }
+}
+
 var tests = []struct {in, out string} {
    {
       "XeojXq6ySs4",
@@ -15,13 +26,14 @@ var tests = []struct {in, out string} {
    },
 }
 
-func TestInfo(t *testing.T) {
+func TestOld(t *testing.T) {
    for _, test := range tests {
-      p, err := Info(test.in)
+      p, err := oldPlayer(test.in)
       if err != nil {
          t.Error(err)
       }
-      if p.Description.SimpleText != test.out {
+      desc := p.Microformat.PlayerMicroformatRenderer.Description.SimpleText
+      if desc != test.out {
          t.Error(p)
       }
    }
