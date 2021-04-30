@@ -6,7 +6,6 @@ import (
    "errors"
    "fmt"
    "io"
-   "log"
    "net/http"
    "net/url"
    "regexp"
@@ -14,6 +13,48 @@ import (
    "strings"
    "time"
 )
+
+
+// extractVideoID extracts the videoID from the given string
+func extractVideoID(videoID string) (string, error) {
+   videoRegexpList := []string{
+      0: `(?:v|embed|watch\?v)(?:=|/)([^"&?/=%]{11})`,
+      1: `(?:=|/)([^"&?/=%]{11})`,
+      2: `([^"&?/=%]{11})`,
+   }
+   if strings.Contains(videoID, "youtu") || strings.ContainsAny(videoID, "\"?&/<%=") {
+      for _, pat := range videoRegexpList {
+         re := regexp.MustCompile(pat)
+         if isMatch := re.MatchString(videoID); isMatch {
+            subs := re.FindStringSubmatch(videoID)
+            videoID = subs[1]
+         }
+      }
+   }
+   if strings.ContainsAny(videoID, "?&/<%=") {
+      return "", constError("invalid characters in video id")
+   }
+   if len(videoID) < 10 {
+      return "", constError("the video id must be at least 10 characters long")
+   }
+   return videoID, nil
+}
+
+// httpGetBodyBytes reads the whole HTTP body and returns it
+func httpGetBodyBytes(url string) ([]byte, error) {
+   req, err := http.NewRequest(http.MethodGet, url, nil)
+   if err != nil { return nil, err }
+   req.Header.Set("Range", "bytes=0-")
+   res, err := new(http.Client).Do(req)
+   if err != nil { return nil, err }
+   defer res.Body.Close()
+   switch res.StatusCode {
+   case http.StatusOK, http.StatusPartialContent:
+   default:
+      return nil, fmt.Errorf("unexpected status code: %v", res.StatusCode)
+   }
+   return io.ReadAll(res.Body)
+}
 
 type Video struct {
    ID              string
@@ -37,7 +78,7 @@ func NewVideo(url string) (*Video, error) {
    if err != nil { return nil, err }
    v := &Video{ID: id}
    err = v.parseVideoInfo(body)
-   if err == ErrNotPlayableInEmbed {
+   if err == constError("embedding of this video has been disabled") {
       html, err := httpGetBodyBytes("https://www.youtube.com/watch?v="+id)
       if err != nil { return nil, err }
       return v, v.parseVideoPage(html)
@@ -45,74 +86,13 @@ func NewVideo(url string) (*Video, error) {
    return v, err
 }
 
-// httpGet does a HTTP GET request, checks the response to be a 200 OK and returns it
-func httpGet(url string) (resp *http.Response, err error) {
-   client := http.DefaultClient
-   log.Println("GET", url)
-   req, err := http.NewRequest(http.MethodGet, url, nil)
-   if err != nil { return nil, err }
-   req.Header.Set("Range", "bytes=0-")
-   resp, err = client.Do(req)
-   if err != nil { return nil, err }
-   switch resp.StatusCode {
-   case http.StatusOK, http.StatusPartialContent:
-   default:
-      resp.Body.Close()
-      return nil, fmt.Errorf("unexpected status code: %v", resp.StatusCode)
-   }
-   return
-}
-
-// httpGetBodyBytes reads the whole HTTP body and returns it
-func httpGetBodyBytes(url string) ([]byte, error) {
-   resp, err := httpGet(url)
-   if err != nil { return nil, err }
-   defer resp.Body.Close()
-   return io.ReadAll(resp.Body)
-}
-
-var videoRegexpList = []*regexp.Regexp{
-	regexp.MustCompile(`(?:v|embed|watch\?v)(?:=|/)([^"&?/=%]{11})`),
-	regexp.MustCompile(`(?:=|/)([^"&?/=%]{11})`),
-	regexp.MustCompile(`([^"&?/=%]{11})`),
-}
-
-// extractVideoID extracts the videoID from the given string
-func extractVideoID(videoID string) (string, error) {
-	if strings.Contains(videoID, "youtu") || strings.ContainsAny(videoID, "\"?&/<%=") {
-		for _, re := range videoRegexpList {
-			if isMatch := re.MatchString(videoID); isMatch {
-				subs := re.FindStringSubmatch(videoID)
-				videoID = subs[1]
-			}
-		}
-	}
-
-	if strings.ContainsAny(videoID, "?&/<%=") {
-		return "", ErrInvalidCharactersInVideoID
-	}
-	if len(videoID) < 10 {
-		return "", ErrVideoIDMinLength
-	}
-
-	return videoID, nil
-}
-
-const (
-	ErrCipherNotFound             = constError("cipher not found")
-	ErrInvalidCharactersInVideoID = constError("invalid characters in video id")
-	ErrVideoIDMinLength           = constError("the video id must be at least 10 characters long")
-	ErrReadOnClosedResBody        = constError("http: read on closed response body")
-	ErrNotPlayableInEmbed         = constError("embedding of this video has been disabled")
-	ErrInvalidPlaylist            = constError("no playlist detected or invalid playlist ID")
-)
+////////////////////////////////////////////////////////////////////////////////
 
 type constError string
 
 func (e constError) Error() string {
-	return string(e)
+   return string(e)
 }
-
 
 func (v *Video) parseVideoInfo(body []byte) error {
    query, err := url.ParseQuery(string(body))
