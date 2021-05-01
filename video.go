@@ -19,7 +19,6 @@ type Video struct {
    Duration        time.Duration
    Formats         []Format
    ID              string
-   Thumbnails      Thumbnails
    Title           string
 }
 
@@ -69,7 +68,6 @@ func (v *Video) extractDataFromPlayerResponse(prData playerResponseData) error {
    v.Title = prData.VideoDetails.Title
    v.Description = prData.VideoDetails.ShortDescription
    v.Author = prData.VideoDetails.Author
-   v.Thumbnails = prData.VideoDetails.Thumbnail.Thumbnails
    if seconds, _ := strconv.Atoi(prData.Microformat.PlayerMicroformatRenderer.LengthSeconds); seconds > 0 {
       v.Duration = time.Duration(seconds) * time.Second
    }
