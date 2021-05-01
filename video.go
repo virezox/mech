@@ -23,31 +23,24 @@ type Video struct {
 }
 
 func (v *Video) parseVideoInfo(body []byte) error {
-	answer, err := url.ParseQuery(string(body))
-	if err != nil {
-		return err
-	}
-
-	status := answer.Get("status")
-	if status != "ok" {
-		return &ErrResponseStatus{
-			Status: status,
-			Reason: answer.Get("reason"),
-		}
-	}
-
-	// read the streams map
-	playerResponse := answer.Get("player_response")
-	if playerResponse == "" {
-		return errors.New("no player_response found in the server's answer")
-	}
-
-	var prData playerResponseData
-	if err := json.Unmarshal([]byte(playerResponse), &prData); err != nil {
-		return fmt.Errorf("unable to parse player response JSON: %w", err)
-	}
-	return v.extractDataFromPlayerResponse(prData)
+   answer, err := url.ParseQuery(string(body))
+   if err != nil { return err }
+   status := answer.Get("status")
+   if status != "ok" {
+      return fmt.Errorf("status: %q reason: %q", status, answer.Get("reason"))
+   }
+   // read the streams map
+   playerResponse := answer.Get("player_response")
+   if playerResponse == "" {
+      return errors.New("no player_response found in the server's answer")
+   }
+   var prData playerResponseData
+   if err := json.Unmarshal([]byte(playerResponse), &prData); err != nil {
+      return fmt.Errorf("unable to parse player response JSON: %w", err)
+   }
+   return v.extractDataFromPlayerResponse(prData)
 }
+
 
 var playerResponsePattern = regexp.MustCompile(`var ytInitialPlayerResponse\s*=\s*(\{.+?\});`)
 
@@ -142,7 +135,7 @@ func (c *Client) httpGet(url string) (resp *http.Response, err error) {
    case http.StatusOK, http.StatusPartialContent:
    default:
       resp.Body.Close()
-      return nil, ErrUnexpectedStatusCode(resp.StatusCode)
+      return nil, fmt.Errorf("StatusCode %v", resp.StatusCode)
    }
    return
 }
