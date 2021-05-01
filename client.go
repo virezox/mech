@@ -1,8 +1,6 @@
 package youtube
 
 import (
-   "encoding/json"
-   "fmt"
    "io/ioutil"
    "log"
    "net/http"
@@ -51,41 +49,6 @@ func (c *Client) videoFromID(id string) (*Video, error) {
 	}
 
 	return v, err
-}
-
-// GetPlaylist fetches playlist metadata
-func (c *Client) GetPlaylist(url string) (*Playlist, error) {
-	return c.GetPlaylistContext(url)
-}
-
-// GetPlaylistContext fetches playlist metadata, with a context, along with a list of Videos, and some basic information
-// for these videos. Playlist entries cannot be downloaded, as they lack all the required metadata, but
-// can be used to enumerate all IDs, Authors, Titles, etc.
-func (c *Client) GetPlaylistContext(url string) (*Playlist, error) {
-	id, err := extractPlaylistID(url)
-	if err != nil {
-		return nil, fmt.Errorf("extractPlaylistID failed: %w", err)
-	}
-	requestURL := fmt.Sprintf(playlistFetchURL, id)
-	resp, err := c.httpGet(requestURL)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-	data, err := extractPlaylistJSON(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-	p := &Playlist{ID: id}
-	return p, json.Unmarshal(data, p)
-}
-
-func (c *Client) VideoFromPlaylistEntry(entry *PlaylistEntry) (*Video, error) {
-	return c.videoFromID(entry.ID)
-}
-
-func (c *Client) VideoFromPlaylistEntryContext(entry *PlaylistEntry) (*Video, error) {
-	return c.videoFromID(entry.ID)
 }
 
 // GetStream returns the HTTP response for a specific format
