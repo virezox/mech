@@ -1,5 +1,81 @@
 package youtube
 
+import (
+   "bytes"
+   "encoding/json"
+   "fmt"
+   "net/http"
+)
+
+const API = "https://www.youtube.com/get_video_info"
+
+type oldVideo struct {
+   Microformat struct {
+      PlayerMicroformatRenderer struct {
+         Description struct {
+            SimpleText string
+         }
+         PublishDate string
+         Title struct {
+            SimpleText string
+         }
+         ViewCount int `json:",string"`
+      }
+   }
+   StreamingData struct {
+      DashManifestURL string
+   }
+}
+
+// NewVideo fetches video metadata
+func NewVideo(id string) (oldVideo, error) {
+   req, err := http.NewRequest(http.MethodGet, API, nil)
+   if err != nil {
+      return oldVideo{}, err
+   }
+   val := req.URL.Query()
+   val.Set("video_id", id)
+   req.URL.RawQuery = val.Encode()
+   req.Header.Set("Range", "bytes=0-")
+   res, err := new(http.Client).Do(req)
+   if err != nil {
+      return oldVideo{}, err
+   }
+   defer res.Body.Close()
+   switch res.StatusCode {
+   case http.StatusOK, http.StatusPartialContent:
+   default:
+      return oldVideo{}, fmt.Errorf("StatusCode %v", res.StatusCode)
+   }
+   buf := new(bytes.Buffer)
+   buf.ReadFrom(res.Body)
+   req.URL.RawQuery = buf.String()
+   play := req.URL.Query().Get("player_response")
+   buf = bytes.NewBufferString(play)
+   var vid oldVideo
+   err = json.NewDecoder(buf).Decode(&vid)
+   if err != nil {
+      return oldVideo{}, err
+   }
+   return vid, nil
+}
+
+func (v oldVideo) Description() string {
+   return v.Microformat.PlayerMicroformatRenderer.Description.SimpleText
+}
+
+func (v oldVideo) PublishDate() string {
+   return v.Microformat.PlayerMicroformatRenderer.PublishDate
+}
+
+func (v oldVideo) Title() string {
+   return v.Microformat.PlayerMicroformatRenderer.Title.SimpleText
+}
+
+func (v oldVideo) ViewCount() int {
+   return v.Microformat.PlayerMicroformatRenderer.ViewCount
+}
+
 type playerResponseData struct {
    PlayabilityStatus struct {
       Status          string `json:"status"`
@@ -61,7 +137,7 @@ type playerResponseData struct {
       IsUnpluggedCorpus bool    `json:"isUnpluggedCorpus"`
       IsLiveContent     bool    `json:"isLiveContent"`
    } `json:"videoDetails"`
-   PlayerConfig struct {
+   zPlayerConfig struct {
       AudioConfig struct {
          LoudnessDb              float64 `json:"loudnessDb"`
          PerceptualLoudnessDb    float64 `json:"perceptualLoudnessDb"`
@@ -78,11 +154,6 @@ type playerResponseData struct {
          } `json:"dynamicReadaheadConfig"`
       } `json:"mediaCommonConfig"`
    } `json:"playerConfig"`
-   Storyboards struct {
-      PlayerStoryboardSpecRenderer struct {
-         Spec string `json:"spec"`
-      } `json:"playerStoryboardSpecRenderer"`
-   } `json:"storyboards"`
    Microformat struct {
       PlayerMicroformatRenderer struct {
          Thumbnail struct {
