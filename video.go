@@ -14,6 +14,8 @@ import (
    "time"
 )
 
+type FormatList []Format
+
 type Video struct {
 	ID              string
 	Title           string
