@@ -29,12 +29,12 @@ manifest.googlevideo.com/api/manifest/dash
 
 ~~~
 Google Glass
-youtube.com/api/manifest/dash/id/bf5bb2419360daf1/source/youtube?signature
+https://www.youtube.com/api/manifest/dash/id/bf5bb2419360daf1/source/youtube?signature
 youtube.com/watch?v=v1uyQZNg2vE
 youtube.com/get_video_info?video_id=v1uyQZNg2vE
 
 Google Play
-youtube.com/api/manifest/dash/id/3aa39fa2cc27967f/source/youtube?signature
+https://www.youtube.com/api/manifest/dash/id/3aa39fa2cc27967f/source/youtube?signature
 what video is this?
 
 249B04F79E984D7F86B4D8DB48AE6FAF41C17AB3.7B9F0EC0505E1566E59B8E488E9419F253DDF413
