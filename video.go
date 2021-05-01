@@ -1,77 +1,133 @@
 package youtube
 
 import (
-   "bytes"
-   "encoding/json"
-   "fmt"
-   "net/http"
+	"encoding/json"
+	"errors"
+	"fmt"
+	"net/url"
+	"regexp"
+	"sort"
+	"strconv"
+	"time"
 )
 
-const API = "https://www.youtube.com/get_video_info"
-
 type Video struct {
-   Microformat struct {
-      PlayerMicroformatRenderer struct {
-         Description struct {
-            SimpleText string
-         }
-         PublishDate string
-         Title struct {
-            SimpleText string
-         }
-         ViewCount int `json:",string"`
-      }
-   }
-   StreamingData struct {
-      DashManifestURL string
-   }
+	ID              string
+	Title           string
+	Description     string
+	Author          string
+	Duration        time.Duration
+	Formats         FormatList
+	Thumbnails      Thumbnails
+	DASHManifestURL string // URI of the DASH manifest file
+	HLSManifestURL  string // URI of the HLS manifest file
 }
 
-// NewVideo fetches video metadata
-func NewVideo(id string) (Video, error) {
-   req, err := http.NewRequest(http.MethodGet, API, nil)
-   if err != nil {
-      return Video{}, err
-   }
-   val := req.URL.Query()
-   val.Set("video_id", id)
-   req.URL.RawQuery = val.Encode()
-   req.Header.Set("Range", "bytes=0-")
-   res, err := new(http.Client).Do(req)
-   if err != nil {
-      return Video{}, err
-   }
-   defer res.Body.Close()
-   switch res.StatusCode {
-   case http.StatusOK, http.StatusPartialContent:
-   default:
-      return Video{}, fmt.Errorf("StatusCode %v", res.StatusCode)
-   }
-   buf := new(bytes.Buffer)
-   buf.ReadFrom(res.Body)
-   req.URL.RawQuery = buf.String()
-   play := req.URL.Query().Get("player_response")
-   buf = bytes.NewBufferString(play)
-   var vid Video
-   err = json.NewDecoder(buf).Decode(&vid)
-   if err != nil {
-      return Video{}, err
-   }
-   return vid, nil
+func (v *Video) parseVideoInfo(body []byte) error {
+	answer, err := url.ParseQuery(string(body))
+	if err != nil {
+		return err
+	}
+
+	status := answer.Get("status")
+	if status != "ok" {
+		return &ErrResponseStatus{
+			Status: status,
+			Reason: answer.Get("reason"),
+		}
+	}
+
+	// read the streams map
+	playerResponse := answer.Get("player_response")
+	if playerResponse == "" {
+		return errors.New("no player_response found in the server's answer")
+	}
+
+	var prData playerResponseData
+	if err := json.Unmarshal([]byte(playerResponse), &prData); err != nil {
+		return fmt.Errorf("unable to parse player response JSON: %w", err)
+	}
+
+	if err := v.isVideoFromInfoDownloadable(prData); err != nil {
+		return err
+	}
+
+	return v.extractDataFromPlayerResponse(prData)
 }
 
-func (v Video) Description() string {
-   return v.Microformat.PlayerMicroformatRenderer.Description.SimpleText
+func (v *Video) isVideoFromInfoDownloadable(prData playerResponseData) error {
+	return v.isVideoDownloadable(prData, false)
 }
 
-func (v Video) PublishDate() string {
-   return v.Microformat.PlayerMicroformatRenderer.PublishDate
+var playerResponsePattern = regexp.MustCompile(`var ytInitialPlayerResponse\s*=\s*(\{.+?\});`)
+
+func (v *Video) parseVideoPage(body []byte) error {
+	initialPlayerResponse := playerResponsePattern.FindSubmatch(body)
+	if initialPlayerResponse == nil || len(initialPlayerResponse) < 2 {
+		return errors.New("no ytInitialPlayerResponse found in the server's answer")
+	}
+
+	var prData playerResponseData
+	if err := json.Unmarshal(initialPlayerResponse[1], &prData); err != nil {
+		return fmt.Errorf("unable to parse player response JSON: %w", err)
+	}
+
+	if err := v.isVideoFromPageDownloadable(prData); err != nil {
+		return err
+	}
+
+	return v.extractDataFromPlayerResponse(prData)
 }
 
-func (v Video) Title() string {
-   return v.Microformat.PlayerMicroformatRenderer.Title.SimpleText
+func (v *Video) isVideoFromPageDownloadable(prData playerResponseData) error {
+	return v.isVideoDownloadable(prData, true)
 }
 
-func (v Video) ViewCount() int {
-   return v.Microformat.PlayerMicroformatRenderer.ViewCount
+func (v *Video) isVideoDownloadable(prData playerResponseData, isVideoPage bool) error {
+	// Check if video is downloadable
+	if prData.PlayabilityStatus.Status == "OK" {
+		return nil
+	}
+
+	if !isVideoPage && !prData.PlayabilityStatus.PlayableInEmbed {
+		return ErrNotPlayableInEmbed
+	}
+
+	return &ErrPlayabiltyStatus{
+		Status: prData.PlayabilityStatus.Status,
+		Reason: prData.PlayabilityStatus.Reason,
+	}
+}
+
+func (v *Video) extractDataFromPlayerResponse(prData playerResponseData) error {
+	v.Title = prData.VideoDetails.Title
+	v.Description = prData.VideoDetails.ShortDescription
+	v.Author = prData.VideoDetails.Author
+	v.Thumbnails = prData.VideoDetails.Thumbnail.Thumbnails
+
+	if seconds, _ := strconv.Atoi(prData.Microformat.PlayerMicroformatRenderer.LengthSeconds); seconds > 0 {
+		v.Duration = time.Duration(seconds) * time.Second
+	}
+
+	// Assign Streams
+	v.Formats = append(prData.StreamingData.Formats, prData.StreamingData.AdaptiveFormats...)
+	if len(v.Formats) == 0 {
+		return errors.New("no formats found in the server's answer")
+	}
+
+	// Sort formats by bitrate
+	sort.SliceStable(v.Formats, v.SortBitrateDesc)
+
+	v.HLSManifestURL = prData.StreamingData.HlsManifestURL
+	v.DASHManifestURL = prData.StreamingData.DashManifestURL
+
+	return nil
+}
+
+func (v *Video) SortBitrateDesc(i int, j int) bool {
+	return v.Formats[i].Bitrate > v.Formats[j].Bitrate
+}
+
+func (v *Video) SortBitrateAsc(i int, j int) bool {
+	return v.Formats[i].Bitrate < v.Formats[j].Bitrate
 }

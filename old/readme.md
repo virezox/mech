@@ -134,6 +134,14 @@ Here is source for magic:
 
 https://github.com/google/ExoPlayer/blob/0e4d3162/demos/main/src/main/assets/media.exolist.json
 
+Also this is interesting:
+
+~~~
+.contains("redirector.googlevideo.com"))
+~~~
+
+https://github.com/google/ExoPlayer/blob/release-v2/library/dash/src/test/java/com/google/android/exoplayer2/source/dash/manifest/DashManifestParserTest.java
+
 ## References
 
 1. https://www.youtube.com/watch?v=BnEn7X3Pr7o
