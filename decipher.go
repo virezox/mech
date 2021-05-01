@@ -1,16 +1,15 @@
 package youtube
 
 import (
-	"context"
-	"errors"
-	"fmt"
-	"log"
-	"net/url"
-	"regexp"
-	"strconv"
+   "errors"
+   "fmt"
+   "log"
+   "net/url"
+   "regexp"
+   "strconv"
 )
 
-func (c *Client) decipherURL(ctx context.Context, videoID string, cipher string) (string, error) {
+func (c *Client) decipherURL(videoID string, cipher string) (string, error) {
 	queryParams, err := url.ParseQuery(cipher)
 	if err != nil {
 		return "", err
@@ -37,7 +36,7 @@ func (c *Client) decipherURL(ctx context.Context, videoID string, cipher string)
 		return a.join("")
 	*/
 
-	operations, err := c.parseDecipherOpsWithCache(ctx, videoID)
+	operations, err := c.parseDecipherOpsWithCache(videoID)
 	if err != nil {
 		return "", err
 	}
@@ -83,9 +82,9 @@ var (
 	swapRegexp    = regexp.MustCompile(fmt.Sprintf("(?m)(?:^|,)(%s)%s", jsvarStr, swapStr))
 )
 
-func (c *Client) parseDecipherOps(ctx context.Context, videoID string) (operations []DecipherOperation, err error) {
+func (c *Client) parseDecipherOps(videoID string) (operations []DecipherOperation, err error) {
 	embedURL := fmt.Sprintf("https://youtube.com/embed/%s?hl=en", videoID)
-	embedBody, err := c.httpGetBodyBytes(ctx, embedURL)
+	embedBody, err := c.httpGetBodyBytes(embedURL)
 	if err != nil {
 		return nil, err
 	}
@@ -97,7 +96,7 @@ func (c *Client) parseDecipherOps(ctx context.Context, videoID string) (operatio
 		return nil, errors.New("unable to find basejs URL in playerConfig")
 	}
 
-	basejsBody, err := c.httpGetBodyBytes(ctx, "https://youtube.com"+escapedBasejsURL)
+	basejsBody, err := c.httpGetBodyBytes("https://youtube.com"+escapedBasejsURL)
 	if err != nil {
 		return nil, err
 	}
@@ -145,7 +144,7 @@ func (c *Client) parseDecipherOps(ctx context.Context, videoID string) (operatio
 	return ops, nil
 }
 
-func (c *Client) parseDecipherOpsWithCache(ctx context.Context, videoID string) (operations []DecipherOperation, err error) {
+func (c *Client) parseDecipherOpsWithCache(videoID string) (operations []DecipherOperation, err error) {
 	if c.decipherOpsCache == nil {
 		c.decipherOpsCache = NewSimpleCache()
 	}
@@ -154,7 +153,7 @@ func (c *Client) parseDecipherOpsWithCache(ctx context.Context, videoID string) 
 		return ops, nil
 	}
 
-	ops, err := c.parseDecipherOps(ctx, videoID)
+	ops, err := c.parseDecipherOps(videoID)
 	if err != nil {
 		return nil, err
 	}
