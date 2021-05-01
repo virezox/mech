@@ -60,7 +60,7 @@ func NewVideo(id string) (oldVideo, error) {
    return vid, nil
 }
 
-func (v oldVideo) Description() string {
+func (v Video) Description() string {
    return v.Microformat.PlayerMicroformatRenderer.Description.SimpleText
 }
 
@@ -76,7 +76,9 @@ func (v oldVideo) ViewCount() int {
    return v.Microformat.PlayerMicroformatRenderer.ViewCount
 }
 
-type playerResponseData struct {
+type Video struct {
+   // FIXME kill this
+   ID string
    PlayabilityStatus struct {
       Status          string
       Reason          string
@@ -87,25 +89,6 @@ type playerResponseData struct {
       ExpiresInSeconds string
       Formats          []Format
       AdaptiveFormats  []Format
-   }
-   VideoDetails struct {
-      VideoID          string
-      Title            string
-      LengthSeconds    string
-      ChannelID        string
-      IsOwnerViewing   bool
-      ShortDescription string
-      IsCrawlable      bool
-      Thumbnail        struct {
-         Thumbnails []Thumbnail
-      }
-      AverageRating     float64
-      AllowRatings      bool
-      ViewCount         string
-      Author            string
-      IsPrivate         bool
-      IsUnpluggedCorpus bool
-      IsLiveContent     bool
    }
    Microformat struct {
       PlayerMicroformatRenderer struct {
@@ -138,38 +121,23 @@ type playerResponseData struct {
 }
 
 type Format struct {
-   ItagNo           int    `json:"itag"`
-   URL              string `json:"url"`
-   MimeType         string `json:"mimeType"`
-   Quality          string `json:"quality"`
+   ApproxDurationMs string
+   AudioChannels    int
+   AudioQuality     string
+   AudioSampleRate  string
+   AverageBitrate   int
+   Bitrate          int
    Cipher           string `json:"signatureCipher"`
-   Bitrate          int    `json:"bitrate"`
-   FPS              int    `json:"fps"`
-   Width            int    `json:"width"`
-   Height           int    `json:"height"`
-   LastModified     string `json:"lastModified"`
-   ContentLength    string `json:"contentLength"`
-   QualityLabel     string `json:"qualityLabel"`
-   ProjectionType   string `json:"projectionType"`
-   AverageBitrate   int    `json:"averageBitrate"`
-   AudioQuality     string `json:"audioQuality"`
-   ApproxDurationMs string `json:"approxDurationMs"`
-   AudioSampleRate  string `json:"audioSampleRate"`
-   AudioChannels    int    `json:"audioChannels"`
-   // InitRange is only available for adaptive formats
-   InitRange *struct {
-      Start string `json:"start"`
-      End   string `json:"end"`
-   } `json:"initRange"`
-   // IndexRange is only available for adaptive formats
-   IndexRange *struct {
-      Start string `json:"start"`
-      End   string `json:"end"`
-   } `json:"indexRange"`
+   ContentLength    string
+   FPS              int
+   Height           int
+   ItagNo           int    `json:"itag"`
+   LastModified     string
+   MimeType         string
+   ProjectionType   string
+   Quality          string
+   QualityLabel     string
+   URL              string
+   Width            int
 }
 
-type Thumbnail struct {
-	URL    string
-	Width  uint
-	Height uint
-}

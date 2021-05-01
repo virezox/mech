@@ -4,23 +4,11 @@ import (
    "encoding/json"
    "errors"
    "fmt"
-   "io/ioutil"
+   "io"
    "log"
    "net/http"
    "net/url"
-   "regexp"
-   "strconv"
-   "time"
 )
-
-type Video struct {
-   Author          string
-   Description     string
-   Duration        time.Duration
-   Formats         []Format
-   ID              string
-   Title           string
-}
 
 func (v *Video) parseVideoInfo(body []byte) error {
    answer, err := url.ParseQuery(string(body))
@@ -34,40 +22,9 @@ func (v *Video) parseVideoInfo(body []byte) error {
    if playerResponse == "" {
       return errors.New("no player_response found in the server's answer")
    }
-   var prData playerResponseData
-   if err := json.Unmarshal([]byte(playerResponse), &prData); err != nil {
+   err = json.Unmarshal([]byte(playerResponse), v)
+   if err != nil {
       return fmt.Errorf("unable to parse player response JSON: %w", err)
-   }
-   return v.extractDataFromPlayerResponse(prData)
-}
-
-
-var playerResponsePattern = regexp.MustCompile(`var ytInitialPlayerResponse\s*=\s*(\{.+?\});`)
-
-func (v *Video) parseVideoPage(body []byte) error {
-	initialPlayerResponse := playerResponsePattern.FindSubmatch(body)
-	if initialPlayerResponse == nil || len(initialPlayerResponse) < 2 {
-		return errors.New("no ytInitialPlayerResponse found in the server's answer")
-	}
-
-	var prData playerResponseData
-	if err := json.Unmarshal(initialPlayerResponse[1], &prData); err != nil {
-		return fmt.Errorf("unable to parse player response JSON: %w", err)
-	}
-	return v.extractDataFromPlayerResponse(prData)
-}
-
-func (v *Video) extractDataFromPlayerResponse(prData playerResponseData) error {
-   v.Title = prData.VideoDetails.Title
-   v.Description = prData.VideoDetails.ShortDescription
-   v.Author = prData.VideoDetails.Author
-   if seconds, _ := strconv.Atoi(prData.Microformat.PlayerMicroformatRenderer.LengthSeconds); seconds > 0 {
-      v.Duration = time.Duration(seconds) * time.Second
-   }
-   // Assign Streams
-   v.Formats = append(prData.StreamingData.Formats, prData.StreamingData.AdaptiveFormats...)
-   if len(v.Formats) == 0 {
-      return errors.New("no formats found in the server's answer")
    }
    return nil
 }
@@ -91,15 +48,9 @@ func (c *Client) GetVideo(id string) (*Video, error) {
    eurl := "https://youtube.googleapis.com/v/" + id
    body, err := c.httpGetBodyBytes("https://youtube.com/get_video_info?video_id="+id+"&eurl="+eurl)
    if err != nil { return nil, err }
-   v := &Video{ID: id}
+   v := Video{ID: id}
    err = v.parseVideoInfo(body)
-   // If the uploader has disabled embedding the video on other sites, parse video page
-   if err == ErrNotPlayableInEmbed {
-      html, err := c.httpGetBodyBytes("https://www.youtube.com/watch?v="+id)
-      if err != nil { return nil, err }
-      return v, v.parseVideoPage(html)
-   }
-   return v, err
+   return &v, err
 }
 
 // GetStream returns the HTTP response for a specific format
@@ -148,5 +99,5 @@ func (c *Client) httpGetBodyBytes(url string) ([]byte, error) {
 	}
 	defer resp.Body.Close()
 
-	return ioutil.ReadAll(resp.Body)
+	return io.ReadAll(resp.Body)
 }

@@ -1,5 +1,9 @@
 package youtube
-import "testing"
+
+import (
+   "net/http"
+   "testing"
+)
 
 var tests = []struct{id, desc string}{
    {
@@ -15,14 +19,33 @@ var tests = []struct{id, desc string}{
    },
 }
 
-func TestVideo(t *testing.T) {
+func TestDesc(t *testing.T) {
    for _, test := range tests {
       v, err := new(Client).GetVideo(test.id)
       if err != nil {
          t.Error(err)
       }
-      if v.Description != test.desc {
-         t.Error(v)
+      if v.Description() != test.desc {
+         t.Errorf("%+v\n", v)
       }
+   }
+}
+
+func TestURL(t *testing.T) {
+   var c Client
+   v, e := c.GetVideo("GiNR187EMd4")
+   if e != nil {
+      t.Error(e)
+   }
+   s, e := c.GetStreamURL(v, &v.StreamingData.Formats[0])
+   if e != nil {
+      t.Error(e)
+   }
+   r, e := http.Head(s)
+   if e != nil {
+      t.Error(e)
+   }
+   if r.StatusCode != 200 {
+      t.Error(r.StatusCode)
    }
 }
