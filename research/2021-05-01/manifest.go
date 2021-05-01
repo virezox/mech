@@ -3,18 +3,22 @@ package main
 import (
    "fmt"
    "github.com/89z/youtube"
+   "os"
    "strings"
 )
 
-var ids = []struct{in, out string}{
-   {"9HzQvow8zF8", "f47cd0be8c3ccc5f"},
-   {"BnEn7X3Pr7o", "067127ed7dcfafba"},
-}
-
 func main() {
-   v, e := youtube.NewVideo(ids[0].in)
+   if len(os.Args) != 2 {
+      println("manifest id")
+      os.Exit(1)
+   }
+   v, e := youtube.NewVideo(os.Args[1])
    if e != nil {
       panic(e)
+   }
+   if v.StreamingData.DashManifestURL == "" {
+      println("missing dashManifestUrl")
+      os.Exit(1)
    }
    front := "https://manifest.googlevideo.com/api/manifest/dash/"
    var back string
