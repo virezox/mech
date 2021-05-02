@@ -3,7 +3,9 @@ package youtube
 import (
    "errors"
    "fmt"
+   "io"
    "log"
+   "net/http"
    "regexp"
    "sort"
    "strconv"
@@ -38,7 +40,10 @@ var (
 
 func (c *Client) parseDecipherOps(videoID string) (operations []decipherOperation, err error) {
    embedURL := fmt.Sprintf("https://youtube.com/embed/%s?hl=en", videoID)
-   embedBody, err := httpGetBodyBytes(embedURL)
+   res, err := http.Get(embedURL)
+   if err != nil { return nil, err }
+   defer res.Body.Close()
+   embedBody, err := io.ReadAll(res.Body)
    if err != nil { return nil, err }
    // example: /s/player/f676c671/player_ias.vflset/en_US/base.js
    escapedBasejsURL := string(basejsPattern.Find(embedBody))
@@ -46,7 +51,10 @@ func (c *Client) parseDecipherOps(videoID string) (operations []decipherOperatio
    log.Println("playerConfig:", string(embedBody))
       return nil, errors.New("unable to find basejs URL in playerConfig")
    }
-   basejsBody, err := httpGetBodyBytes("https://youtube.com"+escapedBasejsURL)
+   res, err = http.Get("https://youtube.com"+escapedBasejsURL)
+   if err != nil { return nil, err }
+   defer res.Body.Close()
+   basejsBody, err := io.ReadAll(res.Body)
    if err != nil { return nil, err }
    objResult := actionsObjRegexp.FindSubmatch(basejsBody)
    funcResult := actionsFuncRegexp.FindSubmatch(basejsBody)
