@@ -13,7 +13,7 @@ import (
 // Client offers methods to download video metadata and video streams.
 type Client struct {
    // decipherOpsCache cache decipher operations
-   decipherOpsCache DecipherOperationsCache
+   decipherOpsCache decipherOperationsCache
 }
 
 // httpGetBodyBytes reads the whole HTTP body and returns it
@@ -30,8 +30,6 @@ func (c *Client) httpGetBodyBytes(url string) ([]byte, error) {
    }
    return io.ReadAll(resp.Body)
 }
-
-////////////////////////////////////////////////////////////////////////////////
 
 // GetVideo fetches video metadata
 func (c *Client) GetVideo(id string) (*Video, error) {
@@ -61,11 +59,11 @@ func (c *Client) GetVideo(id string) (*Video, error) {
 // GetStream returns the url for a specific format
 func (c *Client) GetStream(video *Video, format *Format) (string, error) {
    if format.URL != "" { return format.URL, nil }
-   cipher := format.Cipher
-   if cipher == "" { return "", ErrCipherNotFound }
-   return c.decipherURL(video.ID, cipher)
+   if format.Cipher == "" {
+      return "", errors.New("cipher not found")
+   }
+   return c.decipherURL(video.ID, format.Cipher)
 }
-
 
 const API = "https://www.youtube.com/get_video_info"
 
@@ -200,4 +198,3 @@ type Format struct {
    URL              string
    Width            int
 }
-

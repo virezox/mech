@@ -71,7 +71,7 @@ func (c *Client) decipherURL(videoID string, cipher string) (string, error) {
    queryParams, err := url.ParseQuery(cipher)
    if err != nil { return "", err }
    if c.decipherOpsCache == nil {
-      c.decipherOpsCache = new(SimpleCache)
+      c.decipherOpsCache = new(simpleCache)
    }
    operations := c.decipherOpsCache.Get(videoID)
    if operations == nil {
@@ -108,10 +108,12 @@ func (c *Client) parseDecipherOps(videoID string) (operations []DecipherOperatio
          len(objResult), len(funcResult),
       )
    }
-   obj := objResult[1]
-   objBody := objResult[2]
-   funcBody := funcResult[1]
-   var reverseKey, spliceKey, swapKey string
+   var (
+      funcBody = funcResult[1]
+      obj = objResult[1]
+      objBody = objResult[2]
+      reverseKey, spliceKey, swapKey string
+   )
    if result := reverseRegexp.FindSubmatch(objBody); len(result) > 1 {
       reverseKey = string(result[1])
    }
@@ -151,67 +153,39 @@ func newSpliceFunc(pos int) DecipherOperation {
 }
 
 func newSwapFunc(arg int) DecipherOperation {
-	return func(bs []byte) []byte {
-		pos := arg % len(bs)
-		bs[0], bs[pos] = bs[pos], bs[0]
-		return bs
-	}
+   return func(bs []byte) []byte {
+      pos := arg % len(bs)
+      bs[0], bs[pos] = bs[pos], bs[0]
+      return bs
+   }
 }
 
-////////////////////////////////////////////////////////////////////////////////
-
-type DecipherOperationsCache interface {
-	Get(videoID string) []DecipherOperation
-	Set(video string, operations []DecipherOperation)
+type decipherOperationsCache interface {
+   Get(videoID string) []DecipherOperation
+   Set(video string, operations []DecipherOperation)
 }
 
-type SimpleCache struct {
-	videoID    string
-	expiredAt  time.Time
-	operations []DecipherOperation
+type simpleCache struct {
+   expiredAt  time.Time
+   operations []DecipherOperation
+   videoID    string
 }
-
 
 // Get : get cache  when it has same video id and not expired
-func (s SimpleCache) Get(videoID string) []DecipherOperation {
-	return s.GetCacheBefore(videoID, time.Now())
-}
-
-// GetCacheBefore : can pass time for testing
-func (s SimpleCache) GetCacheBefore(videoID string, time time.Time) []DecipherOperation {
-	if videoID == s.videoID && s.expiredAt.After(time) {
-		operations := make([]DecipherOperation, len(s.operations))
-		copy(operations, s.operations)
-		return operations
-	}
-	return nil
+func (s simpleCache) Get(videoID string) []DecipherOperation {
+   if videoID == s.videoID && s.expiredAt.After(time.Now()) {
+      operations := make([]DecipherOperation, len(s.operations))
+      copy(operations, s.operations)
+      return operations
+   }
+   return nil
 }
 
 // Set : set cache with default expiration
-func (s *SimpleCache) Set(videoID string, operations []DecipherOperation) {
+func (s *simpleCache) Set(videoID string, operations []DecipherOperation) {
    defaultCacheExpiration := time.Minute * time.Duration(5)
-   s.setWithExpiredTime(videoID, operations, time.Now().Add(defaultCacheExpiration))
-}
-
-func (s *SimpleCache) setWithExpiredTime(videoID string, operations []DecipherOperation, time time.Time) {
-	s.videoID = videoID
-	s.operations = make([]DecipherOperation, len(operations))
-	copy(s.operations, operations)
-	s.expiredAt = time
-}
-
-
-const (
-	ErrCipherNotFound             = constError("cipher not found")
-	ErrInvalidCharactersInVideoID = constError("invalid characters in video id")
-	ErrVideoIDMinLength           = constError("the video id must be at least 10 characters long")
-	ErrReadOnClosedResBody        = constError("http: read on closed response body")
-	ErrNotPlayableInEmbed         = constError("embedding of this video has been disabled")
-	ErrInvalidPlaylist            = constError("no playlist detected or invalid playlist ID")
-)
-
-type constError string
-
-func (e constError) Error() string {
-	return string(e)
+   s.videoID = videoID
+   s.operations = make([]DecipherOperation, len(operations))
+   copy(s.operations, operations)
+   s.expiredAt = time.Now().Add(defaultCacheExpiration)
 }
