@@ -13,7 +13,7 @@ import (
 )
 
 const (
-   jsvarStr = "[a-zA-Z_\\$][a-zA-Z_0-9]*"
+   jsvarStr = `[a-zA-Z_\$][a-zA-Z_0-9]*`
    reverseStr = ":function\\(a\\)\\{(?:return )?a\\.reverse\\(\\)\\}"
    spliceStr = ":function\\(a,b\\)\\{a\\.splice\\(0,b\\)\\}"
 )
@@ -38,19 +38,7 @@ var (
    )
 )
 
-func readAll(addr string) ([]byte, error) {
-   res, err := http.Get(addr)
-   if err != nil { return nil, err }
-   defer res.Body.Close()
-   return io.ReadAll(res.Body)
-}
-
-func reverseFunc(bs []byte) []byte {
-   sort.SliceStable(bs, func(d, e int) bool { return true })
-   return bs
-}
-
-func (c *Client) parseDecipherOps(videoID string) (operations []decipherOperation, err error) {
+func parseDecipherOps(videoID string) ([]decipherOperation, error) {
    embedBody, err := readAll("https://youtube.com/embed/" + videoID)
    if err != nil { return nil, err }
    // example: /s/player/f676c671/player_ias.vflset/en_US/base.js
@@ -105,6 +93,18 @@ func (c *Client) parseDecipherOps(videoID string) (operations []decipherOperatio
    return ops, nil
 }
 
+func readAll(addr string) ([]byte, error) {
+   res, err := http.Get(addr)
+   if err != nil { return nil, err }
+   defer res.Body.Close()
+   return io.ReadAll(res.Body)
+}
+
+func reverseFunc(bs []byte) []byte {
+   sort.SliceStable(bs, func(d, e int) bool { return true })
+   return bs
+}
+
 type decipherOperation func([]byte) []byte
 
 func newSpliceFunc(pos int) decipherOperation {
@@ -122,13 +122,13 @@ func newSwapFunc(arg int) decipherOperation {
 }
 
 type simpleCache struct {
-   expiredAt  time.Time
+   expiredAt time.Time
    operations []decipherOperation
-   videoID    string
+   videoID string
 }
 
-// Get : get cache  when it has same video id and not expired
-func (s simpleCache) Get(videoID string) []decipherOperation {
+// get cache  when it has same video id and not expired
+func (s simpleCache) get(videoID string) []decipherOperation {
    if videoID == s.videoID && s.expiredAt.After(time.Now()) {
       operations := make([]decipherOperation, len(s.operations))
       copy(operations, s.operations)
@@ -137,8 +137,8 @@ func (s simpleCache) Get(videoID string) []decipherOperation {
    return nil
 }
 
-// Set : set cache with default expiration
-func (s *simpleCache) Set(videoID string, operations []decipherOperation) {
+// set cache with default expiration
+func (s *simpleCache) set(videoID string, operations []decipherOperation) {
    defaultCacheExpiration := time.Minute * time.Duration(5)
    s.videoID = videoID
    s.operations = make([]decipherOperation, len(operations))

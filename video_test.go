@@ -21,7 +21,7 @@ var tests = []struct{id, desc string}{
 
 func TestDesc(t *testing.T) {
    for _, test := range tests {
-      v, err := new(Client).GetVideo(test.id)
+      v, err := NewVideo(test.id)
       if err != nil {
          t.Error(err)
       }
@@ -32,13 +32,12 @@ func TestDesc(t *testing.T) {
 }
 
 func TestStream(t *testing.T) {
-   var c Client
-   v, e := c.GetVideo("GiNR187EMd4")
+   v, e := NewVideo("GiNR187EMd4")
    if e != nil {
       t.Error(e)
    }
    f := v.StreamingData.AdaptiveFormats
-   s, e := c.GetStream(v, f[0])
+   s, e := GetStream(v, f[0])
    if e != nil {
       t.Error(e)
    }
