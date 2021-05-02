@@ -66,20 +66,12 @@ func (c *Client) GetVideo(id string) (*Video, error) {
    return &vid, nil
 }
 
-func (v Video) Description() string {
-   return v.Microformat.PlayerMicroformatRenderer.Description.SimpleText
-}
-
-func (v Video) PublishDate() string {
-   return v.Microformat.PlayerMicroformatRenderer.PublishDate
-}
-
-func (v Video) Title() string {
-   return v.Microformat.PlayerMicroformatRenderer.Title.SimpleText
-}
-
-func (v Video) ViewCount() int {
-   return v.Microformat.PlayerMicroformatRenderer.ViewCount
+type Format struct {
+   Bitrate int
+   Height int
+   Itag int
+   MimeType string
+   SignatureCipher string
 }
 
 type Video struct {
@@ -103,10 +95,18 @@ type Video struct {
    }
 }
 
-type Format struct {
-   Bitrate int
-   Height int
-   Itag int
-   MimeType string
-   SignatureCipher string
+func (v Video) Description() string {
+   return v.Microformat.PlayerMicroformatRenderer.Description.SimpleText
+}
+
+func (v Video) PublishDate() string {
+   return v.Microformat.PlayerMicroformatRenderer.PublishDate
+}
+
+func (v Video) Title() string {
+   return v.Microformat.PlayerMicroformatRenderer.Title.SimpleText
+}
+
+func (v Video) ViewCount() int {
+   return v.Microformat.PlayerMicroformatRenderer.ViewCount
 }
