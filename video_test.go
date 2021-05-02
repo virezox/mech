@@ -36,8 +36,7 @@ func TestStream(t *testing.T) {
    if e != nil {
       t.Error(e)
    }
-   f := v.StreamingData.AdaptiveFormats
-   s, e := GetStream(v, f[0])
+   s, e := v.GetStream(251)
    if e != nil {
       t.Error(e)
    }
