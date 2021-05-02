@@ -58,8 +58,8 @@ func (c *Client) GetVideo(id string) (*Video, error) {
    return v, nil
 }
 
-// GetStreamURL returns the url for a specific format
-func (c *Client) GetStreamURL(video *Video, format *Format) (string, error) {
+// GetStream returns the url for a specific format
+func (c *Client) GetStream(video *Video, format *Format) (string, error) {
    if format.URL != "" { return format.URL, nil }
    cipher := format.Cipher
    if cipher == "" { return "", ErrCipherNotFound }

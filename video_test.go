@@ -37,7 +37,7 @@ func TestURL(t *testing.T) {
    if e != nil {
       t.Error(e)
    }
-   s, e := c.GetStreamURL(v, &v.StreamingData.Formats[0])
+   s, e := c.GetStream(v, &v.StreamingData.Formats[0])
    if e != nil {
       t.Error(e)
    }
