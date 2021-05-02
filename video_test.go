@@ -1,7 +1,6 @@
 package youtube
 
 import (
-   "fmt"
    "net/http"
    "testing"
 )
@@ -32,15 +31,14 @@ func TestDesc(t *testing.T) {
    }
 }
 
-func TestURL(t *testing.T) {
+func TestStream(t *testing.T) {
    var c Client
    v, e := c.GetVideo("GiNR187EMd4")
    if e != nil {
       t.Error(e)
    }
-   f := v.StreamingData.Formats[0]
-   fmt.Printf("%+v\n", f)
-   s, e := c.GetStream(v, &f)
+   f := v.StreamingData.AdaptiveFormats
+   s, e := c.GetStream(v, f[0])
    if e != nil {
       t.Error(e)
    }

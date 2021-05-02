@@ -12,6 +12,22 @@ import (
 
 const API = "https://www.youtube.com/get_video_info"
 
+// httpGetBodyBytes reads the whole HTTP body and returns it
+func httpGetBodyBytes(url string) ([]byte, error) {
+   req, err := http.NewRequest(http.MethodGet, url, nil)
+   if err != nil { return nil, err }
+   println(req.Method, url)
+   resp, err := new(http.Client).Do(req)
+   if err != nil { return nil, err }
+   defer resp.Body.Close()
+   switch resp.StatusCode {
+   case http.StatusOK, http.StatusPartialContent:
+   default:
+      return nil, fmt.Errorf("StatusCode %v", resp.StatusCode)
+   }
+   return io.ReadAll(resp.Body)
+}
+
 // Client offers methods to download video metadata and video streams.
 type Client struct {
    // decipherOpsCache cache decipher operations
@@ -19,32 +35,11 @@ type Client struct {
 }
 
 // GetStream returns the url for a specific format
-//
-// eg: extract decipher from
-// https://youtube.com/s/player/4fbb4d5b/player_ias.vflset/en_US/base.js
-//
-// var Mt={
-// splice:function(a,b){a.splice(0,b)},
-// reverse:function(a){a.reverse()},
-// EQ:function(a,b){var c=a[0];a[0]=a[b%a.length];a[b%a.length]=c}};
-//
-// a=a.split("");
-// Mt.splice(a,3);
-// Mt.EQ(a,39);
-// Mt.splice(a,2);
-// Mt.EQ(a,1);
-// Mt.splice(a,1);
-// Mt.EQ(a,35);
-// Mt.EQ(a,51);
-// Mt.splice(a,2);
-// Mt.reverse(a,52);
-// return a.join("")
-func (c *Client) GetStream(video *Video, format *Format) (string, error) {
-   if format.URL != "" { return format.URL, nil }
-   if format.Cipher == "" {
+func (c *Client) GetStream(video *Video, format Format) (string, error) {
+   if format.SignatureCipher == "" {
       return "", errors.New("cipher not found")
    }
-   queryParams, err := url.ParseQuery(format.Cipher)
+   queryParams, err := url.ParseQuery(format.SignatureCipher)
    if err != nil { return "", err }
    if c.decipherOpsCache == nil {
       c.decipherOpsCache = new(simpleCache)
@@ -69,7 +64,7 @@ func (c *Client) GetStream(video *Video, format *Format) (string, error) {
 func (c *Client) GetVideo(id string) (*Video, error) {
    // Circumvent age restriction to pretend access through googleapis.com
    eurl := "https://youtube.googleapis.com/v/" + id
-   body, err := c.httpGetBodyBytes("https://youtube.com/get_video_info?video_id="+id+"&eurl="+eurl)
+   body, err := httpGetBodyBytes("https://youtube.com/get_video_info?video_id="+id+"&eurl="+eurl)
    if err != nil { return nil, err }
    v := &Video{ID: id}
    query, err := url.ParseQuery(string(body))
@@ -90,22 +85,8 @@ func (c *Client) GetVideo(id string) (*Video, error) {
    return v, nil
 }
 
-// httpGetBodyBytes reads the whole HTTP body and returns it
-func (c *Client) httpGetBodyBytes(url string) ([]byte, error) {
-   req, err := http.NewRequest(http.MethodGet, url, nil)
-   if err != nil { return nil, err }
-   resp, err := new(http.Client).Do(req)
-   if err != nil { return nil, err }
-   defer resp.Body.Close()
-   switch resp.StatusCode {
-   case http.StatusOK, http.StatusPartialContent:
-   default:
-      return nil, fmt.Errorf("StatusCode %v", resp.StatusCode)
-   }
-   return io.ReadAll(resp.Body)
-}
-
 ////////////////////////////////////////////////////////////////////////////////
+
 
 type oldVideo struct {
    Microformat struct {
@@ -125,8 +106,8 @@ type oldVideo struct {
    }
 }
 
-// NewVideo fetches video metadata
-func NewVideo(id string) (oldVideo, error) {
+// newVideo fetches video metadata
+func newVideo(id string) (oldVideo, error) {
    req, err := http.NewRequest(http.MethodGet, API, nil)
    if err != nil {
       return oldVideo{}, err
@@ -178,9 +159,8 @@ type Video struct {
    // FIXME kill this
    ID string
    StreamingData struct {
-      AdaptiveFormats  []Format
+      AdaptiveFormats []Format
       ExpiresInSeconds string
-      Formats          []Format
    }
    Microformat struct {
       PlayerMicroformatRenderer struct {
@@ -197,20 +177,9 @@ type Video struct {
 }
 
 type Format struct {
-   AudioQuality     string
-   AudioSampleRate  string
-   AverageBitrate   int
-   Bitrate          int
-   Cipher           string `json:"signatureCipher"`
-   ContentLength    string
-   FPS              int
-   Height           int
-   ItagNo           int    `json:"itag"`
-   LastModified     string
-   MimeType         string
-   ProjectionType   string
-   Quality          string
-   QualityLabel     string
-   URL              string
-   Width            int
+   Bitrate int
+   Height int
+   Itag int
+   MimeType string
+   SignatureCipher string
 }
