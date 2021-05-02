@@ -17,50 +17,68 @@ const (
 )
 
 var (
-   swapStr = fmt.Sprint(
-      `:function\(a,b\)\{var c=a\[0\];a\[0\]=a\[b(?:%a\.length)?\];`,
-      `a\[b(?:%a\.length)?\]=c(?:;return a)?\}`,
-   )
-   basejsPattern = regexp.MustCompile(`(/s/player/\w+/player_ias.vflset/\w+/base.js)`)
-   actionsObjRegexp = regexp.MustCompile(fmt.Sprintf(
-      "var (%s)=\\{((?:(?:%s%s|%s%s|%s%s),?\\n?)+)\\};",
-      jsvarStr, jsvarStr, swapStr, jsvarStr, spliceStr, jsvarStr, reverseStr,
-   ))
-   reverseRegexp = regexp.MustCompile(fmt.Sprintf("(?m)(?:^|,)(%s)%s", jsvarStr, reverseStr))
-   spliceRegexp  = regexp.MustCompile(fmt.Sprintf("(?m)(?:^|,)(%s)%s", jsvarStr, spliceStr))
-   swapRegexp    = regexp.MustCompile(fmt.Sprintf("(?m)(?:^|,)(%s)%s", jsvarStr, swapStr))
    actionsFuncRegexp = regexp.MustCompile(fmt.Sprintf(
       `function(?: %s)?\(a\)\{a=a\.split\(""\);` +
       `\s*((?:(?:a=)?%s\.%s\(a,\d+\);)+)return a\.join\(""\)\}`,
       jsvarStr, jsvarStr, jsvarStr,
    ))
+   actionsObjRegexp = regexp.MustCompile(fmt.Sprintf(
+      "var (%s)=\\{((?:(?:%s%s|%s%s|%s%s),?\\n?)+)\\};",
+      jsvarStr, jsvarStr, swapStr, jsvarStr, spliceStr, jsvarStr, reverseStr,
+   ))
+   basejsPattern = regexp.MustCompile(`(/s/player/\w+/player_ias.vflset/\w+/base.js)`)
+   reverseRegexp = regexp.MustCompile(fmt.Sprintf("(?m)(?:^|,)(%s)%s", jsvarStr, reverseStr))
+   spliceRegexp  = regexp.MustCompile(fmt.Sprintf("(?m)(?:^|,)(%s)%s", jsvarStr, spliceStr))
+   swapRegexp    = regexp.MustCompile(fmt.Sprintf("(?m)(?:^|,)(%s)%s", jsvarStr, swapStr))
+   swapStr = fmt.Sprint(
+      `:function\(a,b\)\{var c=a\[0\];a\[0\]=a\[b(?:%a\.length)?\];`,
+      `a\[b(?:%a\.length)?\]=c(?:;return a)?\}`,
+   )
 )
 
+func reverseFunc(bs []byte) []byte {
+	l, r := 0, len(bs)-1
+	for l < r {
+		bs[l], bs[r] = bs[r], bs[l]
+		l++
+		r--
+	}
+	return bs
+}
+
+
+/* eg:
+extract decipher from  https://youtube.com/s/player/4fbb4d5b/player_ias.vflset/en_US/base.js
+
+var Mt={
+splice:function(a,b){a.splice(0,b)},
+reverse:function(a){a.reverse()},
+EQ:function(a,b){var c=a[0];a[0]=a[b%a.length];a[b%a.length]=c}};
+
+a=a.split("");
+Mt.splice(a,3);
+Mt.EQ(a,39);
+Mt.splice(a,2);
+Mt.EQ(a,1);
+Mt.splice(a,1);
+Mt.EQ(a,35);
+Mt.EQ(a,51);
+Mt.splice(a,2);
+Mt.reverse(a,52);
+return a.join("")
+*/
 func (c *Client) decipherURL(videoID string, cipher string) (string, error) {
    queryParams, err := url.ParseQuery(cipher)
    if err != nil { return "", err }
-   /* eg:
-   extract decipher from  https://youtube.com/s/player/4fbb4d5b/player_ias.vflset/en_US/base.js
-
-   var Mt={
-   splice:function(a,b){a.splice(0,b)},
-   reverse:function(a){a.reverse()},
-   EQ:function(a,b){var c=a[0];a[0]=a[b%a.length];a[b%a.length]=c}};
-
-   a=a.split("");
-   Mt.splice(a,3);
-   Mt.EQ(a,39);
-   Mt.splice(a,2);
-   Mt.EQ(a,1);
-   Mt.splice(a,1);
-   Mt.EQ(a,35);
-   Mt.EQ(a,51);
-   Mt.splice(a,2);
-   Mt.reverse(a,52);
-   return a.join("")
-   */
-   operations, err := c.parseDecipherOpsWithCache(videoID)
-   if err != nil { return "", err }
+   if c.decipherOpsCache == nil {
+      c.decipherOpsCache = new(SimpleCache)
+   }
+   operations := c.decipherOpsCache.Get(videoID)
+   if operations == nil {
+      operations, err = c.parseDecipherOps(videoID)
+      if err != nil { return "", err }
+      c.decipherOpsCache.Set(videoID, operations)
+   }
    // apply operations
    bs := []byte(queryParams.Get("s"))
    for _, op := range operations {
@@ -87,7 +105,7 @@ func (c *Client) parseDecipherOps(videoID string) (operations []DecipherOperatio
    if len(objResult) < 3 || len(funcResult) < 2 {
       return nil, fmt.Errorf(
          "error parsing signature tokens (#obj=%d, #func=%d)",
-         len(objResult), len(funcResult)
+         len(objResult), len(funcResult),
       )
    }
    obj := objResult[1]
@@ -124,25 +142,6 @@ func (c *Client) parseDecipherOps(videoID string) (operations []DecipherOperatio
    return ops, nil
 }
 
-func (c *Client) parseDecipherOpsWithCache(videoID string) (operations []DecipherOperation, err error) {
-	if c.decipherOpsCache == nil {
-		c.decipherOpsCache = NewSimpleCache()
-	}
-
-	if ops := c.decipherOpsCache.Get(videoID); ops != nil {
-		return ops, nil
-	}
-
-	ops, err := c.parseDecipherOps(videoID)
-	if err != nil {
-		return nil, err
-	}
-
-	c.decipherOpsCache.Set(videoID, ops)
-	return ops, err
-}
-
-
 type DecipherOperation func([]byte) []byte
 
 func newSpliceFunc(pos int) DecipherOperation {
@@ -159,21 +158,7 @@ func newSwapFunc(arg int) DecipherOperation {
 	}
 }
 
-func reverseFunc(bs []byte) []byte {
-	l, r := 0, len(bs)-1
-	for l < r {
-		bs[l], bs[r] = bs[r], bs[l]
-		l++
-		r--
-	}
-	return bs
-}
-
-var (
-	_ DecipherOperationsCache = NewSimpleCache()
-)
-
-const defaultCacheExpiration = time.Minute * time.Duration(5)
+////////////////////////////////////////////////////////////////////////////////
 
 type DecipherOperationsCache interface {
 	Get(videoID string) []DecipherOperation
@@ -186,9 +171,6 @@ type SimpleCache struct {
 	operations []DecipherOperation
 }
 
-func NewSimpleCache() *SimpleCache {
-	return &SimpleCache{}
-}
 
 // Get : get cache  when it has same video id and not expired
 func (s SimpleCache) Get(videoID string) []DecipherOperation {
@@ -207,7 +189,8 @@ func (s SimpleCache) GetCacheBefore(videoID string, time time.Time) []DecipherOp
 
 // Set : set cache with default expiration
 func (s *SimpleCache) Set(videoID string, operations []DecipherOperation) {
-	s.setWithExpiredTime(videoID, operations, time.Now().Add(defaultCacheExpiration))
+   defaultCacheExpiration := time.Minute * time.Duration(5)
+   s.setWithExpiredTime(videoID, operations, time.Now().Add(defaultCacheExpiration))
 }
 
 func (s *SimpleCache) setWithExpiredTime(videoID string, operations []DecipherOperation, time time.Time) {
