@@ -13,7 +13,7 @@ import (
 // Client offers methods to download video metadata and video streams.
 type Client struct {
    // decipherOpsCache cache decipher operations
-   decipherOpsCache decipherOperationsCache
+   decipherOpsCache *simpleCache
 }
 
 // httpGetBodyBytes reads the whole HTTP body and returns it
@@ -57,13 +57,52 @@ func (c *Client) GetVideo(id string) (*Video, error) {
 }
 
 // GetStream returns the url for a specific format
+//
+// eg: extract decipher from
+// https://youtube.com/s/player/4fbb4d5b/player_ias.vflset/en_US/base.js
+//
+// var Mt={
+// splice:function(a,b){a.splice(0,b)},
+// reverse:function(a){a.reverse()},
+// EQ:function(a,b){var c=a[0];a[0]=a[b%a.length];a[b%a.length]=c}};
+//
+// a=a.split("");
+// Mt.splice(a,3);
+// Mt.EQ(a,39);
+// Mt.splice(a,2);
+// Mt.EQ(a,1);
+// Mt.splice(a,1);
+// Mt.EQ(a,35);
+// Mt.EQ(a,51);
+// Mt.splice(a,2);
+// Mt.reverse(a,52);
+// return a.join("")
 func (c *Client) GetStream(video *Video, format *Format) (string, error) {
    if format.URL != "" { return format.URL, nil }
    if format.Cipher == "" {
       return "", errors.New("cipher not found")
    }
-   return c.decipherURL(video.ID, format.Cipher)
+   queryParams, err := url.ParseQuery(format.Cipher)
+   if err != nil { return "", err }
+   if c.decipherOpsCache == nil {
+      c.decipherOpsCache = new(simpleCache)
+   }
+   operations := c.decipherOpsCache.Get(video.ID)
+   if operations == nil {
+      operations, err = c.parseDecipherOps(video.ID)
+      if err != nil { return "", err }
+      c.decipherOpsCache.Set(video.ID, operations)
+   }
+   // apply operations
+   bs := []byte(queryParams.Get("s"))
+   for _, op := range operations {
+      bs = op(bs)
+   }
+   return fmt.Sprintf(
+      "%s&%s=%s", queryParams.Get("url"), queryParams.Get("sp"), string(bs),
+   ), nil
 }
+
 
 const API = "https://www.youtube.com/get_video_info"
 
