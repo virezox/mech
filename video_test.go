@@ -1,6 +1,7 @@
 package youtube
 
 import (
+   "fmt"
    "net/http"
    "testing"
 )
@@ -37,7 +38,9 @@ func TestURL(t *testing.T) {
    if e != nil {
       t.Error(e)
    }
-   s, e := c.GetStream(v, &v.StreamingData.Formats[0])
+   f := v.StreamingData.Formats[0]
+   fmt.Printf("%+v\n", f)
+   s, e := c.GetStream(v, &f)
    if e != nil {
       t.Error(e)
    }

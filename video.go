@@ -197,8 +197,6 @@ type Video struct {
 }
 
 type Format struct {
-   ApproxDurationMs string
-   AudioChannels    int
    AudioQuality     string
    AudioSampleRate  string
    AverageBitrate   int
