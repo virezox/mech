@@ -1,7 +1,6 @@
 package youtube
 
 import (
-   "errors"
    "fmt"
    "regexp"
    "sort"
@@ -10,45 +9,11 @@ import (
 
 const jsvarStr = `[a-zA-Z_\$][a-zA-Z_0-9]*`
 
-type decipherOperation func([]byte) []byte
-
-func newReverseFunc() decipherOperation {
-   return func(bs []byte) []byte {
-      sort.Slice(bs, func(d, e int) bool { return true })
-      return bs
-   }
-}
-
-func newSpliceFunc(pos int) decipherOperation {
-   return func(bs []byte) []byte {
-      return bs[pos:]
-   }
-}
-
-func newSwapFunc(arg int) decipherOperation {
-   return func(bs []byte) []byte {
-      pos := arg % len(bs)
-      bs[0], bs[pos] = bs[pos], bs[0]
-      return bs
-   }
-}
-
-func (v Video) baseJs() ([]byte, error) {
-   body, err := readAll("https://www.youtube.com/embed/" + v.VideoDetails.VideoId)
-   if err != nil { return nil, err }
-   player := regexp.MustCompile("/player/([^/]+)/player_").FindSubmatch(body)
-   if len(player) < 2 {
-      return nil, errors.New("unable to find basejs URL in playerConfig")
-   }
-   return readAll(fmt.Sprintf(
-      "https://www.youtube.com/s/player/%s/player_ias.vflset/en_US/base.js",
-      player[1],
-   ))
-}
-
-func findFuncBody(body []byte) []byte {
-   f := `function(?: %s)?\(a\)\{a=a\.split\(""\);\s*((?:(?:a=)?%s\.%s\(a,\d+\);)+)return a\.join\(""\)\}`
-   return regexp.MustCompile(fmt.Sprintf(f, jsvarStr, jsvarStr, jsvarStr)).FindSubmatch(body)[1]
+type cipher struct {
+   matches [][]string
+   reverse string
+   splice string
+   swap string
 }
 
 func newCipher(body []byte) cipher {
@@ -80,36 +45,52 @@ func newCipher(body []byte) cipher {
    if len(result) > 1 {
       ci.swap = string(result[1])
    }
-   ci.regex = fmt.Sprintf(
+   funcBody := regexp.MustCompile(fmt.Sprintf(
+      `function(?: %s)?\(a\)\{a=a\.split\(""\);\s*((?:(?:a=)?%s\.%s\(a,\d+\);)+)return a\.join\(""\)\}`,
+      jsvarStr, jsvarStr, jsvarStr,
+   )).FindSubmatch(body)[1]
+   ci.matches = regexp.MustCompile(fmt.Sprintf(
       `(?:a=)?%s\.(%s|%s|%s)\(a,(\d+)\)`, obj, ci.reverse, ci.splice, ci.swap,
-   )
+   )).FindAllStringSubmatch(string(funcBody), -1)
    return ci
 }
 
-type cipher struct {
-   regex string
-   reverse string
-   splice string
-   swap string
+type decipherOperation func([]byte) []byte
+
+func newReverseFunc() decipherOperation {
+   return func(bs []byte) []byte {
+      sort.Slice(bs, func(d, e int) bool { return true })
+      return bs
+   }
 }
 
-func (v Video) parseDecipherOps() ([]decipherOperation, error) {
-   body, err := v.baseJs()
-   if err != nil { return nil, err }
-   funcBody := findFuncBody(body)
+func newSpliceFunc(pos int) decipherOperation {
+   return func(bs []byte) []byte {
+      return bs[pos:]
+   }
+}
+
+func newSwapFunc(arg int) decipherOperation {
+   return func(bs []byte) []byte {
+      pos := arg % len(bs)
+      bs[0], bs[pos] = bs[pos], bs[0]
+      return bs
+   }
+}
+
+func parseDecipherOps(sig, body []byte) []byte {
    ci := newCipher(body)
-   var ops []decipherOperation
-   for _, s := range regexp.MustCompile(ci.regex).FindAllSubmatch(funcBody, -1) {
-      switch string(s[1]) {
+   for _, s := range ci.matches {
+      switch s[1] {
       case ci.swap:
-         arg, _ := strconv.Atoi(string(s[2]))
-         ops = append(ops, newSwapFunc(arg))
+         arg, _ := strconv.Atoi(s[2])
+         sig = newSwapFunc(arg)(sig)
       case ci.splice:
-         arg, _ := strconv.Atoi(string(s[2]))
-         ops = append(ops, newSpliceFunc(arg))
+         arg, _ := strconv.Atoi(s[2])
+         sig = newSpliceFunc(arg)(sig)
       case ci.reverse:
-         ops = append(ops, newReverseFunc())
+         sig = newReverseFunc()(sig)
       }
    }
-   return ops, nil
+   return sig
 }
