@@ -6,42 +6,32 @@ import (
    "errors"
    "fmt"
    "io"
-   "log"
    "net/http"
    "net/url"
 )
 
-func (v *Video) parseVideoInfo(body []byte) error {
-   answer, err := url.ParseQuery(string(body))
-   if err != nil { return err }
-   status := answer.Get("status")
-   if status != "ok" {
-      return fmt.Errorf("status: %q reason: %q", status, answer.Get("reason"))
-   }
-   // read the streams map
-   playerResponse := answer.Get("player_response")
-   if playerResponse == "" {
-      return errors.New("no player_response found in the server's answer")
-   }
-   err = json.Unmarshal([]byte(playerResponse), v)
-   if err != nil {
-      return fmt.Errorf("unable to parse player response JSON: %w", err)
-   }
-   return nil
-}
-
 // Client offers methods to download video metadata and video streams.
 type Client struct {
-	// Debug enables debugging output through log package
-	Debug bool
-
-	// HTTPClient can be used to set a custom HTTP client.
-	// If not set, http.DefaultClient will be used
-	HTTPClient *http.Client
-
-	// decipherOpsCache cache decipher operations
-	decipherOpsCache DecipherOperationsCache
+   // decipherOpsCache cache decipher operations
+   decipherOpsCache DecipherOperationsCache
 }
+
+// httpGetBodyBytes reads the whole HTTP body and returns it
+func (c *Client) httpGetBodyBytes(url string) ([]byte, error) {
+   req, err := http.NewRequest(http.MethodGet, url, nil)
+   if err != nil { return nil, err }
+   resp, err := new(http.Client).Do(req)
+   if err != nil { return nil, err }
+   defer resp.Body.Close()
+   switch resp.StatusCode {
+   case http.StatusOK, http.StatusPartialContent:
+   default:
+      return nil, fmt.Errorf("StatusCode %v", resp.StatusCode)
+   }
+   return io.ReadAll(resp.Body)
+}
+
+////////////////////////////////////////////////////////////////////////////////
 
 // GetVideo fetches video metadata
 func (c *Client) GetVideo(id string) (*Video, error) {
@@ -49,9 +39,23 @@ func (c *Client) GetVideo(id string) (*Video, error) {
    eurl := "https://youtube.googleapis.com/v/" + id
    body, err := c.httpGetBodyBytes("https://youtube.com/get_video_info?video_id="+id+"&eurl="+eurl)
    if err != nil { return nil, err }
-   v := Video{ID: id}
-   err = v.parseVideoInfo(body)
-   return &v, err
+   v := &Video{ID: id}
+   query, err := url.ParseQuery(string(body))
+   if err != nil { return nil, err }
+   status := query.Get("status")
+   if status != "ok" {
+      return nil, fmt.Errorf("status: %q reason: %q", status, query.Get("reason"))
+   }
+   // read the streams map
+   playerResponse := query.Get("player_response")
+   if playerResponse == "" {
+      return nil, errors.New("no player_response found in the server's answer")
+   }
+   err = json.Unmarshal([]byte(playerResponse), v)
+   if err != nil {
+      return nil, fmt.Errorf("unable to parse player response JSON %v", err)
+   }
+   return v, nil
 }
 
 // GetStreamURL returns the url for a specific format
@@ -60,40 +64,6 @@ func (c *Client) GetStreamURL(video *Video, format *Format) (string, error) {
    cipher := format.Cipher
    if cipher == "" { return "", ErrCipherNotFound }
    return c.decipherURL(video.ID, cipher)
-}
-
-// httpGet does a HTTP GET request, checks the response to be a 200 OK and returns it
-func (c *Client) httpGet(url string) (resp *http.Response, err error) {
-   client := c.HTTPClient
-   if client == nil {
-      client = http.DefaultClient
-   }
-   log.Println("GET", url)
-   req, err := http.NewRequest(http.MethodGet, url, nil)
-   if err != nil { return nil, err }
-   // Add range header to disable throttling
-   // see https://github.com/kkdai/youtube/pull/170
-   req.Header.Set("Range", "bytes=0-")
-   resp, err = client.Do(req)
-   if err != nil { return nil, err }
-   switch resp.StatusCode {
-   case http.StatusOK, http.StatusPartialContent:
-   default:
-      resp.Body.Close()
-      return nil, fmt.Errorf("StatusCode %v", resp.StatusCode)
-   }
-   return
-}
-
-// httpGetBodyBytes reads the whole HTTP body and returns it
-func (c *Client) httpGetBodyBytes(url string) ([]byte, error) {
-	resp, err := c.httpGet(url)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	return io.ReadAll(resp.Body)
 }
 
 
