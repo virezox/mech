@@ -14,7 +14,40 @@ import (
    "time"
 )
 
-const API = "https://www.youtube.com/get_video_info"
+const (
+   API = "https://www.youtube.com/get_video_info"
+   jsvarStr = `[a-zA-Z_\$][a-zA-Z_0-9]*`
+   reverseStr = ":function\\(a\\)\\{(?:return )?a\\.reverse\\(\\)\\}"
+   spliceStr = ":function\\(a,b\\)\\{a\\.splice\\(0,b\\)\\}"
+)
+
+var (
+   actionsFuncRegexp = regexp.MustCompile(fmt.Sprintf(
+      `function(?: %s)?\(a\)\{a=a\.split\(""\);` +
+      `\s*((?:(?:a=)?%s\.%s\(a,\d+\);)+)return a\.join\(""\)\}`,
+      jsvarStr, jsvarStr, jsvarStr,
+   ))
+   actionsObjRegexp = regexp.MustCompile(fmt.Sprintf(
+      "var (%s)=\\{((?:(?:%s%s|%s%s|%s%s),?\\n?)+)\\};",
+      jsvarStr, jsvarStr, swapStr, jsvarStr, spliceStr, jsvarStr, reverseStr,
+   ))
+   basejsPattern = regexp.MustCompile(`(/s/player/\w+/player_ias.vflset/\w+/base.js)`)
+   reverseRegexp = regexp.MustCompile(fmt.Sprintf("(?m)(?:^|,)(%s)%s", jsvarStr, reverseStr))
+   spliceRegexp  = regexp.MustCompile(fmt.Sprintf("(?m)(?:^|,)(%s)%s", jsvarStr, spliceStr))
+   swapRegexp    = regexp.MustCompile(fmt.Sprintf("(?m)(?:^|,)(%s)%s", jsvarStr, swapStr))
+   swapStr = fmt.Sprint(
+      `:function\(a,b\)\{var c=a\[0\];a\[0\]=a\[b(?:%a\.length)?\];`,
+      `a\[b(?:%a\.length)?\]=c(?:;return a)?\}`,
+   )
+)
+
+func readAll(addr string) ([]byte, error) {
+   println("Get", addr)
+   res, err := http.Get(addr)
+   if err != nil { return nil, err }
+   defer res.Body.Close()
+   return io.ReadAll(res.Body)
+}
 
 type Video struct {
    StreamingData struct {
@@ -25,17 +58,22 @@ type Video struct {
          MimeType string
          SignatureCipher string
       }
-      ExpiresInSeconds string
    }
    Microformat struct {
       PlayerMicroformatRenderer struct {
-         Description struct { SimpleText string }
+         Description struct {
+            SimpleText string
+         }
          PublishDate string
-         Title struct { SimpleText string }
+         Title struct {
+            SimpleText string
+         }
          ViewCount int `json:",string"`
       }
    }
-   VideoDetails struct { VideoId string }
+   VideoDetails struct {
+      VideoId string
+   }
 }
 
 // NewVideo fetches video metadata
@@ -101,32 +139,28 @@ func (v Video) ViewCount() int {
    return v.Microformat.PlayerMicroformatRenderer.ViewCount
 }
 
+type decipherOperation func([]byte) []byte
 
-const (
-   jsvarStr = `[a-zA-Z_\$][a-zA-Z_0-9]*`
-   reverseStr = ":function\\(a\\)\\{(?:return )?a\\.reverse\\(\\)\\}"
-   spliceStr = ":function\\(a,b\\)\\{a\\.splice\\(0,b\\)\\}"
-)
+func newReverseFunc() decipherOperation {
+   return func(bs []byte) []byte {
+      sort.SliceStable(bs, func(d, e int) bool { return true })
+      return bs
+   }
+}
 
-var (
-   actionsFuncRegexp = regexp.MustCompile(fmt.Sprintf(
-      `function(?: %s)?\(a\)\{a=a\.split\(""\);` +
-      `\s*((?:(?:a=)?%s\.%s\(a,\d+\);)+)return a\.join\(""\)\}`,
-      jsvarStr, jsvarStr, jsvarStr,
-   ))
-   actionsObjRegexp = regexp.MustCompile(fmt.Sprintf(
-      "var (%s)=\\{((?:(?:%s%s|%s%s|%s%s),?\\n?)+)\\};",
-      jsvarStr, jsvarStr, swapStr, jsvarStr, spliceStr, jsvarStr, reverseStr,
-   ))
-   basejsPattern = regexp.MustCompile(`(/s/player/\w+/player_ias.vflset/\w+/base.js)`)
-   reverseRegexp = regexp.MustCompile(fmt.Sprintf("(?m)(?:^|,)(%s)%s", jsvarStr, reverseStr))
-   spliceRegexp  = regexp.MustCompile(fmt.Sprintf("(?m)(?:^|,)(%s)%s", jsvarStr, spliceStr))
-   swapRegexp    = regexp.MustCompile(fmt.Sprintf("(?m)(?:^|,)(%s)%s", jsvarStr, swapStr))
-   swapStr = fmt.Sprint(
-      `:function\(a,b\)\{var c=a\[0\];a\[0\]=a\[b(?:%a\.length)?\];`,
-      `a\[b(?:%a\.length)?\]=c(?:;return a)?\}`,
-   )
-)
+func newSpliceFunc(pos int) decipherOperation {
+   return func(bs []byte) []byte {
+      return bs[pos:]
+   }
+}
+
+func newSwapFunc(arg int) decipherOperation {
+   return func(bs []byte) []byte {
+      pos := arg % len(bs)
+      bs[0], bs[pos] = bs[pos], bs[0]
+      return bs
+   }
+}
 
 func parseDecipherOps(videoID string) ([]decipherOperation, error) {
    embedBody, err := readAll("https://youtube.com/embed/" + videoID)
@@ -177,39 +211,10 @@ func parseDecipherOps(videoID string) ([]decipherOperation, error) {
          arg, _ := strconv.Atoi(string(s[2]))
          ops = append(ops, newSpliceFunc(arg))
       case reverseKey:
-         ops = append(ops, reverseFunc)
+         ops = append(ops, newReverseFunc())
       }
    }
    return ops, nil
-}
-
-func readAll(addr string) ([]byte, error) {
-   println("Get", addr)
-   res, err := http.Get(addr)
-   if err != nil { return nil, err }
-   defer res.Body.Close()
-   return io.ReadAll(res.Body)
-}
-
-func reverseFunc(bs []byte) []byte {
-   sort.SliceStable(bs, func(d, e int) bool { return true })
-   return bs
-}
-
-type decipherOperation func([]byte) []byte
-
-func newSpliceFunc(pos int) decipherOperation {
-   return func(bs []byte) []byte {
-      return bs[pos:]
-   }
-}
-
-func newSwapFunc(arg int) decipherOperation {
-   return func(bs []byte) []byte {
-      pos := arg % len(bs)
-      bs[0], bs[pos] = bs[pos], bs[0]
-      return bs
-   }
 }
 
 type simpleCache struct {
