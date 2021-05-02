@@ -5,6 +5,7 @@ import (
    "fmt"
    "log"
    "regexp"
+   "sort"
    "strconv"
    "time"
 )
@@ -34,16 +35,6 @@ var (
       `a\[b(?:%a\.length)?\]=c(?:;return a)?\}`,
    )
 )
-
-func reverseFunc(bs []byte) []byte {
-   l, r := 0, len(bs)-1
-   for l < r {
-      bs[l], bs[r] = bs[r], bs[l]
-      l++
-      r--
-   }
-   return bs
-}
 
 func (c *Client) parseDecipherOps(videoID string) (operations []decipherOperation, err error) {
    embedURL := fmt.Sprintf("https://youtube.com/embed/%s?hl=en", videoID)
@@ -88,17 +79,22 @@ func (c *Client) parseDecipherOps(videoID string) (operations []decipherOperatio
    var ops []decipherOperation
    for _, s := range regex.FindAllSubmatch(funcBody, -1) {
       switch string(s[1]) {
-      case reverseKey:
-         ops = append(ops, reverseFunc)
       case swapKey:
          arg, _ := strconv.Atoi(string(s[2]))
          ops = append(ops, newSwapFunc(arg))
       case spliceKey:
          arg, _ := strconv.Atoi(string(s[2]))
          ops = append(ops, newSpliceFunc(arg))
+      case reverseKey:
+         ops = append(ops, reverseFunc)
       }
    }
    return ops, nil
+}
+
+func reverseFunc(bs []byte) []byte {
+   sort.SliceStable(bs, func(d, e int) bool { return true })
+   return bs
 }
 
 type decipherOperation func([]byte) []byte
