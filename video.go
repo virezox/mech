@@ -79,7 +79,7 @@ func (v Video) GetStream(itag int) (string, error) {
    if err != nil { return "", err }
    query, err := url.ParseQuery(cipher)
    if err != nil { return "", err }
-   bs := []byte(query.Get("s"))
+   sig := []byte(query.Get("s"))
    // decrypt
    body, err := readAll("https://www.youtube.com/embed/" + v.VideoDetails.VideoId)
    if err != nil { return "", err }
@@ -92,7 +92,8 @@ func (v Video) GetStream(itag int) (string, error) {
       player[1],
    ))
    if err != nil { return "", err }
-   sig := parseDecipherOps(bs, body)
+   err = newCipher(body).decrypt(sig)
+   if err != nil { return "", err }
    return query.Get("url") + "&sig=" + string(sig), nil
 }
 

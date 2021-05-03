@@ -40,6 +40,7 @@ func TestStream(t *testing.T) {
    if e != nil {
       t.Error(e)
    }
+   println("Head", s)
    r, e := http.Head(s)
    if e != nil {
       t.Error(e)
