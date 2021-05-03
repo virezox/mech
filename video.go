@@ -6,9 +6,25 @@ import (
    "io"
    "net/http"
    "net/url"
+   "regexp"
+   "strconv"
 )
 
 const API = "https://www.youtube.com/get_video_info"
+
+func decrypt(sig, body []byte) error {
+   // get line
+   line := regexp.MustCompile(`\.split\(""\);[^\n]+`).Find(body)
+   // get swaps
+   matches := regexp.MustCompile(`\d+`).FindAll(line, -1)
+   for _, match := range matches {
+      pos, err := strconv.Atoi(string(match))
+      if err != nil { return err }
+      pos %= len(sig)
+      sig[0], sig[pos] = sig[pos], sig[0]
+   }
+   return nil
+}
 
 func readAll(addr string) ([]byte, error) {
    println("Get", addr)
@@ -66,22 +82,6 @@ func NewVideo(id string) (Video, error) {
 }
 
 func (v Video) Description() string { return v.VideoDetails.ShortDescription }
-
-// GetStream returns the url for a specific format
-func (v Video) GetStream(itag int) (string, error) {
-   if len(v.StreamingData.AdaptiveFormats) == 0 {
-      return "", errors.New("AdaptiveFormats empty")
-   }
-   // get cipher text
-   cipher, err := v.signatureCipher(itag)
-   if err != nil { return "", err }
-   query, err := url.ParseQuery(cipher)
-   if err != nil { return "", err }
-   sig := []byte(query.Get("s"))
-   err = decrypt(sig)
-   if err != nil { return "", err }
-   return query.Get("url") + "&sig=" + string(sig), nil
-}
 
 func (v Video) PublishDate() string {
    return v.Microformat.PlayerMicroformatRenderer.PublishDate
