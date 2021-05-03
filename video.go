@@ -1,7 +1,6 @@
 package youtube
 
 import (
-   "encoding/json"
    "errors"
    "io"
    "net/http"
@@ -10,8 +9,17 @@ import (
    "strconv"
 )
 
-const API = "https://www.youtube.com/get_video_info"
+/*
+Current logic is based on this input:
 
+var uy={VP:function(a){a.reverse()},
+eG:function(a,b){var c=a[0];a[0]=a[b%a.length];a[b%a.length]=c},
+li:function(a,b){a.splice(0,b)}};
+vy=function(a){a=a.split("");uy.eG(a,50);uy.eG(a,48);uy.eG(a,23);uy.eG(a,31);return a.join("")};
+
+if this fails in the future, we should keep a record of all failed cases, to
+keep from repeating a mistake.
+*/
 func decrypt(sig, body []byte) error {
    // get line
    line := regexp.MustCompile(`\.split\(""\);[^\n]+`).Find(body)
@@ -26,9 +34,10 @@ func decrypt(sig, body []byte) error {
    return nil
 }
 
-func readAll(addr string) ([]byte, error) {
-   println("Get", addr)
-   res, err := http.Get(addr)
+func httpGet(addr url.URL) ([]byte, error) {
+   get := addr.String()
+   println("Get", get)
+   res, err := http.Get(get)
    if err != nil { return nil, err }
    defer res.Body.Close()
    return io.ReadAll(res.Body)
@@ -55,30 +64,6 @@ type Video struct {
       VideoId string
       ViewCount int `json:",string"`
    }
-}
-
-// NewVideo fetches video metadata
-func NewVideo(id string) (Video, error) {
-   val := make(url.Values)
-   val.Set("eurl", API)
-   val.Set("video_id", id)
-   body, err := readAll(API + "?" + val.Encode())
-   if err != nil {
-      return Video{}, err
-   }
-   val, err = url.ParseQuery(string(body))
-   if err != nil {
-      return Video{}, err
-   }
-   var (
-      play = val.Get("player_response")
-      vid Video
-   )
-   err = json.Unmarshal([]byte(play), &vid)
-   if err != nil {
-      return Video{}, err
-   }
-   return vid, nil
 }
 
 func (v Video) Description() string { return v.VideoDetails.ShortDescription }
