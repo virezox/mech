@@ -54,28 +54,40 @@ func newCipher(body []byte) cipher {
    obj := objResult[1]
    objBody := objResult[2]
    var ci cipher
+   // VP:function(a){a.reverse()}
    result := regexp.MustCompile(fmt.Sprintf(
       "(?m)(?:^|,)(%v)%v", jsVar, jsReverse,
    )).FindSubmatch(objBody)
    if len(result) > 1 {
       ci.reverse = string(result[1])
    }
+   // li:function(a,b){a.splice(0,b)}
    result = regexp.MustCompile(
       fmt.Sprintf("(?m)(?:^|,)(%v)%v", jsVar, jsSplice,
    )).FindSubmatch(objBody)
    if len(result) > 1 {
       ci.splice = string(result[1])
    }
+   // eG:function(a,b){var c=a[0];a[0]=a[b%a.length];a[b%a.length]=c}
    result = regexp.MustCompile(fmt.Sprintf(
       "(?m)(?:^|,)(%v)%v", jsVar, jsSwap,
    )).FindSubmatch(objBody)
    if len(result) > 1 {
       ci.swap = string(result[1])
    }
+   // uy.eG(a,50);uy.eG(a,48);uy.eG(a,23);uy.eG(a,31);
    funcBody := regexp.MustCompile(fmt.Sprintf(
       `function(?: %v)?\(a\)\{a=a\.split\(""\);\s*((?:(?:a=)?%v\.%v\(a,\d+\);)+)return a\.join\(""\)\}`,
       jsVar, jsVar, jsVar,
    )).FindSubmatch(body)[1]
+   /*
+   [
+      [uy.eG(a,50) eG 50],
+      [uy.eG(a,48) eG 48],
+      [uy.eG(a,23) eG 23],
+      [uy.eG(a,31) eG 31],
+   ]
+   */
    ci.matches = regexp.MustCompile(fmt.Sprintf(
       `(?:a=)?%s\.(%v|%v|%v)\(a,(\d+)\)`, obj, ci.reverse, ci.splice, ci.swap,
    )).FindAllStringSubmatch(string(funcBody), -1)
