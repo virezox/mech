@@ -1,6 +1,7 @@
 package youtube
 
 import (
+   "bufio"
    "encoding/json"
    "errors"
    "fmt"
@@ -8,6 +9,8 @@ import (
    "net/http"
    "net/url"
    "regexp"
+   "strconv"
+   "strings"
 )
 
 const API = "https://www.youtube.com/get_video_info"
@@ -69,6 +72,8 @@ func NewVideo(id string) (Video, error) {
 
 func (v Video) Description() string { return v.VideoDetails.ShortDescription }
 
+const split = `.split("");`
+
 // GetStream returns the url for a specific format
 func (v Video) GetStream(itag int) (string, error) {
    if len(v.StreamingData.AdaptiveFormats) == 0 {
@@ -87,14 +92,30 @@ func (v Video) GetStream(itag int) (string, error) {
    if len(player) < 2 {
       return "", errors.New("unable to find basejs URL in playerConfig")
    }
-   body, err = readAll(fmt.Sprintf(
+   base := fmt.Sprintf(
       "https://www.youtube.com/s/player/%s/player_ias.vflset/en_US/base.js",
       player[1],
-   ))
+   )
+   res, err := http.Get(base)
    if err != nil { return "", err }
-   err = newCipher(body).decrypt(sig)
-   if err != nil { return "", err }
-   return query.Get("url") + "&sig=" + string(sig), nil
+   defer res.Body.Close()
+   scan := bufio.NewScanner(res.Body)
+   for scan.Scan() {
+      if ! strings.Contains(scan.Text(), `.split("");`) { continue }
+      for _, match := range regexp.MustCompile(`\d+`).FindAllString(scan.Text(), -1) {
+         index, err := strconv.Atoi(match)
+         if err != nil { return "", err }
+         swap(sig, index)
+      }
+      return query.Get("url") + "&sig=" + string(sig), nil
+   }
+   return "", fmt.Errorf("%q not found", split)
+}
+
+func swap(sig []byte, index int) {
+   c := sig[0]
+   sig[0] = sig[index % len(sig)]
+   sig[index % len(sig)] = c
 }
 
 func (v Video) PublishDate() string {
