@@ -92,7 +92,12 @@ type Format struct {
 
 func (v Video) NewFormat(itag int) (Format, error) {
    for _, format := range v.StreamingData.AdaptiveFormats {
-      if format.Itag == itag { return format, nil }
+      if format.Itag == itag {
+         if format.SignatureCipher == "" {
+            return Format{}, errors.New("signatureCipher not found")
+         }
+         return format, nil
+      }
    }
    return Format{}, errors.New("itag not found")
 }
