@@ -28,8 +28,7 @@ func decrypt(sig, body []byte) error {
    // get line
    line := regexp.MustCompile(`\.split\(""\);[^\n]+`).Find(body)
    // get swaps
-   matches := regexp.MustCompile(`\d+`).FindAll(line, -1)
-   for _, match := range matches {
+   for _, match := range regexp.MustCompile(`\d+`).FindAll(line, -1) {
       pos, err := strconv.Atoi(string(match))
       if err != nil { return err }
       pos %= len(sig)
@@ -81,25 +80,31 @@ type Format struct {
    SignatureCipher string
 }
 
-func (v Video) GetFormat(itag int) (Format, error) {
+func (v Video) NewFormat(itag int) (Format, error) {
    for _, format := range v.StreamingData.AdaptiveFormats {
       if format.Itag == itag { return format, nil }
    }
    return Format{}, errors.New("itag not found")
 }
 
-// GetStream returns the url for a specific format
-func (f Format) GetStream() (string, error) {
-   query, err := url.ParseQuery(f.SignatureCipher)
-   if err != nil { return "", err }
-   sig := []byte(query.Get("s"))
+// NewRequest returns the url for a specific format
+func (f Format) NewRequest() (*http.Request, error) {
+   val, err := url.ParseQuery(f.SignatureCipher)
+   if err != nil { return nil, err }
+   sig := []byte(val.Get("s"))
    // get player
    body, err := getPlayer()
-   if err != nil { return "", err }
+   if err != nil { return nil, err }
    // decrypt
    err = decrypt(sig, body)
-   if err != nil { return "", err }
-   return query.Get("url") + "&sig=" + string(sig), nil
+   if err != nil { return nil, err }
+   req, err := http.NewRequest("GET", val.Get("url"), nil)
+   if err != nil { return nil, err }
+   val = req.URL.Query()
+   val.Set("sig", string(sig))
+   req.URL.RawQuery = val.Encode()
+   req.Header.Set("Range", "bytes=0-")
+   return req, nil
 }
 
 type Video struct {
@@ -112,9 +117,9 @@ type Video struct {
       }
    }
    VideoDetails struct {
+      Author string
       ShortDescription string
       Title string
-      VideoId string
       ViewCount int `json:"viewCount,string"`
    }
 }

@@ -4,10 +4,51 @@ import (
    "flag"
    "fmt"
    "github.com/89z/youtube"
+   "net/http"
    "net/url"
    "os"
+   "strings"
+   "time"
 )
 
+func info(video youtube.Video) {
+   for _, f := range video.StreamingData.AdaptiveFormats {
+      fmt.Println(
+         "itag:", f.Itag,
+         "bitrate:", f.Bitrate,
+         "height:", f.Height,
+         "mimetype:", f.MimeType,
+      )
+   }
+}
+
+func download(video youtube.Video, itag int) error {
+   format, e := video.NewFormat(itag)
+   if e != nil { return e }
+   // source
+   req, e := format.NewRequest()
+   if e != nil { return e }
+   fmt.Println("Get", req.URL)
+   res, e := new(http.Client).Do(req)
+   if e != nil { return e }
+   defer res.Body.Close()
+   // destination
+   semi := strings.IndexByte(format.MimeType, ';')
+   file, e := os.Create(fmt.Sprintf(
+      "%v - %v.%v",
+      video.VideoDetails.Author,
+      video.VideoDetails.Title,
+      // audio/webm; codecs="opus"
+      format.MimeType[6:semi],
+   ))
+   if e != nil { return e }
+   defer file.Close()
+   // copy
+   begin := time.Now()
+   _, e = file.ReadFrom(res.Body)
+   fmt.Println(time.Since(begin))
+   return e
+}
 
 func main() {
    var (
@@ -39,28 +80,5 @@ func main() {
       }
    } else {
       info(video)
-   }
-}
-
-func download(video youtube.Video, itag int) error {
-   stream, e := video.GetStream(itag)
-   if e != nil { return e }
-   fmt.Println("Get", stream)
-   res, e := http.Get(stream)
-   if e != nil { return e }
-   defer res.Body.Close()
-   /*
-   audio/webm; codecs="opus"
-   */
-}
-
-func info(video youtube.Video) {
-   for _, f := range video.StreamingData.AdaptiveFormats {
-      fmt.Println(
-         "itag:", f.Itag,
-         "bitrate:", f.Bitrate,
-         "height:", f.Height,
-         "mimetype:", f.MimeType,
-      )
    }
 }
