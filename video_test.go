@@ -37,7 +37,11 @@ func TestDesc(t *testing.T) {
          t.Errorf("%+v\n", v)
       }
       if ! test.stream { continue }
-      s, e := v.GetStream(251)
+      f, e := v.GetFormat(251)
+      if e != nil {
+         t.Error(e)
+      }
+      s, e := f.GetStream()
       if e != nil {
          t.Error(e)
       }

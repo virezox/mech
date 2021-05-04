@@ -73,15 +73,38 @@ func getPlayer() ([]byte, error) {
    return os.ReadFile(play)
 }
 
+type Format struct {
+   Bitrate int
+   Height int
+   Itag int
+   MimeType string
+   SignatureCipher string
+}
+
+func (v Video) GetFormat(itag int) (Format, error) {
+   for _, format := range v.StreamingData.AdaptiveFormats {
+      if format.Itag == itag { return format, nil }
+   }
+   return Format{}, errors.New("itag not found")
+}
+
+// GetStream returns the url for a specific format
+func (f Format) GetStream() (string, error) {
+   query, err := url.ParseQuery(f.SignatureCipher)
+   if err != nil { return "", err }
+   sig := []byte(query.Get("s"))
+   // get player
+   body, err := getPlayer()
+   if err != nil { return "", err }
+   // decrypt
+   err = decrypt(sig, body)
+   if err != nil { return "", err }
+   return query.Get("url") + "&sig=" + string(sig), nil
+}
+
 type Video struct {
    StreamingData struct {
-      AdaptiveFormats []struct {
-         Bitrate int
-         Height int
-         Itag int
-         MimeType string
-         SignatureCipher string
-      }
+      AdaptiveFormats []Format
    }
    Microformat struct {
       PlayerMicroformatRenderer struct {
@@ -130,26 +153,6 @@ func NewVideo(id string) (Video, error) {
 
 func (v Video) Description() string { return v.VideoDetails.ShortDescription }
 
-// GetStream returns the url for a specific format
-func (v Video) GetStream(itag int) (string, error) {
-   if len(v.StreamingData.AdaptiveFormats) == 0 {
-      return "", errors.New("AdaptiveFormats empty")
-   }
-   // get cipher text
-   cipher, err := v.signatureCipher(itag)
-   if err != nil { return "", err }
-   query, err := url.ParseQuery(cipher)
-   if err != nil { return "", err }
-   sig := []byte(query.Get("s"))
-   // get player
-   body, err := getPlayer()
-   if err != nil { return "", err }
-   // decrypt
-   err = decrypt(sig, body)
-   if err != nil { return "", err }
-   return query.Get("url") + "&sig=" + string(sig), nil
-}
-
 func (v Video) PublishDate() string {
    return v.Microformat.PlayerMicroformatRenderer.PublishDate
 }
@@ -157,13 +160,6 @@ func (v Video) PublishDate() string {
 func (v Video) Title() string { return v.VideoDetails.Title }
 
 func (v Video) ViewCount() int { return v.VideoDetails.ViewCount }
-
-func (v Video) signatureCipher(itag int) (string, error) {
-   for _, format := range v.StreamingData.AdaptiveFormats {
-      if format.Itag == itag { return format.SignatureCipher, nil }
-   }
-   return "", errors.New("itag not found")
-}
 
 type youTube struct {
    url.URL
