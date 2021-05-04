@@ -31,6 +31,9 @@ func download(video youtube.Video, itag int) error {
    fmt.Println("Get", req.URL)
    res, e := new(http.Client).Do(req)
    if e != nil { return e }
+   if res.StatusCode != 206 {
+      return fmt.Errorf("StatusCode %v", res.StatusCode)
+   }
    defer res.Body.Close()
    // destination
    semi := strings.IndexByte(format.MimeType, ';')
