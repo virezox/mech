@@ -37,21 +37,23 @@ func TestDesc(t *testing.T) {
          t.Errorf("%+v\n", v)
       }
       if ! test.stream { continue }
-      f, e := v.GetFormat(251)
+      f, e := v.NewFormat(251)
       if e != nil {
          t.Error(e)
       }
-      s, e := f.GetStream()
+      req, e := f.NewRequest()
       if e != nil {
          t.Error(e)
       }
-      println("Head", s)
-      r, e := http.Head(s)
+      println("Get", req.URL.String())
+      res, e := new(http.Client).Do(req)
       if e != nil {
          t.Error(e)
       }
-      if r.StatusCode != 200 {
-         t.Error(r.StatusCode)
+      switch res.StatusCode {
+      case http.StatusOK, http.StatusPartialContent:
+      default:
+         t.Error(res.StatusCode)
       }
    }
 }
