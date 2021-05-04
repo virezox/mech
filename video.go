@@ -3,12 +3,9 @@ package youtube
 import (
    "encoding/json"
    "errors"
-   "fmt"
    "io"
    "net/http"
    "net/url"
-   "os"
-   "path/filepath"
    "regexp"
    "strconv"
 )
@@ -38,14 +35,6 @@ func decrypt(sig, body []byte) error {
    return nil
 }
 
-func httpGet(addr string) ([]byte, error) {
-   println("Get", addr)
-   res, err := http.Get(addr)
-   if err != nil { return nil, err }
-   defer res.Body.Close()
-   return io.ReadAll(res.Body)
-}
-
 type Video struct {
    StreamingData struct {
       AdaptiveFormats []struct {
@@ -72,10 +61,17 @@ type Video struct {
 // NewVideo fetches video metadata
 func NewVideo(id string) (Video, error) {
    yt := newYouTube()
-   yt.set("eurl", yt.String())
-   yt.set("video_id", id)
+   yt.Set("eurl", yt.String())
+   yt.Set("video_id", id)
+   yt.RawQuery = yt.Encode()
    yt.Path = "get_video_info"
-   body, err := httpGet(yt.String())
+   println("Get", yt.String())
+   res, err := http.Get(yt.String())
+   if err != nil {
+      return Video{}, err
+   }
+   defer res.Body.Close()
+   body, err := io.ReadAll(res.Body)
    if err != nil {
       return Video{}, err
    }
@@ -96,51 +92,6 @@ func NewVideo(id string) (Video, error) {
 
 func (v Video) Description() string { return v.VideoDetails.ShortDescription }
 
-// GetStream returns the url for a specific format
-func (v Video) GetStream(itag int) (string, error) {
-   if len(v.StreamingData.AdaptiveFormats) == 0 {
-      return "", errors.New("AdaptiveFormats empty")
-   }
-   // get cipher text
-   cipher, err := v.signatureCipher(itag)
-   if err != nil { return "", err }
-   query, err := url.ParseQuery(cipher)
-   if err != nil { return "", err }
-   sig := []byte(query.Get("s"))
-   // get player
-   yt := newYouTube()
-   yt.Path = "iframe_api"
-   body, err := httpGet(yt.String())
-   if err != nil { return "", err }
-   match := regexp.MustCompile(`/player\\/(\w+)`).FindSubmatch(body)
-   id := string(match[1])
-   cache, err := os.UserCacheDir()
-   if err != nil { return "", err }
-   cache += "/youtube"
-   play := filepath.Join(cache, id + ".js")
-   _, err = os.Stat(play)
-   if os.IsNotExist(err) {
-      os.Mkdir(cache, os.ModeDir)
-      yt.Path = fmt.Sprintf("s/player/%v/player_ias.vflset/en_US/base.js", id)
-      res, err := http.Get(yt.String())
-      if err != nil { return "", err }
-      defer res.Body.Close()
-      file, err := os.Create(play)
-      if err != nil { return "", err }
-      defer file.Close()
-      file.ReadFrom(res.Body)
-   } else if err != nil {
-      return "", err
-   } else {
-      println("Exist", play)
-   }
-   body, err = os.ReadFile(play)
-   if err != nil { return "", err }
-   err = decrypt(sig, body)
-   if err != nil { return "", err }
-   return query.Get("url") + "&sig=" + string(sig), nil
-}
-
 func (v Video) PublishDate() string {
    return v.Microformat.PlayerMicroformatRenderer.PublishDate
 }
@@ -156,16 +107,13 @@ func (v Video) signatureCipher(itag int) (string, error) {
    return "", errors.New("itag not found")
 }
 
-type youTube struct { url.URL }
+type youTube struct {
+   url.URL
+   url.Values
+}
 
 func newYouTube() youTube {
    return youTube{
-      url.URL{Scheme: "https", Host: "www.youtube.com"},
+      url.URL{Scheme: "https", Host: "www.youtube.com"}, make(url.Values),
    }
-}
-
-func (yt *youTube) set(key, val string) {
-   query := yt.Query()
-   query.Set(key, val)
-   yt.RawQuery = query.Encode()
 }
