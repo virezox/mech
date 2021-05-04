@@ -73,15 +73,24 @@ func getPlayer() ([]byte, error) {
    return os.ReadFile(play)
 }
 
+type Format struct {
+   Bitrate int
+   Height int
+   Itag int
+   MimeType string
+   SignatureCipher string
+}
+
+func (v Video) GetFormat(itag int) (Format, error) {
+   for _, format := range v.StreamingData.AdaptiveFormats {
+      if format.Itag == itag { return format, nil }
+   }
+   return Format{}, errors.New("itag not found")
+}
+
 type Video struct {
    StreamingData struct {
-      AdaptiveFormats []struct {
-         Bitrate int
-         Height int
-         Itag int
-         MimeType string
-         SignatureCipher string
-      }
+      AdaptiveFormats []Format
    }
    Microformat struct {
       PlayerMicroformatRenderer struct {
@@ -136,9 +145,9 @@ func (v Video) GetStream(itag int) (string, error) {
       return "", errors.New("AdaptiveFormats empty")
    }
    // get cipher text
-   cipher, err := v.signatureCipher(itag)
+   format, err := v.GetFormat(itag)
    if err != nil { return "", err }
-   query, err := url.ParseQuery(cipher)
+   query, err := url.ParseQuery(format.SignatureCipher)
    if err != nil { return "", err }
    sig := []byte(query.Get("s"))
    // get player
@@ -158,12 +167,6 @@ func (v Video) Title() string { return v.VideoDetails.Title }
 
 func (v Video) ViewCount() int { return v.VideoDetails.ViewCount }
 
-func (v Video) signatureCipher(itag int) (string, error) {
-   for _, format := range v.StreamingData.AdaptiveFormats {
-      if format.Itag == itag { return format.SignatureCipher, nil }
-   }
-   return "", errors.New("itag not found")
-}
 
 type youTube struct {
    url.URL
