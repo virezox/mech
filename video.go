@@ -112,9 +112,9 @@ type Video struct {
       }
    }
    VideoDetails struct {
+      Author string
       ShortDescription string
       Title string
-      VideoId string
       ViewCount int `json:"viewCount,string"`
    }
 }
