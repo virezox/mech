@@ -28,8 +28,7 @@ func decrypt(sig, body []byte) error {
    // get line
    line := regexp.MustCompile(`\.split\(""\);[^\n]+`).Find(body)
    // get swaps
-   matches := regexp.MustCompile(`\d+`).FindAll(line, -1)
-   for _, match := range matches {
+   for _, match := range regexp.MustCompile(`\d+`).FindAll(line, -1) {
       pos, err := strconv.Atoi(string(match))
       if err != nil { return err }
       pos %= len(sig)
@@ -112,9 +111,9 @@ type Video struct {
       }
    }
    VideoDetails struct {
+      Author string
       ShortDescription string
       Title string
-      VideoId string
       ViewCount int `json:"viewCount,string"`
    }
 }

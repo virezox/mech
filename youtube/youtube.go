@@ -4,8 +4,11 @@ import (
    "flag"
    "fmt"
    "github.com/89z/youtube"
+   "net/http"
    "net/url"
    "os"
+   "strings"
+   "time"
 )
 
 
@@ -43,15 +46,34 @@ func main() {
 }
 
 func download(video youtube.Video, itag int) error {
-   stream, e := video.GetStream(itag)
+   format, e := video.GetFormat(itag)
    if e != nil { return e }
+   stream, e := format.GetStream()
+   if e != nil { return e }
+   // source
+   req, e := http.NewRequest("GET", stream, nil)
+   if e != nil { return e }
+   req.Header.Set("Range", "bytes=0-")
    fmt.Println("Get", stream)
-   res, e := http.Get(stream)
+   res, e := new(http.Client).Do(req)
    if e != nil { return e }
    defer res.Body.Close()
-   /*
-   audio/webm; codecs="opus"
-   */
+   // destination
+   semi := strings.IndexByte(format.MimeType, ';')
+   file, e := os.Create(fmt.Sprintf(
+      "%v - %v.%v",
+      video.VideoDetails.Author,
+      video.VideoDetails.Title,
+      // audio/webm; codecs="opus"
+      format.MimeType[6:semi],
+   ))
+   if e != nil { return e }
+   defer file.Close()
+   // copy
+   begin := time.Now()
+   _, e = file.ReadFrom(res.Body)
+   fmt.Println(time.Since(begin))
+   return e
 }
 
 func info(video youtube.Video) {
