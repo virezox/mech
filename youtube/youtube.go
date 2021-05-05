@@ -22,6 +22,13 @@ func info(video youtube.Video) {
    }
 }
 
+func clean(r rune) rune {
+   switch {
+   case strings.ContainsRune(`"*/:<>?\|`, r): return -1
+   default: return r
+   }
+}
+
 func download(video youtube.Video, itag int) error {
    format, e := video.NewFormat(itag)
    if e != nil { return e }
@@ -31,19 +38,22 @@ func download(video youtube.Video, itag int) error {
    fmt.Println("Get", req.URL)
    res, e := new(http.Client).Do(req)
    if e != nil { return e }
-   if res.StatusCode != 206 {
+   switch res.StatusCode {
+   case http.StatusOK, http.StatusPartialContent:
+   default:
       return fmt.Errorf("StatusCode %v", res.StatusCode)
    }
    defer res.Body.Close()
    // destination
    semi := strings.IndexByte(format.MimeType, ';')
-   file, e := os.Create(fmt.Sprintf(
+   name := fmt.Sprintf(
       "%v - %v.%v",
       video.VideoDetails.Author,
       video.VideoDetails.Title,
       // audio/webm; codecs="opus"
       format.MimeType[6:semi],
-   ))
+   )
+   file, e := os.Create(strings.Map(clean, name))
    if e != nil { return e }
    defer file.Close()
    // copy
