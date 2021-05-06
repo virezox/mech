@@ -1,11 +1,11 @@
 package youtube
 
 import (
+   "bytes"
    "encoding/json"
    "errors"
    "fmt"
    "github.com/robertkrimen/otto"
-   "io"
    "net/http"
    "net/url"
    "os"
@@ -15,7 +15,7 @@ import (
 
 const Origin = "https://www.youtube.com"
 
-func Decrypt(sig string, js []byte) (string, error) {
+func decrypt(sig string, js []byte) (string, error) {
    /*
 May 5 2021:
 var uy={bH:function(a,b){a.splice(0,b)},
@@ -54,36 +54,33 @@ vy=function(a){a=a.split("");uy.eG(a,50);uy.eG(a,48);uy.eG(a,23);uy.eG(a,31);ret
    return value.String(), nil
 }
 
-func getBaseJs() ([]byte, error) {
-   fmt.Println("Get", Origin + "/iframe_api")
-   res, err := http.Get(Origin + "/iframe_api")
+func get(addr string) (*bytes.Buffer, error) {
+   fmt.Println("Get", addr)
+   res, err := http.Get(addr)
    if err != nil { return nil, err }
    defer res.Body.Close()
-   body, err := io.ReadAll(res.Body)
-   if err != nil { return nil, err }
-   match := regexp.MustCompile(`/player\\/(\w+)`).FindSubmatch(body)
-   id := string(match[1])
-   // cache
+   buf := new(bytes.Buffer)
+   buf.ReadFrom(res.Body)
+   return buf, nil
+}
+
+func getBaseJs(update bool) ([]byte, error) {
    cache, err := os.UserCacheDir()
    if err != nil { return nil, err }
    cache = filepath.Join(cache, "youtube")
-   play := filepath.Join(cache, id + ".js")
-   _, err = os.Stat(play)
-   if os.IsNotExist(err) {
-      os.Mkdir(cache, os.ModeDir)
-      base := fmt.Sprintf("/s/player/%v/player_ias.vflset/en_US/base.js", id)
-      fmt.Println("Get", Origin + base)
-      res, err := http.Get(Origin + base)
+   play := filepath.Join(cache, "base.js")
+   if update {
+      buf, err := get(Origin + "/iframe_api")
       if err != nil { return nil, err }
-      defer res.Body.Close()
+      id := regexp.MustCompile(`/player\\/\w+`).Find(buf.Bytes())[9:]
+      base := fmt.Sprintf("/s/player/%s/player_ias.vflset/en_US/base.js", id)
+      buf, err = get(Origin + base)
+      if err != nil { return nil, err }
+      os.Mkdir(cache, os.ModeDir)
       file, err := os.Create(play)
       if err != nil { return nil, err }
       defer file.Close()
-      file.ReadFrom(res.Body)
-   } else if err != nil {
-      return nil, err
-   } else {
-      fmt.Println("Exist", play)
+      file.ReadFrom(buf)
    }
    return os.ReadFile(play)
 }
@@ -104,7 +101,7 @@ func (v Video) NewFormat(itag int) (Format, error) {
    return Format{}, errors.New("itag not found")
 }
 
-func (f Format) NewRequest() (*http.Request, error) {
+func (f Format) NewRequest(update bool) (*http.Request, error) {
    var req *http.Request
    if f.URL != "" {
       var err error
@@ -113,9 +110,9 @@ func (f Format) NewRequest() (*http.Request, error) {
    } else {
       val, err := url.ParseQuery(f.SignatureCipher)
       if err != nil { return nil, err }
-      baseJs, err := getBaseJs()
+      baseJs, err := getBaseJs(update)
       if err != nil { return nil, err }
-      sig, err := Decrypt(val.Get("s"), baseJs)
+      sig, err := decrypt(val.Get("s"), baseJs)
       if err != nil { return nil, err }
       req, err = http.NewRequest("GET", val.Get("url"), nil)
       if err != nil { return nil, err }
@@ -146,30 +143,21 @@ type Video struct {
 
 // NewVideo fetches video metadata
 func NewVideo(id string) (Video, error) {
-   req, err := http.NewRequest("GET", Origin + "/get_video_info", nil)
+   info, err := url.Parse(Origin + "/get_video_info")
    if err != nil {
       return Video{}, err
    }
-   val := req.URL.Query()
-   val.Set("video_id", id)
+   val := info.Query()
    val.Set("eurl", Origin)
-   req.URL.RawQuery = val.Encode()
-   fmt.Println("Get", req.URL)
-   res, err := new(http.Client).Do(req)
+   val.Set("video_id", id)
+   info.RawQuery = val.Encode()
+   buf, err := get(info.String())
    if err != nil {
       return Video{}, err
    }
-   defer res.Body.Close()
-   body, err := io.ReadAll(res.Body)
-   if err != nil {
-      return Video{}, err
-   }
-   val, err = url.ParseQuery(string(body))
-   if err != nil {
-      return Video{}, err
-   }
+   info.RawQuery = buf.String()
    var (
-      play = val.Get("player_response")
+      play = info.Query().Get("player_response")
       vid Video
    )
    err = json.Unmarshal([]byte(play), &vid)

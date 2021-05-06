@@ -27,7 +27,7 @@ func TestSignatureCipher(t *testing.T) {
    if err != nil {
       t.Error(err)
    }
-   req, err := f.NewRequest()
+   req, err := f.NewRequest(true)
    if err != nil {
       t.Error(err)
    }
@@ -52,7 +52,7 @@ func TestURL(t *testing.T) {
    if err != nil {
       t.Error(err)
    }
-   req, err := f.NewRequest()
+   req, err := f.NewRequest(false)
    if err != nil {
       t.Error(err)
    }

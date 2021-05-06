@@ -29,11 +29,11 @@ func clean(r rune) rune {
    }
 }
 
-func download(video youtube.Video, itag int) error {
+func download(video youtube.Video, itag int, update bool) error {
    format, e := video.NewFormat(itag)
    if e != nil { return e }
    // source
-   req, e := format.NewRequest()
+   req, e := format.NewRequest(update)
    if e != nil { return e }
    fmt.Println("Get", req.URL)
    res, e := new(http.Client).Do(req)
@@ -65,10 +65,11 @@ func download(video youtube.Video, itag int) error {
 
 func main() {
    var (
-      down bool
+      down, update bool
       itag int
    )
    flag.BoolVar(&down, "d", false, "download")
+   flag.BoolVar(&update, "u", false, "update base.js")
    flag.IntVar(&itag, "i", 251, "itag")
    flag.Parse()
    if flag.NArg() != 1 {
@@ -87,7 +88,7 @@ func main() {
       panic(e)
    }
    if down {
-      e := download(video, itag)
+      e := download(video, itag, update)
       if e != nil {
          panic(e)
       }
