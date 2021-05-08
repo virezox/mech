@@ -111,4 +111,5 @@ sig=AOq0QJ8wRAIgc-ylc9Z4lSO2CozG4B-W9uC5zeuTNTDvqH_nQaHGNmkCICsZJGbEjKDmDSnKg_..
 
 - https://github.com/iawia002/annie/issues/839
 - https://github.com/kkdai/youtube/issues/186
+- https://golang.org/pkg/net/http#Header.WriteSubset
 - https://superuser.com/questions/773719/how-do-all-of-these-save-video

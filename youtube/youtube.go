@@ -4,7 +4,6 @@ import (
    "flag"
    "fmt"
    "github.com/89z/youtube"
-   "net/http"
    "net/url"
    "os"
    "strings"
@@ -30,20 +29,8 @@ func clean(r rune) rune {
 }
 
 func download(video youtube.Video, itag int, update bool) error {
-   format, e := video.NewFormat(itag)
-   if e != nil { return e }
-   // source
-   req, e := format.NewRequest(update)
-   if e != nil { return e }
-   fmt.Println("Get", req.URL)
-   res, e := new(http.Client).Do(req)
-   if e != nil { return e }
-   switch res.StatusCode {
-   case http.StatusOK, http.StatusPartialContent:
-   default:
-      return fmt.Errorf("StatusCode %v", res.StatusCode)
-   }
-   defer res.Body.Close()
+   format, err := video.NewFormat(itag)
+   if err != nil { return err }
    // destination
    semi := strings.IndexByte(format.MimeType, ';')
    name := fmt.Sprintf(
@@ -53,14 +40,15 @@ func download(video youtube.Video, itag int, update bool) error {
       // audio/webm; codecs="opus"
       format.MimeType[6:semi],
    )
-   file, e := os.Create(strings.Map(clean, name))
-   if e != nil { return e }
+   file, err := os.Create(strings.Map(clean, name))
+   if err != nil { return err }
    defer file.Close()
-   // copy
+   // source
    begin := time.Now()
-   _, e = file.ReadFrom(res.Body)
+   err = format.Write(file, update)
+   if err != nil { return err }
    fmt.Println(time.Since(begin))
-   return e
+   return nil
 }
 
 func main() {
@@ -78,19 +66,19 @@ func main() {
       os.Exit(1)
    }
    arg := flag.Arg(0)
-   watch, e := url.Parse(arg)
-   if e != nil {
-      panic(e)
+   watch, err := url.Parse(arg)
+   if err != nil {
+      panic(err)
    }
    id := watch.Query().Get("v")
-   video, e := youtube.NewVideo(id)
-   if e != nil {
-      panic(e)
+   video, err := youtube.NewVideo(id)
+   if err != nil {
+      panic(err)
    }
    if down {
-      e := download(video, itag, update)
-      if e != nil {
-         panic(e)
+      err := download(video, itag, update)
+      if err != nil {
+         panic(err)
       }
    } else {
       info(video)

@@ -1,8 +1,7 @@
 package youtube
 
 import (
-   "fmt"
-   "net/http"
+   "io"
    "testing"
 )
 
@@ -23,23 +22,13 @@ func TestSignatureCipher(t *testing.T) {
    if v.ViewCount() == 0 {
       t.Errorf("%+v\n", v)
    }
-   f, err := v.NewFormat(251)
+   f, err := v.NewFormat(249)
    if err != nil {
       t.Error(err)
    }
-   req, err := f.NewRequest(true)
+   err = f.Write(io.Discard, true)
    if err != nil {
       t.Error(err)
-   }
-   fmt.Println("Get", req.URL)
-   res, err := new(http.Client).Do(req)
-   if err != nil {
-      t.Error(err)
-   }
-   switch res.StatusCode {
-   case http.StatusOK, http.StatusPartialContent:
-   default:
-      t.Error(res.StatusCode)
    }
 }
 
@@ -48,22 +37,12 @@ func TestURL(t *testing.T) {
    if err != nil {
       t.Error(err)
    }
-   f, err := v.NewFormat(251)
+   f, err := v.NewFormat(249)
    if err != nil {
       t.Error(err)
    }
-   req, err := f.NewRequest(false)
+   err = f.Write(io.Discard, false)
    if err != nil {
       t.Error(err)
-   }
-   fmt.Println("Get", req.URL)
-   res, err := new(http.Client).Do(req)
-   if err != nil {
-      t.Error(err)
-   }
-   switch res.StatusCode {
-   case http.StatusOK, http.StatusPartialContent:
-   default:
-      t.Error(res.StatusCode)
    }
 }

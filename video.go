@@ -14,7 +14,10 @@ import (
    "regexp"
 )
 
-const Origin = "https://www.youtube.com"
+const (
+   Origin = "https://www.youtube.com"
+   chunk = 10_000_000
+)
 
 func decrypt(sig string, js []byte) (string, error) {
    child, err := find(`\n[^.]+\.split\(""\);[^\n]+`, js)
@@ -77,7 +80,7 @@ func find(pat string, sub []byte) ([]byte, error) {
 }
 
 func get(addr string) (*bytes.Buffer, error) {
-   fmt.Println("\x1b[7m Get \x1b[m", addr)
+   fmt.Println("\x1b[7m GET \x1b[m", addr)
    res, err := http.Get(addr)
    if err != nil { return nil, err }
    defer res.Body.Close()
@@ -125,26 +128,6 @@ func (v Video) NewFormat(itag int) (Format, error) {
    return Format{}, errors.New("itag not found")
 }
 
-func (f Format) NewRequest(update bool) (*http.Request, error) {
-   if f.URL != "" {
-      return http.NewRequest("GET", f.URL, nil)
-   }
-   val, err := url.ParseQuery(f.SignatureCipher)
-   if err != nil { return nil, err }
-   baseJs, err := getBaseJs(update)
-   if err != nil { return nil, err }
-   sig, err := decrypt(val.Get("s"), baseJs)
-   if err != nil { return nil, err }
-   req, err := http.NewRequest("GET", val.Get("url"), nil)
-   if err != nil { return nil, err }
-   val = req.URL.Query()
-   val.Set("sig", sig)
-   req.URL.RawQuery = val.Encode()
-   return req, nil
-}
-
-const chunk = 10_000_000
-
 func (f Format) Write(w io.Writer, update bool) error {
    var req *http.Request
    if f.URL != "" {
@@ -165,7 +148,7 @@ func (f Format) Write(w io.Writer, update bool) error {
       req.URL.RawQuery = val.Encode()
    }
    var pos int64
-   fmt.Println("GET", req.URL)
+   fmt.Println("\x1b[7m GET \x1b[m", req.URL)
    for pos < f.ContentLength {
       bytes := fmt.Sprintf("bytes=%v-%v", pos, pos+chunk-1)
       req.Header.Set("Range", bytes)
