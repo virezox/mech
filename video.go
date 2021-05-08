@@ -3,7 +3,6 @@ package youtube
 import (
    "bytes"
    "encoding/json"
-   "errors"
    "fmt"
    "github.com/robertkrimen/otto"
    "io"
@@ -125,7 +124,7 @@ func (v Video) NewFormat(itag int) (Format, error) {
    for _, format := range v.StreamingData.AdaptiveFormats {
       if format.Itag == itag { return format, nil }
    }
-   return Format{}, errors.New("itag not found")
+   return Format{}, fmt.Errorf("itag %v", itag)
 }
 
 func (f Format) Write(w io.Writer, update bool) error {
