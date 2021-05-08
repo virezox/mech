@@ -6,6 +6,7 @@ import (
    "errors"
    "fmt"
    "github.com/robertkrimen/otto"
+   "io"
    "net/http"
    "net/url"
    "os"
@@ -76,7 +77,7 @@ func find(pat string, sub []byte) ([]byte, error) {
 }
 
 func get(addr string) (*bytes.Buffer, error) {
-   fmt.Println("Get", addr)
+   fmt.Println("\x1b[7m Get \x1b[m", addr)
    res, err := http.Get(addr)
    if err != nil { return nil, err }
    defer res.Body.Close()
@@ -109,6 +110,7 @@ func getBaseJs(update bool) ([]byte, error) {
 
 type Format struct {
    Bitrate int
+   ContentLength int64 `json:"contentLength,string"`
    Height int
    Itag int
    MimeType string
@@ -124,26 +126,57 @@ func (v Video) NewFormat(itag int) (Format, error) {
 }
 
 func (f Format) NewRequest(update bool) (*http.Request, error) {
+   if f.URL != "" {
+      return http.NewRequest("GET", f.URL, nil)
+   }
+   val, err := url.ParseQuery(f.SignatureCipher)
+   if err != nil { return nil, err }
+   baseJs, err := getBaseJs(update)
+   if err != nil { return nil, err }
+   sig, err := decrypt(val.Get("s"), baseJs)
+   if err != nil { return nil, err }
+   req, err := http.NewRequest("GET", val.Get("url"), nil)
+   if err != nil { return nil, err }
+   val = req.URL.Query()
+   val.Set("sig", sig)
+   req.URL.RawQuery = val.Encode()
+   return req, nil
+}
+
+const chunk = 10_000_000
+
+func (f Format) Write(w io.Writer, update bool) error {
    var req *http.Request
    if f.URL != "" {
       var err error
       req, err = http.NewRequest("GET", f.URL, nil)
-      if err != nil { return nil, err }
+      if err != nil { return err }
    } else {
       val, err := url.ParseQuery(f.SignatureCipher)
-      if err != nil { return nil, err }
+      if err != nil { return err }
       baseJs, err := getBaseJs(update)
-      if err != nil { return nil, err }
+      if err != nil { return err }
       sig, err := decrypt(val.Get("s"), baseJs)
-      if err != nil { return nil, err }
+      if err != nil { return err }
       req, err = http.NewRequest("GET", val.Get("url"), nil)
-      if err != nil { return nil, err }
+      if err != nil { return err }
       val = req.URL.Query()
       val.Set("sig", sig)
       req.URL.RawQuery = val.Encode()
    }
-   req.Header.Set("Range", "bytes=0-")
-   return req, nil
+   var pos int64
+   fmt.Println("GET", req.URL)
+   for pos < f.ContentLength {
+      bytes := fmt.Sprintf("bytes=%v-%v", pos, pos+chunk-1)
+      req.Header.Set("Range", bytes)
+      fmt.Println(bytes)
+      res, err := new(http.Client).Do(req)
+      if err != nil { return err }
+      defer res.Body.Close()
+      io.Copy(w, res.Body)
+      pos += chunk
+   }
+   return nil
 }
 
 type Video struct {
