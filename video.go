@@ -16,6 +16,8 @@ import (
 const (
    Origin = "https://www.youtube.com"
    chunk = 10_000_000
+   invert = "\x1b[7m"
+   reset = "\x1b[m"
 )
 
 func decrypt(sig string, js []byte) (string, error) {
@@ -79,7 +81,7 @@ func find(pat string, sub []byte) ([]byte, error) {
 }
 
 func get(addr string) (*bytes.Buffer, error) {
-   fmt.Println("\x1b[7m GET \x1b[m", addr)
+   fmt.Println(invert, "GET", reset, addr)
    res, err := http.Get(addr)
    if err != nil { return nil, err }
    defer res.Body.Close()
@@ -147,7 +149,7 @@ func (f Format) Write(w io.Writer, update bool) error {
       req.URL.RawQuery = val.Encode()
    }
    var pos int64
-   fmt.Println("\x1b[7m GET \x1b[m", req.URL)
+   fmt.Println(invert, "GET", reset, req.URL)
    for pos < f.ContentLength {
       bytes := fmt.Sprintf("bytes=%v-%v", pos, pos+chunk-1)
       req.Header.Set("Range", bytes)
