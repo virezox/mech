@@ -5,8 +5,10 @@ import (
    "encoding/json"
    "fmt"
    "github.com/robertkrimen/otto"
+   "io"
    "net/http"
    "net/url"
+   "os"
    "regexp"
 )
 
@@ -98,6 +100,42 @@ func (v Video) NewFormat(itag int) (Format, error) {
       if format.Itag == itag { return format, nil }
    }
    return Format{}, fmt.Errorf("itag %v", itag)
+}
+
+func (f Format) Write(w io.Writer) error {
+   var req *http.Request
+   if f.URL != "" {
+      var err error
+      req, err = http.NewRequest("GET", f.URL, nil)
+      if err != nil { return err }
+   } else {
+      val, err := url.ParseQuery(f.SignatureCipher)
+      if err != nil { return err }
+      baseJS, err := NewBaseJS()
+      if err != nil { return err }
+      create, err := os.ReadFile(baseJS.Create)
+      if err != nil { return err }
+      sig, err := decrypt(val.Get("s"), create)
+      if err != nil { return err }
+      req, err = http.NewRequest("GET", val.Get("url"), nil)
+      if err != nil { return err }
+      val = req.URL.Query()
+      val.Set("sig", sig)
+      req.URL.RawQuery = val.Encode()
+   }
+   var pos int64
+   fmt.Println(invert, "GET", reset, req.URL)
+   for pos < f.ContentLength {
+      bytes := fmt.Sprintf("bytes=%v-%v", pos, pos+chunk-1)
+      req.Header.Set("Range", bytes)
+      fmt.Println(bytes)
+      res, err := new(http.Client).Do(req)
+      if err != nil { return err }
+      defer res.Body.Close()
+      io.Copy(w, res.Body)
+      pos += chunk
+   }
+   return nil
 }
 
 type Video struct {
