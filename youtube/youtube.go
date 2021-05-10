@@ -23,8 +23,8 @@ func info(video youtube.Video) {
 
 func clean(r rune) rune {
    switch {
-   case strings.ContainsRune(`"*/:<>?\|`, r): return -1
-   default: return r
+      case strings.ContainsRune(`"*/:<>?\|`, r): return -1
+      default: return r
    }
 }
 
@@ -33,12 +33,11 @@ func download(video youtube.Video, itag int, update bool) error {
    if err != nil { return err }
    // destination
    semi := strings.IndexByte(format.MimeType, ';')
-   name := fmt.Sprintf(
-      "%v - %v.%v",
-      video.VideoDetails.Author,
-      video.VideoDetails.Title,
-      // audio/webm; codecs="opus"
-      format.MimeType[6:semi],
+   name := fmt.Sprint(
+      video.VideoDetails.Author, "-",
+      video.VideoDetails.Title, "-",
+      itag, ".",
+      format.MimeType[6:semi], // audio/webm; codecs="opus"
    )
    file, err := os.Create(strings.Map(clean, name))
    if err != nil { return err }
