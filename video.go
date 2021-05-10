@@ -4,9 +4,13 @@ import (
    "bytes"
    "encoding/json"
    "fmt"
+   "github.com/robertkrimen/otto"
    "io"
    "net/http"
    "net/url"
+   "os"
+   "path/filepath"
+   "regexp"
 )
 
 const (
@@ -15,6 +19,87 @@ const (
    invert = "\x1b[7m"
    reset = "\x1b[m"
 )
+
+func decrypt(sig string, js []byte) (string, error) {
+   re := `\n[^.]+\.split\(""\);[^\n]+`
+   child := regexp.MustCompile(re).Find(js)
+   if child == nil {
+      return "", fmt.Errorf("Find %v", re)
+   }
+   re = `\w+`
+   childName := regexp.MustCompile(re).Find(child)
+   if childName == nil {
+      return "", fmt.Errorf("Find %v", re)
+   }
+   re = `;\w+`
+   parentName := regexp.MustCompile(re).Find(child)
+   if parentName == nil {
+      return "", fmt.Errorf("Find %v", re)
+   }
+   parentName = parentName[1:]
+   re = fmt.Sprintf(`var %s=[^\n]+\n[^\n]+\n[^}]+}};`, parentName)
+   parent := regexp.MustCompile(re).Find(js)
+   if parent == nil {
+      return "", fmt.Errorf("Find %v", re)
+   }
+   vm := otto.New()
+   vm.Run(string(parent) + string(child))
+   value, err := vm.Call(string(childName), nil, sig)
+   if err != nil {
+      return "", fmt.Errorf("parent %q %v", parent, err)
+   }
+   return value.String(), nil
+   /*
+May 7 2021:
+var uy={wd:function(a,b){var c=a[0];a[0]=a[b%a.length];a[b%a.length]=c},
+kI:function(a){a.reverse()},
+NY:function(a,b){a.splice(0,b)}};wy.prototype.set=function(a,b){this.i[a]!==b&&(this.i[a]=b,this.url="")};
+vy=function(a){a=a.split("");uy.wd(a,41);uy.NY(a,3);uy.kI(a,41);uy.NY(a,2);uy.kI(a,5);uy.wd(a,62);uy.NY(a,3);uy.wd(a,69);uy.NY(a,2);return a.join("")};
+
+May 5 2021:
+var uy={bH:function(a,b){a.splice(0,b)},
+Fg:function(a,b){var c=a[0];a[0]=a[b%a.length];a[b%a.length]=c},
+S6:function(a){a.reverse()}};
+vy=function(a){a=a.split("");uy.bH(a,3);uy.Fg(a,7);uy.Fg(a,50);uy.S6(a,71);uy.bH(a,2);uy.S6(a,80);uy.Fg(a,38);return a.join("")};
+
+May 4 2021:
+var uy={an:function(a){a.reverse()},
+gN:function(a,b){a.splice(0,b)},
+J4:function(a,b){var c=a[0];a[0]=a[b%a.length];a[b%a.length]=c}};
+vy=function(a){a=a.split("");uy.gN(a,2);uy.J4(a,47);uy.gN(a,1);uy.an(a,49);uy.gN(a,2);uy.J4(a,4);uy.an(a,71);uy.J4(a,15);uy.J4(a,40);return a.join("")};
+
+May 3 2021:
+var uy={VP:function(a){a.reverse()},
+eG:function(a,b){var c=a[0];a[0]=a[b%a.length];a[b%a.length]=c},
+li:function(a,b){a.splice(0,b)}};
+vy=function(a){a=a.split("");uy.eG(a,50);uy.eG(a,48);uy.eG(a,23);uy.eG(a,31);return a.join("")};
+   */
+}
+
+func getBaseJs(update bool) ([]byte, error) {
+   cache, err := os.UserCacheDir()
+   if err != nil { return nil, err }
+   cache = filepath.Join(cache, "youtube")
+   play := filepath.Join(cache, "base.js")
+   if update {
+      buf, err := httpGet(Origin + "/iframe_api")
+      if err != nil { return nil, err }
+      re := regexp.MustCompile(`/player\\/\w+`)
+      id := re.Find(buf.Bytes())
+      if id == nil {
+         return nil, fmt.Errorf("Find %v", re)
+      }
+      base := fmt.Sprintf("/s/player/%s/player_ias.vflset/en_US/base.js", id[9:])
+      buf, err = httpGet(Origin + base)
+      if err != nil { return nil, err }
+      os.Mkdir(cache, os.ModeDir)
+      file, err := os.Create(play)
+      if err != nil { return nil, err }
+      defer file.Close()
+      file.ReadFrom(buf)
+   }
+   return os.ReadFile(play)
+}
 
 func httpGet(addr string) (*bytes.Buffer, error) {
    fmt.Println(invert, "GET", reset, addr)
