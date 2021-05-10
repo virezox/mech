@@ -52,12 +52,13 @@ func download(video youtube.Video, itag int, update bool) error {
 
 func main() {
    var (
+      atag, vtag int
       down, update bool
-      itag int
    )
    flag.BoolVar(&down, "d", false, "download")
    flag.BoolVar(&update, "u", false, "update base.js")
-   flag.IntVar(&itag, "i", 251, "itag")
+   flag.IntVar(&atag, "a", 251, "audio (0 to skip)")
+   flag.IntVar(&vtag, "v", 247, "video (0 to skip)")
    flag.Parse()
    if flag.NArg() != 1 {
       fmt.Println("youtube [flags] URL")
@@ -75,9 +76,17 @@ func main() {
       panic(err)
    }
    if down {
-      err := download(video, itag, update)
-      if err != nil {
-         panic(err)
+      if atag > 0 {
+         err := download(video, atag, update)
+         if err != nil {
+            panic(err)
+         }
+      }
+      if vtag > 0 {
+         err := download(video, vtag, update)
+         if err != nil {
+            panic(err)
+         }
       }
    } else {
       info(video)
