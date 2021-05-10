@@ -9,6 +9,7 @@ import (
    "net/http"
    "net/url"
    "os"
+   "path/filepath"
    "regexp"
 )
 
@@ -23,23 +24,23 @@ func decrypt(sig string, js []byte) (string, error) {
    re := `\n[^.]+\.split\(""\);[^\n]+`
    child := regexp.MustCompile(re).Find(js)
    if child == nil {
-      return "", fmt.Errorf("Find %v", re)
+      return "", fmt.Errorf("find %v", re)
    }
    re = `\w+`
    childName := regexp.MustCompile(re).Find(child)
    if childName == nil {
-      return "", fmt.Errorf("Find %v", re)
+      return "", fmt.Errorf("find %v", re)
    }
    re = `;\w+`
    parentName := regexp.MustCompile(re).Find(child)
    if parentName == nil {
-      return "", fmt.Errorf("Find %v", re)
+      return "", fmt.Errorf("find %v", re)
    }
    parentName = parentName[1:]
    re = fmt.Sprintf(`var %s=[^\n]+\n[^\n]+\n[^}]+}};`, parentName)
    parent := regexp.MustCompile(re).Find(js)
    if parent == nil {
-      return "", fmt.Errorf("Find %v", re)
+      return "", fmt.Errorf("find %v", re)
    }
    vm := otto.New()
    vm.Run(string(parent) + string(child))
@@ -83,6 +84,45 @@ func httpGet(addr string) (*bytes.Buffer, error) {
    buf := new(bytes.Buffer)
    buf.ReadFrom(res.Body)
    return buf, nil
+}
+
+
+type BaseJS struct {
+   Cache string
+   Create string
+}
+
+func NewBaseJS() (BaseJS, error) {
+   var (
+      b BaseJS
+      err error
+   )
+   b.Cache, err = os.UserCacheDir()
+   if err != nil {
+      return BaseJS{}, err
+   }
+   b.Cache = filepath.Join(b.Cache, "youtube")
+   b.Create = filepath.Join(b.Cache, "base.js")
+   return b, nil
+}
+
+func (b BaseJS) Get() error {
+   buf, err := httpGet(Origin + "/iframe_api")
+   if err != nil { return err }
+   re := regexp.MustCompile(`/player\\/\w+`)
+   id := re.Find(buf.Bytes())
+   if id == nil {
+      return fmt.Errorf("find %v", re)
+   }
+   get := fmt.Sprintf("/s/player/%s/player_ias.vflset/en_US/base.js", id[9:])
+   buf, err = httpGet(Origin + get)
+   if err != nil { return err }
+   os.Mkdir(b.Cache, os.ModeDir)
+   file, err := os.Create(b.Create)
+   if err != nil { return err }
+   defer file.Close()
+   _, err = file.ReadFrom(buf)
+   return err
 }
 
 type Format struct {

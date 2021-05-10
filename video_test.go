@@ -26,7 +26,15 @@ func TestSignatureCipher(t *testing.T) {
    if err != nil {
       t.Error(err)
    }
-   err = f.Write(io.Discard, true)
+   b, err := NewBaseJS()
+   if err != nil {
+      t.Error(err)
+   }
+   err = b.Get()
+   if err != nil {
+      t.Error(err)
+   }
+   err = f.Write(io.Discard)
    if err != nil {
       t.Error(err)
    }
@@ -41,7 +49,7 @@ func TestURL(t *testing.T) {
    if err != nil {
       t.Error(err)
    }
-   err = f.Write(io.Discard, false)
+   err = f.Write(io.Discard)
    if err != nil {
       t.Error(err)
    }

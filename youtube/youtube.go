@@ -10,13 +10,13 @@ import (
    "time"
 )
 
-func info(video youtube.Video) {
-   for _, f := range video.StreamingData.AdaptiveFormats {
+func getInfo(video youtube.Video) {
+   for _, format := range video.StreamingData.AdaptiveFormats {
       fmt.Println(
-         "itag:", f.Itag,
-         "bitrate:", f.Bitrate,
-         "height:", f.Height,
-         "mimetype:", f.MimeType,
+         "itag:", format.Itag,
+         "bitrate:", format.Bitrate,
+         "height:", format.Height,
+         "mimetype:", format.MimeType,
       )
    }
 }
@@ -28,10 +28,9 @@ func clean(r rune) rune {
    }
 }
 
-func download(video youtube.Video, itag int, update bool) error {
+func download(video youtube.Video, itag int) error {
    format, err := video.NewFormat(itag)
    if err != nil { return err }
-   // destination
    semi := strings.IndexByte(format.MimeType, ';')
    name := fmt.Sprint(
       video.VideoDetails.Author, "-",
@@ -42,9 +41,8 @@ func download(video youtube.Video, itag int, update bool) error {
    file, err := os.Create(strings.Map(clean, name))
    if err != nil { return err }
    defer file.Close()
-   // source
    begin := time.Now()
-   err = format.Write(file, update)
+   err = format.Write(file)
    if err != nil { return err }
    fmt.Println(time.Since(begin))
    return nil
@@ -53,17 +51,30 @@ func download(video youtube.Video, itag int, update bool) error {
 func main() {
    var (
       atag, vtag int
-      down, update bool
+      info, update bool
    )
-   flag.BoolVar(&down, "d", false, "download")
+   flag.BoolVar(&info, "i", false, "info only")
    flag.BoolVar(&update, "u", false, "update base.js")
    flag.IntVar(&atag, "a", 251, "audio (0 to skip)")
    flag.IntVar(&vtag, "v", 247, "video (0 to skip)")
    flag.Parse()
-   if flag.NArg() != 1 {
-      fmt.Println("youtube [flags] URL")
+   if len(os.Args) == 1 {
+      fmt.Println("youtube [flags] [URL]")
       flag.PrintDefaults()
-      os.Exit(1)
+      return
+   }
+   // update
+   if update {
+      base, err := youtube.NewBaseJS()
+      if err != nil {
+         panic(err)
+      }
+      base.Get()
+      return
+   }
+   // check URL
+   if flag.NArg() != 1 {
+      panic("missing URL")
    }
    arg := flag.Arg(0)
    watch, err := url.Parse(arg)
@@ -75,20 +86,23 @@ func main() {
    if err != nil {
       panic(err)
    }
-   if down {
-      if atag > 0 {
-         err := download(video, atag, update)
-         if err != nil {
-            panic(err)
-         }
+   // info
+   if info {
+      getInfo(video)
+      return
+   }
+   // audio
+   if atag > 0 {
+      err := download(video, atag)
+      if err != nil {
+         panic(err)
       }
-      if vtag > 0 {
-         err := download(video, vtag, update)
-         if err != nil {
-            panic(err)
-         }
+   }
+   // video
+   if vtag > 0 {
+      err := download(video, vtag)
+      if err != nil {
+         panic(err)
       }
-   } else {
-      info(video)
    }
 }
