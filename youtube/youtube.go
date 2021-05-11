@@ -31,16 +31,23 @@ func clean(r rune) rune {
 func download(video youtube.Video, itag int) error {
    format, err := video.NewFormat(itag)
    if err != nil { return err }
-   semi := strings.IndexByte(format.MimeType, ';')
-   name := fmt.Sprint(
-      video.VideoDetails.Author, "-",
-      video.VideoDetails.Title, "-",
-      itag, ".",
-      format.MimeType[6:semi], // audio/webm; codecs="opus"
+   ext := map[string]string{
+      "audio/mp4;": ".m4a",
+      "audio/webm": ".weba",
+      "video/mp4;": ".mp4",
+      "video/webm": ".webm",
+   }[format.MimeType[:10]]
+   create := fmt.Sprint(
+      video.Author(), "-", video.Title(), ext,
    )
-   file, err := os.Create(strings.Map(clean, name))
+   file, err := os.Create(strings.Map(clean, create))
    if err != nil { return err }
-   defer file.Close()
+   defer func() {
+      file.Close()
+      if err != nil {
+         os.Remove(file.Name())
+      }
+   }()
    begin := time.Now()
    err = format.Write(file)
    if err != nil { return err }
@@ -91,14 +98,13 @@ func main() {
       getInfo(video)
       return
    }
-   // audio
+   // download
    if atag > 0 {
       err := download(video, atag)
       if err != nil {
          panic(err)
       }
    }
-   // video
    if vtag > 0 {
       err := download(video, vtag)
       if err != nil {

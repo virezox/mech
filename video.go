@@ -81,11 +81,13 @@ func httpGet(addr string) (*bytes.Buffer, error) {
    res, err := http.Get(addr)
    if err != nil { return nil, err }
    defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return nil, fmt.Errorf("StatusCode %v", res.StatusCode)
+   }
    buf := new(bytes.Buffer)
    buf.ReadFrom(res.Body)
    return buf, nil
 }
-
 
 type BaseJS struct {
    Cache string
@@ -172,6 +174,9 @@ func (f Format) Write(w io.Writer) error {
       res, err := new(http.Client).Do(req)
       if err != nil { return err }
       defer res.Body.Close()
+      if res.StatusCode != http.StatusPartialContent {
+         return fmt.Errorf("StatusCode %v", res.StatusCode)
+      }
       io.Copy(w, res.Body)
       pos += chunk
    }
