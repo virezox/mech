@@ -11,7 +11,10 @@ import (
 )
 
 func getInfo(video youtube.Video) {
-   for _, format := range video.StreamingData.AdaptiveFormats {
+   fmt.Println("Author:", video.Author())
+   fmt.Println("Title:", video.Title())
+   fmt.Println()
+   for _, format := range video.Formats() {
       fmt.Println(
          "itag:", format.Itag,
          "bitrate:", format.Bitrate,
@@ -28,9 +31,7 @@ func clean(r rune) rune {
    }
 }
 
-func download(video youtube.Video, itag int) error {
-   format, err := video.NewFormat(itag)
-   if err != nil { return err }
+func download(video youtube.Video, format youtube.Format) error {
    ext := map[string]string{
       "audio/mp4;": ".m4a",
       "audio/webm": ".weba",
@@ -98,15 +99,29 @@ func main() {
       getInfo(video)
       return
    }
-   // download
+   // check formats
+   var afmt, vfmt youtube.Format
    if atag > 0 {
-      err := download(video, atag)
+      afmt, err = video.NewFormat(atag)
       if err != nil {
          panic(err)
       }
    }
    if vtag > 0 {
-      err := download(video, vtag)
+      vfmt, err = video.NewFormat(vtag)
+      if err != nil {
+         panic(err)
+      }
+   }
+   // download
+   if atag > 0 {
+      err := download(video, afmt)
+      if err != nil {
+         panic(err)
+      }
+   }
+   if vtag > 0 {
+      err := download(video, vfmt)
       if err != nil {
          panic(err)
       }

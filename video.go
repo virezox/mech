@@ -137,13 +137,6 @@ type Format struct {
    URL string
 }
 
-func (v Video) NewFormat(itag int) (Format, error) {
-   for _, format := range v.StreamingData.AdaptiveFormats {
-      if format.Itag == itag { return format, nil }
-   }
-   return Format{}, fmt.Errorf("itag %v", itag)
-}
-
 func (f Format) Write(w io.Writer) error {
    var req *http.Request
    if f.URL != "" {
@@ -229,6 +222,23 @@ func NewVideo(id string) (Video, error) {
 func (v Video) Author() string { return v.VideoDetails.Author }
 
 func (v Video) Description() string { return v.VideoDetails.ShortDescription }
+
+func (v Video) Formats() []Format {
+   var formats []Format
+   for _, format := range v.StreamingData.AdaptiveFormats {
+      if format.ContentLength > 0 {
+         formats = append(formats, format)
+      }
+   }
+   return formats
+}
+
+func (v Video) NewFormat(itag int) (Format, error) {
+   for _, format := range v.Formats() {
+      if format.Itag == itag { return format, nil }
+   }
+   return Format{}, fmt.Errorf("itag %v", itag)
+}
 
 func (v Video) PublishDate() string {
    return v.Microformat.PlayerMicroformatRenderer.PublishDate
