@@ -54,3 +54,15 @@ func TestURL(t *testing.T) {
       t.Error(err)
    }
 }
+
+func TestContentLength(t *testing.T) {
+   v, err := NewVideo("eAzIAjTBGgU")
+   if err != nil {
+      t.Error(err)
+   }
+   // this should fail
+   f, err := v.NewFormat(247)
+   if err == nil {
+      t.Error(f)
+   }
+}

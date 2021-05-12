@@ -11,7 +11,10 @@ import (
 )
 
 func getInfo(video youtube.Video) {
-   for _, format := range video.StreamingData.AdaptiveFormats {
+   fmt.Println("Author:", video.Author())
+   fmt.Println("Title:", video.Title())
+   fmt.Println()
+   for _, format := range video.Formats() {
       fmt.Println(
          "itag:", format.Itag,
          "bitrate:", format.Bitrate,
