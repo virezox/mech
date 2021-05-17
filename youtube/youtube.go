@@ -38,9 +38,7 @@ func download(video youtube.Video, format youtube.Format) error {
       "video/mp4;": ".mp4",
       "video/webm": ".webm",
    }[format.MimeType[:10]]
-   create := fmt.Sprint(
-      video.Author(), "-", video.Title(), ext,
-   )
+   create := video.Author() + "-" + video.Title() + ext
    file, err := os.Create(strings.Map(clean, create))
    if err != nil { return err }
    defer func() {
