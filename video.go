@@ -82,7 +82,7 @@ func httpGet(addr string) (*bytes.Buffer, error) {
    if err != nil { return nil, err }
    defer res.Body.Close()
    if res.StatusCode != http.StatusOK {
-      return nil, fmt.Errorf("StatusCode %v", res.StatusCode)
+      return nil, fmt.Errorf("httpGet StatusCode %v", res.StatusCode)
    }
    buf := new(bytes.Buffer)
    buf.ReadFrom(res.Body)
@@ -168,7 +168,7 @@ func (f Format) Write(w io.Writer) error {
       if err != nil { return err }
       defer res.Body.Close()
       if res.StatusCode != http.StatusPartialContent {
-         return fmt.Errorf("StatusCode %v", res.StatusCode)
+         return fmt.Errorf("Write StatusCode %v", res.StatusCode)
       }
       io.Copy(w, res.Body)
       pos += chunk
