@@ -45,11 +45,15 @@ func decrypt(sig string, js []byte) (string, error) {
    vm := otto.New()
    vm.Run(string(parent) + string(child))
    value, err := vm.Call(string(childName), nil, sig)
-   if err != nil {
-      return "", fmt.Errorf("parent %q %v", parent, err)
-   }
+   if err != nil { return "", err }
    return value.String(), nil
    /*
+May 19 2021:
+var ry={Ui:function(a,b){var c=a[0];a[0]=a[b%a.length];a[b%a.length]=c},
+Yg:function(a){a.reverse()},
+K6:function(a,b){a.splice(0,b)}};
+sy=function(a){a=a.split("");ry.K6(a,2);ry.Yg(a,59);ry.K6(a,3);return a.join("")};
+
 May 7 2021:
 var uy={wd:function(a,b){var c=a[0];a[0]=a[b%a.length];a[b%a.length]=c},
 kI:function(a){a.reverse()},
@@ -82,7 +86,7 @@ func httpGet(addr string) (*bytes.Buffer, error) {
    if err != nil { return nil, err }
    defer res.Body.Close()
    if res.StatusCode != http.StatusOK {
-      return nil, fmt.Errorf("httpGet StatusCode %v", res.StatusCode)
+      return nil, fmt.Errorf("StatusCode %v", res.StatusCode)
    }
    buf := new(bytes.Buffer)
    buf.ReadFrom(res.Body)
@@ -168,7 +172,7 @@ func (f Format) Write(w io.Writer) error {
       if err != nil { return err }
       defer res.Body.Close()
       if res.StatusCode != http.StatusPartialContent {
-         return fmt.Errorf("Write StatusCode %v", res.StatusCode)
+         return fmt.Errorf("StatusCode %v", res.StatusCode)
       }
       io.Copy(w, res.Body)
       pos += chunk
@@ -201,6 +205,7 @@ func NewVideo(id string) (Video, error) {
    }
    val := info.Query()
    val.Set("eurl", Origin)
+   val.Set("html5", "1")
    val.Set("video_id", id)
    info.RawQuery = val.Encode()
    buf, err := httpGet(info.String())
