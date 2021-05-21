@@ -113,22 +113,28 @@ func NewBaseJS() (BaseJS, error) {
 }
 
 func (b BaseJS) Get() error {
-   buf, err := httpGet(Origin + "/iframe_api")
+   res, err := http.Get(Origin + "/iframe_api")
    if err != nil { return err }
-   re := regexp.MustCompile(`/player\\/\w+`)
-   id := re.Find(buf.Bytes())
+   defer res.Body.Close()
+   body, err := io.ReadAll(res.Body)
+   if err != nil { return err }
+   re := regexp.MustCompile(`/player\\/(\w+)`)
+   id := re.FindSubmatch(body)
    if id == nil {
-      return fmt.Errorf("find %v", re)
+      return fmt.Errorf("FindSubmatch %v", re)
    }
-   get := fmt.Sprintf("/s/player/%s/player_ias.vflset/en_US/base.js", id[9:])
-   buf, err = httpGet(Origin + get)
-   if err != nil { return err }
    os.Mkdir(b.Cache, os.ModeDir)
    file, err := os.Create(b.Create)
    if err != nil { return err }
    defer file.Close()
-   _, err = file.ReadFrom(buf)
-   return err
+   get := fmt.Sprintf("/s/player/%s/player_ias.vflset/en_US/base.js", id[1])
+   {
+      res, err := http.Get(Origin + get)
+      if err != nil { return err }
+      defer res.Body.Close()
+      file.ReadFrom(res.Body)
+   }
+   return nil
 }
 
 type Format struct {
