@@ -37,7 +37,6 @@ Extract the `player_response` value. This will be a JSON object, like this:
       {
         "itag": 137,
         "mimeType": "video/mp4; codecs=\"avc1.640020\"",
-        "bitrate": 570464,
         "height": 1080,
         "signatureCipher": "s=VZVZOq0QJ8wRgIhANWm3sPF-2hbzQQGrErjQFMNmxTfALco..."
       }

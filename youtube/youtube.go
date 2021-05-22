@@ -10,16 +10,30 @@ import (
    "time"
 )
 
+func numberFormat(d int64, a ...string) string {
+   var (
+      e = float64(d)
+      f int
+   )
+   for e >= 1000 {
+      e /= 1000
+      f++
+   }
+   return fmt.Sprintf("%.1f", e) + a[f]
+}
+
 func getInfo(video youtube.Video) {
    fmt.Println("Author:", video.Author())
    fmt.Println("Title:", video.Title())
    fmt.Println()
-   for _, format := range video.Formats() {
-      fmt.Println(
-         "itag:", format.Itag,
-         "bitrate:", format.Bitrate,
-         "height:", format.Height,
-         "mimetype:", format.MimeType,
+   for _, f := range video.Formats() {
+      fmt.Printf(
+         "itag %v, height %v, %v, %v, %v\n",
+         f.Itag,
+         f.Height,
+         numberFormat(f.Bitrate, "", " kb/s", " mb/s", " gb/s"),
+         numberFormat(f.ContentLength, "", " kB", " MB", " GB"),
+         f.MimeType,
       )
    }
 }

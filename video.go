@@ -1,7 +1,6 @@
 package youtube
 
 import (
-   "bytes"
    "encoding/json"
    "fmt"
    "github.com/robertkrimen/otto"
@@ -80,19 +79,6 @@ vy=function(a){a=a.split("");uy.eG(a,50);uy.eG(a,48);uy.eG(a,23);uy.eG(a,31);ret
    */
 }
 
-func httpGet(addr string) (*bytes.Buffer, error) {
-   fmt.Println(invert, "GET", reset, addr)
-   res, err := http.Get(addr)
-   if err != nil { return nil, err }
-   defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return nil, fmt.Errorf("StatusCode %v", res.StatusCode)
-   }
-   buf := new(bytes.Buffer)
-   buf.ReadFrom(res.Body)
-   return buf, nil
-}
-
 type BaseJS struct {
    Cache string
    Create string
@@ -113,6 +99,7 @@ func NewBaseJS() (BaseJS, error) {
 }
 
 func (b BaseJS) Get() error {
+   fmt.Println(invert, "GET", reset, Origin + "/iframe_api")
    res, err := http.Get(Origin + "/iframe_api")
    if err != nil { return err }
    defer res.Body.Close()
@@ -128,6 +115,7 @@ func (b BaseJS) Get() error {
    if err != nil { return err }
    defer file.Close()
    get := fmt.Sprintf("/s/player/%s/player_ias.vflset/en_US/base.js", id[1])
+   fmt.Println(invert, "GET", reset, Origin + get)
    {
       res, err := http.Get(Origin + get)
       if err != nil { return err }
@@ -138,7 +126,7 @@ func (b BaseJS) Get() error {
 }
 
 type Format struct {
-   Bitrate int
+   Bitrate int64
    ContentLength int64 `json:"contentLength,string"`
    Height int
    Itag int
@@ -205,22 +193,31 @@ type Video struct {
 
 // NewVideo fetches video metadata
 func NewVideo(id string) (Video, error) {
-   info, err := url.Parse(Origin + "/get_video_info")
+   addr, err := url.Parse(Origin + "/get_video_info")
    if err != nil {
       return Video{}, err
    }
-   val := info.Query()
+   val := addr.Query()
    val.Set("eurl", Origin)
    val.Set("html5", "1")
    val.Set("video_id", id)
-   info.RawQuery = val.Encode()
-   buf, err := httpGet(info.String())
+   addr.RawQuery = val.Encode()
+   fmt.Println(invert, "GET", reset, addr)
+   res, err := http.Get(addr.String())
    if err != nil {
       return Video{}, err
    }
-   info.RawQuery = buf.String()
+   defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return Video{}, fmt.Errorf("StatusCode %v", res.StatusCode)
+   }
+   body, err := io.ReadAll(res.Body)
+   if err != nil {
+      return Video{}, err
+   }
+   addr.RawQuery = string(body)
    var (
-      play = info.Query().Get("player_response")
+      play = addr.Query().Get("player_response")
       vid Video
    )
    err = json.Unmarshal([]byte(play), &vid)
