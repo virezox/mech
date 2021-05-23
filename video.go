@@ -35,8 +35,7 @@ func decrypt(sig string, js []byte) (string, error) {
    if parentName == nil {
       return "", fmt.Errorf("find %v", re)
    }
-   parentName = parentName[1:]
-   re = fmt.Sprintf(`var %s=[^\n]+\n[^\n]+\n[^}]+}};`, parentName)
+   re = fmt.Sprintf(`var %s=[^\n]+\n[^\n]+\n[^}]+}};`, parentName[1:])
    parent := regexp.MustCompile(re).Find(js)
    if parent == nil {
       return "", fmt.Errorf("find %v", re)
