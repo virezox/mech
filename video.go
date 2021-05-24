@@ -3,7 +3,6 @@ package youtube
 import (
    "encoding/json"
    "fmt"
-   "github.com/robertkrimen/otto"
    "io"
    "net/http"
    "net/url"
@@ -19,82 +18,20 @@ const (
    reset = "\x1b[m"
 )
 
-func decrypt(sig string, js []byte) (string, error) {
-   re := `\n[^.]+\.split\(""\);[^\n]+`
-   child := regexp.MustCompile(re).Find(js)
-   if child == nil {
-      return "", fmt.Errorf("find %v", re)
-   }
-   re = `\w+`
-   childName := regexp.MustCompile(re).Find(child)
-   if childName == nil {
-      return "", fmt.Errorf("find %v", re)
-   }
-   re = `;\w+`
-   parentName := regexp.MustCompile(re).Find(child)
-   if parentName == nil {
-      return "", fmt.Errorf("find %v", re)
-   }
-   re = fmt.Sprintf(`var %s=[^\n]+\n[^\n]+\n[^}]+}};`, parentName[1:])
-   parent := regexp.MustCompile(re).Find(js)
-   if parent == nil {
-      return "", fmt.Errorf("find %v", re)
-   }
-   vm := otto.New()
-   vm.Run(string(parent) + string(child))
-   value, err := vm.Call(string(childName), nil, sig)
-   if err != nil { return "", err }
-   return value.String(), nil
-   /*
-May 19 2021:
-var ry={Ui:function(a,b){var c=a[0];a[0]=a[b%a.length];a[b%a.length]=c},
-Yg:function(a){a.reverse()},
-K6:function(a,b){a.splice(0,b)}};
-sy=function(a){a=a.split("");ry.K6(a,2);ry.Yg(a,59);ry.K6(a,3);return a.join("")};
-
-May 7 2021:
-var uy={wd:function(a,b){var c=a[0];a[0]=a[b%a.length];a[b%a.length]=c},
-kI:function(a){a.reverse()},
-NY:function(a,b){a.splice(0,b)}};wy.prototype.set=function(a,b){this.i[a]!==b&&(this.i[a]=b,this.url="")};
-vy=function(a){a=a.split("");uy.wd(a,41);uy.NY(a,3);uy.kI(a,41);uy.NY(a,2);uy.kI(a,5);uy.wd(a,62);uy.NY(a,3);uy.wd(a,69);uy.NY(a,2);return a.join("")};
-
-May 5 2021:
-var uy={bH:function(a,b){a.splice(0,b)},
-Fg:function(a,b){var c=a[0];a[0]=a[b%a.length];a[b%a.length]=c},
-S6:function(a){a.reverse()}};
-vy=function(a){a=a.split("");uy.bH(a,3);uy.Fg(a,7);uy.Fg(a,50);uy.S6(a,71);uy.bH(a,2);uy.S6(a,80);uy.Fg(a,38);return a.join("")};
-
-May 4 2021:
-var uy={an:function(a){a.reverse()},
-gN:function(a,b){a.splice(0,b)},
-J4:function(a,b){var c=a[0];a[0]=a[b%a.length];a[b%a.length]=c}};
-vy=function(a){a=a.split("");uy.gN(a,2);uy.J4(a,47);uy.gN(a,1);uy.an(a,49);uy.gN(a,2);uy.J4(a,4);uy.an(a,71);uy.J4(a,15);uy.J4(a,40);return a.join("")};
-
-May 3 2021:
-var uy={VP:function(a){a.reverse()},
-eG:function(a,b){var c=a[0];a[0]=a[b%a.length];a[b%a.length]=c},
-li:function(a,b){a.splice(0,b)}};
-vy=function(a){a=a.split("");uy.eG(a,50);uy.eG(a,48);uy.eG(a,23);uy.eG(a,31);return a.join("")};
-   */
-}
-
 type BaseJS struct {
    Cache string
    Create string
 }
 
 func NewBaseJS() (BaseJS, error) {
-   var (
-      b BaseJS
-      err error
-   )
-   b.Cache, err = os.UserCacheDir()
+   cache, err := os.UserCacheDir()
    if err != nil {
       return BaseJS{}, err
    }
-   b.Cache = filepath.Join(b.Cache, "youtube")
-   b.Create = filepath.Join(b.Cache, "base.js")
-   return b, nil
+   cache = filepath.Join(cache, "youtube")
+   return BaseJS{
+      cache, filepath.Join(cache, "base.js"),
+   }, nil
 }
 
 func (b BaseJS) Get() error {
@@ -132,45 +69,6 @@ type Format struct {
    MimeType string
    SignatureCipher string
    URL string
-}
-
-func (f Format) Write(w io.Writer) error {
-   var req *http.Request
-   if f.URL != "" {
-      var err error
-      req, err = http.NewRequest("GET", f.URL, nil)
-      if err != nil { return err }
-   } else {
-      val, err := url.ParseQuery(f.SignatureCipher)
-      if err != nil { return err }
-      baseJS, err := NewBaseJS()
-      if err != nil { return err }
-      create, err := os.ReadFile(baseJS.Create)
-      if err != nil { return err }
-      sig, err := decrypt(val.Get("s"), create)
-      if err != nil { return err }
-      req, err = http.NewRequest("GET", val.Get("url"), nil)
-      if err != nil { return err }
-      val = req.URL.Query()
-      val.Set("sig", sig)
-      req.URL.RawQuery = val.Encode()
-   }
-   var pos int64
-   fmt.Println(invert, "GET", reset, req.URL)
-   for pos < f.ContentLength {
-      bytes := fmt.Sprintf("bytes=%v-%v", pos, pos+chunk-1)
-      req.Header.Set("Range", bytes)
-      fmt.Println(bytes)
-      res, err := new(http.Client).Do(req)
-      if err != nil { return err }
-      defer res.Body.Close()
-      if res.StatusCode != http.StatusPartialContent {
-         return fmt.Errorf("StatusCode %v", res.StatusCode)
-      }
-      io.Copy(w, res.Body)
-      pos += chunk
-   }
-   return nil
 }
 
 type Video struct {
