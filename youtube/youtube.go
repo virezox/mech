@@ -62,8 +62,8 @@ func download(video youtube.Video, format youtube.Format) error {
       }
    }()
    begin := time.Now()
-   err = format.Write(file)
-   if err != nil { return err }
+   if err := format.Write(file)
+   err != nil { return err }
    fmt.Println(time.Since(begin))
    return nil
 }
@@ -114,27 +114,23 @@ func main() {
    // check formats
    var afmt, vfmt youtube.Format
    if atag > 0 {
-      afmt, err = video.NewFormat(atag)
-      if err != nil {
+      if afmt, err = video.NewFormat(atag); err != nil {
          panic(err)
       }
    }
    if vtag > 0 {
-      vfmt, err = video.NewFormat(vtag)
-      if err != nil {
+      if vfmt, err = video.NewFormat(vtag); err != nil {
          panic(err)
       }
    }
    // download
    if atag > 0 {
-      err := download(video, afmt)
-      if err != nil {
+      if err := download(video, afmt); err != nil {
          panic(err)
       }
    }
    if vtag > 0 {
-      err := download(video, vfmt)
-      if err != nil {
+      if err := download(video, vfmt); err != nil {
          panic(err)
       }
    }

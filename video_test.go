@@ -30,12 +30,10 @@ func TestSignatureCipher(t *testing.T) {
    if err != nil {
       t.Error(err)
    }
-   err = b.Get()
-   if err != nil {
+   if err := b.Get(); err != nil {
       t.Error(err)
    }
-   err = f.Write(io.Discard)
-   if err != nil {
+   if err := f.Write(io.Discard); err != nil {
       t.Error(err)
    }
 }
@@ -49,8 +47,7 @@ func TestURL(t *testing.T) {
    if err != nil {
       t.Error(err)
    }
-   err = f.Write(io.Discard)
-   if err != nil {
+   if err := f.Write(io.Discard); err != nil {
       t.Error(err)
    }
 }
