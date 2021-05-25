@@ -52,25 +52,25 @@ func main() {
       return
    }
    // check formats
-   var afmt, vfmt youtube.Format
+   var forms []youtube.Format
    if atag > 0 {
-      if afmt, err = video.NewFormat(atag); err != nil {
+      format, err := video.NewFormat(atag)
+      if err != nil {
          panic(err)
       }
+      forms = append(forms, format)
    }
    if vtag > 0 {
-      if vfmt, err = video.NewFormat(vtag); err != nil {
+      format, err := video.NewFormat(vtag)
+      if err != nil {
          panic(err)
       }
+      forms = append(forms, format)
    }
    // download
-   if atag > 0 {
-      if err := download(video, afmt); err != nil {
-         panic(err)
-      }
-   }
-   if vtag > 0 {
-      if err := download(video, vfmt); err != nil {
+   for _, form := range forms {
+      err := download(video, form)
+      if err != nil {
          panic(err)
       }
    }
