@@ -57,7 +57,10 @@ func (b BaseJS) Get() error {
       res, err := http.Get(Origin + get)
       if err != nil { return err }
       defer res.Body.Close()
-      file.ReadFrom(res.Body)
+      {
+         _, err := file.ReadFrom(res.Body)
+         if err != nil { return err }
+      }
    }
    return nil
 }
