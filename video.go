@@ -53,13 +53,12 @@ func (b BaseJS) Get() error {
    defer file.Close()
    get := fmt.Sprintf("/s/player/%s/player_ias.vflset/en_US/base.js", id[1])
    fmt.Println(invert, "GET", reset, Origin + get)
-   {
-      res, err := http.Get(Origin + get)
-      if err != nil { return err }
+   if res, err := http.Get(Origin + get); err != nil {
+      return err
+   } else {
       defer res.Body.Close()
-      {
-         _, err := file.ReadFrom(res.Body)
-         if err != nil { return err }
+      if _, err := file.ReadFrom(res.Body); err != nil {
+         return err
       }
    }
    return nil
