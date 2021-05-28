@@ -89,7 +89,9 @@ func (f Format) Write(w io.Writer) error {
       if res.StatusCode != http.StatusPartialContent {
          return fmt.Errorf("StatusCode %v", res.StatusCode)
       }
-      io.Copy(w, res.Body)
+      if _, err := io.Copy(w, res.Body); err != nil {
+         return err
+      }
       pos += chunk
    }
    return nil
