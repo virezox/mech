@@ -37,10 +37,10 @@ func getInfo(video youtube.Video) {
 }
 
 func clean(r rune) rune {
-   switch {
-      case strings.ContainsRune(`"*/:<>?\|`, r): return -1
-      default: return r
+   if strings.ContainsRune(`"*/:<>?\|`, r) {
+      return -1
    }
+   return r
 }
 
 func download(video youtube.Video, format youtube.Format) error {

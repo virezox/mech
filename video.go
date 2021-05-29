@@ -105,7 +105,7 @@ func (f Format) request() (*http.Request, error) {
    if err != nil { return nil, err }
    js, err := os.ReadFile(baseJS.Create)
    if err != nil { return nil, err }
-   re := `\n[^.]+\.split\(""\);[^\n]+`
+   re := `\n[^.]+\.split\(""\);.+`
    child := regexp.MustCompile(re).Find(js)
    if child == nil {
       return nil, fmt.Errorf("find %v", re)
@@ -120,7 +120,7 @@ func (f Format) request() (*http.Request, error) {
    if parentName == nil {
       return nil, fmt.Errorf("find %v", re)
    }
-   re = fmt.Sprintf(`var %s=[^\n]+\n[^\n]+\n[^}]+}};`, parentName[1])
+   re = fmt.Sprintf(`var %s=.+\n.+\n[^}]+}};`, parentName[1])
    parent := regexp.MustCompile(re).Find(js)
    if parent == nil {
       return nil, fmt.Errorf("find %v", re)
