@@ -128,7 +128,9 @@ func (f Format) request() (*http.Request, error) {
    val, err := url.ParseQuery(f.SignatureCipher)
    if err != nil { return nil, err }
    vm := otto.New()
-   vm.Run(string(parent) + string(child))
+   if _, err := vm.Run(string(parent) + string(child)); err != nil {
+      return nil, err
+   }
    sig, err := vm.Call(string(childName), nil, val.Get("s"))
    if err != nil { return nil, err }
    req, err := http.NewRequest("GET", val.Get("url"), nil)
