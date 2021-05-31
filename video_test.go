@@ -14,52 +14,52 @@ const desc = "Provided to YouTube by Epitaph\n\nSnowflake · Kate Bush\n\n" +
 func TestSignatureCipher(t *testing.T) {
    v, err := NewVideo("XeojXq6ySs4")
    if err != nil {
-      t.Error(err)
+      t.Fatal(err)
    }
    if v.Description() != desc {
-      t.Errorf("%+v\n", v)
+      t.Fatalf("%+v\n", v)
    }
    if v.ViewCount() == 0 {
-      t.Errorf("%+v\n", v)
+      t.Fatalf("%+v\n", v)
    }
    f, err := v.NewFormat(249)
    if err != nil {
-      t.Error(err)
+      t.Fatal(err)
    }
    b, err := NewBaseJS()
    if err != nil {
-      t.Error(err)
+      t.Fatal(err)
    }
    if err := b.Get(); err != nil {
-      t.Error(err)
+      t.Fatal(err)
    }
    if err := f.Write(io.Discard); err != nil {
-      t.Error(err)
+      t.Fatal(err)
    }
 }
 
 func TestURL(t *testing.T) {
    v, err := NewVideo("x8_KsatcC8c")
    if err != nil {
-      t.Error(err)
+      t.Fatal(err)
    }
    f, err := v.NewFormat(249)
    if err != nil {
-      t.Error(err)
+      t.Fatal(err)
    }
    if err := f.Write(io.Discard); err != nil {
-      t.Error(err)
+      t.Fatal(err)
    }
 }
 
 func TestContentLength(t *testing.T) {
    v, err := NewVideo("eAzIAjTBGgU")
    if err != nil {
-      t.Error(err)
+      t.Fatal(err)
    }
    // this should fail
    f, err := v.NewFormat(247)
    if err == nil {
-      t.Error(f)
+      t.Fatal(f)
    }
 }
