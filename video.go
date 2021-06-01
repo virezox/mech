@@ -187,7 +187,9 @@ func NewVideo(id string) (Video, error) {
       play = addr.Query().Get("player_response")
       vid Video
    )
-   json.Unmarshal([]byte(play), &vid)
+   if err := json.Unmarshal([]byte(play), &vid); err != nil {
+      return Video{}, err
+   }
    return vid, nil
 }
 
