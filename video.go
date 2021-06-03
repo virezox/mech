@@ -193,9 +193,13 @@ func NewVideo(id string) (Video, error) {
    return vid, nil
 }
 
-func (v Video) Author() string { return v.VideoDetails.Author }
+func (v Video) Author() string {
+   return v.VideoDetails.Author
+}
 
-func (v Video) Description() string { return v.VideoDetails.ShortDescription }
+func (v Video) Description() string {
+   return v.VideoDetails.ShortDescription
+}
 
 func (v Video) Formats() []Format {
    var formats []Format
