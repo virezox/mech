@@ -147,6 +147,7 @@ type Video struct {
    }
    Microformat struct {
       PlayerMicroformatRenderer struct {
+         AvailableCountries []string
          PublishDate string
       }
    }
@@ -195,6 +196,10 @@ func NewVideo(id string) (Video, error) {
 
 func (v Video) Author() string {
    return v.VideoDetails.Author
+}
+
+func (v Video) Countries() []string {
+   return v.Microformat.PlayerMicroformatRenderer.AvailableCountries
 }
 
 func (v Video) Description() string {

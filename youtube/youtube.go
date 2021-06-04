@@ -21,8 +21,12 @@ func numberFormat(d int64, a ...string) string {
 }
 
 func getInfo(video youtube.Video) {
-   fmt.Println("Author:", video.Author())
-   fmt.Println("Title:", video.Title())
+   fmt.Println("author:", video.Author())
+   fmt.Println("title:", video.Title())
+   fmt.Println("countries:", video.Countries())
+   if len(video.Formats()) == 0 {
+      return
+   }
    fmt.Println()
    for _, f := range video.Formats() {
       fmt.Printf(
