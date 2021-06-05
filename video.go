@@ -227,6 +227,10 @@ func (v Video) PublishDate() string {
    return v.Microformat.PlayerMicroformatRenderer.PublishDate
 }
 
-func (v Video) Title() string { return v.VideoDetails.Title }
+func (v Video) Title() string {
+   return v.VideoDetails.Title
+}
 
-func (v Video) ViewCount() int { return v.VideoDetails.ViewCount }
+func (v Video) ViewCount() int {
+   return v.VideoDetails.ViewCount
+}
