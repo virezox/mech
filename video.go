@@ -218,7 +218,9 @@ func (v Video) Formats() []Format {
 
 func (v Video) NewFormat(itag int) (Format, error) {
    for _, format := range v.Formats() {
-      if format.Itag == itag { return format, nil }
+      if format.Itag == itag {
+         return format, nil
+      }
    }
    return Format{}, fmt.Errorf("itag %v", itag)
 }
