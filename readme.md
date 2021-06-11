@@ -4,6 +4,10 @@ Download from YouTube
 
 https://pkg.go.dev/github.com/89z/youtube
 
+## Free proxy list
+
+https://proxy.webshare.io/register
+
 ## Process
 
 Start with a typical video:
