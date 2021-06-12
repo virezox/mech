@@ -8,6 +8,7 @@ https://pkg.go.dev/github.com/89z/mech
 
 - Deezer
 - MusicBrainz
+- RARBG
 - Rotten Tomatoes
 - YouTube
 - ocr.space
