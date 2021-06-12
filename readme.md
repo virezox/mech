@@ -10,3 +10,4 @@ https://pkg.go.dev/github.com/89z/mech
 - MusicBrainz
 - Rotten Tomatoes
 - YouTube
+- ocr.space
