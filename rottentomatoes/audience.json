@@ -1,0 +1,76 @@
+{
+  "scoreboard": {
+    "audienceBandedRatingCount": "500+",
+    "audienceCount": 982,
+    "audienceCountHref": "/m/one_night_in_miami/reviews?type=user&intcmp=rt-scorecard_audience-score-reviews",
+    "audienceRatingCopy": "Ratings",
+    "audienceScore": "79",
+    "audienceState": "upright",
+    "hasVerifiedAudienceScore": false,
+    "info": "2020, Drama, 1h 50m",
+    "rating": "R",
+    "title": "One Night in Miami",
+    "tomatometerCount": 327,
+    "tomatometerCountHref": "/m/one_night_in_miami/reviews?intcmp=rt-scorecard_tomatometer-reviews",
+    "tomatometerScore": "98",
+    "tomatometerState": "certified-fresh"
+  },
+  "modal": {
+    "audienceScoreAll": {
+      "averageRating": "3.9",
+      "bandedRatingCount": "500+",
+      "certified": false,
+      "likedCount": 780,
+      "notLikedCount": 202,
+      "ratingCount": 982,
+      "reviewCount": 94,
+      "score": "79",
+      "scoreSentiment": "POSITIVE",
+      "scoreType": "ALL",
+      "audienceClass": "upright"
+    },
+    "audienceScoreVerified": {
+      "averageRating": null,
+      "bandedRatingCount": "Fewer than 50",
+      "certified": false,
+      "likedCount": 2,
+      "notLikedCount": 1,
+      "ratingCount": 3,
+      "reviewCount": 1,
+      "score": null,
+      "scoreSentiment": null,
+      "scoreType": "VERIFIED",
+      "audienceClass": "N/A"
+    },
+    "hasTomatometerScoreAll": true,
+    "hasTomatometerScoreTop": true,
+    "hasAudienceScoreAll": true,
+    "hasAudienceScoreVerified": false,
+    "tomatometerScoreAll": {
+      "averageRating": "8.30",
+      "bandedRatingCount": "",
+      "certified": true,
+      "likedCount": 321,
+      "notLikedCount": 6,
+      "ratingCount": 327,
+      "reviewCount": 327,
+      "score": "98",
+      "scoreSentiment": "POSITIVE",
+      "scoreType": "",
+      "tomatometerState": "certified-fresh"
+    },
+    "tomatometerScoreTop": {
+      "averageRating": "8.20",
+      "bandedRatingCount": "",
+      "certified": true,
+      "likedCount": 77,
+      "notLikedCount": 2,
+      "ratingCount": 79,
+      "reviewCount": 79,
+      "score": "97",
+      "scoreSentiment": "POSITIVE",
+      "scoreType": "",
+      "tomatometerState": "certified-fresh"
+    }
+  }
+}
