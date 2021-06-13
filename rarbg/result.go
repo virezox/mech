@@ -1,4 +1,4 @@
-package torrent
+package rarbg
 
 import (
    "encoding/json"
@@ -41,7 +41,7 @@ type Result struct {
 func NewResults(search, page string) ([]Result, error) {
    cache, err := os.UserCacheDir()
    if err != nil { return nil, err }
-   skt, err := os.Open(cache + "/torrent/skt.json")
+   skt, err := os.Open(cache + "/mech/skt.json")
    if err != nil { return nil, err }
    defer skt.Close()
    cookie := new(http.Cookie)

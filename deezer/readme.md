@@ -1,15 +1,6 @@
 # Deezer
 
-> Listen, um, I don’t really know what’s going on here, but I’m leaving. I
-> don’t know where exactly, but I’m gonna start over.
->
-> Come with me. Please.
->
-> [Paint it Black (2016)][1]
-
 Download audio from Deezer
-
-[![][3]][2]
 
 ## ARL cookie
 
@@ -42,7 +33,3 @@ C          | https://github.com/yne/dzr
 Go         | https://github.com/godeezer/lib
 Go         | https://github.com/moon004/Go-deezer-downloader
 JavaScript | https://github.com/svbnet/diezel
-
-[1]:https://f002.backblazeb2.com/file/ql8mlh/Paint.It.Black.2016.mp4
-[2]:https://pkg.go.dev/github.com/89z/deezer
-[3]:https://pkg.go.dev/badge/github.com/89z/deezer.svg

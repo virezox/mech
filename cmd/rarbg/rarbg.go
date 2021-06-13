@@ -3,7 +3,7 @@ package main
 import (
    "embed"
    "fmt"
-   "github.com/89z/torrent"
+   "github.com/89z/mech/rarbg"
    "html/template"
    "io"
    "net/http"
@@ -59,12 +59,12 @@ func index(w http.ResponseWriter, r *http.Request) {
    if search == "" {
       return
    }
-   in, err := torrent.NewResults(search, val.Get("page"))
+   in, err := rarbg.NewResults(search, val.Get("page"))
    if err != nil {
       panic(err)
    }
    var (
-      out []torrent.Result
+      out []rarbg.Result
       uniq = val.Get("uniq")
    )
    for _, r := range in {

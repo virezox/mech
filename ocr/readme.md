@@ -2,8 +2,6 @@
 
 Simple OCR
 
-https://pkg.go.dev/github.com/89z/lookup
-
 ~~~
 golang ocr -tesseract
 ~~~

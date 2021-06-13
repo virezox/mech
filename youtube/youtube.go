@@ -30,7 +30,7 @@ func NewBaseJS() (BaseJS, error) {
    if err != nil {
       return BaseJS{}, err
    }
-   cache = filepath.Join(cache, "youtube")
+   cache = filepath.Join(cache, "mech")
    return BaseJS{
       cache, filepath.Join(cache, "base.js"),
    }, nil

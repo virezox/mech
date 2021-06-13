@@ -4,7 +4,7 @@ import (
    "encoding/json"
    "flag"
    "fmt"
-   "github.com/89z/deezer"
+   "github.com/89z/mech/deezer"
    "io"
    "net/http"
    "os"

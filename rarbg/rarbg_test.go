@@ -1,12 +1,8 @@
-package torrent_test
+package rarbg
+import "testing"
 
-import (
-   "github.com/89z/torrent"
-   "testing"
-)
-
-func TestTorrent(t *testing.T) {
-   r, err := torrent.NewDefence()
+func TestDefence(t *testing.T) {
+   r, err := NewDefence()
    if err != nil {
       t.Fatal(err)
    }
@@ -14,11 +10,18 @@ func TestTorrent(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   solve, err := torrent.Solve(php)
+   solve, err := Solve(php)
    if err != nil {
       t.Fatal(err)
    }
    if err := r.IamHuman(id, solve); err != nil {
+      t.Fatal(err)
+   }
+}
+
+func TestResult(t *testing.T) {
+   _, err := NewResults("2020", "")
+   if err != nil {
       t.Fatal(err)
    }
 }

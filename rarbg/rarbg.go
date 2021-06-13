@@ -1,10 +1,10 @@
-// Rarbg Mechanize
-package torrent
+// RARBG
+package rarbg
 
 import (
    "encoding/json"
    "fmt"
-   "github.com/89z/torrent/ocr"
+   "github.com/89z/mech/ocr"
    "io"
    "net/http"
    "os"
@@ -106,8 +106,8 @@ func (d Defence) IamHuman(id, solve string) error {
       if c.Name != "skt" { continue }
       cache, err := os.UserCacheDir()
       if err != nil { return err }
-      os.Mkdir(cache + "/torrent", os.ModeDir)
-      file, err := os.Create(cache + "/torrent/skt.json")
+      os.Mkdir(cache + "/mech", os.ModeDir)
+      file, err := os.Create(cache + "/mech/skt.json")
       if err != nil { return err }
       defer file.Close()
       enc := json.NewEncoder(file)
