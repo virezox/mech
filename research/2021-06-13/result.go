@@ -5,7 +5,15 @@ import (
    "io"
 )
 
-type node struct { *html.Node }
+func tag(t string) func(node) bool {
+   return func(n node) bool {
+      return n.Data == t
+   }
+}
+
+type node struct {
+   *html.Node
+}
 
 func newNode(r io.Reader) (node, error) {
    d, err := html.Parse(r)
@@ -15,22 +23,38 @@ func newNode(r io.Reader) (node, error) {
    return node{d}, nil
 }
 
-func (n node) query(f func(n node) bool) node {
-   in := []node{n}
-   for len(in) > 0 {
-      n := in[0]
-      if f(n) {
-         return n
+func (n node) attr(key string) string {
+   for _, a := range n.Attr {
+      if a.Key == key {
+         return a.Val
       }
-      for c := n.FirstChild; c != nil; c = c.NextSibling {
-         in = append(in, node{c})
+   }
+   return ""
+}
+
+func (n node) byAttrAll(key, val string) []node {
+   return n.selector(true, func(n node) bool {
+      for _, a := range n.Attr {
+         if a.Key == key && a.Val == val {
+            return true
+         }
       }
-      in = in[1:]
+      return false
+   })
+}
+
+func (n node) byTag(name string) node {
+   for _, n := range n.selector(false, tag(name)) {
+      return n
    }
    return node{}
 }
 
-func (n node) queryAll(f func(n node) bool) []node {
+func (n node) byTagAll(name string) []node {
+   return n.selector(true, tag(name))
+}
+
+func (n node) selector(all bool, f func(n node) bool) []node {
    var (
       in = []node{n}
       out []node
@@ -39,6 +63,9 @@ func (n node) queryAll(f func(n node) bool) []node {
       n := in[0]
       if f(n) {
          out = append(out, n)
+         if ! all {
+            break
+         }
       }
       for c := n.FirstChild; c != nil; c = c.NextSibling {
          in = append(in, node{c})
@@ -48,47 +75,11 @@ func (n node) queryAll(f func(n node) bool) []node {
    return out
 }
 
-func (n node) allTag(t string) []node {
-   return n.queryAll(func(n node) bool {
-      return n.Data == t
-   })
-}
-
-func (n node) tag(t string) node {
-   return n.query(func(n node) bool {
-      return n.Data == t
-   })
-}
-
 func (n node) text() string {
-   n = n.query(func(n node) bool {
+   for _, n := range n.selector(false, func(n node) bool {
       return n.Type == html.TextNode
-   })
-   return n.Data
-}
-
-func class(c string) func(n node) bool {
-   return func(n node) bool {
-      for _, a := range n.Attr {
-         if a.Key == "class" && a.Val == c {
-            return true
-         }
-      }
-      return false
+   }) {
+      return n.Data
    }
-}
-
-func (n node) class(c string) node {
-   return n.query(class(c))
-}
-
-func (n node) allClass(c string) []node {
-   return n.queryAll(func(n node) bool {
-      for _, a := range n.Attr {
-         if a.Key == "class" && a.Val == c {
-            return true
-         }
-      }
-      return false
-   })
+   return ""
 }

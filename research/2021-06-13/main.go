@@ -15,24 +15,27 @@ func main() {
    if err != nil {
       panic(err)
    }
-   for _, tr := range doc.queryAll(class("lista2")) {
-      fmt.Printf("%+v\n", tr.Node)
-   }
-   /*
-   for _, tr := range doc.allClass("lista2") {
-      tds := tr.allTag("td")
+   for _, tr := range doc.byAttrAll("class", "lista2") {
+      tds := tr.byTagAll("td")
       // <td> <a> #text
-      title := tds[1].tag("a").text()
-      //        <td>    <a>        onmouseover
-      r.Image = tds[1].FirstChild.Attr[0].Val
-      //                   <td>    <a>        href
-      r.Torrent = Origin + tds[1].FirstChild.Attr[2].Val
-      //              <td>    #text     <span>      #text
-      r.Genre = tds[1].LastChild.PrevSibling.FirstChild.Data
-      //       <td>    #text
-      r.Size = tds[3].FirstChild.Data
-      //          <td>    <font>     #text
-      r.Seeders = tds[4].FirstChild.FirstChild.Data
+      title := tds[1].byTag("a").text()
+      fmt.Println(title)
+      // <td> <a> onmouseover
+      img := tds[1].byTag("a").attr("onmouseover")
+      fmt.Println(img)
+      // <td> <a> href
+      tor := tds[1].byTag("a").attr("href")
+      fmt.Println(tor)
+      // <td> #text <span> #text
+      gen := tds[1].byTag("span").text()
+      fmt.Println(gen)
+      // <td> #text
+      size := tds[3].text()
+      fmt.Println(size)
+      // <td> <font> #text
+      seed := tds[4].byTag("font").text()
+      fmt.Println(seed)
+      // newline
+      fmt.Println()
    }
-   */
 }
