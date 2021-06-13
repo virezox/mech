@@ -26,10 +26,9 @@ func getInfo(video youtube.Video) {
    fmt.Println("author:", video.Author())
    fmt.Println("title:", video.Title())
    fmt.Println("countries:", video.Countries())
-   if len(video.Formats()) == 0 {
-      return
+   if len(video.Formats()) > 0 {
+      fmt.Println()
    }
-   fmt.Println()
    for _, f := range video.Formats() {
       fmt.Printf(
          "itag %v, height %v, %v, %v, %v\n",
