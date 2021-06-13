@@ -22,50 +22,6 @@ type Group struct {
    Releases []Release
 }
 
-func NewGroup(groupID string) (*Group, error) {
-   req, err := http.NewRequest("GET", API, nil)
-   if err != nil { return nil, err }
-   val := req.URL.Query()
-   val.Set("fmt", "json")
-   val.Set("inc", "artist-credits recordings")
-   val.Set("release-group", groupID)
-   req.URL.RawQuery = val.Encode()
-   fmt.Println(invert, "GET", reset, req.URL)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil { return nil, err }
-   defer res.Body.Close()
-   g := new(Group)
-   if err := json.NewDecoder(res.Body).Decode(g); err != nil {
-      return nil, err
-   }
-   return g, nil
-}
-
-func GroupFromArtist(artistID string, offset int) (*Group, error) {
-   req, err := http.NewRequest("GET", API, nil)
-   if err != nil { return nil, err }
-   val := req.URL.Query()
-   val.Set("artist", artistID)
-   val.Set("fmt", "json")
-   val.Set("inc", "release-groups")
-   val.Set("limit", "100")
-   val.Set("status", "official")
-   val.Set("type", "album")
-   if offset > 0 {
-      val.Set("offset", strconv.Itoa(offset))
-   }
-   req.URL.RawQuery = val.Encode()
-   fmt.Println(invert, "GET", reset, req.URL)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil { return nil, err }
-   defer res.Body.Close()
-   g := new(Group)
-   if err := json.NewDecoder(res.Body).Decode(g); err != nil {
-      return nil, err
-   }
-   return g, nil
-}
-
 func (g Group) Sort() {
    sort.Slice(g.Releases, func(d, e int) bool {
       one, two := g.Releases[d], g.Releases[e]
@@ -120,24 +76,6 @@ type Release struct {
    Title string
 }
 
-func NewRelease(releaseID string) (*Release, error) {
-   req, err := http.NewRequest("GET", API + "/" + releaseID, nil)
-   if err != nil { return nil, err }
-   val := req.URL.Query()
-   val.Set("fmt", "json")
-   val.Set("inc", "artist-credits recordings")
-   req.URL.RawQuery = val.Encode()
-   fmt.Println(invert, "GET", reset, req.URL)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil { return nil, err }
-   defer res.Body.Close()
-   r := new(Release)
-   if err := json.NewDecoder(res.Body).Decode(r); err != nil {
-      return nil, err
-   }
-   return r, nil
-}
-
 func (r Release) date(width int) string {
    start := len(r.Date)
    right := "9999-12-31"[start:]
@@ -150,4 +88,78 @@ func (r Release) trackLen() int {
       count += media.TrackCount
    }
    return count
+}
+
+func NewGroup(groupID string) (Group, error) {
+   req, err := http.NewRequest("GET", API, nil)
+   if err != nil {
+      return Group{}, err
+   }
+   val := req.URL.Query()
+   val.Set("fmt", "json")
+   val.Set("inc", "artist-credits recordings")
+   val.Set("release-group", groupID)
+   req.URL.RawQuery = val.Encode()
+   fmt.Println(invert, "GET", reset, req.URL)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return Group{}, err
+   }
+   defer res.Body.Close()
+   var g Group
+   if err := json.NewDecoder(res.Body).Decode(&g); err != nil {
+      return Group{}, err
+   }
+   return g, nil
+}
+
+func GroupFromArtist(artistID string, offset int) (Group, error) {
+   req, err := http.NewRequest("GET", API, nil)
+   if err != nil {
+      return Group{}, err
+   }
+   val := req.URL.Query()
+   val.Set("artist", artistID)
+   val.Set("fmt", "json")
+   val.Set("inc", "release-groups")
+   val.Set("limit", "100")
+   val.Set("status", "official")
+   val.Set("type", "album")
+   if offset > 0 {
+      val.Set("offset", strconv.Itoa(offset))
+   }
+   req.URL.RawQuery = val.Encode()
+   fmt.Println(invert, "GET", reset, req.URL)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return Group{}, err
+   }
+   defer res.Body.Close()
+   var g Group
+   if err := json.NewDecoder(res.Body).Decode(&g); err != nil {
+      return Group{}, err
+   }
+   return g, nil
+}
+
+func NewRelease(releaseID string) (Release, error) {
+   req, err := http.NewRequest("GET", API + "/" + releaseID, nil)
+   if err != nil {
+      return Release{}, err
+   }
+   val := req.URL.Query()
+   val.Set("fmt", "json")
+   val.Set("inc", "artist-credits recordings")
+   req.URL.RawQuery = val.Encode()
+   fmt.Println(invert, "GET", reset, req.URL)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return Release{}, err
+   }
+   defer res.Body.Close()
+   var r Release
+   if err := json.NewDecoder(res.Body).Decode(&r); err != nil {
+      return Release{}, err
+   }
+   return r, nil
 }
