@@ -4,28 +4,11 @@ import (
    "encoding/json"
    "fmt"
    "golang.org/x/net/html"
+   "io"
    "net/http"
    "os"
    "regexp"
 )
-
-func queryAll(n *html.Node, f func(n *html.Node) bool) []*html.Node {
-   var (
-      in = []*html.Node{n}
-      out []*html.Node
-   )
-   for len(in) > 0 {
-      n := in[0]
-      if f(n) {
-         out = append(out, n)
-      }
-      for n = n.FirstChild; n != nil; n = n.NextSibling {
-         in = append(in, n)
-      }
-      in = in[1:]
-   }
-   return out
-}
 
 type Result struct {
    Genre string
@@ -70,43 +53,111 @@ func NewResults(search, page string) ([]Result, error) {
       return nil, err
    }
    defer res.Body.Close()
-   doc, err := html.Parse(res.Body)
+   doc, err := newNode(res.Body)
    if err != nil {
       return nil, err
    }
-   rows := queryAll(doc, func(n *html.Node) bool {
-      if n.Data != "tr" {
-         return false
-      }
-      if len(n.Attr) == 0 {
-         return false
-      }
-      return n.Attr[0].Val == "lista2"
-   })
    var results []Result
-   for _, row := range rows {
-      cols := queryAll(row, func(n *html.Node) bool {
-         return n.Data == "td"
-      })
+   for _, tr := range doc.byAttrAll("class", "lista2") {
       var r Result
-      //        <td>    <a>        #text
-      r.Title = cols[1].FirstChild.FirstChild.Data
-      //        <td>    <a>        onmouseover
-      r.Image = cols[1].FirstChild.Attr[0].Val
+      td := tr.byTagAll("td")
+      // title
+      r.Title = td[1].byTag("a").text()
+      // image
+      r.Image = td[1].byTag("a").attr("onmouseover")
       r.Image = regexp.MustCompile(`\d+`).FindString(r.Image)
       r.Image = fmt.Sprintf(
          "https://dyncdn.me/mimages/%v/poster_opt.jpg", r.Image,
       )
-      //                   <td>    <a>        href
-      r.Torrent = Origin + cols[1].FirstChild.Attr[2].Val
-      //              <td>    #text     <span>      #text
-      r.Genre = cols[1].LastChild.PrevSibling.FirstChild.Data
-      //       <td>    #text
-      r.Size = cols[3].FirstChild.Data
-      //          <td>    <font>     #text
-      r.Seeders = cols[4].FirstChild.FirstChild.Data
+      // torrent
+      r.Torrent = Origin + td[1].byTag("a").attr("href")
+      // genre
+      r.Genre = td[1].byTag("span").text()
+      // size
+      r.Size = td[3].text()
+      // seeders
+      r.Seeders = td[4].byTag("font").text()
       // append
       results = append(results, r)
    }
    return results, nil
+}
+
+func tag(t string) func(node) bool {
+   return func(n node) bool {
+      return n.Data == t
+   }
+}
+
+type node struct {
+   *html.Node
+}
+
+func newNode(r io.Reader) (node, error) {
+   d, err := html.Parse(r)
+   if err != nil {
+      return node{}, err
+   }
+   return node{d}, nil
+}
+
+func (n node) attr(key string) string {
+   for _, a := range n.Attr {
+      if a.Key == key {
+         return a.Val
+      }
+   }
+   return ""
+}
+
+func (n node) byAttrAll(key, val string) []node {
+   return n.selector(true, func(n node) bool {
+      for _, a := range n.Attr {
+         if a.Key == key && a.Val == val {
+            return true
+         }
+      }
+      return false
+   })
+}
+
+func (n node) byTag(name string) node {
+   for _, n := range n.selector(false, tag(name)) {
+      return n
+   }
+   return node{}
+}
+
+func (n node) byTagAll(name string) []node {
+   return n.selector(true, tag(name))
+}
+
+func (n node) selector(all bool, f func(n node) bool) []node {
+   var (
+      in = []node{n}
+      out []node
+   )
+   for len(in) > 0 {
+      n := in[0]
+      if f(n) {
+         out = append(out, n)
+         if ! all {
+            break
+         }
+      }
+      for c := n.FirstChild; c != nil; c = c.NextSibling {
+         in = append(in, node{c})
+      }
+      in = in[1:]
+   }
+   return out
+}
+
+func (n node) text() string {
+   for _, n := range n.selector(false, func(n node) bool {
+      return n.Type == html.TextNode
+   }) {
+      return n.Data
+   }
+   return ""
 }
