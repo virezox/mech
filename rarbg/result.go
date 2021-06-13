@@ -40,14 +40,20 @@ type Result struct {
 // saved the SKT cookie to the Cache folder using IamHuman.
 func NewResults(search, page string) ([]Result, error) {
    cache, err := os.UserCacheDir()
-   if err != nil { return nil, err }
+   if err != nil {
+      return nil, err
+   }
    skt, err := os.Open(cache + "/mech/skt.json")
-   if err != nil { return nil, err }
+   if err != nil {
+      return nil, err
+   }
    defer skt.Close()
    cookie := new(http.Cookie)
    json.NewDecoder(skt).Decode(cookie)
    req, err := http.NewRequest("GET", Origin + "/torrents.php", nil)
-   if err != nil { return nil, err }
+   if err != nil {
+      return nil, err
+   }
    val := req.URL.Query()
    val.Set("by", "DESC")
    val.Set("category", "movies")
@@ -60,10 +66,14 @@ func NewResults(search, page string) ([]Result, error) {
    req.AddCookie(cookie)
    fmt.Println(invert, "GET", reset, req.URL)
    res, err := new(http.Transport).RoundTrip(req)
-   if err != nil { return nil, err }
+   if err != nil {
+      return nil, err
+   }
    defer res.Body.Close()
    doc, err := html.Parse(res.Body)
-   if err != nil { return nil, err }
+   if err != nil {
+      return nil, err
+   }
    rows := queryAll(doc, func(n *html.Node) bool {
       if n.Data != "tr" {
          return false
