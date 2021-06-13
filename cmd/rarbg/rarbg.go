@@ -24,7 +24,7 @@ func image(w http.ResponseWriter, r *http.Request) {
    if err != nil {
       panic(err)
    }
-   cache = filepath.Join(cache, "torrent", r.URL.Path)
+   cache = filepath.Join(cache, "mech", r.URL.Path)
    if _, err := os.Stat(cache); err != nil {
       fmt.Println("Get", origin + r.URL.Path)
       res, err := http.Get(origin + r.URL.Path)

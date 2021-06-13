@@ -4,7 +4,7 @@ package rarbg
 import (
    "encoding/json"
    "fmt"
-   "github.com/89z/mech/ocr"
+   "github.com/89z/mech/ocr.space"
    "io"
    "net/http"
    "os"
