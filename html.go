@@ -5,9 +5,9 @@ import (
    "io"
 )
 
-func tag(t string) func(Node) bool {
+func tag(name string) func(Node) bool {
    return func(n Node) bool {
-      return n.Data == t
+      return n.Data == name
    }
 }
 
@@ -54,6 +54,15 @@ func (n Node) ByTagAll(name string) []Node {
    return n.selector(true, tag(name))
 }
 
+func (n Node) Text() string {
+   for _, n := range n.selector(false, func(n Node) bool {
+      return n.Type == html.TextNode
+   }) {
+      return n.Data
+   }
+   return ""
+}
+
 func (n Node) selector(all bool, f func(n Node) bool) []Node {
    var (
       in = []Node{n}
@@ -73,13 +82,4 @@ func (n Node) selector(all bool, f func(n Node) bool) []Node {
       in = in[1:]
    }
    return out
-}
-
-func (n Node) Text() string {
-   for _, n := range n.selector(false, func(n Node) bool {
-      return n.Type == html.TextNode
-   }) {
-      return n.Data
-   }
-   return ""
 }
