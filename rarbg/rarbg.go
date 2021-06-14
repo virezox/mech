@@ -12,6 +12,7 @@ import (
 
 const (
    AJAXPHP = "/threat_defence_ajax.php"
+   CaptchaPHP = "/threat_captcha.php"
    DefencePHP = "/threat_defence.php"
    Origin = "http://rarbg.to"
    Sleep = 4 * time.Second

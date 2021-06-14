@@ -5,6 +5,17 @@ import (
    "io"
 )
 
+func attr(key, val string) func(Node) bool {
+   return func(n Node) bool {
+      for _, a := range n.Node.Attr {
+         if a.Key == key && a.Val == val {
+            return true
+         }
+      }
+      return false
+   }
+}
+
 func tag(name string) func(Node) bool {
    return func(n Node) bool {
       return n.Data == name
@@ -32,15 +43,15 @@ func (n Node) Attr(key string) string {
    return ""
 }
 
+func (n Node) ByAttr(key, val string) Node {
+   for _, n := range n.selector(false, attr(key, val)) {
+      return n
+   }
+   return Node{}
+}
+
 func (n Node) ByAttrAll(key, val string) []Node {
-   return n.selector(true, func(n Node) bool {
-      for _, a := range n.Node.Attr {
-         if a.Key == key && a.Val == val {
-            return true
-         }
-      }
-      return false
-   })
+   return n.selector(true, attr(key, val))
 }
 
 func (n Node) ByTag(name string) Node {

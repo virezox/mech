@@ -3,10 +3,12 @@ package rarbg
 import (
    "encoding/json"
    "fmt"
+   "github.com/89z/mech"
    "io"
    "net/http"
    "os"
    "regexp"
+   "strings"
    "time"
 )
 
@@ -107,24 +109,17 @@ func (d Defence) ThreatCaptcha() (php string, id string, err error) {
       return "", "", err
    }
    defer res.Body.Close()
-   body, err := io.ReadAll(res.Body)
+   doc, err := mech.NewNode(res.Body)
    if err != nil {
       return "", "", err
    }
-   // captchaPHP
-   re := regexp.MustCompile(`/threat_captcha\.php\?[^"]+`)
-   captchaPHP := re.Find(body)
-   if captchaPHP == nil {
-      return "", "", fmt.Errorf("find %v", re)
+   for _, img := range doc.ByTagAll("img") {
+      src := img.Attr("src")
+      if strings.HasPrefix(src, CaptchaPHP) {
+         return src, doc.ByAttr("name", "captcha_id").Attr("value"), nil
+      }
    }
-   // captchaID
-   re = regexp.MustCompile(`"captcha_id" value="([^"]+)"`)
-   captchaID := re.FindSubmatch(body)
-   if captchaID == nil {
-      return "", "", fmt.Errorf("findSubmatch %v", re)
-   }
-   // return
-   return string(captchaPHP), string(captchaID[1]), nil
+   return "", "", fmt.Errorf("%q not found", CaptchaPHP)
 }
 
 func (d Defence) threatDefenceAJAX() error {
