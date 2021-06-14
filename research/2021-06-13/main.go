@@ -7,12 +7,12 @@ import (
 
 func main() {
    for range [9]struct{}{} {
-      d, err := newData("radiohead")
+      data, err := newYTInitialData("radiohead")
       if err != nil {
          panic(err)
       }
-      for _, item := range d.items() {
-         fmt.Printf("%+v\n", item)
+      for _, vid := range data.primaryContents().videoRenderers() {
+         fmt.Printf("%+v\n", vid)
       }
       time.Sleep(time.Second)
    }
