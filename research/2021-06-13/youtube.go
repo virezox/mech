@@ -8,7 +8,7 @@ import (
    "regexp"
 )
 
-type data struct {
+type search struct {
    Contents struct {
       TwoColumnSearchResultsRenderer struct {
          PrimaryContents struct {
@@ -24,10 +24,10 @@ type data struct {
    }
 }
 
-func (d data) items() []item {
+func (s search) items() []item {
    var (
       iCons []item
-      pCons = d.Contents.TwoColumnSearchResultsRenderer.PrimaryContents
+      pCons = s.Contents.TwoColumnSearchResultsRenderer.PrimaryContents
    )
    for _, sCon := range pCons.SectionListRenderer.Contents {
       for _, iCon := range sCon.ItemSectionRenderer.Contents {
@@ -45,10 +45,10 @@ type item struct {
    }
 }
 
-func newData(query string) (data, error) {
+func newData(query string) (search, error) {
    req, err := http.NewRequest("GET", "https://www.youtube.com/results", nil)
    if err != nil {
-      return data{}, err
+      return search{}, err
    }
    val := req.URL.Query()
    val.Set("search_query", query)
@@ -56,21 +56,21 @@ func newData(query string) (data, error) {
    fmt.Println("GET", req.URL)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
-      return data{}, err
+      return search{}, err
    }
    defer res.Body.Close()
    body, err := io.ReadAll(res.Body)
    if err != nil {
-      return data{}, err
+      return search{}, err
    }
    re := regexp.MustCompile(" ytInitialData = ([^;]+)")
    find := re.FindSubmatch(body)
    if find == nil {
-      return data{}, fmt.Errorf("FindSubmatch %v", re)
+      return search{}, fmt.Errorf("FindSubmatch %v", re)
    }
-   var d data
-   if err := json.Unmarshal(find[1], &d); err != nil {
-      return data{}, err
+   var s search
+   if err := json.Unmarshal(find[1], &s); err != nil {
+      return search{}, err
    }
-   return d, nil
+   return s, nil
 }
