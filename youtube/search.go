@@ -8,7 +8,7 @@ import (
    "regexp"
 )
 
-type ytInitialData struct {
+type Search struct {
    Contents struct {
       TwoColumnSearchResultsRenderer struct {
          PrimaryContents primaryContents
@@ -16,10 +16,10 @@ type ytInitialData struct {
    }
 }
 
-func newYTInitialData(query string) (ytInitialData, error) {
+func NewSearch(query string) (Search, error) {
    req, err := http.NewRequest("GET", "https://www.youtube.com/results", nil)
    if err != nil {
-      return ytInitialData{}, err
+      return Search{}, err
    }
    val := req.URL.Query()
    val.Set("search_query", query)
@@ -27,23 +27,41 @@ func newYTInitialData(query string) (ytInitialData, error) {
    fmt.Println("GET", req.URL)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
-      return ytInitialData{}, err
+      return Search{}, err
    }
    defer res.Body.Close()
    body, err := io.ReadAll(res.Body)
    if err != nil {
-      return ytInitialData{}, err
+      return Search{}, err
    }
    re := regexp.MustCompile(" ytInitialData = ([^;]+)")
    find := re.FindSubmatch(body)
    if find == nil {
-      return ytInitialData{}, fmt.Errorf("FindSubmatch %v", re)
+      return Search{}, fmt.Errorf("FindSubmatch %v", re)
    }
-   var data ytInitialData
-   if err := json.Unmarshal(find[1], &data); err != nil {
-      return ytInitialData{}, err
+   var s Search
+   if err := json.Unmarshal(find[1], &s); err != nil {
+      return Search{}, err
    }
-   return data, nil
+   return s, nil
+}
+
+func (s Search) VideoRenderers() []VideoRenderer {
+   var vids []VideoRenderer
+   for _, sect := range s.primaryContents().SectionListRenderer.Contents {
+      for _, item := range sect.ItemSectionRenderer.Contents {
+         vids = append(vids, item.VideoRenderer)
+      }
+   }
+   return vids
+}
+
+func (s Search) primaryContents() primaryContents {
+   return s.Contents.TwoColumnSearchResultsRenderer.PrimaryContents
+}
+
+type VideoRenderer struct {
+   VideoID string
 }
 
 type primaryContents struct {
@@ -51,27 +69,9 @@ type primaryContents struct {
       Contents []struct {
          ItemSectionRenderer struct {
             Contents []struct {
-               VideoRenderer videoRenderer
+               VideoRenderer VideoRenderer
             }
          }
       }
    }
-}
-
-func (d ytInitialData) primaryContents() primaryContents {
-   return d.Contents.TwoColumnSearchResultsRenderer.PrimaryContents
-}
-
-type videoRenderer struct {
-   VideoID string
-}
-
-func (p primaryContents) videoRenderers() []videoRenderer {
-   var video []videoRenderer
-   for _, section := range p.SectionListRenderer.Contents {
-      for _, item := range section.ItemSectionRenderer.Contents {
-         video = append(video, item.VideoRenderer)
-      }
-   }
-   return video
 }

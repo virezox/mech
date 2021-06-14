@@ -1,4 +1,3 @@
-// Deezer
 package deezer
 
 import (

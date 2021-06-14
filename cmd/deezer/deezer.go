@@ -41,24 +41,32 @@ func getArl(har string) (string, error) {
    return "", fmt.Errorf("Arl cookie not found")
 }
 
-func writeFile(sngId, arl, format string) error {
-   track, err := deezer.NewTrack(sngId, arl)
-   if err != nil { return err }
+func writeFile(sngID, arl, format string) error {
+   track, err := deezer.NewTrack(sngID, arl)
+   if err != nil {
+      return err
+   }
    var audio rune
    if format == "flac" {
       audio = deezer.FLAC
    } else {
       audio = deezer.MP3_320
    }
-   source, err := track.Source(sngId, audio)
-   if err != nil { return err }
+   source, err := track.Source(sngID, audio)
+   if err != nil {
+      return err
+   }
    fmt.Println(invert, "GET", reset, source)
    res, err := http.Get(source)
-   if err != nil { return err }
+   if err != nil {
+      return err
+   }
    defer res.Body.Close()
    body, err := io.ReadAll(res.Body)
-   if err != nil { return err }
-   if err := deezer.Decrypt(sngId, body); err != nil {
+   if err != nil {
+      return err
+   }
+   if err := deezer.Decrypt(sngID, body); err != nil {
       return err
    }
    name := fmt.Sprintf("%v - %v.%v", track.ART_NAME, track.SNG_TITLE, format)
