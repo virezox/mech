@@ -8,8 +8,8 @@ import (
 )
 
 func TestSearch(t *testing.T) {
-   for range [9]struct{}{} {
-      s, err := youtube.NewSearch("radiohead")
+   for _, query := range []string{"radiohead", "nelly furtado afraid"} {
+      s, err := youtube.NewSearch(query)
       if err != nil {
          t.Fatal(err)
       }

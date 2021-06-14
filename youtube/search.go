@@ -24,7 +24,7 @@ func NewSearch(query string) (Search, error) {
    val := req.URL.Query()
    val.Set("search_query", query)
    req.URL.RawQuery = val.Encode()
-   fmt.Println("GET", req.URL)
+   fmt.Println(invert, "GET", reset, req.URL)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return Search{}, err
@@ -34,7 +34,7 @@ func NewSearch(query string) (Search, error) {
    if err != nil {
       return Search{}, err
    }
-   re := regexp.MustCompile(" ytInitialData = ([^;]+)")
+   re := regexp.MustCompile(">var ytInitialData = (.+);<")
    find := re.FindSubmatch(body)
    if find == nil {
       return Search{}, fmt.Errorf("FindSubmatch %v", re)

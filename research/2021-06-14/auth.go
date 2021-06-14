@@ -1,4 +1,4 @@
-package deezer
+package main
 
 import (
    "bytes"
@@ -6,10 +6,7 @@ import (
    "net/http"
 )
 
-const (
-   gatewayAPI = "http://api.deezer.com/1.0/gateway.php"
-   gatewayWWW = "https://www.deezer.com/ajax/gw-light.php"
-)
+const gatewayWWW = "https://www.deezer.com/ajax/gw-light.php"
 
 func auth() error {
    in, out := map[string]string{
@@ -22,4 +19,8 @@ func auth() error {
    }
    println(req)
    return nil
+}
+
+func main() {
+   auth()
 }

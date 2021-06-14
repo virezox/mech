@@ -3,10 +3,8 @@ package main
 import (
    "encoding/json"
    "fmt"
-   "net/http"
    "net/url"
    "os"
-   "time"
 )
 
 func iterate() ([]string, error) {
@@ -32,7 +30,6 @@ type image struct {
    left string
    right string
    ext string
-   bad bool
 }
 
 var images = []image{
@@ -84,15 +81,16 @@ var images = []image{
 
 func main() {
    for _, i := range images {
-      addr := fmt.Sprintf(
-         "http://i.ytimg.com/vi%v/UpNXI3_ctAc/%v%v.%v",
+      fmt.Printf(
+         "http://i.ytimg.com/vi%v/UpNXI3_ctAc/%v%v.%v\n",
          i.vi, i.left, i.right, i.ext,
       )
-      r, e := http.Head(addr)
-      if e != nil {
-         panic(e)
-      }
-      fmt.Printf("%v %+v\n", r.StatusCode, i)
-      time.Sleep(100 * time.Millisecond)
+   }
+   ids, err := iterate()
+   if err != nil {
+      panic(err)
+   }
+   for _, id := range ids {
+      fmt.Println(id)
    }
 }

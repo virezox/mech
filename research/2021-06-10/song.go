@@ -1,4 +1,4 @@
-package deezer
+package main
 
 import (
    "bytes"
@@ -36,4 +36,8 @@ func newSong(apiToken, sid string, sngId int) (song, error) {
    var data song
    json.NewDecoder(res.Body).Decode(&data)
    return data, nil
+}
+
+func main() {
+   newSong("", "", 0)
 }

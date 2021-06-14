@@ -55,7 +55,6 @@ func md5Hash(s string) string {
 }
 
 type UserData struct {
-   SID string
    Results struct {
       CheckForm string
       User struct {
@@ -64,11 +63,14 @@ type UserData struct {
          }
       }
    }
+   SID string
 }
 
-func NewUserData(arl string) (*UserData, error) {
+func NewUserData(arl string) (UserData, error) {
    req, err := http.NewRequest("GET", GatewayWWW, nil)
-   if err != nil { return nil, err }
+   if err != nil {
+      return UserData{}, err
+   }
    val := req.URL.Query()
    val.Set("api_version", "1.0")
    val.Set("api_token", "")
@@ -78,15 +80,19 @@ func NewUserData(arl string) (*UserData, error) {
    req.Header.Set("Cookie", "arl=" + arl)
    fmt.Println(invert, "GET", reset, req.URL)
    res, err := new(http.Transport).RoundTrip(req)
-   if err != nil { return nil, err }
+   if err != nil {
+      return UserData{}, err
+   }
    defer res.Body.Close()
-   user := new(UserData)
+   var user UserData
    for _, c := range res.Cookies() {
       if c.Name == "sid" {
          user.SID = c.Value
       }
    }
-   json.NewDecoder(res.Body).Decode(user)
+   if err := json.NewDecoder(res.Body).Decode(&user); err != nil {
+      return UserData{}, err
+   }
    return user, nil
 }
 
@@ -99,29 +105,35 @@ type Track struct {
 
 // Given a SNG_ID string, make a "deezer.pageTrack" request and return the
 // result.
-func NewTrack(sngID, token, sID string) (*Track, error) {
+func NewTrack(sngID, arl, sID string) (Track, error) {
    in, out := map[string]string{"SNG_ID": sngID}, new(bytes.Buffer)
    json.NewEncoder(out).Encode(in)
    req, err := http.NewRequest("POST", GatewayWWW, out)
-   if err != nil { return nil, err }
+   if err != nil {
+      return Track{}, err
+   }
    val := req.URL.Query()
    val.Set("method", "deezer.pageTrack")
    val.Set("api_version", "1.0")
-   val.Set("api_token", token)
+   val.Set("api_token", arl)
    req.URL.RawQuery = val.Encode()
    req.AddCookie(&http.Cookie{Name: "sid", Value: sID})
    fmt.Println(invert, "POST", reset, req.URL)
    res, err := new(http.Transport).RoundTrip(req)
-   if err != nil { return nil, err }
+   if err != nil {
+      return Track{}, err
+   }
    defer res.Body.Close()
    if res.StatusCode != http.StatusOK {
-      return nil, fmt.Errorf("Status %v", res.Status)
+      return Track{}, fmt.Errorf("status %v", res.Status)
    }
    var page struct {
-      Results struct { Data Track }
+      Results struct {
+         Data Track
+      }
    }
    json.NewDecoder(res.Body).Decode(&page)
-   return &page.Results.Data, nil
+   return page.Results.Data, nil
 }
 
 // Given SNG_ID and file format, return audio URL.
