@@ -38,11 +38,15 @@ func getArl(har string) (string, error) {
          if cookie.Name == "arl" { return cookie.Value, nil }
       }
    }
-   return "", fmt.Errorf("Arl cookie not found")
+   return "", fmt.Errorf("arl cookie not found")
 }
 
 func writeFile(sngID, arl, format string) error {
-   track, err := deezer.NewTrack(sngID, arl)
+   user, err := deezer.NewUserData(arl)
+   if err != nil {
+      return err
+   }
+   track, err := deezer.NewTrack(sngID, arl, user.SID)
    if err != nil {
       return err
    }

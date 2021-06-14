@@ -34,7 +34,7 @@ func NewSearch(query string) (Search, error) {
    if err != nil {
       return Search{}, err
    }
-   re := regexp.MustCompile(" ytInitialData = ([^;]+)")
+   re := regexp.MustCompile(">var ytInitialData = (.+);<")
    find := re.FindSubmatch(body)
    if find == nil {
       return Search{}, fmt.Errorf("FindSubmatch %v", re)
