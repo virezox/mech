@@ -75,19 +75,6 @@ func (n Node) ByTagAll(name string) []Node {
    return n.selector(true, tag(name))
 }
 
-////////////////////////////////////////////////////////////////////////////////
-
-func (n Node) ByAttr(key, val string) Node {
-   for _, n := range n.selector(false, attr(key, val)) {
-      return n
-   }
-   return Node{}
-}
-
-func (n Node) ByAttrAll(key, val string) []Node {
-   return n.selector(true, attr(key, val))
-}
-
 func (n Node) Text() string {
    for _, n := range n.selector(false, func(n Node) bool {
       return n.Type == html.TextNode
@@ -95,4 +82,17 @@ func (n Node) Text() string {
       return n.Data
    }
    return ""
+}
+
+func (n Node) ByAttrAll(key, val string) []Node {
+   return n.selector(true, attr(key, val))
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+func (n Node) ByAttr(key, val string) Node {
+   for _, n := range n.selector(false, attr(key, val)) {
+      return n
+   }
+   return Node{}
 }
