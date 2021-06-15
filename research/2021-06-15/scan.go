@@ -1,4 +1,4 @@
-package main
+package scan
 
 import (
    "golang.org/x/net/html"
@@ -11,14 +11,24 @@ type Scanner struct {
    callback func(*html.Node) bool
 }
 
-func NewScanner(r io.Reader) (*Scanner, error) {
+func NewScanner(r io.Reader) (Scanner, error) {
    n, err := html.Parse(r)
    if err != nil {
-      return nil, err
+      return Scanner{}, err
    }
-   return &Scanner{Node: n}, nil
+   return Scanner{Node: n}, nil
 }
 
+// keep source as is, return modified copy
+func (s Scanner) Split(tag string) Scanner {
+   s.todo = []*html.Node{s.Node}
+   s.callback = func(n *html.Node) bool {
+      return n.Data == tag
+   }
+   return s
+}
+
+// this can modify the struct now, as we are working with a copy
 func (s *Scanner) Scan() bool {
    for len(s.todo) > 0 {
       n := s.todo[0]
@@ -27,16 +37,18 @@ func (s *Scanner) Scan() bool {
          s.Node = n
          return true
       }
-      for n = n.FirstChild; n != nil; n = n.NextSibling {
-         s.todo = append(s.todo, n)
+      for c := n.FirstChild; c != nil; c = c.NextSibling {
+         s.todo = append(s.todo, c)
       }
    }
    return false
 }
 
-func (s *Scanner) Split(tag string) {
-   s.todo = []*html.Node{s.Node}
-   s.callback = func(n *html.Node) bool {
-      return n.Data == tag
+func (s Scanner) Attr(key string) string {
+   for _, attr := range s.Node.Attr {
+      if attr.Key == key {
+         return attr.Val
+      }
    }
+   return ""
 }
