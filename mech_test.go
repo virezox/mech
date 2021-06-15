@@ -24,6 +24,18 @@ const source = `
 </html>
 `
 
+func TestMutate(t *testing.T) {
+   doc, err := Parse(strings.NewReader(source))
+   if err != nil {
+      t.Fatal(err)
+   }
+   if doc = doc.ByTag("tr"); doc.Scan() {
+      if doc.Data != "tr" {
+         t.Fatal(doc.Data)
+      }
+   }
+}
+
 func TestNode(t *testing.T) {
    doc, err := Parse(strings.NewReader(source))
    if err != nil {
@@ -75,10 +87,8 @@ func TestNode(t *testing.T) {
    for r.Scan() {
       fmt.Printf("%+v\n", r.Node)
    }
-   // mutate
-   if doc = doc.ByTag("tr"); doc.Scan() {
-      if doc.Data != "tr" {
-         t.Fatal(doc.Data)
-      }
+   // can we scan the doc directly?
+   for doc.Scan() {
+      fmt.Println(doc.Data)
    }
 }

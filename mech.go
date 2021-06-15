@@ -16,7 +16,11 @@ func Parse(r io.Reader) (Node, error) {
    if err != nil {
       return Node{}, err
    }
-   return Node{Node: n}, nil
+   return Node{
+      n, []*html.Node{n}, func(*html.Node) bool {
+         return true
+      },
+   }, nil
 }
 
 func (n Node) Attr(key string) string {
@@ -55,12 +59,12 @@ func (n *Node) Scan() bool {
    for len(n.todo) > 0 {
       t := n.todo[0]
       n.todo = n.todo[1:]
+      for c := t.FirstChild; c != nil; c = c.NextSibling {
+         n.todo = append(n.todo, c)
+      }
       if n.callback(t) {
          n.Node = t
          return true
-      }
-      for c := t.FirstChild; c != nil; c = c.NextSibling {
-         n.todo = append(n.todo, c)
       }
    }
    return false
