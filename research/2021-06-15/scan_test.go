@@ -1,27 +1,10 @@
 package scan
 
 import (
+   "fmt"
    "strings"
    "testing"
 )
-
-const source = `
-<!doctype html>
-<html>
-   <body>
-      <table>
-         <tr class="h">
-            <th class="r">release</th>
-            <th class="p">post</th>
-         </tr>
-         <tr class="d">
-            <td class="r">2000</td>
-            <td class="p">2021</td>
-         </tr>
-      </table>
-   </body>
-</html>
-`
 
 func TestScan(t *testing.T) {
    doc, err := NewScanner(strings.NewReader(source))
@@ -48,4 +31,39 @@ func TestScan(t *testing.T) {
    if class != "h" {
       t.Fatal(class)
    }
+   // ByTagAll
+   tr = doc.Split("tr")
+   for tr.Scan() {
+      fmt.Printf("%+v\n", tr.Node)
+   }
+   // Text
+   td = doc.Split("td")
+   td.Scan()
+   if td.Text() != "2000" {
+      t.Fatal(td.Text())
+   }
+   // mutate
+   doc = doc.Split("tr")
+   doc.Scan()
+   if doc.Data != "tr" {
+      t.Fatal(doc.Data)
+   }
 }
+
+const source = `
+<!doctype html>
+<html>
+   <body>
+      <table>
+         <tr class="h">
+            <th class="r">release</th>
+            <th class="p">post</th>
+         </tr>
+         <tr class="d">
+            <td class="r">2000</td>
+            <td class="p">2021</td>
+         </tr>
+      </table>
+   </body>
+</html>
+`

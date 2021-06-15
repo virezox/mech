@@ -52,3 +52,12 @@ func (s Scanner) Attr(key string) string {
    }
    return ""
 }
+
+func (s Scanner) Text() string {
+   for c := s.FirstChild; c != nil; c = c.NextSibling {
+      if c.Type == html.TextNode {
+         return c.Data
+      }
+   }
+   return ""
+}
