@@ -109,14 +109,17 @@ func (d Defence) ThreatCaptcha() (php string, id string, err error) {
       return "", "", err
    }
    defer res.Body.Close()
-   doc, err := mech.NewNode(res.Body)
+   doc, err := mech.Parse(res.Body)
    if err != nil {
       return "", "", err
    }
-   for _, img := range doc.ByTagAll("img") {
+   img := doc.ByTag("img")
+   for img.Scan() {
       src := img.Attr("src")
       if strings.HasPrefix(src, CaptchaPHP) {
-         return src, doc.ByAttr("name", "captcha_id").Attr("value"), nil
+         doc = doc.ByAttr("name", "captcha_id")
+         doc.Scan()
+         return src, doc.Attr("value"), nil
       }
    }
    return "", "", fmt.Errorf("%q not found", CaptchaPHP)

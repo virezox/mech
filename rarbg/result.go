@@ -52,31 +52,46 @@ func NewResults(search, page string) ([]Result, error) {
       return nil, err
    }
    defer res.Body.Close()
-   doc, err := mech.NewNode(res.Body)
+   doc, err := mech.Parse(res.Body)
    if err != nil {
       return nil, err
    }
    var results []Result
-   for _, tr := range doc.ByAttrAll("class", "lista2") {
+   tr := doc.ByAttr("class", "lista2")
+   for tr.Scan() {
       var r Result
-      td := tr.ByTagAll("td")
+      td := tr.ByTag("td")
+      // Cat.
+      td.Scan()
+      // File
+      td.Scan()
+      // genre
+      span := td.ByTag("span")
+      span.Scan()
+      r.Genre = span.Text()
       // title
-      r.Title = td[1].ByTag("a").Text()
+      a := td.ByTag("a")
+      a.Scan()
+      r.Title = a.Text()
       // image
-      r.Image = td[1].ByTag("a").Attr("onmouseover")
+      r.Image = a.Attr("onmouseover")
+      // torrent
+      r.Torrent = Origin + a.Attr("href")
+      // Added
+      td.Scan()
+      // Size
+      td.Scan()
+      r.Size = td.Text()
+      // S.
+      td.Scan()
+      font := td.ByTag("font")
+      font.Scan()
+      r.Seeders = font.Text()
+      // append
       r.Image = regexp.MustCompile(`\d+`).FindString(r.Image)
       r.Image = fmt.Sprintf(
          "https://dyncdn.me/mimages/%v/poster_opt.jpg", r.Image,
       )
-      // torrent
-      r.Torrent = Origin + td[1].ByTag("a").Attr("href")
-      // genre
-      r.Genre = td[1].ByTag("span").Text()
-      // size
-      r.Size = td[3].Text()
-      // seeders
-      r.Seeders = td[4].ByTag("font").Text()
-      // append
       results = append(results, r)
    }
    return results, nil
