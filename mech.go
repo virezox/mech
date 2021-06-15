@@ -28,6 +28,7 @@ func (n Node) Attr(key string) string {
    return ""
 }
 
+// keep source as is, return modified copy
 func (n Node) ByAttr(key, val string) Node {
    n.todo = []*html.Node{n.Node}
    n.callback = func(c *html.Node) bool {
@@ -41,7 +42,6 @@ func (n Node) ByAttr(key, val string) Node {
    return n
 }
 
-// keep source as is, return modified copy
 func (n Node) ByTag(tag string) Node {
    n.todo = []*html.Node{n.Node}
    n.callback = func(c *html.Node) bool {
@@ -51,7 +51,7 @@ func (n Node) ByTag(tag string) Node {
 }
 
 // this can modify the struct now, as we are working with a copy
-func (n *Node) Next() bool {
+func (n *Node) Scan() bool {
    for len(n.todo) > 0 {
       t := n.todo[0]
       n.todo = n.todo[1:]

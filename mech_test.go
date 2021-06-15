@@ -30,53 +30,53 @@ func TestNode(t *testing.T) {
       t.Fatal(err)
    }
    // make sure we only mutate if we want to:
-   if tr := doc.ByTag("tr"); tr.Next() {
+   if tr := doc.ByTag("tr"); tr.Scan() {
       if doc.Data != "" {
          t.Fatal(doc.Data)
       }
    }
-   // make sure Next actually works:
-   if tr := doc.ByTag("tr"); tr.Next() {
+   // make sure Scan actually works:
+   if tr := doc.ByTag("tr"); tr.Scan() {
       if tr.Data != "tr" {
          t.Fatal(tr.Data)
       }
    }
    // make sure we can only get valid children:
-   if tr := doc.ByTag("tr"); tr.Next() {
-      if td := tr.ByTag("td"); td.Next() {
+   if tr := doc.ByTag("tr"); tr.Scan() {
+      if td := tr.ByTag("td"); td.Scan() {
          t.Fatal("tr[0].td")
       }
    }
    // test Attr
-   if tr := doc.ByTag("tr"); tr.Next() {
+   if tr := doc.ByTag("tr"); tr.Scan() {
       if class := tr.Attr("class"); class != "h" {
          t.Fatal(class)
       }
    }
    // Text
-   if td := doc.ByTag("td"); td.Next() {
+   if td := doc.ByTag("td"); td.Scan() {
       if td.Text() != "2000" {
          t.Fatal(td.Text())
       }
    }
    // ByAttr
-   if r := doc.ByAttr("class", "r"); r.Next() {
+   if r := doc.ByAttr("class", "r"); r.Scan() {
       if r.Data != "th" {
          t.Fatal(r.Data)
       }
    }
    // ByTagAll
    tr := doc.ByTag("tr")
-   for tr.Next() {
+   for tr.Scan() {
       fmt.Printf("%+v\n", tr.Node)
    }
    // ByAttrAll
    r := doc.ByAttr("class", "r")
-   for r.Next() {
+   for r.Scan() {
       fmt.Printf("%+v\n", r.Node)
    }
    // mutate
-   if doc = doc.ByTag("tr"); doc.Next() {
+   if doc = doc.ByTag("tr"); doc.Scan() {
       if doc.Data != "tr" {
          t.Fatal(doc.Data)
       }
