@@ -1,15 +1,9 @@
-// Rotten Tomatoes
 package tomato
 
 import (
    "encoding/json"
    "github.com/89z/mech"
    "net/http"
-)
-
-const (
-   invert = "\x1b[7m"
-   reset = "\x1b[m"
 )
 
 type Audience struct {
