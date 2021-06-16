@@ -1,5 +1,39 @@
 # Rotten Tomatoes
 
+## Item
+
+Start scanning:
+
+~~~
+.Scan()
+.Text() == "Wonder"
+.Scan()
+.Text() == "Woman"
+~~~
+
+This could be ReleaseYear, or it could be part of title:
+
+~~~
+.Scan()
+.Text() == "1984"
+~~~
+
+Only way to know is to scan again:
+
+~~~
+.Scan()
+.Text() == "2020"
+~~~
+
+but that could be part of title too, so scan again:
+
+~~~
+.Scan()
+.Text() == "IMAX"
+~~~
+
+now we know that ReleaseYear is 2020.
+
 ## Search
 
 ~~~

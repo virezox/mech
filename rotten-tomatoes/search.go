@@ -7,17 +7,8 @@ import (
    "net/http"
 )
 
-const AddrSearch = "https://www.rottentomatoes.com/search"
-
 type Search struct {
-   Items []struct {
-      Name string
-      ReleaseYear string
-      TomatoMeterScore struct {
-         Score string
-      }
-      URL string
-   }
+   Items []Item
 }
 
 func NewSearch(search string) (Search, error) {
