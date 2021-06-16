@@ -1,5 +1,20 @@
 # Rotten Tomatoes
 
+## Search
+
+~~~
+curl -o index.html https://www.rottentomatoes.com/search?search=inception
+~~~
+
+Looking for:
+
+~~~html
+<script id="movies-json" type="application/json">{"items":[{"imageUrl":"https:...
+...Page":"true","hasPreviousPage":"false","startCursor":""},"count":136}</script>
+~~~
+
+## Rating
+
 ~~~
 curl -o index.html https://www.rottentomatoes.com/m/one_night_in_miami
 ~~~
@@ -22,26 +37,26 @@ Pretty:
 
 ~~~json
 {
-   "title": "One Night in Miami",
-   "cag[movieshow]": "One Night in Miami",
-   "field[rtid]": "771534628",
-   "cag[score]": "98",
    "adunits": "Multi Logo|Box Ad|Marquee Banner|Top Banner",
    "cag[certified_fresh]": "1",
    "cag[fresh_rotten]": "fresh",
    "cag[genre]": "Drama",
+   "cag[movieshow]": "One Night in Miami",
    "cag[rating]": "R",
    "cag[release]": "2020",
+   "cag[score]": "98",
    "cag[urlid]": "one_night_in_miami",
    "cat": "movie|movie_page",
    "field[env]": "production",
+   "field[rtid]": "771534628",
    "path": "/m/one_night_in_miami",
    "site": "rottentomatoes-web",
+   "title": "One Night in Miami",
    "type": "movie_page"
 }
 ~~~
 
-Old:
+Alternative:
 
 ~~~html
 <script type="application/ld+json">

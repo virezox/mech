@@ -14,10 +14,10 @@ const (
 )
 
 type Movie struct {
-   RTID string
-   Score string
+   RTID string `json:"field[rtid]"`
+   Score string `json:"cag[score]"`
    Title string
-   URLID string
+   URLID string `json:"cag[urlid]"`
 }
 
 func NewMovie(addr string) (Movie, error) {
