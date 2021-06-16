@@ -3,6 +3,7 @@ package mech
 import (
    "golang.org/x/net/html"
    "io"
+   "strings"
 )
 
 type Node struct {
@@ -49,7 +50,8 @@ func (n Node) ByAttr(key, val string) Node {
 func (n Node) ByTag(tag string) Node {
    n.todo = []*html.Node{n.Node}
    n.callback = func(c *html.Node) bool {
-      return c.Data == tag
+      // x/net/html lowercases the tags
+      return strings.EqualFold(c.Data, tag)
    }
    return n
 }
