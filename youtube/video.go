@@ -44,7 +44,7 @@ func NewVideo(id string) (Video, error) {
    }
    defer res.Body.Close()
    if res.StatusCode != http.StatusOK {
-      return Video{}, fmt.Errorf("StatusCode %v", res.StatusCode)
+      return Video{}, fmt.Errorf("Status %v", res.Status)
    }
    body, err := io.ReadAll(res.Body)
    if err != nil {
