@@ -23,21 +23,30 @@ const (
 // This returns solution to the Captcha at the given path. After this, you will
 // want to call IamHuman.
 func Solve(php string) (solve string, err error) {
-   fmt.Println(invert, "GET", reset, Origin + php)
-   res, err := http.Get(Origin + php)
-   if err != nil { return "", err }
+   req, err := http.NewRequest("GET", Origin + php, nil)
+   if err != nil {
+      return "", err
+   }
+   fmt.Println(invert, "GET", reset, req.URL)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return "", err
+   }
    defer res.Body.Close()
    if res.StatusCode != http.StatusOK {
       return "", fmt.Errorf("status %v", res.Status)
    }
    capt := filepath.Join(os.TempDir(), "captcha.png")
    file, err := os.Create(capt)
-   if err != nil { return "", err }
+   if err != nil {
+      return "", err
+   }
    file.ReadFrom(res.Body)
    // need to close before opening again, not after return
    file.Close()
    img, err := ocr.NewImage(capt)
-   if err != nil { return "", err }
+   if err != nil {
+      return "", err
+   }
    return img.ParsedResults[0].ParsedText, nil
 }
-

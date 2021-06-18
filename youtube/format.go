@@ -22,15 +22,20 @@ type Format struct {
 
 func (f Format) Write(w io.Writer) error {
    req, err := f.request()
-   if err != nil { return err }
+   if err != nil {
+      return err
+   }
    var pos int64
    fmt.Println(invert, "GET", reset, req.URL)
    for pos < f.ContentLength {
       bytes := fmt.Sprintf("bytes=%v-%v", pos, pos+chunk-1)
       req.Header.Set("Range", bytes)
       fmt.Println(bytes)
-      res, err := new(http.Transport).RoundTrip(req)
-      if err != nil { return err }
+      // we need to follow redirect here
+      res, err := new(http.Client).Do(req)
+      if err != nil {
+         return err
+      }
       defer res.Body.Close()
       if res.StatusCode != http.StatusPartialContent {
          return fmt.Errorf("status %v", res.Status)

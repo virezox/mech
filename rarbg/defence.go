@@ -21,9 +21,12 @@ type Defence struct {
 // This is the entrypoint into getting the SKT cookie, should you need to do
 // that. After this you will want to call ThreatCaptcha.
 func NewDefence() (*Defence, error) {
-   fmt.Println(invert, "GET", reset, Origin + DefencePHP)
-   res, err := http.Get(Origin + DefencePHP)
-   if err != nil { return nil, err }
+   req, err := http.NewRequest("GET", Origin + DefencePHP, nil)
+   if err != nil {
+      return nil, err
+   }
+   fmt.Println(invert, "GET", reset, req.URL)
+   res, err := new(http.Transport).RoundTrip(req)
    defer res.Body.Close()
    if res.StatusCode != http.StatusOK {
       return nil, fmt.Errorf("status %v", res.Status)

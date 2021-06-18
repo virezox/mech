@@ -2,29 +2,6 @@
 
 Download from YouTube
 
-## June 18 2021
-
-~~~
-https://www.youtube.com/youtubei/v1/<ep>
-~~~
-
-- https://github.com/pytube/pytube/issues/1021
-- https://github.com/ytdl-org/youtube-dl/issues/29333
-- https://stackoverflow.com/questions/67615278
-
-## Watch
-
-~~~
-curl -o index.html -A iPad https://m.youtube.com/watch?v=NMYIVsdGfoo
-~~~
-
-Looking for:
-
-~~~html
-<script nonce="rnllSB3lBoQNKekJVVmrOA">var ytInitialPlayerResponse = {"respons...
-...NOWN"}}}],"timestamp":{"seconds":"1624028141","nanos":546973023}}}};</script>
-~~~
-
 ## Search
 
 So, we are looking for this:

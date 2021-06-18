@@ -26,12 +26,23 @@ func NewBaseJS() (BaseJS, error) {
 }
 
 func (b BaseJS) Get() error {
-   fmt.Println(invert, "GET", reset, Origin + "/iframe_api")
-   res, err := http.Get(Origin + "/iframe_api")
-   if err != nil { return err }
+   req, err := http.NewRequest("GET", Origin + "/iframe_api", nil)
+   if err != nil {
+      return err
+   }
+   fmt.Println(invert, "GET", reset, req.URL)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return err
+   }
    defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return fmt.Errorf("status %v", res.Status)
+   }
    body, err := io.ReadAll(res.Body)
-   if err != nil { return err }
+   if err != nil {
+      return err
+   }
    re := regexp.MustCompile(`/player\\/(\w+)`)
    id := re.FindSubmatch(body)
    if id == nil {
@@ -39,7 +50,9 @@ func (b BaseJS) Get() error {
    }
    os.Mkdir(b.Cache, os.ModeDir)
    file, err := os.Create(b.Create)
-   if err != nil { return err }
+   if err != nil {
+      return err
+   }
    defer file.Close()
    get := fmt.Sprintf("/s/player/%s/player_ias.vflset/en_US/base.js", id[1])
    fmt.Println(invert, "GET", reset, Origin + get)
