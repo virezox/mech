@@ -33,7 +33,7 @@ func (f Format) Write(w io.Writer) error {
       if err != nil { return err }
       defer res.Body.Close()
       if res.StatusCode != http.StatusPartialContent {
-         return fmt.Errorf("Status %v", res.Status)
+         return fmt.Errorf("status %v", res.Status)
       }
       if _, err := io.Copy(w, res.Body); err != nil {
          return err

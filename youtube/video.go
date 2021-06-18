@@ -33,6 +33,8 @@ func NewVideo(id string) (Video, error) {
       return Video{}, err
    }
    val := addr.Query()
+   val.Set("c", "TVHTML5")
+   val.Set("cver", "4.19700101")
    val.Set("eurl", Origin)
    val.Set("html5", "1")
    val.Set("video_id", id)
@@ -44,7 +46,7 @@ func NewVideo(id string) (Video, error) {
    }
    defer res.Body.Close()
    if res.StatusCode != http.StatusOK {
-      return Video{}, fmt.Errorf("Status %v", res.Status)
+      return Video{}, fmt.Errorf("status %v", res.Status)
    }
    body, err := io.ReadAll(res.Body)
    if err != nil {
