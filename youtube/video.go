@@ -5,7 +5,6 @@ import (
    "fmt"
    "io"
    "net/http"
-   "net/url"
 )
 
 type Video struct {
@@ -28,19 +27,19 @@ type Video struct {
 
 // NewVideo fetches video metadata
 func NewVideo(id string) (Video, error) {
-   addr, err := url.Parse(Origin + "/get_video_info")
+   req, err := http.NewRequest("GET", Origin + "/get_video_info", nil)
    if err != nil {
       return Video{}, err
    }
-   val := addr.Query()
+   val := req.URL.Query()
    val.Set("c", "TVHTML5")
    val.Set("cver", "4.19700101")
    val.Set("eurl", Origin)
    val.Set("html5", "1")
    val.Set("video_id", id)
-   addr.RawQuery = val.Encode()
-   fmt.Println(invert, "GET", reset, addr)
-   res, err := http.Get(addr.String())
+   req.URL.RawQuery = val.Encode()
+   fmt.Println(invert, "GET", reset, req.URL)
+   res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return Video{}, err
    }
@@ -52,14 +51,10 @@ func NewVideo(id string) (Video, error) {
    if err != nil {
       return Video{}, err
    }
-   addr.RawQuery = string(body)
-   var (
-      play = addr.Query().Get("player_response")
-      vid Video
-   )
-   if err := json.Unmarshal([]byte(play), &vid); err != nil {
-      return Video{}, err
-   }
+   req.URL.RawQuery = string(body)
+   play := req.URL.Query().Get("player_response")
+   var vid Video
+   json.Unmarshal([]byte(play), &vid)
    return vid, nil
 }
 

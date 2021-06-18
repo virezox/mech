@@ -54,15 +54,18 @@ func (b BaseJS) Get() error {
       return err
    }
    defer file.Close()
-   get := fmt.Sprintf("/s/player/%s/player_ias.vflset/en_US/base.js", id[1])
-   fmt.Println(invert, "GET", reset, Origin + get)
-   if res, err := http.Get(Origin + get); err != nil {
+   req.URL.Path = fmt.Sprintf(
+      "s/player/%s/player_ias.vflset/en_US/base.js", id[1],
+   )
+   fmt.Println(invert, "GET", reset, req.URL)
+   if res, err := new(http.Transport).RoundTrip(req); err != nil {
       return err
    } else {
       defer res.Body.Close()
-      if _, err := file.ReadFrom(res.Body); err != nil {
-         return err
+      if res.StatusCode != http.StatusOK {
+         return fmt.Errorf("status %v", res.Status)
       }
+      file.ReadFrom(res.Body)
    }
    return nil
 }
