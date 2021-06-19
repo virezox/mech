@@ -22,7 +22,7 @@ func numberFormat(d int64, a ...string) string {
    return fmt.Sprintf("%.1f", e) + a[f]
 }
 
-func getInfo(video youtube.Video) {
+func getInfo(video youtube.Player) {
    fmt.Println("author:", video.Author())
    fmt.Println("title:", video.Title())
    fmt.Println("countries:", video.Countries())
@@ -48,7 +48,7 @@ func clean(r rune) rune {
    return r
 }
 
-func download(video youtube.Video, format youtube.Format) error {
+func download(video youtube.Player, format youtube.Format) error {
    ext := map[string]string{
       "audio/mp4;": ".m4a",
       "audio/webm": ".weba",
@@ -106,7 +106,7 @@ func main() {
       panic(err)
    }
    id := watch.Query().Get("v")
-   video, err := youtube.NewVideo(id)
+   video, err := youtube.NewPlayer(id)
    if err != nil {
       panic(err)
    }
