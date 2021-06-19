@@ -6,6 +6,7 @@ import (
    "io"
    "net/http"
    "net/url"
+   "os"
    "time"
 )
 
@@ -36,36 +37,48 @@ func values() error {
    if err != nil {
       return err
    }
+   file, err := os.Create("info.txt")
+   if err != nil {
+      return err
+   }
+   defer file.Close()
    for _, c := range cs {
       for _, cplayer := range cplayers {
          for _, cver := range cvers {
             for _, el := range els {
-               for _, hl := range hls {
-                  for _, sts := range stss{
-                     val := make(url.Values)
-                     val.Set("c", c)
-                     if cplayer != "" {
-                        val.Set("cplayer", cplayer)
+               for _, eurl := range eurls {
+                  for _, hl := range hls {
+                     for _, ps := range pss {
+                        for _, sts := range stss {
+                           val := make(url.Values)
+                           val.Set("c", c)
+                           if cplayer != "" {
+                              val.Set("cplayer", cplayer)
+                           }
+                           val.Set("cver", cver)
+                           if el != "" {
+                              val.Set("el", el)
+                           }
+                           val.Set("eurl", eurl)
+                           if hl != "" {
+                              val.Set("hl", hl)
+                           }
+                           // stackoverflow.com/a/67629882
+                           val.Set("html5", "1")
+                           if ps != "" {
+                              val.Set("ps", ps)
+                           }
+                           if sts != "" {
+                              val.Set("sts", sts)
+                           }
+                           val.Set("video_id", "NMYIVsdGfoo")
+                           fmt.Println(val)
+                           req.URL.RawQuery = val.Encode()
+                           err := request(req)
+                           fmt.Fprintln(file, val, err)
+                           time.Sleep(100 * time.Millisecond)
+                        }
                      }
-                     val.Set("cver", cver)
-                     if el != "" {
-                        val.Set("el", el)
-                     }
-                     // stackoverflow.com/a/67629882
-                     val.Set("eurl", "https://youtube.googleapis.com/v/NMYIVsdGfoo")
-                     if hl != "" {
-                        val.Set("hl", hl)
-                     }
-                     // stackoverflow.com/a/67629882
-                     val.Set("html5", "1")
-                     if sts != "" {
-                        val.Set("sts", sts)
-                     }
-                     val.Set("video_id", "NMYIVsdGfoo")
-                     req.URL.RawQuery = val.Encode()
-                     err := request(req)
-                     fmt.Print(val, err, "\n\n")
-                     time.Sleep(100 * time.Millisecond)
                   }
                }
             }
@@ -75,13 +88,6 @@ func values() error {
    return nil
 }
 
-var cplayers = []string{
-   // stackoverflow.com/a/67629882
-   "",
-   // github.com/yt-dlp/yt-dlp
-   "UNIPLAYER",
-}
-
 var cs = []string{
    // stackoverflow.com/a/67629882
    "TVHTML5",
@@ -89,11 +95,20 @@ var cs = []string{
    "WEB_REMIX",
 }
 
-var cvers = []string{
+var cplayers = []string{
    // stackoverflow.com/a/67629882
-   "6.20180913",
+   "",
+   // github.com/yt-dlp/yt-dlp
+   "UNIPLAYER",
+}
+
+var cvers = []string{
    // github.com/yt-dlp/yt-dlp
    "0.1",
+   // stackoverflow.com/a/67629882
+   "6.20180913",
+   // github.com/pytube/pytube
+   "7.20201028",
 }
 
 var els = []string{
@@ -105,11 +120,27 @@ var els = []string{
    "embedded",
 }
 
+var eurls = []string{
+   // stackoverflow.com/a/67629882
+   "https://youtube.googleapis.com/v/NMYIVsdGfoo",
+   // github.com/pytube/pytube
+   "https://www.youtube.com/watch?v=NMYIVsdGfoo",
+}
+
 var hls = []string{
    // stackoverflow.com/a/67629882
    "",
    // github.com/Hexer10/youtube_explode_dart
    "en",
+   // github.com/pytube/pytube
+   "en_US",
+}
+
+var pss = []string{
+   // stackoverflow.com/a/67629882
+   "",
+   // github.com/pytube/pytube
+   "default",
 }
 
 var stss = []string{
