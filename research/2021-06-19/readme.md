@@ -1,21 +1,12 @@
 # youtubei
 
-~~~
-https://www.youtube.com/youtubei/v1/player
-~~~
+This new method downloads 72.2 KB.
+
+How much is the old method?
 
 ~~~
-fail
-youtubei streamingData language:go
-youtubei player language:go
-
-youtubei player
-youtubei streamingData
-youtubei language:go
-~~~
-
-~~~
-https://r4---sn-q4flrnes.googlevideo.com/videoplayback
+PS C:\> curl -I https://www.youtube.com/watch?v=UpNXI3_ctAc
+content-length: 502,514
 ~~~
 
 - https://github.com/alexmercerind/youtube-search-python/issues/85
