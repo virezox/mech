@@ -3,8 +3,8 @@ package youtube
 import (
    "encoding/json"
    "fmt"
-   "io"
    "net/http"
+   "os"
    "regexp"
    "strings"
 )
@@ -29,14 +29,30 @@ type Player struct {
 
 const PlayerAPI = "https://www.youtube.com/youtubei/v1/player"
 
-func YouTubeI(id string) (Player, error) {
+func NewPlayer(id string) (Player, error) {
+   baseJS, err := NewBaseJS()
+   if err != nil {
+      return Player{}, err
+   }
+   js, err := os.ReadFile(baseJS.Create)
+   re := regexp.MustCompile(`\bsignatureTimestamp:(\d+)`)
+   sts := re.FindSubmatch(js)
+   if sts == nil {
+      return Player{}, fmt.Errorf("findSubmatch %v", re)
+   }
    body := fmt.Sprintf(`
    {
-      "videoId": "%v", "context": {
+      "context": {
          "client": {"clientName": "WEB", "clientVersion": "1.19700101"}
-      }
+      },
+      "playbackContext": {
+         "contentPlaybackContext": {
+            "signatureTimestamp": %s
+         }
+      },
+      "videoId": %q
    }
-   `, id)
+   `, sts[1], id)
    req, err := http.NewRequest("POST", PlayerAPI, strings.NewReader(body))
    if err != nil {
       return Player{}, err
@@ -54,34 +70,6 @@ func YouTubeI(id string) (Player, error) {
    }
    var play Player
    json.NewDecoder(res.Body).Decode(&play)
-   return play, nil
-}
-
-func NewPlayer(id string) (Player, error) {
-   req, err := http.NewRequest("GET", "https://www.youtube.com/watch", nil)
-   if err != nil {
-      return Player{}, err
-   }
-   val := req.URL.Query()
-   val.Set("v", id)
-   req.URL.RawQuery = val.Encode()
-   fmt.Println(invert, "GET", reset, req.URL)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return Player{}, err
-   }
-   defer res.Body.Close()
-   body, err := io.ReadAll(res.Body)
-   if err != nil {
-      return Player{}, err
-   }
-   re := regexp.MustCompile(">var ytInitialPlayerResponse = (.+);<")
-   find := re.FindSubmatch(body)
-   if find == nil {
-      return Player{}, fmt.Errorf("findSubmatch %v", re)
-   }
-   var play Player
-   json.Unmarshal(find[1], &play)
    return play, nil
 }
 

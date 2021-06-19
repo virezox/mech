@@ -11,11 +11,7 @@ PS C:\> curl -I https://www.youtube.com/watch?v=UpNXI3_ctAc
 content-length: 502,514
 ~~~
 
-- https://github.com/alexmercerind/youtube-search-python/issues/85
-- https://github.com/dqn/pritube/issues/5
-- https://github.com/guendto/jomiel
-- https://github.com/raitonoberu/ytsearch/issues/1
-- https://github.com/tombulled/innertube
+https://github.com/yt-dlp/yt-dlp/pull/328
 
 ## watch
 
