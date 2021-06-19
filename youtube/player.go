@@ -1,40 +1,41 @@
-package main
+package youtube
 
 import (
-   "bytes"
+   "encoding/json"
    "fmt"
    "io"
    "net/http"
+   "regexp"
 )
 
-func request() error {
+type Player struct {
+   Video
+}
+
+func NewPlayer(id string) error {
    req, err := http.NewRequest("GET", "https://www.youtube.com/watch", nil)
    if err != nil {
       return err
    }
    val := req.URL.Query()
-   val.Set("v", "NMYIVsdGfoo")
+   val.Set("v", id)
    req.URL.RawQuery = val.Encode()
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return err
    }
    defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return fmt.Errorf("status %v", res.Status)
-   }
    body, err := io.ReadAll(res.Body)
    if err != nil {
       return err
    }
-   count := bytes.Count(body, []byte("videoplayback"))
-   println(count)
-   return nil
-}
-
-func main() {
-   err := request()
-   if err != nil {
-      panic(err)
+   re := regexp.MustCompile(">var ytInitialPlayerResponse = (.+);<")
+   find := re.FindSubmatch(body)
+   if find == nil {
+      return fmt.Errorf("findSubmatch %v", re)
    }
+   var vid Video
+   json.Unmarshal(find[1], &vid)
+   fmt.Printf("%+v\n", vid)
+   return nil
 }
