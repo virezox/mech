@@ -55,7 +55,7 @@ func (b BaseJS) Get() error {
    }
    defer file.Close()
    req.URL.Path = fmt.Sprintf(
-      "s/player/%s/player_ias.vflset/en_US/base.js", id[1],
+      "/s/player/%s/player_ias.vflset/en_US/base.js", id[1],
    )
    fmt.Println(invert, "GET", reset, req.URL)
    if res, err := new(http.Transport).RoundTrip(req); err != nil {
