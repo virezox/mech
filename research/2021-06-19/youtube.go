@@ -1,51 +1,23 @@
 package youtube
 
 import (
-   "bytes"
    "encoding/json"
    "fmt"
    "net/http"
+   "strings"
 )
 
 const PlayerAPI = "https://www.youtube.com/youtubei/v1/player"
 
-type Format struct {
-   Bitrate int64
-   ContentLength int64 `json:"contentLength,string"`
-   Height int
-   Itag int
-   MimeType string
-   SignatureCipher string
-   URL string
-}
-
-type Player struct {
-   StreamingData struct {
-      AdaptiveFormats []Format
-   }
-   Microformat struct {
-      PlayerMicroformatRenderer struct {
-         AvailableCountries []string
-         PublishDate string
+func NewPlayer(id string) (Player, error) {
+   body := fmt.Sprintf(`
+   {
+      "videoId": "%v", "context": {
+         "client": {"clientName": "WEB", "clientVersion": "1.19700101"}
       }
    }
-   VideoDetails struct {
-      Author string
-      ShortDescription string
-      Title string
-      ViewCount int `json:"viewCount,string"`
-   }
-}
-
-func NewPlayer(id string) (Player, error) {
-   body := m{
-      "videoId": id, "context": m{
-         "client": m{"clientName": "WEB", "clientVersion": "1.19700101"},
-      },
-   }
-   buf := new(bytes.Buffer)
-   json.NewEncoder(buf).Encode(body)
-   req, err := http.NewRequest("POST", PlayerAPI, buf)
+   `, id)
+   req, err := http.NewRequest("POST", PlayerAPI, strings.NewReader(body))
    if err != nil {
       return Player{}, err
    }
@@ -64,5 +36,3 @@ func NewPlayer(id string) (Player, error) {
    json.NewDecoder(res.Body).Decode(&play)
    return play, nil
 }
-
-type m map[string]interface{}
