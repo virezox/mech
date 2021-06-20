@@ -4,8 +4,6 @@ import (
    "encoding/json"
    "fmt"
    "net/http"
-   "os"
-   "regexp"
    "strings"
 )
 
@@ -27,33 +25,20 @@ type Player struct {
    }
 }
 
-const PlayerAPI = "https://www.youtube.com/youtubei/v1/player"
+//const PlayerAPI = "https://www.youtube.com/youtubei/v1/player"
+const PlayerAPI = "https://youtubei.googleapis.com/youtubei/v1/player"
 
 func NewPlayer(id string) (Player, error) {
-   baseJS, err := NewBaseJS()
-   if err != nil {
-      return Player{}, err
-   }
-   js, err := os.ReadFile(baseJS.Create)
-   re := regexp.MustCompile(`\bsignatureTimestamp:(\d+)`)
-   sts := re.FindSubmatch(js)
-   if sts == nil {
-      return Player{}, fmt.Errorf("findSubmatch %v", re)
-   }
    body := fmt.Sprintf(`
    {
-      "context": {
-         "client": {"clientName": "WEB", "clientVersion": "1.19700101"}
-      },
-      "playbackContext": {
-         "contentPlaybackContext": {
-            "signatureTimestamp": %s
-         }
-      },
-      "videoId": %q
+      "videoId": %q, "context": {
+         "client": {"clientName": "ANDROID", "clientVersion": "15.01"}
+      }
    }
-   `, sts[1], id)
-   req, err := http.NewRequest("POST", PlayerAPI, strings.NewReader(body))
+   `, id)
+   req, err := http.NewRequest(
+      "POST", PlayerAPI, strings.NewReader(body),
+   )
    if err != nil {
       return Player{}, err
    }

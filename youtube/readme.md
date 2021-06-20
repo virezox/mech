@@ -11,7 +11,10 @@ PS C:\> curl -I https://www.youtube.com/watch?v=UpNXI3_ctAc
 content-length: 502,514
 ~~~
 
-https://github.com/yt-dlp/yt-dlp/pull/328
+- https://github.com/TeamNewPipe/NewPipeExtractor/issues/562
+- https://github.com/TeamNewPipe/NewPipeExtractor/issues/568
+- https://github.com/iv-org/invidious/issues/1981
+- https://github.com/iv-org/invidious/pull/1985
 
 ## watch
 
