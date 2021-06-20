@@ -43,7 +43,6 @@ func post(id, name, version string) (*http.Response, error) {
    return res, nil
 }
 
-
 type Format struct {
    Bitrate int64
    ContentLength int64 `json:"contentLength,string"`
@@ -78,4 +77,11 @@ func (f Format) Write(w io.Writer) error {
       pos += chunk
    }
    return nil
+}
+
+type VideoDetails struct {
+   Author string
+   ShortDescription string
+   Title string
+   ViewCount int `json:"viewCount,string"`
 }

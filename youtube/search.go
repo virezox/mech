@@ -10,9 +10,7 @@ import (
 
 type Search struct {
    Contents struct {
-      TwoColumnSearchResultsRenderer struct {
-         PrimaryContents PrimaryContents
-      }
+      TwoColumnSearchResultsRenderer `json:"twoColumnSearchResultsRenderer"`
    }
 }
 
@@ -48,7 +46,7 @@ func NewSearch(query string) (Search, error) {
 
 func (s Search) VideoRenderers() []VideoRenderer {
    var vids []VideoRenderer
-   for _, sect := range s.primaryContents().SectionListRenderer.Contents {
+   for _, sect := range s.Contents.PrimaryContents.SectionListRenderer.Contents {
       for _, item := range sect.ItemSectionRenderer.Contents {
          vids = append(vids, item.VideoRenderer)
       }
@@ -56,22 +54,20 @@ func (s Search) VideoRenderers() []VideoRenderer {
    return vids
 }
 
-func (s Search) primaryContents() PrimaryContents {
-   return s.Contents.TwoColumnSearchResultsRenderer.PrimaryContents
-}
-
-type VideoRenderer struct {
-   VideoID string
-}
-
-type PrimaryContents struct {
-   SectionListRenderer struct {
-      Contents []struct {
-         ItemSectionRenderer struct {
-            Contents []struct {
-               VideoRenderer VideoRenderer
+type TwoColumnSearchResultsRenderer struct {
+   PrimaryContents struct {
+      SectionListRenderer struct {
+         Contents []struct {
+            ItemSectionRenderer struct {
+               Contents []struct {
+                  VideoRenderer `json:"videoRenderer"`
+               }
             }
          }
       }
    }
+}
+
+type VideoRenderer struct {
+   VideoID string
 }

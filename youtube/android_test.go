@@ -11,6 +11,9 @@ func TestAndroid(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
+   if a.Title != "Snowflake" {
+      t.Fatalf("%+v\n", a)
+   }
    f, err := a.NewFormat(249)
    if err != nil {
       t.Fatal(err)

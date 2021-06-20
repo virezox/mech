@@ -16,10 +16,13 @@ func TestWeb(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   if w.Description() != desc {
+   if w.PublishDate != "2020-11-05" {
       t.Fatalf("%+v\n", w)
    }
-   if w.ViewCount() == 0 {
+   if w.ShortDescription != desc {
+      t.Fatalf("%+v\n", w)
+   }
+   if w.ViewCount == 0 {
       t.Fatalf("%+v\n", w)
    }
 }

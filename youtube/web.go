@@ -1,19 +1,18 @@
 package youtube
 import "encoding/json"
 
+type Microformat struct {
+   PlayerMicroformatRenderer `json:"playerMicroformatRenderer"`
+}
+
+type PlayerMicroformatRenderer struct {
+   AvailableCountries []string
+   PublishDate string
+}
+
 type Web struct {
-   Microformat struct {
-      PlayerMicroformatRenderer struct {
-         AvailableCountries []string
-         PublishDate string
-      }
-   }
-   VideoDetails struct {
-      Author string
-      ShortDescription string
-      Title string
-      ViewCount int `json:"viewCount,string"`
-   }
+   Microformat `json:"microformat"`
+   VideoDetails `json:"videoDetails"`
 }
 
 func NewWeb(id string) (Web, error) {
@@ -23,30 +22,8 @@ func NewWeb(id string) (Web, error) {
    }
    defer res.Body.Close()
    var w Web
-   json.NewDecoder(res.Body).Decode(&w)
+   if err := json.NewDecoder(res.Body).Decode(&w); err != nil {
+      return Web{}, err
+   }
    return w, nil
-}
-
-func (w Web) Author() string {
-   return w.VideoDetails.Author
-}
-
-func (w Web) Countries() []string {
-   return w.Microformat.PlayerMicroformatRenderer.AvailableCountries
-}
-
-func (w Web) Description() string {
-   return w.VideoDetails.ShortDescription
-}
-
-func (w Web) PublishDate() string {
-   return w.Microformat.PlayerMicroformatRenderer.PublishDate
-}
-
-func (w Web) Title() string {
-   return w.VideoDetails.Title
-}
-
-func (w Web) ViewCount() int {
-   return w.VideoDetails.ViewCount
 }

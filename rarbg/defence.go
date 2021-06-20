@@ -27,6 +27,9 @@ func NewDefence() (*Defence, error) {
    }
    fmt.Println(invert, "GET", reset, req.URL)
    res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
    defer res.Body.Close()
    if res.StatusCode != http.StatusOK {
       return nil, fmt.Errorf("status %v", res.Status)
