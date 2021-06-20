@@ -9,10 +9,7 @@ type Android struct {
    StreamingData struct {
       AdaptiveFormats []Format
    }
-   VideoDetails struct {
-      Author string
-      Title string
-   }
+   VideoDetails `json:"videoDetails"`
 }
 
 func NewAndroid(id string) (Android, error) {
@@ -22,33 +19,17 @@ func NewAndroid(id string) (Android, error) {
    }
    defer res.Body.Close()
    var and Android
-   json.NewDecoder(res.Body).Decode(&and)
+   if err := json.NewDecoder(res.Body).Decode(&and); err != nil {
+      return Android{}, err
+   }
    return and, nil
 }
 
-func (a Android) Author() string {
-   return a.VideoDetails.Author
-}
-
-func (a Android) Formats() []Format {
-   var formats []Format
-   for _, format := range a.StreamingData.AdaptiveFormats {
-      if format.ContentLength > 0 {
-         formats = append(formats, format)
-      }
-   }
-   return formats
-}
-
 func (a Android) NewFormat(itag int) (Format, error) {
-   for _, format := range a.Formats() {
+   for _, format := range a.StreamingData.AdaptiveFormats {
       if format.Itag == itag {
          return format, nil
       }
    }
    return Format{}, fmt.Errorf("itag %v", itag)
-}
-
-func (a Android) Title() string {
-   return a.VideoDetails.Title
 }

@@ -88,10 +88,10 @@ func main() {
 }
 
 func getInfo(and youtube.Android) {
-   fmt.Println("author:", and.Author())
-   fmt.Println("title:", and.Title())
+   fmt.Println("author:", and.Author)
+   fmt.Println("title:", and.Title)
    fmt.Println()
-   for _, f := range and.Formats() {
+   for _, f := range and.StreamingData.AdaptiveFormats {
       fmt.Printf(
          "itag %v, height %v, %v, %v, %v\n",
          f.Itag,
@@ -110,7 +110,7 @@ func download(and youtube.Android, format youtube.Format) error {
       "video/mp4;": ".mp4",
       "video/webm": ".webm",
    }[format.MimeType[:10]]
-   create := and.Author() + "-" + and.Title() + ext
+   create := and.Author + "-" + and.Title + ext
    file, err := os.Create(strings.Map(clean, create))
    if err != nil { return err }
    defer func() {
