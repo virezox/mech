@@ -1,15 +1,37 @@
 # June 20 2021
 
+Since ANDROID is smaller, we want to pull as much from it as possible. Here is
+what we need to check:
+
+~~~go
+StreamingData struct {
+   AdaptiveFormats []struct {
+      Bitrate         int64  // pass
+      ContentLength   int64  // pass
+      Height          int    // pass
+      Itag            int    // pass
+      MimeType        string // pass
+      URL             string // pass
+   }
+}
+VideoDetails struct {
+   Author           string // pass
+   ShortDescription string // pass
+   Title            string // pass
+   ViewCount        int    // pass
+}
+Microformat struct {
+   PlayerMicroformatRenderer struct {
+      AvailableCountries []string // fail
+      PublishDate        string   // fail
+   }
+}
+~~~
+
 api    | client      | format | size    | media | date
 -------|-------------|--------|---------|-------|-----
-next   | android     | JSON   | 1.3 MB  | no    | Published on Oct 24, 2009
-next   | android     | proto  | 319 KB  | no    | Published on Oct 24, 2009
-next   | web         | JSON   | 522 KB  | no    | Oct 24, 2009
-next   | web         | proto  | 131 KB  | no    | Oct 24, 2009
-player | `web_remix` | JSON   | 242 KB  | yes   | 2009-10-24
 player | android     | JSON   | 98.3 KB | yes   | no
 player | web         | JSON   | 228 KB  | yes   | 2009-10-24
-player | web         | proto  | 160 KB  | yes   | 2009-10-24
 
 `next` with `ANDROID` doesnt return any media, so we will need to call `player`
 with `ANDROID` regardless. To get the date, we could do `next` with `ANDROID`,

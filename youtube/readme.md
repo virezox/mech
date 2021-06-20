@@ -2,13 +2,14 @@
 
 ## youtubei
 
-This new method downloads 72.2 KB.
+~~~go
+type Android struct {
+   Media
+}
 
-How much is the old method?
-
-~~~
-PS C:\> curl -I https://www.youtube.com/watch?v=UpNXI3_ctAc
-content-length: 502,514
+type Web struct {
+   Date
+}
 ~~~
 
 - https://github.com/TeamNewPipe/NewPipeExtractor/issues/562
