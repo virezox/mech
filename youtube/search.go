@@ -11,7 +11,7 @@ import (
 type Search struct {
    Contents struct {
       TwoColumnSearchResultsRenderer struct {
-         PrimaryContents primaryContents
+         PrimaryContents PrimaryContents
       }
    }
 }
@@ -56,7 +56,7 @@ func (s Search) VideoRenderers() []VideoRenderer {
    return vids
 }
 
-func (s Search) primaryContents() primaryContents {
+func (s Search) primaryContents() PrimaryContents {
    return s.Contents.TwoColumnSearchResultsRenderer.PrimaryContents
 }
 
@@ -64,7 +64,7 @@ type VideoRenderer struct {
    VideoID string
 }
 
-type primaryContents struct {
+type PrimaryContents struct {
    SectionListRenderer struct {
       Contents []struct {
          ItemSectionRenderer struct {

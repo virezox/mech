@@ -11,7 +11,12 @@ type Android struct {
    StreamingData struct {
       AdaptiveFormats []Format
    }
+   VideoDetails struct {
+      Author string
+      Title string
+   }
 }
+
 
 func NewAndroid(id string) (Android, error) {
    body := fmt.Sprintf(`
@@ -44,6 +49,10 @@ func NewAndroid(id string) (Android, error) {
    return and, nil
 }
 
+func (a Android) Author() string {
+   return a.VideoDetails.Author
+}
+
 func (a Android) Formats() []Format {
    var formats []Format
    for _, format := range a.StreamingData.AdaptiveFormats {
@@ -61,4 +70,8 @@ func (a Android) NewFormat(itag int) (Format, error) {
       }
    }
    return Format{}, fmt.Errorf("itag %v", itag)
+}
+
+func (a Android) Title() string {
+   return a.VideoDetails.Title
 }

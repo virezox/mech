@@ -12,7 +12,6 @@ type Format struct {
    Height int
    Itag int
    MimeType string
-   SignatureCipher string
    URL string
 }
 

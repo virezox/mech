@@ -2,13 +2,31 @@
 
 ## youtubei
 
-~~~go
-type Android struct {
-   Media
-}
+Since ANDROID is smaller, we want to pull as much from it as possible. Here is
+what we need to check:
 
-type Web struct {
-   Date
+~~~go
+StreamingData struct {
+   AdaptiveFormats []struct {
+      Bitrate         int64  // pass
+      ContentLength   int64  // pass
+      Height          int    // pass
+      Itag            int    // pass
+      MimeType        string // pass
+      URL             string // pass
+   }
+}
+VideoDetails struct {
+   Author           string // pass
+   ShortDescription string // pass
+   Title            string // pass
+   ViewCount        int    // pass
+}
+Microformat struct {
+   PlayerMicroformatRenderer struct {
+      AvailableCountries []string // fail
+      PublishDate        string   // fail
+   }
 }
 ~~~
 
