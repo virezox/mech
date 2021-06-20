@@ -6,12 +6,12 @@ import (
    "testing"
 )
 
-func TestSignatureCipher(t *testing.T) {
-   p, err := youtube.NewPlayer("XeojXq6ySs4")
+func TestAndroid(t *testing.T) {
+   a, err := youtube.NewAndroid("XeojXq6ySs4")
    if err != nil {
       t.Fatal(err)
    }
-   f, err := p.NewFormat(249)
+   f, err := a.NewFormat(249)
    if err != nil {
       t.Fatal(err)
    }
