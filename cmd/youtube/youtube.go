@@ -75,25 +75,15 @@ func download(video youtube.Player, format youtube.Format) error {
 func main() {
    var (
       atag, vtag int
-      info, update bool
+      info bool
    )
    flag.BoolVar(&info, "i", false, "info only")
-   flag.BoolVar(&update, "u", false, "update base.js")
    flag.IntVar(&atag, "a", 251, "audio (0 to skip)")
    flag.IntVar(&vtag, "v", 247, "video (0 to skip)")
    flag.Parse()
    if len(os.Args) == 1 {
       fmt.Println("youtube [flags] [URL]")
       flag.PrintDefaults()
-      return
-   }
-   // update
-   if update {
-      base, err := youtube.NewBaseJS()
-      if err != nil {
-         panic(err)
-      }
-      base.Get()
       return
    }
    // check URL
