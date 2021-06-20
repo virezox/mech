@@ -25,9 +25,6 @@ type Player struct {
    }
 }
 
-//const PlayerAPI = "https://www.youtube.com/youtubei/v1/player"
-const PlayerAPI = "https://youtubei.googleapis.com/youtubei/v1/player"
-
 func NewPlayer(id string) (Player, error) {
    body := fmt.Sprintf(`
    {
