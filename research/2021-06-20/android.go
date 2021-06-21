@@ -17,13 +17,17 @@ func post(id, name, version string) (*http.Response, error) {
    }
    `, id, name, version)
    req, err := http.NewRequest(
-      "POST", youtube.PlayerAPI, strings.NewReader(body),
+      "POST",
+      //youtube.PlayerAPI,
+      "https://youtubei.googleapis.com/youtubei/v1/player",
+      strings.NewReader(body),
    )
    if err != nil {
       return nil, err
    }
    val := req.URL.Query()
    val.Set("key", "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8")
+   val.Set("alt", "proto")
    req.URL.RawQuery = val.Encode()
    fmt.Println("POST", req.URL)
    res, err := new(http.Transport).RoundTrip(req)
@@ -38,6 +42,7 @@ func post(id, name, version string) (*http.Response, error) {
 
 func main() {
    res, err := post("GuAwIatmN3U", "ANDROID", youtube.VersionAndroid)
+   //res, err := post("GuAwIatmN3U", "WEB", youtube.VersionWeb)
    if err != nil {
       panic(err)
    }
