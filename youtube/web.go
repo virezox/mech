@@ -1,6 +1,8 @@
 package youtube
 import "encoding/json"
 
+const VersionWeb = "1.19700101"
+
 type Microformat struct {
    PlayerMicroformatRenderer `json:"playerMicroformatRenderer"`
 }
@@ -16,7 +18,7 @@ type Web struct {
 }
 
 func NewWeb(id string) (Web, error) {
-   res, err := post(id, "WEB", "1.19700101")
+   res, err := post(id, "WEB", VersionWeb)
    if err != nil {
       return Web{}, err
    }

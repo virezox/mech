@@ -5,6 +5,8 @@ import (
    "fmt"
 )
 
+const VersionAndroid = "15.01"
+
 type Android struct {
    StreamingData struct {
       AdaptiveFormats []Format
@@ -13,7 +15,7 @@ type Android struct {
 }
 
 func NewAndroid(id string) (Android, error) {
-   res, err := post(id, "ANDROID", "15.01")
+   res, err := post(id, "ANDROID", VersionAndroid)
    if err != nil {
       return Android{}, err
    }
