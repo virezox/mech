@@ -7,6 +7,12 @@ import (
    "net/http"
 )
 
+const (
+   chunk = 10_000_000
+   invert = "\x1b[7m"
+   reset = "\x1b[m"
+)
+
 type Request struct {
    Context struct {
       Client struct {
