@@ -13,6 +13,24 @@ type Search struct {
    }
 }
 
+type TwoColumnSearchResultsRenderer struct {
+   PrimaryContents struct {
+      SectionListRenderer struct {
+         Contents []struct {
+            ItemSectionRenderer struct {
+               Contents []struct {
+                  VideoRenderer `json:"videoRenderer"`
+               }
+            }
+         }
+      }
+   }
+}
+
+type VideoRenderer struct {
+   VideoID string
+}
+
 func NewSearch(query string) (*Search, error) {
    body := fmt.Sprintf(`
    {
@@ -54,20 +72,4 @@ func (s Search) VideoRenderers() []VideoRenderer {
    return vids
 }
 
-type TwoColumnSearchResultsRenderer struct {
-   PrimaryContents struct {
-      SectionListRenderer struct {
-         Contents []struct {
-            ItemSectionRenderer struct {
-               Contents []struct {
-                  VideoRenderer `json:"videoRenderer"`
-               }
-            }
-         }
-      }
-   }
-}
 
-type VideoRenderer struct {
-   VideoID string
-}
