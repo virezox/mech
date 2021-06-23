@@ -3,9 +3,8 @@ package youtube
 import (
    "encoding/json"
    "fmt"
-   "io"
    "net/http"
-   "regexp"
+   "strings"
 )
 
 type Search struct {
@@ -14,33 +13,34 @@ type Search struct {
    }
 }
 
-func NewSearch(query string) (Search, error) {
-   req, err := http.NewRequest("GET", "https://www.youtube.com/results", nil)
+func NewSearch(query string) (*Search, error) {
+   body := fmt.Sprintf(`
+   {
+      "query": %q, "context": {
+         "client": {"clientName": "WEB", "clientVersion": %q}
+      }
+   }
+   `, query, VersionWeb)
+   req, err := http.NewRequest(
+      "POST", "https://www.youtube.com/youtubei/v1/search",
+      strings.NewReader(body),
+   )
    if err != nil {
-      return Search{}, err
+      return nil, err
    }
    val := req.URL.Query()
-   val.Set("search_query", query)
+   val.Set("key", "AIzaSyDCU8hByM-4DrUqRUYnGn-3llEO78bcxq8")
    req.URL.RawQuery = val.Encode()
-   fmt.Println(invert, "GET", reset, req.URL)
+   fmt.Println("POST", req.URL)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
-      return Search{}, err
+      return nil, err
    }
-   defer res.Body.Close()
-   body, err := io.ReadAll(res.Body)
-   if err != nil {
-      return Search{}, err
+   if res.StatusCode != http.StatusOK {
+      return nil, fmt.Errorf("status %v", res.Status)
    }
-   re := regexp.MustCompile(">var ytInitialData = (.+);<")
-   find := re.FindSubmatch(body)
-   if find == nil {
-      return Search{}, fmt.Errorf("FindSubmatch %v", re)
-   }
-   var s Search
-   if err := json.Unmarshal(find[1], &s); err != nil {
-      return Search{}, err
-   }
+   s := new(Search)
+   json.NewDecoder(res.Body).Decode(s)
    return s, nil
 }
 

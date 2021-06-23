@@ -31,6 +31,11 @@ contents
 
 careful, first result might be an advertisement.
 
+~~~
+https://github.com/yuliskov/MediaServiceCore/blob/master/youtubeapi/src/test/
+resources/youtube-requests.http
+~~~
+
 ## youtubei
 
 Since ANDROID is smaller, we want to pull as much from it as possible. Here is
