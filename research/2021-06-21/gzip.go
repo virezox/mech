@@ -10,30 +10,6 @@ import (
 
 const PlayerAPI = "https://www.youtube.com/youtubei/v1/player"
 
-/*
-web normal
-62870
-59609
-avg 61239.5
-
-web gzip
-20488
-20474
-avg 20481
-66% reduce
-
-android normal
-59133
-57675
-avg 58404
-
-android gzip
-12614
-12717
-12665.5
-78%
-*/
-
 func request() error {
    body := fmt.Sprintf(`
    {
