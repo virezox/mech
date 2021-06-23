@@ -33,13 +33,13 @@ func NewAndroid(id string) (*Android, error) {
    return and, nil
 }
 
-func (a Android) NewFormat(itag int) (Format, error) {
+func (a Android) NewFormat(itag int) (*Format, error) {
    for _, format := range a.StreamingData.AdaptiveFormats {
       if format.Itag == itag {
-         return format, nil
+         return &format, nil
       }
    }
-   return Format{}, fmt.Errorf("itag %v", itag)
+   return nil, fmt.Errorf("itag %v", itag)
 }
 
 type Format struct {

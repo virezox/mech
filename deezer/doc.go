@@ -1,2 +1,0 @@
-// Deezer
-package deezer
