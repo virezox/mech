@@ -7,33 +7,15 @@ import (
    "net/http"
 )
 
-type Result struct {
+type Search struct {
    Contents struct {
       TwoColumnSearchResultsRenderer `json:"twoColumnSearchResultsRenderer"`
    }
 }
 
-type Search struct {
-   Query string `json:"query"`
-   Context struct {
-      Client struct {
-         ClientName string `json:"clientName"`
-         ClientVersion string `json:"clientVersion"`
-      } `json:"client"`
-   } `json:"context"`
-}
-
-func NewSearch(query string) Search {
-   var s Search
-   s.Query = query
-   s.Context.Client.ClientName = "WEB"
-   s.Context.Client.ClientVersion = VersionWeb
-   return s
-}
-
-func (s Search) NewResult() (*Result, error) {
+func (r Request) NewSearch() (*Search, error) {
    buf := new(bytes.Buffer)
-   json.NewEncoder(buf).Encode(s)
+   json.NewEncoder(buf).Encode(r)
    req, err := http.NewRequest(
       "POST", "https://www.youtube.com/youtubei/v1/search", buf,
    )
@@ -52,14 +34,14 @@ func (s Search) NewResult() (*Result, error) {
    if res.StatusCode != http.StatusOK {
       return nil, fmt.Errorf("status %v", res.Status)
    }
-   r := new(Result)
-   json.NewDecoder(res.Body).Decode(r)
-   return r, nil
+   s := new(Search)
+   json.NewDecoder(res.Body).Decode(s)
+   return s, nil
 }
 
-func (r Result) VideoRenderers() []VideoRenderer {
+func (s Search) VideoRenderers() []VideoRenderer {
    var vids []VideoRenderer
-   for _, sect := range r.Contents.PrimaryContents.SectionListRenderer.Contents {
+   for _, sect := range s.Contents.PrimaryContents.SectionListRenderer.Contents {
       for _, item := range sect.ItemSectionRenderer.Contents {
          vids = append(vids, item.VideoRenderer)
       }

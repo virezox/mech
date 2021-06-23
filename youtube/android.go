@@ -1,3 +1,4 @@
+// YouTube
 package youtube
 
 import (
@@ -7,7 +8,12 @@ import (
    "net/http"
 )
 
-const VersionAndroid = "15.01"
+const (
+   VersionAndroid = "15.01"
+   chunk = 10_000_000
+   invert = "\x1b[7m"
+   reset = "\x1b[m"
+)
 
 type Android struct {
    StreamingData struct {
@@ -16,16 +22,14 @@ type Android struct {
    VideoDetails `json:"videoDetails"`
 }
 
-func NewAndroid(id string) (Android, error) {
-   res, err := post(id, "ANDROID", VersionAndroid)
+func NewAndroid(id string) (*Android, error) {
+   res, err := VideoRequest(id, "ANDROID", VersionAndroid).post()
    if err != nil {
-      return Android{}, err
+      return nil, err
    }
    defer res.Body.Close()
-   var and Android
-   if err := json.NewDecoder(res.Body).Decode(&and); err != nil {
-      return Android{}, err
-   }
+   and := new(Android)
+   json.NewDecoder(res.Body).Decode(and)
    return and, nil
 }
 
@@ -72,4 +76,11 @@ func (f Format) Write(w io.Writer) error {
       pos += chunk
    }
    return nil
+}
+
+type VideoDetails struct {
+   Author string
+   ShortDescription string
+   Title string
+   ViewCount int `json:"viewCount,string"`
 }

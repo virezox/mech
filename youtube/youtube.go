@@ -1,29 +1,44 @@
-// YouTube
 package youtube
 
 import (
+   "bytes"
+   "encoding/json"
    "fmt"
    "net/http"
-   "strings"
 )
 
-const (
-   PlayerAPI = "https://www.youtube.com/youtubei/v1/player"
-   chunk = 10_000_000
-   invert = "\x1b[7m"
-   reset = "\x1b[m"
-)
+type Request struct {
+   Context struct {
+      Client struct {
+         ClientName string `json:"clientName"`
+         ClientVersion string `json:"clientVersion"`
+      } `json:"client"`
+   } `json:"context"`
+   Query string `json:"query"`
+   VideoID string `json:"videoId"`
+}
 
-func post(id, name, version string) (*http.Response, error) {
-   body := fmt.Sprintf(`
-   {
-      "videoId": %q, "context": {
-         "client": {"clientName": %q, "clientVersion": %q}
-      }
-   }
-   `, id, name, version)
+func QueryRequest(query string) Request {
+   var r Request
+   r.Context.Client.ClientName = "WEB"
+   r.Context.Client.ClientVersion = VersionWeb
+   r.Query = query
+   return r
+}
+
+func VideoRequest(id, name, version string) Request {
+   var r Request
+   r.Context.Client.ClientName = name
+   r.Context.Client.ClientVersion = version
+   r.VideoID = id
+   return r
+}
+
+func (r Request) post() (*http.Response, error) {
+   buf := new(bytes.Buffer)
+   json.NewEncoder(buf).Encode(r)
    req, err := http.NewRequest(
-      "POST", PlayerAPI, strings.NewReader(body),
+      "POST", "https://www.youtube.com/youtubei/v1/player", buf,
    )
    if err != nil {
       return nil, err
@@ -40,11 +55,4 @@ func post(id, name, version string) (*http.Response, error) {
       return nil, fmt.Errorf("status %v", res.Status)
    }
    return res, nil
-}
-
-type VideoDetails struct {
-   Author string
-   ShortDescription string
-   Title string
-   ViewCount int `json:"viewCount,string"`
 }

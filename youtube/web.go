@@ -17,15 +17,13 @@ type Web struct {
    VideoDetails `json:"videoDetails"`
 }
 
-func NewWeb(id string) (Web, error) {
-   res, err := post(id, "WEB", VersionWeb)
+func NewWeb(id string) (*Web, error) {
+   res, err := VideoRequest(id, "WEB", VersionWeb).post()
    if err != nil {
-      return Web{}, err
+      return nil, err
    }
    defer res.Body.Close()
-   var w Web
-   if err := json.NewDecoder(res.Body).Decode(&w); err != nil {
-      return Web{}, err
-   }
+   w := new(Web)
+   json.NewDecoder(res.Body).Decode(w)
    return w, nil
 }

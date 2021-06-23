@@ -9,11 +9,11 @@ import (
 
 func TestSearch(t *testing.T) {
    for _, query := range []string{"radiohead", "nelly furtado afraid"} {
-      r, err := youtube.NewSearch(query).NewResult()
+      s, err := youtube.QueryRequest(query).NewSearch()
       if err != nil {
          t.Fatal(err)
       }
-      for _, v := range r.VideoRenderers() {
+      for _, v := range s.VideoRenderers() {
          fmt.Printf("%+v\n", v)
       }
       time.Sleep(time.Second)
