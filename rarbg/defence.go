@@ -35,7 +35,9 @@ func NewDefence() (*Defence, error) {
       return nil, fmt.Errorf("status %v", res.Status)
    }
    body, err := io.ReadAll(res.Body)
-   if err != nil { return nil, err }
+   if err != nil {
+      return nil, err
+   }
    d := new(Defence)
    // CID
    re := regexp.MustCompile(" value_c = '([^']+)'")
@@ -64,7 +66,9 @@ func NewDefence() (*Defence, error) {
 // This saves the SKT cookie to the Cache folder for later use.
 func (d Defence) IamHuman(id, solve string) error {
    req, err := http.NewRequest("GET", Origin + DefencePHP, nil)
-   if err != nil { return err }
+   if err != nil {
+      return err
+   }
    val := req.URL.Query()
    val.Set("defence", "2")
    val.Set("cid", d.CID)
@@ -75,15 +79,23 @@ func (d Defence) IamHuman(id, solve string) error {
    req.URL.RawQuery = val.Encode()
    fmt.Println(invert, "GET", reset, req.URL)
    res, err := new(http.Transport).RoundTrip(req)
-   if err != nil { return err }
+   if err != nil {
+      return err
+   }
    defer res.Body.Close()
    for _, c := range res.Cookies() {
-      if c.Name != "skt" { continue }
+      if c.Name != "skt" {
+         continue
+      }
       cache, err := os.UserCacheDir()
-      if err != nil { return err }
+      if err != nil {
+         return err
+      }
       os.Mkdir(cache + "/mech", os.ModeDir)
       file, err := os.Create(cache + "/mech/skt.json")
-      if err != nil { return err }
+      if err != nil {
+         return err
+      }
       defer file.Close()
       enc := json.NewEncoder(file)
       enc.SetIndent("", " ")
@@ -133,7 +145,9 @@ func (d Defence) ThreatCaptcha() (php string, id string, err error) {
 
 func (d Defence) threatDefenceAJAX() error {
    req, err := http.NewRequest("GET", Origin + AJAXPHP, nil)
-   if err != nil { return err }
+   if err != nil {
+      return err
+   }
    val := req.URL.Query()
    val.Set("cid", d.CID)
    val.Set("i", d.I)
@@ -141,7 +155,9 @@ func (d Defence) threatDefenceAJAX() error {
    req.URL.RawQuery = val.Encode()
    fmt.Println(invert, "GET", reset, req.URL)
    res, err := new(http.Transport).RoundTrip(req)
-   if err != nil { return err }
+   if err != nil {
+      return err
+   }
    defer res.Body.Close()
    if res.StatusCode != http.StatusOK {
       return fmt.Errorf("status %v", res.Status)

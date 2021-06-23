@@ -18,7 +18,7 @@ type Web struct {
 }
 
 func NewWeb(id string) (*Web, error) {
-   res, err := VideoRequest(id, "WEB", VersionWeb).post()
+   res, err := videoRequest(id, "WEB", VersionWeb).post()
    if err != nil {
       return nil, err
    }

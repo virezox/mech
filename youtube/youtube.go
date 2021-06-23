@@ -7,6 +7,12 @@ import (
    "net/http"
 )
 
+const (
+   chunk = 10_000_000
+   invert = "\x1b[7m"
+   reset = "\x1b[m"
+)
+
 type Request struct {
    Context struct {
       Client struct {
@@ -26,7 +32,7 @@ func QueryRequest(query string) Request {
    return r
 }
 
-func VideoRequest(id, name, version string) Request {
+func videoRequest(id, name, version string) Request {
    var r Request
    r.Context.Client.ClientName = name
    r.Context.Client.ClientVersion = version

@@ -1,38 +1,13 @@
-package main
+package image
 
-import (
-   "encoding/json"
-   "fmt"
-   "net/url"
-   "os"
-)
-
-func iterate() ([]string, error) {
-   f, e := os.Open(`D:\Git\umber\umber.json`)
-   if e != nil { return nil, e }
-   defer f.Close()
-   var a []struct { Q string }
-   json.NewDecoder(f).Decode(&a)
-   out := make([]string, len(a))
-   for n, vid := range a {
-      val, e := url.ParseQuery(vid.Q)
-      if e != nil { return nil, e }
-      if val.Get("p") != "y" {
-         continue
-      }
-      out[n] = val.Get("b")
-   }
-   return out, nil
-}
-
-type image struct {
+type option struct {
    vi string
    left string
    right string
    ext string
 }
 
-var images = []image{
+var options = []option{
    {right:"0", ext:"jpg"},
    {right:"1", ext:"jpg"},
    {right:"2", ext:"jpg"},
@@ -77,20 +52,4 @@ var images = []image{
    {vi:"_webp", left:"sd", right:"2", ext:"webp"},
    {vi:"_webp", left:"sd", right:"3", ext:"webp"},
    {vi:"_webp", left:"sd", right:"default", ext:"webp"},
-}
-
-func main() {
-   for _, i := range images {
-      fmt.Printf(
-         "http://i.ytimg.com/vi%v/UpNXI3_ctAc/%v%v.%v\n",
-         i.vi, i.left, i.right, i.ext,
-      )
-   }
-   ids, err := iterate()
-   if err != nil {
-      panic(err)
-   }
-   for _, id := range ids {
-      fmt.Println(id)
-   }
 }

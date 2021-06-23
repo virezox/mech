@@ -8,12 +8,7 @@ import (
    "net/http"
 )
 
-const (
-   VersionAndroid = "15.01"
-   chunk = 10_000_000
-   invert = "\x1b[7m"
-   reset = "\x1b[m"
-)
+const VersionAndroid = "15.01"
 
 type Android struct {
    StreamingData struct {
@@ -23,7 +18,7 @@ type Android struct {
 }
 
 func NewAndroid(id string) (*Android, error) {
-   res, err := VideoRequest(id, "ANDROID", VersionAndroid).post()
+   res, err := videoRequest(id, "ANDROID", VersionAndroid).post()
    if err != nil {
       return nil, err
    }

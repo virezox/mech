@@ -51,7 +51,9 @@ func NewTrack(sngID, arl, sID string) (*Track, error) {
 // Given SNG_ID and file format, return audio URL.
 func (t Track) Source(sngID string, format rune) (string, error) {
    block, err := aes.NewCipher(keyAES)
-   if err != nil { return "", err }
+   if err != nil {
+      return "", err
+   }
    text :=
       t.MD5_ORIGIN +
       "\xa4" +

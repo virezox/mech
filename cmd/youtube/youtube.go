@@ -112,7 +112,9 @@ func download(and *youtube.Android, format *youtube.Format) error {
    }[format.MimeType[:10]]
    create := and.Author + "-" + and.Title + ext
    file, err := os.Create(strings.Map(clean, create))
-   if err != nil { return err }
+   if err != nil {
+      return err
+   }
    defer func() {
       file.Close()
       if err != nil {
@@ -120,8 +122,9 @@ func download(and *youtube.Android, format *youtube.Format) error {
       }
    }()
    begin := time.Now()
-   if err := format.Write(file)
-   err != nil { return err }
+   if err := format.Write(file); err != nil {
+      return err
+   }
    fmt.Println(time.Since(begin))
    return nil
 }

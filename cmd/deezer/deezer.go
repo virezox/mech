@@ -19,13 +19,17 @@ const (
 
 func getArl(har string) (string, error) {
    file, err := os.Open(har)
-   if err != nil { return "", err }
+   if err != nil {
+      return "", err
+   }
    defer file.Close()
    var archive struct {
       Log struct {
          Entries []struct {
             Request struct {
-               Cookies []struct { Name, Value string }
+               Cookies []struct {
+                  Name, Value string
+               }
             }
          }
       }
@@ -35,10 +39,12 @@ func getArl(har string) (string, error) {
    }
    for _, entry := range archive.Log.Entries {
       for _, cookie := range entry.Request.Cookies {
-         if cookie.Name == "arl" { return cookie.Value, nil }
+         if cookie.Name == "arl" {
+            return cookie.Value, nil
+         }
       }
    }
-   return "", fmt.Errorf("arl cookie not found")
+   return "", http.ErrNoCookie
 }
 
 func writeFile(sngID, arl, format string) error {
