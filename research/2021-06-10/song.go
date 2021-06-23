@@ -15,12 +15,12 @@ type song struct {
    }
 }
 
-func newSong(apiToken, sid string, sngId int) (song, error) {
+func newSong(apiToken, sid string, sngId int) (*song, error) {
    in, out := map[string]int{"SNG_ID": sngId}, new(bytes.Buffer)
    json.NewEncoder(out).Encode(in)
    req, err := http.NewRequest("POST", gatewayWWW, out)
    if err != nil {
-      return song{}, err
+      return nil, err
    }
    val := req.URL.Query()
    val.Set("api_version", "1.0")
@@ -31,11 +31,11 @@ func newSong(apiToken, sid string, sngId int) (song, error) {
    req.AddCookie(&http.Cookie{Name: "sid", Value: sid})
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
-      return song{}, err
+      return nil, err
    }
-   var data song
-   json.NewDecoder(res.Body).Decode(&data)
-   return data, nil
+   s := new(song)
+   json.NewDecoder(res.Body).Decode(s)
+   return s, nil
 }
 
 func main() {

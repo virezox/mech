@@ -63,7 +63,7 @@ func main() {
       return
    }
    // check formats
-   var forms []youtube.Format
+   var forms []*youtube.Format
    if atag > 0 {
       format, err := and.NewFormat(atag)
       if err != nil {
@@ -87,7 +87,7 @@ func main() {
    }
 }
 
-func getInfo(and youtube.Android) {
+func getInfo(and *youtube.Android) {
    fmt.Println("author:", and.Author)
    fmt.Println("title:", and.Title)
    fmt.Println()
@@ -103,7 +103,7 @@ func getInfo(and youtube.Android) {
    }
 }
 
-func download(and youtube.Android, format youtube.Format) error {
+func download(and *youtube.Android, format *youtube.Format) error {
    ext := map[string]string{
       "audio/mp4;": ".m4a",
       "audio/webm": ".weba",

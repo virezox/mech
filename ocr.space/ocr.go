@@ -48,27 +48,25 @@ type Image struct {
    }
 }
 
-func NewImage(name string) (Image, error) {
+func NewImage(name string) (*Image, error) {
    form := map[string]string{"OCREngine": "2", "file": "@" + name}
    ct, body, err := createForm(form)
    if err != nil {
-      return Image{}, err
+      return nil, err
    }
    req, err := http.NewRequest("POST", API, body)
    if err != nil {
-      return Image{}, err
+      return nil, err
    }
    req.Header.Set("Content-Type", ct)
    req.Header.Set("apikey", "helloworld")
    fmt.Println(invert, "POST", reset, form)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
-      return Image{}, err
+      return nil, err
    }
    defer res.Body.Close()
-   var img Image
-   if err := json.NewDecoder(res.Body).Decode(&img); err != nil {
-      return Image{}, err
-   }
+   img := new(Image)
+   json.NewDecoder(res.Body).Decode(img)
    return img, nil
 }

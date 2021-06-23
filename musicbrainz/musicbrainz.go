@@ -90,10 +90,10 @@ func (r Release) trackLen() int {
    return count
 }
 
-func NewGroup(groupID string) (Group, error) {
+func NewGroup(groupID string) (*Group, error) {
    req, err := http.NewRequest("GET", API, nil)
    if err != nil {
-      return Group{}, err
+      return nil, err
    }
    val := req.URL.Query()
    val.Set("fmt", "json")
@@ -103,20 +103,18 @@ func NewGroup(groupID string) (Group, error) {
    fmt.Println(invert, "GET", reset, req.URL)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
-      return Group{}, err
+      return nil, err
    }
    defer res.Body.Close()
-   var g Group
-   if err := json.NewDecoder(res.Body).Decode(&g); err != nil {
-      return Group{}, err
-   }
+   g := new(Group)
+   json.NewDecoder(res.Body).Decode(g)
    return g, nil
 }
 
-func GroupFromArtist(artistID string, offset int) (Group, error) {
+func GroupFromArtist(artistID string, offset int) (*Group, error) {
    req, err := http.NewRequest("GET", API, nil)
    if err != nil {
-      return Group{}, err
+      return nil, err
    }
    val := req.URL.Query()
    val.Set("artist", artistID)
@@ -132,20 +130,18 @@ func GroupFromArtist(artistID string, offset int) (Group, error) {
    fmt.Println(invert, "GET", reset, req.URL)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
-      return Group{}, err
+      return nil, err
    }
    defer res.Body.Close()
-   var g Group
-   if err := json.NewDecoder(res.Body).Decode(&g); err != nil {
-      return Group{}, err
-   }
+   g := new(Group)
+   json.NewDecoder(res.Body).Decode(g)
    return g, nil
 }
 
-func NewRelease(releaseID string) (Release, error) {
+func NewRelease(releaseID string) (*Release, error) {
    req, err := http.NewRequest("GET", API + "/" + releaseID, nil)
    if err != nil {
-      return Release{}, err
+      return nil, err
    }
    val := req.URL.Query()
    val.Set("fmt", "json")
@@ -154,12 +150,10 @@ func NewRelease(releaseID string) (Release, error) {
    fmt.Println(invert, "GET", reset, req.URL)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
-      return Release{}, err
+      return nil, err
    }
    defer res.Body.Close()
-   var r Release
-   if err := json.NewDecoder(res.Body).Decode(&r); err != nil {
-      return Release{}, err
-   }
+   r := new(Release)
+   json.NewDecoder(res.Body).Decode(r)
    return r, nil
 }

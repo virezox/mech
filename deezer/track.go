@@ -17,12 +17,12 @@ type Track struct {
 
 // Given a SNG_ID string, make a "deezer.pageTrack" request and return the
 // result.
-func NewTrack(sngID, arl, sID string) (Track, error) {
+func NewTrack(sngID, arl, sID string) (*Track, error) {
    in, out := map[string]string{"SNG_ID": sngID}, new(bytes.Buffer)
    json.NewEncoder(out).Encode(in)
    req, err := http.NewRequest("POST", GatewayWWW, out)
    if err != nil {
-      return Track{}, err
+      return nil, err
    }
    val := req.URL.Query()
    val.Set("method", "deezer.pageTrack")
@@ -33,11 +33,11 @@ func NewTrack(sngID, arl, sID string) (Track, error) {
    fmt.Println(invert, "POST", reset, req.URL)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
-      return Track{}, err
+      return nil, err
    }
    defer res.Body.Close()
    if res.StatusCode != http.StatusOK {
-      return Track{}, fmt.Errorf("status %v", res.Status)
+      return nil, fmt.Errorf("status %v", res.Status)
    }
    var page struct {
       Results struct {
@@ -45,7 +45,7 @@ func NewTrack(sngID, arl, sID string) (Track, error) {
       }
    }
    json.NewDecoder(res.Body).Decode(&page)
-   return page.Results.Data, nil
+   return &page.Results.Data, nil
 }
 
 // Given SNG_ID and file format, return audio URL.
