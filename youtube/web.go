@@ -18,12 +18,12 @@ type Web struct {
 }
 
 func NewWeb(id string) (*Web, error) {
-   res, err := video(id, "WEB", VersionWeb).post()
+   r, err := newPlayer(id, "WEB", VersionWeb).post()
    if err != nil {
       return nil, err
    }
-   defer res.Body.Close()
+   defer r.Body.Close()
    w := new(Web)
-   json.NewDecoder(res.Body).Decode(w)
+   json.NewDecoder(r.Body).Decode(w)
    return w, nil
 }
