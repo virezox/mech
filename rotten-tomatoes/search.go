@@ -4,7 +4,6 @@ import (
    "encoding/json"
    "fmt"
    "github.com/89z/mech"
-   "net/http"
 )
 
 type Search struct {
@@ -12,7 +11,7 @@ type Search struct {
 }
 
 func NewSearch(search string) (*Search, error) {
-   req, err := http.NewRequest("GET", AddrSearch, nil)
+   req, err := mech.NewRequest("GET", AddrSearch, nil)
    if err != nil {
       return nil, err
    }
@@ -20,12 +19,12 @@ func NewSearch(search string) (*Search, error) {
    val.Set("search", search)
    req.URL.RawQuery = val.Encode()
    fmt.Println(invert, "GET", reset, req.URL)
-   res, err := new(http.Transport).RoundTrip(req)
+   res, err := new(mech.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
+   if res.StatusCode != mech.StatusOK {
       return nil, fmt.Errorf("status %v", res.Status)
    }
    doc, err := mech.Parse(res.Body)
