@@ -1,10 +1,21 @@
-package mech
+package mech_test
 
-func main() {
+import (
+   "fmt"
+   "github.com/89z/mech"
+   "os"
+   "testing"
+)
+
+func TestTransport(t *testing.T) {
    for _, gz := range []bool{false, true} {
-      var c client
-      c.DisableCompression = gz
-      res, err := c.get("https://github.com/manifest.json")
+      req, err := mech.NewRequest("GET", "https://github.com/manifest.json", nil)
+      if err != nil {
+         t.Fatal(err)
+      }
+      var t mech.Transport
+      t.DisableCompression = gz
+      res, err := t.RoundTrip(req)
       if err != nil {
          panic(err)
       }

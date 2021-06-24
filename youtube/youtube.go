@@ -5,7 +5,7 @@ import (
    "bytes"
    "encoding/json"
    "fmt"
-   "net/http"
+   "github.com/89z/mech"
 )
 
 const (
@@ -34,32 +34,6 @@ func NewSearch(query string) Search {
    return s
 }
 
-func (s Search) Post() (*Result, error) {
-   buf := new(bytes.Buffer)
-   json.NewEncoder(buf).Encode(s)
-   req, err := http.NewRequest(
-      "POST", "https://www.youtube.com/youtubei/v1/search", buf,
-   )
-   if err != nil {
-      return nil, err
-   }
-   val := req.URL.Query()
-   val.Set("key", "AIzaSyDCU8hByM-4DrUqRUYnGn-3llEO78bcxq8")
-   req.URL.RawQuery = val.Encode()
-   fmt.Println(invert, "POST", reset, req.URL)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return nil, fmt.Errorf("status %v", res.Status)
-   }
-   r := new(Result)
-   json.NewDecoder(res.Body).Decode(r)
-   return r, nil
-}
-
 type player struct {
    Context `json:"context"`
    VideoID string `json:"videoId"`
@@ -73,10 +47,38 @@ func newPlayer(id, name, version string) player {
    return p
 }
 
-func (p player) post() (*http.Response, error) {
+////////////////////////////////////////////////////////////////////////////////
+
+func (s Search) Post() (*Result, error) {
+   buf := new(bytes.Buffer)
+   json.NewEncoder(buf).Encode(s)
+   req, err := mech.NewRequest(
+      "POST", "https://www.youtube.com/youtubei/v1/search", buf,
+   )
+   if err != nil {
+      return nil, err
+   }
+   val := req.URL.Query()
+   val.Set("key", "AIzaSyDCU8hByM-4DrUqRUYnGn-3llEO78bcxq8")
+   req.URL.RawQuery = val.Encode()
+   fmt.Println(invert, "POST", reset, req.URL)
+   res, err := new(mech.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   if res.StatusCode != mech.StatusOK {
+      return nil, fmt.Errorf("status %v", res.Status)
+   }
+   r := new(Result)
+   json.NewDecoder(res.Body).Decode(r)
+   return r, nil
+}
+
+func (p player) post() (*mech.Response, error) {
    buf := new(bytes.Buffer)
    json.NewEncoder(buf).Encode(p)
-   req, err := http.NewRequest(
+   req, err := mech.NewRequest(
       "POST", "https://www.youtube.com/youtubei/v1/player", buf,
    )
    if err != nil {
@@ -86,11 +88,11 @@ func (p player) post() (*http.Response, error) {
    val.Set("key", "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8")
    req.URL.RawQuery = val.Encode()
    fmt.Println(invert, "POST", reset, req.URL)
-   res, err := new(http.Transport).RoundTrip(req)
+   res, err := new(mech.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
    }
-   if res.StatusCode != http.StatusOK {
+   if res.StatusCode != mech.StatusOK {
       return nil, fmt.Errorf("status %v", res.Status)
    }
    return res, nil

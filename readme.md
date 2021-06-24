@@ -13,7 +13,7 @@ https://pkg.go.dev/github.com/89z/mech
 5. Rotten Tomatoes
 6. YouTube
 
-## Client
+## Transport
 
 How can I tell if response is Gzip encoded? With cURL, I can do this:
 
