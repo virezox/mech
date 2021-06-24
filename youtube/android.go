@@ -18,7 +18,7 @@ type Android struct {
 }
 
 func NewAndroid(id string) (*Android, error) {
-   res, err := videoRequest(id, "ANDROID", VersionAndroid).post()
+   res, err := video(id, "ANDROID", VersionAndroid).post()
    if err != nil {
       return nil, err
    }

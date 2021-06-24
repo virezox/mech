@@ -24,15 +24,15 @@ type Request struct {
    VideoID string `json:"videoId"`
 }
 
-func QueryRequest(query string) Request {
+func Query(search string) Request {
    var r Request
    r.Context.Client.ClientName = "WEB"
    r.Context.Client.ClientVersion = VersionWeb
-   r.Query = query
+   r.Query = search
    return r
 }
 
-func videoRequest(id, name, version string) Request {
+func video(id, name, version string) Request {
    var r Request
    r.Context.Client.ClientName = name
    r.Context.Client.ClientVersion = version

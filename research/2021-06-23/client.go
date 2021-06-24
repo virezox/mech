@@ -13,13 +13,19 @@ type readCloser struct {
    io.Closer
 }
 
-func get(addr string) (*http.Response, error) {
+type client struct {
+   http.Transport
+}
+
+func (c client) get(addr string) (*http.Response, error) {
    req, err := http.NewRequest("GET", addr, nil)
    if err != nil {
       return nil, err
    }
-   req.Header.Set("Accept-Encoding", "gzip")
-   res, err := new(http.Transport).RoundTrip(req)
+   if !c.DisableCompression {
+      req.Header.Set("Accept-Encoding", "gzip")
+   }
+   res, err := c.RoundTrip(req)
    if err != nil {
       return nil, err
    }
@@ -37,11 +43,16 @@ func get(addr string) (*http.Response, error) {
 }
 
 func main() {
-   res, err := get("https://github.com/manifest.json")
-   if err != nil {
-      panic(err)
+   for _, gz := range []bool{false, true} {
+      var c client
+      c.DisableCompression = gz
+      res, err := c.get("https://github.com/manifest.json")
+      if err != nil {
+         panic(err)
+      }
+      defer res.Body.Close()
+      fmt.Println(res.ContentLength)
+      os.Stdout.ReadFrom(res.Body)
+      fmt.Println()
    }
-   defer res.Body.Close()
-   fmt.Println(res.ContentLength)
-   os.Stdout.ReadFrom(res.Body)
 }
