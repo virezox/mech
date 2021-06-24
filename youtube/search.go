@@ -1,5 +1,21 @@
 package youtube
 
+type Result struct {
+   Contents struct {
+      TwoColumnSearchResultsRenderer `json:"twoColumnSearchResultsRenderer"`
+   }
+}
+
+func (r Result) VideoRenderers() []VideoRenderer {
+   var vids []VideoRenderer
+   for _, sect := range r.Contents.PrimaryContents.SectionListRenderer.Contents {
+      for _, item := range sect.ItemSectionRenderer.Contents {
+         vids = append(vids, item.VideoRenderer)
+      }
+   }
+   return vids
+}
+
 type TwoColumnSearchResultsRenderer struct {
    PrimaryContents struct {
       SectionListRenderer struct {
@@ -16,20 +32,4 @@ type TwoColumnSearchResultsRenderer struct {
 
 type VideoRenderer struct {
    VideoID string
-}
-
-type Result struct {
-   Contents struct {
-      TwoColumnSearchResultsRenderer `json:"twoColumnSearchResultsRenderer"`
-   }
-}
-
-func (r Result) VideoRenderers() []VideoRenderer {
-   var vids []VideoRenderer
-   for _, sect := range r.Contents.PrimaryContents.SectionListRenderer.Contents {
-      for _, item := range sect.ItemSectionRenderer.Contents {
-         vids = append(vids, item.VideoRenderer)
-      }
-   }
-   return vids
 }
