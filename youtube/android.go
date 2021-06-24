@@ -58,11 +58,9 @@ func (f Format) Write(w io.Writer) error {
       return err
    }
    var pos int64
-   fmt.Println(invert, "GET", reset, req.URL)
    for pos < f.ContentLength {
       bytes := fmt.Sprintf("bytes=%v-%v", pos, pos+chunk-1)
       req.Header.Set("Range", bytes)
-      fmt.Println(bytes)
       res, err := new(mech.Transport).RoundTrip(req)
       if err != nil {
          return err

@@ -8,11 +8,7 @@ import (
    "github.com/89z/mech"
 )
 
-const (
-   chunk = 10_000_000
-   invert = "\x1b[7m"
-   reset = "\x1b[m"
-)
+const chunk = 10_000_000
 
 type Context struct {
    Client struct {
@@ -60,7 +56,6 @@ func (p player) post() (*mech.Response, error) {
    val := req.URL.Query()
    val.Set("key", "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8")
    req.URL.RawQuery = val.Encode()
-   fmt.Println(invert, "POST", reset, req.URL)
    res, err := new(mech.Transport).RoundTrip(req)
    if err != nil {
       return nil, err

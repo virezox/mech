@@ -1,10 +1,14 @@
+// MusicBrainz
 package musicbrainz
 
 import (
    "encoding/json"
-   "fmt"
    "github.com/89z/mech"
 )
+
+const API = "http://musicbrainz.org/ws/2/release"
+
+var Status = map[string]int{"Official": 0, "Bootleg": 1}
 
 type Release struct {
    ArtistCredit []struct {
@@ -40,7 +44,6 @@ func NewRelease(releaseID string) (*Release, error) {
    val.Set("fmt", "json")
    val.Set("inc", "artist-credits recordings")
    req.URL.RawQuery = val.Encode()
-   fmt.Println(invert, "GET", reset, req.URL)
    res, err := new(mech.Transport).RoundTrip(req)
    if err != nil {
       return nil, err

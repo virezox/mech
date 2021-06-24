@@ -2,7 +2,6 @@ package musicbrainz
 
 import (
    "encoding/json"
-   "fmt"
    "github.com/89z/mech"
    "sort"
    "strconv"
@@ -29,7 +28,6 @@ func GroupFromArtist(artistID string, offset int) (*Group, error) {
       val.Set("offset", strconv.Itoa(offset))
    }
    req.URL.RawQuery = val.Encode()
-   fmt.Println(invert, "GET", reset, req.URL)
    res, err := new(mech.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -50,7 +48,6 @@ func NewGroup(groupID string) (*Group, error) {
    val.Set("inc", "artist-credits recordings")
    val.Set("release-group", groupID)
    req.URL.RawQuery = val.Encode()
-   fmt.Println(invert, "GET", reset, req.URL)
    res, err := new(mech.Transport).RoundTrip(req)
    if err != nil {
       return nil, err

@@ -16,8 +16,6 @@ const (
    DefencePHP = "/threat_defence.php"
    Origin = "http://rarbg.to"
    Sleep = 4 * time.Second
-   invert = "\x1b[7m"
-   reset = "\x1b[m"
 )
 
 // This returns solution to the Captcha at the given path. After this, you will
@@ -27,7 +25,6 @@ func Solve(php string) (solve string, err error) {
    if err != nil {
       return "", err
    }
-   fmt.Println(invert, "GET", reset, req.URL)
    res, err := new(mech.Transport).RoundTrip(req)
    if err != nil {
       return "", err

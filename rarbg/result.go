@@ -45,7 +45,6 @@ func NewResults(search, page string) ([]Result, error) {
    }
    req.URL.RawQuery = val.Encode()
    req.AddCookie(cookie)
-   fmt.Println(invert, "GET", reset, req.URL)
    res, err := new(mech.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
