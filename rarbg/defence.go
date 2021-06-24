@@ -24,7 +24,6 @@ func NewDefence() (*Defence, error) {
    if err != nil {
       return nil, err
    }
-   fmt.Println(invert, "GET", reset, req.URL)
    res, err := new(mech.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -76,7 +75,6 @@ func (d Defence) IamHuman(id, solve string) error {
    val.Set("solve_string", solve)
    val.Set("captcha_id", id)
    req.URL.RawQuery = val.Encode()
-   fmt.Println(invert, "GET", reset, req.URL)
    res, err := new(mech.Transport).RoundTrip(req)
    if err != nil {
       return err
@@ -120,7 +118,6 @@ func (d Defence) ThreatCaptcha() (php string, id string, err error) {
    val.Set("sk", d.SK)
    req.URL.RawQuery = val.Encode()
    time.Sleep(Sleep)
-   fmt.Println(invert, "GET", reset, req.URL)
    res, err := new(mech.Transport).RoundTrip(req)
    if err != nil {
       return "", "", err
@@ -152,7 +149,6 @@ func (d Defence) threatDefenceAJAX() error {
    val.Set("i", d.I)
    val.Set("sk", d.SK)
    req.URL.RawQuery = val.Encode()
-   fmt.Println(invert, "GET", reset, req.URL)
    res, err := new(mech.Transport).RoundTrip(req)
    if err != nil {
       return err

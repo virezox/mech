@@ -2,7 +2,6 @@ package deezer
 
 import (
    "encoding/json"
-   "fmt"
    "github.com/89z/mech"
 )
 
@@ -31,7 +30,6 @@ func NewUserData(arl string) (*UserData, error) {
    val.Set("method", "deezer.getUserData")
    req.URL.RawQuery = val.Encode()
    req.Header.Set("Cookie", "arl=" + arl)
-   fmt.Println(invert, "GET", reset, req.URL)
    res, err := new(mech.Transport).RoundTrip(req)
    if err != nil {
       return nil, err

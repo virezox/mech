@@ -1,3 +1,4 @@
+// Rotten Tomatoes
 package tomato
 
 import (
@@ -5,6 +6,8 @@ import (
    "fmt"
    "github.com/89z/mech"
 )
+
+const AddrSearch = "https://www.rottentomatoes.com/search"
 
 type Search struct {
    Items []Item
@@ -18,7 +21,6 @@ func NewSearch(search string) (*Search, error) {
    val := req.URL.Query()
    val.Set("search", search)
    req.URL.RawQuery = val.Encode()
-   fmt.Println(invert, "GET", reset, req.URL)
    res, err := new(mech.Transport).RoundTrip(req)
    if err != nil {
       return nil, err

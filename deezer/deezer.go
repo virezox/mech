@@ -8,11 +8,7 @@ import (
    "golang.org/x/crypto/blowfish"
 )
 
-const (
-   GatewayWWW = "http://www.deezer.com/ajax/gw-light.php"
-   invert = "\x1b[7m"
-   reset = "\x1b[m"
-)
+const GatewayWWW = "http://www.deezer.com/ajax/gw-light.php"
 
 const (
    FLAC = '9'

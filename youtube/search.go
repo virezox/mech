@@ -53,7 +53,6 @@ func (s Search) Post() (*Result, error) {
    val := req.URL.Query()
    val.Set("key", "AIzaSyDCU8hByM-4DrUqRUYnGn-3llEO78bcxq8")
    req.URL.RawQuery = val.Encode()
-   fmt.Println(invert, "POST", reset, req.URL)
    res, err := new(mech.Transport).RoundTrip(req)
    if err != nil {
       return nil, err

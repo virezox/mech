@@ -59,7 +59,6 @@ func NewTrack(sngID, arl, sID string) (*Track, error) {
    val.Set("api_token", arl)
    req.URL.RawQuery = val.Encode()
    req.Header.Set("Cookie", "sid=" + sID)
-   fmt.Println(invert, "POST", reset, req.URL)
    res, err := new(mech.Transport).RoundTrip(req)
    if err != nil {
       return nil, err

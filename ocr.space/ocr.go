@@ -4,7 +4,6 @@ package ocr
 import (
    "bytes"
    "encoding/json"
-   "fmt"
    "github.com/89z/mech"
    "io"
    "mime/multipart"
@@ -14,8 +13,6 @@ import (
 
 const (
    API = "http://api.ocr.space/parse/image"
-   invert = "\x1b[7m"
-   reset = "\x1b[m"
 )
 
 func createForm(form map[string]string) (string, io.Reader, error) {
@@ -60,7 +57,6 @@ func NewImage(name string) (*Image, error) {
    }
    req.Header.Set("Content-Type", ct)
    req.Header.Set("apikey", "helloworld")
-   fmt.Println(invert, "POST", reset, form)
    res, err := new(mech.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
