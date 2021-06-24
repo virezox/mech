@@ -3,10 +3,10 @@ package main
 import (
    "embed"
    "fmt"
+   "github.com/89z/mech"
    "github.com/89z/mech/rarbg"
    "html/template"
    "io"
-   "net/http"
    "net/url"
    "os"
    "path/filepath"
@@ -19,7 +19,7 @@ const origin = "https://dyncdn.me"
 //go:embed index.html
 var content embed.FS
 
-func image(w http.ResponseWriter, r *http.Request) {
+func image(w mech.ResponseWriter, r *mech.Request) {
    cache, err := os.UserCacheDir()
    if err != nil {
       panic(err)
@@ -27,7 +27,7 @@ func image(w http.ResponseWriter, r *http.Request) {
    cache = filepath.Join(cache, "mech", r.URL.Path)
    if _, err := os.Stat(cache); err != nil {
       fmt.Println("Get", origin + r.URL.Path)
-      res, err := http.Get(origin + r.URL.Path)
+      res, err := mech.Get(origin + r.URL.Path)
       if err != nil {
          panic(err)
       }
@@ -52,7 +52,7 @@ func image(w http.ResponseWriter, r *http.Request) {
 
 var done = make(map[string]bool)
 
-func index(w http.ResponseWriter, r *http.Request) {
+func index(w mech.ResponseWriter, r *mech.Request) {
    val := r.URL.Query()
    search := val.Get("search")
    // favicon.ico
@@ -92,24 +92,24 @@ func index(w http.ResponseWriter, r *http.Request) {
    t.Execute(w, out)
 }
 
-func google(w http.ResponseWriter, r *http.Request) {
+func google(w mech.ResponseWriter, r *mech.Request) {
    re := regexp.MustCompile(`(.+\.\d{4})\.`)
    find := re.FindStringSubmatch(filepath.Base(r.URL.Path))
    if find == nil {
       fmt.Println(re)
       return
    }
-   http.Redirect(
-      w, r, "http://google.com/search?q=" + find[1], http.StatusSeeOther,
+   mech.Redirect(
+      w, r, "http://google.com/search?q=" + find[1], mech.StatusSeeOther,
    )
 }
 
 func main() {
-   http.HandleFunc("/", index)
-   http.HandleFunc("/google/", google)
-   http.HandleFunc("/mimages/", image)
+   mech.HandleFunc("/", index)
+   mech.HandleFunc("/google/", google)
+   mech.HandleFunc("/mimages/", image)
    // slash prevents redirect
    fmt.Println(`localhost/?search=2020
 localhost/?uniq=1&search=2020&page=2`)
-   new(http.Server).ListenAndServe()
+   new(mech.Server).ListenAndServe()
 }
