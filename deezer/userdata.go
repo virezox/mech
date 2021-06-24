@@ -3,7 +3,7 @@ package deezer
 import (
    "encoding/json"
    "fmt"
-   "net/http"
+   "github.com/89z/mech"
 )
 
 
@@ -20,7 +20,7 @@ type UserData struct {
 }
 
 func NewUserData(arl string) (*UserData, error) {
-   req, err := http.NewRequest("GET", GatewayWWW, nil)
+   req, err := mech.NewRequest("GET", GatewayWWW, nil)
    if err != nil {
       return nil, err
    }
@@ -32,7 +32,7 @@ func NewUserData(arl string) (*UserData, error) {
    req.URL.RawQuery = val.Encode()
    req.Header.Set("Cookie", "arl=" + arl)
    fmt.Println(invert, "GET", reset, req.URL)
-   res, err := new(http.Transport).RoundTrip(req)
+   res, err := new(mech.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
    }

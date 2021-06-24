@@ -3,7 +3,7 @@ package musicbrainz
 import (
    "encoding/json"
    "fmt"
-   "net/http"
+   "github.com/89z/mech"
    "sort"
    "strconv"
 )
@@ -14,7 +14,7 @@ type Group struct {
 }
 
 func GroupFromArtist(artistID string, offset int) (*Group, error) {
-   req, err := http.NewRequest("GET", API, nil)
+   req, err := mech.NewRequest("GET", API, nil)
    if err != nil {
       return nil, err
    }
@@ -30,7 +30,7 @@ func GroupFromArtist(artistID string, offset int) (*Group, error) {
    }
    req.URL.RawQuery = val.Encode()
    fmt.Println(invert, "GET", reset, req.URL)
-   res, err := new(http.Transport).RoundTrip(req)
+   res, err := new(mech.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
    }
@@ -41,7 +41,7 @@ func GroupFromArtist(artistID string, offset int) (*Group, error) {
 }
 
 func NewGroup(groupID string) (*Group, error) {
-   req, err := http.NewRequest("GET", API, nil)
+   req, err := mech.NewRequest("GET", API, nil)
    if err != nil {
       return nil, err
    }
@@ -51,7 +51,7 @@ func NewGroup(groupID string) (*Group, error) {
    val.Set("release-group", groupID)
    req.URL.RawQuery = val.Encode()
    fmt.Println(invert, "GET", reset, req.URL)
-   res, err := new(http.Transport).RoundTrip(req)
+   res, err := new(mech.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
    }

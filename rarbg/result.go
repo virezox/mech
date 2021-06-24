@@ -4,7 +4,6 @@ import (
    "encoding/json"
    "fmt"
    "github.com/89z/mech"
-   "net/http"
    "os"
    "regexp"
 )
@@ -30,9 +29,9 @@ func NewResults(search, page string) ([]Result, error) {
       return nil, err
    }
    defer skt.Close()
-   cookie := new(http.Cookie)
+   cookie := new(mech.Cookie)
    json.NewDecoder(skt).Decode(cookie)
-   req, err := http.NewRequest("GET", Origin + "/torrents.php", nil)
+   req, err := mech.NewRequest("GET", Origin + "/torrents.php", nil)
    if err != nil {
       return nil, err
    }
@@ -47,7 +46,7 @@ func NewResults(search, page string) ([]Result, error) {
    req.URL.RawQuery = val.Encode()
    req.AddCookie(cookie)
    fmt.Println(invert, "GET", reset, req.URL)
-   res, err := new(http.Transport).RoundTrip(req)
+   res, err := new(mech.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
    }

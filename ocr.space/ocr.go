@@ -5,9 +5,9 @@ import (
    "bytes"
    "encoding/json"
    "fmt"
+   "github.com/89z/mech"
    "io"
    "mime/multipart"
-   "net/http"
    "os"
    "strings"
 )
@@ -54,14 +54,14 @@ func NewImage(name string) (*Image, error) {
    if err != nil {
       return nil, err
    }
-   req, err := http.NewRequest("POST", API, body)
+   req, err := mech.NewRequest("POST", API, body)
    if err != nil {
       return nil, err
    }
    req.Header.Set("Content-Type", ct)
    req.Header.Set("apikey", "helloworld")
    fmt.Println(invert, "POST", reset, form)
-   res, err := new(http.Transport).RoundTrip(req)
+   res, err := new(mech.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
    }

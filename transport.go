@@ -7,13 +7,20 @@ import (
    "strings"
 )
 
-var (
-   NewRequest = http.NewRequest
+const (
    StatusOK = http.StatusOK
    StatusPartialContent = http.StatusPartialContent
 )
 
-type Response = http.Response
+var (
+   ErrNoCookie = http.ErrNoCookie
+   NewRequest = http.NewRequest
+)
+
+type (
+   Cookie = http.Cookie
+   Response = http.Response
+)
 
 type Transport struct {
    http.Transport
