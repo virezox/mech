@@ -1,4 +1,3 @@
-// YouTube
 package youtube
 
 import (
@@ -18,14 +17,14 @@ type Android struct {
 }
 
 func NewAndroid(id string) (*Android, error) {
-   res, err := video(id, "ANDROID", VersionAndroid).post()
+   r, err := NewPlayer(id, "ANDROID", VersionAndroid).Post()
    if err != nil {
       return nil, err
    }
-   defer res.Body.Close()
-   and := new(Android)
-   json.NewDecoder(res.Body).Decode(and)
-   return and, nil
+   defer r.Body.Close()
+   a := new(Android)
+   json.NewDecoder(r.Body).Decode(a)
+   return a, nil
 }
 
 func (a Android) NewFormat(itag int) (*Format, error) {
