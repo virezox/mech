@@ -56,6 +56,7 @@ func (p player) post() (*http.Response, error) {
    val := req.URL.Query()
    val.Set("key", "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8")
    req.URL.RawQuery = val.Encode()
+   fmt.Println(invert, "POST", reset, req.URL)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
