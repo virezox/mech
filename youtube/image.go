@@ -1,61 +1,73 @@
 package youtube
-import "fmt"
+
+import (
+   "fmt"
+   "path"
+)
+
+const (
+   HeightCrop = iota
+   WidthAuto
+   WidthAutoHeightBlack
+   WidthBlack
+)
 
 var Images = []Image{
-   {"vi", "0", "jpg"},
-   {"vi", "1", "jpg"},
-   {"vi", "2", "jpg"},
-   {"vi", "3", "jpg"},
-   {"vi", "default", "jpg"},
-   {"vi", "hq1", "jpg"},
-   {"vi", "hq2", "jpg"},
-   {"vi", "hq3", "jpg"},
-   {"vi", "hq720", "jpg"},
-   {"vi", "hqdefault", "jpg"},
-   {"vi", "maxres1", "jpg"},
-   {"vi", "maxres2", "jpg"},
-   {"vi", "maxres3", "jpg"},
-   {"vi", "maxresdefault", "jpg"},
-   {"vi", "mq1", "jpg"},
-   {"vi", "mq2", "jpg"},
-   {"vi", "mq3", "jpg"},
-   {"vi", "mqdefault", "jpg"},
-   {"vi", "sd1", "jpg"},
-   {"vi", "sd2", "jpg"},
-   {"vi", "sd3", "jpg"},
-   {"vi", "sddefault", "jpg"},
-   {"vi_webp", "0", "webp"},
-   {"vi_webp", "1", "webp"},
-   {"vi_webp", "2", "webp"},
-   {"vi_webp", "3", "webp"},
-   {"vi_webp", "default", "webp"},
-   {"vi_webp", "hq1", "webp"},
-   {"vi_webp", "hq2", "webp"},
-   {"vi_webp", "hq3", "webp"},
-   {"vi_webp", "hq720", "webp"},
-   {"vi_webp", "hqdefault", "webp"},
-   {"vi_webp", "maxres1", "webp"},
-   {"vi_webp", "maxres2", "webp"},
-   {"vi_webp", "maxres3", "webp"},
-   {"vi_webp", "maxresdefault", "webp"},
-   {"vi_webp", "mq1", "webp"},
-   {"vi_webp", "mq2", "webp"},
-   {"vi_webp", "mq3", "webp"},
-   {"vi_webp", "mqdefault", "webp"},
-   {"vi_webp", "sd1", "webp"},
-   {"vi_webp", "sd2", "webp"},
-   {"vi_webp", "sd3", "webp"},
-   {"vi_webp", "sddefault", "webp"},
+   {"0.jpg", 360, WidthAutoHeightBlack},
+   {"0.webp", 360, WidthAutoHeightBlack},
+   {"1.jpg", 90, WidthBlack},
+   {"1.webp", 90, WidthBlack},
+   {"2.jpg", 90, WidthBlack},
+   {"2.webp", 90, WidthBlack},
+   {"3.jpg", 90, WidthBlack},
+   {"3.webp", 90, WidthBlack},
+   {"default.jpg", 90, WidthAutoHeightBlack},
+   {"default.webp", 90, WidthAutoHeightBlack},
+   {"hq1.jpg", 360, WidthBlack},
+   {"hq1.webp", 360, WidthBlack},
+   {"hq2.jpg", 360, WidthBlack},
+   {"hq2.webp", 360, WidthBlack},
+   {"hq3.jpg", 360, WidthBlack},
+   {"hq3.webp", 360, WidthBlack},
+   {"hq720.jpg", 720, WidthAuto},
+   {"hq720.webp", 720, WidthAuto},
+   {"hqdefault.jpg", 360, WidthAutoHeightBlack},
+   {"hqdefault.webp", 360, WidthAutoHeightBlack},
+   {"maxres1.jpg", 720, WidthBlack},
+   {"maxres1.webp", 720, WidthBlack},
+   {"maxres2.jpg", 720, WidthBlack},
+   {"maxres2.webp", 720, WidthBlack},
+   {"maxres3.jpg", 720, WidthBlack},
+   {"maxres3.webp", 720, WidthBlack},
+   {"maxresdefault.jpg", 720, WidthAuto},
+   {"maxresdefault.webp", 720, WidthAuto},
+   {"mq1.jpg", 180, HeightCrop},
+   {"mq1.webp", 180, HeightCrop},
+   {"mq2.jpg", 180, HeightCrop},
+   {"mq2.webp", 180, HeightCrop},
+   {"mq3.jpg", 180, HeightCrop},
+   {"mq3.webp", 180, HeightCrop},
+   {"mqdefault.jpg", 180, WidthAuto},
+   {"mqdefault.webp", 180, WidthAuto},
+   {"sd1.jpg", 480, WidthBlack},
+   {"sd1.webp", 480, WidthBlack},
+   {"sd2.jpg", 480, WidthBlack},
+   {"sd2.webp", 480, WidthBlack},
+   {"sd3.jpg", 480, WidthBlack},
+   {"sd3.webp", 480, WidthBlack},
+   {"sddefault.jpg", 480, WidthAutoHeightBlack},
+   {"sddefault.webp", 480, WidthAutoHeightBlack},
 }
 
+var imageDirs = map[string]string{".webp": "vi_webp", ".jpg": "vi"}
+
 type Image struct {
-   Dir string
-   Base string
-   Ext string
+   File string
+   Height int
+   Frame int
 }
 
 func (i Image) Address(id string) string {
-   return fmt.Sprintf(
-      "http://i.ytimg.com/%v/%v/%v.%v", i.Dir, id, i.Base, i.Ext,
-   )
+   dir := imageDirs[path.Ext(i.File)]
+   return fmt.Sprintf("http://i.ytimg.com/%v/%v/%v", dir, id, i.File)
 }
