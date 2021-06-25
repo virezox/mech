@@ -1,5 +1,13 @@
 # YouTube
 
+## Image
+
+Given a video ID, return all the possible image links. Leave it up to end user
+to make sure links are valid for a given video. Also add a test to ensure all
+options are up to date.
+
+https://stackoverflow.com/questions/2068344
+
 ## Search
 
 So, we are looking for this:
