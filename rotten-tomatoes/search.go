@@ -5,6 +5,7 @@ import (
    "encoding/json"
    "fmt"
    "github.com/89z/mech"
+   "net/http"
 )
 
 const AddrSearch = "https://www.rottentomatoes.com/search"
@@ -14,19 +15,19 @@ type Search struct {
 }
 
 func NewSearch(search string) (*Search, error) {
-   req, err := mech.NewRequest("GET", AddrSearch, nil)
+   req, err := http.NewRequest("GET", AddrSearch, nil)
    if err != nil {
       return nil, err
    }
    val := req.URL.Query()
    val.Set("search", search)
    req.URL.RawQuery = val.Encode()
-   res, err := new(mech.Transport).RoundTrip(req)
+   res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
-   if res.StatusCode != mech.StatusOK {
+   if res.StatusCode != http.StatusOK {
       return nil, fmt.Errorf("status %v", res.Status)
    }
    doc, err := mech.Parse(res.Body)

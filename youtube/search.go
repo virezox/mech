@@ -4,7 +4,7 @@ import (
    "bytes"
    "encoding/json"
    "fmt"
-   "github.com/89z/mech"
+   "net/http"
 )
 
 type Result struct {
@@ -44,7 +44,7 @@ type VideoRenderer struct {
 func (s Search) Post() (*Result, error) {
    buf := new(bytes.Buffer)
    json.NewEncoder(buf).Encode(s)
-   req, err := mech.NewRequest(
+   req, err := http.NewRequest(
       "POST", "https://www.youtube.com/youtubei/v1/search", buf,
    )
    if err != nil {
@@ -53,12 +53,12 @@ func (s Search) Post() (*Result, error) {
    val := req.URL.Query()
    val.Set("key", "AIzaSyDCU8hByM-4DrUqRUYnGn-3llEO78bcxq8")
    req.URL.RawQuery = val.Encode()
-   res, err := new(mech.Transport).RoundTrip(req)
+   res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
-   if res.StatusCode != mech.StatusOK {
+   if res.StatusCode != http.StatusOK {
       return nil, fmt.Errorf("status %v", res.Status)
    }
    r := new(Result)

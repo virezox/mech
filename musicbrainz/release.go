@@ -3,7 +3,7 @@ package musicbrainz
 
 import (
    "encoding/json"
-   "github.com/89z/mech"
+   "net/http"
 )
 
 const API = "http://musicbrainz.org/ws/2/release"
@@ -36,7 +36,7 @@ type Release struct {
 }
 
 func NewRelease(releaseID string) (*Release, error) {
-   req, err := mech.NewRequest("GET", API + "/" + releaseID, nil)
+   req, err := http.NewRequest("GET", API + "/" + releaseID, nil)
    if err != nil {
       return nil, err
    }
@@ -44,7 +44,7 @@ func NewRelease(releaseID string) (*Release, error) {
    val.Set("fmt", "json")
    val.Set("inc", "artist-credits recordings")
    req.URL.RawQuery = val.Encode()
-   res, err := new(mech.Transport).RoundTrip(req)
+   res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
    }

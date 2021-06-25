@@ -5,7 +5,7 @@ import (
    "crypto/aes"
    "encoding/json"
    "fmt"
-   "github.com/89z/mech"
+   "net/http"
 )
 
 type Track struct {
@@ -49,7 +49,7 @@ func (t Track) Source(sngID string, format rune) (string, error) {
 func NewTrack(sngID, arl, sID string) (*Track, error) {
    in, out := map[string]string{"SNG_ID": sngID}, new(bytes.Buffer)
    json.NewEncoder(out).Encode(in)
-   req, err := mech.NewRequest("POST", GatewayWWW, out)
+   req, err := http.NewRequest("POST", GatewayWWW, out)
    if err != nil {
       return nil, err
    }
@@ -59,12 +59,12 @@ func NewTrack(sngID, arl, sID string) (*Track, error) {
    val.Set("api_token", arl)
    req.URL.RawQuery = val.Encode()
    req.Header.Set("Cookie", "sid=" + sID)
-   res, err := new(mech.Transport).RoundTrip(req)
+   res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
-   if res.StatusCode != mech.StatusOK {
+   if res.StatusCode != http.StatusOK {
       return nil, fmt.Errorf("status %v", res.Status)
    }
    var page struct {

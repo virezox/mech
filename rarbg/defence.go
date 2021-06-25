@@ -5,6 +5,7 @@ import (
    "fmt"
    "github.com/89z/mech"
    "io"
+   "net/http"
    "os"
    "regexp"
    "strings"
@@ -20,16 +21,16 @@ type Defence struct {
 // This is the entrypoint into getting the SKT cookie, should you need to do
 // that. After this you will want to call ThreatCaptcha.
 func NewDefence() (*Defence, error) {
-   req, err := mech.NewRequest("GET", Origin + DefencePHP, nil)
+   req, err := http.NewRequest("GET", Origin + DefencePHP, nil)
    if err != nil {
       return nil, err
    }
-   res, err := new(mech.Transport).RoundTrip(req)
+   res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
-   if res.StatusCode != mech.StatusOK {
+   if res.StatusCode != http.StatusOK {
       return nil, fmt.Errorf("status %v", res.Status)
    }
    body, err := io.ReadAll(res.Body)
@@ -63,7 +64,7 @@ func NewDefence() (*Defence, error) {
 
 // This saves the SKT cookie to the Cache folder for later use.
 func (d Defence) IamHuman(id, solve string) error {
-   req, err := mech.NewRequest("GET", Origin + DefencePHP, nil)
+   req, err := http.NewRequest("GET", Origin + DefencePHP, nil)
    if err != nil {
       return err
    }
@@ -75,7 +76,7 @@ func (d Defence) IamHuman(id, solve string) error {
    val.Set("solve_string", solve)
    val.Set("captcha_id", id)
    req.URL.RawQuery = val.Encode()
-   res, err := new(mech.Transport).RoundTrip(req)
+   res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return err
    }
@@ -98,7 +99,7 @@ func (d Defence) IamHuman(id, solve string) error {
       enc.SetIndent("", " ")
       return enc.Encode(c)
    }
-   return mech.ErrNoCookie
+   return http.ErrNoCookie
 }
 
 // This returns path to Captcha image, as well as Captcha ID. After this, you
@@ -107,7 +108,7 @@ func (d Defence) ThreatCaptcha() (php string, id string, err error) {
    if err := d.threatDefenceAJAX(); err != nil {
       return "", "", err
    }
-   req, err := mech.NewRequest("GET", Origin + DefencePHP, nil)
+   req, err := http.NewRequest("GET", Origin + DefencePHP, nil)
    if err != nil {
       return "", "", err
    }
@@ -118,7 +119,7 @@ func (d Defence) ThreatCaptcha() (php string, id string, err error) {
    val.Set("sk", d.SK)
    req.URL.RawQuery = val.Encode()
    time.Sleep(Sleep)
-   res, err := new(mech.Transport).RoundTrip(req)
+   res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return "", "", err
    }
@@ -140,7 +141,7 @@ func (d Defence) ThreatCaptcha() (php string, id string, err error) {
 }
 
 func (d Defence) threatDefenceAJAX() error {
-   req, err := mech.NewRequest("GET", Origin + AJAXPHP, nil)
+   req, err := http.NewRequest("GET", Origin + AJAXPHP, nil)
    if err != nil {
       return err
    }
@@ -149,12 +150,12 @@ func (d Defence) threatDefenceAJAX() error {
    val.Set("i", d.I)
    val.Set("sk", d.SK)
    req.URL.RawQuery = val.Encode()
-   res, err := new(mech.Transport).RoundTrip(req)
+   res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return err
    }
    defer res.Body.Close()
-   if res.StatusCode != mech.StatusOK {
+   if res.StatusCode != http.StatusOK {
       return fmt.Errorf("status %v", res.Status)
    }
    return nil

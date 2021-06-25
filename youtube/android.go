@@ -3,8 +3,8 @@ package youtube
 import (
    "encoding/json"
    "fmt"
-   "github.com/89z/mech"
    "io"
+   "net/http"
 )
 
 const VersionAndroid = "15.01"
@@ -53,7 +53,7 @@ type VideoDetails struct {
 }
 
 func (f Format) Write(w io.Writer) error {
-   req, err := mech.NewRequest("GET", f.URL, nil)
+   req, err := http.NewRequest("GET", f.URL, nil)
    if err != nil {
       return err
    }
@@ -61,12 +61,12 @@ func (f Format) Write(w io.Writer) error {
    for pos < f.ContentLength {
       bytes := fmt.Sprintf("bytes=%v-%v", pos, pos+chunk-1)
       req.Header.Set("Range", bytes)
-      res, err := new(mech.Transport).RoundTrip(req)
+      res, err := new(http.Transport).RoundTrip(req)
       if err != nil {
          return err
       }
       defer res.Body.Close()
-      if res.StatusCode != mech.StatusPartialContent {
+      if res.StatusCode != http.StatusPartialContent {
          return fmt.Errorf("status %v", res.Status)
       }
       if _, err := io.Copy(w, res.Body); err != nil {

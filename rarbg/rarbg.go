@@ -3,8 +3,8 @@ package rarbg
 
 import (
    "fmt"
-   "github.com/89z/mech"
    "github.com/89z/mech/ocr.space"
+   "net/http"
    "os"
    "path/filepath"
    "time"
@@ -21,16 +21,16 @@ const (
 // This returns solution to the Captcha at the given path. After this, you will
 // want to call IamHuman.
 func Solve(php string) (solve string, err error) {
-   req, err := mech.NewRequest("GET", Origin + php, nil)
+   req, err := http.NewRequest("GET", Origin + php, nil)
    if err != nil {
       return "", err
    }
-   res, err := new(mech.Transport).RoundTrip(req)
+   res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return "", err
    }
    defer res.Body.Close()
-   if res.StatusCode != mech.StatusOK {
+   if res.StatusCode != http.StatusOK {
       return "", fmt.Errorf("status %v", res.Status)
    }
    capt := filepath.Join(os.TempDir(), "captcha.png")

@@ -5,7 +5,7 @@ import (
    "bytes"
    "encoding/json"
    "fmt"
-   "github.com/89z/mech"
+   "net/http"
 )
 
 const chunk = 10_000_000
@@ -44,10 +44,10 @@ func newPlayer(id, name, version string) player {
 }
 
 
-func (p player) post() (*mech.Response, error) {
+func (p player) post() (*http.Response, error) {
    buf := new(bytes.Buffer)
    json.NewEncoder(buf).Encode(p)
-   req, err := mech.NewRequest(
+   req, err := http.NewRequest(
       "POST", "https://www.youtube.com/youtubei/v1/player", buf,
    )
    if err != nil {
@@ -56,11 +56,11 @@ func (p player) post() (*mech.Response, error) {
    val := req.URL.Query()
    val.Set("key", "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8")
    req.URL.RawQuery = val.Encode()
-   res, err := new(mech.Transport).RoundTrip(req)
+   res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
    }
-   if res.StatusCode != mech.StatusOK {
+   if res.StatusCode != http.StatusOK {
       return nil, fmt.Errorf("status %v", res.Status)
    }
    return res, nil

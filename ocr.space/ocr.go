@@ -4,9 +4,9 @@ package ocr
 import (
    "bytes"
    "encoding/json"
-   "github.com/89z/mech"
    "io"
    "mime/multipart"
+   "net/http"
    "os"
    "strings"
 )
@@ -51,13 +51,13 @@ func NewImage(name string) (*Image, error) {
    if err != nil {
       return nil, err
    }
-   req, err := mech.NewRequest("POST", API, body)
+   req, err := http.NewRequest("POST", API, body)
    if err != nil {
       return nil, err
    }
    req.Header.Set("Content-Type", ct)
    req.Header.Set("apikey", "helloworld")
-   res, err := new(mech.Transport).RoundTrip(req)
+   res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
    }

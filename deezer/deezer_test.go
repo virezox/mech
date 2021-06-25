@@ -1,8 +1,8 @@
 package deezer
 
 import (
-   "github.com/89z/mech"
    "io"
+   "net/http"
    "testing"
 )
 
@@ -22,7 +22,7 @@ func TestDecrypt(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   res, err := mech.Get(source)
+   res, err := http.Get(source)
    if err != nil {
       t.Fatal(err)
    }
