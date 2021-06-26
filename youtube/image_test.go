@@ -11,7 +11,7 @@ const id = "UpNXI3_ctAc"
 
 func TestImage(t *testing.T) {
    for _, img := range youtube.Images {
-      addr := img.Address(id)
+      addr := img.Abs(id)
       println("Head", addr)
       r, err := http.Head(addr)
       if err != nil {
