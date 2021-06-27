@@ -1,3 +1,4 @@
+// YouTube
 package youtube
 import "fmt"
 
@@ -58,13 +59,6 @@ var Images = []Image{
    {720, WidthBlack, WebP, "maxres1"},
    {720, WidthBlack, WebP, "maxres2"},
    {720, WidthBlack, WebP, "maxres3"},
-}
-
-type Image struct {
-   Height int64
-   Frame int64
-   Format int64
-   Base string
 }
 
 func (i Image) Address(id string) string {

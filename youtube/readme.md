@@ -1,5 +1,13 @@
 # YouTube
 
+## Client
+
+Does `ANDROID` work in call cases? No.
+
+Does `15.01` work in all cases? No.
+
+Does `https://www.youtube.com` work in all cases? No.
+
 ## MWEB
 
 https://github.com/thanhphongdo/youtube-noads/blob/master/server/apis/youtube.ts
@@ -11,35 +19,6 @@ to make sure links are valid for a given video. Also add a test to ensure all
 options are up to date.
 
 ## Search
-
-So, we are looking for this:
-
-~~~
-/watch?v=XFkzRNyygfk
-~~~
-
-First result:
-
-~~~
-<script nonce="TCh7gubawSzSBgq1Zg3rSA">var ytInitialData = {"responseContext"...
-...ead creep cover","radiohead fake plastic trees","radiohead kid a"]};</script>
-~~~
-
-Everything after `var ytInitialData =` and before `;` is valid JSON. The search
-results are here:
-
-~~~
-contents	
-   twoColumnSearchResultsRenderer	
-      primaryContents	
-         sectionListRenderer	
-            contents	
-               0	
-                  itemSectionRenderer	
-                     contents
-~~~
-
-careful, first result might be an advertisement.
 
 ~~~
 https://github.com/yuliskov/MediaServiceCore/blob/master/youtubeapi/src/test/

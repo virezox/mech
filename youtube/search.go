@@ -7,12 +7,10 @@ import (
    "net/http"
 )
 
-const VersionWeb = "1.19700101"
-
 func NewSearch(query string) Search {
    var s Search
-   s.Context.Client.ClientName = "WEB"
-   s.Context.Client.ClientVersion = VersionWeb
+   s.Context.Client.ClientName = ClientWeb.ClientName
+   s.Context.Client.ClientVersion = ClientWeb.ClientVersion
    s.Query = query
    return s
 }

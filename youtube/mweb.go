@@ -1,24 +1,11 @@
 package youtube
 import "encoding/json"
 
-const VersionMWeb = "2.19700101"
-
-type Microformat struct {
-   PlayerMicroformatRenderer `json:"playerMicroformatRenderer"`
-}
-
-type PlayerMicroformatRenderer struct {
-   AvailableCountries []string
-   PublishDate string
-}
-
-type MWeb struct {
-   Microformat `json:"microformat"`
-   VideoDetails `json:"videoDetails"`
-}
 
 func NewMWeb(id string) (*MWeb, error) {
-   res, err := newPlayer(id, "MWEB", VersionMWeb).post()
+   res, err := newPlayer(
+      id, ClientMWeb.ClientName, ClientMWeb.ClientVersion,
+   ).post()
    if err != nil {
       return nil, err
    }

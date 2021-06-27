@@ -1,24 +1,18 @@
-// YouTube
 package youtube
 
-import (
-   "bytes"
-   "encoding/json"
-   "fmt"
-   "net/http"
+var (
+   ClientAndroid = Client{"ANDROID", "15.01"}
+   ClientMWeb = Client{"MWEB", "2.19700101"}
+   ClientWeb = Client{"WEB", "1.19700101"}
 )
 
-const (
-   chunk = 10_000_000
-   invert = "\x1b[7m"
-   reset = "\x1b[m"
-)
+type Client struct {
+   ClientName string `json:"clientName"`
+   ClientVersion string `json:"clientVersion"`
+}
 
 type Context struct {
-   Client struct {
-      ClientName string `json:"clientName"`
-      ClientVersion string `json:"clientVersion"`
-   } `json:"client"`
+   Client Client `json:"client"`
 }
 
 type Search struct {
@@ -31,55 +25,10 @@ type player struct {
    VideoID string `json:"videoId"`
 }
 
-func newPlayer(id, name, version string) player {
-   var p player
-   p.Context.Client.ClientName = name
-   p.Context.Client.ClientVersion = version
-   p.VideoID = id
-   return p
-}
-
-func (p player) post() (*http.Response, error) {
-   buf := new(bytes.Buffer)
-   err := json.NewEncoder(buf).Encode(p)
-   if err != nil {
-      return nil, err
-   }
-   req, err := http.NewRequest(
-      "POST", "https://www.youtube.com/youtubei/v1/player", buf,
-   )
-   if err != nil {
-      return nil, err
-   }
-   val := req.URL.Query()
-   val.Set("key", "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8")
-   req.URL.RawQuery = val.Encode()
-   fmt.Println(invert, "POST", reset, req.URL)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   if res.StatusCode != http.StatusOK {
-      return nil, fmt.Errorf("status %v", res.Status)
-   }
-   return res, nil
-}
-
-
 type Result struct {
    Contents struct {
       TwoColumnSearchResultsRenderer `json:"twoColumnSearchResultsRenderer"`
    }
-}
-
-func (r Result) VideoRenderers() []VideoRenderer {
-   var vids []VideoRenderer
-   for _, sect := range r.Contents.PrimaryContents.SectionListRenderer.Contents {
-      for _, item := range sect.ItemSectionRenderer.Contents {
-         vids = append(vids, item.VideoRenderer)
-      }
-   }
-   return vids
 }
 
 type TwoColumnSearchResultsRenderer struct {
@@ -98,4 +47,48 @@ type TwoColumnSearchResultsRenderer struct {
 
 type VideoRenderer struct {
    VideoID string
+}
+
+type Android struct {
+   StreamingData struct {
+      AdaptiveFormats []Format
+   }
+   VideoDetails `json:"videoDetails"`
+}
+
+type Format struct {
+   Bitrate int64
+   ContentLength int64 `json:"contentLength,string"`
+   Height int
+   Itag int
+   MimeType string
+   URL string
+}
+
+type VideoDetails struct {
+   Author string
+   ShortDescription string
+   Title string
+   ViewCount int `json:"viewCount,string"`
+}
+
+type Image struct {
+   Height int64
+   Frame int64
+   Format int64
+   Base string
+}
+
+type Microformat struct {
+   PlayerMicroformatRenderer `json:"playerMicroformatRenderer"`
+}
+
+type PlayerMicroformatRenderer struct {
+   AvailableCountries []string
+   PublishDate string
+}
+
+type MWeb struct {
+   Microformat `json:"microformat"`
+   VideoDetails `json:"videoDetails"`
 }
