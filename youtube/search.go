@@ -7,38 +7,14 @@ import (
    "net/http"
 )
 
-type Result struct {
-   Contents struct {
-      TwoColumnSearchResultsRenderer `json:"twoColumnSearchResultsRenderer"`
-   }
-}
+const VersionWeb = "1.19700101"
 
-func (r Result) VideoRenderers() []VideoRenderer {
-   var vids []VideoRenderer
-   for _, sect := range r.Contents.PrimaryContents.SectionListRenderer.Contents {
-      for _, item := range sect.ItemSectionRenderer.Contents {
-         vids = append(vids, item.VideoRenderer)
-      }
-   }
-   return vids
-}
-
-type TwoColumnSearchResultsRenderer struct {
-   PrimaryContents struct {
-      SectionListRenderer struct {
-         Contents []struct {
-            ItemSectionRenderer struct {
-               Contents []struct {
-                  VideoRenderer `json:"videoRenderer"`
-               }
-            }
-         }
-      }
-   }
-}
-
-type VideoRenderer struct {
-   VideoID string
+func NewSearch(query string) Search {
+   var s Search
+   s.Context.Client.ClientName = "WEB"
+   s.Context.Client.ClientVersion = VersionWeb
+   s.Query = query
+   return s
 }
 
 func (s Search) Post() (*Result, error) {

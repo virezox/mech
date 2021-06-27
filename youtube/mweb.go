@@ -1,7 +1,7 @@
 package youtube
 import "encoding/json"
 
-const VersionWeb = "1.19700101"
+const VersionMWeb = "2.19700101"
 
 type Microformat struct {
    PlayerMicroformatRenderer `json:"playerMicroformatRenderer"`
@@ -12,20 +12,20 @@ type PlayerMicroformatRenderer struct {
    PublishDate string
 }
 
-type Web struct {
+type MWeb struct {
    Microformat `json:"microformat"`
    VideoDetails `json:"videoDetails"`
 }
 
-func NewWeb(id string) (*Web, error) {
-   r, err := newPlayer(id, "WEB", VersionWeb).post()
+func NewMWeb(id string) (*MWeb, error) {
+   res, err := newPlayer(id, "MWEB", VersionMWeb).post()
    if err != nil {
       return nil, err
    }
-   defer r.Body.Close()
-   w := new(Web)
-   if err := json.NewDecoder(r.Body).Decode(w); err != nil {
+   defer res.Body.Close()
+   mw := new(MWeb)
+   if err := json.NewDecoder(res.Body).Decode(mw); err != nil {
       return nil, err
    }
-   return w, nil
+   return mw, nil
 }

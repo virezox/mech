@@ -26,14 +26,6 @@ type Search struct {
    Query string `json:"query"`
 }
 
-func NewSearch(query string) Search {
-   var s Search
-   s.Context.Client.ClientName = "WEB"
-   s.Context.Client.ClientVersion = VersionWeb
-   s.Query = query
-   return s
-}
-
 type player struct {
    Context `json:"context"`
    VideoID string `json:"videoId"`
@@ -46,7 +38,6 @@ func newPlayer(id, name, version string) player {
    p.VideoID = id
    return p
 }
-
 
 func (p player) post() (*http.Response, error) {
    buf := new(bytes.Buffer)
@@ -72,4 +63,39 @@ func (p player) post() (*http.Response, error) {
       return nil, fmt.Errorf("status %v", res.Status)
    }
    return res, nil
+}
+
+
+type Result struct {
+   Contents struct {
+      TwoColumnSearchResultsRenderer `json:"twoColumnSearchResultsRenderer"`
+   }
+}
+
+func (r Result) VideoRenderers() []VideoRenderer {
+   var vids []VideoRenderer
+   for _, sect := range r.Contents.PrimaryContents.SectionListRenderer.Contents {
+      for _, item := range sect.ItemSectionRenderer.Contents {
+         vids = append(vids, item.VideoRenderer)
+      }
+   }
+   return vids
+}
+
+type TwoColumnSearchResultsRenderer struct {
+   PrimaryContents struct {
+      SectionListRenderer struct {
+         Contents []struct {
+            ItemSectionRenderer struct {
+               Contents []struct {
+                  VideoRenderer `json:"videoRenderer"`
+               }
+            }
+         }
+      }
+   }
+}
+
+type VideoRenderer struct {
+   VideoID string
 }

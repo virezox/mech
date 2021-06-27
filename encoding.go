@@ -30,11 +30,11 @@ func NewContent(req *http.Request, enc string) (*Content, error) {
    defer res.Body.Close()
    length := res.Header.Get("Content-Length")
    if length == "" {
-      body, err := io.ReadAll(res.Body)
+      written, err := io.Copy(io.Discard, res.Body)
       if err != nil {
          return nil, err
       }
-      length = strconv.Itoa(len(body))
+      length = strconv.FormatInt(written, 10)
    }
    return &Content{
       res.Header.Get("Content-Encoding"), length,
