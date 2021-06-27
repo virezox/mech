@@ -23,7 +23,9 @@ func NewAndroid(id string) (*Android, error) {
    }
    defer r.Body.Close()
    a := new(Android)
-   json.NewDecoder(r.Body).Decode(a)
+   if err := json.NewDecoder(r.Body).Decode(a); err != nil {
+      return nil, err
+   }
    return a, nil
 }
 

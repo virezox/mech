@@ -24,6 +24,8 @@ func NewWeb(id string) (*Web, error) {
    }
    defer r.Body.Close()
    w := new(Web)
-   json.NewDecoder(r.Body).Decode(w)
+   if err := json.NewDecoder(r.Body).Decode(w); err != nil {
+      return nil, err
+   }
    return w, nil
 }

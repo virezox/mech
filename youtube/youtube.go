@@ -50,7 +50,10 @@ func newPlayer(id, name, version string) player {
 
 func (p player) post() (*http.Response, error) {
    buf := new(bytes.Buffer)
-   json.NewEncoder(buf).Encode(p)
+   err := json.NewEncoder(buf).Encode(p)
+   if err != nil {
+      return nil, err
+   }
    req, err := http.NewRequest(
       "POST", "https://www.youtube.com/youtubei/v1/player", buf,
    )

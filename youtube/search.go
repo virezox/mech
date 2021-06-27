@@ -43,7 +43,10 @@ type VideoRenderer struct {
 
 func (s Search) Post() (*Result, error) {
    buf := new(bytes.Buffer)
-   json.NewEncoder(buf).Encode(s)
+   err := json.NewEncoder(buf).Encode(s)
+   if err != nil {
+      return nil, err
+   }
    req, err := http.NewRequest(
       "POST", "https://www.youtube.com/youtubei/v1/search", buf,
    )
@@ -63,6 +66,8 @@ func (s Search) Post() (*Result, error) {
       return nil, fmt.Errorf("status %v", res.Status)
    }
    r := new(Result)
-   json.NewDecoder(res.Body).Decode(r)
+   if err := json.NewDecoder(res.Body).Decode(r); err != nil {
+      return nil, err
+   }
    return r, nil
 }

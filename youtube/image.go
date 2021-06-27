@@ -60,11 +60,6 @@ var Images = []Image{
    {720, WidthBlack, WebP, "maxres3"},
 }
 
-var (
-   imageDirs = map[int64]string{WebP: "vi_webp", JPG: "vi"}
-   imageExts = map[int64]string{WebP: "webp", JPG: "jpg"}
-)
-
 type Image struct {
    Height int64
    Frame int64
@@ -73,7 +68,7 @@ type Image struct {
 }
 
 func (i Image) Address(id string) string {
-   dir := imageDirs[i.Format]
-   ext := imageExts[i.Format]
+   dir := map[int64]string{WebP: "vi_webp", JPG: "vi"}[i.Format]
+   ext := map[int64]string{WebP: "webp", JPG: "jpg"}[i.Format]
    return fmt.Sprintf("http://i.ytimg.com/%v/%v/%v.%v", dir, id, i.Base, ext)
 }
