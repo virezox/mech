@@ -128,5 +128,22 @@ func TestClients(t *testing.T) {
       results[c.ClientName] = r
       time.Sleep(100 * time.Millisecond)
    }
-   fmt.Printf("%+v\n", results)
+   for kOne, vOne := range results {
+      for kTwo, vTwo := range results {
+         // decrypt
+         if !vOne.decrypt && !vTwo.decrypt {
+            continue
+         }
+         // publishDate
+         if !vOne.publishDate && !vTwo.publishDate {
+            continue
+         }
+         // search
+         if !vOne.search && !vTwo.search {
+            continue
+         }
+         // print
+         fmt.Println(vOne.size + vTwo.size, kOne, kTwo)
+      }
+   }
 }

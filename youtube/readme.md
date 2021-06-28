@@ -2,30 +2,49 @@
 
 ## Client
 
-Can we use one client for decrypted media, `publishDate` and search? No.
-
-Can we use two clients? Yes. Which two are best?
+Can we use one client for decrypted media, `publishDate` and search? No. Can we
+use two clients? Yes. Which two are best?
 
 ~~~
-len 2390 ANDROID_KIDS
-len 2698 IOS_KIDS
-len 3023 WEB_KIDS
-len 4565 ANDROID_EMBEDDED_PLAYER
-len 5752 WEB_EMBEDDED_PLAYER
-len 11813 IOS_CREATOR
-len 22444 ANDROID_CREATOR
-len 32702 IOS_MUSIC
-len 40312 IOS
-len 54491 ANDROID_MUSIC
-len 54609 WEB_CREATOR
-len 58280 MWEB
-len 63598 ANDROID
-len 70718 WEB
-len 233260 WEB_REMIX
-len 669127 TVHTML5
+67796 IOS_CREATOR MWEB
+67796 MWEB IOS_CREATOR
+78242 ANDROID_CREATOR MWEB
+78242 MWEB ANDROID_CREATOR
+81549 IOS_CREATOR WEB
+81549 WEB IOS_CREATOR
+89389 IOS_MUSIC MWEB
+89389 MWEB IOS_MUSIC
+91995 ANDROID_CREATOR WEB
+91995 WEB ANDROID_CREATOR
+97358 IOS MWEB
+97358 MWEB IOS
+103142 IOS_MUSIC WEB
+103142 WEB IOS_MUSIC
+110019 ANDROID_MUSIC MWEB
+110019 MWEB ANDROID_MUSIC
+111111 IOS WEB
+111111 WEB IOS
+121632 ANDROID MWEB
+121632 MWEB ANDROID
+123772 ANDROID_MUSIC WEB
+123772 WEB ANDROID_MUSIC
+135385 ANDROID WEB
+135385 WEB ANDROID
+245595 IOS_CREATOR WEB_REMIX
+245595 WEB_REMIX IOS_CREATOR
+256041 ANDROID_CREATOR WEB_REMIX
+256041 WEB_REMIX ANDROID_CREATOR
+267188 IOS_MUSIC WEB_REMIX
+267188 WEB_REMIX IOS_MUSIC
+275157 IOS WEB_REMIX
+275157 WEB_REMIX IOS
+287818 ANDROID_MUSIC WEB_REMIX
+287818 WEB_REMIX ANDROID_MUSIC
+299431 ANDROID WEB_REMIX
+299431 WEB_REMIX ANDROID
 ~~~
 
-And alternative to `publishDate` is:
+An alternative to `publishDate` is:
 
 ~~~
 "text": "Published on Nov 5, 2020"
@@ -34,75 +53,6 @@ And alternative to `publishDate` is:
 which you can get doing a `next` request with `IOS_KIDS`. Uncompressed size is
 115 KB. For `publishDate`, doing a `player` request with `MWEB`, you get
 uncompressed size of 57 KB.
-
-~~~
-publishDate fail ANDROID_CREATOR
-publishDate fail ANDROID_EMBEDDED_PLAYER
-publishDate fail ANDROID_KIDS
-publishDate fail ANDROID_MUSIC
-publishDate fail IOS
-publishDate fail IOS_CREATOR
-publishDate fail IOS_KIDS
-publishDate fail IOS_MUSIC
-publishDate fail TVHTML5
-publishDate fail WEB_CREATOR
-publishDate fail WEB_EMBEDDED_PLAYER
-publishDate fail WEB_KIDS
-publishDate pass MWEB
-publishDate pass WEB
-publishDate pass WEB_REMIX
-
-decrypt fail ANDROID_EMBEDDED_PLAYER
-decrypt fail ANDROID_KIDS
-decrypt fail IOS_KIDS
-decrypt fail MWEB
-decrypt fail TVHTML5
-decrypt fail WEB
-decrypt fail WEB_CREATOR
-decrypt fail WEB_EMBEDDED_PLAYER
-decrypt fail WEB_KIDS
-decrypt fail WEB_REMIX
-decrypt pass ANDROID
-decrypt pass ANDROID_CREATOR
-decrypt pass ANDROID_MUSIC
-decrypt pass IOS
-decrypt pass IOS_CREATOR
-decrypt pass IOS_MUSIC
-
-player 200 OK ANDROID
-player 200 OK ANDROID_CREATOR
-player 200 OK ANDROID_EMBEDDED_PLAYER
-player 200 OK ANDROID_KIDS
-player 200 OK ANDROID_MUSIC
-player 200 OK IOS
-player 200 OK IOS_CREATOR
-player 200 OK IOS_KIDS
-player 200 OK IOS_MUSIC
-player 200 OK MWEB
-player 200 OK TVHTML5
-player 200 OK WEB
-player 200 OK WEB_CREATOR
-player 200 OK WEB_EMBEDDED_PLAYER
-player 200 OK WEB_KIDS
-player 200 OK WEB_REMIX
-
-search 200 OK ANDROID
-search 200 OK ANDROID_EMBEDDED_PLAYER
-search 200 OK ANDROID_KIDS
-search 200 OK ANDROID_MUSIC
-search 200 OK IOS
-search 200 OK IOS_KIDS
-search 200 OK IOS_MUSIC
-search 200 OK MWEB
-search 200 OK TVHTML5
-search 200 OK WEB
-search 200 OK WEB_CREATOR
-search 200 OK WEB_KIDS
-search 200 OK WEB_REMIX
-search 400 Bad Request ANDROID_CREATOR
-search 400 Bad Request IOS_CREATOR
-search 400 Bad Request WEB_EMBEDDED_PLAYER
-~~~
 
 - https://github.com/TeamNewPipe/NewPipeExtractor/issues/562
 - https://github.com/yt-dlp/yt-dlp/pull/328
