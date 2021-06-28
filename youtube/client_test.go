@@ -41,30 +41,6 @@ type search struct {
    Query string `json:"query"`
 }
 
-func (c Client) searchRequest() error {
-   var s search
-   s.Context.Client = c
-   s.Query = "nelly furtado say it right"
-   buf := new(bytes.Buffer)
-   json.NewEncoder(buf).Encode(s)
-   req, err := http.NewRequest(
-      "POST", "https://www.youtube.com/youtubei/v1/search", buf,
-   )
-   if err != nil {
-      return err
-   }
-   val := req.URL.Query()
-   val.Set("key", "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8")
-   req.URL.RawQuery = val.Encode()
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   fmt.Println("search", res.Status, c.ClientName)
-   return nil
-}
-
 
 type player struct {
    Context struct {
@@ -73,7 +49,7 @@ type player struct {
    VideoID string `json:"videoId"`
 }
 
-func (c Client) playerRequest() error {
+func (r *result) playerRequest(c Client) error {
    var p player
    p.Context.Client = c
    p.VideoID = "XeojXq6ySs4"
@@ -93,39 +69,64 @@ func (c Client) playerRequest() error {
       return err
    }
    defer res.Body.Close()
-   fmt.Println("player", res.Status, c.ClientName)
    data, err := io.ReadAll(res.Body)
    if err != nil {
       return err
    }
-   fmt.Println("len", len(data), c.ClientName)
-   if bytes.Contains(data, []byte("\n        \"url\"")) {
-      fmt.Println("decrypt pass", c.ClientName)
-   } else {
-      fmt.Println("decrypt fail", c.ClientName)
-   }
-   if bytes.Contains(data, []byte(`"publishDate"`)) {
-      fmt.Println("publishDate pass", c.ClientName)
-   } else {
-      fmt.Println("publishDate fail", c.ClientName)
-   }
+   // decrypt
+   r.decrypt = bytes.Contains(data, []byte("\n        \"url\""))
+   // publishDate
+   r.publishDate = bytes.Contains(data, []byte(`"publishDate"`))
+   // size
+   r.size = len(data)
    return nil
 }
 
+func (r *result) searchRequest(c Client) error {
+   var s search
+   s.Context.Client = c
+   s.Query = "nelly furtado say it right"
+   buf := new(bytes.Buffer)
+   json.NewEncoder(buf).Encode(s)
+   req, err := http.NewRequest(
+      "POST", "https://www.youtube.com/youtubei/v1/search", buf,
+   )
+   if err != nil {
+      return err
+   }
+   val := req.URL.Query()
+   val.Set("key", "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8")
+   req.URL.RawQuery = val.Encode()
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   r.search = res.StatusCode == http.StatusOK
+   return nil
+}
+
+type result struct {
+   decrypt bool
+   publishDate bool
+   search bool
+   size int
+}
+
 func TestClients(t *testing.T) {
-   for _, client := range clients {
-      // 1. player request?
-      // 2. decrypted media?
-      // 3. publishDate?
-      // 4. size?
-      if err := client.playerRequest(); err != nil {
+   results := make(map[string]result)
+   for _, c := range clients {
+      fmt.Println(c)
+      var r result
+      if err := r.playerRequest(c); err != nil {
          t.Fatal(err)
       }
       time.Sleep(100 * time.Millisecond)
-      // 5. search request?
-      if err := client.searchRequest(); err != nil {
+      if err := r.searchRequest(c); err != nil {
          t.Fatal(err)
       }
+      results[c.ClientName] = r
       time.Sleep(100 * time.Millisecond)
    }
+   fmt.Printf("%+v\n", results)
 }
