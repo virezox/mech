@@ -3,6 +3,23 @@
 ## Client
 
 ~~~
+decrypt fail ANDROID_EMBEDDED_PLAYER
+decrypt fail ANDROID_KIDS
+decrypt fail IOS_KIDS
+decrypt fail MWEB
+decrypt fail TVHTML5
+decrypt fail WEB
+decrypt fail WEB_CREATOR
+decrypt fail WEB_EMBEDDED_PLAYER
+decrypt fail WEB_KIDS
+decrypt fail WEB_REMIX
+decrypt pass ANDROID
+decrypt pass ANDROID_CREATOR
+decrypt pass ANDROID_MUSIC
+decrypt pass IOS
+decrypt pass IOS_CREATOR
+decrypt pass IOS_MUSIC
+
 player 200 OK ANDROID
 player 200 OK ANDROID_CREATOR
 player 200 OK ANDROID_EMBEDDED_PLAYER
@@ -19,6 +36,23 @@ player 200 OK WEB_CREATOR
 player 200 OK WEB_EMBEDDED_PLAYER
 player 200 OK WEB_KIDS
 player 200 OK WEB_REMIX
+
+publishDate fail ANDROID
+publishDate fail ANDROID_CREATOR
+publishDate fail ANDROID_EMBEDDED_PLAYER
+publishDate fail ANDROID_KIDS
+publishDate fail ANDROID_MUSIC
+publishDate fail IOS
+publishDate fail IOS_CREATOR
+publishDate fail IOS_KIDS
+publishDate fail IOS_MUSIC
+publishDate fail TVHTML5
+publishDate fail WEB_CREATOR
+publishDate fail WEB_EMBEDDED_PLAYER
+publishDate fail WEB_KIDS
+publishDate pass MWEB
+publishDate pass WEB
+publishDate pass WEB_REMIX
 
 search 200 OK ANDROID
 search 200 OK ANDROID_EMBEDDED_PLAYER

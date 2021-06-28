@@ -4,6 +4,7 @@ import (
    "bytes"
    "encoding/json"
    "fmt"
+   "io"
    "net/http"
    "testing"
    "time"
@@ -47,30 +48,6 @@ type search struct {
    Query string `json:"query"`
 }
 
-func (c Client) playerRequest() error {
-   var p player
-   p.Context.Client = c
-   p.VideoID = "XeojXq6ySs4"
-   buf := new(bytes.Buffer)
-   json.NewEncoder(buf).Encode(p)
-   req, err := http.NewRequest(
-      "POST", "https://www.youtube.com/youtubei/v1/player", buf,
-   )
-   if err != nil {
-      return  err
-   }
-   val := req.URL.Query()
-   val.Set("key", "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8")
-   req.URL.RawQuery = val.Encode()
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   fmt.Println("player", res.Status, c.ClientName)
-   return nil
-}
-
 func (c Client) searchRequest() error {
    var s search
    s.Context.Client = c
@@ -95,20 +72,58 @@ func (c Client) searchRequest() error {
    return nil
 }
 
+func (c Client) playerRequest() error {
+   var p player
+   p.Context.Client = c
+   p.VideoID = "XeojXq6ySs4"
+   buf := new(bytes.Buffer)
+   json.NewEncoder(buf).Encode(p)
+   req, err := http.NewRequest(
+      "POST", "https://www.youtube.com/youtubei/v1/player", buf,
+   )
+   if err != nil {
+      return  err
+   }
+   val := req.URL.Query()
+   val.Set("key", "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8")
+   req.URL.RawQuery = val.Encode()
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   fmt.Println("player", res.Status, c.ClientName)
+   data, err := io.ReadAll(res.Body)
+   if err != nil {
+      return err
+   }
+   if bytes.Contains(data, []byte("\n        \"url\"")) {
+      fmt.Println("decrypt pass", c.ClientName)
+   } else {
+      fmt.Println("decrypt fail", c.ClientName)
+   }
+   if bytes.Contains(data, []byte(`"publishDate"`)) {
+      fmt.Println("publishDate pass", c.ClientName)
+   } else {
+      fmt.Println("publishDate fail", c.ClientName)
+   }
+   return nil
+}
+
 func TestClients(t *testing.T) {
    for _, client := range clients {
       // 1. player request?
+      // 2. decrypted media?
+      // 3. publishDate?
       if err := client.playerRequest(); err != nil {
          t.Fatal(err)
       }
       time.Sleep(100 * time.Millisecond)
-      // 2. search request?
+      // 4. search request?
       if err := client.searchRequest(); err != nil {
          t.Fatal(err)
       }
       time.Sleep(100 * time.Millisecond)
-      // 3. decrypted media?
-      // 4. publishDate?
       // 5. size?
    }
 }
