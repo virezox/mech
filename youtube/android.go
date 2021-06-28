@@ -9,7 +9,7 @@ import (
 
 const chunk = 10_000_000
 
-var ClientAndroid = Client{"ANDROID_MUSIC", "1.10"}
+var ClientAndroid = Client{"ANDROID", "15.01"}
 
 type Android struct {
    StreamingData struct {

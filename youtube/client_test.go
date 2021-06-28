@@ -80,6 +80,47 @@ type result struct {
    size int
 }
 
+func (r *result) playerRequest(c Client) error {
+   r.decrypt = true
+   r.publishDate = true
+   for _, id := range []string{"3gdfNdilGFE", "XeojXq6ySs4"} {
+      var p player
+      p.Context.Client = c
+      p.VideoID = id
+      buf := new(bytes.Buffer)
+      json.NewEncoder(buf).Encode(p)
+      req, err := http.NewRequest(
+         "POST", "https://www.youtube.com/youtubei/v1/player", buf,
+      )
+      if err != nil {
+         return  err
+      }
+      val := req.URL.Query()
+      val.Set("key", "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8")
+      req.URL.RawQuery = val.Encode()
+      res, err := new(http.Transport).RoundTrip(req)
+      if err != nil {
+         return err
+      }
+      defer res.Body.Close()
+      data, err := io.ReadAll(res.Body)
+      if err != nil {
+         return err
+      }
+      // size
+      r.size = len(data)
+      // decrypt
+      if !bytes.Contains(data, []byte("\"itag\": 251,\n        \"url\"")) {
+         r.decrypt = false
+      }
+      // publishDate
+      if !bytes.Contains(data, []byte(`"publishDate"`)) {
+         r.publishDate = false
+      }
+   }
+   return nil
+}
+
 func TestClients(t *testing.T) {
    results := make(map[string]result)
    for _, c := range clients {
@@ -120,39 +161,4 @@ func TestClients(t *testing.T) {
          )
       }
    }
-}
-
-func (r *result) playerRequest(c Client) error {
-   var p player
-   p.Context.Client = c
-   p.VideoID = "XeojXq6ySs4"
-   buf := new(bytes.Buffer)
-   json.NewEncoder(buf).Encode(p)
-   req, err := http.NewRequest(
-      "POST", "https://www.youtube.com/youtubei/v1/player", buf,
-   )
-   if err != nil {
-      return  err
-   }
-   val := req.URL.Query()
-   val.Set("key", "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8")
-   req.URL.RawQuery = val.Encode()
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   data, err := io.ReadAll(res.Body)
-   if err != nil {
-      return err
-   }
-   // decrypt
-   if bytes.Contains(data, []byte(`"itag": 251`)) {
-      r.decrypt = bytes.Contains(data, []byte("\n        \"url\""))
-   }
-   // publishDate
-   r.publishDate = bytes.Contains(data, []byte(`"publishDate"`))
-   // size
-   r.size = len(data)
-   return nil
 }

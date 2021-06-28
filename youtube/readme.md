@@ -6,30 +6,41 @@ Can we use one client for decrypted media, `publishDate` and search? No. Can we
 use two clients? Yes. Which two are best?
 
 ~~~
-110690 MWEB {decrypt:false publishDate:true search:true size:56784}
-ANDROID_MUSIC {decrypt:true publishDate:false search:true size:53906}
+120597 MWEB {decrypt:false publishDate:true search:true size:56111} ANDROID
+{decrypt:true publishDate:false search:true size:64486}
 
-119227 ANDROID {decrypt:true publishDate:false search:true size:62443} MWEB
-{decrypt:false publishDate:true search:true size:56784}
+135304 ANDROID {decrypt:true publishDate:false search:true size:64486} WEB
+{decrypt:false publishDate:true search:true size:70818}
 
-123978 WEB {decrypt:false publishDate:true search:true size:70072}
-ANDROID_MUSIC {decrypt:true publishDate:false search:true size:53906}
-
-132515 ANDROID {decrypt:true publishDate:false search:true size:62443} WEB
-{decrypt:false publishDate:true search:true size:70072}
-
-289237 WEB_REMIX {decrypt:false publishDate:true search:true size:235331}
-ANDROID_MUSIC {decrypt:true publishDate:false search:true size:53906}
-
-297774 ANDROID {decrypt:true publishDate:false search:true size:62443}
-WEB_REMIX {decrypt:false publishDate:true search:true size:235331}
+295700 ANDROID {decrypt:true publishDate:false search:true size:64486}
+WEB_REMIX {decrypt:false publishDate:true search:true size:231214}
 ~~~
 
 Can we use `MWEB` for `publishDate`? Yes. Can we use `MWEB` for search? Yes.
-Can we use `ANDROID_MUSIC` for decrypted media? Yes.
+Can we use `ANDROID` for decrypted media? Yes.
 
 - https://github.com/TeamNewPipe/NewPipeExtractor/issues/562
 - https://github.com/yt-dlp/yt-dlp/pull/328
+
+## itag 251
+
+If we look at video `3gdfNdilGFE`:
+
+~~~
+67201 WEB_CREATOR {decrypt:true publishDate:false search:true size:56980} WEB_REMIX {decrypt:false publishDate:true search:true size:10221}
+80760 WEB_EMBEDDED_PLAYER {decrypt:true publishDate:false search:false size:70539} WEB_REMIX {decrypt:false publishDate:true search:true size:10221}
+99252 ANDROID {decrypt:true publishDate:false search:true size:89031}
+151916 MWEB {decrypt:true publishDate:true search:true size:62885}
+564097 WEB {decrypt:true publishDate:true search:true size:561332}
+690545 TVHTML5 {decrypt:true publishDate:false search:true size:680324} WEB_REMIX {decrypt:false publishDate:true search:true size:10221}
+~~~
+
+If we look at video `XeojXq6ySs4`:
+
+~~~
+110560 MWEB {decrypt:false publishDate:true search:true size:57396} ANDROID_MUSIC {decrypt:true publishDate:false search:true size:53164}
+120580 MWEB {decrypt:false publishDate:true search:true size:57396} ANDROID {decrypt:true publishDate:false search:true size:63184}
+~~~
 
 ## publishDate
 
