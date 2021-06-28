@@ -41,7 +41,6 @@ type search struct {
    Query string `json:"query"`
 }
 
-
 type player struct {
    Context struct {
       Client `json:"client"`
@@ -49,38 +48,6 @@ type player struct {
    VideoID string `json:"videoId"`
 }
 
-func (r *result) playerRequest(c Client) error {
-   var p player
-   p.Context.Client = c
-   p.VideoID = "XeojXq6ySs4"
-   buf := new(bytes.Buffer)
-   json.NewEncoder(buf).Encode(p)
-   req, err := http.NewRequest(
-      "POST", "https://www.youtube.com/youtubei/v1/player", buf,
-   )
-   if err != nil {
-      return  err
-   }
-   val := req.URL.Query()
-   val.Set("key", "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8")
-   req.URL.RawQuery = val.Encode()
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   data, err := io.ReadAll(res.Body)
-   if err != nil {
-      return err
-   }
-   // decrypt
-   r.decrypt = bytes.Contains(data, []byte("\n        \"url\""))
-   // publishDate
-   r.publishDate = bytes.Contains(data, []byte(`"publishDate"`))
-   // size
-   r.size = len(data)
-   return nil
-}
 
 func (r *result) searchRequest(c Client) error {
    var s search
@@ -128,8 +95,13 @@ func TestClients(t *testing.T) {
       results[c.ClientName] = r
       time.Sleep(100 * time.Millisecond)
    }
+   done := make(map[string]bool)
    for kOne, vOne := range results {
       for kTwo, vTwo := range results {
+         if done[kOne + kTwo] {
+            continue
+         }
+         done[kTwo + kOne] = true
          // decrypt
          if !vOne.decrypt && !vTwo.decrypt {
             continue
@@ -143,7 +115,44 @@ func TestClients(t *testing.T) {
             continue
          }
          // print
-         fmt.Println(vOne.size + vTwo.size, kOne, kTwo)
+         fmt.Printf(
+            "%v %v %+v %v %+v\n", vOne.size + vTwo.size, kOne, vOne, kTwo, vTwo,
+         )
       }
    }
+}
+
+func (r *result) playerRequest(c Client) error {
+   var p player
+   p.Context.Client = c
+   p.VideoID = "XeojXq6ySs4"
+   buf := new(bytes.Buffer)
+   json.NewEncoder(buf).Encode(p)
+   req, err := http.NewRequest(
+      "POST", "https://www.youtube.com/youtubei/v1/player", buf,
+   )
+   if err != nil {
+      return  err
+   }
+   val := req.URL.Query()
+   val.Set("key", "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8")
+   req.URL.RawQuery = val.Encode()
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   data, err := io.ReadAll(res.Body)
+   if err != nil {
+      return err
+   }
+   // decrypt
+   if bytes.Contains(data, []byte(`"itag": 251`)) {
+      r.decrypt = bytes.Contains(data, []byte("\n        \"url\""))
+   }
+   // publishDate
+   r.publishDate = bytes.Contains(data, []byte(`"publishDate"`))
+   // size
+   r.size = len(data)
+   return nil
 }
