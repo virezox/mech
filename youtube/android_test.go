@@ -22,3 +22,15 @@ func TestAndroid(t *testing.T) {
       t.Fatal(err)
    }
 }
+
+func TestFormat(t *testing.T) {
+   a, err := youtube.NewAndroid("eAzIAjTBGgU")
+   if err != nil {
+      t.Fatal(err)
+   }
+   // this should fail
+   f, err := a.NewFormat(247)
+   if err == nil {
+      t.Fatalf("%+v\n", f)
+   }
+}

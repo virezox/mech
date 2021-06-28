@@ -104,13 +104,12 @@ func getInfo(and *youtube.Android) {
 }
 
 func download(and *youtube.Android, format *youtube.Format) error {
-   ext := map[string]string{
+   create := and.Author + "-" + and.Title + map[string]string{
       "audio/mp4;": ".m4a",
       "audio/webm": ".weba",
       "video/mp4;": ".mp4",
       "video/webm": ".webm",
    }[format.MimeType[:10]]
-   create := and.Author + "-" + and.Title + ext
    file, err := os.Create(strings.Map(clean, create))
    if err != nil {
       return err
