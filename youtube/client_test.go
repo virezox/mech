@@ -1,7 +1,12 @@
 package youtube_test
 
 import (
+   "bytes"
+   "encoding/json"
+   "fmt"
+   "net/http"
    "testing"
+   "time"
 )
 
 var clients = []Client{
@@ -20,7 +25,7 @@ var clients = []Client{
    {"WEB_CREATOR", "1.20210223.01.00"},
    {"WEB_EMBEDDED_PLAYER", "1.20210620.0.1"},
    {"WEB_KIDS", "2.1.3"},
-   {"WEB_REMIX", "2.20210621.00.00"},
+   {"WEB_REMIX", "0.1"},
 }
 
 type Client struct {
@@ -35,32 +40,75 @@ type player struct {
    VideoID string `json:"videoId"`
 }
 
+type search struct {
+   Context struct {
+      Client `json:"client"`
+   } `json:"context"`
+   Query string `json:"query"`
+}
+
+func (c Client) playerRequest() error {
+   var p player
+   p.Context.Client = c
+   p.VideoID = "XeojXq6ySs4"
+   buf := new(bytes.Buffer)
+   json.NewEncoder(buf).Encode(p)
+   req, err := http.NewRequest(
+      "POST", "https://www.youtube.com/youtubei/v1/player", buf,
+   )
+   if err != nil {
+      return  err
+   }
+   val := req.URL.Query()
+   val.Set("key", "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8")
+   req.URL.RawQuery = val.Encode()
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   fmt.Println("player", res.Status, c.ClientName)
+   return nil
+}
+
+func (c Client) searchRequest() error {
+   var s search
+   s.Context.Client = c
+   s.Query = "nelly furtado say it right"
+   buf := new(bytes.Buffer)
+   json.NewEncoder(buf).Encode(s)
+   req, err := http.NewRequest(
+      "POST", "https://www.youtube.com/youtubei/v1/search", buf,
+   )
+   if err != nil {
+      return err
+   }
+   val := req.URL.Query()
+   val.Set("key", "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8")
+   req.URL.RawQuery = val.Encode()
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   fmt.Println("search", res.Status, c.ClientName)
+   return nil
+}
+
 func TestClients(t *testing.T) {
    for _, client := range clients {
       // 1. player request?
-      var p player
-      p.Context.Client = client
-      p.VideoID = "XeojXq6ySs4"
-      buf := new(bytes.Buffer)
-      json.NewEncoder(buf).Encode(p)
-      req, err := http.NewRequest(
-         "POST", "https://www.youtube.com/youtubei/v1/player", buf,
-      )
-      if err != nil {
-         return nil, err
+      if err := client.playerRequest(); err != nil {
+         t.Fatal(err)
       }
-      val := req.URL.Query()
-      val.Set("key", "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8")
-      req.URL.RawQuery = val.Encode()
-      fmt.Println(invert, "POST", reset, req.URL)
-      res, err := new(http.Transport).RoundTrip(req)
-      if err != nil {
-         return nil, err
-      }
+      time.Sleep(100 * time.Millisecond)
       // 2. search request?
+      if err := client.searchRequest(); err != nil {
+         t.Fatal(err)
+      }
+      time.Sleep(100 * time.Millisecond)
       // 3. decrypted media?
       // 4. publishDate?
       // 5. size?
-      break
    }
 }

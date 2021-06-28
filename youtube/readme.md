@@ -2,11 +2,45 @@
 
 ## Client
 
-Does `ANDROID` work in call cases? No.
+~~~
+player 200 OK ANDROID
+player 200 OK ANDROID_CREATOR
+player 200 OK ANDROID_EMBEDDED_PLAYER
+player 200 OK ANDROID_KIDS
+player 200 OK ANDROID_MUSIC
+player 200 OK IOS
+player 200 OK IOS_CREATOR
+player 200 OK IOS_KIDS
+player 200 OK IOS_MUSIC
+player 200 OK MWEB
+player 200 OK TVHTML5
+player 200 OK WEB
+player 200 OK WEB_CREATOR
+player 200 OK WEB_EMBEDDED_PLAYER
+player 200 OK WEB_KIDS
+player 200 OK WEB_REMIX
 
-Does `15.01` work in all cases? No.
+search 200 OK ANDROID
+search 200 OK ANDROID_EMBEDDED_PLAYER
+search 200 OK ANDROID_KIDS
+search 200 OK ANDROID_MUSIC
+search 200 OK IOS
+search 200 OK IOS_KIDS
+search 200 OK IOS_MUSIC
+search 200 OK MWEB
+search 200 OK TVHTML5
+search 200 OK WEB
+search 200 OK WEB_CREATOR
+search 200 OK WEB_KIDS
+search 200 OK WEB_REMIX
+search 400 Bad Request ANDROID_CREATOR
+search 400 Bad Request IOS_CREATOR
+search 400 Bad Request WEB_EMBEDDED_PLAYER
+~~~
 
-Does `https://www.youtube.com` work in all cases? No.
+- https://github.com/TeamNewPipe/NewPipeExtractor/issues/562
+- https://github.com/tombulled/innertube
+- https://github.com/yt-dlp/yt-dlp/pull/328
 
 ## MWEB
 
