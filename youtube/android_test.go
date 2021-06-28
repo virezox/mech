@@ -29,7 +29,7 @@ func TestFormat(t *testing.T) {
       t.Fatal(err)
    }
    // this should fail
-   f, err := a.NewFormat(247)
+   f, err := a.NewFormat(302)
    if err == nil {
       t.Fatalf("%+v\n", f)
    }

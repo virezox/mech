@@ -34,43 +34,11 @@ type Client struct {
    ClientVersion string `json:"clientVersion"`
 }
 
-type search struct {
-   Context struct {
-      Client `json:"client"`
-   } `json:"context"`
-   Query string `json:"query"`
-}
-
 type player struct {
    Context struct {
       Client `json:"client"`
    } `json:"context"`
    VideoID string `json:"videoId"`
-}
-
-
-func (r *result) searchRequest(c Client) error {
-   var s search
-   s.Context.Client = c
-   s.Query = "nelly furtado say it right"
-   buf := new(bytes.Buffer)
-   json.NewEncoder(buf).Encode(s)
-   req, err := http.NewRequest(
-      "POST", "https://www.youtube.com/youtubei/v1/search", buf,
-   )
-   if err != nil {
-      return err
-   }
-   val := req.URL.Query()
-   val.Set("key", "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8")
-   req.URL.RawQuery = val.Encode()
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   r.search = res.StatusCode == http.StatusOK
-   return nil
 }
 
 type result struct {
@@ -119,6 +87,37 @@ func (r *result) playerRequest(c Client) error {
       }
    }
    return nil
+}
+
+func (r *result) searchRequest(c Client) error {
+   var s search
+   s.Context.Client = c
+   s.Query = "nelly furtado say it right"
+   buf := new(bytes.Buffer)
+   json.NewEncoder(buf).Encode(s)
+   req, err := http.NewRequest(
+      "POST", "https://www.youtube.com/youtubei/v1/search", buf,
+   )
+   if err != nil {
+      return err
+   }
+   val := req.URL.Query()
+   val.Set("key", "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8")
+   req.URL.RawQuery = val.Encode()
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   r.search = res.StatusCode == http.StatusOK
+   return nil
+}
+
+type search struct {
+   Context struct {
+      Client `json:"client"`
+   } `json:"context"`
+   Query string `json:"query"`
 }
 
 func TestClients(t *testing.T) {

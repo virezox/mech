@@ -1,5 +1,54 @@
 # YouTube
 
+## itag 302
+
+If we look at video `youtube.com/watch?v=3gdfNdilGFE`:
+
+~~~
+itag 302, height 720, 3.5 mb/s, 139.4 MB, video/webm; codecs="vp9"
+~~~
+
+If we look at video `youtube.com/watch?v=XeojXq6ySs4`:
+
+~~~
+itag 247, height 720, 127.0 kb/s, 5.9 MB, video/webm; codecs="vp9"
+~~~
+
+Can we get `itag 247` on both videos, with any client? No. Can we get `itag
+302` on both videos, with any client? No. For either video, can we get
+`dashManifestUrl`, with any client? No.
+
+## itag 251
+
+If we look at video `3gdfNdilGFE`:
+
+~~~
+67201 WEB_CREATOR {decrypt:true publishDate:false search:true size:56980}
+WEB_REMIX {decrypt:false publishDate:true search:true size:10221}
+
+80760 WEB_EMBEDDED_PLAYER {decrypt:true publishDate:false search:false
+size:70539} WEB_REMIX {decrypt:false publishDate:true search:true size:10221}
+
+99252 ANDROID {decrypt:true publishDate:false search:true size:89031}
+
+151916 MWEB {decrypt:true publishDate:true search:true size:62885}
+
+564097 WEB {decrypt:true publishDate:true search:true size:561332}
+
+690545 TVHTML5 {decrypt:true publishDate:false search:true size:680324}
+WEB_REMIX {decrypt:false publishDate:true search:true size:10221}
+~~~
+
+If we look at video `XeojXq6ySs4`:
+
+~~~
+110560 MWEB {decrypt:false publishDate:true search:true size:57396}
+ANDROID_MUSIC {decrypt:true publishDate:false search:true size:53164}
+
+120580 MWEB {decrypt:false publishDate:true search:true size:57396} ANDROID
+{decrypt:true publishDate:false search:true size:63184}
+~~~
+
 ## Client
 
 Can we use one client for decrypted media, `publishDate` and search? No. Can we
@@ -21,26 +70,6 @@ Can we use `ANDROID` for decrypted media? Yes.
 
 - https://github.com/TeamNewPipe/NewPipeExtractor/issues/562
 - https://github.com/yt-dlp/yt-dlp/pull/328
-
-## itag 251
-
-If we look at video `3gdfNdilGFE`:
-
-~~~
-67201 WEB_CREATOR {decrypt:true publishDate:false search:true size:56980} WEB_REMIX {decrypt:false publishDate:true search:true size:10221}
-80760 WEB_EMBEDDED_PLAYER {decrypt:true publishDate:false search:false size:70539} WEB_REMIX {decrypt:false publishDate:true search:true size:10221}
-99252 ANDROID {decrypt:true publishDate:false search:true size:89031}
-151916 MWEB {decrypt:true publishDate:true search:true size:62885}
-564097 WEB {decrypt:true publishDate:true search:true size:561332}
-690545 TVHTML5 {decrypt:true publishDate:false search:true size:680324} WEB_REMIX {decrypt:false publishDate:true search:true size:10221}
-~~~
-
-If we look at video `XeojXq6ySs4`:
-
-~~~
-110560 MWEB {decrypt:false publishDate:true search:true size:57396} ANDROID_MUSIC {decrypt:true publishDate:false search:true size:53164}
-120580 MWEB {decrypt:false publishDate:true search:true size:57396} ANDROID {decrypt:true publishDate:false search:true size:63184}
-~~~
 
 ## publishDate
 

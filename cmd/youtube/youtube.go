@@ -36,7 +36,7 @@ func main() {
    )
    flag.BoolVar(&info, "i", false, "info only")
    flag.IntVar(&atag, "a", 251, "audio (0 to skip)")
-   flag.IntVar(&vtag, "v", 247, "video (0 to skip)")
+   flag.IntVar(&vtag, "v", 302, "video (0 to skip)")
    flag.Parse()
    if len(os.Args) == 1 {
       fmt.Println("youtube [flags] [URL]")
