@@ -61,6 +61,13 @@ var Images = []Image{
    {720, WidthBlack, WebP, "maxres3"},
 }
 
+type Image struct {
+   Height int64
+   Frame int64
+   Format int64
+   Base string
+}
+
 func (i Image) Address(id string) string {
    dir := map[int64]string{WebP: "vi_webp", JPG: "vi"}[i.Format]
    ext := map[int64]string{WebP: "webp", JPG: "jpg"}[i.Format]

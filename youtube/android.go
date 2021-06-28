@@ -1,18 +1,22 @@
 package youtube
 
 import (
-   "bytes"
    "encoding/json"
    "fmt"
    "io"
    "net/http"
 )
 
-const (
-   chunk = 10_000_000
-   invert = "\x1b[7m"
-   reset = "\x1b[m"
-)
+const chunk = 10_000_000
+
+var ClientAndroid = Client{"ANDROID", "15.01"}
+
+type Android struct {
+   StreamingData struct {
+      AdaptiveFormats []Format
+   }
+   VideoDetails `json:"videoDetails"`
+}
 
 func NewAndroid(id string) (*Android, error) {
    res, err := ClientAndroid.newPlayer(id).post()
@@ -34,6 +38,15 @@ func (a Android) NewFormat(itag int) (*Format, error) {
       }
    }
    return nil, fmt.Errorf("itag %v", itag)
+}
+
+type Format struct {
+   Bitrate int64
+   ContentLength int64 `json:"contentLength,string"`
+   Height int
+   Itag int
+   MimeType string
+   URL string
 }
 
 func (f Format) Write(w io.Writer) error {
@@ -61,41 +74,4 @@ func (f Format) Write(w io.Writer) error {
       pos += chunk
    }
    return nil
-}
-
-func (p player) post() (*http.Response, error) {
-   buf := new(bytes.Buffer)
-   err := json.NewEncoder(buf).Encode(p)
-   if err != nil {
-      return nil, err
-   }
-   req, err := http.NewRequest(
-      "POST", "https://www.youtube.com/youtubei/v1/player", buf,
-   )
-   if err != nil {
-      return nil, err
-   }
-   val := req.URL.Query()
-   val.Set("key", "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8")
-   req.URL.RawQuery = val.Encode()
-   fmt.Println(invert, "POST", reset, req.URL)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   if res.StatusCode != http.StatusOK {
-      return nil, fmt.Errorf("status %v", res.Status)
-   }
-   return res, nil
-}
-
-
-func (r Result) VideoRenderers() []VideoRenderer {
-   var vids []VideoRenderer
-   for _, sect := range r.Contents.PrimaryContents.SectionListRenderer.Contents {
-      for _, item := range sect.ItemSectionRenderer.Contents {
-         vids = append(vids, item.VideoRenderer)
-      }
-   }
-   return vids
 }

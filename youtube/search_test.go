@@ -11,7 +11,7 @@ func TestSearch(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   for _, v := range r.VideoRenderers() {
+   for _, v := range r.Videos() {
       fmt.Printf("%+v\n", v)
    }
 }

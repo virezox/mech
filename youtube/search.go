@@ -7,6 +7,45 @@ import (
    "net/http"
 )
 
+type CompactVideoRenderer struct {
+   VideoID string
+}
+
+type Result struct {
+   Contents struct {
+      SectionListRenderer struct {
+         Contents []struct{
+            ItemSectionRenderer struct {
+               Contents	[]struct{
+                  CompactVideoRenderer `json:"compactVideoRenderer"`
+               }
+            }
+         }
+      }
+   }
+}
+
+func (r Result) Videos() []CompactVideoRenderer {
+   var vids []CompactVideoRenderer
+   for _, sect := range r.Contents.SectionListRenderer.Contents {
+      for _, item := range sect.ItemSectionRenderer.Contents {
+         vids = append(vids, item.CompactVideoRenderer)
+      }
+   }
+   return vids
+}
+
+type Search struct {
+   Context `json:"context"`
+   Query string `json:"query"`
+}
+
+func NewSearch(query string) Search {
+   var s Search
+   s.Client = ClientMWeb
+   s.Query = query
+   return s
+}
 
 func (s Search) Post() (*Result, error) {
    buf := new(bytes.Buffer)

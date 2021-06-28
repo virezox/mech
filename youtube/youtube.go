@@ -1,84 +1,20 @@
 package youtube
 
-type Result struct {
-   Contents struct {
-      TwoColumnSearchResultsRenderer `json:"twoColumnSearchResultsRenderer"`
-   }
-}
+import (
+   "bytes"
+   "encoding/json"
+   "fmt"
+   "net/http"
+)
 
-type TwoColumnSearchResultsRenderer struct {
-   PrimaryContents struct {
-      SectionListRenderer struct {
-         Contents []struct {
-            ItemSectionRenderer struct {
-               Contents []struct {
-                  VideoRenderer `json:"videoRenderer"`
-               }
-            }
-         }
-      }
-   }
-}
+const (
+   invert = "\x1b[7m"
+   reset = "\x1b[m"
+)
 
-type VideoRenderer struct {
-   VideoID string
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-type Image struct {
-   Height int64
-   Frame int64
-   Format int64
-   Base string
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-type Android struct {
-   StreamingData struct {
-      AdaptiveFormats []Format
-   }
-   VideoDetails `json:"videoDetails"`
-}
-
-type Format struct {
-   Bitrate int64
-   ContentLength int64 `json:"contentLength,string"`
-   Height int
-   Itag int
-   MimeType string
-   URL string
-}
-
-type VideoDetails struct {
-   Author string
-   ShortDescription string
-   Title string
-   ViewCount int `json:"viewCount,string"`
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-type MWeb struct {
-   Microformat `json:"microformat"`
-   VideoDetails `json:"videoDetails"`
-}
-
-type Microformat struct {
-   PlayerMicroformatRenderer `json:"playerMicroformatRenderer"`
-}
-
-type PlayerMicroformatRenderer struct {
-   AvailableCountries []string
-   PublishDate string
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-type player struct {
-   Context `json:"context"`
-   VideoID string `json:"videoId"`
+type Client struct {
+   ClientName string `json:"clientName"`
+   ClientVersion string `json:"clientVersion"`
 }
 
 func (c Client) newPlayer(id string) player {
@@ -88,31 +24,44 @@ func (c Client) newPlayer(id string) player {
    return p
 }
 
-////////////////////////////////////////////////////////////////////////////////
-
-type Search struct {
-   Context `json:"context"`
-   Query string `json:"query"`
-}
-
 type Context struct {
    Client `json:"client"`
 }
 
-type Client struct {
-   ClientName string `json:"clientName"`
-   ClientVersion string `json:"clientVersion"`
+type VideoDetails struct {
+   Author string
+   ShortDescription string
+   Title string
+   ViewCount int `json:"viewCount,string"`
 }
 
-var (
-   ClientAndroid = Client{"ANDROID", "15.01"}
-   ClientMWeb = Client{"MWEB", "2.19700101"}
-   ClientWeb = Client{"WEB", "1.19700101"}
-)
+type player struct {
+   Context `json:"context"`
+   VideoID string `json:"videoId"`
+}
 
-func NewSearch(query string) Search {
-   var s Search
-   s.Client = ClientWeb
-   s.Query = query
-   return s
+func (p player) post() (*http.Response, error) {
+   buf := new(bytes.Buffer)
+   err := json.NewEncoder(buf).Encode(p)
+   if err != nil {
+      return nil, err
+   }
+   req, err := http.NewRequest(
+      "POST", "https://www.youtube.com/youtubei/v1/player", buf,
+   )
+   if err != nil {
+      return nil, err
+   }
+   val := req.URL.Query()
+   val.Set("key", "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8")
+   req.URL.RawQuery = val.Encode()
+   fmt.Println(invert, "POST", reset, req.URL)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   if res.StatusCode != http.StatusOK {
+      return nil, fmt.Errorf("status %v", res.Status)
+   }
+   return res, nil
 }
