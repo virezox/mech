@@ -2,7 +2,56 @@
 
 ## Client
 
+Can we use one client for decrypted media, `publishDate` and search? No.
+
+Can we use two clients? Yes. Which two are best?
+
 ~~~
+len 2390 ANDROID_KIDS
+len 2698 IOS_KIDS
+len 3023 WEB_KIDS
+len 4565 ANDROID_EMBEDDED_PLAYER
+len 5752 WEB_EMBEDDED_PLAYER
+len 11813 IOS_CREATOR
+len 22444 ANDROID_CREATOR
+len 32702 IOS_MUSIC
+len 40312 IOS
+len 54491 ANDROID_MUSIC
+len 54609 WEB_CREATOR
+len 58280 MWEB
+len 63598 ANDROID
+len 70718 WEB
+len 233260 WEB_REMIX
+len 669127 TVHTML5
+~~~
+
+And alternative to `publishDate` is:
+
+~~~
+"text": "Published on Nov 5, 2020"
+~~~
+
+which you can get doing a `next` request with `IOS_KIDS`. Uncompressed size is
+115 KB. For `publishDate`, doing a `player` request with `MWEB`, you get
+uncompressed size of 57 KB.
+
+~~~
+publishDate fail ANDROID_CREATOR
+publishDate fail ANDROID_EMBEDDED_PLAYER
+publishDate fail ANDROID_KIDS
+publishDate fail ANDROID_MUSIC
+publishDate fail IOS
+publishDate fail IOS_CREATOR
+publishDate fail IOS_KIDS
+publishDate fail IOS_MUSIC
+publishDate fail TVHTML5
+publishDate fail WEB_CREATOR
+publishDate fail WEB_EMBEDDED_PLAYER
+publishDate fail WEB_KIDS
+publishDate pass MWEB
+publishDate pass WEB
+publishDate pass WEB_REMIX
+
 decrypt fail ANDROID_EMBEDDED_PLAYER
 decrypt fail ANDROID_KIDS
 decrypt fail IOS_KIDS
@@ -37,23 +86,6 @@ player 200 OK WEB_EMBEDDED_PLAYER
 player 200 OK WEB_KIDS
 player 200 OK WEB_REMIX
 
-publishDate fail ANDROID
-publishDate fail ANDROID_CREATOR
-publishDate fail ANDROID_EMBEDDED_PLAYER
-publishDate fail ANDROID_KIDS
-publishDate fail ANDROID_MUSIC
-publishDate fail IOS
-publishDate fail IOS_CREATOR
-publishDate fail IOS_KIDS
-publishDate fail IOS_MUSIC
-publishDate fail TVHTML5
-publishDate fail WEB_CREATOR
-publishDate fail WEB_EMBEDDED_PLAYER
-publishDate fail WEB_KIDS
-publishDate pass MWEB
-publishDate pass WEB
-publishDate pass WEB_REMIX
-
 search 200 OK ANDROID
 search 200 OK ANDROID_EMBEDDED_PLAYER
 search 200 OK ANDROID_KIDS
@@ -73,7 +105,6 @@ search 400 Bad Request WEB_EMBEDDED_PLAYER
 ~~~
 
 - https://github.com/TeamNewPipe/NewPipeExtractor/issues/562
-- https://github.com/tombulled/innertube
 - https://github.com/yt-dlp/yt-dlp/pull/328
 
 ## MWEB

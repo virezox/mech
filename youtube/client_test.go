@@ -34,13 +34,6 @@ type Client struct {
    ClientVersion string `json:"clientVersion"`
 }
 
-type player struct {
-   Context struct {
-      Client `json:"client"`
-   } `json:"context"`
-   VideoID string `json:"videoId"`
-}
-
 type search struct {
    Context struct {
       Client `json:"client"`
@@ -72,6 +65,14 @@ func (c Client) searchRequest() error {
    return nil
 }
 
+
+type player struct {
+   Context struct {
+      Client `json:"client"`
+   } `json:"context"`
+   VideoID string `json:"videoId"`
+}
+
 func (c Client) playerRequest() error {
    var p player
    p.Context.Client = c
@@ -97,6 +98,7 @@ func (c Client) playerRequest() error {
    if err != nil {
       return err
    }
+   fmt.Println("len", len(data), c.ClientName)
    if bytes.Contains(data, []byte("\n        \"url\"")) {
       fmt.Println("decrypt pass", c.ClientName)
    } else {
@@ -115,15 +117,15 @@ func TestClients(t *testing.T) {
       // 1. player request?
       // 2. decrypted media?
       // 3. publishDate?
+      // 4. size?
       if err := client.playerRequest(); err != nil {
          t.Fatal(err)
       }
       time.Sleep(100 * time.Millisecond)
-      // 4. search request?
+      // 5. search request?
       if err := client.searchRequest(); err != nil {
          t.Fatal(err)
       }
       time.Sleep(100 * time.Millisecond)
-      // 5. size?
    }
 }
