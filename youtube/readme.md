@@ -6,43 +6,32 @@ Can we use one client for decrypted media, `publishDate` and search? No. Can we
 use two clients? Yes. Which two are best?
 
 ~~~
-67796 IOS_CREATOR MWEB
-67796 MWEB IOS_CREATOR
-78242 ANDROID_CREATOR MWEB
-78242 MWEB ANDROID_CREATOR
-81549 IOS_CREATOR WEB
-81549 WEB IOS_CREATOR
-89389 IOS_MUSIC MWEB
-89389 MWEB IOS_MUSIC
-91995 ANDROID_CREATOR WEB
-91995 WEB ANDROID_CREATOR
-97358 IOS MWEB
-97358 MWEB IOS
-103142 IOS_MUSIC WEB
-103142 WEB IOS_MUSIC
-110019 ANDROID_MUSIC MWEB
-110019 MWEB ANDROID_MUSIC
-111111 IOS WEB
-111111 WEB IOS
-121632 ANDROID MWEB
-121632 MWEB ANDROID
-123772 ANDROID_MUSIC WEB
-123772 WEB ANDROID_MUSIC
-135385 ANDROID WEB
-135385 WEB ANDROID
-245595 IOS_CREATOR WEB_REMIX
-245595 WEB_REMIX IOS_CREATOR
-256041 ANDROID_CREATOR WEB_REMIX
-256041 WEB_REMIX ANDROID_CREATOR
-267188 IOS_MUSIC WEB_REMIX
-267188 WEB_REMIX IOS_MUSIC
-275157 IOS WEB_REMIX
-275157 WEB_REMIX IOS
-287818 ANDROID_MUSIC WEB_REMIX
-287818 WEB_REMIX ANDROID_MUSIC
-299431 ANDROID WEB_REMIX
-299431 WEB_REMIX ANDROID
+110690 MWEB {decrypt:false publishDate:true search:true size:56784}
+ANDROID_MUSIC {decrypt:true publishDate:false search:true size:53906}
+
+119227 ANDROID {decrypt:true publishDate:false search:true size:62443} MWEB
+{decrypt:false publishDate:true search:true size:56784}
+
+123978 WEB {decrypt:false publishDate:true search:true size:70072}
+ANDROID_MUSIC {decrypt:true publishDate:false search:true size:53906}
+
+132515 ANDROID {decrypt:true publishDate:false search:true size:62443} WEB
+{decrypt:false publishDate:true search:true size:70072}
+
+289237 WEB_REMIX {decrypt:false publishDate:true search:true size:235331}
+ANDROID_MUSIC {decrypt:true publishDate:false search:true size:53906}
+
+297774 ANDROID {decrypt:true publishDate:false search:true size:62443}
+WEB_REMIX {decrypt:false publishDate:true search:true size:235331}
 ~~~
+
+Can we use `MWEB` for `publishDate`? Yes. Can we use `MWEB` for search? Yes.
+Can we use `ANDROID_MUSIC` for decrypted media? Yes.
+
+- https://github.com/TeamNewPipe/NewPipeExtractor/issues/562
+- https://github.com/yt-dlp/yt-dlp/pull/328
+
+## publishDate
 
 An alternative to `publishDate` is:
 
@@ -53,9 +42,6 @@ An alternative to `publishDate` is:
 which you can get doing a `next` request with `IOS_KIDS`. Uncompressed size is
 115 KB. For `publishDate`, doing a `player` request with `MWEB`, you get
 uncompressed size of 57 KB.
-
-- https://github.com/TeamNewPipe/NewPipeExtractor/issues/562
-- https://github.com/yt-dlp/yt-dlp/pull/328
 
 ## MWEB
 
