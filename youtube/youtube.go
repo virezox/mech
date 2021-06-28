@@ -1,30 +1,5 @@
 package youtube
 
-var (
-   ClientAndroid = Client{"ANDROID", "15.01"}
-   ClientMWeb = Client{"MWEB", "2.19700101"}
-   ClientWeb = Client{"WEB", "1.19700101"}
-)
-
-type Client struct {
-   ClientName string `json:"clientName"`
-   ClientVersion string `json:"clientVersion"`
-}
-
-type Context struct {
-   Client Client `json:"client"`
-}
-
-type Search struct {
-   Context `json:"context"`
-   Query string `json:"query"`
-}
-
-type player struct {
-   Context `json:"context"`
-   VideoID string `json:"videoId"`
-}
-
 type Result struct {
    Contents struct {
       TwoColumnSearchResultsRenderer `json:"twoColumnSearchResultsRenderer"`
@@ -49,6 +24,17 @@ type VideoRenderer struct {
    VideoID string
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
+type Image struct {
+   Height int64
+   Frame int64
+   Format int64
+   Base string
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 type Android struct {
    StreamingData struct {
       AdaptiveFormats []Format
@@ -72,11 +58,11 @@ type VideoDetails struct {
    ViewCount int `json:"viewCount,string"`
 }
 
-type Image struct {
-   Height int64
-   Frame int64
-   Format int64
-   Base string
+////////////////////////////////////////////////////////////////////////////////
+
+type MWeb struct {
+   Microformat `json:"microformat"`
+   VideoDetails `json:"videoDetails"`
 }
 
 type Microformat struct {
@@ -88,7 +74,45 @@ type PlayerMicroformatRenderer struct {
    PublishDate string
 }
 
-type MWeb struct {
-   Microformat `json:"microformat"`
-   VideoDetails `json:"videoDetails"`
+////////////////////////////////////////////////////////////////////////////////
+
+type player struct {
+   Context `json:"context"`
+   VideoID string `json:"videoId"`
+}
+
+func (c Client) newPlayer(id string) player {
+   var p player
+   p.Client = c
+   p.VideoID = id
+   return p
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+type Search struct {
+   Context `json:"context"`
+   Query string `json:"query"`
+}
+
+type Context struct {
+   Client `json:"client"`
+}
+
+type Client struct {
+   ClientName string `json:"clientName"`
+   ClientVersion string `json:"clientVersion"`
+}
+
+var (
+   ClientAndroid = Client{"ANDROID", "15.01"}
+   ClientMWeb = Client{"MWEB", "2.19700101"}
+   ClientWeb = Client{"WEB", "1.19700101"}
+)
+
+func NewSearch(query string) Search {
+   var s Search
+   s.Client = ClientWeb
+   s.Query = query
+   return s
 }

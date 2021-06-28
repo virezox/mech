@@ -4,18 +4,14 @@ import (
    "fmt"
    "github.com/89z/mech/youtube"
    "testing"
-   "time"
 )
 
 func TestSearch(t *testing.T) {
-   for _, query := range []string{"radiohead", "nelly furtado afraid"} {
-      r, err := youtube.NewSearch(query).Post()
-      if err != nil {
-         t.Fatal(err)
-      }
-      for _, v := range r.VideoRenderers() {
-         fmt.Printf("%+v\n", v)
-      }
-      time.Sleep(time.Second)
+   r, err := youtube.NewSearch("nelly furtado say it right").Post()
+   if err != nil {
+      t.Fatal(err)
+   }
+   for _, v := range r.VideoRenderers() {
+      fmt.Printf("%+v\n", v)
    }
 }

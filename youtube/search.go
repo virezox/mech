@@ -7,13 +7,6 @@ import (
    "net/http"
 )
 
-func NewSearch(query string) Search {
-   var s Search
-   s.Context.Client.ClientName = ClientWeb.ClientName
-   s.Context.Client.ClientVersion = ClientWeb.ClientVersion
-   s.Query = query
-   return s
-}
 
 func (s Search) Post() (*Result, error) {
    buf := new(bytes.Buffer)

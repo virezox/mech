@@ -3,9 +3,7 @@ import "encoding/json"
 
 
 func NewMWeb(id string) (*MWeb, error) {
-   res, err := newPlayer(
-      id, ClientMWeb.ClientName, ClientMWeb.ClientVersion,
-   ).post()
+   res, err := ClientMWeb.newPlayer(id).post()
    if err != nil {
       return nil, err
    }

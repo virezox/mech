@@ -15,9 +15,7 @@ const (
 )
 
 func NewAndroid(id string) (*Android, error) {
-   res, err := newPlayer(
-      id, ClientAndroid.ClientName, ClientAndroid.ClientVersion,
-   ).post()
+   res, err := ClientAndroid.newPlayer(id).post()
    if err != nil {
       return nil, err
    }
@@ -63,14 +61,6 @@ func (f Format) Write(w io.Writer) error {
       pos += chunk
    }
    return nil
-}
-
-func newPlayer(id, name, version string) player {
-   var p player
-   p.Context.Client.ClientName = name
-   p.Context.Client.ClientVersion = version
-   p.VideoID = id
-   return p
 }
 
 func (p player) post() (*http.Response, error) {
