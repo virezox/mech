@@ -9,9 +9,9 @@ const (
 
 const (
    WidthAutoHeightBlack = 0
-   WidthAuto = 10
-   WidthBlack = 20
-   HeightCrop = 30
+   WidthAuto = 1
+   WidthBlack = 2
+   HeightCrop = 3
 )
 
 var Images = []Image{
@@ -62,14 +62,14 @@ var Images = []Image{
 }
 
 type Image struct {
-   Height int64
-   Frame int64
-   Format int64
+   Height float64
+   Frame int
+   Format int
    Base string
 }
 
 func (i Image) Address(id string) string {
-   dir := map[int64]string{WebP: "vi_webp", JPG: "vi"}[i.Format]
-   ext := map[int64]string{WebP: "webp", JPG: "jpg"}[i.Format]
+   dir := map[int]string{WebP: "vi_webp", JPG: "vi"}[i.Format]
+   ext := map[int]string{WebP: "webp", JPG: "jpg"}[i.Format]
    return fmt.Sprintf("http://i.ytimg.com/%v/%v/%v.%v", dir, id, i.Base, ext)
 }

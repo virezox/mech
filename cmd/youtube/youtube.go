@@ -74,7 +74,8 @@ func main() {
    if vtag > 0 {
       format, err := and.NewFormat(vtag)
       if err != nil {
-         panic(err)
+         fmt.Println("vtag", err)
+         return
       }
       forms = append(forms, format)
    }

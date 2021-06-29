@@ -2,6 +2,7 @@ package musicbrainz
 
 import (
    "encoding/json"
+   "fmt"
    "net/http"
    "sort"
    "strconv"
@@ -28,6 +29,7 @@ func GroupFromArtist(artistID string, offset int) (*Group, error) {
       val.Set("offset", strconv.Itoa(offset))
    }
    req.URL.RawQuery = val.Encode()
+   fmt.Println(invert, req.Method, reset, req.URL)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -48,6 +50,7 @@ func NewGroup(groupID string) (*Group, error) {
    val.Set("inc", "artist-credits recordings")
    val.Set("release-group", groupID)
    req.URL.RawQuery = val.Encode()
+   fmt.Println(invert, req.Method, reset, req.URL)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -59,31 +62,33 @@ func NewGroup(groupID string) (*Group, error) {
 }
 
 func (g Group) Sort() {
-   sort.Slice(g.Releases, func(d, e int) bool {
-      one, two := g.Releases[d], g.Releases[e]
-      // 1. STATUS
-      if Status[one.Status] < Status[two.Status] {
-         return true
+   rFuncs := []rFunc{
+      func(a, b *Release) bool {
+         status := map[string]int{"Official": 0, "Bootleg": 1}
+         return status[a.Status] < status[b.Status]
+      },
+      func(a, b *Release) bool {
+         return a.date(4) < b.date(4)
+      },
+      func(a, b *Release) bool {
+         return a.trackLen() < b.trackLen()
+      },
+      func(a, b *Release) bool {
+         return a.date(10) < b.date(10)
+      },
+   }
+   sort.Slice(g.Releases, func(a, b int) bool {
+      ra, rb := g.Releases[a], g.Releases[b]
+      for _, rf := range rFuncs {
+         if rf(ra, rb) {
+            return true
+         }
+         if rf(rb, ra) {
+            break
+         }
       }
-      if Status[one.Status] > Status[two.Status] {
-         return false
-      }
-      // 2. YEAR
-      if one.date(4) < two.date(4) {
-         return true
-      }
-      if one.date(4) > two.date(4) {
-         return false
-      }
-      // 3. TRACKS
-      if one.trackLen() < two.trackLen() {
-         return true
-      }
-      if one.trackLen() > two.trackLen() {
-         return false
-      }
-      // 4. DATE
-      return one.date(10) < two.date(10)
+      return false
    })
 }
 
+type rFunc func(a, b *Release) bool
