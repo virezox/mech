@@ -1,6 +1,10 @@
 // YouTube
 package youtube
-import "fmt"
+
+import (
+   "fmt"
+   "sort"
+)
 
 const (
    JPG = 1
@@ -61,11 +65,44 @@ var Images = []Image{
    {720, WidthBlack, WebP, "maxres3"},
 }
 
+func SortImages() {
+   iFuncs := []iFunc{
+      func(a, b Image) bool {
+         return b.Height < a.Height
+      },
+      func(a, b Image) bool {
+         return a.Frame < b.Frame
+      },
+      func(a, b Image) bool {
+         return a.Format < b.Format
+      },
+   }
+   sort.SliceStable(Images, func(a, b int) bool {
+      ia, ib := Images[a], Images[b]
+      for _, fn := range iFuncs {
+         if fn(ia, ib) {
+            return true
+         }
+         if fn(ib, ia) {
+            break
+         }
+      }
+      return false
+   })
+}
+
 type Image struct {
-   Height float64
+   Height int
    Frame int
    Format int
    Base string
+}
+
+func LargestLessThan(height int) Image {
+   n := sort.Search(len(Images), func(n int) bool {
+      return Images[n].Height < height
+   })
+   return Images[n]
 }
 
 func (i Image) Address(id string) string {
@@ -73,3 +110,5 @@ func (i Image) Address(id string) string {
    ext := map[int]string{WebP: "webp", JPG: "jpg"}[i.Format]
    return fmt.Sprintf("http://i.ytimg.com/%v/%v/%v.%v", dir, id, i.Base, ext)
 }
+
+type iFunc func(a, b Image) bool

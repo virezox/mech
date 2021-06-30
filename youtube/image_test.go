@@ -3,9 +3,7 @@ package youtube_test
 import (
    "fmt"
    "github.com/89z/mech/youtube"
-   "math"
    "net/http"
-   "sort"
    "testing"
    "time"
 )
@@ -25,4 +23,10 @@ func TestImage(t *testing.T) {
       }
       time.Sleep(100 * time.Millisecond)
    }
+}
+
+func TestImageSearch(t *testing.T) {
+   youtube.SortImages()
+   img := youtube.LargestLessThan(720)
+   fmt.Println(img)
 }
