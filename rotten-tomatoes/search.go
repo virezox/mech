@@ -8,10 +8,21 @@ import (
    "net/http"
 )
 
-const AddrSearch = "https://www.rottentomatoes.com/search"
+const (
+   AddrSearch = "https://www.rottentomatoes.com/search"
+   invert = "\x1b[7m"
+   reset = "\x1b[m"
+)
 
 type Search struct {
-   Items []Item
+   Items []struct {
+      Name string
+      ReleaseYear string
+      TomatoMeterScore struct {
+         Score string
+      }
+      URL string
+   }
 }
 
 func NewSearch(search string) (*Search, error) {
@@ -22,6 +33,7 @@ func NewSearch(search string) (*Search, error) {
    val := req.URL.Query()
    val.Set("search", search)
    req.URL.RawQuery = val.Encode()
+   fmt.Println(invert, req.Method, reset, req.URL)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
