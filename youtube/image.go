@@ -7,18 +7,18 @@ import (
 )
 
 const (
-   JPG = 1
-   WebP = 0
-)
-
-const (
    WidthAutoHeightBlack = 0
    WidthAuto = 1
    WidthBlack = 2
    HeightCrop = 3
 )
 
-var Images = []Image{
+const (
+   JPG = 1
+   WebP = 0
+)
+
+var Images = ImageSlice{
    {90, WidthAutoHeightBlack, JPG, "default"},
    {90, WidthAutoHeightBlack, WebP, "default"},
    {90, WidthBlack, JPG, "1"},
@@ -65,7 +65,32 @@ var Images = []Image{
    {720, WidthBlack, WebP, "maxres3"},
 }
 
-func SortImages() {
+type Image struct {
+   Height int
+   Frame int
+   Format int
+   Base string
+}
+
+func (i Image) Address(id string) string {
+   dir := map[int]string{WebP: "vi_webp", JPG: "vi"}[i.Format]
+   ext := map[int]string{WebP: "webp", JPG: "jpg"}[i.Format]
+   return fmt.Sprintf("http://i.ytimg.com/%v/%v/%v.%v", dir, id, i.Base, ext)
+}
+
+type ImageSlice []Image
+
+func (s ImageSlice) Filter(keep func(Image)bool) ImageSlice {
+   var t ImageSlice
+   for _, x := range s {
+      if keep(x) {
+         t = append(t, x)
+      }
+   }
+   return t
+}
+
+func (s ImageSlice) Sort() {
    iFuncs := []iFunc{
       func(a, b Image) bool {
          return b.Height < a.Height
@@ -77,39 +102,18 @@ func SortImages() {
          return a.Format < b.Format
       },
    }
-   sort.SliceStable(Images, func(a, b int) bool {
-      ia, ib := Images[a], Images[b]
+   sort.SliceStable(s, func(a, b int) bool {
+      sa, sb := s[a], s[b]
       for _, fn := range iFuncs {
-         if fn(ia, ib) {
+         if fn(sa, sb) {
             return true
          }
-         if fn(ib, ia) {
+         if fn(sb, sa) {
             break
          }
       }
       return false
    })
-}
-
-type Image struct {
-   Height int
-   Frame int
-   Format int
-   Base string
-}
-
-func LessThan(height int) []Image {
-   SortImages()
-   n := sort.Search(len(Images), func(n int) bool {
-      return Images[n].Height < height
-   })
-   return Images[n:]
-}
-
-func (i Image) Address(id string) string {
-   dir := map[int]string{WebP: "vi_webp", JPG: "vi"}[i.Format]
-   ext := map[int]string{WebP: "webp", JPG: "jpg"}[i.Format]
-   return fmt.Sprintf("http://i.ytimg.com/%v/%v/%v.%v", dir, id, i.Base, ext)
 }
 
 type iFunc func(a, b Image) bool

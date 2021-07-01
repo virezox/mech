@@ -25,8 +25,12 @@ func TestImage(t *testing.T) {
    }
 }
 
-func TestImageSearch(t *testing.T) {
-   for _, img := range youtube.LessThan(720) {
+func TestFilter(t *testing.T) {
+   imgs := youtube.Images.Filter(func(i youtube.Image) bool {
+      return i.Height < 720
+   })
+   imgs.Sort()
+   for _, img := range imgs {
       fmt.Println(img)
    }
 }
