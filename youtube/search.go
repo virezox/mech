@@ -1,3 +1,4 @@
+// YouTube
 package youtube
 
 import (
@@ -5,6 +6,11 @@ import (
    "encoding/json"
    "fmt"
    "net/http"
+)
+
+const (
+   invert = "\x1b[7m"
+   reset = "\x1b[m"
 )
 
 type CompactVideoRenderer struct {

@@ -11,7 +11,7 @@ import (
 const id = "UpNXI3_ctAc"
 
 func TestImage(t *testing.T) {
-   for _, img := range youtube.Images {
+   for _, img := range youtube.AdaptiveImages {
       addr := img.Address(id)
       println("Head", addr)
       r, err := http.Head(addr)
@@ -26,7 +26,7 @@ func TestImage(t *testing.T) {
 }
 
 func TestFilter(t *testing.T) {
-   imgs := youtube.Images.Filter(func(i youtube.Image) bool {
+   imgs := youtube.AdaptiveImages.Filter(func(i youtube.Image) bool {
       return i.Height < 720
    })
    imgs.Sort()

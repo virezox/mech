@@ -7,20 +7,13 @@ import (
    "net/http"
 )
 
-const (
-   invert = "\x1b[7m"
-   reset = "\x1b[m"
-)
-
 var (
    ClientAndroid = Client{"ANDROID", "15.01"}
    ClientMWeb = Client{"MWEB", "2.19700101"}
 )
 
 type Android struct {
-   StreamingData struct {
-      AdaptiveFormats []Format
-   }
+   StreamingData `json:"streamingData"`
    VideoDetails `json:"videoDetails"`
 }
 
@@ -78,6 +71,10 @@ type Microformat struct {
 type PlayerMicroformatRenderer struct {
    AvailableCountries []string
    PublishDate string
+}
+
+type StreamingData struct {
+   AdaptiveFormats Formats
 }
 
 type VideoDetails struct {

@@ -1,4 +1,3 @@
-// YouTube
 package youtube
 
 import (
@@ -18,7 +17,7 @@ const (
    WebP = 0
 )
 
-var Images = ImageSlice{
+var AdaptiveImages = Images{
    {90, WidthAutoHeightBlack, JPG, "default"},
    {90, WidthAutoHeightBlack, WebP, "default"},
    {90, WidthBlack, JPG, "1"},
@@ -78,20 +77,20 @@ func (i Image) Address(id string) string {
    return fmt.Sprintf("http://i.ytimg.com/%v/%v/%v.%v", dir, id, i.Base, ext)
 }
 
-type ImageSlice []Image
+type Images []Image
 
-func (s ImageSlice) Filter(keep func(Image)bool) ImageSlice {
-   var t ImageSlice
-   for _, x := range s {
-      if keep(x) {
-         t = append(t, x)
+func (s Images) Filter(keep func(Image)bool) Images {
+   var imgs Images
+   for _, img := range s {
+      if keep(img) {
+         imgs = append(imgs, img)
       }
    }
-   return t
+   return imgs
 }
 
-func (s ImageSlice) Sort() {
-   iFuncs := []iFunc{
+func (s Images) Sort() {
+   imageFns := []imageFn{
       func(a, b Image) bool {
          return b.Height < a.Height
       },
@@ -104,7 +103,7 @@ func (s ImageSlice) Sort() {
    }
    sort.SliceStable(s, func(a, b int) bool {
       sa, sb := s[a], s[b]
-      for _, fn := range iFuncs {
+      for _, fn := range imageFns {
          if fn(sa, sb) {
             return true
          }
@@ -116,4 +115,4 @@ func (s ImageSlice) Sort() {
    })
 }
 
-type iFunc func(a, b Image) bool
+type imageFn func(a, b Image) bool
