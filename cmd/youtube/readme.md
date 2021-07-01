@@ -1,43 +1,23 @@
-# mimtype
+# YouTube
 
-## videoplayback.webm
-
-~~~
-video/webm; codecs="vp9"
-video/webm; codecs="vp9"
-video/webm; codecs="vp9"
-video/webm; codecs="vp9"
-video/webm; codecs="vp9"
-video/webm; codecs="vp9"
-~~~
-
-## videoplayback.weba
+If we look at video `youtube.com/watch?v=3gdfNdilGFE`:
 
 ~~~
-audio/webm; codecs="opus"
-audio/webm; codecs="opus"
-audio/webm; codecs="opus"
+itag 302, height 720, 3.5 mb/s, 139.4 MB, video/webm; codecs="vp9"
 ~~~
 
-## videoplayback.mp4
+If we look at video `youtube.com/watch?v=Mfu_iFS-UY8`:
 
 ~~~
-video/mp4; codecs="av01.0.00M.08"
-video/mp4; codecs="av01.0.00M.08"
-video/mp4; codecs="av01.0.01M.08"
-video/mp4; codecs="av01.0.04M.08"
-video/mp4; codecs="av01.0.05M.08"
-video/mp4; codecs="av01.0.08M.08"
-video/mp4; codecs="avc1.4d400c"
-video/mp4; codecs="avc1.4d4015"
-video/mp4; codecs="avc1.4d401e"
-video/mp4; codecs="avc1.4d401e"
-video/mp4; codecs="avc1.4d401f"
-video/mp4; codecs="avc1.640028"
+itag 247, height 720, 833.4 kb/s, 9.6 MB, video/webm; codecs="vp9"
 ~~~
 
-## videoplayback.m4a
+If we look at video `youtube.com/watch?v=XeojXq6ySs4`:
 
 ~~~
-audio/mp4; codecs="mp4a.40.2"
+itag 247, height 720, 127.0 kb/s, 5.9 MB, video/webm; codecs="vp9"
 ~~~
+
+Can we get `itag 247` on all videos, with any client? No. Can we get `itag 302`
+on all videos, with any client? No. For any video, can we get
+`dashManifestUrl`, with any client? No.

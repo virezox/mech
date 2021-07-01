@@ -35,8 +35,8 @@ func main() {
       info bool
    )
    flag.BoolVar(&info, "i", false, "info only")
-   flag.IntVar(&atag, "a", 251, "audio (0 to skip)")
-   flag.IntVar(&vtag, "v", 302, "video (0 to skip)")
+   flag.IntVar(&atag, "a", 0, "audio (-1 to skip)")
+   flag.IntVar(&vtag, "v", 0, "video (-1 to skip)")
    flag.Parse()
    if len(os.Args) == 1 {
       fmt.Println("youtube [flags] [URL]")
@@ -62,25 +62,39 @@ func main() {
       getInfo(and)
       return
    }
-   // check formats
-   var forms []*youtube.Format
-   if atag > 0 {
-      format, err := and.NewFormat(atag)
+   // sort
+   and.AdaptiveFormats.Sort()
+   // filter audio
+   if atag >= 0 {
+      var f func(youtube.Format)bool
+      if atag > 0 {
+         f = func(f youtube.Format) bool {
+            return f.Itag == atag
+         }
+      } else {
+         f = func(f youtube.Format) bool {
+            return f.Height == 0
+         }
+      }
+      form := and.AdaptiveFormats.Filter(f)[0]
+      err := download(and, form)
       if err != nil {
          panic(err)
       }
-      forms = append(forms, format)
    }
-   if vtag > 0 {
-      format, err := and.NewFormat(vtag)
-      if err != nil {
-         fmt.Println("vtag", err)
-         return
+   // filter video
+   if vtag >= 0 {
+      var f func(youtube.Format)bool
+      if vtag > 0 {
+         f = func(f youtube.Format) bool {
+            return f.Itag == vtag
+         }
+      } else {
+         f = func(f youtube.Format) bool {
+            return f.Height == 720
+         }
       }
-      forms = append(forms, format)
-   }
-   // download
-   for _, form := range forms {
+      form := and.AdaptiveFormats.Filter(f)[0]
       err := download(and, form)
       if err != nil {
          panic(err)
@@ -104,14 +118,9 @@ func getInfo(and *youtube.Android) {
    }
 }
 
-func download(and *youtube.Android, format *youtube.Format) error {
-   create := and.Author + "-" + and.Title + map[string]string{
-      "audio/mp4;": ".m4a",
-      "audio/webm": ".weba",
-      "video/mp4;": ".mp4",
-      "video/webm": ".webm",
-   }[format.MimeType[:10]]
-   file, err := os.Create(strings.Map(clean, create))
+func download(a *youtube.Android, f youtube.Format) error {
+   create := strings.Map(clean, a.Author + "-" + a.Title + f.Ext())
+   file, err := os.Create(create)
    if err != nil {
       return err
    }
@@ -122,7 +131,7 @@ func download(and *youtube.Android, format *youtube.Format) error {
       }
    }()
    begin := time.Now()
-   if err := format.Write(file); err != nil {
+   if err := f.Write(file); err != nil {
       return err
    }
    fmt.Println(time.Since(begin))

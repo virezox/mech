@@ -36,7 +36,7 @@ func TestAndroid(t *testing.T) {
    if a.Title != "Snowflake" {
       t.Fatalf("%+v\n", a)
    }
-   f := a.StreamingData.AdaptiveFormats.Filter(func(f youtube.Format) bool {
+   f := a.AdaptiveFormats.Filter(func(f youtube.Format) bool {
       return f.Height == 0
    })
    if err := f[0].Write(io.Discard); err != nil {
