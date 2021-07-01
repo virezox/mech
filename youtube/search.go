@@ -7,6 +7,11 @@ import (
    "net/http"
 )
 
+const (
+   invert = "\x1b[7m"
+   reset = "\x1b[m"
+)
+
 type CompactVideoRenderer struct {
    VideoID string
 }
