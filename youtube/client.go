@@ -12,6 +12,31 @@ const (
    reset = "\x1b[m"
 )
 
+var (
+   ClientAndroid = Client{"ANDROID", "15.01"}
+   ClientMWeb = Client{"MWEB", "2.19700101"}
+)
+
+type Android struct {
+   StreamingData struct {
+      AdaptiveFormats []Format
+   }
+   VideoDetails `json:"videoDetails"`
+}
+
+func NewAndroid(id string) (*Android, error) {
+   res, err := ClientAndroid.newPlayer(id).post()
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   a := new(Android)
+   if err := json.NewDecoder(res.Body).Decode(a); err != nil {
+      return nil, err
+   }
+   return a, nil
+}
+
 type Client struct {
    ClientName string `json:"clientName"`
    ClientVersion string `json:"clientVersion"`
@@ -26,6 +51,33 @@ func (c Client) newPlayer(id string) player {
 
 type Context struct {
    Client `json:"client"`
+}
+
+type MWeb struct {
+   Microformat `json:"microformat"`
+   VideoDetails `json:"videoDetails"`
+}
+
+func NewMWeb(id string) (*MWeb, error) {
+   res, err := ClientMWeb.newPlayer(id).post()
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   mw := new(MWeb)
+   if err := json.NewDecoder(res.Body).Decode(mw); err != nil {
+      return nil, err
+   }
+   return mw, nil
+}
+
+type Microformat struct {
+   PlayerMicroformatRenderer `json:"playerMicroformatRenderer"`
+}
+
+type PlayerMicroformatRenderer struct {
+   AvailableCountries []string
+   PublishDate string
 }
 
 type VideoDetails struct {
