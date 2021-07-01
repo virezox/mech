@@ -18,6 +18,16 @@ const (
    HeightCrop = 3
 )
 
+func ImageFilter(keep func(Image)bool) []Image {
+   var a []Image
+   for _, x := range Images {
+      if keep(x) {
+         a = append(a, x)
+      }
+   }
+   return a
+}
+
 var Images = []Image{
    {90, WidthAutoHeightBlack, JPG, "default"},
    {90, WidthAutoHeightBlack, WebP, "default"},
@@ -96,14 +106,6 @@ type Image struct {
    Frame int
    Format int
    Base string
-}
-
-func LessThan(height int) []Image {
-   SortImages()
-   n := sort.Search(len(Images), func(n int) bool {
-      return Images[n].Height < height
-   })
-   return Images[n:]
 }
 
 func (i Image) Address(id string) string {
