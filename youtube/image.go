@@ -91,7 +91,7 @@ func (s ImageSlice) Filter(keep func(Image)bool) ImageSlice {
 }
 
 func (s ImageSlice) Sort() {
-   iFuncs := []iFunc{
+   cImages := []cImage{
       func(a, b Image) bool {
          return b.Height < a.Height
       },
@@ -104,7 +104,7 @@ func (s ImageSlice) Sort() {
    }
    sort.SliceStable(s, func(a, b int) bool {
       sa, sb := s[a], s[b]
-      for _, fn := range iFuncs {
+      for _, fn := range cImages {
          if fn(sa, sb) {
             return true
          }
@@ -116,4 +116,4 @@ func (s ImageSlice) Sort() {
    })
 }
 
-type iFunc func(a, b Image) bool
+type cImage func(a, b Image) bool
