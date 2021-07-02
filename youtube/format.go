@@ -66,22 +66,24 @@ func (s Formats) Filter(keep func(Format)bool) Formats {
    return forms
 }
 
-func (s Formats) Sort() {
-   formatFns := []formatFn{
-      func(a, b Format) bool {
-         return b.Height < a.Height
-      },
-      func(a, b Format) bool {
-         exts := map[string]int{".m4v": 1, ".m4a": 1}
-         return exts[a.Ext()] < exts[b.Ext()]
-      },
-      func(a, b Format) bool {
-         return b.Bitrate < a.Bitrate
-      },
+func (s Formats) Sort(less ...func(a, b Format) bool) {
+   if less == nil {
+      less = []func(a, b Format) bool{
+         func(a, b Format) bool {
+            return b.Height < a.Height
+         },
+         func(a, b Format) bool {
+            exts := map[string]int{".m4v": 1, ".m4a": 1}
+            return exts[a.Ext()] < exts[b.Ext()]
+         },
+         func(a, b Format) bool {
+            return b.Bitrate < a.Bitrate
+         },
+      }
    }
    sort.Slice(s, func(a, b int) bool {
       sa, sb := s[a], s[b]
-      for _, fn := range formatFns {
+      for _, fn := range less {
          if fn(sa, sb) {
             return true
          }
@@ -92,5 +94,3 @@ func (s Formats) Sort() {
       return false
    })
 }
-
-type formatFn func(a, b Format) bool

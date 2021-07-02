@@ -89,21 +89,23 @@ func (s Images) Filter(keep func(Image)bool) Images {
    return imgs
 }
 
-func (s Images) Sort() {
-   imageFns := []imageFn{
-      func(a, b Image) bool {
-         return b.Height < a.Height
-      },
-      func(a, b Image) bool {
-         return a.Frame < b.Frame
-      },
-      func(a, b Image) bool {
-         return a.Format < b.Format
-      },
+func (s Images) Sort(less ...func(a, b Image) bool) {
+   if less == nil {
+      less = []func(a, b Image) bool{
+         func(a, b Image) bool {
+            return b.Height < a.Height
+         },
+         func(a, b Image) bool {
+            return a.Frame < b.Frame
+         },
+         func(a, b Image) bool {
+            return a.Format < b.Format
+         },
+      }
    }
    sort.SliceStable(s, func(a, b int) bool {
       sa, sb := s[a], s[b]
-      for _, fn := range imageFns {
+      for _, fn := range less {
          if fn(sa, sb) {
             return true
          }
@@ -114,5 +116,3 @@ func (s Images) Sort() {
       return false
    })
 }
-
-type imageFn func(a, b Image) bool

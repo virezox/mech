@@ -23,23 +23,10 @@ func TestMWeb(t *testing.T) {
    if mw.ShortDescription != desc {
       t.Fatalf("%+v\n", mw)
    }
-   if mw.ViewCount == 0 {
-      t.Fatalf("%+v\n", mw)
-   }
-}
-
-func TestAndroid(t *testing.T) {
-   a, err := youtube.NewAndroid("XeojXq6ySs4")
-   if err != nil {
-      t.Fatal(err)
-   }
-   if a.Title != "Snowflake" {
+   if mw.Title != "Snowflake" {
       t.Fatalf("%+v\n", a)
    }
-   f := a.AdaptiveFormats.Filter(func(f youtube.Format) bool {
-      return f.Height == 0
-   })
-   if err := f[0].Write(io.Discard); err != nil {
-      t.Fatal(err)
+   if mw.ViewCount == 0 {
+      t.Fatalf("%+v\n", mw)
    }
 }
