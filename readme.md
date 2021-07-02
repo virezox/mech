@@ -8,9 +8,8 @@ https://pkg.go.dev/github.com/89z/mech
 
 1. Deezer
 2. MusicBrainz
-3. ocr.space
-4. Rotten Tomatoes
-5. YouTube
+3. Rotten Tomatoes
+4. YouTube
 
 ## Transport
 
