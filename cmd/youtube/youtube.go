@@ -103,7 +103,7 @@ func getInfo(and *youtube.Android) {
    fmt.Println("author:", and.Author)
    fmt.Println("title:", and.Title)
    fmt.Println()
-   for _, f := range and.StreamingData.AdaptiveFormats {
+   for _, f := range and.AdaptiveFormats {
       fmt.Printf(
          "itag %v, height %v, %v, %v, %v\n",
          f.Itag,
