@@ -91,7 +91,7 @@ func main() {
          }
       } else {
          f = func(f youtube.Format) bool {
-            return f.Height == 720
+            return f.Height <= 720
          }
       }
       form := and.AdaptiveFormats.Filter(f)[0]
@@ -124,12 +124,7 @@ func download(a *youtube.Android, f youtube.Format) error {
    if err != nil {
       return err
    }
-   defer func() {
-      file.Close()
-      if err != nil {
-         os.Remove(file.Name())
-      }
-   }()
+   defer file.Close()
    begin := time.Now()
    if err := f.Write(file); err != nil {
       return err
