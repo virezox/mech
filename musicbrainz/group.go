@@ -62,7 +62,7 @@ func NewGroup(groupID string) (*Group, error) {
 }
 
 func (g Group) Sort() {
-   rFuncs := []rFunc{
+   releaseFns := []releaseFn{
       func(a, b *Release) bool {
          status := map[string]int{"Official": 0, "Bootleg": 1}
          return status[a.Status] < status[b.Status]
@@ -79,11 +79,11 @@ func (g Group) Sort() {
    }
    sort.Slice(g.Releases, func(a, b int) bool {
       ra, rb := g.Releases[a], g.Releases[b]
-      for _, rf := range rFuncs {
-         if rf(ra, rb) {
+      for _, fn := range releaseFns {
+         if fn(ra, rb) {
             return true
          }
-         if rf(rb, ra) {
+         if fn(rb, ra) {
             break
          }
       }
@@ -91,4 +91,4 @@ func (g Group) Sort() {
    })
 }
 
-type rFunc func(a, b *Release) bool
+type releaseFn func(a, b *Release) bool
