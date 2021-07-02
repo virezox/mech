@@ -64,18 +64,17 @@ func main() {
    }
    // sort
    and.AdaptiveFormats.Sort()
+   type formatFn map[bool]func(youtube.Format)bool
    // filter audio
    if atag >= 0 {
-      var f func(youtube.Format)bool
-      if atag > 0 {
-         f = func(f youtube.Format) bool {
+      f := formatFn{
+         true: func(f youtube.Format) bool {
             return f.Itag == atag
-         }
-      } else {
-         f = func(f youtube.Format) bool {
+         },
+         false: func(f youtube.Format) bool {
             return f.Height == 0
-         }
-      }
+         },
+      }[atag > 0]
       form := and.AdaptiveFormats.Filter(f)[0]
       err := download(and, form)
       if err != nil {
@@ -84,16 +83,14 @@ func main() {
    }
    // filter video
    if vtag >= 0 {
-      var f func(youtube.Format)bool
-      if vtag > 0 {
-         f = func(f youtube.Format) bool {
+      f := formatFn{
+         true: func(f youtube.Format) bool {
             return f.Itag == vtag
-         }
-      } else {
-         f = func(f youtube.Format) bool {
+         },
+         false: func(f youtube.Format) bool {
             return f.Height <= 720
-         }
-      }
+         },
+      }[vtag > 0]
       form := and.AdaptiveFormats.Filter(f)[0]
       err := download(and, form)
       if err != nil {
