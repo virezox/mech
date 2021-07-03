@@ -2,56 +2,45 @@
 
 ## Client
 
-Can we use one client for decrypted media, `publishDate` and search? No. Can we
-use two clients? Yes. Which two are best?
+For `publishDate` and search, seems best option is `WEB_REMIX`. For decrypted
+media, seems best option is `ANDROID_MUSIC` or `WEB_EMBEDDED_PLAYER`. If we
+look at video `HtVdAasjOgU`:
 
 ~~~
-120597 MWEB {decrypt:false publishDate:true search:true size:56111} ANDROID
-{decrypt:true publishDate:false search:true size:64486}
+99988 WEB_EMBEDDED_PLAYER {decrypt:true publishDate:false search:false
+size:89580} WEB_REMIX {decrypt:false publishDate:true search:true size:10408}
 
-135304 ANDROID {decrypt:true publishDate:false search:true size:64486} WEB
-{decrypt:false publishDate:true search:true size:70818}
+104193 WEB_EMBEDDED_PLAYER {decrypt:true publishDate:false search:false
+size:89580} WEB {decrypt:false publishDate:true search:true size:14613}
 
-295700 ANDROID {decrypt:true publishDate:false search:true size:64486}
-WEB_REMIX {decrypt:false publishDate:true search:true size:231214}
-~~~
-
-Can we use `MWEB` for `publishDate`? Yes. Can we use `MWEB` for search? Yes.
-Can we use `ANDROID` for decrypted media? Yes.
-
-## itag 251
-
-If we look at video `3gdfNdilGFE`:
-
-~~~
-67201 WEB_CREATOR {decrypt:true publishDate:false search:true size:56980}
-WEB_REMIX {decrypt:false publishDate:true search:true size:10221}
-
-80760 WEB_EMBEDDED_PLAYER {decrypt:true publishDate:false search:false
-size:70539} WEB_REMIX {decrypt:false publishDate:true search:true size:10221}
-
-99252 ANDROID {decrypt:true publishDate:false search:true size:89031}
-
-151916 MWEB {decrypt:true publishDate:true search:true size:62885}
-
-564097 WEB {decrypt:true publishDate:true search:true size:561332}
-
-690545 TVHTML5 {decrypt:true publishDate:false search:true size:680324}
-WEB_REMIX {decrypt:false publishDate:true search:true size:10221}
+102311 WEB_EMBEDDED_PLAYER {decrypt:true publishDate:false search:false
+size:89580} MWEB {decrypt:false publishDate:true search:true size:12731}
 ~~~
 
 If we look at video `XeojXq6ySs4`:
 
 ~~~
-110560 MWEB {decrypt:false publishDate:true search:true size:57396}
-ANDROID_MUSIC {decrypt:true publishDate:false search:true size:53164}
+116361 MWEB {decrypt:false publishDate:true search:true size:53801} ANDROID
+{decrypt:true publishDate:false search:true size:62560}
 
-120580 MWEB {decrypt:false publishDate:true search:true size:57396} ANDROID
-{decrypt:true publishDate:false search:true size:63184}
+107769 MWEB {decrypt:false publishDate:true search:true size:53801}
+ANDROID_MUSIC {decrypt:true publishDate:false search:true size:53968}
+
+132827 WEB {decrypt:false publishDate:true search:true size:70267} ANDROID
+{decrypt:true publishDate:false search:true size:62560}
+
+124235 WEB {decrypt:false publishDate:true search:true size:70267}
+ANDROID_MUSIC {decrypt:true publishDate:false search:true size:53968}
+
+123103 WEB_REMIX {decrypt:false publishDate:true search:true size:60543}
+ANDROID {decrypt:true publishDate:false search:true size:62560}
+
+114511 WEB_REMIX {decrypt:false publishDate:true search:true size:60543}
+ANDROID_MUSIC {decrypt:true publishDate:false search:true size:53968}
 ~~~
 
-- https://github.com/TeamNewPipe/NewPipeExtractor/issues/562
-- https://github.com/yt-dlp/yt-dlp/pull/328
+Can we use one client for decrypted media, `publishDate` and search? No. Can we
+use two clients? Yes. Which two are best?
 
 ## publishDate
 
@@ -64,13 +53,6 @@ An alternative to `publishDate` is:
 which you can get doing a `next` request with `IOS_KIDS`. Uncompressed size is
 115 KB. For `publishDate`, doing a `player` request with `MWEB`, you get
 uncompressed size of 57 KB.
-
-## Search
-
-~~~
-https://github.com/yuliskov/MediaServiceCore/blob/master/youtubeapi/src/test/
-resources/youtube-requests.http
-~~~
 
 ## youtubei
 
@@ -106,6 +88,7 @@ Microformat struct {
 - https://github.com/TeamNewPipe/NewPipeExtractor/issues/568
 - https://github.com/iv-org/invidious/issues/1981
 - https://github.com/iv-org/invidious/pull/1985
+- https://github.com/yt-dlp/yt-dlp/pull/328
 
 ## watch
 

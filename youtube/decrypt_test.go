@@ -51,7 +51,7 @@ type result struct {
 func (r *result) playerRequest(c Client) error {
    r.decrypt = true
    r.publishDate = true
-   for _, id := range []string{"3gdfNdilGFE", "XeojXq6ySs4"} {
+   for _, id := range []string{"XeojXq6ySs4"} {
       var p player
       p.Context.Client = c
       p.VideoID = id
@@ -86,30 +86,6 @@ func (r *result) playerRequest(c Client) error {
          r.publishDate = false
       }
    }
-   return nil
-}
-
-func (r *result) searchRequest(c Client) error {
-   var s search
-   s.Context.Client = c
-   s.Query = "nelly furtado say it right"
-   buf := new(bytes.Buffer)
-   json.NewEncoder(buf).Encode(s)
-   req, err := http.NewRequest(
-      "POST", "https://www.youtube.com/youtubei/v1/search", buf,
-   )
-   if err != nil {
-      return err
-   }
-   val := req.URL.Query()
-   val.Set("key", "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8")
-   req.URL.RawQuery = val.Encode()
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   r.search = res.StatusCode == http.StatusOK
    return nil
 }
 
