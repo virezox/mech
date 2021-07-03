@@ -1,19 +1,23 @@
 # YouTube
 
-## age
+## Client
+
+Can we use one client for decrypted media, `publishDate` and search? No. Can we
+use two clients? Yes. Which two are best?
 
 ~~~
-[youtube] SkRSXFQerZs: Downloading webpage
-[youtube] SkRSXFQerZs: Downloading API JSON
-[youtube] SkRSXFQerZs: Refetching age-gated info webpage
-[youtube] SkRSXFQerZs: Downloading player 7acefd5d
+120597 MWEB {decrypt:false publishDate:true search:true size:56111} ANDROID
+{decrypt:true publishDate:false search:true size:64486}
+
+135304 ANDROID {decrypt:true publishDate:false search:true size:64486} WEB
+{decrypt:false publishDate:true search:true size:70818}
+
+295700 ANDROID {decrypt:true publishDate:false search:true size:64486}
+WEB_REMIX {decrypt:false publishDate:true search:true size:231214}
 ~~~
 
-## isUnlisted
-
-Use MWEB:
-
-<https://github.com/Hexer10/youtube_explode_dart/blob/master/test/video_test.dart>
+Can we use `MWEB` for `publishDate`? Yes. Can we use `MWEB` for search? Yes.
+Can we use `ANDROID` for decrypted media? Yes.
 
 ## itag 251
 
@@ -45,25 +49,6 @@ ANDROID_MUSIC {decrypt:true publishDate:false search:true size:53164}
 120580 MWEB {decrypt:false publishDate:true search:true size:57396} ANDROID
 {decrypt:true publishDate:false search:true size:63184}
 ~~~
-
-## Client
-
-Can we use one client for decrypted media, `publishDate` and search? No. Can we
-use two clients? Yes. Which two are best?
-
-~~~
-120597 MWEB {decrypt:false publishDate:true search:true size:56111} ANDROID
-{decrypt:true publishDate:false search:true size:64486}
-
-135304 ANDROID {decrypt:true publishDate:false search:true size:64486} WEB
-{decrypt:false publishDate:true search:true size:70818}
-
-295700 ANDROID {decrypt:true publishDate:false search:true size:64486}
-WEB_REMIX {decrypt:false publishDate:true search:true size:231214}
-~~~
-
-Can we use `MWEB` for `publishDate`? Yes. Can we use `MWEB` for search? Yes.
-Can we use `ANDROID` for decrypted media? Yes.
 
 - https://github.com/TeamNewPipe/NewPipeExtractor/issues/562
 - https://github.com/yt-dlp/yt-dlp/pull/328
