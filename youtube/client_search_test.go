@@ -34,44 +34,6 @@ type Client struct {
    ClientVersion string `json:"clientVersion"`
 }
 
-type player struct {
-   Context struct {
-      Client `json:"client"`
-   } `json:"context"`
-   VideoID string `json:"videoId"`
-}
-
-type result struct {
-   decrypt bool
-   publishDate bool
-   search bool
-   size int
-}
-
-func (r *result) searchRequest(c Client) error {
-   var s search
-   s.Context.Client = c
-   s.Query = "nelly furtado say it right"
-   buf := new(bytes.Buffer)
-   json.NewEncoder(buf).Encode(s)
-   req, err := http.NewRequest(
-      "POST", "https://www.youtube.com/youtubei/v1/search", buf,
-   )
-   if err != nil {
-      return err
-   }
-   val := req.URL.Query()
-   val.Set("key", "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8")
-   req.URL.RawQuery = val.Encode()
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   r.search = res.StatusCode == http.StatusOK
-   return nil
-}
-
 type search struct {
    Context struct {
       Client `json:"client"`
@@ -80,18 +42,35 @@ type search struct {
 }
 
 func TestClients(t *testing.T) {
-   results := make(map[string]result)
-   for _, c := range clients {
-      fmt.Println(c)
-      var r result
-      if err := r.playerRequest(c); err != nil {
+   for _, client := range clients {
+      var s search
+      s.Context.Client = client
+      s.Query = "nelly furtado say it right"
+      buf := new(bytes.Buffer)
+      json.NewEncoder(buf).Encode(s)
+      req, err := http.NewRequest(
+         "POST", "https://www.youtube.com/youtubei/v1/search", buf,
+      )
+      if err != nil {
          t.Fatal(err)
       }
-      time.Sleep(100 * time.Millisecond)
-      if err := r.searchRequest(c); err != nil {
+      val := req.URL.Query()
+      val.Set("key", "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8")
+      req.URL.RawQuery = val.Encode()
+      res, err := new(http.Transport).RoundTrip(req)
+      if err != nil {
          t.Fatal(err)
       }
-      results[c.ClientName] = r
+      defer res.Body.Close()
+      data, err := io.ReadAll(res.Body)
+      if err != nil {
+         t.Fatal(err)
+      }
+      fmt.Println(
+         res.StatusCode == http.StatusOK,
+         len(data),
+         client,
+      )
       time.Sleep(100 * time.Millisecond)
    }
 }

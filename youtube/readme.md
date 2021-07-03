@@ -10,9 +10,34 @@ true 61760 XeojXq6ySs4 {ANDROID 16.07.34}
 true 53541 XeojXq6ySs4 {ANDROID_MUSIC 4.32}
 ~~~
 
-`publishDate` and search results:
+`publishDate` results:
 
-TBD
+~~~
+true 10237 HtVdAasjOgU {WEB_REMIX 0.1}
+true 12731 HtVdAasjOgU {MWEB 2.19700101}
+true 14091 HtVdAasjOgU {WEB 2.20210223.09.00}
+true 236153 XeojXq6ySs4 {WEB_REMIX 0.1}
+true 56637 XeojXq6ySs4 {MWEB 2.19700101}
+true 71280 XeojXq6ySs4 {WEB 2.20210223.09.00}
+~~~
+
+search results:
+
+~~~
+true 128086 {WEB_KIDS 2.1.3}
+true 132090 {IOS_KIDS 5.42.2}
+true 134067 {ANDROID_KIDS 6.02.3}
+true 134528 {TVHTML5 7.20210224.00.00}
+true 192310 {MWEB 2.19700101}
+true 203891 {ANDROID_EMBEDDED_PLAYER 16.20}
+true 2503 {WEB_CREATOR 1.20210223.01.00}
+true 292468 {IOS_MUSIC 4.16.1}
+true 312990 {WEB_REMIX 0.1}
+true 503483 {ANDROID_MUSIC 4.32}
+true 759876 {IOS 16.05.7}
+true 766031 {ANDROID 16.07.34}
+true 780453 {WEB 2.20210223.09.00}
+~~~
 
 ## publishDate
 

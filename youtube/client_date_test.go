@@ -10,6 +10,8 @@ import (
    "time"
 )
 
+var ids = []string{"HtVdAasjOgU", "XeojXq6ySs4"}
+
 var clients = []Client{
    {"ANDROID", "16.07.34"},
    {"ANDROID_CREATOR", "21.06.103"},
@@ -41,67 +43,39 @@ type player struct {
    VideoID string `json:"videoId"`
 }
 
-type result struct {
-   decrypt bool
-   publishDate bool
-   search bool
-   size int
-}
-
-func (r *result) playerRequest(c Client) error {
-   r.decrypt = true
-   r.publishDate = true
-   for _, id := range []string{"XeojXq6ySs4"} {
-      var p player
-      p.Context.Client = c
-      p.VideoID = id
-      buf := new(bytes.Buffer)
-      json.NewEncoder(buf).Encode(p)
-      req, err := http.NewRequest(
-         "POST", "https://www.youtube.com/youtubei/v1/player", buf,
-      )
-      if err != nil {
-         return  err
-      }
-      val := req.URL.Query()
-      val.Set("key", "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8")
-      req.URL.RawQuery = val.Encode()
-      res, err := new(http.Transport).RoundTrip(req)
-      if err != nil {
-         return err
-      }
-      defer res.Body.Close()
-      data, err := io.ReadAll(res.Body)
-      if err != nil {
-         return err
-      }
-      // size
-      r.size = len(data)
-      // decrypt
-      if !bytes.Contains(data, []byte("\"itag\": 251,\n        \"url\"")) {
-         r.decrypt = false
-      }
-      // publishDate
-      if !bytes.Contains(data, []byte(`"publishDate"`)) {
-         r.publishDate = false
-      }
-   }
-   return nil
-}
-
 func TestClients(t *testing.T) {
-   results := make(map[string]result)
-   for _, c := range clients {
-      fmt.Println(c)
-      var r result
-      if err := r.playerRequest(c); err != nil {
-         t.Fatal(err)
+   for _, id := range ids {
+      for _, client := range clients {
+         var p player
+         p.Context.Client = client
+         p.VideoID = id
+         buf := new(bytes.Buffer)
+         json.NewEncoder(buf).Encode(p)
+         req, err := http.NewRequest(
+            "POST", "https://www.youtube.com/youtubei/v1/player", buf,
+         )
+         if err != nil {
+            t.Fatal(err)
+         }
+         val := req.URL.Query()
+         val.Set("key", "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8")
+         req.URL.RawQuery = val.Encode()
+         res, err := new(http.Transport).RoundTrip(req)
+         if err != nil {
+            t.Fatal(err)
+         }
+         defer res.Body.Close()
+         data, err := io.ReadAll(res.Body)
+         if err != nil {
+            t.Fatal(err)
+         }
+         fmt.Println(
+            bytes.Contains(data, []byte(`"publishDate"`)),
+            len(data),
+            id,
+            client,
+         )
+         time.Sleep(100 * time.Millisecond)
       }
-      time.Sleep(100 * time.Millisecond)
-      if err := r.searchRequest(c); err != nil {
-         t.Fatal(err)
-      }
-      results[c.ClientName] = r
-      time.Sleep(100 * time.Millisecond)
    }
 }
