@@ -1,5 +1,14 @@
 # YouTube
 
+## age
+
+~~~
+[youtube] SkRSXFQerZs: Downloading webpage
+[youtube] SkRSXFQerZs: Downloading API JSON
+[youtube] SkRSXFQerZs: Refetching age-gated info webpage
+[youtube] SkRSXFQerZs: Downloading player 7acefd5d
+~~~
+
 ## isUnlisted
 
 Use MWEB:
@@ -70,16 +79,6 @@ An alternative to `publishDate` is:
 which you can get doing a `next` request with `IOS_KIDS`. Uncompressed size is
 115 KB. For `publishDate`, doing a `player` request with `MWEB`, you get
 uncompressed size of 57 KB.
-
-## MWEB
-
-https://github.com/thanhphongdo/youtube-noads/blob/master/server/apis/youtube.ts
-
-## Image
-
-Given a video ID, return all the possible image links. Leave it up to end user
-to make sure links are valid for a given video. Also add a test to ensure all
-options are up to date.
 
 ## Search
 

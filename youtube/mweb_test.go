@@ -2,7 +2,6 @@ package youtube_test
 
 import (
    "github.com/89z/mech/youtube"
-   "io"
    "testing"
 )
 
@@ -24,7 +23,7 @@ func TestMWeb(t *testing.T) {
       t.Fatalf("%+v\n", mw)
    }
    if mw.Title != "Snowflake" {
-      t.Fatalf("%+v\n", a)
+      t.Fatalf("%+v\n", mw)
    }
    if mw.ViewCount == 0 {
       t.Fatalf("%+v\n", mw)

@@ -13,6 +13,9 @@ var (
 )
 
 type Android struct {
+   PlayabilityStatus struct {
+      Reason string
+   }
    StreamingData `json:"streamingData"`
    VideoDetails `json:"videoDetails"`
 }
