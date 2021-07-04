@@ -31,21 +31,10 @@ var clients = []Client{
    {"WEB_REMIX", "0.1"},
 }
 
-type Client struct {
-   ClientName string `json:"clientName"`
-   ClientVersion string `json:"clientVersion"`
-}
-
-type player struct {
-   Context struct {
-      Client `json:"client"`
-   } `json:"context"`
-   VideoID string `json:"videoId"`
-}
-
 func TestClients(t *testing.T) {
-   for _, id := range ids {
-      for _, client := range clients {
+   for _, client := range clients {
+      var date, size int
+      for _, id := range ids {
          var p player
          p.Context.Client = client
          p.VideoID = id
@@ -69,13 +58,59 @@ func TestClients(t *testing.T) {
          if err != nil {
             t.Fatal(err)
          }
-         fmt.Println(
-            bytes.Contains(data, []byte(`"publishDate"`)),
-            len(data),
-            id,
-            client,
-         )
+         if bytes.Contains(data, []byte(`"publishDate"`)) {
+            date++
+         }
+         size += len(data)
          time.Sleep(100 * time.Millisecond)
       }
+      fmt.Println(date, size, client)
    }
+   var s search
+   s.Context.Client = client
+   s.Query = "nelly furtado say it right"
+   buf := new(bytes.Buffer)
+   json.NewEncoder(buf).Encode(s)
+   req, err := http.NewRequest(
+      "POST", "https://www.youtube.com/youtubei/v1/search", buf,
+   )
+   if err != nil {
+      t.Fatal(err)
+   }
+   val := req.URL.Query()
+   val.Set("key", "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8")
+   req.URL.RawQuery = val.Encode()
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      t.Fatal(err)
+   }
+   defer res.Body.Close()
+   data, err := io.ReadAll(res.Body)
+   if err != nil {
+      t.Fatal(err)
+   }
+   fmt.Println(
+      bytes.Contains(data, []byte(`"videoId"`)),
+      len(data),
+      client,
+   )
+}
+
+type Client struct {
+   ClientName string `json:"clientName"`
+   ClientVersion string `json:"clientVersion"`
+}
+
+type player struct {
+   Context struct {
+      Client `json:"client"`
+   } `json:"context"`
+   VideoID string `json:"videoId"`
+}
+
+type search struct {
+   Context struct {
+      Client `json:"client"`
+   } `json:"context"`
+   Query string `json:"query"`
 }
