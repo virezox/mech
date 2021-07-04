@@ -10,7 +10,7 @@ import (
    "time"
 )
 
-var ids = []string{"HtVdAasjOgU", "XeojXq6ySs4"}
+var ids = []string{"HtVdAasjOgU", "XeojXq6ySs4", "3gdfNdilGFE"}
 
 var clients = []Client{
    {"ANDROID", "16.07.34"},
@@ -44,8 +44,12 @@ type player struct {
 }
 
 func TestClients(t *testing.T) {
-   for _, id := range ids {
-      for _, client := range clients {
+   for _, client := range clients {
+      var (
+         decrypt []string
+         size int
+      )
+      for _, id := range ids {
          var p player
          p.Context.Client = client
          p.VideoID = id
@@ -69,13 +73,14 @@ func TestClients(t *testing.T) {
          if err != nil {
             t.Fatal(err)
          }
-         fmt.Println(
-            bytes.Contains(data, []byte("\"itag\": 251,\n        \"url\"")),
-            len(data),
-            id,
-            client,
-         )
+         if bytes.Contains(data, []byte("\"itag\": 251,\n        \"url\"")) {
+            decrypt = append(decrypt, id)
+         }
+         size += len(data)
          time.Sleep(100 * time.Millisecond)
       }
+      fmt.Println(
+         "decrypt", len(decrypt), decrypt, "size", size, client,
+      )
    }
 }

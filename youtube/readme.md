@@ -2,28 +2,24 @@
 
 ## Client
 
-decrypted media results:
+Best choice for decrypted media:
 
 ~~~
-true 53541 XeojXq6ySs4 {ANDROID_MUSIC 4.32}
-true 61760 XeojXq6ySs4 {ANDROID 16.07.34}
-true 89439 HtVdAasjOgU {WEB_EMBEDDED_PLAYER 1.20210620.0.1}
+decrypt 2 [XeojXq6ySs4 3gdfNdilGFE] size 171899 {ANDROID 16.07.34}
 ~~~
 
-`publishDate` results:
+Best choice for age gate:
 
 ~~~
-2 84161 {WEB 2.20210223.09.00}
-2 69674 {MWEB 2.19700101}
-2 243979 {WEB_REMIX 0.1}
+decrypt 2 [HtVdAasjOgU 3gdfNdilGFE] size 199781 {WEB_EMBEDDED_PLAYER}
 ~~~
 
-search results:
+Best choice for `publishDate` and search is `MWEB`:
 
 ~~~
-true 220906 {MWEB 2.19700101}
-true 313035 {WEB_REMIX 0.1}
-true 780846 {WEB 2.20210223.09.00}
+date 3 search true size 387527 {MWEB 2.19700101}
+date 3 search true size 574903 {WEB_REMIX 0.1}
+date 3 search true size 974833 {WEB 2.20210223.09.00}
 ~~~
 
 ## publishDate
