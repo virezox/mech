@@ -34,8 +34,8 @@ type Search struct {
    }
 }
 
-func SearchMweb(query string) (*Search, error) {
-   res, err := mWeb.query(query).post("/youtubei/v1/search")
+func NewSearch(query string) (*Search, error) {
+   res, err := Mweb.query(query).post("/youtubei/v1/search")
    if err != nil {
       return nil, err
    }
