@@ -39,17 +39,13 @@ func main() {
    flag.IntVar(&atag, "a", 0, "audio (-1 to skip)")
    flag.IntVar(&vtag, "v", 0, "video (-1 to skip)")
    flag.Parse()
-   if len(os.Args) == 1 {
-      fmt.Println("youtube [flags] [URL]")
+   if flag.NArg() != 1 {
+      fmt.Println("youtube [flags] <URL>")
       flag.PrintDefaults()
       return
    }
    // check URL
-   if flag.NArg() != 1 {
-      panic("missing URL")
-   }
-   arg := flag.Arg(0)
-   watch, err := url.Parse(arg)
+   watch, err := url.Parse(flag.Arg(0))
    if err != nil {
       panic(err)
    }
@@ -65,34 +61,24 @@ func main() {
    }
    // sort
    play.AdaptiveFormats.Sort()
-   type formatFn map[bool]func(youtube.Format)bool
-   // filter audio
-   if atag >= 0 {
-      f := formatFn{
-         true: func(f youtube.Format) bool {
-            return f.Itag == atag
-         },
-         false: func(f youtube.Format) bool {
-            return f.Height == 0
-         },
-      }[atag > 0]
-      form := play.AdaptiveFormats.Filter(f)[0]
-      err := download(play, form)
-      if err != nil {
-         panic(err)
-      }
+   formats := youtube.Formats{
+      {Itag: atag}, {Itag: vtag, Height: 720},
    }
-   // filter video
-   if vtag >= 0 {
-      f := formatFn{
-         true: func(f youtube.Format) bool {
-            return f.Itag == vtag
-         },
-         false: func(f youtube.Format) bool {
-            return f.Height <= 720
-         },
-      }[vtag > 0]
-      form := play.AdaptiveFormats.Filter(f)[0]
+   for _, a := range formats {
+      var fn func(youtube.Format)bool
+      switch a.Itag {
+      case -1:
+         continue
+      case 0:
+         fn = func(b youtube.Format) bool {
+            return b.Height <= a.Height
+         }
+      default:
+         fn = func(b youtube.Format) bool {
+            return b.Itag == a.Itag
+         }
+      }
+      form := play.AdaptiveFormats.Filter(fn)[0]
       err := download(play, form)
       if err != nil {
          panic(err)
