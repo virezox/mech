@@ -1,4 +1,5 @@
 package youtube
+import "encoding/json"
 
 const (
    invert = "\x1b[7m"
@@ -13,4 +14,33 @@ func (r Search) Videos() []CompactVideoRenderer {
       }
    }
    return vids
+}
+
+type CompactVideoRenderer struct {
+   VideoID string
+}
+
+type Search struct {
+   Contents struct {
+      SectionListRenderer struct {
+         Contents []struct{
+            ItemSectionRenderer struct {
+               Contents	[]struct{
+                  CompactVideoRenderer CompactVideoRenderer
+               }
+            }
+         }
+      }
+   }
+}
+
+func SearchMweb(query string) (*Search, error) {
+   res, err := clientMweb.query(query).post("/youtubei/v1/search")
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   s := new(Search)
+   json.NewDecoder(res.Body).Decode(s)
+   return s, nil
 }

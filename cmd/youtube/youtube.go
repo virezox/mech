@@ -53,17 +53,17 @@ func main() {
       panic(err)
    }
    id := watch.Query().Get("v")
-   and, err := youtube.NewAndroid(id)
+   play, err := youtube.PlayerAndroid(id)
    if err != nil {
       panic(err)
    }
    // info
    if info {
-      getInfo(and)
+      getInfo(play)
       return
    }
    // sort
-   and.AdaptiveFormats.Sort()
+   play.AdaptiveFormats.Sort()
    type formatFn map[bool]func(youtube.Format)bool
    // filter audio
    if atag >= 0 {
@@ -75,8 +75,8 @@ func main() {
             return f.Height == 0
          },
       }[atag > 0]
-      form := and.AdaptiveFormats.Filter(f)[0]
-      err := download(and, form)
+      form := play.AdaptiveFormats.Filter(f)[0]
+      err := download(play, form)
       if err != nil {
          panic(err)
       }
@@ -91,19 +91,19 @@ func main() {
             return f.Height <= 720
          },
       }[vtag > 0]
-      form := and.AdaptiveFormats.Filter(f)[0]
-      err := download(and, form)
+      form := play.AdaptiveFormats.Filter(f)[0]
+      err := download(play, form)
       if err != nil {
          panic(err)
       }
    }
 }
 
-func getInfo(and *youtube.Android) {
-   fmt.Println("author:", and.Author)
-   fmt.Println("title:", and.Title)
+func getInfo(play *youtube.Player) {
+   fmt.Println("author:", play.Author)
+   fmt.Println("title:", play.Title)
    fmt.Println()
-   for _, f := range and.AdaptiveFormats {
+   for _, f := range play.AdaptiveFormats {
       fmt.Printf(
          "itag %v, height %v, %v, %v, %v\n",
          f.Itag,
@@ -115,7 +115,7 @@ func getInfo(and *youtube.Android) {
    }
 }
 
-func download(a *youtube.Android, f youtube.Format) error {
+func download(a *youtube.Player, f youtube.Format) error {
    create := strings.Map(clean, a.Author + "-" + a.Title + f.Ext())
    file, err := os.Create(create)
    if err != nil {

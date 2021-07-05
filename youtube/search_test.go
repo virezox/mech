@@ -7,11 +7,11 @@ import (
 )
 
 func TestSearch(t *testing.T) {
-   r, err := youtube.NewSearch("nelly furtado say it right").Post()
+   s, err := youtube.SearchMweb("nelly furtado say it right")
    if err != nil {
       t.Fatal(err)
    }
-   for _, v := range r.Videos() {
+   for _, v := range s.Videos() {
       fmt.Printf("%+v\n", v)
    }
 }
