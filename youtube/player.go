@@ -8,8 +8,9 @@ import (
 )
 
 var (
-   clientAndroid = client{"ANDROID", "15.01"}
-   clientMweb = client{"MWEB", "2.19700101"}
+   android = client{"ANDROID", "15.01"}
+   mWeb = client{"MWEB", "2.19700101"}
+   webEmbed = client{"WEB_EMBEDDED_PLAYER", "1.20210620.0.1"}
 )
 
 type Microformat struct {
@@ -26,29 +27,42 @@ type Player struct {
 }
 
 func PlayerAndroid(id string) (*Player, error) {
-   res, err := clientAndroid.video(id).post("/youtubei/v1/player")
+   res, err := android.video(id).post("/youtubei/v1/player")
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
-   a := new(Player)
-   if err := json.NewDecoder(res.Body).Decode(a); err != nil {
+   play := new(Player)
+   if err := json.NewDecoder(res.Body).Decode(play); err != nil {
       return nil, err
    }
-   return a, nil
+   return play, nil
 }
 
 func PlayerMweb(id string) (*Player, error) {
-   res, err := clientMweb.video(id).post("/youtubei/v1/player")
+   res, err := mWeb.video(id).post("/youtubei/v1/player")
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
-   mw := new(Player)
-   if err := json.NewDecoder(res.Body).Decode(mw); err != nil {
+   play := new(Player)
+   if err := json.NewDecoder(res.Body).Decode(play); err != nil {
       return nil, err
    }
-   return mw, nil
+   return play, nil
+}
+
+func PlayerWebEmbed(id string) (*Player, error) {
+   res, err := webEmbed.video(id).post("/youtubei/v1/player")
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   play := new(Player)
+   if err := json.NewDecoder(res.Body).Decode(play); err != nil {
+      return nil, err
+   }
+   return play, nil
 }
 
 type PlayerMicroformatRenderer struct {

@@ -7,12 +7,12 @@ import (
 )
 
 func TestSort(t *testing.T) {
-   a, err := youtube.PlayerAndroid("XeojXq6ySs4")
+   p, err := youtube.PlayerAndroid("XeojXq6ySs4")
    if err != nil {
       t.Fatal(err)
    }
-   a.AdaptiveFormats.Sort()
-   for _, f := range a.AdaptiveFormats {
+   p.AdaptiveFormats.Sort()
+   for _, f := range p.AdaptiveFormats {
       fmt.Println(f.Height, f.MimeType, f.Bitrate)
    }
 }

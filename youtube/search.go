@@ -35,12 +35,14 @@ type Search struct {
 }
 
 func SearchMweb(query string) (*Search, error) {
-   res, err := clientMweb.query(query).post("/youtubei/v1/search")
+   res, err := mWeb.query(query).post("/youtubei/v1/search")
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
    s := new(Search)
-   json.NewDecoder(res.Body).Decode(s)
+   if err := json.NewDecoder(res.Body).Decode(s); err != nil {
+      return nil, err
+   }
    return s, nil
 }

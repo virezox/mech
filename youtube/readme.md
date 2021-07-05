@@ -2,24 +2,24 @@
 
 ## Client
 
-Best choice for decrypted media:
-
-~~~
-decrypt 2 [XeojXq6ySs4 3gdfNdilGFE] size 171899 {ANDROID 16.07.34}
-~~~
-
-Best choice for age gate:
-
-~~~
-decrypt 2 [HtVdAasjOgU 3gdfNdilGFE] size 199781 {WEB_EMBEDDED_PLAYER}
-~~~
-
-Best choice for `publishDate` and search is `MWEB`:
+Best choice for `publishDate` and search is `player`, `MWEB`:
 
 ~~~
 date 3 search true size 387527 {MWEB 2.19700101}
 date 3 search true size 574903 {WEB_REMIX 0.1}
 date 3 search true size 974833 {WEB 2.20210223.09.00}
+~~~
+
+Best choice for decrypted media is `player`, `ANDROID`:
+
+~~~
+decrypt 2 [XeojXq6ySs4 3gdfNdilGFE] size 171899 {ANDROID 16.07.34}
+~~~
+
+Best choice for age gate is `player`, `WEB_EMBEDDED_PLAYER`:
+
+~~~
+decrypt 2 [HtVdAasjOgU 3gdfNdilGFE] size 199781 {WEB_EMBEDDED_PLAYER}
 ~~~
 
 ## publishDate
