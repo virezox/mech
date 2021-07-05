@@ -12,40 +12,40 @@ var (
    ClientMWeb = Client{"MWEB", "2.19700101"}
 )
 
-func NewAndroid(id string) (*Android, error) {
-   res, err := ClientAndroid.newPlayer(id).post()
+func Android(id string) (*Player, error) {
+   res, err := ClientAndroid.PlayerRequest(id).post()
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
-   a := new(Android)
+   a := new(Player)
    if err := json.NewDecoder(res.Body).Decode(a); err != nil {
       return nil, err
    }
    return a, nil
 }
 
-func (c Client) newPlayer(id string) player {
-   var p player
-   p.Client = c
+func (c Client) PlayerRequest(id string) PlayerRequest {
+   var p PlayerRequest
+   p.Context.Client = c
    p.VideoID = id
    return p
 }
 
-func NewMWeb(id string) (*MWeb, error) {
-   res, err := ClientMWeb.newPlayer(id).post()
+func MWeb(id string) (*Player, error) {
+   res, err := ClientMWeb.PlayerRequest(id).post()
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
-   mw := new(MWeb)
+   mw := new(Player)
    if err := json.NewDecoder(res.Body).Decode(mw); err != nil {
       return nil, err
    }
    return mw, nil
 }
 
-func (p player) post() (*http.Response, error) {
+func (p PlayerRequest) post() (*http.Response, error) {
    buf := new(bytes.Buffer)
    err := json.NewEncoder(buf).Encode(p)
    if err != nil {

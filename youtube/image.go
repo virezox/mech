@@ -64,11 +64,20 @@ var AdaptiveImages = Images{
    {720, WidthBlack, WebP, "maxres3"},
 }
 
+type Image struct {
+   Height int
+   Frame int
+   Format int
+   Base string
+}
+
 func (i Image) Address(id string) string {
    dir := map[int]string{WebP: "vi_webp", JPG: "vi"}[i.Format]
    ext := map[int]string{WebP: "webp", JPG: "jpg"}[i.Format]
    return fmt.Sprintf("http://i.ytimg.com/%v/%v/%v.%v", dir, id, i.Base, ext)
 }
+
+type Images []Image
 
 func (s Images) Filter(keep func(Image)bool) Images {
    var imgs Images
