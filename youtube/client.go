@@ -12,14 +12,6 @@ var (
    ClientMWeb = Client{"MWEB", "2.19700101"}
 )
 
-type Android struct {
-   PlayabilityStatus struct {
-      Reason string
-   }
-   StreamingData `json:"streamingData"`
-   VideoDetails `json:"videoDetails"`
-}
-
 func NewAndroid(id string) (*Android, error) {
    res, err := ClientAndroid.newPlayer(id).post()
    if err != nil {
@@ -33,25 +25,11 @@ func NewAndroid(id string) (*Android, error) {
    return a, nil
 }
 
-type Client struct {
-   ClientName string `json:"clientName"`
-   ClientVersion string `json:"clientVersion"`
-}
-
 func (c Client) newPlayer(id string) player {
    var p player
    p.Client = c
    p.VideoID = id
    return p
-}
-
-type Context struct {
-   Client `json:"client"`
-}
-
-type MWeb struct {
-   Microformat `json:"microformat"`
-   VideoDetails `json:"videoDetails"`
 }
 
 func NewMWeb(id string) (*MWeb, error) {
@@ -65,31 +43,6 @@ func NewMWeb(id string) (*MWeb, error) {
       return nil, err
    }
    return mw, nil
-}
-
-type Microformat struct {
-   PlayerMicroformatRenderer `json:"playerMicroformatRenderer"`
-}
-
-type PlayerMicroformatRenderer struct {
-   AvailableCountries []string
-   PublishDate string
-}
-
-type StreamingData struct {
-   AdaptiveFormats Formats
-}
-
-type VideoDetails struct {
-   Author string
-   ShortDescription string
-   Title string
-   ViewCount int `json:"viewCount,string"`
-}
-
-type player struct {
-   Context `json:"context"`
-   VideoID string `json:"videoId"`
 }
 
 func (p player) post() (*http.Response, error) {

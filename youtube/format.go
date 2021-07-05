@@ -10,15 +10,6 @@ import (
 
 const chunk = 10_000_000
 
-type Format struct {
-   Bitrate int64
-   ContentLength int64 `json:"contentLength,string"`
-   Height int
-   Itag int
-   MimeType string
-   URL string
-}
-
 func (f Format) Ext() string {
    exts, err := mime.ExtensionsByType(f.MimeType)
    if err != nil {
@@ -53,8 +44,6 @@ func (f Format) Write(w io.Writer) error {
    }
    return nil
 }
-
-type Formats []Format
 
 func (s Formats) Filter(keep func(Format)bool) Formats {
    var forms Formats
