@@ -34,8 +34,11 @@ type Search struct {
    }
 }
 
-func SearchMweb(query string) (*Search, error) {
-   res, err := mWeb.query(query).post("/youtubei/v1/search")
+func NewSearch(query string) (*Search, error) {
+   var req request
+   req.Context.Client = Mweb
+   req.Query = query
+   res, err := req.post("/youtubei/v1/search")
    if err != nil {
       return nil, err
    }

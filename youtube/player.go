@@ -8,10 +8,31 @@ import (
 )
 
 var (
-   android = client{"ANDROID", "15.01"}
-   mWeb = client{"MWEB", "2.19700101"}
-   webEmbed = client{"WEB_EMBEDDED_PLAYER", "1.20210620.0.1"}
+   Android = Client{"ANDROID", "15.01"}
+   Mweb = Client{"MWEB", "2.19700101"}
+   WebEmbed = Client{"WEB_EMBEDDED_PLAYER", "1.19700101"}
 )
+
+type Client struct {
+   ClientName string `json:"clientName"`
+   ClientVersion string `json:"clientVersion"`
+}
+
+func (c Client) Player(id string) (*Player, error) {
+   var req request
+   req.Context.Client = c
+   req.VideoID = id
+   res, err := req.post("/youtubei/v1/player")
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   play := new(Player)
+   if err := json.NewDecoder(res.Body).Decode(play); err != nil {
+      return nil, err
+   }
+   return play, nil
+}
 
 type Microformat struct {
    PlayerMicroformatRenderer `json:"playerMicroformatRenderer"`
@@ -24,45 +45,6 @@ type Player struct {
    }
    StreamingData `json:"streamingData"`
    VideoDetails `json:"videoDetails"`
-}
-
-func PlayerAndroid(id string) (*Player, error) {
-   res, err := android.video(id).post("/youtubei/v1/player")
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   play := new(Player)
-   if err := json.NewDecoder(res.Body).Decode(play); err != nil {
-      return nil, err
-   }
-   return play, nil
-}
-
-func PlayerMweb(id string) (*Player, error) {
-   res, err := mWeb.video(id).post("/youtubei/v1/player")
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   play := new(Player)
-   if err := json.NewDecoder(res.Body).Decode(play); err != nil {
-      return nil, err
-   }
-   return play, nil
-}
-
-func PlayerWebEmbed(id string) (*Player, error) {
-   res, err := webEmbed.video(id).post("/youtubei/v1/player")
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   play := new(Player)
-   if err := json.NewDecoder(res.Body).Decode(play); err != nil {
-      return nil, err
-   }
-   return play, nil
 }
 
 type PlayerMicroformatRenderer struct {
@@ -81,28 +63,9 @@ type VideoDetails struct {
    ViewCount int `json:"viewCount,string"`
 }
 
-type client struct {
-   ClientName string `json:"clientName"`
-   ClientVersion string `json:"clientVersion"`
-}
-
-func (c client) query(s string) request {
-   var r request
-   r.Context.Client = c
-   r.Query = s
-   return r
-}
-
-func (c client) video(id string) request {
-   var r request
-   r.Context.Client = c
-   r.VideoID = id
-   return r
-}
-
 type request struct {
    Context struct {
-      Client client `json:"client"`
+      Client Client `json:"client"`
    } `json:"context"`
    Query string `json:"query"`
    VideoID string `json:"videoId"`
