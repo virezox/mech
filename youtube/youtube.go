@@ -7,42 +7,67 @@ import (
    "net/http"
 )
 
-type Client struct {
+// REQUEST BODY ////////////////////////////////////////////////////////////////
+
+var (
+   clientAndroid = client{"ANDROID", "15.01"}
+   clientMweb = client{"MWEB", "2.19700101"}
+)
+
+type request struct {
+   Context struct {
+      Client client `json:"client"`
+   } `json:"context"`
+   Query string `json:"query"`
+   VideoID string `json:"videoId"`
+}
+
+type client struct {
    ClientName string `json:"clientName"`
    ClientVersion string `json:"clientVersion"`
 }
 
-type Context struct {
-   Client Client
+func (c client) video(id string) request {
+   var r request
+   r.Context.Client = c
+   r.VideoID = id
+   return r
 }
 
-type Player struct {
-   Microformat struct {
-      PlayerMicroformatRenderer struct {
-         AvailableCountries []string
-         PublishDate string
-      }
-   }
-   PlayabilityStatus struct {
-      Reason string
-   }
-   StreamingData struct {
-      AdaptiveFormats Formats
-   }
-   VideoDetails VideoDetails
+func (c client) query(s string) request {
+   var r request
+   r.Context.Client = c
+   r.Query = s
+   return r
 }
 
-type PlayerRequest struct {
-   Context Context
-   VideoID string `json:"videoId"`
+// RESPONSE BODY ///////////////////////////////////////////////////////////////
+
+func (r request) post(path string) (*http.Response, error) {
+   buf := new(bytes.Buffer)
+   err := json.NewEncoder(buf).Encode(r)
+   if err != nil {
+      return nil, err
+   }
+   req, err := http.NewRequest("POST", "https://www.youtube.com" + path, buf)
+   if err != nil {
+      return nil, err
+   }
+   val := req.URL.Query()
+   val.Set("key", "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8")
+   req.URL.RawQuery = val.Encode()
+   fmt.Println(invert, "POST", reset, req.URL)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   if res.StatusCode != http.StatusOK {
+      return nil, fmt.Errorf("status %v", res.Status)
+   }
+   return res, nil
 }
 
-type VideoDetails struct {
-   Author string
-   ShortDescription string
-   Title string
-   ViewCount int `json:"viewCount,string"`
-}
+// RESPONSE SEARCH /////////////////////////////////////////////////////////////
 
 type CompactVideoRenderer struct {
    VideoID string
@@ -62,19 +87,42 @@ type Search struct {
    }
 }
 
-type SearchRequest struct {
-   Context Context
-   Query string `json:"query"`
+func SearchMweb(query string) (*Search, error) {
+   res, err := clientMweb.query(query).post("/youtubei/v1/search")
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   s := new(Search)
+   json.NewDecoder(res.Body).Decode(s)
+   return s, nil
 }
 
+// RESPONSE PLAYER /////////////////////////////////////////////////////////////
 
-var (
-   ClientAndroid = Client{"ANDROID", "15.01"}
-   ClientMWeb = Client{"MWEB", "2.19700101"}
-)
+type Player struct {
+   Microformat struct {
+      PlayerMicroformatRenderer struct {
+         AvailableCountries []string
+         PublishDate string
+      }
+   }
+   PlayabilityStatus struct {
+      Reason string
+   }
+   StreamingData struct {
+      AdaptiveFormats Formats
+   }
+   VideoDetails struct {
+      Author string
+      ShortDescription string
+      Title string
+      ViewCount int `json:"viewCount,string"`
+   }
+}
 
-func Android(id string) (*Player, error) {
-   res, err := ClientAndroid.PlayerRequest(id).post()
+func PlayerAndroid(id string) (*Player, error) {
+   res, err := clientAndroid.video(id).post("/youtubei/v1/player")
    if err != nil {
       return nil, err
    }
@@ -86,15 +134,8 @@ func Android(id string) (*Player, error) {
    return a, nil
 }
 
-func (c Client) PlayerRequest(id string) PlayerRequest {
-   var p PlayerRequest
-   p.Context.Client = c
-   p.VideoID = id
-   return p
-}
-
-func MWeb(id string) (*Player, error) {
-   res, err := ClientMWeb.PlayerRequest(id).post()
+func PlayerMweb(id string) (*Player, error) {
+   res, err := clientMweb.video(id).post("/youtubei/v1/player")
    if err != nil {
       return nil, err
    }
@@ -104,84 +145,4 @@ func MWeb(id string) (*Player, error) {
       return nil, err
    }
    return mw, nil
-}
-
-func (p PlayerRequest) post() (*http.Response, error) {
-   buf := new(bytes.Buffer)
-   err := json.NewEncoder(buf).Encode(p)
-   if err != nil {
-      return nil, err
-   }
-   req, err := http.NewRequest(
-      "POST", "https://www.youtube.com/youtubei/v1/player", buf,
-   )
-   if err != nil {
-      return nil, err
-   }
-   val := req.URL.Query()
-   val.Set("key", "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8")
-   req.URL.RawQuery = val.Encode()
-   fmt.Println(invert, "POST", reset, req.URL)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   if res.StatusCode != http.StatusOK {
-      return nil, fmt.Errorf("status %v", res.Status)
-   }
-   return res, nil
-}
-
-
-const (
-   invert = "\x1b[7m"
-   reset = "\x1b[m"
-)
-
-func (r Search) Videos() []CompactVideoRenderer {
-   var vids []CompactVideoRenderer
-   for _, sect := range r.Contents.SectionListRenderer.Contents {
-      for _, item := range sect.ItemSectionRenderer.Contents {
-         vids = append(vids, item.CompactVideoRenderer)
-      }
-   }
-   return vids
-}
-
-func NewSearchRequest(query string) SearchRequest {
-   var s SearchRequest
-   s.Context.Client = ClientMWeb
-   s.Query = query
-   return s
-}
-
-func (s SearchRequest) Post() (*Search, error) {
-   buf := new(bytes.Buffer)
-   err := json.NewEncoder(buf).Encode(s)
-   if err != nil {
-      return nil, err
-   }
-   req, err := http.NewRequest(
-      "POST", "https://www.youtube.com/youtubei/v1/search", buf,
-   )
-   if err != nil {
-      return nil, err
-   }
-   val := req.URL.Query()
-   val.Set("key", "AIzaSyDCU8hByM-4DrUqRUYnGn-3llEO78bcxq8")
-   req.URL.RawQuery = val.Encode()
-   fmt.Println(invert, "POST", reset, req.URL)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return nil, fmt.Errorf("status %v", res.Status)
-   }
-   r := new(Search)
-   if err := json.NewDecoder(res.Body).Decode(r); err != nil {
-      return nil, err
-   }
-   return r, nil
 }
