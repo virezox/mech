@@ -20,7 +20,7 @@ func search(query string) (string, error) {
    return "", fmt.Errorf("%q fail", query)
 }
 
-func main() {
+func tracks() {
    r, err := musicbrainz.NewRelease("a40cb6e9-c766-37c4-8677-7eb51393d5a1")
    if err != nil {
       panic(err)
