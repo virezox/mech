@@ -20,41 +20,51 @@ func loadJpeg(filename string) (image.Image, error) {
    return img, nil
 }
  
-func diff(a, b uint32) int64 {
-   if a > b {
-      return int64(a - b)
-   }
-   return int64(b - a)
-}
- 
-func main() {
-   i50, err := loadJpeg("Lenna50.jpg")
+
+func diff(pathA, pathB string) (float64, error) {
+   i100, err := loadJpeg(pathA)
    if err != nil {
-      panic(err)
+      return 0, err
    }
-   i100, err := loadJpeg("Lenna100.jpg")
+   i50, err := loadJpeg(pathB)
    if err != nil {
-      panic(err)
+      return 0, err
    }
    if i50.ColorModel() != i100.ColorModel() {
-      panic("different color models")
+      return 0, fmt.Errorf("different color models")
    }
    b := i50.Bounds()
    if !b.Eq(i100.Bounds()) {
-      panic("different image sizes")
+      return 0, fmt.Errorf("different image sizes")
    }
-   var sum int64
+   var sum float64
    for y := b.Min.Y; y < b.Max.Y; y++ {
       for x := b.Min.X; x < b.Max.X; x++ {
          r1, g1, b1, _ := i50.At(x, y).RGBA()
          r2, g2, b2, _ := i100.At(x, y).RGBA()
-         sum += diff(r1, r2)
-         sum += diff(g1, g2)
-         sum += diff(b1, b2)
+         sum += sub(r1, r2)
+         sum += sub(g1, g2)
+         sum += sub(b1, b2)
       }
    }
    nPixels := (b.Max.X - b.Min.X) * (b.Max.Y - b.Min.Y)
-   fmt.Println(
-      float64(sum*100)/(float64(nPixels)*0xffff*3), "percent",
-   )
+   return sum / (float64(nPixels)*0xFFFF*3), nil
+}
+
+func sub(a, b uint32) float64 {
+   var c float64
+   if a > b {
+      c = float64(a - b)
+   } else {
+      c = float64(b - a)
+   }
+   return c
+}
+
+func main() {
+   f, err := diff("Lenna100.jpg", "Lenna50.jpg")
+   if err != nil {
+      panic(err)
+   }
+   fmt.Println(f)
 }
