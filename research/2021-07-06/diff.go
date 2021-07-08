@@ -19,9 +19,8 @@ func loadJpeg(filename string) (image.Image, error) {
    }
    return img, nil
 }
- 
 
-func diff(pathA, pathB string) (float64, error) {
+func diff(pathA, pathB string) (float32, error) {
    i100, err := loadJpeg(pathA)
    if err != nil {
       return 0, err
@@ -37,28 +36,25 @@ func diff(pathA, pathB string) (float64, error) {
    if !b.Eq(i100.Bounds()) {
       return 0, fmt.Errorf("different image sizes")
    }
-   var sum float64
+   var sum uint32
    for y := b.Min.Y; y < b.Max.Y; y++ {
       for x := b.Min.X; x < b.Max.X; x++ {
          r1, g1, b1, _ := i50.At(x, y).RGBA()
          r2, g2, b2, _ := i100.At(x, y).RGBA()
-         sum += sub(r1, r2)
-         sum += sub(g1, g2)
-         sum += sub(b1, b2)
+         sum += absDiff(r1, r2)
+         sum += absDiff(g1, g2)
+         sum += absDiff(b1, b2)
       }
    }
    nPixels := (b.Max.X - b.Min.X) * (b.Max.Y - b.Min.Y)
-   return sum / (float64(nPixels)*0xFFFF*3), nil
+   return float32(sum) / (float32(nPixels) * 0xFFFF *3), nil
 }
 
-func sub(a, b uint32) float64 {
-   var c float64
-   if a > b {
-      c = float64(a - b)
-   } else {
-      c = float64(b - a)
+func absDiff(x, y uint32) uint32 {
+   if x < y {
+      return y - x
    }
-   return c
+   return x - y
 }
 
 func main() {
