@@ -5,13 +5,15 @@ import (
    "image"
    "image/jpeg"
    "os"
+   "math"
 )
 
 func ycbcrToRgb(y, cb, cr uint8) (uint8, uint8, uint8) {
    fy, fcb, fcr := float64(y), float64(cb), float64(cr)
    r := fy + 1.402 * (fcr - 128)
-   g := fy - 0.34414*(fcb-128) - 0.71414*(fcr-128)
-   b := fy + 1.77200*(fcb-128)
+   g := fy - 0.344136*(fcb-128) - 0.714136*(fcr-128)
+   b := fy + 1.772*(fcb-128)
+   r,g,b = math.Round(r), math.Round(g), math.Round(b)
    return uint8(r), uint8(g), uint8(b)
 }
 
@@ -32,6 +34,13 @@ func (a picture) difference(b *picture) float64 {
    return float64(part) / float64(total)
 }
 
+func absDiff(a, b uint8) uint8 {
+   if a < b {
+      return b - a
+   }
+   return a - b
+}
+
 type picture struct {
    *image.YCbCr
 }
@@ -49,13 +58,6 @@ func newPicture(name string) (*picture, error) {
    return &picture{
       i.(*image.YCbCr),
    }, nil
-}
-
-func absDiff(a, b uint8) uint8 {
-   if a < b {
-      return b - a
-   }
-   return a - b
 }
 
 func main() {

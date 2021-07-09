@@ -4,42 +4,29 @@ import (
    "fmt"
    "image"
    "image/jpeg"
+   "math"
    "os"
 )
-
-func clampi32(val, min, max int64) int64 {
-   if val > max {
-      return max
-   }
-   if val > min {
-      return val
-   }
-   return 0
-}
 
 func getPixel(i *image.YCbCr, re image.Rectangle, x, y int) (float64, float64, float64) {
    iy := (y- re.Min.Y)* i.YStride + (x - re.Min.X)
    ic := (y/2- re.Min.Y/2)* i.CStride + (x/2 - re.Min.X/2)
-   const (
-      max = 255 * 1e5
-      inv = 1.0 / max
-   )
-   y1 := int64(i.Y[iy]) * 1e5
-   cb1 := int64(i.Cb[ic]) - 128
-   cr1 := int64(i.Cr[ic]) - 128
-   r1 := y1 + 140200*cr1
-   g1 := y1 - 34414*cb1 - 71414*cr1
-   b1 := y1 + 177200*cb1
-   r := float64(clampi32(r1, 0, max)) * inv
-   g := float64(clampi32(g1, 0, max)) * inv
-   b := float64(clampi32(b1, 0, max)) * inv
+   y1 := float64(i.Y[iy])
+   cb1 := float64(i.Cb[ic]) - 128
+   cr1 := float64(i.Cr[ic]) - 128
+   r1 := y1 + 1.402*cr1
+   g1 := y1 - 0.344136*cb1 - 0.714136*cr1
+   b1 := y1 + 1.772*cb1
+   r := math.Min(math.Max(0, math.Round(r1)), 255)
+   g := math.Min(math.Max(0, math.Round(g1)), 255)
+   b := math.Min(math.Max(0, math.Round(b1)), 255)
    return r,g,b
 }
 
 func (a picture) difference(b *picture) float64 {
    r := a.Bounds()
    var part float64
-   var total int64
+   var total uint64
    for y := r.Min.Y; y < r.Max.Y; y++ {
       for x := r.Min.X; x < r.Max.X; x++ {
          r1, g1, b1 := getPixel(a.YCbCr, r, x, y)
@@ -47,7 +34,7 @@ func (a picture) difference(b *picture) float64 {
          part += absDiff(r1, r2)
          part += absDiff(g1, g2)
          part += absDiff(b1, b2)
-         total += 1 + 1 + 1
+         total += 0xFF + 0xFF + 0xFF
       }
    }
    return part / float64(total)
