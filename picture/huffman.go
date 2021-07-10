@@ -1,8 +1,5 @@
 package picture
-
-import (
-	"io"
-)
+import "io"
 
 // maxCodeLength is the maximum (inclusive) number of bits in a Huffman code.
 const maxCodeLength = 16

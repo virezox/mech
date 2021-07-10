@@ -1,11 +1,9 @@
 package picture
 
 import (
-	"image"
-      "fmt"
+   "fmt"
+   "image"
 )
-
-var _ = fmt.Print
 
 // makeImg allocates and initializes the destination image.
 func (d *decoder) makeImg(mxx, myy int) {

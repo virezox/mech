@@ -18,6 +18,60 @@ func fsh(x int) int {
    return x * 4096
 }
 
+func idct_block(o []int, stride int, d []int) {
+   val := make([]int, 64)
+   v := val
+   for i := 0; i < 8; i++ {
+      if d[8] | d[16] | d[24] | d[32] | d[40] | d[48] | d[56] == 0 {
+         v[0] = d[0] * 4
+         v[8] = d[0] * 4
+         v[16] = d[0] * 4
+         v[24] = d[0] * 4
+         v[32] = d[0] * 4
+         v[40] = d[0] * 4
+         v[48] = d[0] * 4
+         v[56] = d[0] * 4
+      } else {
+         n := newInverseDCT()
+         n.transform(d, d[8:], d[16:], d[24:], d[32:], d[40:], d[48:], d[56:])
+         n.x0 += 512
+         n.x1 += 512
+         n.x2 += 512
+         n.x3 += 512
+         v[0] = (n.x0 + n.t3[0]) >> 10
+         v[56] = (n.x0 - n.t3[0]) >> 10
+         v[8] = (n.x1 + n.t2[0]) >> 10
+         v[48] = (n.x1 - n.t2[0]) >> 10
+         v[16] = (n.x2 + n.t1[0]) >> 10
+         v[40] = (n.x2 - n.t1[0]) >> 10
+         v[24] = (n.x3 + n.t0[0]) >> 10
+         v[32] = (n.x3 - n.t0[0]) >> 10
+      }
+      d = d[1:]
+      v = v[1:]
+   }
+   // roll back v
+   v = val
+   for i := 0; i < 8; i++ {
+      n := newInverseDCT()
+      n.transform(v, v[1:], v[2:], v[3:], v[4:], v[5:], v[6:], v[7:])
+      n.x0 += 65536 + (128 << 17)
+      n.x1 += 65536 + (128 << 17)
+      n.x2 += 65536 + (128 << 17)
+      n.x3 += 65536 + (128 << 17)
+      o[0] = clamp((n.x0 + n.t3[0]) >> 17)
+      o[7] = clamp((n.x0 - n.t3[0]) >> 17)
+      o[1] = clamp((n.x1 + n.t2[0]) >> 17)
+      o[6] = clamp((n.x1 - n.t2[0]) >> 17)
+      o[2] = clamp((n.x2 + n.t1[0]) >> 17)
+      o[5] = clamp((n.x2 - n.t1[0]) >> 17)
+      o[3] = clamp((n.x3 + n.t0[0]) >> 17)
+      o[4] = clamp((n.x3 - n.t0[0]) >> 17)
+      v = v[8:]
+      o = o[stride:]
+   }
+}
+
 type inverseDCT struct {
    t0, t1, t2, t3 []int
    x0, x1, x2, x3 int
