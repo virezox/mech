@@ -18,7 +18,7 @@ func fsh(x int) int {
    return x * 4096
 }
 
-func idct_block(o []int, stride int, d []int) {
+func idct2(b, d []int, stride int) {
    val := make([]int, 64)
    v := val
    for i := 0; i < 8; i++ {
@@ -59,16 +59,16 @@ func idct_block(o []int, stride int, d []int) {
       n.x1 += 65536 + (128 << 17)
       n.x2 += 65536 + (128 << 17)
       n.x3 += 65536 + (128 << 17)
-      o[0] = clamp((n.x0 + n.t3[0]) >> 17)
-      o[7] = clamp((n.x0 - n.t3[0]) >> 17)
-      o[1] = clamp((n.x1 + n.t2[0]) >> 17)
-      o[6] = clamp((n.x1 - n.t2[0]) >> 17)
-      o[2] = clamp((n.x2 + n.t1[0]) >> 17)
-      o[5] = clamp((n.x2 - n.t1[0]) >> 17)
-      o[3] = clamp((n.x3 + n.t0[0]) >> 17)
-      o[4] = clamp((n.x3 - n.t0[0]) >> 17)
+      b[0] = clamp((n.x0 + n.t3[0]) >> 17)
+      b[7] = clamp((n.x0 - n.t3[0]) >> 17)
+      b[1] = clamp((n.x1 + n.t2[0]) >> 17)
+      b[6] = clamp((n.x1 - n.t2[0]) >> 17)
+      b[2] = clamp((n.x2 + n.t1[0]) >> 17)
+      b[5] = clamp((n.x2 - n.t1[0]) >> 17)
+      b[3] = clamp((n.x3 + n.t0[0]) >> 17)
+      b[4] = clamp((n.x3 - n.t0[0]) >> 17)
       v = v[8:]
-      o = o[stride:]
+      b = b[stride:]
    }
 }
 

@@ -1,8 +1,8 @@
 package main
 
 import (
+   "github.com/89z/mech/picture"
    "os"
-   "picture"
 )
 
 func main() {

@@ -435,54 +435,51 @@ func (d *decoder) reconstructProgressiveImage() error {
 	return nil
 }
 
-// to the image.
 func (d *decoder) reconstructBlock(b *block, bx, by, compIndex int) error {
-         qt := &d.quant[d.comp[compIndex].tq]
-	for zig := 0; zig < blockSize; zig++ {
-		b[unzig[zig]] *= qt[zig]
-	}
-	idct(b)
-	dst, stride := []byte(nil), 0
-      
-     i := -1
-    
-	if d.nComp == 1 {
-		dst, stride = d.img1.Pix[8*(by*d.img1.Stride+bx):], d.img1.Stride
-	} else {
-		switch compIndex {
-		case 0:
-			dst, stride = d.img3.Y[8*(by*d.img3.YStride+bx):], d.img3.YStride
-		case 1:
-			dst, stride = d.img3.Cb[8*(by*d.img3.CStride+bx):], d.img3.CStride
-		case 2:
-                  i = 8*(by*d.img3.CStride+bx)
-                     dst, stride = d.img3.Cr[i:], d.img3.CStride
-		case 3:
-			dst, stride = d.blackPix[8*(by*d.blackStride+bx):], d.blackStride
-		default:
-			return UnsupportedError("too many components")
-		}
-	}
-	// Level shift by +128, clip to [0, 255], and write to dst.
-	for y := 0; y < 8; y++ {
-		y8 := y * 8
-		yStride := y * stride
-		for x := 0; x < 8; x++ {
-			c := b[y8+x]
-			if c < -128 {
-				c = 0
-			} else if c > 127 {
-				c = 255
-			} else {
-				c += 128
-			}
-                        
-                        if compIndex == 2 && i==0 && yStride+x == 7 {
-                           fmt.Println(c-128)
-                        }
-                        
-			dst[yStride+x] = uint8(c)
-		}
-	}
-	return nil
+   qt := &d.quant[d.comp[compIndex].tq]
+   for zig := 0; zig < blockSize; zig++ {
+      b[unzig[zig]] *= qt[zig]
+   }
+   var (
+      dst []byte
+      stride int
+   )
+   i := -1
+   if d.nComp == 1 {
+      dst, stride = d.img1.Pix[8*(by*d.img1.Stride+bx):], d.img1.Stride
+   } else {
+      switch compIndex {
+      case 0:
+         dst, stride = d.img3.Y[8*(by*d.img3.YStride+bx):], d.img3.YStride
+      case 1:
+         dst, stride = d.img3.Cb[8*(by*d.img3.CStride+bx):], d.img3.CStride
+      case 2:
+         i = 8*(by*d.img3.CStride+bx)
+         dst, stride = d.img3.Cr[i:], d.img3.CStride
+      case 3:
+         dst, stride = d.blackPix[8*(by*d.blackStride+bx):], d.blackStride
+      default:
+         return UnsupportedError("too many components")
+      }
+   }
+   idct(b)
+   for y := 0; y < 8; y++ {
+      y8 := y * 8
+      yStride := y * stride
+      for x := 0; x < 8; x++ {
+         c := b[y8+x]
+         if c < -128 {
+            c = 0
+         } else if c > 127 {
+            c = 255
+         } else {
+            c += 128
+         }
+         if compIndex == 2 && i==0 && yStride+x == 7 {
+            fmt.Println(c-128)
+         }
+         dst[yStride+x] = uint8(c)
+      }
+   }
+   return nil
 }
