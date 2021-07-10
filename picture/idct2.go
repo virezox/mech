@@ -18,22 +18,22 @@ func fsh(x int) int {
    return x * 4096
 }
 
-func idct2(b, d []int, stride int) {
+func idct2(src, s []int, stride int) {
    val := make([]int, 64)
    v := val
    for i := 0; i < 8; i++ {
-      if d[8] | d[16] | d[24] | d[32] | d[40] | d[48] | d[56] == 0 {
-         v[0] = d[0] * 4
-         v[8] = d[0] * 4
-         v[16] = d[0] * 4
-         v[24] = d[0] * 4
-         v[32] = d[0] * 4
-         v[40] = d[0] * 4
-         v[48] = d[0] * 4
-         v[56] = d[0] * 4
+      if s[8] | s[16] | s[24] | s[32] | s[40] | s[48] | s[56] == 0 {
+         v[0] = s[0] * 4
+         v[8] = s[0] * 4
+         v[16] = s[0] * 4
+         v[24] = s[0] * 4
+         v[32] = s[0] * 4
+         v[40] = s[0] * 4
+         v[48] = s[0] * 4
+         v[56] = s[0] * 4
       } else {
          n := newInverseDCT()
-         n.transform(d, d[8:], d[16:], d[24:], d[32:], d[40:], d[48:], d[56:])
+         n.transform(s, s[8:], s[16:], s[24:], s[32:], s[40:], s[48:], s[56:])
          n.x0 += 512
          n.x1 += 512
          n.x2 += 512
@@ -47,7 +47,7 @@ func idct2(b, d []int, stride int) {
          v[24] = (n.x3 + n.t0[0]) >> 10
          v[32] = (n.x3 - n.t0[0]) >> 10
       }
-      d = d[1:]
+      s = s[1:]
       v = v[1:]
    }
    // roll back v
@@ -59,16 +59,16 @@ func idct2(b, d []int, stride int) {
       n.x1 += 65536 + (128 << 17)
       n.x2 += 65536 + (128 << 17)
       n.x3 += 65536 + (128 << 17)
-      b[0] = clamp((n.x0 + n.t3[0]) >> 17)
-      b[7] = clamp((n.x0 - n.t3[0]) >> 17)
-      b[1] = clamp((n.x1 + n.t2[0]) >> 17)
-      b[6] = clamp((n.x1 - n.t2[0]) >> 17)
-      b[2] = clamp((n.x2 + n.t1[0]) >> 17)
-      b[5] = clamp((n.x2 - n.t1[0]) >> 17)
-      b[3] = clamp((n.x3 + n.t0[0]) >> 17)
-      b[4] = clamp((n.x3 - n.t0[0]) >> 17)
+      src[0] = clamp((n.x0 + n.t3[0]) >> 17)
+      src[7] = clamp((n.x0 - n.t3[0]) >> 17)
+      src[1] = clamp((n.x1 + n.t2[0]) >> 17)
+      src[6] = clamp((n.x1 - n.t2[0]) >> 17)
+      src[2] = clamp((n.x2 + n.t1[0]) >> 17)
+      src[5] = clamp((n.x2 - n.t1[0]) >> 17)
+      src[3] = clamp((n.x3 + n.t0[0]) >> 17)
+      src[4] = clamp((n.x3 - n.t0[0]) >> 17)
       v = v[8:]
-      b = b[stride:]
+      src = src[stride:]
    }
 }
 
