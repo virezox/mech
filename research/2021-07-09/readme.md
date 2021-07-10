@@ -11,7 +11,8 @@ B = Y + 1.772 * (Cb-128)
 - <https://wiki.musicbrainz.org/Cover_Art_Archive/API>
 - https://github.com/disintegration/gift/blob/master/pixels.go
 - https://github.com/golang/go/blob/master/src/image/color/ycbcr.go
+- https://github.com/golang/go/commit/8bf58725b23a25a4d153a9b9062
 - https://stackoverflow.com/questions/32680834
-- https://stackoverflow.com/questions/47550838/unexpected-inaccurate-image
+- https://stackoverflow.com/questions/47550838
 - https://w3.org/Graphics/JPEG/jfif3.pdf
 - https://wikipedia.org/wiki/YCbCr
