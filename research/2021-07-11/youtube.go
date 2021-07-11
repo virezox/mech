@@ -1,63 +1,54 @@
 package main
 
 import (
-   "fmt"
-   "github.com/89z/mech/youtube"
+   "encoding/json"
+   "net/http"
+   "os"
+   "strings"
 )
 
-var clients = []youtube.Client{
-   {"ANDROID", "16.07.34"},
-   {"ANDROID_CREATOR", "21.06.103"},
-   {"ANDROID_EMBEDDED_PLAYER", "16.20"},
-   {"ANDROID_KIDS", "6.02.3"},
-   {"ANDROID_MUSIC", "4.32"},
-   {"IOS", "16.05.7"},
-   {"IOS_CREATOR", "20.47.100"},
-   {"IOS_KIDS", "5.42.2"},
-   {"IOS_MUSIC", "4.16.1"},
-   {"MWEB", "2.19700101"},
-   {"TVHTML5", "7.20210224.00.00"},
-   {"WEB", "2.20210223.09.00"},
-   {"WEB_CREATOR", "1.20210223.01.00"},
-   {"WEB_EMBEDDED_PLAYER", "1.20210620.0.1"},
-   {"WEB_KIDS", "2.1.3"},
-   {"WEB_REMIX", "0.1"},
-}
-
-func pass(p *youtube.Player) bool {
-   for _, f := range p.AdaptiveFormats {
-      if f.Itag == 137 && f.URL != "" {
-         return true
+const body = `
+{
+   "context": {
+      "client": {
+         "clientName": "WEB",
+         "clientVersion": "2.20210708.06.00",
       }
-   }
-   return false
+   },
+   "videoId": "bO7PgQ-DtZk"
 }
+`
 
 func main() {
-   c := youtube.Client{"ANDROID", "16.05"}
-   p, err := c.Player("54e6lBE3BoQ")
+   f, err := os.Open("secret.json")
    if err != nil {
       panic(err)
    }
-   for _, f := range p.AdaptiveFormats {
-      fmt.Printf("%+v\n", f)
+   defer f.Close()
+   secret := make(map[string]string)
+   json.NewDecoder(f).Decode(&secret)
+   req, err := http.NewRequest(
+      "POST", "https://www.youtube.com/youtubei/v1/player",
+      strings.NewReader(body),
+   )
+   if err != nil {
+      panic(err)
    }
-   return
-   for _, client := range clients {
-      p, err := client.Player("54e6lBE3BoQ")
-      if err != nil {
-         fmt.Println(err, client)
-         continue
-      }
-      if pass(p) {
-         fmt.Println("pass", client)
-      } else {
-         fmt.Println("fail", client)
-      }
+   q := req.URL.Query()
+   q.Set("key", "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8")
+   req.URL.RawQuery = q.Encode()
+   req.Header.Set("X-Origin","https://www.youtube.com")
+   req.Header.Set("Authorization", secret["Authorization"])
+   req.AddCookie(&http.Cookie{
+      Name: "__Secure-3PSID", Value: secret["__Secure-3PSID"],
+   })
+   req.AddCookie(&http.Cookie{
+      Name: "__Secure-3PAPISID", Value: secret["__Secure-3PAPISID"],
+   })
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      panic(err)
    }
+   defer res.Body.Close()
+   os.Stdout.ReadFrom(res.Body)
 }
-
-/*
-pass {ANDROID 16.07.34}
-pass {IOS 16.05.7}
-*/

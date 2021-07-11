@@ -8,7 +8,7 @@ import (
 )
 
 var (
-   Android = Client{"ANDROID", "15.01"}
+   Android = Client{"ANDROID", "16.05"}
    Mweb = Client{"MWEB", "2.19700101"}
    WebEmbed = Client{"WEB_EMBEDDED_PLAYER", "1.19700101"}
 )
