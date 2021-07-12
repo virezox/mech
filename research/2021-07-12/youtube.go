@@ -8,7 +8,6 @@ import (
    "time"
 )
 
-const origin = "https://www.youtube.com"
 
 type video struct {
    id string
@@ -32,48 +31,6 @@ var videos = []video{
    {id: "_kmeFXjjGfk"}, //EmbedRestrictedByYouTube
    {id: "hySoCSoH-g8"}, //AgeRestrictedEmbedRestricted
    {id: "rsAAeyAr-9Y"}, //LiveStreamRecording
-   {id: "vX2vsvdq8nw", el: "detailpage"}, //HighDynamicRange
-}
-
-func main() {
-   req, err := http.NewRequest("GET", origin + "/get_video_info", nil)
-   if err != nil {
-      panic(err)
-   }
-   q := req.URL.Query()
-   q.Set("c", "ANDROID")
-   q.Set("cver", "16.05")
-   q.Set("eurl", origin)
-   q.Set("html5", "1")
-   for _, vid := range videos {
-      q.Set("video_id", vid.id)
-      if vid.el != "" {
-         q.Set("el", "detailpage")
-      } else {
-         q.Del("el")
-      }
-      req.URL.RawQuery = q.Encode()
-      fmt.Println(req.Method, req.URL)
-      res, err := new(http.Transport).RoundTrip(req)
-      if err != nil {
-         panic(err)
-      }
-      defer res.Body.Close()
-      body, err := io.ReadAll(res.Body)
-      if err != nil {
-         panic(err)
-      }
-      req.URL.RawQuery = string(body)
-      play := req.URL.Query().Get("player_response")
-      var p player
-      json.Unmarshal([]byte(play), &p)
-      if pass(p.StreamingData.AdaptiveFormats) {
-         fmt.Println("pass", vid.id)
-      } else {
-         fmt.Println("fail", vid.id)
-      }
-      time.Sleep(100 * time.Millisecond)
-   }
 }
 
 func pass(fs []format) bool {

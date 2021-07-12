@@ -1,39 +1,5 @@
 # YouTube
 
-## Client
-
-Best choice for `publishDate` and search is `player`, `MWEB`:
-
-~~~
-date 3 search true size 387527 {MWEB 2.19700101}
-date 3 search true size 574903 {WEB_REMIX 0.1}
-date 3 search true size 974833 {WEB 2.20210223.09.00}
-~~~
-
-Best choice for decrypted media is `player`, `ANDROID`:
-
-~~~
-decrypt 2 [XeojXq6ySs4 3gdfNdilGFE] size 171899 {ANDROID 16.07.34}
-~~~
-
-Best choice for age gate is `player`, `WEB_EMBEDDED_PLAYER`:
-
-~~~
-decrypt 2 [HtVdAasjOgU 3gdfNdilGFE] size 199781 {WEB_EMBEDDED_PLAYER}
-~~~
-
-## publishDate
-
-An alternative to `publishDate` is:
-
-~~~
-"text": "Published on Nov 5, 2020"
-~~~
-
-which you can get doing a `next` request with `IOS_KIDS`. Uncompressed size is
-115 KB. For `publishDate`, doing a `player` request with `MWEB`, you get
-uncompressed size of 57 KB.
-
 ## youtubei
 
 Since ANDROID is smaller, we want to pull as much from it as possible. Here is
