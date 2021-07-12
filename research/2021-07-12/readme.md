@@ -16,22 +16,13 @@ Tests:
 
 <https://github.com/Hexer10/youtube_explode_dart/blob/master/test/video_test.dart>
 
-## "adaptiveFormats"
-
 ~~~
-fail MeJVWBSsPAY
-fail p3dDcKOFXQg
-fail vX2vsvdq8nw
-pass -xNN-bJQ4vI
-pass 5VGm0dczmHc
-pass 5qap5aO4i9A
-pass 9bZkp7q19f0
-pass AI7ULzgf8RU
-pass SkRSXFQerZs
-pass V5Fsj_sCKdg
-pass YltHGKX80Y8
-pass ZGdLIwrGHG8
-pass _kmeFXjjGfk
-pass hySoCSoH-g8
-pass rsAAeyAr-9Y
+PS D:\Desktop> youtube-dl.exe --print-traffic MeJVWBSsPAY
+GET /watch?v=MeJVWBSsPAY&bpctr=9999999999&has_verified=1 HTTP/1.1
+Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.7
+Accept-Encoding: gzip, deflate\r\nAccept-Language: en-us,en;q=0.5
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Connection: close
+Host: www.youtube.com\r\nCookie: CONSENT=YES+cb.20210328-17-p0.en+FX+512
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.6 Safari/537.36
 ~~~
