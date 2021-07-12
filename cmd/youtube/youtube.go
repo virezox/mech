@@ -32,9 +32,8 @@ func clean(r rune) rune {
 func main() {
    var (
       atag, vtag int
-      embed, info bool
+      info bool
    )
-   flag.BoolVar(&embed, "e", false, "use embedded player")
    flag.BoolVar(&info, "i", false, "info only")
    flag.IntVar(&atag, "a", 0, "audio (-1 to skip)")
    flag.IntVar(&vtag, "v", 0, "video (-1 to skip)")
@@ -50,13 +49,7 @@ func main() {
       panic(err)
    }
    id := watch.Query().Get("v")
-   var client youtube.Client
-   if embed {
-      client = youtube.WebEmbed
-   } else {
-      client = youtube.Android
-   }
-   play, err := client.Player(id)
+   play, err := youtube.GetVideoInfo(id, false)
    if err != nil {
       panic(err)
    }
