@@ -22,7 +22,39 @@ type Player struct {
    VideoDetails `json:"videoDetails"`
 }
 
-func NewPlayer(id string, detailPage bool) (*Player, error) {
+type PlayerMicroformatRenderer struct {
+   AvailableCountries []string
+   PublishDate string
+}
+
+type StreamingData struct {
+   AdaptiveFormats Formats
+}
+
+type VideoDetails struct {
+   Author string
+   ShortDescription string
+   Title string
+   ViewCount int `json:"viewCount,string"`
+}
+
+func YouTubeI(id string) (*Player, error) {
+   var req request
+   req.Context.Client = Mweb
+   req.VideoID = id
+   res, err := req.post("/youtubei/v1/player")
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   p := new(Player)
+   if err := json.NewDecoder(res.Body).Decode(p); err != nil {
+      return nil, err
+   }
+   return p, nil
+}
+
+func GetVideoInfo(id string, detailPage bool) (*Player, error) {
    req, err := http.NewRequest("GET", origin + "/get_video_info", nil)
    if err != nil {
       return nil, err
@@ -57,20 +89,4 @@ func NewPlayer(id string, detailPage bool) (*Player, error) {
       return nil, err
    }
    return p, nil
-}
-
-type PlayerMicroformatRenderer struct {
-   AvailableCountries []string
-   PublishDate string
-}
-
-type StreamingData struct {
-   AdaptiveFormats Formats
-}
-
-type VideoDetails struct {
-   Author string
-   ShortDescription string
-   Title string
-   ViewCount int `json:"viewCount,string"`
 }
