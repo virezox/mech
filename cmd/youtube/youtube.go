@@ -40,7 +40,8 @@ func main() {
    flag.IntVar(&vtag, "v", 0, "video (-1 to skip)")
    flag.Parse()
    if flag.NArg() != 1 {
-      fmt.Println("youtube [flags] <URL>")
+      // URL is not required if we are just printing help
+      fmt.Println("youtube [flags] [URL]")
       flag.PrintDefaults()
       return
    }
