@@ -1,4 +1,4 @@
-package main
+package picture
 
 import (
    "fmt"
@@ -7,7 +7,7 @@ import (
    "os"
 )
 
-func (a picture) difference(b *picture) float32 {
+func (a slow) difference(b *slow) float32 {
    var (
       part uint32
       total uint64
@@ -26,11 +26,11 @@ func (a picture) difference(b *picture) float32 {
    return float32(part) / float32(total)
 }
 
-type picture struct {
+type slow struct {
    image.Image
 }
 
-func newPicture(name string) (*picture, error) {
+func newPicture(name string) (*slow, error) {
    f, err := os.Open(name)
    if err != nil {
       return nil, err
@@ -40,7 +40,7 @@ func newPicture(name string) (*picture, error) {
    if err != nil {
       return nil, err
    }
-   return &picture{i}, nil
+   return &slow{i}, nil
 }
 
 func absDiff(a, b uint32) uint32 {
@@ -48,16 +48,4 @@ func absDiff(a, b uint32) uint32 {
       return b - a
    }
    return a - b
-}
-
-func main() {
-   a, err := newPicture("Lenna100.jpg")
-   if err != nil {
-      panic(err)
-   }
-   b, err := newPicture("Lenna50.jpg")
-   if err != nil {
-      panic(err)
-   }
-   fmt.Println(a.difference(b))
 }
