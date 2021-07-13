@@ -1,11 +1,17 @@
 package picture
 
 import (
-   "fmt"
    "image"
    "image/jpeg"
    "os"
 )
+
+func absDiff(a, b uint32) uint32 {
+   if a < b {
+      return b - a
+   }
+   return a - b
+}
 
 func (a slow) difference(b *slow) float32 {
    var (
@@ -43,9 +49,3 @@ func newPicture(name string) (*slow, error) {
    return &slow{i}, nil
 }
 
-func absDiff(a, b uint32) uint32 {
-   if a < b {
-      return b - a
-   }
-   return a - b
-}

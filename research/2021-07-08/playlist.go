@@ -8,7 +8,7 @@ import (
 )
 
 func search(query string) (string, error) {
-   s, err := youtube.NewSearch(query)
+   s, err := youtube.ISearch(query)
    if err != nil {
       return "", err
    }

@@ -39,7 +39,8 @@ func (f Format) Write(w io.Writer) error {
       bytes := fmt.Sprintf("bytes=%v-%v", pos, pos+chunk-1)
       req.Header.Set("Range", bytes)
       fmt.Println(bytes)
-      res, err := new(http.Transport).RoundTrip(req)
+      // this sometimes redirects, so cannot use http.Transport
+      res, err := new(http.Client).Do(req)
       if err != nil {
          return err
       }
