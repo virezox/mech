@@ -35,7 +35,7 @@ func TestGetVideoInfo(t *testing.T) {
 }
 
 func TestPlayer(t *testing.T) {
-   p, err := youtube.NewI().Player("XeojXq6ySs4")
+   p, err := youtube.IPlayer("XeojXq6ySs4")
    if err != nil {
       t.Fatal(err)
    }

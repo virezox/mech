@@ -24,7 +24,8 @@ type Search struct {
    }
 }
 
-func (i I) Search(query string) (*Search, error) {
+func ISearch(query string) (*Search, error) {
+   i := newYouTubeI()
    i.Query = query
    res, err := i.post("/youtubei/v1/search")
    if err != nil {

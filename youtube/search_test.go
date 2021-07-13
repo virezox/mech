@@ -7,7 +7,7 @@ import (
 )
 
 func TestSearch(t *testing.T) {
-   s, err := youtube.NewI().Search("nelly furtado say it right")
+   s, err := youtube.ISearch("nelly furtado say it right")
    if err != nil {
       t.Fatal(err)
    }

@@ -1,5 +1,17 @@
 # YouTube
 
+## Age gate
+
+Video that can be embedded:
+
+https://www.youtube.com/embed/HtVdAasjOgU
+
+Other age gate video exist, that cannot be embedded:
+
+https://www.youtube.com/embed/bO7PgQ-DtZk
+
+## Sort
+
 If we look at video `youtube.com/watch?v=3gdfNdilGFE`:
 
 ~~~
