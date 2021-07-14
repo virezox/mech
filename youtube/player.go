@@ -80,7 +80,7 @@ type PlayerMicroformatRenderer struct {
 }
 
 type StreamingData struct {
-   AdaptiveFormats Formats
+   AdaptiveFormats FormatSlice
 }
 
 type VideoDetails struct {

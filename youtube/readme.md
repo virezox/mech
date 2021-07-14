@@ -1,38 +1,5 @@
 # YouTube
 
-To anyone interested, I figured out how to do an authenticated request to
-`/youtubei/v1/player`. First you have the normal body:
-
-~~~json
-{
-   "context": {
-      "client": {
-         "clientName": "WEB",
-         "clientVersion": "2.20210708.06.00",
-      }
-   },
-   "videoId": "bO7PgQ-DtZk"
-}
-~~~
-
-probably can adjust the client as needed. You still want to add the `key` to
-querystring as normal. Next, you need these headers:
-
-~~~
-"X-Origin","https://www.youtube.com"
-"Authorization","SAPISIDHASH 1625981319_5d6eb..."
-~~~
-
-Finally, you need these cookies:
-
-~~~
-Name: "__Secure-3PSID",
-Value: "_gdNhnpLL2zVVA9c-gj53X-bZQipAWuXEccm0..."
-
-Name: "__Secure-3PAPISID"
-Value: "VFKYV_f44SBoEuOa/AxyyZj1QZKPY..."
-~~~
-
 ## watch
 
 desktop:

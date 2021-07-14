@@ -8,4 +8,22 @@
 
 ## todo
 
+~~~
+image language:go stars:>400
+~~~
+
+1,579 stars:
+
+https://github.com/n7olkachev/imgdiff
+
+1,264 stars:
+
+https://github.com/dmtrKovalenko/odiff
+
+416 stars:
+
+https://github.com/corona10/goimagehash
+
+76 stars:
+
 https://github.com/vitali-fedulov/images

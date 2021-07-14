@@ -56,11 +56,11 @@ func (f Format) Write(w io.Writer) error {
    return nil
 }
 
-type Formats []Format
+type FormatSlice []Format
 
-func (s Formats) Filter(keep func(Format)bool) Formats {
-   var forms Formats
-   for _, form := range s {
+func (f FormatSlice) Filter(keep func(Format)bool) FormatSlice {
+   var forms FormatSlice
+   for _, form := range f {
       if keep(form) {
          forms = append(forms, form)
       }
@@ -68,7 +68,7 @@ func (s Formats) Filter(keep func(Format)bool) Formats {
    return forms
 }
 
-func (s Formats) Sort(less ...func(a, b Format) bool) {
+func (f FormatSlice) Sort(less ...func(a, b Format) bool) {
    if less == nil {
       less = []func(a, b Format) bool{
          func(a, b Format) bool {
@@ -83,13 +83,13 @@ func (s Formats) Sort(less ...func(a, b Format) bool) {
          },
       }
    }
-   sort.Slice(s, func(a, b int) bool {
-      sa, sb := s[a], s[b]
+   sort.Slice(f, func(a, b int) bool {
+      fa, fb := f[a], f[b]
       for _, fn := range less {
-         if fn(sa, sb) {
+         if fn(fa, fb) {
             return true
          }
-         if fn(sb, sa) {
+         if fn(fb, fa) {
             break
          }
       }

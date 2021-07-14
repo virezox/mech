@@ -62,7 +62,7 @@ func main() {
    }
    // sort
    play.AdaptiveFormats.Sort()
-   formats := youtube.Formats{
+   formats := []youtube.Format{
       {Itag: atag}, {Itag: vtag, Height: 720},
    }
    for _, a := range formats {
