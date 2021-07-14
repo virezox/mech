@@ -2,86 +2,93 @@ package youtube
 
 import (
    "fmt"
+   "image"
    "sort"
 )
 
-const (
-   WidthAutoHeightBlack = 0
-   WidthAuto = 1
-   WidthBlack = 2
-   HeightCrop = 3
-)
-
-const (
-   JPG = 1
-   WebP = 0
+var (
+   WebP = ImageFormat{0, "vi_webp", "webp"}
+   JPG = ImageFormat{1, "vi", "jpg"}
 )
 
 var AdaptiveImages = Images{
-   {90, WidthAutoHeightBlack, JPG, "default"},
-   {90, WidthAutoHeightBlack, WebP, "default"},
-   {90, WidthBlack, JPG, "1"},
-   {90, WidthBlack, JPG, "2"},
-   {90, WidthBlack, JPG, "3"},
-   {90, WidthBlack, WebP, "1"},
-   {90, WidthBlack, WebP, "2"},
-   {90, WidthBlack, WebP, "3"},
-   {180, HeightCrop, JPG, "mq1"},
-   {180, HeightCrop, JPG, "mq2"},
-   {180, HeightCrop, JPG, "mq3"},
-   {180, HeightCrop, WebP, "mq1"},
-   {180, HeightCrop, WebP, "mq2"},
-   {180, HeightCrop, WebP, "mq3"},
-   {180, WidthAuto, JPG, "mqdefault"},
-   {180, WidthAuto, WebP, "mqdefault"},
-   {360, WidthAutoHeightBlack, JPG, "0"},
-   {360, WidthAutoHeightBlack, JPG, "hqdefault"},
-   {360, WidthAutoHeightBlack, WebP, "0"},
-   {360, WidthAutoHeightBlack, WebP, "hqdefault"},
-   {360, WidthBlack, JPG, "hq1"},
-   {360, WidthBlack, JPG, "hq2"},
-   {360, WidthBlack, JPG, "hq3"},
-   {360, WidthBlack, WebP, "hq1"},
-   {360, WidthBlack, WebP, "hq2"},
-   {360, WidthBlack, WebP, "hq3"},
-   {480, WidthAutoHeightBlack, JPG, "sddefault"},
-   {480, WidthAutoHeightBlack, WebP, "sddefault"},
-   {480, WidthBlack, JPG, "sd1"},
-   {480, WidthBlack, JPG, "sd2"},
-   {480, WidthBlack, JPG, "sd3"},
-   {480, WidthBlack, WebP, "sd1"},
-   {480, WidthBlack, WebP, "sd2"},
-   {480, WidthBlack, WebP, "sd3"},
-   {720, WidthAuto, JPG, "hq720"},
-   {720, WidthAuto, JPG, "maxresdefault"},
-   {720, WidthAuto, WebP, "hq720"},
-   {720, WidthAuto, WebP, "maxresdefault"},
-   {720, WidthBlack, JPG, "maxres1"},
-   {720, WidthBlack, JPG, "maxres2"},
-   {720, WidthBlack, JPG, "maxres3"},
-   {720, WidthBlack, WebP, "maxres1"},
-   {720, WidthBlack, WebP, "maxres2"},
-   {720, WidthBlack, WebP, "maxres3"},
+   {120, 90, 68, "default", JPG},
+   {120, 90, 90, "1", JPG},
+   {120, 90, 90, "2", JPG},
+   {120, 90, 90, "3", JPG},
+   {120, 90, 68, "default", WebP},
+   {120, 90, 90, "1", WebP},
+   {120, 90, 90, "2", WebP},
+   {120, 90, 90, "3", WebP},
+   {320, 180, 180, "mqdefault", JPG},
+   {320, 180, 320, "mq1", JPG},
+   {320, 180, 320, "mq2", JPG},
+   {320, 180, 320, "mq3", JPG},
+   {320, 180, 180, "mqdefault", WebP},
+   {320, 180, 320, "mq1", WebP},
+   {320, 180, 320, "mq2", WebP},
+   {320, 180, 320, "mq3", WebP},
+   {480, 360, 270, "0", JPG},
+   {480, 360, 270, "hqdefault", JPG},
+   {480, 360, 360, "hq1", JPG},
+   {480, 360, 360, "hq2", JPG},
+   {480, 360, 360, "hq3", JPG},
+   {480, 360, 270, "0", WebP},
+   {480, 360, 270, "hqdefault", WebP},
+   {480, 360, 360, "hq1", WebP},
+   {480, 360, 360, "hq2", WebP},
+   {480, 360, 360, "hq3", WebP},
+   {640, 480, 360, "sddefault", JPG},
+   {640, 480, 480, "sd1", JPG},
+   {640, 480, 480, "sd2", JPG},
+   {640, 480, 480, "sd3", JPG},
+   {640, 480, 360, "sddefault", WebP},
+   {640, 480, 480, "sd1", WebP},
+   {640, 480, 480, "sd2", WebP},
+   {640, 480, 480, "sd3", WebP},
+   {1280, 720, 720, "hq720", JPG},
+   {1280, 720, 720, "maxres1", JPG},
+   {1280, 720, 720, "maxres2", JPG},
+   {1280, 720, 720, "maxres3", JPG},
+   {1280, 720, 720, "maxresdefault", JPG},
+   {1280, 720, 720, "hq720", WebP},
+   {1280, 720, 720, "maxres1", WebP},
+   {1280, 720, 720, "maxres2", WebP},
+   {1280, 720, 720, "maxres3", WebP},
+   {1280, 720, 720, "maxresdefault", WebP},
 }
 
 type Image struct {
+   Width int
    Height int
-   Frame int
-   Format int
+   SubHeight int
    Base string
+   Format ImageFormat
 }
 
 func (i Image) Address(id string) string {
-   dir := map[int]string{WebP: "vi_webp", JPG: "vi"}[i.Format]
-   ext := map[int]string{WebP: "webp", JPG: "jpg"}[i.Format]
-   return fmt.Sprintf("http://i.ytimg.com/%v/%v/%v.%v", dir, id, i.Base, ext)
+   return fmt.Sprintf(
+      "http://i.ytimg.com/%v/%v/%v.%v", i.Format.Dir, id, i.Base, i.Format.Ext,
+   )
+}
+
+func (i Image) Rect() image.Rectangle {
+   x0 := (i.Width - i.SubHeight) / 2
+   y0 := (i.Height - i.SubHeight) / 2
+   return image.Rect(x0, y0, x0 + i.SubHeight, y0 + i.SubHeight)
+}
+
+type ImageFormat struct {
+   Sort int
+   Dir string
+   Ext string
 }
 
 type Images []Image
 
-func (s Images) Filter(keep func(Image)bool) Images {
+func (i Images) Filter(keep func(Image)bool) Images {
    var imgs Images
-   for _, img := range s {
+   for _, img := range i {
       if keep(img) {
          imgs = append(imgs, img)
       }
@@ -89,27 +96,30 @@ func (s Images) Filter(keep func(Image)bool) Images {
    return imgs
 }
 
-func (s Images) Sort(less ...func(a, b Image) bool) {
+func (i Images) Sort(less ...func(a, b Image) bool) {
    if less == nil {
       less = []func(a, b Image) bool{
          func(a, b Image) bool {
             return b.Height < a.Height
          },
          func(a, b Image) bool {
-            return a.Frame < b.Frame
+            return a.SubHeight < b.SubHeight
          },
          func(a, b Image) bool {
-            return a.Format < b.Format
+            return a.Base < b.Base
+         },
+         func(a, b Image) bool {
+            return a.Format.Sort < b.Format.Sort
          },
       }
    }
-   sort.SliceStable(s, func(a, b int) bool {
-      sa, sb := s[a], s[b]
+   sort.SliceStable(i, func(a, b int) bool {
+      ia, ib := i[a], i[b]
       for _, fn := range less {
-         if fn(sa, sb) {
+         if fn(ia, ib) {
             return true
          }
-         if fn(sb, sa) {
+         if fn(ib, ia) {
             break
          }
       }
