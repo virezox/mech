@@ -107,8 +107,8 @@ func getInfo(play *youtube.Player) {
    }
 }
 
-func download(a *youtube.Player, f youtube.Format) error {
-   create := strings.Map(clean, a.Author + "-" + a.Title + f.Ext())
+func download(p *youtube.Player, f youtube.Format) error {
+   create := strings.Map(clean, p.Author + "-" + p.Title + f.Ext())
    file, err := os.Create(create)
    if err != nil {
       return err
