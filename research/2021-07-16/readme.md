@@ -1,6 +1,29 @@
 # July 16 2021
 
-If it helps, I found a new way to access some videos without cookie:
+## oauth
+
+~~~json
+{
+  "access_token": "ya29.a0ARrdaM8IoKZHM_WiGDZpTGASVZ2-FlAEG9zmlboNF5iCovX0b7...",
+  "expires_in": 3599,
+  "scope": "https://www.googleapis.com/auth/youtube-paid-content https://www.googleapis.com/auth/youtube",
+  "token_type": "Bearer"
+}
+~~~
+
+I found a dead simple program for getting OAuth tokens [1]:
+
+~~~
+step oauth
+~~~
+
+so I might just see if I can incorporate that into my own code.
+
+https://github.com/smallstep/cli#features
+
+## token
+
+I found a new way to access some videos without cookie:
 
 ~~~
 POST /youtubei/v1/player HTTP/2
@@ -58,42 +81,3 @@ content-type: application/json
   "refresh_token": "1//0fvQm8klSPFldCgYIARAAGA8SNwF-L9Ir9T6EnZnEXuNoQt-V8UpOQ..."
 }
 ~~~
-
-> @89z We can already download all age-gated videos with logged in cookies.
-
-So what? Cookies are not the end all solution to authentication. For example,
-in addition to suggestions I have put forward, other options might be
-available, such as monitoring the YouTube Android app. I know other apps have
-special keys hidden inside the APK. For example the Android deezer.com app
-hides a special key inside a PNG file [1]. YouTube could be doing something
-similar.
-
-> **If** someone can figure out a way to download them without authentication,
-> then we can think about implementing it.
-
-Its not possible, people need to accept that.
-
-> The discussion of any method that requires auth is useless since **it can
-> already be done** with the existing code
-
-If you still think that after reading my paragraph above, then suit yourself
-and close the issue.
-
-> I agree. But when there are workarounds, it is good to implement them. If
-> there are none, then we just need to accept that fact and start blaming
-> youtube instead of youtube-dl for it.
-
-The only workaround at this point is authentication. That can be done different
-ways, if you just want to only support the cookie method, thats your choice.
-But better auth methods might be available.
-
-> This is why this issue is marked as "enhancement" and not "bug" and this is
-> the same reason why @colethedj originally closed this issue. This **is not a
-> bug**.
-
-I dont care what you call it, and I dont care if you close the issue. I am
-actively doing research on the topic, so I thought it would be good for people
-to work together to a common goal. But if your goal is different than mine, or
-if your goal already done, then close issue and I will continue on my own.
-
-1. <https://github.com/89z/mech/blob/master/research/2021-05-12/android_gw_key.py>
