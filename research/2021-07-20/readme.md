@@ -1,5 +1,14 @@
 # July 20 2021
 
+## x-youtube
+
+~~~
+curl -v -o youtube.txt `
+-H 'x-youtube-client-name: 1' `
+-H 'x-youtube-client-version: 2.20191008.04.01' `
+'https://www.youtube.com/watch?v=mvDWtMVPyf8&pbj=1'
+~~~
+
 ## device approach
 
 I did some more research, and was finally able to programmatically complete a
