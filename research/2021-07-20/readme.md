@@ -1,40 +1,73 @@
 # July 20 2021
 
+## deviceregistration
+
+First make a request like this:
+
+~~~
+curl -v `
+-d key=AIzaSyA8eiZmM1FaDVjRy-df2KTyQ_vz_yYM39w `
+-d rawDeviceId=1234567890123456 `
+https://youtubei.googleapis.com/deviceregistration/v1/devices
+~~~
+
+Response:
+
+~~~
+{
+  "key": "AP+lc7+vnzjxeNwcPRUdiO3Mw84/IqvSq+qjJvy7hKWduKU/oTyBaoCnyOO6LTE",
+  "id": "AP+lc7829EbFysNk+qGtXaIl1a5ApLUBnvW2p3KVtuvsPMsosSGTNsoTWJsl+vMYy27czPr1Eu/HDs7n8wkzh1UtsiCGgRdZf6dnNmagNuPLQ+/83DYg/5yq6CBdWW5W2KTzC9Y1X2J9og"
+}
+~~~
+
+- https://github.com/leptos-null/LeptosMusic/blob/1505597c/music/Services/LMApiaryDeviceCrypto.h
+- https://github.com/socialAPIS/YoutubeDownloader/blob/65b0ea2a/src/Request/DeviceRegistrationRequest.php
+
 ## key
 
-What `key`s are available? First, we have `youtube.com`:
+todo:
 
 ~~~
-AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8
-~~~
-
-What about `youtube.com/tv`:
-
-~~~
-Mozilla/5.0 (Linux; Tizen 2.3; SmartTV)
-AIzaSyDCU8hByM-4DrUqRUYnGn-3llEO78bcxq8
-~~~
-
-From APK:
-
-~~~
-1:
-AIzaSyC8UYZpvA2eknNex0Pjid0_eTLJoDu6los
-
-2:
-AIzaSyDHQ9ipnphqTzDqZsbtd8_Ru4_kiKVQe2k
-
-19:
-AIzaSyCjc_pVEDi4qsv5MtC2dMXzpIaDoRFLsxw
-
-39:
-AIzaSyCtkvNIR1HCEwzsqK6JuE6KqpyjusIRI30
-
-75:
 AIzaSyA8eiZmM1FaDVjRy-df2KTyQ_vz_yYM39w
 ~~~
 
-## `access_token`
+10 stars:
+
+https://github.com/socialAPIS/YoutubeDownloader
+
+0 stars:
+
+https://github.com/BorisChen396/PuddingPlayer
+
+done:
+
+~~~
+AIzaSyA64xQnVODx8qBOeSsrlfDc8gDEw_NLopk
+AIzaSyA_n-CBlmsO1fOxFUZqRnQ9SX4Bh1jCjWg
+AIzaSyAxmTFlJLw9-uEJ1pFJUzw8LX7veGxGUoI
+AIzaSyBD1uN7sPOWjkZ3fNKv7xDlLqF7Rg_JLnk
+AIzaSyC8UYZpvA2eknNex0Pjid0_eTLJoDu6los
+AIzaSyCChP9IaeaDS_LLGBI0P9CDQwTzCxn1kp8
+AIzaSyCTa7aViyHnB3GLIqhL5hQFZGb675SoCIA
+AIzaSyCV2I1gEhkJYkd51xG7MGaZGC85zylcS74
+AIzaSyCX7NVTCfWMK8eEUau8Scc2y6dZUpWfNd0
+AIzaSyCjc_pVEDi4qsv5MtC2dMXzpIaDoRFLsxw
+AIzaSyCqrNxCAJrrk_NQqIUp1-baqW05d3JYeOc
+AIzaSyCtkvNIR1HCEwzsqK6JuE6KqpyjusIRI30
+AIzaSyCymf5PAosq7hWs5DkgHy0-3uacHaY1SPE
+AIzaSyD5cCj3gK6IKFQCHRf1pYAt9nDKUzfxmPg
+AIzaSyDCU8hByM-4DrUqRUYnGn-3llEO78bcxq8
+AIzaSyDHQ9ipnphqTzDqZsbtd8_Ru4_kiKVQe2k
+AIzaSyDil7P0s1hvamdVWsqFtySc1T5P1S9dHqk
+AIzaSyDjSMHkZSQWmcCKsNnvZcjRc2ZaJbAXpR4
+AIzaSyDtpXO8h8u8Z6N7asPxy6AczIICsqmkg64
+~~~
+
+## tv
+
+~~~
+Mozilla/5.0 (Linux; Tizen 2.3; SmartTV)
+~~~
 
 - https://developers.google.com/identity/protocols/oauth2/native-app
 - https://developers.google.com/youtube/v3/guides/auth/server-side-web-apps
