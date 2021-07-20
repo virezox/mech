@@ -1,23 +1,5 @@
 # July 17 2021
 
-Actually I do have one more idea. Its possible that an authentication key
-exists in the mobile app. This has been done before with other apps [1].
-However with YouTube it is different, as on Android you are always logged in,
-so the Android app would have no need for a special key, it can just use your
-Google credentials.
-
-The IOS app on the other hand, wouldnt be able to. So its possible that hidden
-in the IOS IPA file, is some special key can we could use for authentication,
-without having to worry about cookies or anything. Only thing, I think you have
-to have TOR to get the IPA file [2], so if someone has a way to get the IPA
-without TOR, I would prefer that. I dont want to bother setting up TOR if I
-dont need to.
-
-1. <https://github.com/89z/mech/blob/master/research/2021-05-12/android_gw_key.py>
-2. https://appdb.to/app/ios/544007664
-
-## oauth
-
 Note: The OAuth Playground will automatically revoke refresh tokens after 24h.
 You can avoid this by specifying your own application OAuth credentials using
 the Configuration panel.

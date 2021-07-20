@@ -1,5 +1,9 @@
 # July 20 2021
 
+## `access_token`
+
+https://developers.google.com/youtube/v3/guides/auth/server-side-web-apps
+
 ## key
 
 What `key`s are available? First, we have `youtube.com`:
