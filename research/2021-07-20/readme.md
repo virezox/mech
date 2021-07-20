@@ -1,11 +1,5 @@
 # July 20 2021
 
-## `access_token`
-
-- https://developers.google.com/identity/protocols/oauth2/native-app
-- https://developers.google.com/youtube/v3/guides/auth/server-side-web-apps
-- https://developers.google.com/youtube/v3/live/guides/auth/installed-apps
-
 ## key
 
 What `key`s are available? First, we have `youtube.com`:
@@ -24,13 +18,27 @@ AIzaSyDCU8hByM-4DrUqRUYnGn-3llEO78bcxq8
 From APK:
 
 ~~~
-<string name="google_api_key">AIzaSyCtkvNIR1HCEwzsqK6JuE6KqpyjusIRI30</string>
-
-AIzaSyA8eiZmM1FaDVjRy-df2KTyQ_vz_yYM39w
+1:
 AIzaSyC8UYZpvA2eknNex0Pjid0_eTLJoDu6los
-AIzaSyCjc_pVEDi4qsv5MtC2dMXzpIaDoRFLsxw
+
+2:
 AIzaSyDHQ9ipnphqTzDqZsbtd8_Ru4_kiKVQe2k
+
+19:
+AIzaSyCjc_pVEDi4qsv5MtC2dMXzpIaDoRFLsxw
+
+39:
+AIzaSyCtkvNIR1HCEwzsqK6JuE6KqpyjusIRI30
+
+75:
+AIzaSyA8eiZmM1FaDVjRy-df2KTyQ_vz_yYM39w
 ~~~
+
+## `access_token`
+
+- https://developers.google.com/identity/protocols/oauth2/native-app
+- https://developers.google.com/youtube/v3/guides/auth/server-side-web-apps
+- https://developers.google.com/youtube/v3/live/guides/auth/installed-apps
 
 ## x-youtube
 
