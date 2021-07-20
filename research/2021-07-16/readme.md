@@ -1,16 +1,5 @@
 # July 16 2021
 
-## oauth
-
-~~~json
-{
-  "access_token": "ya29.a0ARrdaM8IoKZHM_WiGDZpTGASVZ2-FlAEG9zmlboNF5iCovX0b7...",
-  "expires_in": 3599,
-  "scope": "https://www.googleapis.com/auth/youtube-paid-content https://www.googleapis.com/auth/youtube",
-  "token_type": "Bearer"
-}
-~~~
-
 I found a dead simple program for getting OAuth tokens [1]:
 
 ~~~

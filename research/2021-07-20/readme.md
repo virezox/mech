@@ -2,7 +2,9 @@
 
 ## `access_token`
 
-https://developers.google.com/youtube/v3/guides/auth/server-side-web-apps
+- https://developers.google.com/identity/protocols/oauth2/native-app
+- https://developers.google.com/youtube/v3/guides/auth/server-side-web-apps
+- https://developers.google.com/youtube/v3/live/guides/auth/installed-apps
 
 ## key
 
