@@ -1,5 +1,22 @@
 # July 18 2021
 
+## key
+
+What `key`s are available? First, we have `youtube.com`:
+
+~~~
+AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8
+~~~
+
+What about `youtube.com/tv`:
+
+~~~
+Mozilla/5.0 (Linux; Tizen 2.3; SmartTV)
+AIzaSyDCU8hByM-4DrUqRUYnGn-3llEO78bcxq8
+~~~
+
+## oauth
+
 > I'd be more interested in trying to find the flow for generating a token in
 > the first place.
 
