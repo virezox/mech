@@ -24,11 +24,11 @@ type Search struct {
    }
 }
 
-func ISearch(query string) (*Search, error) {
-   var i youTubeI
-   i.Context.Client = Mweb
-   i.Query = query
-   res, err := i.post("/youtubei/v1/search")
+func NewSearch(query string) (*Search, error) {
+   var body youTubeI
+   body.Context.Client = Mweb
+   body.Query = query
+   res, err := post(origin + "/youtubei/v1/search", body)
    if err != nil {
       return nil, err
    }

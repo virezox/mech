@@ -1,8 +1,16 @@
 # July 20 2021
 
+## headers
+
 ~~~
 Mozilla/5.0 (Linux; Tizen 2.3; SmartTV)
 ~~~
+
+~~~
+X-Goog-Api-Key
+~~~
+
+https://cloud.google.com/apis/docs/system-parameters
 
 ## device approach
 
