@@ -25,7 +25,8 @@ type Search struct {
 }
 
 func ISearch(query string) (*Search, error) {
-   i := newYouTubeI()
+   var i youTubeI
+   i.Context.Client = Mweb
    i.Query = query
    res, err := i.post("/youtubei/v1/search")
    if err != nil {

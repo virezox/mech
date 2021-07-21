@@ -23,6 +23,9 @@ type Player struct {
    VideoDetails `json:"videoDetails"`
 }
 
+
+var Mweb = Client{"MWEB", "2.19700101"}
+
 func GetVideoInfo(id string, detailPage bool) (*Player, error) {
    req, err := http.NewRequest("GET", origin + "/get_video_info", nil)
    if err != nil {
@@ -61,7 +64,8 @@ func GetVideoInfo(id string, detailPage bool) (*Player, error) {
 }
 
 func IPlayer(id string) (*Player, error) {
-   i := newYouTubeI()
+   var i youTubeI
+   i.Context.Client = Mweb
    i.VideoID = id
    res, err := i.post("/youtubei/v1/player")
    if err != nil {
@@ -91,23 +95,19 @@ type VideoDetails struct {
    ViewCount int `json:"viewCount,string"`
 }
 
+type Client struct {
+   ClientName string `json:"clientName"`
+   ClientVersion string `json:"clientVersion"`
+}
+
 type youTubeI struct {
    Context struct {
-      Client struct {
-         ClientName string `json:"clientName"`
-         ClientVersion string `json:"clientVersion"`
-      } `json:"client"`
+      Client Client `json:"client"`
    } `json:"context"`
    Query string `json:"query"`
    VideoID string `json:"videoId"`
 }
 
-func newYouTubeI() youTubeI {
-   var i youTubeI
-   i.Context.Client.ClientName = "MWEB"
-   i.Context.Client.ClientVersion = "2.19700101"
-   return i
-}
 
 func (i youTubeI) post(path string) (*http.Response, error) {
    buf := new(bytes.Buffer)
