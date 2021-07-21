@@ -9,52 +9,10 @@ import (
 
 const origin = "https://www.youtube.com"
 
-type Microformat struct {
-   PlayerMicroformatRenderer `json:"playerMicroformatRenderer"`
-}
-
-type Player struct {
-   Microformat `json:"microformat"`
-   PlayabilityStatus struct {
-      Reason string
-   }
-   StreamingData `json:"streamingData"`
-   VideoDetails `json:"videoDetails"`
-}
-
 var (
    Android = Client{"ANDROID", "16.05"}
    Mweb = Client{"MWEB", "2.19700101"}
 )
-
-type PlayerMicroformatRenderer struct {
-   PublishDate string
-}
-
-type StreamingData struct {
-   AdaptiveFormats FormatSlice
-}
-
-type VideoDetails struct {
-   Author string
-   ShortDescription string
-   Title string
-   VideoID string
-   ViewCount int `json:"viewCount,string"`
-}
-
-type Client struct {
-   ClientName string `json:"clientName"`
-   ClientVersion string `json:"clientVersion"`
-}
-
-type youTubeI struct {
-   Context struct {
-      Client Client `json:"client"`
-   } `json:"context"`
-   Query string `json:"query"`
-   VideoID string `json:"videoId"`
-}
 
 func post(url string, body youTubeI) (*http.Response, error) {
    buf := new(bytes.Buffer)
@@ -77,6 +35,24 @@ func post(url string, body youTubeI) (*http.Response, error) {
    return res, nil
 }
 
+type Client struct {
+   ClientName string `json:"clientName"`
+   ClientVersion string `json:"clientVersion"`
+}
+
+type Microformat struct {
+   PlayerMicroformatRenderer `json:"playerMicroformatRenderer"`
+}
+
+type Player struct {
+   Microformat `json:"microformat"`
+   PlayabilityStatus struct {
+      Reason string
+   }
+   StreamingData `json:"streamingData"`
+   VideoDetails `json:"videoDetails"`
+}
+
 func NewPlayer(id string, c Client) (*Player, error) {
    var body youTubeI
    body.Context.Client = c
@@ -91,4 +67,28 @@ func NewPlayer(id string, c Client) (*Player, error) {
       return nil, err
    }
    return p, nil
+}
+
+type PlayerMicroformatRenderer struct {
+   PublishDate string
+}
+
+type StreamingData struct {
+   AdaptiveFormats FormatSlice
+}
+
+type VideoDetails struct {
+   Author string
+   ShortDescription string
+   Title string
+   VideoID string
+   ViewCount int `json:"viewCount,string"`
+}
+
+type youTubeI struct {
+   Context struct {
+      Client Client `json:"client"`
+   } `json:"context"`
+   Query string `json:"query"`
+   VideoID string `json:"videoId"`
 }

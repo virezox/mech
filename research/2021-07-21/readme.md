@@ -1,16 +1,34 @@
-# July 20 2021
+# July 21 2021
 
-## headers
+## how to get `client_id` and `client_secret`
 
-~~~
-Mozilla/5.0 (Linux; Tizen 2.3; SmartTV)
-~~~
+Set User-Agent to [1]:
 
 ~~~
-X-Goog-Api-Key
+Mozilla/5.0 (SMART-TV; LINUX; Tizen 5.0)
 ~~~
 
-https://cloud.google.com/apis/docs/system-parameters
+Then visit:
+
+https://www.youtube.com/tv
+
+Next open your browser menu, and click Web Developer, Network or similar. Then
+go back to the page, and click "Sign in", then "Sign in on your TV". After
+signing in, go back to Developer Tools, and find a JSON request like this:
+
+~~~
+POST /o/oauth2/token HTTP/1.1
+Host: www.youtube.com
+
+{"client_id":"861556708454-912i5jlic99ecvu3ro5kqirg0hldli5t.apps.googleusercontent.com",
+"client_secret":"ju2WuMJMOjilz_h_1dPgFdeU",
+"code":"4/0AX4XfWjBflJwhKMBYl7yNqq8JhrqcIvYTFjf86LPR9tss2cTJU6d6I2vfTuDLn9ri...",
+"grant_type":"authorization_code","redirect_uri":"https://www.youtube.com/tv"}
+~~~
+
+References:
+
+1. https://developer.samsung.com/smarttv/develop/guides/fundamentals/retrieving-platform-information.html
 
 ## device approach
 
@@ -103,3 +121,4 @@ Unless someone finds a magic way with the Android keys I put, it seems OAuth is
 the best way to handle this situation.
 
 1. https://developers.google.com/identity/protocols/oauth2/native-app
+
