@@ -32,9 +32,8 @@ func clean(r rune) rune {
 func main() {
    var (
       atag, vtag int
-      detailPage, info bool
+      info bool
    )
-   flag.BoolVar(&detailPage, "d", false, "playback on other websites has been disabled")
    flag.BoolVar(&info, "i", false, "info only")
    flag.IntVar(&atag, "a", 0, "audio (-1 to skip)")
    flag.IntVar(&vtag, "v", 0, "video (-1 to skip)")
@@ -51,7 +50,7 @@ func main() {
       panic(err)
    }
    id := watch.Query().Get("v")
-   play, err := youtube.GetVideoInfo(id, detailPage)
+   play, err := youtube.NewPlayer(id, youtube.Android, youtube.Key)
    if err != nil {
       panic(err)
    }

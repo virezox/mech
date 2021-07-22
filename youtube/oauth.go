@@ -13,13 +13,13 @@ const (
    clientSecret = "SboVhoG9s0rNafixCSGGKXAT"
 )
 
-type Auth struct {
+type OAuth struct {
    Device_Code string
    User_Code string
    Verification_URL string
 }
 
-func NewAuth() (*Auth, error) {
+func NewOAuth() (*OAuth, error) {
    data := url.Values{
       "client_id": {clientID},
       "scope": {"https://www.googleapis.com/auth/youtube"},
@@ -29,18 +29,18 @@ func NewAuth() (*Auth, error) {
       return nil, err
    }
    defer res.Body.Close()
-   a := new(Auth)
-   if err := json.NewDecoder(res.Body).Decode(a); err != nil {
+   o := new(OAuth)
+   if err := json.NewDecoder(res.Body).Decode(o); err != nil {
       return nil, err
    }
-   return a, nil
+   return o, nil
 }
 
-func (a Auth) Exchange() (*Exchange, error) {
+func (o OAuth) Exchange() (*Exchange, error) {
    data := url.Values{
       "client_id": {clientID},
       "client_secret": {clientSecret},
-      "device_code": {a.Device_Code},
+      "device_code": {o.Device_Code},
       "grant_type":  {"urn:ietf:params:oauth:grant-type:device_code"},
    }
    res, err := http.PostForm("https://oauth2.googleapis.com/token", data)

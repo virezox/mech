@@ -2,7 +2,8 @@
 
 ## Device OAuth
 
-https://developers.google.com/identity/sign-in/devices
+- https://datatracker.ietf.org/doc/html/rfc8628
+- https://developers.google.com/identity/sign-in/devices
 
 ## How to get X-Goog-Api-Key
 

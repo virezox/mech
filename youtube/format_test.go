@@ -7,7 +7,7 @@ import (
 )
 
 func TestSort(t *testing.T) {
-   p, err := youtube.NewPlayer("XeojXq6ySs4", youtube.Android)
+   p, err := youtube.NewPlayer("XeojXq6ySs4", youtube.Android, youtube.Key)
    if err != nil {
       t.Fatal(err)
    }

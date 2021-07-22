@@ -28,7 +28,7 @@ func NewSearch(query string) (*Search, error) {
    var body youTubeI
    body.Context.Client = Mweb
    body.Query = query
-   res, err := post(origin + "/youtubei/v1/search", body)
+   res, err := post(origin + "/youtubei/v1/search", Key, body)
    if err != nil {
       return nil, err
    }

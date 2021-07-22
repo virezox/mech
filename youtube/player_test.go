@@ -6,9 +6,6 @@ import (
    "testing"
 )
 
-// OAuth
-// SkRSXFQerZs
-
 const desc = "Provided to YouTube by Epitaph\n\nSnowflake · Kate Bush\n\n" +
 "50 Words For Snow\n\n" +
 "℗ Noble & Brite Ltd. trading as Fish People, under exclusive license to Anti Inc.\n\n" +
@@ -17,7 +14,7 @@ const desc = "Provided to YouTube by Epitaph\n\nSnowflake · Kate Bush\n\n" +
 
 func TestGetVideoInfo(t *testing.T) {
    // Playback on other websites has been disabled by the video owner
-   p, err := youtube.NewPlayer("MeJVWBSsPAY", youtube.Android)
+   p, err := youtube.NewPlayer("MeJVWBSsPAY", youtube.Android, youtube.Key)
    if err != nil {
       t.Fatal(err)
    }
@@ -30,7 +27,7 @@ func TestGetVideoInfo(t *testing.T) {
 }
 
 func TestPlayer(t *testing.T) {
-   p, err := youtube.NewPlayer("XeojXq6ySs4", youtube.Mweb)
+   p, err := youtube.NewPlayer("XeojXq6ySs4", youtube.Mweb, youtube.Key)
    if err != nil {
       t.Fatal(err)
    }

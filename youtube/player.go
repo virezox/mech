@@ -9,12 +9,14 @@ import (
 
 const origin = "https://www.youtube.com"
 
+var Key = Auth{"X-Goog-Api-Key", "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8"}
+
 var (
    Android = Client{"ANDROID", "16.05"}
    Mweb = Client{"MWEB", "2.19700101"}
 )
 
-func post(url string, body youTubeI) (*http.Response, error) {
+func post(url string, head Auth, body youTubeI) (*http.Response, error) {
    buf := new(bytes.Buffer)
    if err := json.NewEncoder(buf).Encode(body); err != nil {
       return nil, err
@@ -23,7 +25,7 @@ func post(url string, body youTubeI) (*http.Response, error) {
    if err != nil {
       return nil, err
    }
-   req.Header.Set("X-Goog-Api-Key", "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8")
+   req.Header.Set(head.Key, head.Val)
    fmt.Println(invert, req.Method, reset, req.URL)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
@@ -33,6 +35,11 @@ func post(url string, body youTubeI) (*http.Response, error) {
       return nil, fmt.Errorf("status %v", res.Status)
    }
    return res, nil
+}
+
+type Auth struct {
+   Key string
+   Val string
 }
 
 type Client struct {
@@ -53,11 +60,12 @@ type Player struct {
    VideoDetails `json:"videoDetails"`
 }
 
-func NewPlayer(id string, c Client) (*Player, error) {
-   var body youTubeI
-   body.Context.Client = c
-   body.VideoID = id
-   res, err := post(origin + "/youtubei/v1/player", body)
+func NewPlayer(id string, head Auth, body Client) (*Player, error) {
+   var i youTubeI
+   i.Context.Client = body
+   i.RacyCheckOK = true
+   i.VideoID = id
+   res, err := post(origin + "/youtubei/v1/player", head, i)
    if err != nil {
       return nil, err
    }
@@ -90,5 +98,6 @@ type youTubeI struct {
       Client Client `json:"client"`
    } `json:"context"`
    Query string `json:"query"`
+   RacyCheckOK bool `json:"racyCheckOk"`
    VideoID string `json:"videoId"`
 }
