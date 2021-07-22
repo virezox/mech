@@ -7,36 +7,18 @@ import (
    "net/url"
    "os"
    "strings"
-   "time"
 )
-
-func numberFormat(d int64, a ...string) string {
-   var (
-      e = float64(d)
-      f int
-   )
-   for e >= 1000 {
-      e /= 1000
-      f++
-   }
-   return fmt.Sprintf("%.1f", e) + a[f]
-}
-
-func clean(r rune) rune {
-   if strings.ContainsRune(`"*/:<>?\|`, r) {
-      return -1
-   }
-   return r
-}
 
 func main() {
    var (
       atag, vtag int
-      info, read, write bool
+      info bool
+      construct, exchange, refresh bool
    )
    flag.BoolVar(&info, "i", false, "info only")
-   flag.BoolVar(&read, "r", false, "read auth from file")
-   flag.BoolVar(&write, "w", false, "write auth to file")
+   flag.BoolVar(&construct, "c", false, "OAuth construct request")
+   flag.BoolVar(&exchange, "e", false, "OAuth token exchange")
+   flag.BoolVar(&refresh, "r", false, "OAuth token refresh")
    flag.IntVar(&atag, "a", 0, "audio (-1 to skip)")
    flag.IntVar(&vtag, "v", 0, "video (-1 to skip)")
    flag.Parse()
@@ -46,9 +28,17 @@ func main() {
       flag.PrintDefaults()
       return
    }
-   // write
-   if write {
-      err := authWrite()
+   // exchange
+   if exchange {
+      err := authExchange()
+      if err != nil {
+         panic(err)
+      }
+      return
+   }
+   // refresh
+   if refresh {
+      err := authRefresh()
       if err != nil {
          panic(err)
       }
@@ -61,8 +51,8 @@ func main() {
    }
    id := watch.Query().Get("v")
    auth := youtube.Key
-   if read {
-      x, err := authRead()
+   if construct {
+      x, err := authConstruct()
       if err != nil {
          panic(err)
       }
@@ -98,7 +88,8 @@ func main() {
       }
       fmts := play.AdaptiveFormats.Filter(fn)
       if fmts == nil {
-         fmt.Println(play.PlayabilityStatus.Reason)
+         ps := play.PlayabilityStatus
+         fmt.Println(ps.Status, ps.ReasonTitle)
          return
       }
       err := download(play, fmts[0])
@@ -107,6 +98,26 @@ func main() {
       }
    }
 }
+
+func numberFormat(d int64, a ...string) string {
+   var (
+      e = float64(d)
+      f int
+   )
+   for e >= 1000 {
+      e /= 1000
+      f++
+   }
+   return fmt.Sprintf("%.1f", e) + a[f]
+}
+
+func clean(r rune) rune {
+   if strings.ContainsRune(`"*/:<>?\|`, r) {
+      return -1
+   }
+   return r
+}
+
 
 func getInfo(play *youtube.Player) {
    fmt.Println("author:", play.Author)
@@ -131,10 +142,5 @@ func download(p *youtube.Player, f youtube.Format) error {
       return err
    }
    defer file.Close()
-   begin := time.Now()
-   if err := f.Write(file); err != nil {
-      return err
-   }
-   fmt.Println(time.Since(begin))
-   return nil
+   return f.Write(file)
 }

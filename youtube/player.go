@@ -5,6 +5,8 @@ import (
    "encoding/json"
    "fmt"
    "net/http"
+   "net/http/httputil"
+   "os"
 )
 
 const origin = "https://www.youtube.com"
@@ -26,7 +28,11 @@ func post(url string, head Auth, body youTubeI) (*http.Response, error) {
       return nil, err
    }
    req.Header.Set(head.Key, head.Val)
-   fmt.Println(invert, req.Method, reset, req.URL)
+   dump, err := httputil.DumpRequest(req, true)
+   if err != nil {
+      return nil, err
+   }
+   os.Stdout.Write(dump)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -54,7 +60,8 @@ type Microformat struct {
 type Player struct {
    Microformat `json:"microformat"`
    PlayabilityStatus struct {
-      Reason string
+      ReasonTitle string
+      Status string
    }
    StreamingData `json:"streamingData"`
    VideoDetails `json:"videoDetails"`
@@ -97,7 +104,7 @@ type youTubeI struct {
    Context struct {
       Client Client `json:"client"`
    } `json:"context"`
-   Query string `json:"query"`
+   Query string `json:"query,omitempty"`
    RacyCheckOK bool `json:"racyCheckOk"`
    VideoID string `json:"videoId"`
 }
