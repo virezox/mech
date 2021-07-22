@@ -32,9 +32,10 @@ func clean(r rune) rune {
 func main() {
    var (
       atag, vtag int
-      info bool
+      info, save bool
    )
    flag.BoolVar(&info, "i", false, "info only")
+   flag.BoolVar(&save, "s", false, "save refresh_token to file")
    flag.IntVar(&atag, "a", 0, "audio (-1 to skip)")
    flag.IntVar(&vtag, "v", 0, "video (-1 to skip)")
    flag.Parse()
@@ -44,13 +45,21 @@ func main() {
       flag.PrintDefaults()
       return
    }
+   // save
+   if save {
+      err := authSet()
+      if err != nil {
+         panic(err)
+      }
+      return
+   }
    // check URL
    watch, err := url.Parse(flag.Arg(0))
    if err != nil {
       panic(err)
    }
    id := watch.Query().Get("v")
-   play, err := youtube.NewPlayer(id, youtube.Android, youtube.Key)
+   play, err := youtube.NewPlayer(id, youtube.Key, youtube.Android)
    if err != nil {
       panic(err)
    }
