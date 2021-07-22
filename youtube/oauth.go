@@ -2,8 +2,12 @@ package youtube
 
 import (
    "encoding/json"
+   "fmt"
    "net/http"
+   "net/http/httputil"
    "net/url"
+   "os"
+   "strings"
 )
 
 const (
@@ -67,10 +71,26 @@ func (x *Exchange) Refresh() error {
       "grant_type": {"refresh_token"},
       "refresh_token": {x.Refresh_Token},
    }
-   res, err := http.PostForm("https://oauth2.googleapis.com/token", data)
+   req, err := http.NewRequest(
+      "POST", "https://oauth2.googleapis.com/token",
+      strings.NewReader(data.Encode()),
+   )
+   if err != nil {
+      return err
+   }
+   req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+   dump, err := httputil.DumpRequest(req, true)
+   if err != nil {
+      return err
+   }
+   os.Stdout.Write(dump)
+   res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return err
    }
    defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return fmt.Errorf("status %v", res.Status)
+   }
    return json.NewDecoder(res.Body).Decode(x)
 }

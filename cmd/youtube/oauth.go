@@ -7,8 +7,7 @@ import (
    "os"
 )
 
-// write auth to file
-func authWrite() error {
+func authExchange() error {
    o, err := youtube.NewOAuth()
    if err != nil {
       return err
@@ -43,8 +42,7 @@ func authWrite() error {
    return e.Encode(x)
 }
 
-// read auth from file
-func authRead() (*youtube.Exchange, error) {
+func authConstruct() (*youtube.Exchange, error) {
    c, err := os.UserCacheDir()
    if err != nil {
       return nil, err
@@ -59,4 +57,26 @@ func authRead() (*youtube.Exchange, error) {
       return nil, err
    }
    return x, nil
+}
+
+func authRefresh() error {
+   x, err := authConstruct()
+   if err != nil {
+      return err
+   }
+   if err := x.Refresh(); err != nil {
+      return err
+   }
+   c, err := os.UserCacheDir()
+   if err != nil {
+      return err
+   }
+   f, err := os.Create(c + "/mech/youtube.json")
+   if err != nil {
+      return err
+   }
+   defer f.Close()
+   e := json.NewEncoder(f)
+   e.SetIndent("", " ")
+   return e.Encode(x)
 }

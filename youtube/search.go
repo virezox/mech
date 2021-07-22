@@ -1,11 +1,6 @@
 package youtube
 import "encoding/json"
 
-const (
-   invert = "\x1b[7m"
-   reset = "\x1b[m"
-)
-
 type CompactVideoRenderer struct {
    VideoID string
 }

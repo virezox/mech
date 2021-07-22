@@ -6,6 +6,8 @@ import (
    "io"
    "mime"
    "net/http"
+   "net/http/httputil"
+   "os"
    "sort"
 )
 
@@ -34,7 +36,11 @@ func (f Format) Write(w io.Writer) error {
       return err
    }
    var pos int64
-   fmt.Println(invert, req.Method, reset, req.URL)
+   dump, err := httputil.DumpRequest(req, false)
+   if err != nil {
+      return err
+   }
+   os.Stdout.Write(dump)
    for pos < f.ContentLength {
       bytes := fmt.Sprintf("bytes=%v-%v", pos, pos+chunk-1)
       req.Header.Set("Range", bytes)
