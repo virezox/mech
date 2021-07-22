@@ -1,8 +1,7 @@
-package main
+package youtube
 
 import (
    "encoding/json"
-   "fmt"
    "net/http"
    "net/url"
 )
@@ -14,13 +13,13 @@ const (
    clientSecret = "SboVhoG9s0rNafixCSGGKXAT"
 )
 
-type authorization struct {
+type Auth struct {
    Device_Code string
    User_Code string
    Verification_URL string
 }
 
-func newAuthorization() (*authorization, error) {
+func NewAuth() (*Auth, error) {
    data := url.Values{
       "client_id": {clientID},
       "scope": {"https://www.googleapis.com/auth/youtube"},
@@ -30,38 +29,38 @@ func newAuthorization() (*authorization, error) {
       return nil, err
    }
    defer res.Body.Close()
-   auth := new(authorization)
-   if err := json.NewDecoder(res.Body).Decode(auth); err != nil {
+   a := new(Auth)
+   if err := json.NewDecoder(res.Body).Decode(a); err != nil {
       return nil, err
    }
-   return auth, nil
+   return a, nil
 }
 
-func (a authorization) exchange() (*exchange, error) {
+func (a Auth) Exchange() (*Exchange, error) {
    data := url.Values{
       "client_id": {clientID},
       "client_secret": {clientSecret},
-      "code": {a.Device_Code},
-      "grant_type": {"http://oauth.net/grant_type/device/1.0"},
+      "device_code": {a.Device_Code},
+      "grant_type":  {"urn:ietf:params:oauth:grant-type:device_code"},
    }
    res, err := http.PostForm("https://oauth2.googleapis.com/token", data)
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
-   exch := new(exchange)
-   if err := json.NewDecoder(res.Body).Decode(exch); err != nil {
+   x := new(Exchange)
+   if err := json.NewDecoder(res.Body).Decode(x); err != nil {
       return nil, err
    }
-   return exch, nil
+   return x, nil
 }
 
-type exchange struct {
+type Exchange struct {
    Access_Token string
    Refresh_Token string
 }
 
-func (x *exchange) refresh() error {
+func (x *Exchange) Refresh() error {
    data := url.Values{
       "client_id": {clientID},
       "client_secret": {clientSecret},
@@ -74,30 +73,4 @@ func (x *exchange) refresh() error {
    }
    defer res.Body.Close()
    return json.NewDecoder(res.Body).Decode(x)
-}
-
-func main() {
-   a, err := newAuthorization()
-   if err != nil {
-      panic(err)
-   }
-   fmt.Printf(`1. Go to
-%v
-
-2. Enter this code
-%v
-
-3. Sign in to your Google Account
-
-4. Press Enter to continue`, a.Verification_URL, a.User_Code)
-   fmt.Scanln()
-   x, err := a.exchange()
-   if err != nil {
-      panic(err)
-   }
-   fmt.Printf("%+v\n", x)
-   if err := x.refresh(); err != nil {
-      panic(err)
-   }
-   fmt.Printf("%+v\n", x)
 }
