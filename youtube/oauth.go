@@ -3,7 +3,10 @@ package youtube
 import (
    "encoding/json"
    "net/http"
+   "net/http/httputil"
    "net/url"
+   "os"
+   "strings"
 )
 
 const (
@@ -67,7 +70,19 @@ func (x *Exchange) Refresh() error {
       "grant_type": {"refresh_token"},
       "refresh_token": {x.Refresh_Token},
    }
-   res, err := http.PostForm("https://oauth2.googleapis.com/token", data)
+   req, err := http.NewRequest(
+      "POST", "https://oauth2.googleapis.com/token",
+      strings.NewReader(data.Encode()),
+   )
+   if err != nil {
+      return err
+   }
+   dump, err := httputil.DumpRequest(req, true)
+   if err != nil {
+      return err
+   }
+   os.Stdout.Write(dump)
+   res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return err
    }

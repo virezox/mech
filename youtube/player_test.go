@@ -14,7 +14,7 @@ const desc = "Provided to YouTube by Epitaph\n\nSnowflake · Kate Bush\n\n" +
 
 func TestGetVideoInfo(t *testing.T) {
    // Playback on other websites has been disabled by the video owner
-   p, err := youtube.NewPlayer("MeJVWBSsPAY", youtube.Android, youtube.Key)
+   p, err := youtube.NewPlayer("MeJVWBSsPAY", youtube.Key, youtube.Android)
    if err != nil {
       t.Fatal(err)
    }
@@ -27,7 +27,7 @@ func TestGetVideoInfo(t *testing.T) {
 }
 
 func TestPlayer(t *testing.T) {
-   p, err := youtube.NewPlayer("XeojXq6ySs4", youtube.Mweb, youtube.Key)
+   p, err := youtube.NewPlayer("XeojXq6ySs4", youtube.Key, youtube.Mweb)
    if err != nil {
       t.Fatal(err)
    }
