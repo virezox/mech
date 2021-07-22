@@ -1,5 +1,7 @@
 # July 21 2021
 
+https://pkg.go.dev/golang.org/x/oauth2/google
+
 ## native app approach
 
 Update: here is the process for "native app" [1]. First, program prompts user
@@ -36,4 +38,3 @@ Unless someone finds a magic way with the Android keys I put, it seems OAuth is
 the best way to handle this situation.
 
 1. https://developers.google.com/identity/protocols/oauth2/native-app
-
