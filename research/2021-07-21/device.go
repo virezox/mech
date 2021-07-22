@@ -5,7 +5,6 @@ import (
    "fmt"
    "net/http"
    "net/url"
-   "os"
 )
 
 const (
@@ -15,22 +14,73 @@ const (
    clientSecret = "SboVhoG9s0rNafixCSGGKXAT"
 )
 
-func main() {
+type authorization struct {
+   Device_Code string
+   User_Code string
+   Verification_URL string
+}
+
+func newAuthorization() (*authorization, error) {
    data := url.Values{
       "client_id": {clientID},
       "scope": {"https://www.googleapis.com/auth/youtube"},
    }
    res, err := http.PostForm("https://oauth2.googleapis.com/device/code", data)
    if err != nil {
-      panic(err)
+      return nil, err
    }
    defer res.Body.Close()
-   var auth struct {
-      Device_Code string
-      User_Code string
-      Verification_URL string
+   auth := new(authorization)
+   if err := json.NewDecoder(res.Body).Decode(auth); err != nil {
+      return nil, err
    }
-   json.NewDecoder(res.Body).Decode(&auth)
+   return auth, nil
+}
+
+func (a authorization) exchange() (*exchange, error) {
+   data := url.Values{
+      "client_id": {clientID},
+      "client_secret": {clientSecret},
+      "code": {a.Device_Code},
+      "grant_type": {"http://oauth.net/grant_type/device/1.0"},
+   }
+   res, err := http.PostForm("https://oauth2.googleapis.com/token", data)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   exch := new(exchange)
+   if err := json.NewDecoder(res.Body).Decode(exch); err != nil {
+      return nil, err
+   }
+   return exch, nil
+}
+
+type exchange struct {
+   Access_Token string
+   Refresh_Token string
+}
+
+func (x *exchange) refresh() error {
+   data := url.Values{
+      "client_id": {clientID},
+      "client_secret": {clientSecret},
+      "grant_type": {"refresh_token"},
+      "refresh_token": {x.Refresh_Token},
+   }
+   res, err := http.PostForm("https://oauth2.googleapis.com/token", data)
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   return json.NewDecoder(res.Body).Decode(x)
+}
+
+func main() {
+   a, err := newAuthorization()
+   if err != nil {
+      panic(err)
+   }
    fmt.Printf(`1. Go to
 %v
 
@@ -39,20 +89,15 @@ func main() {
 
 3. Sign in to your Google Account
 
-4. Press Enter to continue`, auth.Verification_URL, auth.User_Code)
+4. Press Enter to continue`, a.Verification_URL, a.User_Code)
    fmt.Scanln()
-   data = url.Values{
-      "client_id": {clientID},
-      "client_secret": {clientSecret},
-      "code": {auth.Device_Code},
-      "grant_type": {"http://oauth.net/grant_type/device/1.0"},
-   }
-   if res, err := http.PostForm(
-      "https://oauth2.googleapis.com/token", data,
-   ); err != nil {
+   x, err := a.exchange()
+   if err != nil {
       panic(err)
-   } else {
-      defer res.Body.Close()
-      os.Stdout.ReadFrom(res.Body)
    }
+   fmt.Printf("%+v\n", x)
+   if err := x.refresh(); err != nil {
+      panic(err)
+   }
+   fmt.Printf("%+v\n", x)
 }
