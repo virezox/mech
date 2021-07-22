@@ -7,8 +7,8 @@ import (
    "os"
 )
 
-// save auth to file
-func authSet() error {
+// write auth to file
+func authWrite() error {
    o, err := youtube.NewOAuth()
    if err != nil {
       return err
@@ -38,11 +38,13 @@ func authSet() error {
       return err
    }
    defer f.Close()
-   return json.NewEncoder(f).Encode(x)
+   e := json.NewEncoder(f)
+   e.SetIndent("", " ")
+   return e.Encode(x)
 }
 
 // read auth from file
-func authGet() (*youtube.Exchange, error) {
+func authRead() (*youtube.Exchange, error) {
    c, err := os.UserCacheDir()
    if err != nil {
       return nil, err

@@ -32,22 +32,23 @@ func clean(r rune) rune {
 func main() {
    var (
       atag, vtag int
-      info, save bool
+      info, read, write bool
    )
    flag.BoolVar(&info, "i", false, "info only")
-   flag.BoolVar(&save, "s", false, "save refresh_token to file")
+   flag.BoolVar(&read, "r", false, "read auth from file")
+   flag.BoolVar(&write, "w", false, "write auth to file")
    flag.IntVar(&atag, "a", 0, "audio (-1 to skip)")
    flag.IntVar(&vtag, "v", 0, "video (-1 to skip)")
    flag.Parse()
-   if flag.NArg() != 1 {
+   if len(os.Args) == 1 {
       // URL is not required if we are just printing help
       fmt.Println("youtube [flags] [URL]")
       flag.PrintDefaults()
       return
    }
-   // save
-   if save {
-      err := authSet()
+   // write
+   if write {
+      err := authWrite()
       if err != nil {
          panic(err)
       }
@@ -59,7 +60,15 @@ func main() {
       panic(err)
    }
    id := watch.Query().Get("v")
-   play, err := youtube.NewPlayer(id, youtube.Key, youtube.Android)
+   auth := youtube.Key
+   if read {
+      x, err := authRead()
+      if err != nil {
+         panic(err)
+      }
+      auth = youtube.Auth{"Authorization", "Bearer " + x.Access_Token}
+   }
+   play, err := youtube.NewPlayer(id, auth, youtube.Android)
    if err != nil {
       panic(err)
    }

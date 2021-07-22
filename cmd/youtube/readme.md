@@ -1,20 +1,8 @@
 # YouTube
 
-## Age gate
+## OAuth
 
-detailPage:
-
-https://www.youtube.com/watch?v=MeJVWBSsPAY
-
-Video that can be embedded:
-
-- https://www.youtube.com/embed/HtVdAasjOgU
-- https://www.youtube.com/watch?v=HtVdAasjOgU
-
-Other age gate video exist, that cannot be embedded:
-
-- https://www.youtube.com/embed/bO7PgQ-DtZk
-- https://www.youtube.com/watch?v=bO7PgQ-DtZk
+https://www.youtube.com/watch?v=Cr381pDsSsA
 
 ## Sort
 

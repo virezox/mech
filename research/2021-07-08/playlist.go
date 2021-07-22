@@ -3,11 +3,12 @@ package picture
 import (
    "fmt"
    "github.com/89z/mech/musicbrainz"
-   "github.com/89z/mech/youtube"
    "time"
+   // "github.com/89z/mech/youtube"
 )
 
 func search(query string) (string, error) {
+   /*
    s, err := youtube.ISearch(query)
    if err != nil {
       return "", err
@@ -17,6 +18,7 @@ func search(query string) (string, error) {
          return vid.VideoID, nil
       }
    }
+   */
    return "", fmt.Errorf("%q fail", query)
 }
 
