@@ -5,57 +5,32 @@ import (
    "fmt"
    "github.com/89z/mech"
    "net/http"
-   "os"
 )
 
-type newsArticle struct {
-   Video struct {
-      ContentURL string
-   }
-}
+const addr =
+   "http://nytimes.com/2021/07/14/podcasts/the-daily" +
+   "/heat-wave-climate-change-pacific-northwest.html"
 
-func open(source string) ([]string, error) {
-   res, err := http.Get(source)
+func main() {
+   fmt.Println(addr)
+   res, err := http.Get(addr)
    if err != nil {
-      return nil, err
+      panic(err)
    }
    defer res.Body.Close()
    doc, err := mech.Parse(res.Body)
    if err != nil {
-      return nil, err
-   }
-   var nodes []string
-   img := doc.ByAttr("property", "og:image")
-   for img.Scan() {
-      nodes = append(nodes, img.Attr("content"))
-   }
-   vid := doc.ByAttr("property", "og:video")
-   for vid.Scan() {
-      nodes = append(nodes, vid.Attr("content"))
+      panic(err)
    }
    script := doc.ByAttr("type", "application/ld+json")
    for script.Scan() {
       text := []byte(script.Text())
-      var na newsArticle
-      json.Unmarshal(text, &na)
-      if na.Video.ContentURL != "" {
-         nodes = append(nodes, na.Video.ContentURL)
+      var audio struct {
+         ContentURL string
       }
-   }
-   return nodes, nil
-}
-
-func main() {
-   if len(os.Args) != 2 {
-      fmt.Println("page-media <URL>")
-      return
-   }
-   arg := os.Args[1]
-   items, err := open(arg)
-   if err != nil {
-      panic(err)
-   }
-   for _, item := range items {
-      fmt.Println(item)
+      json.Unmarshal(text, &audio)
+      if audio.ContentURL != "" {
+         fmt.Println(audio.ContentURL)
+      }
    }
 }
