@@ -15,6 +15,7 @@ var Key = Auth{"X-Goog-Api-Key", "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8"}
 
 var (
    Android = Client{"ANDROID", "16.05"}
+   Embed = Client{"ANDROID_EMBEDDED_PLAYER", "16.05"}
    Mweb = Client{"MWEB", "2.19700101"}
 )
 
@@ -70,8 +71,10 @@ type Player struct {
 func NewPlayer(id string, head Auth, body Client) (*Player, error) {
    var i youTubeI
    i.Context.Client = body
-   i.RacyCheckOK = true
    i.VideoID = id
+   if head != Key {
+      i.RacyCheckOK = true
+   }
    res, err := post(origin + "/youtubei/v1/player", head, i)
    if err != nil {
       return nil, err
@@ -105,6 +108,6 @@ type youTubeI struct {
       Client Client `json:"client"`
    } `json:"context"`
    Query string `json:"query,omitempty"`
-   RacyCheckOK bool `json:"racyCheckOk"`
+   RacyCheckOK bool `json:"racyCheckOk,omitempty"`
    VideoID string `json:"videoId"`
 }

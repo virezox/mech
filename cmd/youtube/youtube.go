@@ -4,7 +4,6 @@ import (
    "flag"
    "fmt"
    "github.com/89z/mech/youtube"
-   "net/url"
    "os"
    "strings"
 )
@@ -12,19 +11,20 @@ import (
 func main() {
    var (
       atag, vtag int
-      info bool
+      embed, info bool
       construct, exchange, refresh bool
    )
-   flag.BoolVar(&info, "i", false, "info only")
    flag.BoolVar(&construct, "c", false, "OAuth construct request")
-   flag.BoolVar(&exchange, "e", false, "OAuth token exchange")
+   flag.BoolVar(&embed, "e", false, "use embedded player")
+   flag.BoolVar(&exchange, "x", false, "OAuth token exchange")
+   flag.BoolVar(&info, "i", false, "info only")
    flag.BoolVar(&refresh, "r", false, "OAuth token refresh")
    flag.IntVar(&atag, "a", 0, "audio (-1 to skip)")
    flag.IntVar(&vtag, "v", 0, "video (-1 to skip)")
    flag.Parse()
    if len(os.Args) == 1 {
       // URL is not required if we are just printing help
-      fmt.Println("youtube [flags] [URL]")
+      fmt.Println("youtube [flags] [video ID]")
       flag.PrintDefaults()
       return
    }
@@ -44,12 +44,7 @@ func main() {
       }
       return
    }
-   // check URL
-   watch, err := url.Parse(flag.Arg(0))
-   if err != nil {
-      panic(err)
-   }
-   id := watch.Query().Get("v")
+   // head
    auth := youtube.Key
    if construct {
       x, err := authConstruct()
@@ -58,7 +53,12 @@ func main() {
       }
       auth = youtube.Auth{"Authorization", "Bearer " + x.Access_Token}
    }
-   play, err := youtube.NewPlayer(id, auth, youtube.Android)
+   // body
+   client := youtube.Android
+   if embed {
+      client = youtube.Embed
+   }
+   play, err := youtube.NewPlayer(flag.Arg(0), auth, client)
    if err != nil {
       panic(err)
    }
@@ -117,7 +117,6 @@ func clean(r rune) rune {
    }
    return r
 }
-
 
 func getInfo(play *youtube.Player) {
    fmt.Println("author:", play.Author)

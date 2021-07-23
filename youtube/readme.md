@@ -55,4 +55,5 @@ References:
 
 ## Free proxy list
 
-https://proxy.webshare.io/register
+- https://proxy.webshare.io/register
+- https://unblockvideos.com/youtube-video-restriction-checker
