@@ -70,8 +70,10 @@ type Player struct {
 func NewPlayer(id string, head Auth, body Client) (*Player, error) {
    var i youTubeI
    i.Context.Client = body
-   i.RacyCheckOK = true
    i.VideoID = id
+   if head != Key {
+      i.RacyCheckOK = true
+   }
    res, err := post(origin + "/youtubei/v1/player", head, i)
    if err != nil {
       return nil, err
@@ -105,6 +107,6 @@ type youTubeI struct {
       Client Client `json:"client"`
    } `json:"context"`
    Query string `json:"query,omitempty"`
-   RacyCheckOK bool `json:"racyCheckOk"`
+   RacyCheckOK bool `json:"racyCheckOk,omitempty"`
    VideoID string `json:"videoId"`
 }
