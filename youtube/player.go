@@ -69,6 +69,9 @@ type Player struct {
 }
 
 func NewPlayer(id string, head Auth, body Client) (*Player, error) {
+   if len(id) != 11 {
+      return nil, fmt.Errorf("%q use ID only", id)
+   }
    var i youTubeI
    i.Context.Client = body
    i.VideoID = id
@@ -93,6 +96,8 @@ type PlayerMicroformatRenderer struct {
 
 type StreamingData struct {
    AdaptiveFormats FormatSlice
+   // just including this so I can bail if video is Dash Manifest
+   DashManifestURL string
 }
 
 type VideoDetails struct {

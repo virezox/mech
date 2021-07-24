@@ -68,6 +68,9 @@ func main() {
       return
    }
    // sort
+   if play.DashManifestURL != "" {
+      panic(play.DashManifestURL)
+   }
    play.AdaptiveFormats.Sort()
    formats := []youtube.Format{
       {Itag: atag}, {Itag: vtag, Height: 720},
