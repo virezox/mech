@@ -16,4 +16,7 @@ Now lets look at an image to compare:
 https://i.ytimg.com/vi/2rYQg0QmhX8/maxresdefault.jpg
 ~~~
 
-First we need to crop the second image.
+First we need to crop the second image. Then, we need to scale the original
+down.
+
+https://stackoverflow.com/questions/22940724/go-resizing-images

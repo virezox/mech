@@ -72,10 +72,11 @@ func (i Image) Address(id string) string {
    )
 }
 
-func (i Image) Rect() image.Rectangle {
+func (i Image) SubImage(m image.Image) image.Image {
    x0 := (i.Width - i.SubHeight) / 2
    y0 := (i.Height - i.SubHeight) / 2
-   return image.Rect(x0, y0, x0 + i.SubHeight, y0 + i.SubHeight)
+   r := image.Rect(x0, y0, x0 + i.SubHeight, y0 + i.SubHeight)
+   return m.(*image.YCbCr).SubImage(r)
 }
 
 type ImageFormat struct {
