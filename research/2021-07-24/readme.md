@@ -1,5 +1,9 @@
 # July 24 2021
 
+~~~
+image language:go stars:>1 pushed:>2020-07-24 size:0..10
+~~~
+
 ## Percentage difference between images
 
 Lets start with a reference image:
@@ -17,6 +21,8 @@ https://i.ytimg.com/vi/2rYQg0QmhX8/maxresdefault.jpg
 ~~~
 
 First we need to crop the second image. Then, we need to scale the original
-down.
+down. Then we can compare.
 
-https://stackoverflow.com/questions/22940724/go-resizing-images
+- <https://rosettacode.org/wiki/Percentage_difference_between_images>
+- <https://wiki.musicbrainz.org/Cover_Art_Archive/API>
+- https://stackoverflow.com/questions/32680834

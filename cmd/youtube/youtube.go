@@ -11,8 +11,8 @@ import (
 func main() {
    var (
       atag, vtag int
-      embed, info bool
       construct, exchange, refresh bool
+      embed, info bool
    )
    flag.BoolVar(&construct, "c", false, "OAuth construct request")
    flag.BoolVar(&embed, "e", false, "use embedded player")
@@ -26,6 +26,15 @@ func main() {
       // URL is not required if we are just printing help
       fmt.Println("youtube [flags] [video ID]")
       flag.PrintDefaults()
+      return
+   }
+   id := flag.Arg(0)
+   // info
+   if info {
+      err := getInfo(id)
+      if err != nil {
+         panic(err)
+      }
       return
    }
    // exchange
@@ -58,14 +67,9 @@ func main() {
    if embed {
       client = youtube.Embed
    }
-   play, err := youtube.NewPlayer(flag.Arg(0), auth, client)
+   play, err := youtube.NewPlayer(id, auth, client)
    if err != nil {
       panic(err)
-   }
-   // info
-   if info {
-      getInfo(play)
-      return
    }
    // sort
    if play.DashManifestURL != "" {
@@ -92,7 +96,7 @@ func main() {
       fmts := play.AdaptiveFormats.Filter(fn)
       if fmts == nil {
          ps := play.PlayabilityStatus
-         fmt.Println(ps.Status, ps.ReasonTitle)
+         fmt.Println(ps.Status, ps.Reason)
          return
       }
       err := download(play, fmts[0])
@@ -121,11 +125,16 @@ func clean(r rune) rune {
    return r
 }
 
-func getInfo(play *youtube.Player) {
-   fmt.Println("author:", play.Author)
-   fmt.Println("title:", play.Title)
+func getInfo(id string) error {
+   p, err := youtube.NewPlayer(id, youtube.Key, youtube.Mweb)
+   if err != nil {
+      return err
+   }
+   fmt.Println("author:", p.Author)
+   fmt.Println("title:", p.Title)
+   fmt.Println("countries:", p.AvailableCountries)
    fmt.Println()
-   for _, f := range play.AdaptiveFormats {
+   for _, f := range p.AdaptiveFormats {
       fmt.Printf(
          "itag %v, height %v, %v, %v, %v\n",
          f.Itag,
@@ -135,6 +144,7 @@ func getInfo(play *youtube.Player) {
          f.MimeType,
       )
    }
+   return nil
 }
 
 func download(p *youtube.Player, f youtube.Format) error {

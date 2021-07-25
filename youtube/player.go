@@ -61,7 +61,7 @@ type Microformat struct {
 type Player struct {
    Microformat `json:"microformat"`
    PlayabilityStatus struct {
-      ReasonTitle string
+      Reason string
       Status string
    }
    StreamingData `json:"streamingData"`
@@ -91,6 +91,7 @@ func NewPlayer(id string, head Auth, body Client) (*Player, error) {
 }
 
 type PlayerMicroformatRenderer struct {
+   AvailableCountries []string
    PublishDate string
 }
 
