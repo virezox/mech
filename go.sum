@@ -1,3 +1,9 @@
+github.com/andybalholm/dhash v0.0.0-20150501221755-25fc23433e5b h1:/qKwj+YX2BKAQWpGjF46ltVEBeAqOA3TpkYwiYJNYC4=
+github.com/andybalholm/dhash v0.0.0-20150501221755-25fc23433e5b/go.mod h1:pEJ3YFav0jhslvUtQoWYFursrHsi1J3WpvMP3Bk7aCU=
+github.com/andybalholm/go-bit v0.0.0-20150501193155-34813fe0e46a h1:yE4/B7ng2G9tr5DdT/x2bj3u6p3Rze2Ha/61eChret8=
+github.com/andybalholm/go-bit v0.0.0-20150501193155-34813fe0e46a/go.mod h1:xPmFQkJW5/HS/ZMM6soMdODwdIOO9zs3yAhksnFQJE0=
+github.com/myusuf3/imghash v0.0.0-20180208001817-23c5511c7b45 h1:BLTXMj+AOCl86Ngvodg1eB9xuArqXUiieIPmuHGkv7M=
+github.com/myusuf3/imghash v0.0.0-20180208001817-23c5511c7b45/go.mod h1:XhM+UoZAdAjFFenIi+FXlBmrBoNnw3QXrgQp/9Z3DcE=
 golang.org/x/crypto v0.0.0-20210616213533-5ff15b29337e h1:gsTQYXdTw2Gq7RBsWvlQ91b+aEQ6bXFUngBGuR8sPpI=
 golang.org/x/crypto v0.0.0-20210616213533-5ff15b29337e/go.mod h1:GvvjBRRGRdwPK5ydBHafDWAxML/pGHZbMvKqRZ5+Abc=
 golang.org/x/image v0.0.0-20210628002857-a66eb6448b8d h1:RNPAfi2nHY7C2srAV8A49jpsYr0ADedCk1wq6fTMTvs=

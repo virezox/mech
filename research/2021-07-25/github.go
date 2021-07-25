@@ -14,13 +14,12 @@ type repo struct {
 }
 
 var addrs = []string{
-   "Bowbaq/imghash",
    "Nr90/imgsim",
    "ajdnik/imghash",
    "andybalholm/dhash",
    "atijust/ahash",
-   "brgmnn/image-hash.go",
    "corona10/goimagehash",
+   "devedge/imagehash",
    "g3vxy/dhash",
    "myusuf3/imghash",
    "olegfedoseev/image-diff",
