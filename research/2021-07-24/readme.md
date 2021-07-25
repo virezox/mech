@@ -1,9 +1,5 @@
 # July 24 2021
 
-~~~
-image language:go stars:>1 pushed:>2020-07-24 size:0..10
-~~~
-
 ## Percentage difference between images
 
 Lets start with a reference image:
