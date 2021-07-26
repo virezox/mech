@@ -1,5 +1,98 @@
 # July 26 2021
 
+AverageHash:
+
+~~~
+1 11Bvzknjo2Q default
+1 11Bvzknjo2Q mqdefault
+1 11Bvzknjo2Q hqdefault
+1 Nw6k8JdZmo8 mqdefault
+1 nGj5N9Ll9pI default
+1 nGj5N9Ll9pI mqdefault
+1 nGj5N9Ll9pI hqdefault
+1 vJMjpX4Ck2o mqdefault
+1 vJMjpX4Ck2o hqdefault
+2 Nw6k8JdZmo8 hqdefault
+2 vJMjpX4Ck2o default
+3 Nw6k8JdZmo8 default
+12 8jCbvqFqftg sd1
+17 m3TqulO8vXA mqdefault
+17 m3TqulO8vXA hqdefault
+18 8jCbvqFqftg mqdefault
+18 8jCbvqFqftg hqdefault
+18 m3TqulO8vXA default
+19 8jCbvqFqftg default
+20 uHrWHXL065g sd1
+21 4FnsdJkUBhk mqdefault
+21 Osh3waD3pVU sd1
+21 jt5tRaV3iY0 default
+21 jt5tRaV3iY0 mqdefault
+21 jt5tRaV3iY0 hqdefault
+21 jt5tRaV3iY0 sd1
+22 4FnsdJkUBhk default
+22 4FnsdJkUBhk hqdefault
+22 Osh3waD3pVU default
+22 Osh3waD3pVU mqdefault
+22 Osh3waD3pVU hqdefault
+22 uHrWHXL065g default
+22 uHrWHXL065g mqdefault
+22 uHrWHXL065g hqdefault
+23 2bDfLtRqKFs mqdefault
+23 2bDfLtRqKFs sd1
+24 Nw6k8JdZmo8 sd1
+25 11Bvzknjo2Q sd1
+25 XbUOX4lr9Bw default
+25 XbUOX4lr9Bw mqdefault
+25 XbUOX4lr9Bw hqdefault
+25 XbUOX4lr9Bw sd1
+25 jCMi9_6vnxk default
+25 nGj5N9Ll9pI sd1
+25 uIeoAzVUEJw default
+25 uIeoAzVUEJw mqdefault
+25 uIeoAzVUEJw hqdefault
+25 vJMjpX4Ck2o sd1
+26 jCMi9_6vnxk mqdefault
+26 jCMi9_6vnxk hqdefault
+26 qX1uuYWtc7A mqdefault
+26 qX1uuYWtc7A hqdefault
+28 ZXNscpJIzQs sd1
+28 fivLqoP0WhU default
+28 fivLqoP0WhU hqdefault
+28 qX1uuYWtc7A default
+29 ZXNscpJIzQs default
+29 ZXNscpJIzQs mqdefault
+29 ZXNscpJIzQs hqdefault
+29 jCMi9_6vnxk sd1
+29 uIeoAzVUEJw sd1
+31 2bDfLtRqKFs default
+31 2bDfLtRqKFs hqdefault
+31 _vhnMkcK5yo sd1
+31 fivLqoP0WhU mqdefault
+31 fivLqoP0WhU sd1
+32 AvEm3a20Yc4 sd1
+32 B3szYRzZqp4 sd1
+32 m3TqulO8vXA sd1
+32 qX1uuYWtc7A sd1
+33 _vhnMkcK5yo default
+33 _vhnMkcK5yo mqdefault
+33 _vhnMkcK5yo hqdefault
+34 EGrv5FND4GY default
+34 EGrv5FND4GY mqdefault
+34 EGrv5FND4GY hqdefault
+37 AvEm3a20Yc4 default
+37 AvEm3a20Yc4 mqdefault
+37 AvEm3a20Yc4 hqdefault
+37 EGrv5FND4GY sd1
+38 2hqqyncPrd0 default
+38 2hqqyncPrd0 mqdefault
+38 2hqqyncPrd0 hqdefault
+38 B3szYRzZqp4 default
+38 B3szYRzZqp4 mqdefault
+38 B3szYRzZqp4 hqdefault
+41 2hqqyncPrd0 sd1
+44 4FnsdJkUBhk sd1
+~~~
+
 DifferenceHash:
 
 ~~~
