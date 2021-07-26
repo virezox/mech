@@ -52,7 +52,7 @@ func main() {
    if err != nil {
       panic(err)
    }
-   a, err := goimagehash.PerceptionHash(i)
+   a, err := goimagehash.DifferenceHash(i)
    if err != nil {
       panic(err)
    }
@@ -67,7 +67,7 @@ func main() {
          if err != nil {
             panic(err)
          }
-         b, err := goimagehash.PerceptionHash(form.SubImage(i))
+         b, err := goimagehash.DifferenceHash(form.SubImage(i))
          if err != nil {
             panic(err)
          }
