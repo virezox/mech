@@ -2,9 +2,12 @@ package main
 
 import (
    "fmt"
-   // "github.com/89z/mech/youtube"
-   // "image/jpeg"
-   // "os"
+   "github.com/89z/mech/youtube"
+   "github.com/corona10/goimagehash"
+   "image/jpeg"
+   "net/http"
+   "os"
+   "time"
 )
 
 var ids = []string{
@@ -33,23 +36,43 @@ var ids = []string{
 }
 
 func main() {
-   fmt.Println(ids)
-   /*
-   i := youtube.Image{Width: 1280, Height: 720, SubHeight: 720}
-   r, err := os.Open("yt.jpg")
+   // A
+   f, err := os.Open("mb.jpg")
    if err != nil {
       panic(err)
    }
-   defer r.Close()
-   m, err := jpeg.Decode(r)
+   defer f.Close()
+   i, err := jpeg.Decode(f)
    if err != nil {
       panic(err)
    }
-   w, err := os.Create("crop.jpg")
+   a, err := goimagehash.AverageHash(i)
    if err != nil {
       panic(err)
    }
-   defer w.Close()
-   jpeg.Encode(w, i.SubImage(m), &jpeg.Options{100})
-   */
+   // B
+   for _, id := range ids {
+      // crop
+      img := youtube.Image{120, 90, 68, "default", youtube.JPG}
+      res, err := http.Get(img.Address(id))
+      if err != nil {
+         panic(err)
+      }
+      defer res.Body.Close()
+      i, err := jpeg.Decode(res.Body)
+      if err != nil {
+         panic(err)
+      }
+      b, err := goimagehash.AverageHash(img.SubImage(i))
+      if err != nil {
+         panic(err)
+      }
+      // diff
+      d, err := a.Distance(b)
+      if err != nil {
+         panic(err)
+      }
+      fmt.Println(d, id)
+      time.Sleep(100 * time.Millisecond)
+   }
 }
