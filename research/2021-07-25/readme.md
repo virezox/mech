@@ -1,20 +1,27 @@
 # July 25 2021
 
+- https://github.com/Nr90/imgsim
+- https://github.com/corona10/goimagehash
+
+## Percentage difference between images
+
+Lets start with a reference image:
+
 ~~~
-1579 418 2021-02-18T21:10:22Z corona10/goimagehash
-   123 2681 2020-11-20T20:05:09Z nfnt/resize
-1702 total
-
-31 49 2018-02-02T14:43:58Z Nr90/imgsim
-   123 2681 2020-11-20T20:05:09Z nfnt/resize
-154 total
+https://ia800309.us.archive.org/9/items/
+mbid-a40cb6e9-c766-37c4-8677-7eb51393d5a1/
+mbid-a40cb6e9-c766-37c4-8677-7eb51393d5a1-9261666555.jpg
 ~~~
 
-## license
+Now lets look at an image to compare:
 
-- https://github.com/atijust/ahash/issues/1
-- https://github.com/g3vxy/dhash/issues/1
+~~~
+https://i.ytimg.com/vi/2rYQg0QmhX8/maxresdefault.jpg
+~~~
 
-## different size images
+First we need to crop the second image. Then, we need to scale the original
+down. Then we can compare.
 
-https://github.com/olegfedoseev/image-diff/issues/1
+- <https://rosettacode.org/wiki/Percentage_difference_between_images>
+- <https://wiki.musicbrainz.org/Cover_Art_Archive/API>
+- https://stackoverflow.com/questions/32680834
