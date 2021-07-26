@@ -1,18 +1,5 @@
 # YouTube
 
-- <https://github.com/Hexer10/youtube_explode_dart>
-- https://github.com/Athlon1600/youtube-downloader
-- https://github.com/DzenanJupic/rustube
-- https://github.com/Tyrrrz/YoutubeDownloader
-- https://github.com/Tyrrrz/YoutubeExplode
-- https://github.com/haruhi-dl/haruhi-dl
-- https://github.com/iawia002/annie
-- https://github.com/ibv/YTD
-- https://github.com/kkdai/youtube
-- https://github.com/pytube/pytube
-- https://github.com/yt-dlp/yt-dlp
-- https://github.com/ytdl-org/youtube-dl
-
 ## Device OAuth
 
 - https://datatracker.ietf.org/doc/html/rfc8628
@@ -70,3 +57,18 @@ References:
 
 - https://proxy.webshare.io/register
 - https://unblockvideos.com/youtube-video-restriction-checker
+
+## other repos
+
+- <https://github.com/Hexer10/youtube_explode_dart>
+- https://github.com/Athlon1600/youtube-downloader
+- https://github.com/DzenanJupic/rustube
+- https://github.com/Tyrrrz/YoutubeDownloader
+- https://github.com/Tyrrrz/YoutubeExplode
+- https://github.com/haruhi-dl/haruhi-dl
+- https://github.com/iawia002/annie
+- https://github.com/ibv/YTD
+- https://github.com/kkdai/youtube
+- https://github.com/pytube/pytube
+- https://github.com/yt-dlp/yt-dlp
+- https://github.com/ytdl-org/youtube-dl

@@ -1,8 +1,5 @@
 # July 25 2021
 
-- https://github.com/Nr90/imgsim
-- https://github.com/corona10/goimagehash
-
 ## Percentage difference between images
 
 Lets start with a reference image:
