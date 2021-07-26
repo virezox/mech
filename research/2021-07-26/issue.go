@@ -33,7 +33,7 @@ func hash(addr string, crop bool) (*goimagehash.ImageHash, error) {
       r := image.Rect(x0, y0, x0 + height, y0 + height)
       i = i.(*image.YCbCr).SubImage(r)
    }
-   return goimagehash.DifferenceHash(i)
+   return goimagehash.PerceptionHash(i)
 }
 
 func main() {
