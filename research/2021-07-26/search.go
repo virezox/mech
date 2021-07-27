@@ -3,7 +3,7 @@ package main
 import (
    "fmt"
    "github.com/89z/mech/youtube"
-   "github.com/corona10/goimagehash"
+   "github.com/Nr90/imgsim"
    "image/jpeg"
    "net/http"
    "os"
@@ -35,13 +35,40 @@ var ids = []string{
    "vJMjpX4Ck2o", // good
 }
 
+const (
+   urlA =
+      "https://ia800309.us.archive.org/9/items" +
+      "/mbid-a40cb6e9-c766-37c4-8677-7eb51393d5a1" +
+      "/mbid-a40cb6e9-c766-37c4-8677-7eb51393d5a1-9261666555.jpg"
+   urlB = "http://i.ytimg.com/vi/11Bvzknjo2Q/hqdefault.jpg"
+   urlC = "http://i.ytimg.com/vi/jCMi9_6vnxk/hqdefault.jpg"
+)
+
 var forms = []youtube.Image{
    {120, 90, 68, "default", youtube.JPG},
    {320, 180, 180, "mqdefault", youtube.JPG},
    {480, 360, 270, "hqdefault", youtube.JPG},
-   {640, 480, 480, "sd1", youtube.JPG},
 }
 
+func hash(addr string, crop bool) (*goimagehash.ImageHash, error) {
+   r, err := http.Get(addr)
+   if err != nil {
+      return nil, err
+   }
+   defer r.Body.Close()
+   i, err := jpeg.Decode(r.Body)
+   if err != nil {
+      return nil, err
+   }
+   if crop {
+      height := 270
+      x0 := (480 - height) / 2
+      y0 := (360 - height) / 2
+      r := image.Rect(x0, y0, x0 + height, y0 + height)
+      i = i.(*image.YCbCr).SubImage(r)
+   }
+   return goimagehash.PerceptionHash(i)
+}
 func main() {
    f, err := os.Open("mb.jpg")
    if err != nil {
