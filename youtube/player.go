@@ -14,9 +14,9 @@ const origin = "https://www.youtube.com"
 var Key = Auth{"X-Goog-Api-Key", "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8"}
 
 var (
-   Android = Client{"ANDROID", "16.05"}
-   Embed = Client{"ANDROID_EMBEDDED_PLAYER", "16.05"}
-   Mweb = Client{"MWEB", "2.19700101"}
+   Android = Client{Name: "ANDROID", Version: "16.05"}
+   Embed = Client{Name: "ANDROID", Screen: "EMBED", Version: "16.05"}
+   Mweb = Client{Name: "MWEB", Version: "2.19700101"}
 )
 
 func post(url string, head Auth, body youTubeI) (*http.Response, error) {
@@ -50,8 +50,9 @@ type Auth struct {
 }
 
 type Client struct {
-   ClientName string `json:"clientName"`
-   ClientVersion string `json:"clientVersion"`
+   Name string `json:"clientName"`
+   Screen string `json:"clientScreen,omitempty"`
+   Version string `json:"clientVersion"`
 }
 
 type Microformat struct {

@@ -58,7 +58,7 @@ func hash(addr string, img *youtube.Image) (imgsim.Hash, error) {
    if img != nil {
       i = img.SubImage(i)
    }
-   return imgsim.AverageHash(i), nil
+   return imgsim.DifferenceHash(i), nil
 }
 
 func main() {
