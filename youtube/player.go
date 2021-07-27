@@ -106,7 +106,6 @@ type VideoDetails struct {
    Author string
    ShortDescription string
    Title string
-   VideoID string
    ViewCount int `json:"viewCount,string"`
 }
 
