@@ -1,6 +1,8 @@
 # July 27 2021
 
-corona10/goimagehash AverageHash mqdefault (score 16):
+## github.com/corona10/goimagehash
+
+AverageHash mqdefault (score 16):
 
 ~~~
 1 11Bvzknjo2Q mqdefault
@@ -10,8 +12,9 @@ corona10/goimagehash AverageHash mqdefault (score 16):
 17 m3TqulO8vXA mqdefault
 ~~~
 
+## github.com/Nr90/imgsim
 
-Nr90/imgsim AverageHash hqdefault (score 13):
+AverageHash hqdefault (score 13):
 
 ~~~
 2 11Bvzknjo2Q hqdefault
@@ -21,6 +24,50 @@ Nr90/imgsim AverageHash hqdefault (score 13):
 15 m3TqulO8vXA hqdefault
 ~~~
 
-- <https://wiki.musicbrainz.org/Cover_Art_Archive/API>
-- https://pkg.go.dev/github.com/Nr90/imgsim
-- https://pkg.go.dev/github.com/corona10/goimagehash
+## github.com/carlogit/phash
+
+34 stars
+
+https://pkg.go.dev/github.com/carlogit/phash
+
+## github.com/devedge/imagehash
+
+30 stars
+
+https://pkg.go.dev/github.com/devedge/imagehash
+
+## github.com/azr/phash
+
+28 stars
+
+https://pkg.go.dev/github.com/azr/phash
+
+## github.com/andybalholm/dhash
+
+15 stars
+
+https://pkg.go.dev/github.com/andybalholm/dhash
+
+## github.com/teran/imgsum
+
+11 stars
+
+https://pkg.go.dev/github.com/teran/imgsum/image
+
+## github.com/brett-lempereur/ish
+
+11 stars
+
+https://pkg.go.dev/github.com/brett-lempereur/ish
+
+## github.com/umahmood/perceptive
+
+10 stars
+
+https://pkg.go.dev/github.com/umahmood/perceptive
+
+## github.com/myusuf3/imghash
+
+3 stars
+
+https://pkg.go.dev/github.com/myusuf3/imghash
