@@ -2,43 +2,37 @@ package main
 import "github.com/89z/mech/youtube"
 
 var ids = []string{
-   "11Bvzknjo2Q", // good
-   "2bDfLtRqKFs",
-   "2hqqyncPrd0",
-   "4FnsdJkUBhk",
-   "8jCbvqFqftg",
-   "AvEm3a20Yc4",
-   "B3szYRzZqp4",
-   "EGrv5FND4GY",
-   "Nw6k8JdZmo8", // good
-   "Osh3waD3pVU",
+   "1UztCDH2xuQ",
+   "6iKPkxfljBY",
+   "F1YdyaJeb1E",
+   "GlhV-OKHecI",
+   "MYr5MypHAhQ",
+   "R7XcAaVumgc",
+   "VKvn_YxuJQc",
+   "WA8oNVFPppw",
+   "Wk_AOIwGeOs",
    "XbUOX4lr9Bw",
-   "ZXNscpJIzQs",
-   "_vhnMkcK5yo",
-   "fivLqoP0WhU",
-   "jCMi9_6vnxk",
-   "jt5tRaV3iY0",
-   "m3TqulO8vXA",
-   "nGj5N9Ll9pI", // good
-   "qX1uuYWtc7A",
-   "uHrWHXL065g",
-   "uIeoAzVUEJw",
-   "vJMjpX4Ck2o", // good
+   "eud9OOVM4to",
+   "mjnAE5go9dI",
+   "qMQJF-7Y2h0",
+   "qmlJveN9IkI",
+   "svTiG5vZ0_A",
+   "uKna8o35UsU",
+   "uhcnxH9zTEo",
+   "unN7QvSWSTo",
+   "w5azY0dH67U",
+   "yGsCzZuK9GI",
 }
 
 const mb =
-   "https://ia800309.us.archive.org/9/items" +
-   "/mbid-a40cb6e9-c766-37c4-8677-7eb51393d5a1" +
-   "/mbid-a40cb6e9-c766-37c4-8677-7eb51393d5a1-9261666555.jpg"
+   "https://ia600709.us.archive.org/34/items" +
+   "/mbid-10cc746f-786c-4307-b8de-92a687489cb4" +
+   "/mbid-10cc746f-786c-4307-b8de-92a687489cb4-4958564206.jpg"
 
-var (
-   def = youtube.Image{120, 90, 68, "default", youtube.JPG}
-   hqDef = youtube.Image{480, 360, 270, "hqdefault", youtube.JPG}
-   mqDef = youtube.Image{320, 180, 180, "mqdefault", youtube.JPG}
-)
+var mqDef = youtube.Image{320, 180, 180, "mqdefault", youtube.JPG}
 
 func main() {
-   err := devedge_main(def)
+   err := corona10_main(mqDef)
    if err != nil {
       panic(err)
    }

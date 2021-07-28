@@ -1,15 +1,11 @@
 package main
 
 import (
-   "fmt"
    "github.com/89z/mech/youtube"
-   "github.com/devedge/imagehash"
-   "image/jpeg"
-   "net/http"
-   "time"
+   "github.com/corona10/goimagehash"
 )
 
-func devedge_ahash(addr string, img *youtube.Image) ([]byte, error) {
+func corona10(addr string, img *youtube.Image) (*goimagehash.ImageHash, error) {
    r, err := http.Get(addr)
    if err != nil {
       return nil, err
@@ -22,21 +18,24 @@ func devedge_ahash(addr string, img *youtube.Image) ([]byte, error) {
    if img != nil {
       i = img.SubImage(i)
    }
-   return imagehash.Ahash(i, 8)
+   return goimagehash.AverageHash(i)
 }
 
-func devedge_main(form youtube.Image) error {
-   a, err := devedge_ahash(mb, nil)
+func corona10_main(img youtube.Image) error {
+   a, err := corona10(mb, nil)
    if err != nil {
       return err
    }
-   fmt.Println("Ahash", form.Base)
    for _, id := range ids {
-      b, err := devedge_ahash(form.Address(id), &form)
+      b, err := corona10(img.Address(id), &img)
       if err != nil {
          return err
       }
-      fmt.Println(imagehash.GetDistance(a, b), id)
+      d, err := a.Distance(b)
+      if err != nil {
+         return err
+      }
+      fmt.Println(d, id)
       time.Sleep(100 * time.Millisecond)
    }
    return nil
