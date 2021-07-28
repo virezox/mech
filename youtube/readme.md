@@ -51,7 +51,7 @@ Host: www.youtube.com
 
 References:
 
-1. <https://cobalt.googlesource.com/cobalt/+/master/src/cobalt/browser/user_agent_string.cc>
+1. <https://github.com/youtube/cobalt/blob/master/src/cobalt/browser/user_agent_string.cc>
 
 ## Free proxy list
 
