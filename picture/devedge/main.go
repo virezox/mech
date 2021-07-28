@@ -6,10 +6,11 @@ import (
    "github.com/devedge/imagehash"
    "image/jpeg"
    "net/http"
+   "picture"
    "time"
 )
 
-func devedge_ahash(addr string, img *youtube.Image) ([]byte, error) {
+func hash(addr string, img *youtube.Image) ([]byte, error) {
    r, err := http.Get(addr)
    if err != nil {
       return nil, err
@@ -25,18 +26,17 @@ func devedge_ahash(addr string, img *youtube.Image) ([]byte, error) {
    return imagehash.Dhash(i, 8)
 }
 
-func devedge_main(form youtube.Image) error {
-   a, err := devedge_ahash(mb, nil)
+func main() {
+   a, err := hash(picture.MB, nil)
    if err != nil {
-      return err
+      panic(err)
    }
-   for _, id := range ids {
-      b, err := devedge_ahash(form.Address(id), &form)
+   for _, id := range picture.Ids {
+      b, err := hash(picture.HqDef.Address(id), &picture.HqDef)
       if err != nil {
-         return err
+         panic(err)
       }
       fmt.Println(imagehash.GetDistance(a, b), id)
       time.Sleep(100 * time.Millisecond)
    }
-   return nil
 }

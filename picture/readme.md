@@ -1,5 +1,12 @@
 # Picture
 
+~~~
+ahash language:go
+dhash language:go
+phash language:go
+image hash language:go
+~~~
+
 ## github.com/corona10/goimagehash
 
 AverageHash (score 15):
@@ -33,5 +40,3 @@ Ahash (score 14):
 2 vJMjpX4Ck2o
 16 m3TqulO8vXA
 ~~~
-
-## github.com/ajdnik/imghash
