@@ -3,44 +3,39 @@ package main
 import (
    "fmt"
    "github.com/89z/mech/youtube"
-   "github.com/brett-lempereur/ish"
+   "github.com/myusuf3/imghash"
    "image/jpeg"
    "net/http"
    "time"
 )
 
-const (
-   width = 8
-   height = 8
-)
-
-func brett(addr string, img *youtube.Image) ([]byte, error) {
+func myusuf3(addr string, img *youtube.Image) (uint64, error) {
    r, err := http.Get(addr)
    if err != nil {
-      return nil, err
+      return 0, err
    }
    defer r.Body.Close()
    i, err := jpeg.Decode(r.Body)
    if err != nil {
-      return nil, err
+      return 0, err
    }
    if img != nil {
       i = img.SubImage(i)
    }
-   return ish.NewDifferenceHash(width, height).Hash(i)
+   return imghash.Average(i), nil
 }
 
-func brett_main(img youtube.Image) error {
-   a, err := brett(mb, nil)
+func myusuf3_main(img youtube.Image) error {
+   a, err := myusuf3(mb, nil)
    if err != nil {
       return err
    }
    for _, id := range ids {
-      b, err := brett(img.Address(id), &img)
+      b, err := myusuf3(img.Address(id), &img)
       if err != nil {
          return err
       }
-      fmt.Println(ish.NewDifferenceHash(width, height).Distance(a, b), id)
+      fmt.Println(imghash.Distance(a, b), id)
       time.Sleep(100 * time.Millisecond)
    }
    return nil

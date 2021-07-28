@@ -26,7 +26,7 @@ https://cloud.google.com/apis/docs/system-parameters
 Set User-Agent to [1]:
 
 ~~~
-Mozilla/5.0 (SMART-TV; LINUX; Tizen 5.0)
+Mozilla/5.0 (ChromiumStylePlatform) Cobalt/Version
 ~~~
 
 Then visit:
@@ -51,7 +51,7 @@ Host: www.youtube.com
 
 References:
 
-1. https://developer.samsung.com/smarttv/develop/guides/fundamentals/retrieving-platform-information.html
+1. <https://cobalt.googlesource.com/cobalt/+/master/src/cobalt/browser/user_agent_string.cc>
 
 ## Free proxy list
 

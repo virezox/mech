@@ -2,7 +2,7 @@
 
 ## github.com/corona10/goimagehash
 
-AverageHash:
+AverageHash (score 15):
 
 ~~~
 1 11Bvzknjo2Q
@@ -12,7 +12,7 @@ AverageHash:
 17 m3TqulO8vXA
 ~~~
 
-DifferenceHash:
+DifferenceHash (score 15):
 
 ~~~
 4 Nw6k8JdZmo8
@@ -22,55 +22,21 @@ DifferenceHash:
 22 8jCbvqFqftg
 ~~~
 
-## github.com/Nr90/imgsim
-
-AverageHash:
-
-~~~
-2 11Bvzknjo2Q
-2 Nw6k8JdZmo8
-2 nGj5N9Ll9pI
-2 vJMjpX4Ck2o
-15 m3TqulO8vXA
-~~~
-
-## github.com/brett-lempereur/ish
-
-AverageHash 8:
-
-~~~
-1 11Bvzknjo2Q
-1 vJMjpX4Ck2o
-2 Nw6k8JdZmo8
-2 nGj5N9Ll9pI
-15 m3TqulO8vXA
-~~~
-
-AverageHash 32:
-
-~~~
-98 vJMjpX4Ck2o
-100 Nw6k8JdZmo8
-104 nGj5N9Ll9pI
-108 11Bvzknjo2Q
-324 XbUOX4lr9Bw
-~~~
-
-DifferenceHash:
-
-https://pkg.go.dev/github.com/brett-lempereur/ish
-
 ## github.com/umahmood/perceptive
 
-10 stars
+Ahash (score 14):
 
-https://pkg.go.dev/github.com/umahmood/perceptive
+~~~
+1 Nw6k8JdZmo8
+2 11Bvzknjo2Q
+2 nGj5N9Ll9pI
+2 vJMjpX4Ck2o
+16 m3TqulO8vXA
+~~~
 
 ## github.com/myusuf3/imghash
 
-3 stars
-
-https://pkg.go.dev/github.com/myusuf3/imghash
+Average:
 
 ## github.com/ajdnik/imghash
 

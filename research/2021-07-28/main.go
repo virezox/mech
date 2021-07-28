@@ -34,7 +34,7 @@ const mb =
 var hqDef = youtube.Image{480, 360, 270, "hqdefault", youtube.JPG}
 
 func main() {
-   err := brett_main(hqDef)
+   err := myusuf3_main(hqDef)
    if err != nil {
       panic(err)
    }
