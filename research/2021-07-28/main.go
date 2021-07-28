@@ -31,14 +31,10 @@ const mb =
    "/mbid-a40cb6e9-c766-37c4-8677-7eb51393d5a1" +
    "/mbid-a40cb6e9-c766-37c4-8677-7eb51393d5a1-9261666555.jpg"
 
-var (
-   def = youtube.Image{120, 90, 68, "default", youtube.JPG}
-   hqDef = youtube.Image{480, 360, 270, "hqdefault", youtube.JPG}
-   mqDef = youtube.Image{320, 180, 180, "mqdefault", youtube.JPG}
-)
+var hqDef = youtube.Image{480, 360, 270, "hqdefault", youtube.JPG}
 
 func main() {
-   err := andybalholm_main(hqDef)
+   err := brett_main(hqDef)
    if err != nil {
       panic(err)
    }

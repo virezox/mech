@@ -26,7 +26,7 @@ func TestAndroid(t *testing.T) {
 }
 
 func TestEmbed(t *testing.T) {
-   p, err := youtube.NewPlayer("SkRSXFQerZs", youtube.Key, youtube.Embed)
+   p, err := youtube.NewPlayer("QWlNyzzwgcc", youtube.Key, youtube.Embed)
    if err != nil {
       t.Fatal(err)
    }

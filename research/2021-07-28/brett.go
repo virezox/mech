@@ -3,13 +3,13 @@ package main
 import (
    "fmt"
    "github.com/89z/mech/youtube"
-   "github.com/corona10/goimagehash"
+   "github.com/brett-lempereur/ish"
    "image/jpeg"
    "net/http"
    "time"
 )
 
-func corona10(addr string, img *youtube.Image) (*goimagehash.ImageHash, error) {
+func brett(addr string, img *youtube.Image) ([]byte, error) {
    r, err := http.Get(addr)
    if err != nil {
       return nil, err
@@ -22,24 +22,20 @@ func corona10(addr string, img *youtube.Image) (*goimagehash.ImageHash, error) {
    if img != nil {
       i = img.SubImage(i)
    }
-   return goimagehash.PerceptionHash(i)
+   return ish.NewAverageHash(8, 8).Hash(i)
 }
 
-func corona10_main(img youtube.Image) error {
-   a, err := corona10(mb, nil)
+func brett_main(img youtube.Image) error {
+   a, err := brett(mb, nil)
    if err != nil {
       return err
    }
    for _, id := range ids {
-      b, err := corona10(img.Address(id), &img)
+      b, err := brett(img.Address(id), &img)
       if err != nil {
          return err
       }
-      d, err := a.Distance(b)
-      if err != nil {
-         return err
-      }
-      fmt.Println(d, id)
+      fmt.Println(ish.NewAverageHash(8, 8).Distance(a, b), id)
       time.Sleep(100 * time.Millisecond)
    }
    return nil

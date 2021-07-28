@@ -76,8 +76,12 @@ func NewPlayer(id string, head Auth, body Client) (*Player, error) {
    var i youTubeI
    i.Context.Client = body
    i.VideoID = id
+   // OAuth
    if head != Key {
       i.RacyCheckOK = true
+   }
+   if body.Screen != "" {
+      i.Context.ThirdParty = &thirdParty{origin}
    }
    res, err := post(origin + "/youtubei/v1/player", head, i)
    if err != nil {
@@ -109,9 +113,14 @@ type VideoDetails struct {
    ViewCount int `json:"viewCount,string"`
 }
 
+type thirdParty struct {
+   EmbedURL string `json:"embedUrl"`
+}
+
 type youTubeI struct {
    Context struct {
       Client Client `json:"client"`
+      ThirdParty *thirdParty `json:"thirdParty,omitempty"`
    } `json:"context"`
    Query string `json:"query,omitempty"`
    RacyCheckOK bool `json:"racyCheckOk,omitempty"`
