@@ -47,3 +47,9 @@ https://pkg.go.dev/github.com/umahmood/perceptive
 3 stars
 
 https://pkg.go.dev/github.com/myusuf3/imghash
+
+## github.com/ajdnik/imghash
+
+1 star
+
+https://pkg.go.dev/github.com/ajdnik/imghash

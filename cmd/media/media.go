@@ -8,6 +8,23 @@ import (
    "os"
 )
 
+func video(doc *mech.Node) string {
+   script := doc.ByAttr("type", "application/ld+json")
+   for script.Scan() {
+      text := []byte(script.Text())
+      var article struct {
+         Video struct {
+            ContentURL string
+         }
+      }
+      json.Unmarshal(text, &article)
+      if article.Video.ContentURL != "" {
+         return article.Video.ContentURL
+      }
+   }
+   return ""
+}
+
 func audio(doc *mech.Node) string {
    script := doc.ByAttr("type", "application/ld+json")
    for script.Scan() {
@@ -49,5 +66,8 @@ func main() {
    }
    if aud := audio(doc); aud != "" {
       fmt.Println(aud)
+   }
+   if vid := video(doc); vid != "" {
+      fmt.Println(vid)
    }
 }
