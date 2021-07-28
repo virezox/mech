@@ -29,10 +29,10 @@ const mb =
    "/mbid-10cc746f-786c-4307-b8de-92a687489cb4" +
    "/mbid-10cc746f-786c-4307-b8de-92a687489cb4-4958564206.jpg"
 
-var mqDef = youtube.Image{320, 180, 180, "mqdefault", youtube.JPG}
+var hqDef = youtube.Image{480, 360, 270, "hqdefault", youtube.JPG}
 
 func main() {
-   err := corona10_main(mqDef)
+   err := andybalholm_main(hqDef)
    if err != nil {
       panic(err)
    }

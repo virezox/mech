@@ -3,43 +3,39 @@ package main
 import (
    "fmt"
    "github.com/89z/mech/youtube"
-   "github.com/corona10/goimagehash"
+   "github.com/andybalholm/dhash"
    "image/jpeg"
    "net/http"
    "time"
 )
 
-func corona10(addr string, img *youtube.Image) (*goimagehash.ImageHash, error) {
+func andybalholm(addr string, img *youtube.Image) (dhash.Hash, error) {
    r, err := http.Get(addr)
    if err != nil {
-      return nil, err
+      return dhash.Hash{}, err
    }
    defer r.Body.Close()
    i, err := jpeg.Decode(r.Body)
    if err != nil {
-      return nil, err
+      return dhash.Hash{}, err
    }
    if img != nil {
       i = img.SubImage(i)
    }
-   return goimagehash.DifferenceHash(i)
+   return dhash.New(i), nil
 }
 
-func corona10_main(img youtube.Image) error {
-   a, err := corona10(mb, nil)
+func andybalholm_main(img youtube.Image) error {
+   a, err := andybalholm(mb, nil)
    if err != nil {
       return err
    }
    for _, id := range ids {
-      b, err := corona10(img.Address(id), &img)
+      b, err := andybalholm(img.Address(id), &img)
       if err != nil {
          return err
       }
-      d, err := a.Distance(b)
-      if err != nil {
-         return err
-      }
-      fmt.Println(d, id)
+      fmt.Println(dhash.Distance(a, b), id)
       time.Sleep(100 * time.Millisecond)
    }
    return nil
