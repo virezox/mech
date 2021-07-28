@@ -24,15 +24,17 @@ AverageHash hqdefault (score 13):
 15 m3TqulO8vXA hqdefault
 ~~~
 
-## github.com/carlogit/phash
-
-34 stars
-
-https://pkg.go.dev/github.com/carlogit/phash
-
 ## github.com/devedge/imagehash
 
-30 stars
+Ahash default (score 3):
+
+~~~
+2 nGj5N9Ll9pI
+2 vJMjpX4Ck2o
+3 11Bvzknjo2Q
+3 Nw6k8JdZmo8
+6 8jCbvqFqftg
+~~~
 
 https://pkg.go.dev/github.com/devedge/imagehash
 

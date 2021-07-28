@@ -1,11 +1,5 @@
 package main
-
-import (
-   "fmt"
-   "github.com/89z/mech/youtube"
-   "github.com/Nr90/imgsim"
-   "time"
-)
+import "github.com/89z/mech/youtube"
 
 var ids = []string{
    "11Bvzknjo2Q", // good
@@ -37,25 +31,15 @@ const mb =
    "/mbid-a40cb6e9-c766-37c4-8677-7eb51393d5a1" +
    "/mbid-a40cb6e9-c766-37c4-8677-7eb51393d5a1-9261666555.jpg"
 
-var forms = []youtube.Image{
-   {120, 90, 68, "default", youtube.JPG},
-   {320, 180, 180, "mqdefault", youtube.JPG},
-   {480, 360, 270, "hqdefault", youtube.JPG},
-}
+var (
+   def = youtube.Image{120, 90, 68, "default", youtube.JPG}
+   hqDef = youtube.Image{480, 360, 270, "hqdefault", youtube.JPG}
+   mqDef = youtube.Image{320, 180, 180, "mqdefault", youtube.JPG}
+)
 
 func main() {
-   a, err := hash(mb, nil)
+   err := devedge_main(def)
    if err != nil {
       panic(err)
-   }
-   for _, id := range ids {
-      for _, form := range forms {
-         b, err := hash(form.Address(id), &form)
-         if err != nil {
-            panic(err)
-         }
-         fmt.Println(imgsim.Distance(a, b), id, form.Base)
-         time.Sleep(100 * time.Millisecond)
-      }
    }
 }
