@@ -2,7 +2,7 @@
 
 ## github.com/corona10/goimagehash
 
-AverageHash (score 15):
+AverageHash:
 
 ~~~
 1 11Bvzknjo2Q
@@ -12,7 +12,7 @@ AverageHash (score 15):
 17 m3TqulO8vXA
 ~~~
 
-DifferenceHash (score 15):
+DifferenceHash:
 
 ~~~
 4 Nw6k8JdZmo8
@@ -24,19 +24,19 @@ DifferenceHash (score 15):
 
 ## github.com/Nr90/imgsim
 
-AverageHash (score 13):
+AverageHash:
 
 ~~~
-2 11Bvzknjo2Q 
-2 Nw6k8JdZmo8 
-2 nGj5N9Ll9pI 
-2 vJMjpX4Ck2o 
+2 11Bvzknjo2Q
+2 Nw6k8JdZmo8
+2 nGj5N9Ll9pI
+2 vJMjpX4Ck2o
 15 m3TqulO8vXA
 ~~~
 
 ## github.com/brett-lempereur/ish
 
-AverageHash 8 (score 13):
+AverageHash 8:
 
 ~~~
 1 11Bvzknjo2Q
@@ -47,6 +47,14 @@ AverageHash 8 (score 13):
 ~~~
 
 AverageHash 32:
+
+~~~
+98 vJMjpX4Ck2o
+100 Nw6k8JdZmo8
+104 nGj5N9Ll9pI
+108 11Bvzknjo2Q
+324 XbUOX4lr9Bw
+~~~
 
 DifferenceHash:
 

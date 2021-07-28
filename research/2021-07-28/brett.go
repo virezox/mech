@@ -9,6 +9,11 @@ import (
    "time"
 )
 
+const (
+   width = 32
+   height = 32
+)
+
 func brett(addr string, img *youtube.Image) ([]byte, error) {
    r, err := http.Get(addr)
    if err != nil {
@@ -22,7 +27,7 @@ func brett(addr string, img *youtube.Image) ([]byte, error) {
    if img != nil {
       i = img.SubImage(i)
    }
-   return ish.NewAverageHash(8, 8).Hash(i)
+   return ish.NewAverageHash(width, height).Hash(i)
 }
 
 func brett_main(img youtube.Image) error {
@@ -35,7 +40,7 @@ func brett_main(img youtube.Image) error {
       if err != nil {
          return err
       }
-      fmt.Println(ish.NewAverageHash(8, 8).Distance(a, b), id)
+      fmt.Println(ish.NewAverageHash(width, height).Distance(a, b), id)
       time.Sleep(100 * time.Millisecond)
    }
    return nil
