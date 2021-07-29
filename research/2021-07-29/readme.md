@@ -1,5 +1,7 @@
 # July 28 2021
 
+DifferenceHash wins
+
 ## Age Of
 
 AverageHash (score 15):
