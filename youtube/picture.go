@@ -2,9 +2,6 @@ package youtube
 
 import (
    "fmt"
-   "image"
-   "image/jpeg"
-   "net/http"
    "sort"
 )
 
@@ -72,22 +69,6 @@ func (p Picture) Address(id string) string {
    return fmt.Sprintf(
       "http://i.ytimg.com/%v/%v/%v.%v", p.Format.Dir, id, p.Base, p.Format.Ext,
    )
-}
-
-func (p Picture) SubImage(videoID string) (image.Image, error) {
-   res, err := http.Get(p.Address(videoID))
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   img, err := jpeg.Decode(res.Body)
-   if err != nil {
-      return nil, err
-   }
-   x0 := (p.Width - p.SubHeight) / 2
-   y0 := (p.Height - p.SubHeight) / 2
-   rect := image.Rect(x0, y0, x0 + p.SubHeight, y0 + p.SubHeight)
-   return img.(*image.YCbCr).SubImage(rect), nil
 }
 
 type PictureFormat struct {
