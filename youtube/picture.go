@@ -3,15 +3,17 @@ package youtube
 import (
    "fmt"
    "image"
+   "image/jpeg"
+   "net/http"
    "sort"
 )
 
 var (
-   WebP = ImageFormat{0, "vi_webp", "webp"}
-   JPG = ImageFormat{1, "vi", "jpg"}
+   WebP = PictureFormat{0, "vi_webp", "webp"}
+   JPG = PictureFormat{1, "vi", "jpg"}
 )
 
-var Images = ImageSlice{
+var Pictures = PictureSlice{
    {120, 90, 68, "default", JPG},
    {120, 90, 90, "1", JPG},
    {120, 90, 90, "2", JPG},
@@ -58,69 +60,78 @@ var Images = ImageSlice{
    {1280, 720, 720, "maxresdefault", WebP},
 }
 
-type Image struct {
+type Picture struct {
    Width int
    Height int
    SubHeight int
    Base string
-   Format ImageFormat
+   Format PictureFormat
 }
 
-func (i Image) Address(id string) string {
+func (p Picture) Address(id string) string {
    return fmt.Sprintf(
-      "http://i.ytimg.com/%v/%v/%v.%v", i.Format.Dir, id, i.Base, i.Format.Ext,
+      "http://i.ytimg.com/%v/%v/%v.%v", p.Format.Dir, id, p.Base, p.Format.Ext,
    )
 }
 
-func (i Image) SubImage(m image.Image) image.Image {
-   x0 := (i.Width - i.SubHeight) / 2
-   y0 := (i.Height - i.SubHeight) / 2
-   r := image.Rect(x0, y0, x0 + i.SubHeight, y0 + i.SubHeight)
-   return m.(*image.YCbCr).SubImage(r)
+func (p Picture) SubImage(videoID string) (image.Image, error) {
+   res, err := http.Get(p.Address(videoID))
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   img, err := jpeg.Decode(res.Body)
+   if err != nil {
+      return nil, err
+   }
+   x0 := (p.Width - p.SubHeight) / 2
+   y0 := (p.Height - p.SubHeight) / 2
+   rect := image.Rect(x0, y0, x0 + p.SubHeight, y0 + p.SubHeight)
+   return img.(*image.YCbCr).SubImage(rect), nil
 }
 
-type ImageFormat struct {
+type PictureFormat struct {
    Sort int
    Dir string
    Ext string
 }
 
-type ImageSlice []Image
+type PictureSlice []Picture
 
-func (i ImageSlice) Filter(keep func(Image)bool) ImageSlice {
-   var imgs ImageSlice
-   for _, img := range i {
-      if keep(img) {
-         imgs = append(imgs, img)
+func (p PictureSlice) Filter(keep func(Picture)bool) PictureSlice {
+   var pics PictureSlice
+   for _, pic := range p {
+      if keep(pic) {
+         pics = append(pics, pic)
       }
    }
-   return imgs
+   return pics
 }
 
-func (i ImageSlice) Sort(less ...func(a, b Image) bool) {
+func (p PictureSlice) Sort(less ...func(a, b Picture) bool) {
    if less == nil {
-      less = []func(a, b Image) bool{
-         func(a, b Image) bool {
+      less = []func(a, b Picture) bool{
+         func(a, b Picture) bool {
             return b.Height < a.Height
          },
-         func(a, b Image) bool {
+         func(a, b Picture) bool {
             return a.SubHeight < b.SubHeight
          },
-         func(a, b Image) bool {
+         func(a, b Picture) bool {
             return a.Base < b.Base
          },
-         func(a, b Image) bool {
+         func(a, b Picture) bool {
             return a.Format.Sort < b.Format.Sort
          },
       }
    }
-   sort.SliceStable(i, func(a, b int) bool {
-      ia, ib := i[a], i[b]
+   sort.SliceStable(p, func(a, b int) bool {
+      pa, pb := p[a], p[b]
       for _, fn := range less {
-         if fn(ia, ib) {
+         if fn(pa, pb) {
             return true
          }
-         if fn(ib, ia) {
+         if fn(pb, pa) {
             break
          }
       }

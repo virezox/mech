@@ -124,5 +124,5 @@ type youTubeI struct {
    } `json:"context"`
    Query string `json:"query,omitempty"`
    RacyCheckOK bool `json:"racyCheckOk,omitempty"`
-   VideoID string `json:"videoId"`
+   VideoID string `json:"videoId,omitempty"`
 }
