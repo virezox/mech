@@ -20,6 +20,13 @@ DifferenceHash (score 6):
 
 ## R Plus Seven
 
+AverageHash (score 15):
+
+~~~
+2 WA8oNVFPppw
+17 w5azY0dH67U
+~~~
+
 DifferenceHash (score 20):
 
 ~~~
@@ -27,13 +34,6 @@ DifferenceHash (score 20):
 23 F1YdyaJeb1E
 23 R7XcAaVumgc
 23 mjnAE5go9dI
-~~~
-
-AverageHash (score 15):
-
-~~~
-2 WA8oNVFPppw
-17 w5azY0dH67U
 ~~~
 
 ## Returnal
@@ -56,4 +56,24 @@ DifferenceHash (score 15):
 7 11Bvzknjo2Q
 7 vJMjpX4Ck2o
 22 8jCbvqFqftg
+~~~
+
+## Rifts
+
+AverageHash (score 15):
+
+~~~
+0 JNkohQ9uckE
+0 V-YZLKWShiY
+0 bFje8as5iPU
+15 I4wPEgrIHyc
+~~~
+
+DifferenceHash (score 15):
+
+~~~
+4 JNkohQ9uckE
+4 V-YZLKWShiY
+4 bFje8as5iPU
+19 ue2o_EokaIw
 ~~~
