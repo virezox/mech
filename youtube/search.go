@@ -9,12 +9,6 @@ import (
    "sort"
 )
 
-type Item struct {
-   CompactVideoRenderer struct {
-      VideoID string
-   }
-}
-
 func (i Item) Distance(other *goimagehash.ImageHash) (int, error) {
    p := Picture{480, 360, 270, "hqdefault", JPG}
    addr := p.Address(i.CompactVideoRenderer.VideoID)
@@ -36,39 +30,6 @@ func (i Item) Distance(other *goimagehash.ImageHash) (int, error) {
       return 0, err
    }
    return h.Distance(other)
-}
-
-type ItemSlice []Item
-
-func (i ItemSlice) Sort(img image.Image) error {
-   other, err := goimagehash.DifferenceHash(img)
-   if err != nil {
-      return err
-   }
-   sort.Slice(i, func(a, b int) bool {
-      da, err := i[a].Distance(other)
-      if err != nil {
-         panic(err)
-      }
-      db, err := i[b].Distance(other)
-      if err != nil {
-         panic(err)
-      }
-      return da < db
-   })
-   return nil
-}
-
-type Search struct {
-   Contents struct {
-      SectionListRenderer struct {
-         Contents []struct {
-            ItemSectionRenderer struct {
-               Contents ItemSlice
-            }
-         }
-      }
-   }
 }
 
 func NewSearch(query string) (*Search, error) {
@@ -97,4 +58,46 @@ func (s Search) Items() ItemSlice {
       }
    }
    return items
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+type Search struct {
+   Contents struct {
+      SectionListRenderer struct {
+         Contents []struct {
+            ItemSectionRenderer struct {
+               Contents ItemSlice
+            }
+         }
+      }
+   }
+}
+
+type ItemSlice []Item
+
+type Item struct {
+   CompactVideoRenderer struct {
+      VideoID string
+   }
+}
+
+func (i ItemSlice) Sort(img image.Image) error {
+   other, err := goimagehash.DifferenceHash(img)
+   if err != nil {
+      return err
+   }
+   sort.Slice(i, func(a, b int) bool {
+      // BAD
+      da, err := i[a].Distance(other)
+      if err != nil {
+         panic(err)
+      }
+      db, err := i[b].Distance(other)
+      if err != nil {
+         panic(err)
+      }
+      return da < db
+   })
+   return nil
 }

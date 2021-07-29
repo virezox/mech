@@ -72,7 +72,7 @@ func (p Picture) Address(id string) string {
 }
 
 type PictureFormat struct {
-   Sort int
+   Size int
    Dir string
    Ext string
 }
@@ -102,7 +102,7 @@ func (p PictureSlice) Sort(less ...func(a, b Picture) bool) {
             return a.Base < b.Base
          },
          func(a, b Picture) bool {
-            return a.Format.Sort < b.Format.Sort
+            return a.Format.Size < b.Format.Size
          },
       }
    }
