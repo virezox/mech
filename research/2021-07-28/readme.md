@@ -1,5 +1,23 @@
 # July 28 2021
 
+## R Plus Seven
+
+DifferenceHash (score 20):
+
+~~~
+3 WA8oNVFPppw
+23 F1YdyaJeb1E
+23 R7XcAaVumgc
+23 mjnAE5go9dI
+~~~
+
+AverageHash (score 15):
+
+~~~
+2 WA8oNVFPppw
+17 w5azY0dH67U
+~~~
+
 ## Returnal
 
 AverageHash (score 15):
@@ -21,9 +39,3 @@ DifferenceHash (score 15):
 7 vJMjpX4Ck2o
 22 8jCbvqFqftg
 ~~~
-
-## R Plus Seven
-
-AverageHash:
-
-DifferenceHash:
