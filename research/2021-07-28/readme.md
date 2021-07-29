@@ -1,6 +1,6 @@
-# Picture
+# July 28 2021
 
-## github.com/corona10/goimagehash
+## Returnal
 
 AverageHash (score 15):
 
@@ -11,3 +11,19 @@ AverageHash (score 15):
 2 Nw6k8JdZmo8
 17 m3TqulO8vXA
 ~~~
+
+DifferenceHash (score 15):
+
+~~~
+4 Nw6k8JdZmo8
+4 nGj5N9Ll9pI
+7 11Bvzknjo2Q
+7 vJMjpX4Ck2o
+22 8jCbvqFqftg
+~~~
+
+## R Plus Seven
+
+AverageHash:
+
+DifferenceHash:

@@ -54,7 +54,7 @@ func hash(addr string, img *youtube.Image) (*goimagehash.ImageHash, error) {
    if img != nil {
       i = img.SubImage(i)
    }
-   return goimagehash.PerceptionHash(i)
+   return goimagehash.DifferenceHash(i)
 }
 
 func main() {
