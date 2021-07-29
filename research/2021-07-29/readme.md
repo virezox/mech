@@ -77,3 +77,19 @@ DifferenceHash (score 15):
 4 bFje8as5iPU
 19 ue2o_EokaIw
 ~~~
+
+## Zones Without People
+
+AverageHash (score 14):
+
+~~~
+1 9YE26ZSKzH0
+15 m5Vwv42kxKo
+~~~
+
+DifferenceHash (score 17):
+
+~~~
+5 9YE26ZSKzH0
+22 yv_8zAB1OUM
+~~~
