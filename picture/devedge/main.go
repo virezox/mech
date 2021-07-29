@@ -23,7 +23,7 @@ func hash(addr string, img *youtube.Image) ([]byte, error) {
    if img != nil {
       i = img.SubImage(i)
    }
-   return imagehash.Dhash(i, 8)
+   return imagehash.Ahash(i, 8)
 }
 
 func main() {

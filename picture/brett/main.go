@@ -6,6 +6,7 @@ import (
    "github.com/brett-lempereur/ish"
    "image/jpeg"
    "net/http"
+   "picture"
    "time"
 )
 
@@ -14,7 +15,7 @@ const (
    height = 8
 )
 
-func brett(addr string, img *youtube.Image) ([]byte, error) {
+func hash(addr string, img *youtube.Image) ([]byte, error) {
    r, err := http.Get(addr)
    if err != nil {
       return nil, err
@@ -27,21 +28,20 @@ func brett(addr string, img *youtube.Image) ([]byte, error) {
    if img != nil {
       i = img.SubImage(i)
    }
-   return ish.NewDifferenceHash(width, height).Hash(i)
+   return ish.NewAverageHash(width, height).Hash(i)
 }
 
-func brett_main(img youtube.Image) error {
-   a, err := brett(mb, nil)
+func main() {
+   a, err := hash(picture.MB, nil)
    if err != nil {
-      return err
+      panic(err)
    }
-   for _, id := range ids {
-      b, err := brett(img.Address(id), &img)
+   for _, id := range picture.Ids {
+      b, err := hash(picture.HqDef.Address(id), &picture.HqDef)
       if err != nil {
-         return err
+         panic(err)
       }
-      fmt.Println(ish.NewDifferenceHash(width, height).Distance(a, b), id)
+      fmt.Println(ish.NewAverageHash(width, height).Distance(a, b), id)
       time.Sleep(100 * time.Millisecond)
    }
-   return nil
 }

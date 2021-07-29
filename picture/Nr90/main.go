@@ -6,10 +6,11 @@ import (
    "github.com/Nr90/imgsim"
    "image/jpeg"
    "net/http"
+   "picture"
    "time"
 )
 
-func Nr90_hash(addr string, img *youtube.Image) (imgsim.Hash, error) {
+func hash(addr string, img *youtube.Image) (imgsim.Hash, error) {
    r, err := http.Get(addr)
    if err != nil {
       return 0, err
@@ -22,21 +23,20 @@ func Nr90_hash(addr string, img *youtube.Image) (imgsim.Hash, error) {
    if img != nil {
       i = img.SubImage(i)
    }
-   return imgsim.DifferenceHash(i), nil
+   return imgsim.AverageHash(i), nil
 }
 
-func Nr90_main(form youtube.Image) error {
-   a, err := Nr90_hash(mb, nil)
+func main() {
+   a, err := hash(picture.MB, nil)
    if err != nil {
-      return err
+      panic(err)
    }
-   for _, id := range ids {
-      b, err := Nr90_hash(form.Address(id), &form)
+   for _, id := range picture.Ids {
+      b, err := hash(picture.HqDef.Address(id), &picture.HqDef)
       if err != nil {
-         return err
+         panic(err)
       }
-      fmt.Println(imgsim.Distance(a, b), id, form.Base)
+      fmt.Println(imgsim.Distance(a, b), id)
       time.Sleep(100 * time.Millisecond)
    }
-   return nil
 }
