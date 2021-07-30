@@ -1,17 +1,15 @@
-// MusicBrainz
 package musicbrainz
 
 import (
    "encoding/json"
-   "fmt"
    "net/http"
+   "net/http/httputil"
+   "net/url"
+   "os"
+   "strings"
 )
 
-const (
-   API = "http://musicbrainz.org/ws/2/release"
-   invert = "\x1b[7m"
-   reset = "\x1b[m"
-)
+const API = "http://musicbrainz.org/ws/2/release"
 
 type Release struct {
    ArtistCredit []struct {
@@ -39,15 +37,22 @@ type Release struct {
 }
 
 func NewRelease(releaseID string) (*Release, error) {
-   req, err := http.NewRequest("GET", API + "/" + releaseID, nil)
+   v := url.Values{
+      "fmt": {"json"},
+      "inc": {"artist-credits recordings"},
+   }
+   req, err := http.NewRequest(
+      "GET", API + "/" + releaseID, strings.NewReader(v.Encode()),
+   )
    if err != nil {
       return nil, err
    }
-   val := req.URL.Query()
-   val.Set("fmt", "json")
-   val.Set("inc", "artist-credits recordings")
-   req.URL.RawQuery = val.Encode()
-   fmt.Println(invert, req.Method, reset, req.URL)
+   req.Header.Set("content-type", "application/x-www-form-urlencoded")
+   d, err := httputil.DumpRequest(req, true)
+   if err != nil {
+      return nil, err
+   }
+   os.Stdout.Write(append(d, '\n'))
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err

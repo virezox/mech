@@ -29,11 +29,11 @@ func post(url string, head Auth, body youTubeI) (*http.Response, error) {
       return nil, err
    }
    req.Header.Set(head.Key, head.Val)
-   dump, err := httputil.DumpRequest(req, true)
+   d, err := httputil.DumpRequest(req, true)
    if err != nil {
       return nil, err
    }
-   os.Stdout.Write(dump)
+   os.Stdout.Write(d)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err

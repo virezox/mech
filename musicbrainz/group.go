@@ -2,8 +2,9 @@ package musicbrainz
 
 import (
    "encoding/json"
-   "fmt"
    "net/http"
+   "net/http/httputil"
+   "os"
    "sort"
    "strconv"
 )
@@ -29,7 +30,11 @@ func GroupFromArtist(artistID string, offset int) (*Group, error) {
       val.Set("offset", strconv.Itoa(offset))
    }
    req.URL.RawQuery = val.Encode()
-   fmt.Println(invert, req.Method, reset, req.URL)
+   d, err := httputil.DumpRequest(req, false)
+   if err != nil {
+      return nil, err
+   }
+   os.Stdout.Write(d)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -50,7 +55,11 @@ func NewGroup(groupID string) (*Group, error) {
    val.Set("inc", "artist-credits recordings")
    val.Set("release-group", groupID)
    req.URL.RawQuery = val.Encode()
-   fmt.Println(invert, req.Method, reset, req.URL)
+   d, err := httputil.DumpRequest(req, false)
+   if err != nil {
+      return nil, err
+   }
+   os.Stdout.Write(d)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
