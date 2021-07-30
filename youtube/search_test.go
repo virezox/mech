@@ -3,33 +3,27 @@ package youtube_test
 import (
    "fmt"
    "github.com/89z/mech/youtube"
-   "image/jpeg"
-   "net/http"
+   "github.com/corona10/goimagehash"
    "testing"
 )
 
-const mb =
-   "http://ia800709.us.archive.org/34/items" +
-   "/mbid-10cc746f-786c-4307-b8de-92a687489cb4" +
-   "/mbid-10cc746f-786c-4307-b8de-92a687489cb4-4958564206.jpg"
+/*
+http://ia800709.us.archive.org/34/items/
+mbid-10cc746f-786c-4307-b8de-92a687489cb4/
+mbid-10cc746f-786c-4307-b8de-92a687489cb4-4958564206.jpg
+*/
+var other = goimagehash.NewImageHash(16638239206888408964, goimagehash.DHash)
 
 func TestSearch(t *testing.T) {
    s, err := youtube.NewSearch("oneohtrix point never along")
    if err != nil {
       t.Fatal(err)
    }
-   r, err := http.Get(mb)
-   if err != nil {
-      t.Fatal(err)
-   }
-   defer r.Body.Close()
-   img, err := jpeg.Decode(r.Body)
-   if err != nil {
-      t.Fatal(err)
-   }
-   items := s.Items()
-   items.Sort(img)
-   for i, item := range items {
-      fmt.Println(i, item)
+   for _, r := range s.Results() {
+      err := r.SetDistance(other)
+      if err != nil {
+         t.Fatal(err)
+      }
+      fmt.Printf("%+v\n", r)
    }
 }

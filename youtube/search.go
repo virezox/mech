@@ -6,20 +6,24 @@ import (
    "image"
    "image/jpeg"
    "net/http"
-   "sort"
 )
 
-func (i Item) Distance(other *goimagehash.ImageHash) (int, error) {
+type Result struct {
+   VideoID string
+   Distance int
+}
+
+func (r *Result) SetDistance(other *goimagehash.ImageHash) error {
    p := Picture{480, 360, 270, "hqdefault", JPG}
-   addr := p.Address(i.CompactVideoRenderer.VideoID)
+   addr := p.Address(r.VideoID)
    res, err := http.Get(addr)
    if err != nil {
-      return 0, err
+      return err
    }
    defer res.Body.Close()
    img, err := jpeg.Decode(res.Body)
    if err != nil {
-      return 0, err
+      return err
    }
    x0 := (p.Width - p.SubHeight) / 2
    y0 := (p.Height - p.SubHeight) / 2
@@ -27,9 +31,30 @@ func (i Item) Distance(other *goimagehash.ImageHash) (int, error) {
    img = img.(*image.YCbCr).SubImage(rect)
    h, err := goimagehash.DifferenceHash(img)
    if err != nil {
-      return 0, err
+      return err
    }
-   return h.Distance(other)
+   d, err := h.Distance(other)
+   if err != nil {
+      return err
+   }
+   r.Distance = d
+   return nil
+}
+
+type Search struct {
+   Contents struct {
+      SectionListRenderer struct {
+         Contents []struct {
+            ItemSectionRenderer struct {
+               Contents []struct {
+                  CompactVideoRenderer struct {
+                     VideoID string
+                  }
+               }
+            }
+         }
+      }
+   }
 }
 
 func NewSearch(query string) (*Search, error) {
@@ -48,56 +73,15 @@ func NewSearch(query string) (*Search, error) {
    return s, nil
 }
 
-func (s Search) Items() ItemSlice {
-   var items ItemSlice
+func (s Search) Results() []Result {
+   var ress []Result
    for _, sect := range s.Contents.SectionListRenderer.Contents {
       for _, item := range sect.ItemSectionRenderer.Contents {
          if item.CompactVideoRenderer.VideoID != "" {
-            items = append(items, item)
+            res := Result{VideoID: item.CompactVideoRenderer.VideoID}
+            ress = append(ress, res)
          }
       }
    }
-   return items
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-type Search struct {
-   Contents struct {
-      SectionListRenderer struct {
-         Contents []struct {
-            ItemSectionRenderer struct {
-               Contents ItemSlice
-            }
-         }
-      }
-   }
-}
-
-type ItemSlice []Item
-
-type Item struct {
-   CompactVideoRenderer struct {
-      VideoID string
-   }
-}
-
-func (i ItemSlice) Sort(img image.Image) error {
-   other, err := goimagehash.DifferenceHash(img)
-   if err != nil {
-      return err
-   }
-   sort.Slice(i, func(a, b int) bool {
-      // BAD
-      da, err := i[a].Distance(other)
-      if err != nil {
-         panic(err)
-      }
-      db, err := i[b].Distance(other)
-      if err != nil {
-         panic(err)
-      }
-      return da < db
-   })
-   return nil
+   return ress
 }
