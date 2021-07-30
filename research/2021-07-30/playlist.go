@@ -7,9 +7,10 @@ import (
    "sort"
 )
 
-
 func main() {
    releaseID := "a40cb6e9-c766-37c4-8677-7eb51393d5a1"
+   musicbrainz.Verbose = true
+   youtube.Verbose = true
    // musicbrainz hash
    c, err := musicbrainz.NewCover(releaseID)
    if err != nil {

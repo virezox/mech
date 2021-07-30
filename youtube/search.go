@@ -2,44 +2,12 @@ package youtube
 
 import (
    "encoding/json"
+   "fmt"
    "github.com/corona10/goimagehash"
    "image"
    "image/jpeg"
    "net/http"
 )
-
-type Result struct {
-   VideoID string
-   Distance int
-}
-
-func (r *Result) SetDistance(other *goimagehash.ImageHash) error {
-   p := Picture{480, 360, 270, "hqdefault", JPG}
-   addr := p.Address(r.VideoID)
-   res, err := http.Get(addr)
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   img, err := jpeg.Decode(res.Body)
-   if err != nil {
-      return err
-   }
-   x0 := (p.Width - p.SubHeight) / 2
-   y0 := (p.Height - p.SubHeight) / 2
-   rect := image.Rect(x0, y0, x0 + p.SubHeight, y0 + p.SubHeight)
-   img = img.(*image.YCbCr).SubImage(rect)
-   h, err := goimagehash.DifferenceHash(img)
-   if err != nil {
-      return err
-   }
-   d, err := h.Distance(other)
-   if err != nil {
-      return err
-   }
-   r.Distance = d
-   return nil
-}
 
 type Search struct {
    Contents struct {
@@ -73,6 +41,13 @@ func NewSearch(query string) (*Search, error) {
    return s, nil
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
+type Result struct {
+   VideoID string
+   Distance int
+}
+
 func (s Search) Results() []Result {
    var ress []Result
    for _, sect := range s.Contents.SectionListRenderer.Contents {
@@ -84,4 +59,36 @@ func (s Search) Results() []Result {
       }
    }
    return ress
+}
+
+func (r *Result) SetDistance(other *goimagehash.ImageHash) error {
+   p := Picture{480, 360, 270, "hqdefault", JPG}
+   addr := p.Address(r.VideoID)
+   if Verbose {
+      fmt.Println("GET", addr)
+   }
+   // BAD
+   res, err := http.Get(addr)
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   img, err := jpeg.Decode(res.Body)
+   if err != nil {
+      return err
+   }
+   x0 := (p.Width - p.SubHeight) / 2
+   y0 := (p.Height - p.SubHeight) / 2
+   rect := image.Rect(x0, y0, x0 + p.SubHeight, y0 + p.SubHeight)
+   img = img.(*image.YCbCr).SubImage(rect)
+   h, err := goimagehash.DifferenceHash(img)
+   if err != nil {
+      return err
+   }
+   d, err := h.Distance(other)
+   if err != nil {
+      return err
+   }
+   r.Distance = d
+   return nil
 }

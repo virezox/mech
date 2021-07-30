@@ -11,7 +11,10 @@ import (
 
 const origin = "https://www.youtube.com"
 
-var Key = Auth{"X-Goog-Api-Key", "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8"}
+var (
+   Key = Auth{"X-Goog-Api-Key", "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8"}
+   Verbose = false
+)
 
 var (
    Android = Client{Name: "ANDROID", Version: "16.05"}
@@ -29,11 +32,13 @@ func post(url string, head Auth, body youTubeI) (*http.Response, error) {
       return nil, err
    }
    req.Header.Set(head.Key, head.Val)
-   d, err := httputil.DumpRequest(req, true)
-   if err != nil {
-      return nil, err
+   if Verbose {
+      d, err := httputil.DumpRequest(req, true)
+      if err != nil {
+         return nil, err
+      }
+      os.Stdout.Write(d)
    }
-   os.Stdout.Write(d)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err

@@ -14,8 +14,12 @@ import (
 
 const API = "http://musicbrainz.org/ws/2/release"
 
+var Verbose = false
+
 func Hash(addr string) (*goimagehash.ImageHash, error) {
-   fmt.Println("GET", addr)
+   if Verbose {
+      fmt.Println("GET", addr)
+   }
    res, err := http.Get(addr)
    if err != nil {
       return nil, err
@@ -38,6 +42,9 @@ func NewCover(releaseID string) (*Cover, error) {
    addr := fmt.Sprintf(
       "http://archive.org/download/mbid-%v/index.json", releaseID,
    )
+   if Verbose {
+      fmt.Println("GET", addr)
+   }
    res, err := http.Get(addr)
    if err != nil {
       return nil, err
@@ -87,11 +94,13 @@ func NewRelease(releaseID string) (*Release, error) {
       return nil, err
    }
    req.Header.Set("content-type", "application/x-www-form-urlencoded")
-   d, err := httputil.DumpRequest(req, true)
-   if err != nil {
-      return nil, err
+   if Verbose {
+      d, err := httputil.DumpRequest(req, true)
+      if err != nil {
+         return nil, err
+      }
+      os.Stdout.Write(append(d, '\n'))
    }
-   os.Stdout.Write(append(d, '\n'))
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
