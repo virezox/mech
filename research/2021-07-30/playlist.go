@@ -4,8 +4,17 @@ import (
    "fmt"
    "github.com/89z/mech/musicbrainz"
    "github.com/89z/mech/youtube"
-   "sort"
+   "time"
 )
+
+var distances = make(map[string]int)
+
+func distance(i youtube.Item, other *goimagehash.ImageHash) (int, error) {
+   if d, ok := distances[i.VideoID]; ok {
+      return d, nil
+   }
+   return i.Distance(other)
+}
 
 func main() {
    releaseID := "a40cb6e9-c766-37c4-8677-7eb51393d5a1"
@@ -16,7 +25,7 @@ func main() {
    if err != nil {
       panic(err)
    }
-   o, err := musicbrainz.Hash(c.Images[0].Image)
+   other, err := musicbrainz.Hash(c.Images[0].Image)
    if err != nil {
       panic(err)
    }
@@ -25,24 +34,30 @@ func main() {
    if err != nil {
       panic(err)
    }
-   artist := r.ArtistCredit[0].Name
+   var (
+      artist = r.ArtistCredit[0].Name
+      distance = make(map[string]int)
+   )
    for _, med := range r.Media {
       for _, track := range med.Tracks {
          s, err := youtube.NewSearch(artist + " " + track.Title)
          if err != nil {
             panic(err)
          }
-         r := s.Results()
-         for i := range r {
-            err := r[i].SetDistance(o)
+         for _, i := range s.Items() {
+            if _, ok := distance[i.VideoID]; ok {
+               continue
+            }
+            d, err := i.Distance(other)
             if err != nil {
                panic(err)
             }
+            distance[i.VideoID] = d
+            time.Sleep(100 * time.Millisecond)
          }
-         sort.SliceStable(r, func(a, b int) bool {
-            return r[a].Distance < r[b].Distance
-         })
-         fmt.Println(r[0].VideoID, track.Title)
       }
+   }
+   for key, val := range distance {
+      fmt.Println(key, val)
    }
 }
