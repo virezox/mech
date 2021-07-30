@@ -31,7 +31,7 @@ func post(url string, head Auth, body youTubeI) (*http.Response, error) {
    if err != nil {
       return nil, err
    }
-   req.Header.Set(head.Key, head.Val)
+   req.Header.Set(head.Key, head.Value)
    if Verbose {
       d, err := httputil.DumpRequest(req, true)
       if err != nil {
@@ -51,7 +51,7 @@ func post(url string, head Auth, body youTubeI) (*http.Response, error) {
 
 type Auth struct {
    Key string
-   Val string
+   Value string
 }
 
 type Client struct {

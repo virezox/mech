@@ -9,6 +9,8 @@ import (
    "net/http"
 )
 
+var Distance = make(map[string]int)
+
 type CompactVideoRenderer struct {
    VideoID string
 }
@@ -18,6 +20,9 @@ type Item struct {
 }
 
 func (i Item) Distance(other *goimagehash.ImageHash) (int, error) {
+   if d, ok := Distance[i.VideoID]; ok {
+      return d, nil
+   }
    p := Picture{480, 360, 270, "hqdefault", JPG}
    addr := p.Address(i.VideoID)
    if Verbose {
@@ -40,7 +45,12 @@ func (i Item) Distance(other *goimagehash.ImageHash) (int, error) {
    if err != nil {
       return 0, err
    }
-   return h.Distance(other)
+   d, err := h.Distance(other)
+   if err != nil {
+      return 0, err
+   }
+   Distance[i.VideoID] = d
+   return d, nil
 }
 
 type Search struct {
