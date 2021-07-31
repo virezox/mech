@@ -11,20 +11,19 @@ import (
 
 var Distance = make(map[string]int)
 
-type CompactVideoRenderer struct {
-   VideoID string
-}
-
 type Item struct {
-   CompactVideoRenderer `json:"compactVideoRenderer"`
+   CompactVideoRenderer struct {
+      VideoID string
+   }
 }
 
 func (i Item) Distance(other *goimagehash.ImageHash) (int, error) {
-   if d, ok := Distance[i.VideoID]; ok {
+   id := i.VideoID()
+   if d, ok := Distance[id]; ok {
       return d, nil
    }
    p := Picture{480, 360, 270, "hqdefault", JPG}
-   addr := p.Address(i.VideoID)
+   addr := p.Address(id)
    if Verbose {
       fmt.Println("GET", addr)
    }
@@ -49,8 +48,12 @@ func (i Item) Distance(other *goimagehash.ImageHash) (int, error) {
    if err != nil {
       return 0, err
    }
-   Distance[i.VideoID] = d
+   Distance[id] = d
    return d, nil
+}
+
+func (i Item) VideoID() string {
+   return i.CompactVideoRenderer.VideoID
 }
 
 type Search struct {
@@ -86,7 +89,7 @@ func (s Search) Items() []Item {
    var items []Item
    for _, sect := range s.Contents.SectionListRenderer.Contents {
       for _, item := range sect.ItemSectionRenderer.Contents {
-         if item.VideoID != "" {
+         if item.VideoID() != "" {
             items = append(items, item)
          }
       }

@@ -32,7 +32,7 @@ type response struct {
          Contents []struct {
             ItemSectionRenderer struct {
                Contents []struct {
-                  TvMusicVideoRenderer struct {
+                  TvMusicVideoRenderer *struct {
                      NavigationEndpoint struct {
                         WatchEndpoint struct {
                            VideoID string
@@ -73,7 +73,21 @@ func main() {
    json.NewDecoder(res.Body).Decode(&r)
    for _, sect := range r.Contents.SectionListRenderer.Contents {
       for _, item := range sect.ItemSectionRenderer.Contents {
-         fmt.Printf("%+v\n", item.TvMusicVideoRenderer)
+         if item.TvMusicVideoRenderer != nil {
+            fmt.Printf("%+v\n", item.TvMusicVideoRenderer)
+         }
       }
    }
 }
+
+
+
+
+
+
+
+
+
+
+
+

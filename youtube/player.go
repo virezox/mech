@@ -61,18 +61,28 @@ type Client struct {
    Version string `json:"clientVersion"`
 }
 
-type Microformat struct {
-   PlayerMicroformatRenderer `json:"playerMicroformatRenderer"`
-}
-
 type Player struct {
-   Microformat `json:"microformat"`
+   Microformat struct {
+      PlayerMicroformatRenderer struct {
+         AvailableCountries []string
+         PublishDate string
+      }
+   }
    PlayabilityStatus struct {
       Reason string
       Status string
    }
-   StreamingData `json:"streamingData"`
-   VideoDetails `json:"videoDetails"`
+   StreamingData struct {
+      AdaptiveFormats FormatSlice
+      // just including this so I can bail if video is Dash Manifest
+      DashManifestURL string
+   }
+   VideoDetails struct {
+      Author string
+      ShortDescription string
+      Title string
+      ViewCount int `json:"viewCount,string"`
+   }
 }
 
 func NewPlayer(id string, head Auth, body Client) (*Player, error) {
@@ -99,24 +109,6 @@ func NewPlayer(id string, head Auth, body Client) (*Player, error) {
       return nil, err
    }
    return p, nil
-}
-
-type PlayerMicroformatRenderer struct {
-   AvailableCountries []string
-   PublishDate string
-}
-
-type StreamingData struct {
-   AdaptiveFormats FormatSlice
-   // just including this so I can bail if video is Dash Manifest
-   DashManifestURL string
-}
-
-type VideoDetails struct {
-   Author string
-   ShortDescription string
-   Title string
-   ViewCount int `json:"viewCount,string"`
 }
 
 type thirdParty struct {
