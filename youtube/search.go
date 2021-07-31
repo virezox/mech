@@ -12,8 +12,15 @@ import (
 var Distance = make(map[string]int)
 
 type Item struct {
-   CompactVideoRenderer struct {
-      VideoID string
+   TvMusicVideoRenderer *struct {
+      NavigationEndpoint struct {
+         WatchEndpoint struct {
+            VideoID string
+         }
+      }
+      PrimaryText struct {
+         SimpleText string
+      }
    }
 }
 
@@ -53,7 +60,7 @@ func (i Item) Distance(other *goimagehash.ImageHash) (int, error) {
 }
 
 func (i Item) VideoID() string {
-   return i.CompactVideoRenderer.VideoID
+   return i.TvMusicVideoRenderer.NavigationEndpoint.WatchEndpoint.VideoID
 }
 
 type Search struct {
@@ -70,7 +77,7 @@ type Search struct {
 
 func NewSearch(query string) (*Search, error) {
    var body youTubeI
-   body.Context.Client = Mweb
+   body.Context.Client = TV
    body.Params = "EgIQAQ" // type video
    body.Query = query
    res, err := post(origin + "/youtubei/v1/search", Key, body)
@@ -89,7 +96,7 @@ func (s Search) Items() []Item {
    var items []Item
    for _, sect := range s.Contents.SectionListRenderer.Contents {
       for _, item := range sect.ItemSectionRenderer.Contents {
-         if item.VideoID() != "" {
+         if item.TvMusicVideoRenderer != nil {
             items = append(items, item)
          }
       }
