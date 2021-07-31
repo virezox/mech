@@ -29,6 +29,7 @@ func main() {
       return
    }
    id := flag.Arg(0)
+   youtube.Verbose = true
    // info
    if info {
       err := getInfo(id)

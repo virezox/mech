@@ -1,5 +1,43 @@
 # YouTube
 
+## Clients
+
+Need Android:
+
+client  | MeJVWBSsPAY
+--------|-------
+Android | pass
+Embed   | fail
+Mweb    | fail
+TV      | fail
+
+Need Embed:
+
+client  | QWlNyzzwgcc
+--------|-------
+Android | fail
+Embed   | pass
+Mweb    | fail
+TV      | fail
+
+Need Mweb:
+
+client  | aN76CmldknI publishDate
+--------|-------
+Android | fail
+Embed   | fail
+Mweb    | pass
+TV      | fail
+
+Need TV:
+
+client  | search
+--------|-------
+Android | fail
+Embed   | fail
+Mweb    | fail
+TV      | pass
+
 ## Cover art
 
 - <https://wiki.musicbrainz.org/Cover_Art_Archive/API>
@@ -58,11 +96,6 @@ Host: www.youtube.com
 References:
 
 1. <https://github.com/youtube/cobalt/blob/master/src/cobalt/browser/user_agent_string.cc>
-
-## Free proxy list
-
-- https://proxy.webshare.io/register
-- https://unblockvideos.com/youtube-video-restriction-checker
 
 ## other repos
 
