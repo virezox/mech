@@ -111,6 +111,14 @@ func NewPlayer(id string, head Auth, body Client) (*Player, error) {
    return p, nil
 }
 
+func (p Player) Countries() []string {
+   return p.Microformat.PlayerMicroformatRenderer.AvailableCountries
+}
+
+func (p Player) Date() string {
+   return p.Microformat.PlayerMicroformatRenderer.PublishDate
+}
+
 type thirdParty struct {
    EmbedURL string `json:"embedUrl"`
 }

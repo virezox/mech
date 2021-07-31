@@ -67,15 +67,15 @@ func main() {
    if embed {
       client = youtube.Embed
    }
-   play, err := youtube.NewPlayer(id, auth, client)
+   p, err := youtube.NewPlayer(id, auth, client)
    if err != nil {
       panic(err)
    }
    // sort
-   if play.DashManifestURL != "" {
-      panic(play.DashManifestURL)
+   if p.StreamingData.DashManifestURL != "" {
+      panic(p.StreamingData.DashManifestURL)
    }
-   play.AdaptiveFormats.Sort()
+   p.StreamingData.AdaptiveFormats.Sort()
    formats := []youtube.Format{
       {Itag: atag}, {Itag: vtag, Height: 720},
    }
@@ -93,13 +93,13 @@ func main() {
             return b.Itag == a.Itag
          }
       }
-      fmts := play.AdaptiveFormats.Filter(fn)
+      fmts := p.StreamingData.AdaptiveFormats.Filter(fn)
       if fmts == nil {
-         ps := play.PlayabilityStatus
+         ps := p.PlayabilityStatus
          fmt.Println(ps.Status, ps.Reason)
          return
       }
-      err := download(play, fmts[0])
+      err := download(p, fmts[0])
       if err != nil {
          panic(err)
       }
@@ -130,11 +130,11 @@ func getInfo(id string) error {
    if err != nil {
       return err
    }
-   fmt.Println("author:", p.Author)
-   fmt.Println("title:", p.Title)
-   fmt.Println("countries:", p.AvailableCountries)
+   fmt.Println("author:", p.VideoDetails.Author)
+   fmt.Println("title:", p.VideoDetails.Title)
+   fmt.Println("countries:", p.Countries())
    fmt.Println()
-   for _, f := range p.AdaptiveFormats {
+   for _, f := range p.StreamingData.AdaptiveFormats {
       fmt.Printf(
          "itag %v, height %v, %v, %v, %v\n",
          f.Itag,
@@ -148,8 +148,8 @@ func getInfo(id string) error {
 }
 
 func download(p *youtube.Player, f youtube.Format) error {
-   create := strings.Map(clean, p.Author + "-" + p.Title + f.Ext())
-   file, err := os.Create(create)
+   name := p.VideoDetails.Author + "-" + p.VideoDetails.Title + f.Ext()
+   file, err := os.Create(strings.Map(clean, name))
    if err != nil {
       return err
    }
