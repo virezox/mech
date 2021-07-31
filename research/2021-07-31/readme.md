@@ -1,10 +1,9 @@
 # July 31 2021
 
-Lets look at this result:
+How can we parse strings into `time.Duration` or `time.Time`?
 
 ~~~
-3 &{{{nGj5N9Ll9pI}} {Oneohtrix Point Never - Returnal [Full album]}}
+golang parse duration site:stackoverflow.com
 ~~~
 
-The cover art is a good match, but the length is way off. Can we get video
-length from the YouTube package?
+https://stackoverflow.com/questions/47067211/parsing-hhmmss-time

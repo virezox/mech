@@ -13,6 +13,9 @@ var Distance = make(map[string]int)
 
 type Item struct {
    TvMusicVideoRenderer *struct {
+      LengthText struct {
+         SimpleText string
+      }
       NavigationEndpoint struct {
          WatchEndpoint struct {
             VideoID string
