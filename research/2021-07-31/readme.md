@@ -1,9 +1,10 @@
 # July 31 2021
 
-Lets do a search for a single song, then we can compare human sort:
+Lets look at this result:
 
-SliceStable AverageHash:
+~~~
+3 &{{{nGj5N9Ll9pI}} {Oneohtrix Point Never - Returnal [Full album]}}
+~~~
 
-SliceStable DifferenceHash:
-
-SliceStable PerceptionHash:
+The cover art is a good match, but the length is way off. Can we get video
+length from the YouTube package?
