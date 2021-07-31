@@ -11,8 +11,8 @@ func TestSort(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   p.AdaptiveFormats.Sort()
-   for _, f := range p.AdaptiveFormats {
+   p.StreamingData.AdaptiveFormats.Sort()
+   for _, f := range p.StreamingData.AdaptiveFormats {
       fmt.Println(f.Height, f.MimeType, f.Bitrate)
    }
 }

@@ -19,11 +19,11 @@ func TestSearch(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   for _, r := range s.Results() {
-      err := r.SetDistance(other)
+   for _, i := range s.Items() {
+      d, err := i.Distance(other)
       if err != nil {
          t.Fatal(err)
       }
-      fmt.Printf("%+v\n", r)
+      fmt.Println(d, i)
    }
 }

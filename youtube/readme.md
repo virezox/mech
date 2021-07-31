@@ -71,9 +71,7 @@ References:
 - https://github.com/DzenanJupic/rustube
 - https://github.com/Tyrrrz/YoutubeDownloader
 - https://github.com/Tyrrrz/YoutubeExplode
-- https://github.com/haruhi-dl/haruhi-dl
 - https://github.com/iawia002/annie
-- https://github.com/ibv/YTD
 - https://github.com/kkdai/youtube
 - https://github.com/pytube/pytube
 - https://github.com/yt-dlp/yt-dlp
