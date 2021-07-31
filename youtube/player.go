@@ -111,6 +111,30 @@ func NewPlayer(id string, head Auth, body Client) (*Player, error) {
    return p, nil
 }
 
+func (p Player) Author() string {
+   return p.VideoDetails.Author
+}
+
+func (p Player) Countries() []string {
+   return p.Microformat.PlayerMicroformatRenderer.AvailableCountries
+}
+
+func (p Player) Date() string {
+   return p.Microformat.PlayerMicroformatRenderer.PublishDate
+}
+
+func (p Player) Description() string {
+   return p.VideoDetails.ShortDescription
+}
+
+func (p Player) Title() string {
+   return p.VideoDetails.Title
+}
+
+func (p Player) Views() int {
+   return p.VideoDetails.ViewCount
+}
+
 type thirdParty struct {
    EmbedURL string `json:"embedUrl"`
 }

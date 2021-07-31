@@ -17,7 +17,7 @@ func TestAndroid(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   f := p.AdaptiveFormats.Filter(func(f youtube.Format) bool {
+   f := p.StreamingData.AdaptiveFormats.Filter(func(f youtube.Format) bool {
       return f.Height == 0
    })
    if err := f[0].Write(io.Discard); err != nil {
@@ -30,7 +30,7 @@ func TestEmbed(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   f := p.AdaptiveFormats.Filter(func(f youtube.Format) bool {
+   f := p.StreamingData.AdaptiveFormats.Filter(func(f youtube.Format) bool {
       return f.Height == 0
    })
    if err := f[0].Write(io.Discard); err != nil {
@@ -43,16 +43,16 @@ func TestMweb(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   if p.PublishDate != "2020-11-05" {
+   if p.Date() != "2020-11-05" {
       t.Fatalf("%+v\n", p)
    }
-   if p.ShortDescription != desc {
+   if p.VideoDetails.ShortDescription != desc {
       t.Fatalf("%+v\n", p)
    }
-   if p.Title != "Snowflake" {
+   if p.VideoDetails.Title != "Snowflake" {
       t.Fatalf("%+v\n", p)
    }
-   if p.ViewCount == 0 {
+   if p.VideoDetails.ViewCount == 0 {
       t.Fatalf("%+v\n", p)
    }
 }
