@@ -20,6 +20,7 @@ var (
    Android = Client{Name: "ANDROID", Version: "16.05"}
    Embed = Client{Name: "ANDROID", Screen: "EMBED", Version: "16.05"}
    Mweb = Client{Name: "MWEB", Version: "2.19700101"}
+   TV = Client{Name: "TVHTML5", Version: "7.20200101"}
 )
 
 func post(url string, head Auth, body youTubeI) (*http.Response, error) {
@@ -127,6 +128,7 @@ type youTubeI struct {
       Client Client `json:"client"`
       ThirdParty *thirdParty `json:"thirdParty,omitempty"`
    } `json:"context"`
+   Params string `json:"params,omitempty"`
    Query string `json:"query,omitempty"`
    RacyCheckOK bool `json:"racyCheckOk,omitempty"`
    VideoID string `json:"videoId,omitempty"`
