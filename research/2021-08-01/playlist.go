@@ -22,6 +22,55 @@ func diffImage(x, y int64) int64 {
    return x - y
 }
 
+type result struct {
+   duration time.Duration
+   contentLength int64
+   youtube.Item
+}
+
+var cache = make(map[string]int64)
+
+func length(p youtube.Picture, i youtube.Item) (int64, error) {
+   addr := p.Address(i.VideoID())
+   if l, ok := cache[addr]; ok {
+      return l, nil
+   }
+   r, err := http.Head(addr)
+   if err != nil {
+      return 0, err
+   }
+   cache[addr] = r.ContentLength
+   return r.ContentLength, nil
+}
+
+func newResult(t musicbrainz.Track, i youtube.Item) (*result, error) {
+   // duration MB
+   dMB := t.Duration()
+   // duration YT
+   dYT, err := i.Duration()
+   if err != nil {
+      return nil, err
+   }
+   // duration difference
+   dDiff := diffDuration(dMB, dYT)
+   // image HQ1
+   p := youtube.Picture{Base: "hq1", Format: youtube.JPG}
+   hq1, err := length(p, i)
+   if err != nil {
+      return nil, err
+   }
+   // image HQ2
+   p = youtube.Picture{Base: "hq2", Format: youtube.JPG}
+   hq2, err := length(p, i)
+   if err != nil {
+      return nil, err
+   }
+   // image difference
+   iDiff := diffImage(hq1, hq2)
+   // return
+   return &result{dDiff, iDiff, i}, nil
+}
+
 func main() {
    musicbrainz.Verbose = true
    youtube.Verbose = true
@@ -31,41 +80,18 @@ func main() {
    }
    artist := r.ArtistCredit[0].Name
    for _, med := range r.Media {
-      for _, track := range med.Tracks {
-         s, err := youtube.NewSearch(artist + " " + track.Title)
+      for _, t := range med.Tracks {
+         s, err := youtube.NewSearch(artist + " " + t.Title)
          if err != nil {
             panic(err)
          }
          for _, i := range s.Items() {
-            // duration 1
-            d1 := 4*time.Minute + 19*time.Second
-            // duration 2
-            d2, err := i.Duration()
+            r, err := newResult(t, i)
             if err != nil {
                panic(err)
             }
-            // duration difference
-            dDiff := diffDuration(d1, d2)
-            // image 1
-            p := youtube.Picture{Base: "hq1", Format: youtube.JPG}
+            fmt.Println(r)
             time.Sleep(100 * time.Millisecond)
-            r, err := http.Head(p.Address(i.VideoID()))
-            if err != nil {
-               panic(err)
-            }
-            i1 := r.ContentLength
-            // image 2
-            p = youtube.Picture{Base: "hq2", Format: youtube.JPG}
-            time.Sleep(100 * time.Millisecond)
-            r, err = http.Head(p.Address(i.VideoID()))
-            if err != nil {
-               panic(err)
-            }
-            i2 := r.ContentLength
-            // image difference
-            iDiff := diffImage(i1, i2)
-            // print
-            fmt.Println("dDiff:", dDiff, "iDiff:", iDiff, i.VideoID(), i.Title())
          }
       }
    }

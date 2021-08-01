@@ -10,6 +10,7 @@ import (
    "net/url"
    "os"
    "strings"
+   "time"
 )
 
 const API = "http://musicbrainz.org/ws/2/release"
@@ -67,10 +68,7 @@ type Release struct {
    Date string
    Media []struct {
       TrackCount int `json:"track-count"`
-      Tracks []struct {
-         Length int
-         Title string
-      }
+      Tracks []Track
    }
    ReleaseGroup struct {
       FirstReleaseDate string `json:"first-release-date"`
@@ -123,4 +121,13 @@ func (r Release) trackLen() int {
       count += media.TrackCount
    }
    return count
+}
+
+type Track struct {
+   Length int
+   Title string
+}
+
+func (t Track) Duration() time.Duration {
+   return time.Duration(t.Length) * time.Millisecond
 }
