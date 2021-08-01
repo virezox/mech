@@ -23,6 +23,13 @@ var (
    TV = Client{Name: "TVHTML5", Version: "7.20200101"}
 )
 
+func ValidID(id string) error {
+   if len(id) == 11 {
+      return nil
+   }
+   return fmt.Errorf("%q invalid as ID", id)
+}
+
 func post(url string, head Auth, body youTubeI) (*http.Response, error) {
    buf := new(bytes.Buffer)
    if err := json.NewEncoder(buf).Encode(body); err != nil {
@@ -86,9 +93,6 @@ type Player struct {
 }
 
 func NewPlayer(id string, head Auth, body Client) (*Player, error) {
-   if len(id) != 11 {
-      return nil, fmt.Errorf("%q invalid as ID", id)
-   }
    var i youTubeI
    i.Context.Client = body
    i.VideoID = id

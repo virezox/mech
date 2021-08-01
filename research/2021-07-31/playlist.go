@@ -7,7 +7,7 @@ import (
    "time"
 )
 
-func main() {
+func playlist() {
    releaseID := "a40cb6e9-c766-37c4-8677-7eb51393d5a1"
    musicbrainz.Verbose = true
    youtube.Verbose = true
