@@ -1,44 +1,22 @@
 # August 1 2021
 
+~~~
+dDiff: 0s iDiff: 290 B3szYRzZqp4 oneohtrix point never - describing bodies
+dDiff: 8s iDiff: 2740 11Bvzknjo2Q Oneohtrix Point Never - Describing Bodies
+dDiff: 1s iDiff: 616 4FnsdJkUBhk Oneohtrix Point Never - Describing Bodies
+dDiff: 0s iDiff: 8 ZXNscpJIzQs Oneohtrix Point Never - Returnal (2010) - Describing Bodies
+dDiff: 3m24s iDiff: 0 _vhnMkcK5yo Oneohtrix Point Never - Music For Steamed Rocks
+dDiff: 37m52s iDiff: 0 nGj5N9Ll9pI Oneohtrix Point Never - Returnal [Full album]
+dDiff: 1h43m1s iDiff: 6 XbUOX4lr9Bw Oneohtrix Point Never - Sleep Mix
+dDiff: 46s iDiff: 2 zZ0NqyQK-kM Oneohtrix Point Never -- Betrayed in the Octagon
+dDiff: 49s iDiff: 378 hD0c_5bmg9M Oneohtrix Point Never - Power of Persuasion
+dDiff: 16s iDiff: 338 1UztCDH2xuQ Oneohtrix Point Never - Animals (Director's Cut)
+dDiff: 3m28s iDiff: 2792 tVvI1AvFGxk Oneohtrix Point Never - Explain (Excerpt MV)
+dDiff: 39m3s iDiff: 0 F1YdyaJeb1E Oneohtrix Point Never - The Fall Into Time (HD Vinyl Rip)
+dDiff: 5m33s iDiff: 1201 gRdVRDSO8aw Oneohtrix Point Never - Blue Drive
+dDiff: 1s iDiff: 170 qmlJveN9IkI Oneohtrix Point Never - Boring Angel
+~~~
+
 Duration then images?
 
 Images then duration?
-
----
-
-Can we just look at duration? No:
-
-~~~
-0s B3szYRzZqp4 oneohtrix point never - describing bodies
-0s ZXNscpJIzQs Oneohtrix Point Never - Returnal (2010) - Describing Bodies
-1s 4FnsdJkUBhk Oneohtrix Point Never - Describing Bodies
-8s 11Bvzknjo2Q Oneohtrix Point Never - Describing Bodies
-~~~
-
-Can we just look at the images? No.
-
-~~~
-PS D:\Desktop> curl -I i.ytimg.com/vi/ZXNscpJIzQs/hq1.jpg
-Content-Length: 10508
-PS D:\Desktop> curl -I i.ytimg.com/vi/ZXNscpJIzQs/hq2.jpg
-Content-Length: 10500
-8
-
-PS D:\Desktop> curl -I i.ytimg.com/vi/B3szYRzZqp4/hq1.jpg
-Content-Length: 17532
-PS D:\Desktop> curl -I i.ytimg.com/vi/B3szYRzZqp4/hq2.jpg
-Content-Length: 17242
-290
-
-PS D:\Desktop> curl -I i.ytimg.com/vi/4FnsdJkUBhk/hq1.jpg
-Content-Length: 27879
-PS D:\Desktop> curl -I i.ytimg.com/vi/4FnsdJkUBhk/hq2.jpg
-Content-Length: 27263
-616
-
-PS D:\Desktop> curl -I i.ytimg.com/vi/11Bvzknjo2Q/hq1.jpg
-Content-Length: 28382
-PS D:\Desktop> curl -I i.ytimg.com/vi/11Bvzknjo2Q/hq2.jpg
-Content-Length: 31122
-2740
-~~~
