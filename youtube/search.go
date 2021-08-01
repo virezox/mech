@@ -7,9 +7,11 @@ import (
    "image"
    "image/jpeg"
    "net/http"
+   "time"
 )
 
-var Distance = make(map[string]int)
+// cache is public so user can clear
+var Hash = make(map[string]*goimagehash.ImageHash)
 
 type Item struct {
    TvMusicVideoRenderer *struct {
@@ -27,10 +29,22 @@ type Item struct {
    }
 }
 
-func (i Item) Distance(other *goimagehash.ImageHash) (int, error) {
+func (i Item) Duration() (time.Duration, error) {
+   l := "00:00:00"
+   r := i.TvMusicVideoRenderer.LengthText.SimpleText
+   l = l[:len(l) - len(r)]
+   u, err := time.Parse("15:04:05", l + r)
+   if err != nil {
+      return 0, err
+   }
+   var t time.Time
+   return u.AddDate(1, 0, 0).Sub(t), nil
+}
+
+func (i Item) Hash() (*goimagehash.ImageHash, error) {
    id := i.VideoID()
-   if d, ok := Distance[id]; ok {
-      return d, nil
+   if h, ok := Hash[id]; ok {
+      return h, nil
    }
    p := Picture{480, 360, 270, "hqdefault", JPG}
    addr := p.Address(id)
@@ -39,12 +53,12 @@ func (i Item) Distance(other *goimagehash.ImageHash) (int, error) {
    }
    res, err := http.Get(addr)
    if err != nil {
-      return 0, err
+      return nil, err
    }
    defer res.Body.Close()
    img, err := jpeg.Decode(res.Body)
    if err != nil {
-      return 0, err
+      return nil, err
    }
    x0 := (p.Width - p.SubHeight) / 2
    y0 := (p.Height - p.SubHeight) / 2
@@ -52,14 +66,14 @@ func (i Item) Distance(other *goimagehash.ImageHash) (int, error) {
    img = img.(*image.YCbCr).SubImage(rect)
    h, err := goimagehash.DifferenceHash(img)
    if err != nil {
-      return 0, err
+      return nil, err
    }
-   d, err := h.Distance(other)
-   if err != nil {
-      return 0, err
-   }
-   Distance[id] = d
-   return d, nil
+   Hash[id] = h
+   return h, nil
+}
+
+func (i Item) Title() string {
+   return i.TvMusicVideoRenderer.PrimaryText.SimpleText
 }
 
 func (i Item) VideoID() string {
