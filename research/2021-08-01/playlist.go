@@ -8,20 +8,9 @@ import (
 )
 
 func playlist() {
-   releaseID := "a40cb6e9-c766-37c4-8677-7eb51393d5a1"
    musicbrainz.Verbose = true
    youtube.Verbose = true
-   // musicbrainz hash
-   c, err := musicbrainz.NewCover(releaseID)
-   if err != nil {
-      panic(err)
-   }
-   other, err := musicbrainz.Hash(c.Images[0].Image)
-   if err != nil {
-      panic(err)
-   }
-   // youtube hash
-   r, err := musicbrainz.NewRelease(releaseID)
+   r, err := musicbrainz.NewRelease("a40cb6e9-c766-37c4-8677-7eb51393d5a1")
    if err != nil {
       panic(err)
    }
@@ -33,10 +22,6 @@ func playlist() {
             panic(err)
          }
          for _, i := range s.Items() {
-            _, err := i.Distance(other)
-            if err != nil {
-               panic(err)
-            }
             time.Sleep(100 * time.Millisecond)
          }
       }
