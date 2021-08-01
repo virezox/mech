@@ -1,5 +1,19 @@
 # YouTube
 
+Is `maxres1` always available? No:
+
+- <http://i.ytimg.com/vi_webp/hq2KgzKETBw/maxres1.webp>
+- http://i.ytimg.com/vi/hq2KgzKETBw/maxres1.jpg
+
+Is `sd1` always available? No:
+
+- <http://i.ytimg.com/vi_webp/hq2KgzKETBw/sd1.webp>
+- http://i.ytimg.com/vi/hq2KgzKETBw/sd1.jpg
+
+If `hq1` always available? Yes:
+
+http://i.ytimg.com/vi/hq2KgzKETBw/hq1.jpg
+
 ## Clients
 
 Need Android:

@@ -3,6 +3,7 @@ package main
 import (
    "fmt"
    "github.com/89z/mech/youtube"
+   "sort"
    "time"
 )
 
@@ -11,12 +12,6 @@ func distance(d, e time.Duration) time.Duration {
       return e - d
    }
    return d - e
-}
-
-type item struct {
-   id string
-   title string
-   distance time.Duration
 }
 
 func main() {
@@ -32,10 +27,18 @@ func main() {
          panic(err)
       }
       items = append(items, item{
-         i.VideoID(), i.Title(), distance(d, 4*time.Minute+19*time.Second),
+         distance(d, 4*time.Minute+19*time.Second), i,
       })
    }
+   sort.Slice(items, func(a, b int) bool {
+      return items[a].distance < items[b].distance
+   })
    for _, i := range items {
-      fmt.Println(i)
+      fmt.Println(i.distance, i.VideoID(), i.Title())
    }
+}
+
+type item struct {
+   distance time.Duration
+   youtube.Item
 }
