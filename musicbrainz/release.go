@@ -3,8 +3,6 @@ package musicbrainz
 import (
    "encoding/json"
    "fmt"
-   "github.com/corona10/goimagehash"
-   "image/jpeg"
    "net/http"
    "net/http/httputil"
    "net/url"
@@ -16,22 +14,6 @@ import (
 const API = "http://musicbrainz.org/ws/2/release"
 
 var Verbose = false
-
-func Hash(addr string) (*goimagehash.ImageHash, error) {
-   if Verbose {
-      fmt.Println("GET", addr)
-   }
-   res, err := http.Get(addr)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   img, err := jpeg.Decode(res.Body)
-   if err != nil {
-      return nil, err
-   }
-   return goimagehash.DifferenceHash(img)
-}
 
 type Cover struct {
    Images []struct {

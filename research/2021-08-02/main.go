@@ -31,19 +31,12 @@ func main() {
             time.Sleep(100 * time.Millisecond)
          }
          sort.Slice(results, func(a, b int) bool {
-            ra, rb := results[a], results[b]
-            if ra.duration < rb.duration {
-               return true
-            }
-            if rb.duration < ra.duration {
-               return false
-            }
-            return ra.contentLength < rb.contentLength
+            // FIXME
+            return true
          })
          r := results[0]
          fmt.Println(
-            "time:", r.duration, "image:", r.contentLength,
-            r.VideoID(), r.Title(),
+            "time:", r.duration, "image:", r.size, r.VideoID(), r.Title(),
          )
       }
    }

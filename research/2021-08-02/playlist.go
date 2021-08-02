@@ -10,21 +10,14 @@ import (
 
 var cache = make(map[string]int64)
 
-func diffDuration(x, y time.Duration) time.Duration {
+func relativeDifference(x, y float64) float64 {
    if x < y {
-      return y - x
+      return (y - x) / y
    }
-   return x - y
+   return (x - y) / x
 }
 
-func diffImage(x, y int64) int64 {
-   if x < y {
-      return y - x
-   }
-   return x - y
-}
-
-func length(p youtube.Picture, i youtube.Item) (int64, error) {
+func size(p youtube.Picture, i youtube.Item) (int64, error) {
    addr := p.Address(i.VideoID())
    if l, ok := cache[addr]; ok {
       return l, nil
@@ -37,7 +30,14 @@ func length(p youtube.Picture, i youtube.Item) (int64, error) {
    return r.ContentLength, nil
 }
 
+type result struct {
+   duration time.Duration
+   size int64
+   youtube.Item
+}
+
 func newResult(t musicbrainz.Track, i youtube.Item) (*result, error) {
+   /*
    // duration MB
    dMB := t.Duration()
    // duration YT
@@ -45,45 +45,30 @@ func newResult(t musicbrainz.Track, i youtube.Item) (*result, error) {
    if err != nil {
       return nil, err
    }
+   */
    // duration difference
-   dDiff := diffDuration(dMB, dYT)
+   var dDiff time.Duration = 1
+   /*
    // image HQ1
    p := youtube.Picture{Base: "hq1", Format: youtube.JPG}
-   hq1, err := length(p, i)
+   hq1, err := size(p, i)
    if err != nil {
       return nil, err
    }
    // image HQ2
    p = youtube.Picture{Base: "hq2", Format: youtube.JPG}
-   hq2, err := length(p, i)
+   hq2, err := size(p, i)
    if err != nil {
       return nil, err
    }
+   */
    // image difference
-   iDiff := diffImage(hq1, hq2)
+   var iDiff int64 = 1
    // return
    return &result{dDiff, iDiff, i}, nil
 }
 
-type result struct {
-   duration time.Duration
-   contentLength int64
-   youtube.Item
-}
-
-type video struct {
-   duration time.Duration
-   size int64
-}
-
-func relativeDifference(x, y float64) float64 {
-   if x < y {
-      return (y - x) / y
-   }
-   return (x - y) / x
-}
-
-func (p video) euclideanDistance(q video) float64 {
+func (p result) euclideanDistance(q result) float64 {
    a := relativeDifference(
       float64(p.duration), float64(q.duration),
    )
