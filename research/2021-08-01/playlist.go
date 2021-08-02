@@ -5,7 +5,6 @@ import (
    "github.com/89z/mech/musicbrainz"
    "github.com/89z/mech/youtube"
    "sort"
-   "time"
 )
 
 func main() {
@@ -28,15 +27,13 @@ func main() {
                panic(err)
             }
             results = append(results, r)
-            time.Sleep(100 * time.Millisecond)
          }
          sort.Slice(results, func(a, b int) bool {
-            // FIXME
-            return true
+            return results[a].distance < results[b].distance
          })
          r := results[0]
          fmt.Println(
-            "time:", r.duration, "image:", r.size, r.VideoID(), r.Title(),
+            r.distance, r.VideoID(), r.Title(),
          )
       }
    }

@@ -106,7 +106,7 @@ func (r Release) trackLen() int {
 }
 
 type Track struct {
-   Length int
+   Length int64
    Title string
 }
 

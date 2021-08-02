@@ -5,17 +5,9 @@ import (
    "github.com/89z/mech/youtube"
    "math"
    "net/http"
-   "time"
 )
 
 var cache = make(map[string]int64)
-
-func relativeDifference(x, y float64) float64 {
-   if x < y {
-      return (y - x) / y
-   }
-   return (x - y) / x
-}
 
 func size(p youtube.Picture, i youtube.Item) (int64, error) {
    addr := p.Address(i.VideoID())
@@ -30,14 +22,19 @@ func size(p youtube.Picture, i youtube.Item) (int64, error) {
    return r.ContentLength, nil
 }
 
+func relativeDifference(x, y float64) float64 {
+   if x < y {
+      return (y - x) / y
+   }
+   return (x - y) / x
+}
+
 type result struct {
-   duration time.Duration
-   size int64
+   distance float64
    youtube.Item
 }
 
 func newResult(t musicbrainz.Track, i youtube.Item) (*result, error) {
-   /*
    // duration MB
    dMB := t.Duration()
    // duration YT
@@ -45,10 +42,10 @@ func newResult(t musicbrainz.Track, i youtube.Item) (*result, error) {
    if err != nil {
       return nil, err
    }
-   */
    // duration difference
-   var dDiff time.Duration = 1
-   /*
+   dDiff := relativeDifference(
+      float64(dMB), float64(dYT),
+   )
    // image HQ1
    p := youtube.Picture{Base: "hq1", Format: youtube.JPG}
    hq1, err := size(p, i)
@@ -61,19 +58,12 @@ func newResult(t musicbrainz.Track, i youtube.Item) (*result, error) {
    if err != nil {
       return nil, err
    }
-   */
    // image difference
-   var iDiff int64 = 1
+   iDiff := relativeDifference(
+      float64(hq1), float64(hq2),
+   )
    // return
-   return &result{dDiff, iDiff, i}, nil
-}
-
-func (p result) euclideanDistance(q result) float64 {
-   a := relativeDifference(
-      float64(p.duration), float64(q.duration),
-   )
-   b := relativeDifference(
-      float64(p.size), float64(q.size),
-   )
-   return math.Pow(a, 2) + math.Pow(b, 2)
+   return &result{
+      math.Pow(dDiff, 2) + math.Pow(iDiff, 2), i,
+   }, nil
 }
