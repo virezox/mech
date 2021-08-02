@@ -23,7 +23,6 @@ func diffImage(x, y int64) int64 {
    return x - y
 }
 
-
 var cache = make(map[string]int64)
 
 func length(p youtube.Picture, i youtube.Item) (int64, error) {

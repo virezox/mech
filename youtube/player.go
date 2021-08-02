@@ -17,9 +17,9 @@ var (
 )
 
 var (
-   ANDROID = Client{Name: "ANDROID", Version: "16.05"}
-   EMBED = Client{Name: "ANDROID", Screen: "EMBED", Version: "16.05"}
-   MWEB = Client{Name: "MWEB", Version: "2.19700101"}
+   Android = Client{Name: "ANDROID", Version: "16.05"}
+   Embed = Client{Name: "ANDROID", Screen: "EMBED", Version: "16.05"}
+   Mweb = Client{Name: "MWEB", Version: "2.19700101"}
 )
 
 func ValidID(id string) error {

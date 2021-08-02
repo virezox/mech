@@ -7,23 +7,15 @@ import (
 
 type Item struct {
    CompactVideoRenderer *struct {
-      LengthText struct {
-         Runs []struct {
-            Text string
-         }
-      }
-      Title struct {
-         Runs []struct {
-            Text string
-         }
-      }
+      LengthText Text
+      Title Text
       VideoID string
    }
 }
 
 func (i Item) Duration() (time.Duration, error) {
    l := "00:00:00"
-   r := i.CompactVideoRenderer.LengthText.Runs[0].Text
+   r := i.CompactVideoRenderer.LengthText.join()
    l = l[:len(l) - len(r)]
    u, err := time.Parse("15:04:05", l + r)
    if err != nil {
@@ -34,7 +26,7 @@ func (i Item) Duration() (time.Duration, error) {
 }
 
 func (i Item) Title() string {
-   return i.CompactVideoRenderer.Title.Runs[0].Text
+   return i.CompactVideoRenderer.Title.join()
 }
 
 func (i Item) VideoID() string {
@@ -55,7 +47,7 @@ type Search struct {
 
 func NewSearch(query string) (*Search, error) {
    var body youTubeI
-   body.Context.Client = MWEB
+   body.Context.Client = Mweb
    body.Params = "EgIQAQ" // type video
    body.Query = query
    res, err := post(origin + "/youtubei/v1/search", Key, body)
@@ -82,4 +74,18 @@ func (s Search) Items() []Item {
       }
    }
    return items
+}
+
+type Text struct {
+   Runs []struct {
+      Text string
+   }
+}
+
+func (t Text) join() string {
+   var s string
+   for _, r := range t.Runs {
+      s += r.Text
+   }
+   return s
 }
