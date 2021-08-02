@@ -1,20 +1,29 @@
 # August 1 2021
 
-Duration then images? Yes:
+Duration then images?
 
 ~~~
-dDiff: 0s iDiff: 8 ZXNscpJIzQs Oneohtrix Point Never - Returnal (2010) - Describing Bodies
-dDiff: 0s iDiff: 290 B3szYRzZqp4 oneohtrix point never - describing bodies
-dDiff: 1s iDiff: 170 qmlJveN9IkI Oneohtrix Point Never - Boring Angel
-dDiff: 1s iDiff: 616 4FnsdJkUBhk Oneohtrix Point Never - Describing Bodies
-dDiff: 8s iDiff: 2740 11Bvzknjo2Q Oneohtrix Point Never - Describing Bodies
-dDiff: 16s iDiff: 338 1UztCDH2xuQ Oneohtrix Point Never - Animals (Director's Cut)
-dDiff: 46s iDiff: 2 zZ0NqyQK-kM Oneohtrix Point Never -- Betrayed in the Octagon
-dDiff: 49s iDiff: 378 hD0c_5bmg9M Oneohtrix Point Never - Power of Persuasion
-dDiff: 3m24s iDiff: 0 _vhnMkcK5yo Oneohtrix Point Never - Music For Steamed Rocks
-dDiff: 3m28s iDiff: 2792 tVvI1AvFGxk Oneohtrix Point Never - Explain (Excerpt MV)
-dDiff: 5m33s iDiff: 1201 gRdVRDSO8aw Oneohtrix Point Never - Blue Drive
-dDiff: 37m52s iDiff: 0 nGj5N9Ll9pI Oneohtrix Point Never - Returnal [Full album]
-dDiff: 39m3s iDiff: 0 F1YdyaJeb1E Oneohtrix Point Never - The Fall Into Time (HD Vinyl Rip)
-dDiff: 1h43m1s iDiff: 6 XbUOX4lr9Bw Oneohtrix Point Never - Sleep Mix
+title: fail
+time: 11.787s image: 41 Osh3waD3pVU Oneohtrix Point Never - Ruined Lives
+
+title: pass, image: pass, 720p: fail
+time: 334ms image: 8 ZXNscpJIzQs Oneohtrix Point Never - Returnal (2010) - Describing Bodies
+
+title: pass, image: pass, 720p: pass
+time: 3.107s image: 30 m1CBrFSfFCg OPN - Stress Waves
+
+title: pass, image: fail
+time: 1.56s image: 8324 lgC2gd-eQtc Oneohtrix point never - Returnal
+
+title: pass, image: fail
+time: 2.373s image: 22491 xsvGOYUtAq8 Oneohtrix Point Never - Pelham Island Road
+
+title: pass, image: pass, 720p: fail
+time: 1.16s image: 71 fThTcbl5v2k Oneohtrix Point Never - Where Does Time Go
+
+title: pass, image: fail
+time: 1.36s image: 694 eiN30tKzJHo The Bling Ring - Oneohtrix Point Never - Ouroboros
+
+title: pass, image: pass, 720p: fail
+time: 2.734s image: 365 qUQ1lCMxMw0 oneohtrix point never - preyouandi
 ~~~

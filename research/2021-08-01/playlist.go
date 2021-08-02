@@ -5,6 +5,7 @@ import (
    "github.com/89z/mech/musicbrainz"
    "github.com/89z/mech/youtube"
    "net/http"
+   "sort"
    "time"
 )
 
@@ -22,11 +23,6 @@ func diffImage(x, y int64) int64 {
    return x - y
 }
 
-type result struct {
-   duration time.Duration
-   contentLength int64
-   youtube.Item
-}
 
 var cache = make(map[string]int64)
 
@@ -73,7 +69,6 @@ func newResult(t musicbrainz.Track, i youtube.Item) (*result, error) {
 
 func main() {
    musicbrainz.Verbose = true
-   youtube.Verbose = true
    r, err := musicbrainz.NewRelease("a40cb6e9-c766-37c4-8677-7eb51393d5a1")
    if err != nil {
       panic(err)
@@ -85,14 +80,36 @@ func main() {
          if err != nil {
             panic(err)
          }
+         var results []*result
          for _, i := range s.Items() {
             r, err := newResult(t, i)
             if err != nil {
                panic(err)
             }
-            fmt.Println(r)
+            results = append(results, r)
             time.Sleep(100 * time.Millisecond)
          }
+         sort.Slice(results, func(a, b int) bool {
+            ra, rb := results[a], results[b]
+            if ra.duration < rb.duration {
+               return true
+            }
+            if rb.duration < ra.duration {
+               return false
+            }
+            return ra.contentLength < rb.contentLength
+         })
+         r := results[0]
+         fmt.Println(
+            "time:", r.duration, "image:", r.contentLength,
+            r.VideoID(), r.Title(),
+         )
       }
    }
+}
+
+type result struct {
+   duration time.Duration
+   contentLength int64
+   youtube.Item
 }
