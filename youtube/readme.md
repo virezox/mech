@@ -43,15 +43,6 @@ Embed   | fail
 Mweb    | pass
 TV      | fail
 
-Need TV:
-
-client  | search
---------|-------
-Android | fail
-Embed   | fail
-Mweb    | fail
-TV      | pass
-
 ## Cover art
 
 - <https://wiki.musicbrainz.org/Cover_Art_Archive/API>
