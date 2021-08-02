@@ -26,7 +26,7 @@ func main() {
    body := new(bytes.Buffer)
    for _, client := range clients {
       fmt.Println(client)
-      i.Context.Client.ClientName = client.name
+      i.Context.Client.ClientName = "MWEB"
       i.Context.Client.ClientVersion = client.version
       json.NewEncoder(body).Encode(i)
       req, err := http.NewRequest(
