@@ -14,7 +14,7 @@ func main() {
    t := musicbrainz.Track{
       Length: d.Milliseconds(),
    }
-   s, err := youtube.NewSearch("oneohtrix point never returnal")
+   s, err := youtube.NewSearch("oneohtrix point never returnal returnal")
    if err != nil {
       panic(err)
    }
@@ -23,6 +23,9 @@ func main() {
       if err != nil {
          panic(err)
       }
-      fmt.Printf("%.3v %v %v\n", r.distance, r.VideoID(), r.Title())
+      fmt.Printf(
+         "di %.3f du %.3f s %.3f %v %v\n",
+         r.distance, r.duration, r.size, r.VideoID(), r.Title(),
+      )
    }
 }

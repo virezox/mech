@@ -29,11 +29,6 @@ func relativeDifference(x, y float64) float64 {
    return (x - y) / x
 }
 
-type result struct {
-   distance float64
-   youtube.Item
-}
-
 func newResult(t musicbrainz.Track, i youtube.Item) (*result, error) {
    // duration MB
    dMB := t.Duration()
@@ -43,7 +38,7 @@ func newResult(t musicbrainz.Track, i youtube.Item) (*result, error) {
       return nil, err
    }
    // duration difference
-   dDiff := relativeDifference(
+   dDiff := 100 * relativeDifference(
       float64(dMB), float64(dYT),
    )
    // image HQ1
@@ -58,12 +53,19 @@ func newResult(t musicbrainz.Track, i youtube.Item) (*result, error) {
    if err != nil {
       return nil, err
    }
-   // image difference
-   iDiff := relativeDifference(
+   // size difference
+   sDiff := 100 * relativeDifference(
       float64(hq1), float64(hq2),
    )
    // return
    return &result{
-      math.Pow(dDiff, 2) + math.Pow(iDiff, 2), i,
+      dDiff, sDiff, math.Pow(dDiff, 2) + math.Pow(sDiff, 2), i,
    }, nil
+}
+
+type result struct {
+   duration float64
+   size float64
+   distance float64
+   youtube.Item
 }

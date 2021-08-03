@@ -16,7 +16,7 @@ func main() {
    artist := r.ArtistCredit[0].Name
    for _, med := range r.Media {
       for _, t := range med.Tracks {
-         s, err := youtube.NewSearch(artist + " " + t.Title)
+         s, err := youtube.NewSearch(artist + " " + r.Title + " " + t.Title)
          if err != nil {
             panic(err)
          }
@@ -32,8 +32,8 @@ func main() {
             return results[a].distance < results[b].distance
          })
          r := results[0]
-         fmt.Println(
-            r.distance, r.VideoID(), r.Title(),
+         fmt.Printf(
+            "%.3f %v %v\n", r.distance, r.VideoID(), r.Title(),
          )
       }
    }
