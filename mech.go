@@ -1,10 +1,24 @@
 package mech
 
 import (
+   "bufio"
    "golang.org/x/net/html"
    "io"
+   "net/http"
    "strings"
 )
+
+func ReadRequest(raw, scheme string) (*http.Request, error) {
+   r, err := http.ReadRequest(bufio.NewReader(strings.NewReader(raw)))
+   if err != nil {
+      return nil, err
+   }
+   // no Host in request URL
+   r.URL.Host = r.Host
+   // unsupported protocol scheme ""
+   r.URL.Scheme = scheme
+   return r, nil
+}
 
 type Node struct {
    *html.Node
