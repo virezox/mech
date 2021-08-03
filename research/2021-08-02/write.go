@@ -1,13 +1,42 @@
 package main
 
 import (
-   "fmt"
+   "encoding/json"
    "github.com/89z/mech/musicbrainz"
    "github.com/89z/mech/youtube"
    "net/http"
+   "os"
 )
 
+var cache = make(map[string]int64)
+
+func size(p youtube.Picture, i youtube.Item) (int64, error) {
+   addr := p.Address(i.VideoID())
+   if l, ok := cache[addr]; ok {
+      return l, nil
+   }
+   r, err := http.Head(addr)
+   if err != nil {
+      return 0, err
+   }
+   cache[addr] = r.ContentLength
+   return r.ContentLength, nil
+}
+
+type track struct {
+   musicbrainz.Track
+   Items []item
+}
+
+type item struct {
+   youtube.Item
+   HQ1 int64
+   HQ2 int64
+}
+
 func main() {
+   musicbrainz.Verbose = true
+   youtube.Verbose = true
    r, err := musicbrainz.NewRelease("a40cb6e9-c766-37c4-8677-7eb51393d5a1")
    if err != nil {
       panic(err)
@@ -43,31 +72,12 @@ func main() {
          })
       }
    }
-   fmt.Println(tracks)
-}
-
-type item struct {
-   youtube.Item
-   hq1 int64
-   hq2 int64
-}
-
-type track struct {
-   musicbrainz.Track
-   items []item
-}
-
-var cache = make(map[string]int64)
-
-func size(p youtube.Picture, i youtube.Item) (int64, error) {
-   addr := p.Address(i.VideoID())
-   if l, ok := cache[addr]; ok {
-      return l, nil
-   }
-   r, err := http.Head(addr)
+   f, err := os.Create("returnal.json")
    if err != nil {
-      return 0, err
+      panic(err)
    }
-   cache[addr] = r.ContentLength
-   return r.ContentLength, nil
+   defer f.Close()
+   enc := json.NewEncoder(f)
+   enc.SetIndent("", " ")
+   enc.Encode(tracks)
 }
