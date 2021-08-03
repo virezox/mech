@@ -5,19 +5,31 @@ import (
    "golang.org/x/net/html"
    "io"
    "net/http"
+   "net/textproto"
+   "net/url"
    "strings"
 )
 
-func ReadRequest(raw, scheme string) (*http.Response, error) {
-   r, err := http.ReadRequest(bufio.NewReader(strings.NewReader(raw)))
+func ReadRequest(r io.Reader) (*http.Request, error) {
+   t := textproto.NewReader(bufio.NewReader(r))
+   s, err := t.ReadLine()
    if err != nil {
       return nil, err
    }
-   // no Host in request URL
-   r.URL.Host = r.Host
-   // unsupported protocol scheme ""
-   r.URL.Scheme = scheme
-   return new(http.Transport).RoundTrip(r)
+   f := strings.Fields(s)
+   h, err := t.ReadMIMEHeader()
+   if err != nil {
+      return nil, err
+   }
+   return &http.Request{
+      Body: io.NopCloser(t.R),
+      Header: http.Header(h),
+      Method: f[0],
+      URL: &url.URL{
+         Host: h.Get("Host"),
+         Path: f[1],
+      },
+   }, nil
 }
 
 type Node struct {

@@ -1,5 +1,13 @@
 # August 1 2021
 
+~~~
+Daft Punk - Around the world (Official Audio)
+https://www.youtube.com/watch?v=dwDns8x3Jb4
+
+Around the World
+https://www.youtube.com/watch?v=Jb6gcoR266U
+~~~
+
 Lets JSON encode all the data for the entire album, so we can stop making HTTP
 requests. Then we can try different sorting until we get it right. We cant use
 these:
