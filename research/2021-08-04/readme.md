@@ -1,5 +1,18 @@
 # August 1 2021
 
+we should also consider the natural sort order as a factor.
+
+~~~
+POST /youtubei/v1/search HTTP/1.1
+Host: www.youtube.com
+x-goog-api-key: AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8
+
+{"context":{"client":{"clientName":"MWEB", "clientVersion":"2.19700101"}},
+"params":"EgIQAQ", "query":"daft punk topic around the world"}
+~~~
+
+Compare:
+
 ~~~
 Daft Punk - Around the world (Official Audio)
 https://www.youtube.com/watch?v=dwDns8x3Jb4
