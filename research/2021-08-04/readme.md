@@ -1,43 +1,38 @@
 # August 4 2021
 
-We should consider the natural sort order as a factor. We cant use these:
+Distance with different units
+
+Say I am a detective, and I want to find the suspect that most closely matches a
+description:
 
 ~~~
-[duration]
-[duration size]
-[size]
+height: 70 inch
+weight: 170 lbs
 ~~~
 
-because of this:
+and here are the suspects:
+
+name  | height | weight
+------|--------|-------
+Adam  | 60     | 160
+Bob   | 65     | 180
+Chris | 70     | 200
+
+I first thought about using squared euclidian distance [1], such as:
 
 ~~~
-1.36s eiN30tKzJHo The Bling Ring - Oneohtrix Point Never - Ouroboros
+Adam = (70-60)^2 + (170-160)^2
 ~~~
 
-we cant use this:
+but since the vectors are different units, I dont think this works. I also read
+about L2-normalised Euclidean distance [2], but I cant figure out how to
+"normalise" the values.
 
-~~~
-[index]
-~~~
+1. <https://wikipedia.org/wiki/Euclidean_distance>
+2. <https://wikipedia.org/wiki/Cosine_similarity>
 
-because of this:
+## Answer
 
-~~~
-B3szYRzZqp4 oneohtrix point never - describing bodies
-~~~
+Mahalanobis distance
 
-which leaves these:
-
-~~~
-[index duration]
-[index size]
-[index duration size]
-[title]
-[index title]
-[duration title]
-[index duration title]
-[size title]
-[index size title]
-[duration size title]
-[index duration size title]
-~~~
+https://paulrohan.medium.com/euclidean-distance-and-normalization-of-a-vector-76f7a97abd9

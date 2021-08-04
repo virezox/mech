@@ -7,27 +7,14 @@ import (
    "github.com/89z/mech/youtube"
    "math"
    "os"
+   "time"
 )
 
-func relativeDifference(x, y float64) float64 {
+func durationDifference(x, y time.Duration) time.Duration {
    if x < y {
-      return (y - x) / y
+      return y - x
    }
-   return (x - y) / x
-}
-
-type dimensions []struct {
-   p float64
-   q float64
-}
-
-func (s dimensions) euclideanDistance() float64 {
-   var f float64
-   for _, e := range s {
-      d := relativeDifference(e.p, e.q)
-      f += math.Pow(d, 2)
-   }
-   return f
+   return x - y
 }
 
 func main() {
@@ -46,21 +33,22 @@ func main() {
    }
    json.NewDecoder(f).Decode(&tracks)
    for _, t := range tracks {
-      for index, item := range t.Items {
+      var points []point
+      for i, item := range t.Items {
          dMB := t.Duration()
          dYT, err := item.Duration()
          if err != nil {
             panic(err)
          }
-         d := dimensions{
-            {
-               0, float64(index),
-            },
-            {
-               float64(dMB), float64(dYT),
-            },
-         }
-         fmt.Println(d.euclideanDistance())
+         points = append(points, point{
+            i, durationDifference(dMB, dYT),
+         })
       }
+      // normalize
    }
+}
+
+type point struct {
+   index int
+   duration time.Duration
 }
