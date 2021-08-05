@@ -2,10 +2,8 @@ package main
 
 import (
    "encoding/json"
-   "fmt"
    "github.com/89z/mech/musicbrainz"
    "github.com/89z/mech/youtube"
-   "math"
    "os"
    "time"
 )
