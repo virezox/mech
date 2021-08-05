@@ -1,38 +1,16 @@
 # August 4 2021
 
-Distance with different units
+You could calculate Z-scores for distances, but still...
 
-Say I am a detective, and I want to find the suspect that most closely matches a
-description:
+Using the variance of the variables and assuming that queries are in the same
+distributions would probably go a long way towards a reasonable answer.
 
-~~~
-height: 70 inch
-weight: 170 lbs
-~~~
+@Steven Penny Calculate the variance for each of the variable, then scale by
+this (the variables and the query), then choose based on minimum Euclidean
+distance. This is a reasonable, but naive implementation.
 
-and here are the suspects:
-
-name  | height | weight
-------|--------|-------
-Adam  | 60     | 160
-Bob   | 65     | 180
-Chris | 70     | 200
-
-I first thought about using squared euclidian distance [1], such as:
-
-~~~
-Adam = (70-60)^2 + (170-160)^2
-~~~
-
-but since the vectors are different units, I dont think this works. I also read
-about L2-normalised Euclidean distance [2], but I cant figure out how to
-"normalise" the values.
-
-1. <https://wikipedia.org/wiki/Euclidean_distance>
-2. <https://wikipedia.org/wiki/Cosine_similarity>
-
-## Answer
-
-Mahalanobis distance
-
-https://paulrohan.medium.com/euclidean-distance-and-normalization-of-a-vector-76f7a97abd9
+- <https://wikipedia.org/wiki/Standard_score>
+- https://paulrohan.medium.com/euclidean-distance-and-normalization-of-a-vector-76f7a97abd9
+- https://stats.stackexchange.com/questions/539156/distance-with-different-units
+- https://wikipedia.org/wiki/Variance
+- https://www.machinelearningplus.com/statistics/mahalanobis-distance
