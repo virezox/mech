@@ -1,5 +1,19 @@
 # August 5 2021
 
+~~~
+PS D:\Git\mech\research\2021-08-05> go run .\10.go
+description 0.000
+Adam 2.674
+Bob 1.630
+Chris 1.757
+
+PS D:\Git\mech\research\2021-08-05> go run .\11.go
+description 0.000
+Adam 1.635
+Bob 1.277
+Chris 1.325
+~~~
+
 ## Mahalanobis distance
 
 - <https://wikipedia.org/wiki/Mahalanobis_distance>
