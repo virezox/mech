@@ -1,16 +1,24 @@
 # August 5 2021
 
-## standard score
-
-You could calculate Z-scores for distances
-
-<https://wikipedia.org/wiki/Standard_score>
-
 ## Mahalanobis distance
 
 - <https://wikipedia.org/wiki/Mahalanobis_distance>
 - https://pkg.go.dev/gonum.org/v1/gonum/stat#Mahalanobis
 - https://stats.stackexchange.com/questions/172564
+
+## standard deviation
+
+The standard deviation of a random variable, sample, statistical population,
+data set, or probability distribution is the square root of its variance.
+
+- <https://wikipedia.org/wiki/Standard_deviation>
+- https://github.com/golang/perf/blob/master/internal/stats/sample.go
+
+## standard score
+
+You could calculate Z-scores for distances
+
+<https://wikipedia.org/wiki/Standard_score>
 
 ## variance
 
