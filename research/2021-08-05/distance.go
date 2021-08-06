@@ -5,15 +5,19 @@ import (
    "math"
 )
 
-func absoluteDifference(x, y float64) float64 {
-   if x < y {
-      return y - x
+func main() {
+   names := []string{"description", "Adam", "Bob", "Chris"}
+   heights := []float64{70, 60, 65, 70}
+   weights := []float64{170, 160, 180, 200}
+   vHeight := variance(heights)
+   vWeight := variance(weights)
+   for i := range names {
+      m := mahalanobis{
+         {heights[0], heights[i], vHeight},
+         {weights[0], weights[i], vWeight},
+      }
+      fmt.Printf("%v %.3f\n", names[i], m.distance())
    }
-   return x - y
-}
-
-func stdDev(xs []float64) float64 {
-   return math.Sqrt(variance(xs))
 }
 
 func variance(xs []float64) float64 {
@@ -26,29 +30,15 @@ func variance(xs []float64) float64 {
    return M2 / float64(len(xs) - 1)
 }
 
-type dimensions []struct {
-   x float64
-   y float64
-   s float64
+type mahalanobis []struct {
+   x, y, variance float64
 }
 
-func (d dimensions) mahalanobisDistance() float64 {
-   var f float64
-   for _, i := range d {
-      f += absoluteDifference(i.x, i.y) / i.s
+func (m mahalanobis) distance() float64 {
+   var sum float64
+   for _, i := range m {
+      sum += math.Pow(i.x-i.y, 2) / i.variance
    }
-   return f
+   return sum
 }
 
-func main() {
-   names := []string{"description", "Adam", "Bob", "Chris"}
-   heights := []float64{70, 60, 65, 70}
-   weights := []float64{170, 160, 180, 200}
-   for i := range names {
-      d := dimensions{
-         {heights[0], heights[i], stdDev(heights)},
-         {weights[0], weights[i], stdDev(weights)},
-      }
-      fmt.Printf("%v %.3f\n", names[i], d.mahalanobisDistance())
-   }
-}
