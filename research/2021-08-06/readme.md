@@ -1,6 +1,8 @@
 # August 6 2021
 
 ~~~
-70 60 65 70
-170 160 180 200
+golang column standard deviation
+golang column variance
+golang row standard deviation
+golang row variance
 ~~~
