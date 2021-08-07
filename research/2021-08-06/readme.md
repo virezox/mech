@@ -4,7 +4,6 @@
 
 - <https://wikipedia.org/wiki/Mahalanobis_distance>
 - https://github.com/bitterfly/emotions/blob/master/emotions/kmeans.go
-- https://pkg.go.dev/gonum.org/v1/gonum/stat#Mahalanobis
 - https://stats.stackexchange.com/questions/172564
 
 ## variance

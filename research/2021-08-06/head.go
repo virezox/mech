@@ -20,12 +20,13 @@ func main() {
       { 70,  60,  65,  70},
       {170, 160, 180, 200},
    }
-   var v []float64
+   var variances []float64
    for _, r := range body {
-      v = append(v, stat.Variance(r, nil))
+      variances = append(variances, stat.Variance(r, nil))
    }
+   fmt.Printf("%.3f\n", variances) // [22.917 291.667]
    for i := 1; i < len(head); i++ {
-      d := distance(0, i, v, body)
+      d := distance(0, i, variances, body)
       fmt.Printf("%v %.3f\n", head[i], d)
    }
 }
