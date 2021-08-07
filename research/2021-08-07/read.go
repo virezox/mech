@@ -2,17 +2,31 @@ package main
 
 import (
    "encoding/json"
+   "fmt"
    "github.com/89z/mech/musicbrainz"
    "github.com/89z/mech/youtube"
    "os"
    "time"
 )
 
-func durationDifference(x, y time.Duration) time.Duration {
-   if x < y {
-      return y - x
+func variance(data []float64) float64 {
+   var count, mean, M2 float64
+   for _, x := range data {
+      count += 1
+      delta := x - mean
+      mean += delta / count
+      M2 += delta * (x - mean)
    }
-   return x - y
+   return M2 / (count - 1)
+}
+
+func distance(x, y int, v []float64, data [][]float64) float64 {
+   var sum float64
+   for i, r := range data {
+      delta := r[x] - r[y]
+      sum += delta * delta / v[i]
+   }
+   return sum
 }
 
 func main() {
@@ -44,9 +58,4 @@ func main() {
       }
       // normalize
    }
-}
-
-type point struct {
-   index int
-   duration time.Duration
 }
