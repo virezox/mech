@@ -1,13 +1,24 @@
 package main
-
 import "fmt"
 
-func distance(x, y int, v []float64, d [][]float64) float64 {
-   var f float64
-   for i, r := range d {
-      f += (r[x] - r[y]) * (r[x] - r[y]) / v[i]
+func variance(data []float64) float64 {
+   var count, mean, M2 float64
+   for _, x := range data {
+      count += 1
+      delta := x - mean
+      mean += delta / count
+      M2 += delta * (x - mean)
    }
-   return f
+   return M2 / (count - 1)
+}
+
+func distance(x, y int, v []float64, d [][]float64) float64 {
+   var dist float64
+   for i, r := range d {
+      delta := r[x] - r[y]
+      dist += delta * delta / v[i]
+   }
+   return dist
 }
 
 func main() {
