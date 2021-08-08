@@ -6,28 +6,7 @@ import (
    "github.com/89z/mech/musicbrainz"
    "github.com/89z/mech/youtube"
    "os"
-   "time"
 )
-
-func variance(data []float64) float64 {
-   var count, mean, M2 float64
-   for _, x := range data {
-      count += 1
-      delta := x - mean
-      mean += delta / count
-      M2 += delta * (x - mean)
-   }
-   return M2 / (count - 1)
-}
-
-func distance(x, y int, v []float64, data [][]float64) float64 {
-   var sum float64
-   for i, r := range data {
-      delta := r[x] - r[y]
-      sum += delta * delta / v[i]
-   }
-   return sum
-}
 
 func main() {
    f, err := os.Open("returnal.json")
@@ -39,23 +18,26 @@ func main() {
       musicbrainz.Track
       Items []struct {
          youtube.Item
-         HQ1 int64
-         HQ2 int64
       }
    }
    json.NewDecoder(f).Decode(&tracks)
    for _, t := range tracks {
-      var points []point
-      for i, item := range t.Items {
-         dMB := t.Duration()
-         dYT, err := item.Duration()
+      // track index
+      indexes := []float64{0}
+      // track length
+      lengths := []float64{t.Length}
+      var index float64
+      for _, i := range t.Items {
+         // item index
+         indexes = append(indexes, index)
+         // item length
+         d, err := i.Duration()
          if err != nil {
             panic(err)
          }
-         points = append(points, point{
-            i, durationDifference(dMB, dYT),
-         })
+         lengths = append(lengths, d.Seconds() * 1000)
+         index++
       }
-      // normalize
+      fmt.Print(indexes, "\n", lengths, "\n\n")
    }
 }

@@ -1,8 +1,8 @@
+// MusicBrainz
 package musicbrainz
 
 import (
    "encoding/json"
-   "fmt"
    "net/http"
    "net/http/httputil"
    "net/url"
@@ -14,31 +14,6 @@ import (
 const API = "http://musicbrainz.org/ws/2/release"
 
 var Verbose = false
-
-type Cover struct {
-   Images []struct {
-      Image string
-   }
-}
-
-func NewCover(releaseID string) (*Cover, error) {
-   addr := fmt.Sprintf(
-      "http://archive.org/download/mbid-%v/index.json", releaseID,
-   )
-   if Verbose {
-      fmt.Println("GET", addr)
-   }
-   res, err := http.Get(addr)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   cov := new(Cover)
-   if err := json.NewDecoder(res.Body).Decode(cov); err != nil {
-      return nil, err
-   }
-   return cov, nil
-}
 
 type Release struct {
    ArtistCredit []struct {
@@ -106,7 +81,7 @@ func (r Release) trackLen() int {
 }
 
 type Track struct {
-   Length int64
+   Length float64
    Title string
 }
 
