@@ -104,13 +104,13 @@ References:
 
 ## other repos
 
-- <https://github.com/Hexer10/youtube_explode_dart>
-- https://github.com/Athlon1600/youtube-downloader
-- https://github.com/DzenanJupic/rustube
-- https://github.com/Tyrrrz/YoutubeDownloader
-- https://github.com/Tyrrrz/YoutubeExplode
-- https://github.com/iawia002/annie
-- https://github.com/kkdai/youtube
-- https://github.com/pytube/pytube
-- https://github.com/yt-dlp/yt-dlp
-- https://github.com/ytdl-org/youtube-dl
+- <https://github.com/Hexer10/youtube_explode_dart/issues>
+- https://github.com/Athlon1600/youtube-downloader/issues
+- https://github.com/DzenanJupic/rustube/issues
+- https://github.com/Tyrrrz/YoutubeDownloader/issues
+- https://github.com/Tyrrrz/YoutubeExplode/issues
+- https://github.com/iawia002/annie/issues
+- https://github.com/kkdai/youtube/issues
+- https://github.com/pytube/pytube/issues
+- https://github.com/yt-dlp/yt-dlp/issues
+- https://github.com/ytdl-org/youtube-dl/issues
