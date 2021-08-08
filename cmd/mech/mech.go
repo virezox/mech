@@ -5,6 +5,7 @@ import (
    "fmt"
    "github.com/89z/mech"
    "net/http"
+   "net/http/httputil"
    "os"
 )
 
@@ -41,6 +42,13 @@ func main() {
       panic(err)
    }
    defer res.Body.Close()
+   // head
+   d, err := httputil.DumpResponse(res, false)
+   if err != nil {
+      panic(err)
+   }
+   os.Stdout.Write(d)
+   // body
    if output == "" {
       os.Stdout.ReadFrom(res.Body)
       return
