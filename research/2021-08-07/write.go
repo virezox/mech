@@ -34,7 +34,7 @@ type item struct {
    HQ2 int64
 }
 
-func write() {
+func main() {
    musicbrainz.Verbose = true
    youtube.Verbose = true
    r, err := musicbrainz.NewRelease("a40cb6e9-c766-37c4-8677-7eb51393d5a1")
