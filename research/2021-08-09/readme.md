@@ -1,11 +1,13 @@
 # August 9 2021
 
-~~~
-indent html
-indent xml
-query html
-query xml
+- node indent
+- node query
+- token indent
+- token query
+
+~~~html
+<script data-rh="true" type="application/ld+json">
+type="application/ld+json"
 ~~~
 
-- https://pkg.go.dev/golang.org/x/net/html#Tokenizer
-- https://stackoverflow.com/questions/21117161
+http://nytimes.com/2021/08/09/podcasts/the-daily/mask-mandates-schools-arkansas.html
