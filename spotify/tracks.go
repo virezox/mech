@@ -5,10 +5,6 @@ import (
    "net/http"
 )
 
-/*
-/v1/playlists/6rZ28nCpmG5Wo1Ik64EoDm?fields=collaborative,description,followers(total),images,name,owner(display_name,id,images,uri),public,tracks(items(track.type,track.duration_ms),total),uri&additional_types=track,episode&market=US HTTP/2
-*/
-
 func main() {
    req, err := http.NewRequest(
       "HEAD",

@@ -7,7 +7,7 @@
 >
 > [Blood Orange (2013)](//youtube.com/watch?v=yP9JsIhHxSg)
 
-Mechanize
+Mechanize: anonymous API access
 
 https://pkg.go.dev/github.com/89z/mech
 
@@ -16,3 +16,7 @@ https://pkg.go.dev/github.com/89z/mech
 1. Deezer
 2. MusicBrainz
 3. YouTube
+
+## Author
+
+Steven Penny
