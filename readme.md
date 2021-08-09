@@ -15,5 +15,4 @@ https://pkg.go.dev/github.com/89z/mech
 
 1. Deezer
 2. MusicBrainz
-3. Rotten Tomatoes
-4. YouTube
+3. YouTube

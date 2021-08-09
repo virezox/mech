@@ -16,19 +16,21 @@ func ReadRequest(r io.Reader) (*http.Request, error) {
    if err != nil {
       return nil, err
    }
-   f := strings.Fields(s)
    h, err := t.ReadMIMEHeader()
    if err != nil {
       return nil, err
    }
+   f := strings.Fields(s)
+   p, err := url.Parse(f[1])
+   if err != nil {
+      return nil, err
+   }
+   p.Host = h.Get("Host")
    return &http.Request{
       Body: io.NopCloser(t.R),
       Header: http.Header(h),
       Method: f[0],
-      URL: &url.URL{
-         Host: h.Get("Host"),
-         Path: f[1],
-      },
+      URL: p,
    }, nil
 }
 
