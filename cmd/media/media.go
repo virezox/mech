@@ -5,6 +5,7 @@ import (
    "fmt"
    "github.com/89z/mech"
    "net/http"
+   "net/http/httputil"
    "os"
 )
 
@@ -51,12 +52,25 @@ func main() {
       fmt.Println("media [URL]")
       return
    }
-   addr := os.Args[1]
-   res, err := http.Get(addr)
+   req, err := http.NewRequest("GET", os.Args[1], nil)
+   if err != nil {
+      panic(err)
+   }
+   // instagram.com
+   req.Header.Set("User-Agent", "Mozilla")
+   d, err := httputil.DumpRequest(req, false)
+   if err != nil {
+      panic(err)
+   }
+   os.Stdout.Write(d)
+   res, err := new(http.Client).Do(req)
    if err != nil {
       panic(err)
    }
    defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      panic(res.Status)
+   }
    doc, err := mech.Parse(res.Body)
    if err != nil {
       panic(err)

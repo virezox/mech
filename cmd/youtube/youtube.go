@@ -19,8 +19,8 @@ func main() {
    flag.BoolVar(&exchange, "x", false, "OAuth token exchange")
    flag.BoolVar(&info, "i", false, "info only")
    flag.BoolVar(&refresh, "r", false, "OAuth token refresh")
-   flag.IntVar(&atag, "a", 0, "audio (-1 to skip)")
-   flag.IntVar(&vtag, "v", 0, "video (-1 to skip)")
+   flag.IntVar(&atag, "a", 0, "audio itag (-1 to skip)")
+   flag.IntVar(&vtag, "v", 0, "video itag (-1 to skip)")
    flag.Parse()
    if len(os.Args) == 1 {
       // URL is not required if we are just printing help
