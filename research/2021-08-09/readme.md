@@ -1,3 +1,11 @@
 # August 9 2021
 
-https://stackoverflow.com/questions/21117161/go-how-would-you-pretty-print
+~~~
+indent html
+indent xml
+query html
+query xml
+~~~
+
+- https://pkg.go.dev/golang.org/x/net/html#Tokenizer
+- https://stackoverflow.com/questions/21117161

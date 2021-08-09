@@ -11,7 +11,6 @@ func main() {
       panic(err)
    }
    defer f.Close()
-   // decode
    d := xml.NewDecoder(f)
    d.Strict = false
    type node struct {
@@ -21,7 +20,6 @@ func main() {
    }
    var x node
    d.Decode(&x)
-   // encode
    enc := xml.NewEncoder(os.Stdout)
    enc.Indent("", " ")
    enc.Encode(x)
