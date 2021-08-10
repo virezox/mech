@@ -1,13 +1,12 @@
 # August 9 2021
 
-- node indent
-- node query
-- token indent
-- token query
+To do indent, we can use:
 
-~~~html
-<script data-rh="true" type="application/ld+json">
-type="application/ld+json"
-~~~
+https://pkg.go.dev/golang.org/x/net/html#Tokenizer
 
-http://nytimes.com/2021/08/09/podcasts/the-daily/mask-mandates-schools-arkansas.html
+To do query, we can use:
+
+- https://pkg.go.dev/golang.org/x/net/html#Node
+- https://pkg.go.dev/golang.org/x/net/html#Tokenizer
+
+Which one is better?
