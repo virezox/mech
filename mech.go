@@ -50,33 +50,6 @@ func NewEncoder(w io.Writer) Encoder {
    return Encoder{Writer: w}
 }
 
-func (e Encoder) Encode(r io.Reader) error {
-   var indent string
-   z := html.NewTokenizer(r)
-   for {
-      tt := z.Next()
-      if tt == html.ErrorToken {
-         break
-      }
-      if tt == html.EndTagToken {
-         indent = indent[len(e.Indent):]
-      }
-      t := z.Token()
-      s := t.String()
-      if tt == html.TextToken && strings.TrimSpace(s) == "" {
-         continue
-      }
-      _, err := io.WriteString(e.Writer, indent + s + "\n")
-      if err != nil {
-         return err
-      }
-      if tt == html.StartTagToken && !VoidElement[t.Data] {
-         indent += e.Indent
-      }
-   }
-   return nil
-}
-
 func (e *Encoder) SetIndent(indent string) {
    e.Indent = indent
 }
@@ -137,4 +110,33 @@ func (s *Scanner) ScanText() bool {
 
 func (s Scanner) Text() string {
    return s.Data
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+func (e Encoder) Encode(r io.Reader) error {
+   var indent string
+   z := html.NewTokenizer(r)
+   for {
+      tt := z.Next()
+      if tt == html.ErrorToken {
+         break
+      }
+      if tt == html.EndTagToken {
+         indent = indent[len(e.Indent):]
+      }
+      t := z.Token()
+      s := t.String()
+      if tt == html.TextToken && strings.TrimSpace(s) == "" {
+         continue
+      }
+      _, err := io.WriteString(e.Writer, indent + s + "\n")
+      if err != nil {
+         return err
+      }
+      if tt == html.StartTagToken && !VoidElement[t.Data] {
+         indent += e.Indent
+      }
+   }
+   return nil
 }
