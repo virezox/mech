@@ -10,6 +10,13 @@ import (
    "strings"
 )
 
+var VoidElement = map[string]bool{
+   "br": true,
+   "img": true,
+   "input": true,
+   "meta": true,
+}
+
 func ReadRequest(r io.Reader) (*http.Request, error) {
    t := textproto.NewReader(bufio.NewReader(r))
    s, err := t.ReadLine()
@@ -54,15 +61,16 @@ func (e Encoder) Encode(r io.Reader) error {
       if tt == html.EndTagToken {
          indent = indent[len(e.Indent):]
       }
-      t := z.Token().String()
-      if tt == html.TextToken && strings.TrimSpace(t) == "" {
+      t := z.Token()
+      s := t.String()
+      if tt == html.TextToken && strings.TrimSpace(s) == "" {
          continue
       }
-      _, err := io.WriteString(e.Writer, indent + t + "\n")
+      _, err := io.WriteString(e.Writer, indent + s + "\n")
       if err != nil {
          return err
       }
-      if tt == html.StartTagToken {
+      if tt == html.StartTagToken && !VoidElement[t.Data] {
          indent += e.Indent
       }
    }
