@@ -10,16 +10,14 @@ import (
 )
 
 func TestEncode() {
-   f, err := os.Open("nyt.html")
+   r, err := os.Open("in.html")
    if err != nil {
       panic(err)
    }
-   defer f.Close()
-   e := newEncoder(os.Stdout)
-   e.setIndent(" ")
-   if err := e.encode(f); err != nil {
-      panic(err)
-   }
+   defer r.Close()
+   e := mech.NewEncoder(os.Stdout)
+   e.SetIndent(" ")
+   e.Encode(r)
 }
 
 func TestScan(t *testing.T) {

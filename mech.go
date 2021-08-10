@@ -2,6 +2,7 @@ package mech
 
 import (
    "bufio"
+   "bytes"
    "golang.org/x/net/html"
    "io"
    "net/http"
@@ -43,15 +44,41 @@ func ReadRequest(r io.Reader) (*http.Request, error) {
 
 type Encoder struct {
    io.Writer
-   Indent string
+   indent []byte
 }
 
 func NewEncoder(w io.Writer) Encoder {
    return Encoder{Writer: w}
 }
 
+func (e Encoder) Encode(r io.Reader) error {
+   var indent []byte
+   z := html.NewTokenizer(r)
+   for {
+      tt := z.Next()
+      if tt == html.ErrorToken {
+         break
+      }
+      if tt == html.EndTagToken {
+         indent = indent[len(e.indent):]
+      }
+      b := z.Raw()
+      if tt == html.TextToken && bytes.TrimSpace(b) == nil {
+         continue
+      }
+      e.Write(append(indent, b...))
+      // It would be nicer to Write the indent, then just Write appended Raw and
+      // newline. However for some reason doing that breaks the output.
+      e.Write([]byte{'\n'})
+      if tt == html.StartTagToken && !VoidElement[z.Token().Data] {
+         indent = append(indent, e.indent...)
+      }
+   }
+   return nil
+}
+
 func (e *Encoder) SetIndent(indent string) {
-   e.Indent = indent
+   e.indent = []byte(indent)
 }
 
 type Scanner struct {
@@ -110,33 +137,4 @@ func (s *Scanner) ScanText() bool {
 
 func (s Scanner) Text() string {
    return s.Data
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-func (e Encoder) Encode(r io.Reader) error {
-   var indent string
-   z := html.NewTokenizer(r)
-   for {
-      tt := z.Next()
-      if tt == html.ErrorToken {
-         break
-      }
-      if tt == html.EndTagToken {
-         indent = indent[len(e.Indent):]
-      }
-      t := z.Token()
-      s := t.String()
-      if tt == html.TextToken && strings.TrimSpace(s) == "" {
-         continue
-      }
-      _, err := io.WriteString(e.Writer, indent + s + "\n")
-      if err != nil {
-         return err
-      }
-      if tt == html.StartTagToken && !VoidElement[t.Data] {
-         indent += e.Indent
-      }
-   }
-   return nil
 }
