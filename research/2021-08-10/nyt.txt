@@ -1,3 +1,0 @@
-GET /2021/08/09/podcasts/the-daily/mask-mandates-schools-arkansas.html HTTP/2
-Host: www.nytimes.com
-

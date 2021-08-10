@@ -2,46 +2,20 @@ package mech
 
 import (
    "fmt"
+   "os"
    "strings"
    "testing"
 )
 
-const source = `
-<!doctype html>
-<html>
-   <body>
-      <table>
-         <tr class="h">
-            <th class="r">release</th>
-            <th class="p">post</th>
-         </tr>
-         <tr class="d">
-            <td class="r">2000</td>
-            <td class="p">2021</td>
-         </tr>
-      </table>
-   </body>
-</html>
-`
-
-func TestNode(t *testing.T) {
-   doc, err := Parse(strings.NewReader(source))
+func TestScan(t *testing.T) {
+   f, err := os.Open("nyt.html")
    if err != nil {
-      t.Fatal(err)
+      panic(err)
    }
-   // ByAttr
-   if r := doc.ByAttr("class", "r"); r.Scan() {
-      if r.Data != "th" {
-         t.Fatal(r.Data)
-      }
-   }
-   // ByAttrAll
-   r := doc.ByAttr("class", "r")
-   for r.Scan() {
-      fmt.Printf("%+v\n", r.Node)
-   }
-   // can we scan the doc directly?
-   for doc.Scan() {
-      fmt.Println(doc.Data)
-   }
+   defer f.Close()
+   s := mech.NewScanner(f)
+   s.ScanAttr("type", "application/ld+json")
+   fmt.Println(s.Attr("data-rh"))
+   s.ScanText()
+   fmt.Println(s.Data)
 }

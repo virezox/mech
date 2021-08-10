@@ -54,6 +54,10 @@ func (s Scanner) Attr(key string) string {
    return ""
 }
 
+func (s Scanner) Bytes() []byte {
+   return []byte(s.Data)
+}
+
 func (s *Scanner) ScanAttr(key, val string) bool {
    for {
       if s.Next() == html.ErrorToken {
@@ -82,4 +86,8 @@ func (s *Scanner) ScanText() bool {
       }
    }
    return false
+}
+
+func (s Scanner) Text() string {
+   return s.Data
 }

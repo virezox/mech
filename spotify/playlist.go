@@ -7,7 +7,7 @@ import (
    "os"
 )
 
-func main() {
+func playlist() {
    req, err := http.NewRequest(
       "HEAD",
       "https://api.spotify.com/v1/playlists/6rZ28nCpmG5Wo1Ik64EoDm",
