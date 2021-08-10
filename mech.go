@@ -40,6 +40,18 @@ type Node struct {
    callback func(*html.Node) bool
 }
 
+func Parse(r io.Reader) (*Node, error) {
+   n, err := html.Parse(r)
+   if err != nil {
+      return nil, err
+   }
+   return &Node{
+      n, []*html.Node{n}, func(*html.Node) bool {
+         return true
+      },
+   }, nil
+}
+
 func (n Node) Attr(key string) string {
    for _, attr := range n.Node.Attr {
       if attr.Key == key {
@@ -47,6 +59,29 @@ func (n Node) Attr(key string) string {
       }
    }
    return ""
+}
+
+func (n Node) ByAttr(key, val string) *Node {
+   n.todo = []*html.Node{n.Node}
+   n.callback = func(c *html.Node) bool {
+      for _, attr := range c.Attr {
+         if attr.Key == key && attr.Val == val {
+            return true
+         }
+      }
+      return false
+   }
+   return &n
+}
+
+// keep source as is, return modified copy
+func (n Node) ByTag(tag string) *Node {
+   n.todo = []*html.Node{n.Node}
+   n.callback = func(c *html.Node) bool {
+      // x/net/html lowercases the tags
+      return strings.EqualFold(c.Data, tag)
+   }
+   return &n
 }
 
 // this can modify the struct now, as we are working with a copy
@@ -72,39 +107,4 @@ func (n Node) Text() string {
       }
    }
    return ""
-}
-
-func Parse(r io.Reader) (*Node, error) {
-   n, err := html.Parse(r)
-   if err != nil {
-      return nil, err
-   }
-   return &Node{
-      n, []*html.Node{n}, func(*html.Node) bool {
-         return true
-      },
-   }, nil
-}
-
-// keep source as is, return modified copy
-func (n Node) ByTag(tag string) *Node {
-   n.todo = []*html.Node{n.Node}
-   n.callback = func(c *html.Node) bool {
-      // x/net/html lowercases the tags
-      return strings.EqualFold(c.Data, tag)
-   }
-   return &n
-}
-
-func (n Node) ByAttr(key, val string) *Node {
-   n.todo = []*html.Node{n.Node}
-   n.callback = func(c *html.Node) bool {
-      for _, attr := range c.Attr {
-         if attr.Key == key && attr.Val == val {
-            return true
-         }
-      }
-      return false
-   }
-   return &n
 }
