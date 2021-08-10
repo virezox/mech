@@ -66,9 +66,8 @@ func (e Encoder) Encode(r io.Reader) error {
       if tt == html.TextToken && bytes.TrimSpace(b) == nil {
          continue
       }
-      e.Write(append(indent, b...))
-      // It would be nicer to Write the indent, then just Write appended Raw and
-      // newline. However for some reason doing that breaks the output.
+      e.Write(indent)
+      e.Write(b)
       e.Write([]byte{'\n'})
       if tt == html.StartTagToken && !VoidElement[z.Token().Data] {
          indent = append(indent, e.indent...)
