@@ -34,6 +34,45 @@ func ReadRequest(r io.Reader) (*http.Request, error) {
    }, nil
 }
 
+type Encoder struct {
+   io.Writer
+   Indent string
+}
+
+func NewEncoder(w io.Writer) Encoder {
+   return Encoder{Writer: w}
+}
+
+func (e Encoder) Encode(r io.Reader) error {
+   var indent string
+   z := html.NewTokenizer(r)
+   for {
+      tt := z.Next()
+      if tt == html.ErrorToken {
+         break
+      }
+      if tt == html.EndTagToken {
+         indent = indent[len(e.Indent):]
+      }
+      t := z.Token().String()
+      if tt == html.TextToken && strings.TrimSpace(t) == "" {
+         continue
+      }
+      _, err := io.WriteString(e.Writer, indent + t + "\n")
+      if err != nil {
+         return err
+      }
+      if tt == html.StartTagToken {
+         indent += e.Indent
+      }
+   }
+   return nil
+}
+
+func (e *Encoder) SetIndent(indent string) {
+   e.Indent = indent
+}
+
 type Scanner struct {
    *html.Tokenizer
    html.Token
