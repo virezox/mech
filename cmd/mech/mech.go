@@ -15,7 +15,7 @@ func main() {
       indent, output string
    )
    flag.BoolVar(&https, "s", false, "HTTPS")
-   flag.StringVar(&indent, "i", "", "indent")
+   flag.StringVar(&indent, "i", "", "HTML indent")
    flag.StringVar(&output, "o", "", "output file")
    flag.Parse()
    if flag.NArg() != 1 {
