@@ -74,16 +74,6 @@ func (n Node) ByAttr(key, val string) *Node {
    return &n
 }
 
-// keep source as is, return modified copy
-func (n Node) ByTag(tag string) *Node {
-   n.todo = []*html.Node{n.Node}
-   n.callback = func(c *html.Node) bool {
-      // x/net/html lowercases the tags
-      return strings.EqualFold(c.Data, tag)
-   }
-   return &n
-}
-
 // this can modify the struct now, as we are working with a copy
 func (n *Node) Scan() bool {
    for len(n.todo) > 0 {
