@@ -2,20 +2,17 @@ package mech
 
 import (
    "fmt"
-   "golang.org/x/net/html"
-   "io"
    "os"
-   "strings"
    "testing"
 )
 
-func TestEncode() {
-   r, err := os.Open("in.html")
+func TestEncode(t *testing.T) {
+   r, err := os.Open("index.html")
    if err != nil {
       panic(err)
    }
    defer r.Close()
-   e := mech.NewEncoder(os.Stdout)
+   e := NewEncoder(os.Stdout)
    e.SetIndent(" ")
    e.Encode(r)
 }
@@ -26,7 +23,7 @@ func TestScan(t *testing.T) {
       panic(err)
    }
    defer f.Close()
-   s := mech.NewScanner(f)
+   s := NewScanner(f)
    s.ScanAttr("type", "application/ld+json")
    fmt.Println(s.Attr("data-rh"))
    s.ScanText()

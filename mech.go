@@ -2,6 +2,7 @@ package mech
 
 import (
    "bufio"
+   "bytes"
    "golang.org/x/net/html"
    "io"
    "net/http"
@@ -51,26 +52,30 @@ func NewEncoder(w io.Writer) Encoder {
 }
 
 func (e Encoder) Encode(r io.Reader) error {
-   var indent string
+   var indent []byte
+   b := new(bytes.Buffer)
    z := html.NewTokenizer(r)
    for {
-      tt := z.Next()
-      if tt == html.ErrorToken {
+      t := z.Next()
+      if t == html.ErrorToken {
          break
       }
-      if tt == html.EndTagToken {
+      if t == html.EndTagToken {
          indent = indent[len(e.indent):]
       }
-      s := string(z.Raw())
-      if tt == html.TextToken && strings.TrimSpace(s) == "" {
+      raw := z.Raw()
+      if t == html.TextToken && bytes.TrimSpace(raw) == nil {
          continue
       }
-      _, err := io.WriteString(e.Writer, indent + s + "\n")
+      b.Write(indent)
+      b.Write(raw)
+      b.WriteByte('\n')
+      _, err := b.WriteTo(e.Writer)
       if err != nil {
          return err
       }
-      if tt == html.StartTagToken && !VoidElement[z.Token().Data] {
-         indent += e.indent
+      if t == html.StartTagToken && !VoidElement[z.Token().Data] {
+         indent = append(indent, e.indent...)
       }
    }
    return nil

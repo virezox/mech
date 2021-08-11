@@ -4,25 +4,25 @@ import (
    "flag"
    "fmt"
    "github.com/89z/mech"
-   "net/http"
-   "net/http/httputil"
    "os"
 )
 
 func main() {
    var indent, output string
+   flag.StringVar(&indent, "i", "", "indent")
    flag.StringVar(&output, "o", "", "output file")
    flag.Parse()
    if flag.NArg() != 1 {
-      fmt.Println("html-indent [-o outfile] [infile]")
+      fmt.Println("html-indent [flags] [input file]")
       flag.PrintDefaults()
       return
    }
-   rd, err := os.Open(flag.Arg(0))
+   input := flag.Arg(0)
+   f, err := os.Open(input)
    if err != nil {
       panic(err)
    }
-   defer rd.Close()
+   defer f.Close()
    var e mech.Encoder
    if output != "" {
       f, err := os.Create(output)
@@ -35,5 +35,7 @@ func main() {
       e = mech.NewEncoder(os.Stdout)
    }
    e.SetIndent(indent)
-   e.Encode(res.Body)
+   if err := e.Encode(f); err != nil {
+      panic(err)
+   }
 }
