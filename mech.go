@@ -2,7 +2,6 @@ package mech
 
 import (
    "bufio"
-   "bytes"
    "golang.org/x/net/html"
    "io"
    "net/http"
@@ -44,7 +43,7 @@ func ReadRequest(r io.Reader) (*http.Request, error) {
 
 type Encoder struct {
    io.Writer
-   indent []byte
+   indent string
 }
 
 func NewEncoder(w io.Writer) Encoder {
@@ -52,7 +51,7 @@ func NewEncoder(w io.Writer) Encoder {
 }
 
 func (e Encoder) Encode(r io.Reader) error {
-   var indent []byte
+   var indent string
    z := html.NewTokenizer(r)
    for {
       tt := z.Next()
@@ -62,22 +61,23 @@ func (e Encoder) Encode(r io.Reader) error {
       if tt == html.EndTagToken {
          indent = indent[len(e.indent):]
       }
-      b := z.Raw()
-      if tt == html.TextToken && bytes.TrimSpace(b) == nil {
+      s := string(z.Raw())
+      if tt == html.TextToken && strings.TrimSpace(s) == "" {
          continue
       }
-      e.Write(indent)
-      e.Write(b)
-      e.Write([]byte{'\n'})
+      _, err := io.WriteString(e.Writer, indent + s + "\n")
+      if err != nil {
+         return err
+      }
       if tt == html.StartTagToken && !VoidElement[z.Token().Data] {
-         indent = append(indent, e.indent...)
+         indent += e.indent
       }
    }
    return nil
 }
 
 func (e *Encoder) SetIndent(indent string) {
-   e.indent = []byte(indent)
+   e.indent = indent
 }
 
 type Scanner struct {

@@ -12,10 +12,9 @@ import (
 func main() {
    var (
       https bool
-      indent, output string
+      output string
    )
    flag.BoolVar(&https, "s", false, "HTTPS")
-   flag.StringVar(&indent, "i", "", "HTML indent")
    flag.StringVar(&output, "o", "", "output file")
    flag.Parse()
    if flag.NArg() != 1 {
@@ -48,30 +47,14 @@ func main() {
       panic(err)
    }
    os.Stdout.Write(d)
-   // stdout
-   if indent == "" && output == "" {
+   if output == "" {
       os.Stdout.ReadFrom(res.Body)
       return
    }
-   // indent stdout
-   if output == "" {
-      e := mech.NewEncoder(os.Stdout)
-      e.SetIndent(indent)
-      e.Encode(res.Body)
-      return
-   }
-   // file
    wr, err := os.Create(output)
    if err != nil {
       panic(err)
    }
    defer wr.Close()
-   if indent == "" {
-      wr.ReadFrom(res.Body)
-      return
-   }
-   // indent file
-   e := mech.NewEncoder(wr)
-   e.SetIndent(indent)
-   e.Encode(res.Body)
+   wr.ReadFrom(res.Body)
 }
