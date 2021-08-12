@@ -92,15 +92,7 @@ func (sc *API) DownloadTrack(transcoding Transcoding, dst io.Writer) error {
 	if err != nil {
 		return err
 	}
-	if strings.Contains(transcoding.URL, "progressive") {
-		// Progressive download
-		err = sc.client.downloadProgressive(u, dst)
-	} else {
-		// HLS download
-		err = sc.client.downloadHLS(u, dst)
-	}
-
-	return err
+     return sc.client.downloadProgressive(u, dst)
 }
 
 // GetLikes returns a PaginatedQuery with the Collection field member as a list of tracks

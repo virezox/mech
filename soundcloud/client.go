@@ -1,18 +1,16 @@
 package soundcloud
 
 import (
-	"bytes"
-	"encoding/json"
-	"fmt"
-	"io"
-	"io/ioutil"
-	"net/http"
-	"net/url"
-	"strconv"
-	"strings"
-
-	"github.com/grafov/m3u8"
-	"github.com/pkg/errors"
+   "bytes"
+   "encoding/json"
+   "fmt"
+   "github.com/pkg/errors"
+   "io"
+   "io/ioutil"
+   "net/http"
+   "net/url"
+   "strconv"
+   "strings"
 )
 
 type client struct {
@@ -277,126 +275,6 @@ func (c *client) downloadProgressive(url string, dst io.Writer) error {
 	}
 
 	return nil
-}
-
-func (c *client) downloadHLS(url string, dst io.Writer) error {
-	// The audio for the track is streamed as per the HLS protocol, see: https://en.wikipedia.org/wiki/HTTP_Live_Streaming
-	m3u8Raw, err := c.makeRequest("GET", url, nil)
-	if err != nil {
-		return err
-	}
-
-	buf := bytes.NewBuffer(m3u8Raw)
-	playlist, listType, err := m3u8.Decode(*buf, true)
-	if err != nil {
-		return errors.Wrap(err, "Failed to decode m3u8 playlist")
-	}
-
-	if mediaPlaylist, ok := playlist.(*m3u8.MediaPlaylist); ok && listType == m3u8.MEDIA {
-		err = c.downloadHLSAll(mediaPlaylist.Segments, dst)
-		return err
-	}
-
-	return errors.New("m3u8 playlist is not a media playlist")
-}
-
-func (c *client) downloadHLSAll(segments []*m3u8.MediaSegment, dst io.Writer) error {
-	// Downloads all HLS segments concurrently and stores in memory until
-	// all goroutines are complete, then writes to dst.
-	//
-	// This is okay for small files, but we should create a separate function
-	// that employs some memory efficient algorithm for larger files.
-	downloadedSegments := make([][]byte, len(segments))
-
-	type result struct {
-		Index int
-		Data  []byte
-	}
-
-	count := 0
-
-	for _, segment := range segments {
-		if segment != nil {
-			count++
-		}
-	}
-
-	// Should we use channels here?
-	//
-	// According to: https://github.com/golang/go/wiki/MutexOrChannel,
-	// we are using channels for the right reason. But maybe it's not efficient
-	// to pass each audio segment from goroutine -> channel -> downloadedSegments slice
-	//
-	// Segment size seems to range from ~30kb <---> ~180kb,
-	// if we use sync.Mutex and add the segments directly to the downloadSegments slice would it be
-	// more memory efficient here?
-	resultChan := make(chan *result, count)
-	errChan := make(chan error)
-
-	for i, segment := range segments {
-
-		if segment == nil {
-			continue
-		}
-		index := i
-		uri := segment.URI
-		go func() {
-			data, err := c.downloadHLSSegment(uri)
-			if err != nil {
-				errChan <- err
-				return
-			}
-			resultChan <- &result{
-				Index: index,
-				Data:  data,
-			}
-		}()
-	}
-
-	complete := 0
-	for {
-		select {
-		case err := <-errChan:
-			return err
-		case r := <-resultChan:
-			downloadedSegments[r.Index] = r.Data
-			complete++
-		}
-
-		if complete == count {
-			break
-		}
-	}
-
-	for _, data := range downloadedSegments {
-		_, err := dst.Write(data)
-		if err != nil {
-			return errors.Wrap(err, "Failed to write HLS segments to dst")
-		}
-	}
-
-	return nil
-}
-
-func (c *client) downloadHLSSegment(url string) ([]byte, error) {
-	res, err := http.Get(url)
-	if err != nil {
-		return nil, err
-	}
-
-	if res.StatusCode < 200 || res.StatusCode > 299 {
-		if data, err := ioutil.ReadAll(res.Body); err == nil {
-			return nil, &FailedRequestError{Status: res.StatusCode, ErrMsg: string(data)}
-		}
-		return nil, &FailedRequestError{Status: res.StatusCode}
-	}
-
-	data, err := ioutil.ReadAll(res.Body)
-	if err != nil {
-		return nil, errors.Wrap(err, "Failed to read HLS segment data")
-	}
-
-	return data, nil
 }
 
 func (c *client) getPlaylistInfo(url string) (Playlist, error) {
