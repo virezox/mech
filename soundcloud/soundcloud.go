@@ -1,11 +1,10 @@
 package soundcloud
 
 import (
-	"io"
-	"net/http"
-	"strings"
-
-	"github.com/pkg/errors"
+   "fmt"
+   "io"
+   "net/http"
+   "strings"
 )
 
 // API is a wrapper for the SoundCloud private API used internally for soundcloud.com
@@ -30,7 +29,7 @@ func New(options APIOptions) (*API, error) {
 		var err error
 		options.ClientID, err = FetchClientID()
 		if err != nil {
-			return nil, errors.Wrap(err, "Failed to initiaze SounCloudAPI")
+                        return nil, err
 		}
 	}
 
@@ -77,11 +76,6 @@ func (sc *API) GetTrackInfo(options GetTrackInfoOptions) ([]Track, error) {
 	return sc.client.getTrackInfo(options)
 }
 
-// GetPlaylistInfo returns the info for a playlist
-func (sc *API) GetPlaylistInfo(url string) (Playlist, error) {
-	return sc.client.getPlaylistInfo(StripMobilePrefix(url))
-}
-
 // DownloadTrack downloads the track specified by the given Transcoding's URL to dst
 func (sc *API) DownloadTrack(transcoding Transcoding, dst io.Writer) error {
 	url, err := sc.prepareURL(transcoding.URL)
@@ -95,29 +89,9 @@ func (sc *API) DownloadTrack(transcoding Transcoding, dst io.Writer) error {
      return sc.client.downloadProgressive(u, dst)
 }
 
-// GetLikes returns a PaginatedQuery with the Collection field member as a list of tracks
-func (sc *API) GetLikes(options GetLikesOptions) (*PaginatedQuery, error) {
-	url, err := sc.prepareURL(options.ProfileURL)
-	if err != nil {
-		return nil, err
-	}
-	options.ProfileURL = url
-	return sc.client.getLikes(options)
-}
-
 // Search returns a PaginatedQuery for searching a specific query
 func (sc *API) Search(options SearchOptions) (*PaginatedQuery, error) {
 	return sc.client.search(options)
-}
-
-// GetUser returns a User
-func (sc *API) GetUser(options GetUserOptions) (User, error) {
-	url, err := sc.prepareURL(options.ProfileURL)
-	if err != nil {
-		return User{}, err
-	}
-	options.ProfileURL = url
-	return sc.client.getUser(options)
 }
 
 // GetDownloadURL retuns the URL to download a track. This is useful if you want to implement your own
@@ -144,7 +118,7 @@ func (sc *API) GetDownloadURL(url string, streamType string) (string, error) {
 		}
 
 		if len(info) == 0 {
-			return "", errors.New("Could not find a track with that URL")
+                        return "", fmt.Errorf("%v fail", url)
 		}
 
 		if info[0].Downloadable && info[0].HasDownloadsLeft {
@@ -171,7 +145,7 @@ func (sc *API) GetDownloadURL(url string, streamType string) (string, error) {
 		}
 		return mediaURL, nil
 	}
-	return "", errors.New("URL is not a track URL")
+      return "", fmt.Errorf("%v is not a track URL", url)
 }
 
 func (sc *API) prepareURL(url string) (string, error) {
@@ -186,7 +160,7 @@ func (sc *API) prepareURL(url string) (string, error) {
 			var err error
 			url, err = ConvertFirebaseLink(url)
 			if err != nil {
-				return "", errors.Wrap(err, "Failed to convert Firebase URL")
+                              return "", err
 			}
 		}
 	}

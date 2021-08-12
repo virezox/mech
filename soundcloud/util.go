@@ -1,14 +1,13 @@
 package soundcloud
 
 import (
-	"io/ioutil"
-	"net/http"
-	"net/url"
-	"regexp"
-	"strconv"
-	"strings"
-
-	"github.com/pkg/errors"
+   "fmt"
+   "io/ioutil"
+   "net/http"
+   "net/url"
+   "regexp"
+   "strconv"
+   "strings"
 )
 
 var firebaseRegex = regexp.MustCompile("https?:\\/\\/(www\\.)?[-a-zA-Z0-9@:%._+~#=]{1,500}\\.[a-zA-Z0-9()]{1,500}\\b([-a-zA-Z0-9()@:%_+.~#?&//\\\\=]*)")
@@ -105,8 +104,7 @@ func ConvertFirebaseLink(u string) (string, error) {
 			return str, nil
 		}
 	}
-
-	return "", errors.New("Could not find regular SoundCloud URL from the URL provided")
+      return "", fmt.Errorf("%v fail", u)
 }
 
 // IsPlaylistURL retuns true if the provided url is a valid SoundCloud playlist URL

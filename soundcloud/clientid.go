@@ -2,7 +2,7 @@ package soundcloud
 
 import (
    "encoding/json"
-   "github.com/pkg/errors"
+   "fmt"
    "io/ioutil"
    "net/http"
    "strings"
@@ -27,12 +27,12 @@ func FetchClientID() (string, error) {
 
 	resp, err := http.Get("https://soundcloud.com")
 	if err != nil {
-		return "", errors.Wrap(err, "Failed to fetch SoundCloud Client ID")
+               return "", err
 	}
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return "", errors.Wrap(err, "Failed to read body while fetching SoundCloud Client ID")
+               return "", err
 	}
 
 	bodyString := string(body)
@@ -54,12 +54,12 @@ func FetchClientID() (string, error) {
 	// so we use urls[len(urls) - 1]
 	resp, err = http.Get(urls[len(urls)-1])
 	if err != nil {
-		return "", errors.Wrap(err, "Failed to fetch SoundCloud Client ID")
+               return "", err
 	}
 
 	body, err = ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return "", errors.Wrap(err, "Failed to read body while fetching SoundCloud Client ID")
+               return "", err
 	}
 
 	bodyString = string(body)
@@ -70,8 +70,7 @@ func FetchClientID() (string, error) {
 		clientID = strings.Split(clientID, `"`)[0]
 		return clientID, nil
 	}
-
-	return "", errors.New("Could not find a SoundCloud client ID")
+      return "", fmt.Errorf("%v fail", bodyString)
 }
 
 
@@ -84,7 +83,7 @@ func (pq *PaginatedQuery) GetTracks() ([]Track, error) {
 		track := Track{}
 		b, err := json.Marshal(item)
 		if err != nil {
-			return nil, errors.Wrap(err, "Failed to marshal PaginatedQuery collection item")
+                        return nil, err
 		}
 
 		err = json.Unmarshal(b, &track)
@@ -110,7 +109,7 @@ func (pq *PaginatedQuery) GetPlaylists() ([]Playlist, error) {
 		playlist := Playlist{}
 		b, err := json.Marshal(item)
 		if err != nil {
-			return nil, errors.Wrap(err, "Failed to marshal PaginatedQuery collection item")
+                        return nil, err
 		}
 
 		err = json.Unmarshal(b, &playlist)
@@ -136,7 +135,7 @@ func (pq *PaginatedQuery) GetLikes() ([]Like, error) {
 		like := Like{}
 		b, err := json.Marshal(item)
 		if err != nil {
-			return nil, errors.Wrap(err, "Failed to marshal PaginatedQuery collection item")
+                        return nil, err
 		}
 
 		err = json.Unmarshal(b, &like)
