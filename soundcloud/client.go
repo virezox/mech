@@ -12,6 +12,13 @@ import (
    "strings"
 )
 
+const (
+   resolveURL = "https://api-v2.soundcloud.com/resolve"
+   searchURL = "https://api-v2.soundcloud.com/search"
+   trackURL = "https://api-v2.soundcloud.com/tracks"
+   usersURL = "https://api-v2.soundcloud.com/users/"
+)
+
 type client struct {
 	httpClient *http.Client
 	clientID   string
@@ -22,11 +29,6 @@ type FailedRequestError struct {
 	Status int
 	ErrMsg string
 }
-
-const trackURL = "https://api-v2.soundcloud.com/tracks"
-const resolveURL = "https://api-v2.soundcloud.com/resolve"
-const usersURL = "https://api-v2.soundcloud.com/users/"
-const searchURL = "https://api-v2.soundcloud.com/search"
 
 func (f *FailedRequestError) Error() string {
 	if f.ErrMsg == "" {
