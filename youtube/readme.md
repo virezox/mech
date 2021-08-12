@@ -56,16 +56,17 @@ TV      | fail
 
 ## How to get X-Goog-Api-Key
 
-Next open your browser menu, and click Web Developer, Network or similar. Then
-go to:
-
-https://www.youtube.com
-
-then go back to Developer Tools, and you should see a JSON request like this:
+Make a request like this:
 
 ~~~
-POST /youtubei/v1/guide?key=AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8 HTTP/1.1
+GET / HTTP/2
 Host: www.youtube.com
+~~~
+
+in the response you should see something like this:
+
+~~~
+"INNERTUBE_API_KEY":"AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8"
 ~~~
 
 https://cloud.google.com/apis/docs/system-parameters
