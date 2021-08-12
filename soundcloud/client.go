@@ -80,7 +80,7 @@ func (c *client) makeRequest(method, url string, jsonBody interface{}) ([]byte, 
 
 func (c *client) buildURL(base string, clientID bool, query ...string) (string, error) {
 	if len(query)%2 != 0 {
-		return "", fmt.Errorf("Invalid query: URL (%s) Query: (%s)", base, strings.Join(query, ","))
+		return "", fmt.Errorf("invalid query: URL %q Query: %q", base, strings.Join(query, ","))
 	}
 
 	u, err := url.Parse(string(base))

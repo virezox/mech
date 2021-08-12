@@ -10,15 +10,13 @@ import (
    "strings"
 )
 
-var firebaseRegex = regexp.MustCompile("https?:\\/\\/(www\\.)?[-a-zA-Z0-9@:%._+~#=]{1,500}\\.[a-zA-Z0-9()]{1,500}\\b([-a-zA-Z0-9()@:%_+.~#?&//\\\\=]*)")
-
-var urlRegex = regexp.MustCompile(`(?m)^https?:\/\/(soundcloud\.com)\/(.*)$`)
-
-var firebaseURLRegex = regexp.MustCompile(`(?m)^https?:\/\/(soundcloud\.app\.goo\.gl)\/(.*)$`)
-
-var mobileURLRegex = regexp.MustCompile(`(?m)^https?:\/\/(m\.soundcloud\.com)\/(.*)$`)
-
-var unicodeRegex = regexp.MustCompile(`(?i)\\u([\d\w]{4})`)
+var (
+   firebaseRegex = regexp.MustCompile("https?:\\/\\/(www\\.)?[-a-zA-Z0-9@:%._+~#=]{1,500}\\.[a-zA-Z0-9()]{1,500}\\b([-a-zA-Z0-9()@:%_+.~#?&//\\\\=]*)")
+   firebaseURLRegex = regexp.MustCompile(`(?m)^https?:\/\/(soundcloud\.app\.goo\.gl)\/(.*)$`)
+   mobileURLRegex = regexp.MustCompile(`(?m)^https?:\/\/(m\.soundcloud\.com)\/(.*)$`)
+   unicodeRegex = regexp.MustCompile(`(?i)\\u([\d\w]{4})`)
+   urlRegex = regexp.MustCompile(`(?m)^https?:\/\/(soundcloud\.com)\/(.*)$`)
+)
 
 // IsURL returns true if the provided url is a valid SoundCloud URL
 func IsURL(url string, testMobile, testFirebase bool) bool {
@@ -71,40 +69,6 @@ func replaceUnicodeChars(str string) (string, error) {
 	}
 
 	return str, nil
-}
-
-// ConvertFirebaseLink converts a link of the form (https://soundcloud.app.goo.gl/xxxxxxxx) to a regular
-// SoundCloud link.
-func ConvertFirebaseLink(u string) (string, error) {
-	_url, err := url.Parse(u)
-	if err != nil {
-		return "", err
-	}
-	q := _url.Query()
-	q.Set("d", "1")
-	_url.RawQuery = q.Encode()
-
-	res, err := http.Get(_url.String())
-	if err != nil {
-		return "", err
-	}
-
-	data, err := ioutil.ReadAll(res.Body)
-	if err != nil {
-		return "", err
-	}
-	matches := firebaseRegex.FindAllString(string(data), -1)
-
-	for _, match := range matches {
-		if IsURL(match, false, false) {
-			str, err := replaceUnicodeChars(match)
-			if err != nil {
-				return "", err
-			}
-			return str, nil
-		}
-	}
-      return "", fmt.Errorf("%v fail", u)
 }
 
 // IsPlaylistURL retuns true if the provided url is a valid SoundCloud playlist URL
@@ -165,18 +129,6 @@ func sliceContains(slice []int64, x int64) bool {
 
 	return false
 }
-
-func deleteEmptyTracks(slice []Track) []Track {
-	newTracks := []Track{}
-	for _, t := range slice {
-		if t.ID != 0 {
-			newTracks = append(newTracks, t)
-		}
-	}
-
-	return newTracks
-}
-
 
 // FetchClientID fetches a SoundCloud client ID.
 // This algorithm is adapted from:
