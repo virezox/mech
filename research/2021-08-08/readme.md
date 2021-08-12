@@ -41,3 +41,17 @@ which leaves these:
 [duration size title]
 [index duration size title]
 ~~~
+
+Compare:
+
+~~~
+Daft Punk - Around the world (Official Audio)
+https://www.youtube.com/watch?v=dwDns8x3Jb4
+
+Around the World
+https://www.youtube.com/watch?v=Jb6gcoR266U
+~~~
+
+- <https://wikipedia.org/wiki/Mahalanobis_distance>
+- https://github.com/bitterfly/emotions/blob/master/emotions/kmeans.go
+- https://github.com/golang/perf/blob/master/internal/stats/sample.go
