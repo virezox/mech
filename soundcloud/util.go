@@ -162,3 +162,5 @@ func FetchClientID() (string, error) {
 	}
       return "", fmt.Errorf("%v fail", bodyString)
 }
+
+
