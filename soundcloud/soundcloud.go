@@ -90,11 +90,6 @@ func (sc *API) GetDownloadURL(url string, streamType string) (string, error) {
 }
 
 func (sc *API) prepareURL(url string) (string, error) {
-   if sc.StripMobilePrefix {
-      if IsMobileURL(url) {
-         url = StripMobilePrefix(url)
-      }
-   }
    return url, nil
 }
 
