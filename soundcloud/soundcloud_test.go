@@ -5,16 +5,18 @@ import (
    "testing"
 )
 
+const addr = "https://soundcloud.com/bluewednesday/murmuration-feat-shopan"
+
 func TestSoundCloud(t *testing.T) {
-   api, err := NewClient()
+   id, err := ClientID()
    if err != nil {
       t.Fatal(err)
    }
-   addr, err := api.GetDownloadURL(
-      "https://soundcloud.com/bluewednesday/murmuration-feat-shopan",
-   )
+   track, err := NewTrack(id, addr)
    if err != nil {
       t.Fatal(err)
    }
-   fmt.Println(addr)
+   for _, code := range track.Media.Transcodings {
+      fmt.Printf("%+v\n", code)
+   }
 }
