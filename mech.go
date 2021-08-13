@@ -15,6 +15,7 @@ var VoidElement = map[string]bool{
    "br": true,
    "img": true,
    "input": true,
+   "link": true,
    "meta": true,
 }
 
