@@ -94,58 +94,53 @@ func (sc *API) Search(options SearchOptions) (*PaginatedQuery, error) {
 	return sc.client.search(options)
 }
 
-// GetDownloadURL retuns the URL to download a track. This is useful if you want to implement your own
-// downloading algorithm.
-// If the track has a publicly available download link, that link will be preferred and the streamType parameter will be ignored.
-// streamType can be either "hls" or "progressive", defaults to "progressive"
+// GetDownloadURL retuns the URL to download a track. This is useful if you
+// want to implement your own downloading algorithm. If the track has a
+// publicly available download link, that link will be preferred and the
+// streamType parameter will be ignored. streamType can be either "hls" or
+// "progressive", defaults to "progressive"
 func (sc *API) GetDownloadURL(url string, streamType string) (string, error) {
-	url, err := sc.prepareURL(url)
-	if err != nil {
-		return "", err
-	}
-	streamType = strings.ToLower(streamType)
-	if streamType == "" {
-		streamType = "progressive"
-	}
-
-	if IsURL(url, false, false) && !IsPlaylistURL(url) {
-		info, err := sc.client.getTrackInfo(GetTrackInfoOptions{
-			URL: url,
-		})
-
-		if err != nil {
-			return "", err
-		}
-
-		if len(info) == 0 {
-                        return "", fmt.Errorf("%v fail", url)
-		}
-
-		if info[0].Downloadable && info[0].HasDownloadsLeft {
-			downloadURL, err := sc.client.getDownloadURL(info[0].ID)
-			if err != nil {
-				return "", err
-			}
-			return downloadURL, nil
-		}
-
-		for _, transcoding := range info[0].Media.Transcodings {
-			if strings.ToLower(transcoding.Format.Protocol) == streamType {
-				mediaURL, err := sc.client.getMediaURL(transcoding.URL)
-				if err != nil {
-					return "", err
-				}
-				return mediaURL, nil
-			}
-		}
-
-		mediaURL, err := sc.client.getMediaURL(info[0].Media.Transcodings[0].URL)
-		if err != nil {
-			return "", err
-		}
-		return mediaURL, nil
-	}
-      return "", fmt.Errorf("%v is not a track URL", url)
+   url, err := sc.prepareURL(url)
+   if err != nil {
+      return "", err
+   }
+   streamType = strings.ToLower(streamType)
+   if streamType == "" {
+      streamType = "progressive"
+   }
+   if IsURL(url, false, false) {
+      info, err := sc.client.getTrackInfo(GetTrackInfoOptions{
+      URL: url,
+      })
+      if err != nil {
+         return "", err
+      }
+      if len(info) == 0 {
+         return "", fmt.Errorf("%v fail", url)
+      }
+      if info[0].Downloadable && info[0].HasDownloadsLeft {
+      downloadURL, err := sc.client.getDownloadURL(info[0].ID)
+      if err != nil {
+         return "", err
+      }
+      return downloadURL, nil
+      }
+      for _, transcoding := range info[0].Media.Transcodings {
+      if strings.ToLower(transcoding.Format.Protocol) == streamType {
+      mediaURL, err := sc.client.getMediaURL(transcoding.URL)
+      if err != nil {
+      return "", err
+      }
+      return mediaURL, nil
+      }
+      }
+      mediaURL, err := sc.client.getMediaURL(info[0].Media.Transcodings[0].URL)
+      if err != nil {
+      return "", err
+      }
+      return mediaURL, nil
+   }
+   return "", fmt.Errorf("%v is not a track URL", url)
 }
 
 func (sc *API) prepareURL(url string) (string, error) {

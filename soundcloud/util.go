@@ -11,10 +11,8 @@ import (
 )
 
 var (
-   firebaseRegex = regexp.MustCompile("https?:\\/\\/(www\\.)?[-a-zA-Z0-9@:%._+~#=]{1,500}\\.[a-zA-Z0-9()]{1,500}\\b([-a-zA-Z0-9()@:%_+.~#?&//\\\\=]*)")
    firebaseURLRegex = regexp.MustCompile(`(?m)^https?:\/\/(soundcloud\.app\.goo\.gl)\/(.*)$`)
    mobileURLRegex = regexp.MustCompile(`(?m)^https?:\/\/(m\.soundcloud\.com)\/(.*)$`)
-   unicodeRegex = regexp.MustCompile(`(?i)\\u([\d\w]{4})`)
    urlRegex = regexp.MustCompile(`(?m)^https?:\/\/(soundcloud\.com)\/(.*)$`)
 )
 
@@ -57,36 +55,6 @@ func IsFirebaseURL(u string) bool {
 // IsMobileURL returns true if the url is a SoundCloud Firebase url (has the following form: https://m.soundcloud.com/xxxxxx)
 func IsMobileURL(u string) bool {
 	return len(mobileURLRegex.FindAllString(u, -1)) > 0
-}
-
-func replaceUnicodeChars(str string) (string, error) {
-	for _, match := range unicodeRegex.FindAllString(str, -1) {
-		s, err := strconv.Unquote("'" + match + "'")
-		if err != nil {
-			return "", err
-		}
-		str = strings.Replace(str, match, s, -1)
-	}
-
-	return str, nil
-}
-
-// IsPlaylistURL retuns true if the provided url is a valid SoundCloud playlist URL
-func IsPlaylistURL(u string) bool {
-	if !IsURL(u, false, false) {
-		return false
-	}
-
-	if IsPersonalizedTrackURL(u) {
-		return false
-	}
-
-	uObj, err := url.Parse(u)
-	if err != nil {
-		return false
-	}
-
-	return strings.Contains(uObj.Path, "/sets/")
 }
 
 // IsSearchURL returns true  if the provided url is a valid search url
