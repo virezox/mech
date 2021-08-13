@@ -164,6 +164,50 @@ func (c *Client) buildURL(base string, clientID bool, query ...string) (string, 
    return u.String(), nil
 }
 
+// getDownloadURL gets the download URL of a publicly downloadable track
+func (c *Client) getDownloadURL(id int64) (string, error) {
+   u, err := c.buildURL(fmt.Sprintf("https://api-v2.soundcloud.com/tracks/%d/download", id), true)
+   if err != nil {
+      return "", err
+   }
+   data, err := c.makeRequest("GET", u, nil)
+   if err != nil {
+      return "", err
+   }
+   // DownloadURLResponse is the JSON respose of retrieving media information
+   // of a publicly downloadable track
+   var res struct {
+      RedirectURI string
+   }
+   if err := json.Unmarshal(data, &res); err != nil {
+      return "", err
+   }
+   return res.RedirectURI, nil
+}
+
+func (c *Client) getMediaURL(url string) (string, error) {
+   // The media URL is the actual link to the audio file for the track
+   u, err := c.buildURL(url, true)
+   if err != nil {
+   return "", err
+   }
+   // MediaURLResponse is the JSON response of retrieving media information of a
+   // track
+   type MediaURLResponse struct {
+      URL string
+   }
+   media := &MediaURLResponse{}
+   data, err := c.makeRequest("GET", u, nil)
+   if err != nil {
+   return "", err
+   }
+   err = json.Unmarshal(data, media)
+   if err != nil {
+   return "", err
+   }
+   return media.URL, nil
+}
+
 func (c *Client) getTrackInfo(options GetTrackInfoOptions) ([]Track, error) {
    var u string
    var data []byte
@@ -247,6 +291,42 @@ func (c *Client) makeRequest(method, url string, jsonBody interface{}) ([]byte, 
    return io.ReadAll(res.Body)
 }
 
+// resolve is a handy API endpoint that returns info from the given resource
+// URL
+func (c *Client) resolve(url string) ([]byte, error) {
+	u, err := c.buildURL(resolveURL, true, "url", strings.TrimRight(url, "/"))
+	if err != nil {
+               return nil, err
+	}
+
+	data, err := c.makeRequest("GET", u, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return data, nil
+}
+
+func (c *Client) sortTrackInfo(ids []int64, tracks []Track) {
+	// Bubble Sort for now. Maybe switch to a more efficient sorting algorithm later??
+	//
+	// Because the API request in getTrackInfo is limited to 50 tracks at once
+	// time complexity will always be <= O(50^2)
+
+	for j, id := range ids {
+
+		if tracks[j].ID != id {
+			for k := 0; k < len(tracks); k++ {
+				if tracks[k].ID == id {
+					temp := tracks[j]
+					tracks[j] = tracks[k]
+					tracks[k] = temp
+				}
+			}
+		}
+	}
+}
+
 // GetTrackInfoOptions can contain the URL of the track or the ID of the track.
 // PlaylistID and PlaylistSecretToken are necessary to retrieve private tracks
 // in private playlists.
@@ -290,96 +370,4 @@ type Track struct {
    Title string
    URI string
    WaveformURL string `json:"waveform_url"`
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-func (c *Client) sortTrackInfo(ids []int64, tracks []Track) {
-	// Bubble Sort for now. Maybe switch to a more efficient sorting algorithm later??
-	//
-	// Because the API request in getTrackInfo is limited to 50 tracks at once
-	// time complexity will always be <= O(50^2)
-
-	for j, id := range ids {
-
-		if tracks[j].ID != id {
-			for k := 0; k < len(tracks); k++ {
-				if tracks[k].ID == id {
-					temp := tracks[j]
-					tracks[j] = tracks[k]
-					tracks[k] = temp
-				}
-			}
-		}
-	}
-}
-
-// MediaURLResponse is the JSON response of retrieving media information of a
-// track
-type MediaURLResponse struct {
-   URL string
-}
-
-func (c *Client) getMediaURL(url string) (string, error) {
-	// The media URL is the actual link to the audio file for the track
-	u, err := c.buildURL(url, true)
-	if err != nil {
-               return "", err
-	}
-
-	media := &MediaURLResponse{}
-	data, err := c.makeRequest("GET", u, nil)
-	if err != nil {
-		return "", err
-	}
-
-	err = json.Unmarshal(data, media)
-	if err != nil {
-               return "", err
-	}
-
-	return media.URL, nil
-}
-
-// DownloadURLResponse is the JSON respose of retrieving media information of a
-// publicly downloadable track
-type DownloadURLResponse struct {
-   URL string `json:"redirectUri"`
-}
-
-// getDownloadURL gets the download URL of a publicly downloadable track
-func (c *Client) getDownloadURL(id int64) (string, error) {
-	u, err := c.buildURL(fmt.Sprintf("https://api-v2.soundcloud.com/tracks/%d/download", id), true)
-	if err != nil {
-               return "", err
-	}
-
-	res := &DownloadURLResponse{}
-	data, err := c.makeRequest("GET", u, nil)
-	if err != nil {
-		return "", err
-	}
-
-	err = json.Unmarshal(data, res)
-	if err != nil {
-               return "", err
-	}
-
-	return res.URL, nil
-}
-
-// resolve is a handy API endpoint that returns info from the given resource
-// URL
-func (c *Client) resolve(url string) ([]byte, error) {
-	u, err := c.buildURL(resolveURL, true, "url", strings.TrimRight(url, "/"))
-	if err != nil {
-               return nil, err
-	}
-
-	data, err := c.makeRequest("GET", u, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return data, nil
 }
