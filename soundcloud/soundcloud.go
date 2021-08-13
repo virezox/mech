@@ -11,10 +11,7 @@ import (
    "regexp"
 )
 
-const (
-   resolveURL = "https://api-v2.soundcloud.com/resolve"
-   trackURL = "https://api-v2.soundcloud.com/tracks"
-)
+const Origin = "https://api-v2.soundcloud.com"
 
 // Fetch a SoundCloud client ID. The basic notion of how this function works is
 // that SoundCloud provides a client ID so its web app can make API requests.
@@ -53,16 +50,19 @@ func getScript() (string, error) {
    if err != nil {
       return "", err
    }
-   scan := mech.NewScanner(res.Body)
+   defer res.Body.Close()
    var src string
-   // The link to the JS file with the client ID looks like this:
-   // <script crossorigin src="https://a-v2.sndcdn.com/assets/sdfhkjhsdkf.js">
-   // Extract all the URLS that match our pattern. It seems like our desired
-   // URL is imported last
+   scan := mech.NewScanner(res.Body)
    for scan.ScanAttr("crossorigin", "") {
       src = scan.Attr("src")
    }
    return src, nil
+}
+
+// MediaURLResponse is the JSON response of retrieving media information of a
+// track
+type Media struct {
+   URL string
 }
 
 // Track represents the JSON response of a track's info
@@ -82,7 +82,7 @@ type Track struct {
 }
 
 func NewTrack(id, addr string) (*Track, error) {
-   req, err := http.NewRequest("GET", resolveURL, nil)
+   req, err := http.NewRequest("GET", Origin + "/resolve", nil)
    if err != nil {
       return nil, err
    }
@@ -109,31 +109,33 @@ func NewTrack(id, addr string) (*Track, error) {
 
 // The media URL is the actual link to the audio file for the track. "addr" is
 // Track.Media.Transcodings[0].URL
-func getMediaURL(id, addr string) (string, error) {
+func (t Track) GetMedia(id string) (*Media, error) {
+   var addr string
+   for _, code := range t.Media.Transcodings {
+      if code.Format.Protocol == "progressive" {
+         addr = code.URL
+      }
+   }
    req, err := http.NewRequest("GET", addr, nil)
    if err != nil {
-      return "", err
+      return nil, err
    }
    q := req.URL.Query()
    q.Set("client_id", id)
    req.URL.RawQuery = q.Encode()
    d, err := httputil.DumpRequest(req, false)
    if err != nil {
-      return "", err
+      return nil, err
    }
    os.Stdout.Write(d)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
-      return "", err
+      return nil, err
    }
    defer res.Body.Close()
-   // MediaURLResponse is the JSON response of retrieving media information of
-   // a track
-   var media struct {
-      URL string
+   m := new(Media)
+   if err := json.NewDecoder(res.Body).Decode(&m); err != nil {
+      return nil, err
    }
-   if err := json.NewDecoder(res.Body).Decode(&media); err != nil {
-      return "", err
-   }
-   return media.URL, nil
+   return m, nil
 }

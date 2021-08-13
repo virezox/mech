@@ -16,7 +16,9 @@ func TestSoundCloud(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   for _, code := range track.Media.Transcodings {
-      fmt.Printf("%+v\n", code)
+   m, err := track.GetMedia(id)
+   if err != nil {
+      t.Fatal(err)
    }
+   fmt.Printf("%+v\n", m)
 }
