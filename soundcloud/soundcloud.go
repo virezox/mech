@@ -4,43 +4,59 @@ import (
    "encoding/json"
    "fmt"
    "github.com/89z/mech"
-   "io"
    "net/http"
    "net/http/httputil"
    "os"
    "regexp"
+   "strings"
 )
 
 const Origin = "https://api-v2.soundcloud.com"
 
-// Fetch a SoundCloud client ID. The basic notion of how this function works is
-// that SoundCloud provides a client ID so its web app can make API requests.
-// This client ID (along with other intialization data for the web app) is
-// provided in a JavaScript file imported through a <script> tag in the HTML.
-// This function scrapes the HTML and tries to find the URL to that JS file,
-// and then scrapes the JS file to find the client ID.
-func ClientID() (string, error) {
-   script, err := getScript()
+func ReadClientID() (string, error) {
+   cache, err := os.UserCacheDir()
    if err != nil {
       return "", err
    }
-   fmt.Println("GET", script)
-   res, err := http.Get(script)
+   b, err := os.ReadFile(cache + "/mech/soundcloud.js")
    if err != nil {
       return "", err
    }
-   defer res.Body.Close()
-   body, err := io.ReadAll(res.Body)
-   if err != nil {
-      return "", err
-   }
-   // Extract the client ID
-   re := regexp.MustCompile(`\bclient_id:"([^"]+)"`)
-   find := re.FindSubmatch(body)
+   re := regexp.MustCompile(`\?client_id=([^&]+)&`)
+   find := re.FindSubmatch(b)
    if find == nil {
       return "", fmt.Errorf("findSubmatch %v", re)
    }
    return string(find[1]), nil
+}
+
+// client_id appears to last for at least a year
+func WriteClientID() error {
+   script, err := getScript()
+   if err != nil {
+      return err
+   }
+   fmt.Println("GET", script)
+   res, err := http.Get(script)
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   cache, err := os.UserCacheDir()
+   if err != nil {
+      return err
+   }
+   cache += "/mech"
+   os.Mkdir(cache, os.ModeDir)
+   f, err := os.Create(cache + "/soundcloud.js")
+   if err != nil {
+      return err
+   }
+   defer f.Close()
+   if _, err := f.ReadFrom(res.Body); err != nil {
+      return err
+   }
+   return nil
 }
 
 func getScript() (string, error) {
@@ -51,12 +67,25 @@ func getScript() (string, error) {
       return "", err
    }
    defer res.Body.Close()
-   var src string
    scan := mech.NewScanner(res.Body)
    for scan.ScanAttr("crossorigin", "") {
-      src = scan.Attr("src")
+      src := scan.Attr("src")
+      /*
+      asset 49 works as well:
+      https://a-v2.sndcdn.com/assets/49-4b976e4f.js
+      client_id:"fSSdm5yTnDka1g0Fz1CO5Yx6z0NbeHAj"
+      content-length: 1393972
+
+      but asset 2 is smaller:
+      https://a-v2.sndcdn.com/assets/2-b0e52b4d.js
+      ?client_id=fSSdm5yTnDka1g0Fz1CO5Yx6z0NbeHAj&
+      content-length: 922378
+      */
+      if strings.HasPrefix(src, "https://a-v2.sndcdn.com/assets/2-") {
+         return src, nil
+      }
    }
-   return src, nil
+   return "", fmt.Errorf("%+v", res)
 }
 
 // MediaURLResponse is the JSON response of retrieving media information of a

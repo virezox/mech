@@ -8,7 +8,11 @@ import (
 const addr = "https://soundcloud.com/bluewednesday/murmuration-feat-shopan"
 
 func TestSoundCloud(t *testing.T) {
-   id, err := ClientID()
+   err := WriteClientID()
+   if err != nil {
+      t.Fatal(err)
+   }
+   id, err := ReadClientID()
    if err != nil {
       t.Fatal(err)
    }
