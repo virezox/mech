@@ -4,7 +4,6 @@ import (
    "bytes"
    "encoding/json"
    "fmt"
-   "io"
    "io/ioutil"
    "net/http"
    "net/url"
@@ -230,33 +229,6 @@ func (c *client) getDownloadURL(id int64) (string, error) {
 	}
 
 	return res.URL, nil
-}
-
-func (c *client) downloadProgressive(url string, dst io.Writer) error {
-	// The track audio file is just a regular audio file that can be downloaded
-	req, err := http.NewRequest("GET", url, nil)
-	if err != nil {
-               return err
-	}
-
-	res, err := c.httpClient.Do(req)
-	if err != nil {
-		return err
-	}
-
-	if res.StatusCode < 200 || res.StatusCode > 299 {
-		if data, err := ioutil.ReadAll(res.Body); err == nil {
-			return &FailedRequestError{Status: res.StatusCode, ErrMsg: string(data)}
-		}
-		return &FailedRequestError{Status: res.StatusCode}
-	}
-
-	_, err = io.Copy(dst, res.Body)
-	if err != nil {
-               return err
-	}
-
-	return nil
 }
 
 // resolve is a handy API endpoint that returns info from the given resource URL

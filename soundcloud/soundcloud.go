@@ -2,7 +2,6 @@ package soundcloud
 
 import (
    "fmt"
-   "io"
    "net/http"
    "strings"
 )
@@ -42,56 +41,6 @@ func New(options APIOptions) (*API, error) {
 		StripMobilePrefix:   options.StripMobilePrefix,
 		ConvertFirebaseURLs: options.ConvertFirebaseURLs,
 	}, nil
-}
-
-// SetClientID sets the client ID
-func (sc *API) SetClientID(clientID string) {
-	sc.client.clientID = clientID
-}
-
-// ClientID returns the client ID
-func (sc *API) ClientID() string {
-	return sc.client.clientID
-}
-
-// GetTrackInfo returns the info for the track given tracks
-//
-// If URL is supplied, it will return the info for a single track given by that url.
-// If an array of ids is supplied, it will return an array of track info.
-//
-// WARNING: Private tracks will not be fetched unless options.PlaylistID and options.PlaylistSecretToken
-// are provided.
-func (sc *API) GetTrackInfo(options GetTrackInfoOptions) ([]Track, error) {
-	if options.URL != "" {
-		url, err := sc.prepareURL(options.URL)
-		if err != nil {
-			return nil, err
-		}
-		options.URL = url
-		id := ExtractIDFromPersonalizedTrackURL(options.URL)
-		if id != -1 {
-			return sc.client.getTrackInfo(GetTrackInfoOptions{ID: []int64{id}})
-		}
-	}
-	return sc.client.getTrackInfo(options)
-}
-
-// DownloadTrack downloads the track specified by the given Transcoding's URL to dst
-func (sc *API) DownloadTrack(transcoding Transcoding, dst io.Writer) error {
-	url, err := sc.prepareURL(transcoding.URL)
-	if err != nil {
-		return err
-	}
-	u, err := sc.client.getMediaURL(url)
-	if err != nil {
-		return err
-	}
-     return sc.client.downloadProgressive(u, dst)
-}
-
-// Search returns a PaginatedQuery for searching a specific query
-func (sc *API) Search(options SearchOptions) (*PaginatedQuery, error) {
-	return sc.client.search(options)
 }
 
 // GetDownloadURL retuns the URL to download a track. This is useful if you
@@ -152,7 +101,8 @@ func (sc *API) prepareURL(url string) (string, error) {
    return url, nil
 }
 
-// IsURL is a shorthand for IsURL(url, sc.StripMobilePrefix, sc.ConvertFirebaseURLs)
+// IsURL is a shorthand for IsURL(url, sc.StripMobilePrefix,
+// sc.ConvertFirebaseURLs)
 func (sc *API) IsURL(url string) bool {
-	return IsURL(url, sc.StripMobilePrefix, sc.ConvertFirebaseURLs)
+   return IsURL(url, sc.StripMobilePrefix, sc.ConvertFirebaseURLs)
 }
