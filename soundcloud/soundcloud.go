@@ -18,6 +18,36 @@ const (
    trackURL = "https://api-v2.soundcloud.com/tracks"
 )
 
+func makeRequest(method, addr string, body interface{}) ([]byte, error) {
+   var (
+      jsonBytes []byte
+      err error
+   )
+   if body != nil {
+      jsonBytes, err = json.Marshal(body)
+      if err != nil {
+         return nil, err
+      }
+   }
+   req, err := http.NewRequest(method, addr, bytes.NewBuffer(jsonBytes))
+   if err != nil {
+      return nil, err
+   }
+   d, err := httputil.DumpRequest(req, true)
+   if err != nil {
+      return nil, err
+   }
+   os.Stdout.Write(d)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   if res.StatusCode < 200 || res.StatusCode > 299 {
+      return nil, fmt.Errorf("status %v", res.Status)
+   }
+   return io.ReadAll(res.Body)
+}
+
 type Client struct {
    ID string
 }
@@ -41,18 +71,17 @@ func New() (*Client, error) {
    if err != nil {
       return nil, err
    }
-   bodyString := string(body)
    // The link to the JS file with the client ID looks like this:
    // <script crossorigin
    // src="https://a-v2.sndcdn.com/assets/sdfhkjhsdkf.js"></script
-   split := strings.Split(bodyString, `<script crossorigin src="`)
-   urls := []string{}
+   split := bytes.Split(body, []byte(`<script crossorigin src="`))
+   var urls []string
    // Extract all the URLS that match our pattern
    for _, raw := range split {
-      u := strings.Replace(raw, `"></script>`, "", 1)
-      u = strings.Split(u, "\n")[0]
-      if string([]rune(u)[0:31]) == "https://a-v2.sndcdn.com/assets/" {
-         urls = append(urls, u)
+      u := bytes.Replace(raw, []byte(`"></script>`), nil, 1)
+      u = bytes.Split(u, []byte{'\n'})[0]
+      if bytes.HasPrefix(u, []byte("https://a-v2.sndcdn.com/assets/")) {
+         urls = append(urls, string(u))
       }
    }
    // It seems like our desired URL is always imported last
@@ -66,15 +95,15 @@ func New() (*Client, error) {
    if err != nil {
       return nil, err
    }
-   bodyString = string(body)
    // Extract the client ID
-   if strings.Contains(bodyString, `,client_id:"`) {
-      clientID := strings.Split(bodyString, `,client_id:"`)[1]
-      return &Client{
-         strings.Split(clientID, `"`)[0],
-      }, nil
+   if !bytes.Contains(body, []byte(`,client_id:"`)) {
+      return nil, fmt.Errorf("%q fail", addr)
    }
-   return nil, fmt.Errorf("%v fail", bodyString)
+   clientID := bytes.Split(body, []byte(`,client_id:"`))[1]
+   clientID = bytes.Split(clientID, []byte{'"'})[0]
+   return &Client{
+      string(clientID),
+   }, nil
 }
 
 // GetDownloadURL retuns the URL to download a track. This is useful if you
@@ -115,7 +144,7 @@ func (sc Client) GetDownloadURL(addr string) (string, error) {
 }
 
 // The media URL is the actual link to the audio file for the track
-func (c *Client) getMediaURL(addr string) (string, error) {
+func (c Client) getMediaURL(addr string) (string, error) {
    u, err := c.buildURL(addr, true)
    if err != nil {
       return "", err
@@ -126,7 +155,7 @@ func (c *Client) getMediaURL(addr string) (string, error) {
       URL string
    }
    media := &MediaURLResponse{}
-   data, err := c.makeRequest("GET", u, nil)
+   data, err := makeRequest("GET", u, nil)
    if err != nil {
       return "", err
    }
@@ -137,7 +166,7 @@ func (c *Client) getMediaURL(addr string) (string, error) {
    return media.URL, nil
 }
 
-func (c *Client) buildURL(base string, clientID bool, query ...string) (string, error) {
+func (c Client) buildURL(base string, clientID bool, query ...string) (string, error) {
    if len(query)%2 != 0 {
       return "", fmt.Errorf("invalid query %v", query)
    }
@@ -157,12 +186,12 @@ func (c *Client) buildURL(base string, clientID bool, query ...string) (string, 
 }
 
 // getDownloadURL gets the download URL of a publicly downloadable track
-func (c *Client) getDownloadURL(id int64) (string, error) {
+func (c Client) getDownloadURL(id int64) (string, error) {
    u, err := c.buildURL(fmt.Sprintf("https://api-v2.soundcloud.com/tracks/%d/download", id), true)
    if err != nil {
       return "", err
    }
-   data, err := c.makeRequest("GET", u, nil)
+   data, err := makeRequest("GET", u, nil)
    if err != nil {
       return "", err
    }
@@ -177,7 +206,7 @@ func (c *Client) getDownloadURL(id int64) (string, error) {
    return res.RedirectURI, nil
 }
 
-func (c *Client) getTrackInfo(opts GetTrackInfoOptions) ([]Track, error) {
+func (c Client) getTrackInfo(opts GetTrackInfoOptions) ([]Track, error) {
    var (
       data []byte
       err error
@@ -201,7 +230,7 @@ func (c *Client) getTrackInfo(opts GetTrackInfoOptions) ([]Track, error) {
       if err != nil {
          return nil, err
       }
-      data, err = c.makeRequest("GET", u, nil)
+      data, err = makeRequest("GET", u, nil)
       if err != nil {
          return nil, err
       }
@@ -210,13 +239,18 @@ func (c *Client) getTrackInfo(opts GetTrackInfoOptions) ([]Track, error) {
          return nil, err
       }
    } else if opts.URL != "" {
-      data, err = c.resolve(opts.URL)
+      u, err := c.buildURL(
+         resolveURL, true, "url", strings.TrimRight(opts.URL, "/"),
+      )
       if err != nil {
          return nil, err
       }
-      trackSingle := Track{}
-      err = json.Unmarshal(data, &trackSingle)
+      data, err := makeRequest("GET", u, nil)
       if err != nil {
+         return nil, err
+      }
+      var trackSingle Track
+      if err := json.Unmarshal(data, &trackSingle); err != nil {
          return nil, err
       }
       trackInfo = []Track{trackSingle}
@@ -224,46 +258,6 @@ func (c *Client) getTrackInfo(opts GetTrackInfoOptions) ([]Track, error) {
       return nil, fmt.Errorf("%v invalid", opts)
    }
    return trackInfo, nil
-}
-
-func (c *Client) makeRequest(method, addr string, body interface{}) ([]byte, error) {
-   var (
-      jsonBytes []byte
-      err error
-   )
-   if body != nil {
-      jsonBytes, err = json.Marshal(body)
-      if err != nil {
-         return nil, err
-      }
-   }
-   req, err := http.NewRequest(method, addr, bytes.NewBuffer(jsonBytes))
-   if err != nil {
-      return nil, err
-   }
-   d, err := httputil.DumpRequest(req, true)
-   if err != nil {
-      return nil, err
-   }
-   os.Stdout.Write(d)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   if res.StatusCode < 200 || res.StatusCode > 299 {
-      return nil, fmt.Errorf("status %v", res.Status)
-   }
-   return io.ReadAll(res.Body)
-}
-
-// resolve is a handy API endpoint that returns info from the given resource
-// URL
-func (c *Client) resolve(addr string) ([]byte, error) {
-   u, err := c.buildURL(resolveURL, true, "url", strings.TrimRight(addr, "/"))
-   if err != nil {
-      return nil, err
-   }
-   return c.makeRequest("GET", u, nil)
 }
 
 // GetTrackInfoOptions can contain the URL of the track or the ID of the track.
