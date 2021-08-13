@@ -13,38 +13,32 @@ import (
 
 const (
    resolveURL = "https://api-v2.soundcloud.com/resolve"
-   searchURL = "https://api-v2.soundcloud.com/search"
    trackURL = "https://api-v2.soundcloud.com/tracks"
-   usersURL = "https://api-v2.soundcloud.com/users/"
 )
 
 type client struct {
-	httpClient *http.Client
-	clientID   string
+   httpClient *http.Client
+   clientID   string
 }
 
 // FailedRequestError is an error response from the SoundCloud API
 type FailedRequestError struct {
-	Status int
-	ErrMsg string
+   Status int
+   ErrMsg string
 }
 
 func (f *FailedRequestError) Error() string {
-	if f.ErrMsg == "" {
-		return fmt.Sprintf("Request returned non 2xx Status: %d", f.Status)
-	}
-
-	return fmt.Sprintf("Request failed with Status %d: %s", f.Status, f.ErrMsg)
+   if f.ErrMsg == "" {
+      return fmt.Sprintf("Request returned non 2xx Status: %d", f.Status)
+   }
+   return fmt.Sprintf("Request failed with Status %d: %s", f.Status, f.ErrMsg)
 }
 
 func newClient(clientID string, httpClient *http.Client) *client {
-	if httpClient == nil {
-		httpClient = http.DefaultClient
-	}
-	return &client{
-		httpClient: httpClient,
-		clientID:   clientID,
-	}
+   if httpClient == nil {
+      httpClient = http.DefaultClient
+   }
+   return &client{clientID:   clientID, httpClient: httpClient}
 }
 
 func (c *client) makeRequest(method, url string, jsonBody interface{}) ([]byte, error) {
@@ -231,7 +225,8 @@ func (c *client) getDownloadURL(id int64) (string, error) {
 	return res.URL, nil
 }
 
-// resolve is a handy API endpoint that returns info from the given resource URL
+// resolve is a handy API endpoint that returns info from the given resource
+// URL
 func (c *client) resolve(url string) ([]byte, error) {
 	u, err := c.buildURL(resolveURL, true, "url", strings.TrimRight(url, "/"))
 	if err != nil {
@@ -264,12 +259,3 @@ type Kind string
 
 // KindTrack is the kind for a Track
 const KindTrack Kind = "tracks"
-
-// KindAlbum is the kind for an album
-const KindAlbum Kind = "albums"
-
-// KindPlaylist is the kind for a playlist
-const KindPlaylist Kind = "playlist"
-
-// KindUser is the kind for a user
-const KindUser Kind = "users"
