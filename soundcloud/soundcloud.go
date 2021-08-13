@@ -12,15 +12,23 @@ import (
    "strings"
 )
 
+const (
+   resolveURL = "https://api-v2.soundcloud.com/resolve"
+   trackURL = "https://api-v2.soundcloud.com/tracks"
+)
+
+type Client struct {
+   clientID string
+   httpClient *http.Client
+}
+
 // New returns a pointer to a new SoundCloud API struct.
-func New() (*client, error) {
+func New() (*Client, error) {
    clientID, err := FetchClientID()
    if err != nil {
       return nil, err
    }
-   return newClient(
-      clientID, http.DefaultClient,
-   ), nil
+   return &Client{clientID, http.DefaultClient}, nil
 }
 
 // GetDownloadURL retuns the URL to download a track. This is useful if you
@@ -28,7 +36,7 @@ func New() (*client, error) {
 // publicly available download link, that link will be preferred and the
 // streamType parameter will be ignored. streamType can be either "hls" or
 // "progressive", defaults to "progressive"
-func (sc client) GetDownloadURL(url string, streamType string) (string, error) {
+func (sc Client) GetDownloadURL(url string, streamType string) (string, error) {
    streamType = strings.ToLower(streamType)
    if streamType == "" {
       streamType = "progressive"
@@ -68,83 +76,7 @@ func (sc client) GetDownloadURL(url string, streamType string) (string, error) {
    return mediaURL, nil
 }
 
-// Track represents the JSON response of a track's info
-type Track struct {
-   Downloadable      bool
-   HasDownloadsLeft  bool   `json:"has_downloads_left"`
-   CreatedAt         string `json:"created_at"`
-   Description       string
-   DurationMS        int64  `json:"duration"`
-   FullDurationMS    int64  `json:"full_duration"`
-   ID                int64
-   Kind string
-   // Media contains an array of transcoding for a track
-   Media struct {
-      // Transcoding contains information about the transcoding of a track
-      Transcodings []struct {
-         // TranscodingFormat contains the protocol by which the track is
-         // delivered ("progressive" or "HLS"), and the mime type of the track
-         Format struct {
-            MimeType string `json:"mime_type"`
-            Protocol string
-         }
-         Preset  string
-         Snipped bool
-         URL     string
-      }
-   }
-   Permalink string
-   PermalinkURL string `json:"permalink_url"`
-   PlaybackCount int64  `json:"playback_count"`
-   SecretToken string `json:"secret_token"`
-   Streamable bool
-   Title string
-   URI string
-   WaveformURL string `json:"waveform_url"`
-}
-
-
-const (
-   resolveURL = "https://api-v2.soundcloud.com/resolve"
-   trackURL = "https://api-v2.soundcloud.com/tracks"
-)
-
-type client struct {
-   httpClient *http.Client
-   clientID   string
-}
-
-func newClient(clientID string, httpClient *http.Client) *client {
-   if httpClient == nil {
-      httpClient = http.DefaultClient
-   }
-   return &client{clientID: clientID, httpClient: httpClient}
-}
-
-func (c *client) makeRequest(method, url string, jsonBody interface{}) ([]byte, error) {
-   var jsonBytes []byte
-   var err error
-   if jsonBody != nil {
-      jsonBytes, err = json.Marshal(jsonBody)
-      if err != nil {
-         return nil, err
-      }
-   }
-   req, err := http.NewRequest(method, url, bytes.NewBuffer(jsonBytes))
-   if err != nil {
-      return nil, err
-   }
-   res, err := c.httpClient.Do(req)
-   if err != nil {
-      return nil, err
-   }
-   if res.StatusCode < 200 || res.StatusCode > 299 {
-      return nil, fmt.Errorf("status %v", res.Status)
-   }
-   return io.ReadAll(res.Body)
-}
-
-func (c *client) buildURL(base string, clientID bool, query ...string) (string, error) {
+func (c *Client) buildURL(base string, clientID bool, query ...string) (string, error) {
    if len(query)%2 != 0 {
       return "", fmt.Errorf("invalid query %v", query)
    }
@@ -163,17 +95,7 @@ func (c *client) buildURL(base string, clientID bool, query ...string) (string, 
    return u.String(), nil
 }
 
-// GetTrackInfoOptions can contain the URL of the track or the ID of the track.
-// PlaylistID and PlaylistSecretToken are necessary to retrieve private tracks
-// in private playlists.
-type GetTrackInfoOptions struct {
-	URL                 string
-	ID                  []int64
-	PlaylistID          int64
-	PlaylistSecretToken string
-}
-
-func (c *client) getTrackInfo(options GetTrackInfoOptions) ([]Track, error) {
+func (c *Client) getTrackInfo(options GetTrackInfoOptions) ([]Track, error) {
    var u string
    var data []byte
    var err error
@@ -233,7 +155,77 @@ func (c *client) getTrackInfo(options GetTrackInfoOptions) ([]Track, error) {
    return trackInfo, nil
 }
 
-func (c *client) sortTrackInfo(ids []int64, tracks []Track) {
+func (c *Client) makeRequest(method, url string, jsonBody interface{}) ([]byte, error) {
+   var jsonBytes []byte
+   var err error
+   if jsonBody != nil {
+      jsonBytes, err = json.Marshal(jsonBody)
+      if err != nil {
+         return nil, err
+      }
+   }
+   req, err := http.NewRequest(method, url, bytes.NewBuffer(jsonBytes))
+   if err != nil {
+      return nil, err
+   }
+   res, err := c.httpClient.Do(req)
+   if err != nil {
+      return nil, err
+   }
+   if res.StatusCode < 200 || res.StatusCode > 299 {
+      return nil, fmt.Errorf("status %v", res.Status)
+   }
+   return io.ReadAll(res.Body)
+}
+
+// GetTrackInfoOptions can contain the URL of the track or the ID of the track.
+// PlaylistID and PlaylistSecretToken are necessary to retrieve private tracks
+// in private playlists.
+type GetTrackInfoOptions struct {
+   ID                  []int64
+   PlaylistID          int64
+   PlaylistSecretToken string
+   URL                 string
+}
+
+// Track represents the JSON response of a track's info
+type Track struct {
+   Downloadable      bool
+   HasDownloadsLeft  bool   `json:"has_downloads_left"`
+   CreatedAt         string `json:"created_at"`
+   Description       string
+   DurationMS        int64  `json:"duration"`
+   FullDurationMS    int64  `json:"full_duration"`
+   ID                int64
+   Kind string
+   // Media contains an array of transcoding for a track
+   Media struct {
+      // Transcoding contains information about the transcoding of a track
+      Transcodings []struct {
+         // TranscodingFormat contains the protocol by which the track is
+         // delivered ("progressive" or "HLS"), and the mime type of the track
+         Format struct {
+            MimeType string `json:"mime_type"`
+            Protocol string
+         }
+         Preset  string
+         Snipped bool
+         URL     string
+      }
+   }
+   Permalink string
+   PermalinkURL string `json:"permalink_url"`
+   PlaybackCount int64  `json:"playback_count"`
+   SecretToken string `json:"secret_token"`
+   Streamable bool
+   Title string
+   URI string
+   WaveformURL string `json:"waveform_url"`
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+func (c *Client) sortTrackInfo(ids []int64, tracks []Track) {
 	// Bubble Sort for now. Maybe switch to a more efficient sorting algorithm later??
 	//
 	// Because the API request in getTrackInfo is limited to 50 tracks at once
@@ -259,7 +251,7 @@ type MediaURLResponse struct {
    URL string
 }
 
-func (c *client) getMediaURL(url string) (string, error) {
+func (c *Client) getMediaURL(url string) (string, error) {
 	// The media URL is the actual link to the audio file for the track
 	u, err := c.buildURL(url, true)
 	if err != nil {
@@ -287,7 +279,7 @@ type DownloadURLResponse struct {
 }
 
 // getDownloadURL gets the download URL of a publicly downloadable track
-func (c *client) getDownloadURL(id int64) (string, error) {
+func (c *Client) getDownloadURL(id int64) (string, error) {
 	u, err := c.buildURL(fmt.Sprintf("https://api-v2.soundcloud.com/tracks/%d/download", id), true)
 	if err != nil {
                return "", err
@@ -309,7 +301,7 @@ func (c *client) getDownloadURL(id int64) (string, error) {
 
 // resolve is a handy API endpoint that returns info from the given resource
 // URL
-func (c *client) resolve(url string) ([]byte, error) {
+func (c *Client) resolve(url string) ([]byte, error) {
 	u, err := c.buildURL(resolveURL, true, "url", strings.TrimRight(url, "/"))
 	if err != nil {
                return nil, err
