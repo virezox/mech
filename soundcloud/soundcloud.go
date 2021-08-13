@@ -19,55 +19,6 @@ const (
 
 var urlRegex = regexp.MustCompile(`(?m)^https?:\/\/(soundcloud\.com)\/(.*)$`)
 
-// FetchClientID fetches a SoundCloud client ID. This algorithm is adapted from
-// https://www.npmjs.com/package/soundcloud-key-fetch. The basic notion of how
-// this function works is that SoundCloud provides a client ID so its web app
-// can make API requests. This client ID (along with other intialization data
-// for the web app) is provided in a JavaScript file imported through a
-// <script> tag in the HTML. This function scrapes the HTML and tries to find
-// the URL to that JS file, and then scrapes the JS file to find the client ID.								//
-func FetchClientID() (string, error) {
-   resp, err := http.Get("https://soundcloud.com")
-   if err != nil {
-   return "", err
-   }
-   body, err := io.ReadAll(resp.Body)
-   if err != nil {
-   return "", err
-   }
-   bodyString := string(body)
-   // The link to the JS file with the client ID looks like this:
-   // <script crossorigin src="https://a-v2.sndcdn.com/assets/sdfhkjhsdkf.js"></script
-   split := strings.Split(bodyString, `<script crossorigin src="`)
-   urls := []string{}
-   // Extract all the URLS that match our pattern
-   for _, raw := range split {
-   u := strings.Replace(raw, `"></script>`, "", 1)
-   u = strings.Split(u, "\n")[0]
-   if string([]rune(u)[0:31]) == "https://a-v2.sndcdn.com/assets/" {
-   urls = append(urls, u)
-   }
-   }
-   // It seems like our desired URL is always imported last,
-   // so we use urls[len(urls) - 1]
-   resp, err = http.Get(urls[len(urls)-1])
-   if err != nil {
-   return "", err
-   }
-   body, err = io.ReadAll(resp.Body)
-   if err != nil {
-   return "", err
-   }
-   bodyString = string(body)
-   // Extract the client ID
-   if strings.Contains(bodyString, `,client_id:"`) {
-   clientID := strings.Split(bodyString, `,client_id:"`)[1]
-   clientID = strings.Split(clientID, `"`)[0]
-   return clientID, nil
-   }
-   return "", fmt.Errorf("%v fail", bodyString)
-}
-
 // IsURL returns true if the provided url is a valid SoundCloud URL
 func IsURL(url string, testMobile, testFirebase bool) bool {
    success := false
@@ -91,13 +42,55 @@ type Client struct {
    httpClient *http.Client
 }
 
-// New returns a pointer to a new SoundCloud API struct.
+// New returns a pointer to a new SoundCloud API struct. First fetch a
+// SoundCloud client ID. This algorithm is adapted from
+// https://www.npmjs.com/package/soundcloud-key-fetch. The basic notion of how
+// this function works is that SoundCloud provides a client ID so its web app
+// can make API requests. This client ID (along with other intialization data
+// for the web app) is provided in a JavaScript file imported through a
+// <script> tag in the HTML. This function scrapes the HTML and tries to find
+// the URL to that JS file, and then scrapes the JS file to find the client ID.
 func New() (*Client, error) {
-   clientID, err := FetchClientID()
+   resp, err := http.Get("https://soundcloud.com")
    if err != nil {
       return nil, err
    }
-   return &Client{clientID, http.DefaultClient}, nil
+   body, err := io.ReadAll(resp.Body)
+   if err != nil {
+      return nil, err
+   }
+   bodyString := string(body)
+   // The link to the JS file with the client ID looks like this:
+   // <script crossorigin
+   // src="https://a-v2.sndcdn.com/assets/sdfhkjhsdkf.js"></script
+   split := strings.Split(bodyString, `<script crossorigin src="`)
+   urls := []string{}
+   // Extract all the URLS that match our pattern
+   for _, raw := range split {
+      u := strings.Replace(raw, `"></script>`, "", 1)
+      u = strings.Split(u, "\n")[0]
+      if string([]rune(u)[0:31]) == "https://a-v2.sndcdn.com/assets/" {
+         urls = append(urls, u)
+      }
+   }
+   // It seems like our desired URL is always imported last,
+   // so we use urls[len(urls) - 1]
+   resp, err = http.Get(urls[len(urls)-1])
+   if err != nil {
+      return nil, err
+   }
+   body, err = io.ReadAll(resp.Body)
+   if err != nil {
+      return nil, err
+   }
+   bodyString = string(body)
+   // Extract the client ID
+   if strings.Contains(bodyString, `,client_id:"`) {
+      clientID := strings.Split(bodyString, `,client_id:"`)[1]
+      clientID = strings.Split(clientID, `"`)[0]
+      return &Client{clientID, http.DefaultClient}, nil
+   }
+   return nil, fmt.Errorf("%v fail", bodyString)
 }
 
 // GetDownloadURL retuns the URL to download a track. This is useful if you
@@ -199,32 +192,34 @@ func (c *Client) getMediaURL(url string) (string, error) {
    media := &MediaURLResponse{}
    data, err := c.makeRequest("GET", u, nil)
    if err != nil {
-   return "", err
+      return "", err
    }
    err = json.Unmarshal(data, media)
    if err != nil {
-   return "", err
+      return "", err
    }
    return media.URL, nil
 }
 
-func (c *Client) getTrackInfo(options GetTrackInfoOptions) ([]Track, error) {
-   var u string
-   var data []byte
-   var err error
-   var trackInfo []Track
-   if options.ID != nil && len(options.ID) > 0 {
+func (c *Client) getTrackInfo(opts GetTrackInfoOptions) ([]Track, error) {
+   var (
+      data []byte
+      err error
+      trackInfo []Track
+      u string
+   )
+   if opts.ID != nil && len(opts.ID) > 0 {
       ids := []string{}
-      for _, id := range options.ID {
+      for _, id := range opts.ID {
          ids = append(ids, strconv.FormatInt(id, 10))
       }
-      if options.PlaylistID == 0 && options.PlaylistSecretToken == "" {
+      if opts.PlaylistID == 0 && opts.PlaylistSecretToken == "" {
          u, err = c.buildURL(trackURL, true, "ids", strings.Join(ids, ","))
       } else {
          u, err = c.buildURL(
             trackURL, true, "ids", strings.Join(ids, ","), "playlistId",
-            fmt.Sprintf("%d", options.PlaylistID), "playlistSecretToken",
-            options.PlaylistSecretToken,
+            fmt.Sprintf("%d", opts.PlaylistID), "playlistSecretToken",
+            opts.PlaylistSecretToken,
          )
       }
       if err != nil {
@@ -238,8 +233,8 @@ func (c *Client) getTrackInfo(options GetTrackInfoOptions) ([]Track, error) {
       if err != nil {
          return nil, err
       }
-   } else if options.URL != "" {
-      data, err = c.resolve(options.URL)
+   } else if opts.URL != "" {
+      data, err = c.resolve(opts.URL)
       if err != nil {
          return nil, err
       }
@@ -250,15 +245,15 @@ func (c *Client) getTrackInfo(options GetTrackInfoOptions) ([]Track, error) {
       }
       trackInfo = []Track{trackSingle}
    } else {
-      return nil, fmt.Errorf("%v invalid", options)
+      return nil, fmt.Errorf("%v invalid", opts)
    }
-   if options.ID != nil && len(options.ID) > 0 {
+   if opts.ID != nil && len(opts.ID) > 0 {
       trimmedIDs := []int64{}
       trackInfoIDs := []int64{}
       for _, track := range trackInfo {
          trackInfoIDs = append(trackInfoIDs, track.ID)
       }
-      for _, id := range options.ID {
+      for _, id := range opts.ID {
          if sliceContains(trackInfoIDs, id) {
             trimmedIDs = append(trimmedIDs, id)
          }
@@ -268,11 +263,13 @@ func (c *Client) getTrackInfo(options GetTrackInfoOptions) ([]Track, error) {
    return trackInfo, nil
 }
 
-func (c *Client) makeRequest(method, url string, jsonBody interface{}) ([]byte, error) {
-   var jsonBytes []byte
-   var err error
-   if jsonBody != nil {
-      jsonBytes, err = json.Marshal(jsonBody)
+func (c *Client) makeRequest(method, url string, body interface{}) ([]byte, error) {
+   var (
+      jsonBytes []byte
+      err error
+   )
+   if body != nil {
+      jsonBytes, err = json.Marshal(body)
       if err != nil {
          return nil, err
       }
@@ -294,37 +291,28 @@ func (c *Client) makeRequest(method, url string, jsonBody interface{}) ([]byte, 
 // resolve is a handy API endpoint that returns info from the given resource
 // URL
 func (c *Client) resolve(url string) ([]byte, error) {
-	u, err := c.buildURL(resolveURL, true, "url", strings.TrimRight(url, "/"))
-	if err != nil {
-               return nil, err
-	}
-
-	data, err := c.makeRequest("GET", u, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return data, nil
+   u, err := c.buildURL(resolveURL, true, "url", strings.TrimRight(url, "/"))
+   if err != nil {
+      return nil, err
+   }
+   return c.makeRequest("GET", u, nil)
 }
 
+// Bubble Sort for now. Maybe switch to a more efficient sorting algorithm
+// later?? Because the API request in getTrackInfo is limited to 50 tracks at
+// once time complexity will always be <= O(50^2)
 func (c *Client) sortTrackInfo(ids []int64, tracks []Track) {
-	// Bubble Sort for now. Maybe switch to a more efficient sorting algorithm later??
-	//
-	// Because the API request in getTrackInfo is limited to 50 tracks at once
-	// time complexity will always be <= O(50^2)
-
-	for j, id := range ids {
-
-		if tracks[j].ID != id {
-			for k := 0; k < len(tracks); k++ {
-				if tracks[k].ID == id {
-					temp := tracks[j]
-					tracks[j] = tracks[k]
-					tracks[k] = temp
-				}
-			}
-		}
-	}
+   for j, id := range ids {
+      if tracks[j].ID != id {
+         for k := 0; k < len(tracks); k++ {
+            if tracks[k].ID == id {
+               temp := tracks[j]
+               tracks[j] = tracks[k]
+               tracks[k] = temp
+            }
+         }
+      }
+   }
 }
 
 // GetTrackInfoOptions can contain the URL of the track or the ID of the track.
