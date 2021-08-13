@@ -6,9 +6,7 @@ import (
    "fmt"
    "io"
    "net/http"
-   "net/http/httputil"
    "net/url"
-   "os"
    "strconv"
    "strings"
 )
@@ -18,41 +16,11 @@ const (
    trackURL = "https://api-v2.soundcloud.com/tracks"
 )
 
-func makeRequest(method, addr string, body interface{}) ([]byte, error) {
-   var (
-      jsonBytes []byte
-      err error
-   )
-   if body != nil {
-      jsonBytes, err = json.Marshal(body)
-      if err != nil {
-         return nil, err
-      }
-   }
-   req, err := http.NewRequest(method, addr, bytes.NewBuffer(jsonBytes))
-   if err != nil {
-      return nil, err
-   }
-   d, err := httputil.DumpRequest(req, true)
-   if err != nil {
-      return nil, err
-   }
-   os.Stdout.Write(d)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   if res.StatusCode < 200 || res.StatusCode > 299 {
-      return nil, fmt.Errorf("status %v", res.Status)
-   }
-   return io.ReadAll(res.Body)
-}
-
 type Client struct {
    ID string
 }
 
-// New returns a pointer to a new SoundCloud API struct. First fetch a
+// NewClient returns a pointer to a new SoundCloud API struct. First fetch a
 // SoundCloud client ID. This algorithm is adapted from
 // https://www.npmjs.com/package/soundcloud-key-fetch. The basic notion of how
 // this function works is that SoundCloud provides a client ID so its web app
@@ -60,7 +28,7 @@ type Client struct {
 // for the web app) is provided in a JavaScript file imported through a
 // <script> tag in the HTML. This function scrapes the HTML and tries to find
 // the URL to that JS file, and then scrapes the JS file to find the client ID.
-func New() (*Client, error) {
+func NewClient() (*Client, error) {
    addr := "https://soundcloud.com"
    fmt.Println("GET", addr)
    resp, err := http.Get(addr)
@@ -115,23 +83,16 @@ func (sc Client) GetDownloadURL(addr string) (string, error) {
    if !strings.HasPrefix(addr, "https://soundcloud.com/") {
       return "", fmt.Errorf("%q is not a track URL", addr)
    }
-   info, err := sc.getTrackInfo(GetTrackInfoOptions{
+   tracks, err := sc.getTrackInfo(GetTrackInfoOptions{
       URL: addr,
    })
    if err != nil {
       return "", err
    }
-   if len(info) == 0 {
+   if len(tracks) == 0 {
       return "", fmt.Errorf("%v fail", addr)
    }
-   if info[0].Downloadable && info[0].HasDownloadsLeft {
-      downloadURL, err := sc.getDownloadURL(info[0].ID)
-      if err != nil {
-         return "", err
-      }
-      return downloadURL, nil
-   }
-   for _, transcoding := range info[0].Media.Transcodings {
+   for _, transcoding := range tracks[0].Media.Transcodings {
       if strings.ToLower(transcoding.Format.Protocol) == "progressive" {
          mediaURL, err := sc.getMediaURL(transcoding.URL)
          if err != nil {
@@ -149,18 +110,22 @@ func (c Client) getMediaURL(addr string) (string, error) {
    if err != nil {
       return "", err
    }
-   // MediaURLResponse is the JSON response of retrieving media information of a
-   // track
-   type MediaURLResponse struct {
-      URL string
-   }
-   media := &MediaURLResponse{}
-   data, err := makeRequest("GET", u, nil)
+   fmt.Println("GET", u)
+   res, err := http.Get(u)
    if err != nil {
       return "", err
    }
-   err = json.Unmarshal(data, media)
+   defer res.Body.Close()
+   data, err := io.ReadAll(res.Body)
    if err != nil {
+      return "", err
+   }
+   // MediaURLResponse is the JSON response of retrieving media information of
+   // a track
+   var media struct {
+      URL string
+   }
+   if err := json.Unmarshal(data, &media); err != nil {
       return "", err
    }
    return media.URL, nil
@@ -185,37 +150,15 @@ func (c Client) buildURL(base string, clientID bool, query ...string) (string, e
    return u.String(), nil
 }
 
-// getDownloadURL gets the download URL of a publicly downloadable track
-func (c Client) getDownloadURL(id int64) (string, error) {
-   u, err := c.buildURL(fmt.Sprintf("https://api-v2.soundcloud.com/tracks/%d/download", id), true)
-   if err != nil {
-      return "", err
-   }
-   data, err := makeRequest("GET", u, nil)
-   if err != nil {
-      return "", err
-   }
-   // DownloadURLResponse is the JSON respose of retrieving media information
-   // of a publicly downloadable track
-   var res struct {
-      RedirectURI string
-   }
-   if err := json.Unmarshal(data, &res); err != nil {
-      return "", err
-   }
-   return res.RedirectURI, nil
-}
-
 func (c Client) getTrackInfo(opts GetTrackInfoOptions) ([]Track, error) {
    var (
-      data []byte
       err error
       trackInfo []Track
       u string
    )
-   if opts.ID != nil && len(opts.ID) > 0 {
+   if opts.IDs != nil && len(opts.IDs) > 0 {
       ids := []string{}
-      for _, id := range opts.ID {
+      for _, id := range opts.IDs {
          ids = append(ids, strconv.FormatInt(id, 10))
       }
       if opts.PlaylistID == 0 && opts.PlaylistSecretToken == "" {
@@ -230,12 +173,17 @@ func (c Client) getTrackInfo(opts GetTrackInfoOptions) ([]Track, error) {
       if err != nil {
          return nil, err
       }
-      data, err = makeRequest("GET", u, nil)
+      fmt.Println("GET", u)
+      res, err := http.Get(u)
       if err != nil {
          return nil, err
       }
-      err = json.Unmarshal(data, &trackInfo)
+      defer res.Body.Close()
+      data, err := io.ReadAll(res.Body)
       if err != nil {
+         return nil, err
+      }
+      if err := json.Unmarshal(data, &trackInfo); err != nil {
          return nil, err
       }
    } else if opts.URL != "" {
@@ -245,7 +193,13 @@ func (c Client) getTrackInfo(opts GetTrackInfoOptions) ([]Track, error) {
       if err != nil {
          return nil, err
       }
-      data, err := makeRequest("GET", u, nil)
+      fmt.Println("GET", u)
+      res, err := http.Get(u)
+      if err != nil {
+         return nil, err
+      }
+      defer res.Body.Close()
+      data, err := io.ReadAll(res.Body)
       if err != nil {
          return nil, err
       }
@@ -264,10 +218,10 @@ func (c Client) getTrackInfo(opts GetTrackInfoOptions) ([]Track, error) {
 // PlaylistID and PlaylistSecretToken are necessary to retrieve private tracks
 // in private playlists.
 type GetTrackInfoOptions struct {
-   ID                  []int64
-   PlaylistID          int64
+   IDs []int64
+   PlaylistID int64
    PlaylistSecretToken string
-   URL                 string
+   URL string
 }
 
 // Track represents the JSON response of a track's info

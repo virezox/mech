@@ -6,7 +6,7 @@ import (
 )
 
 func TestSoundCloud(t *testing.T) {
-   api, err := New()
+   api, err := NewClient()
    if err != nil {
       t.Fatal(err)
    }
