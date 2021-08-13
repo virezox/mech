@@ -246,21 +246,6 @@ func (c *client) resolve(url string) ([]byte, error) {
 	return data, nil
 }
 
-// GetUserOptions contains either the profile url of the user or the ID of the user
-type GetUserOptions struct {
-	ProfileURL string
-	ID         int64
-}
-
-// GetLikesOptions are the options for getting a user's likes.
-type GetLikesOptions struct {
-	ProfileURL string // URL to the user's profile (will use this or ID to choose user)
-	ID         int64  //  User's ID if you have it
-	Limit      int    // How many tracks to return (defaults to 10)
-	Offset     int    // How many tracks to offset by (used for pagination; defaults to 0)
-	Type       string // What type of resource to return. One of ["track", "playlist", "all"]. Defaults to "all"
-}
-
 // SearchOptions are the parameters for executing a search
 type SearchOptions struct {
 	// This is the NextHref property of PaginatedQuery structs
@@ -288,50 +273,3 @@ const KindPlaylist Kind = "playlist"
 
 // KindUser is the kind for a user
 const KindUser Kind = "users"
-
-func (c *client) search(options SearchOptions) (*PaginatedQuery, error) {
-	var u string
-	var err error
-
-	if options.Limit == 0 {
-		options.Limit = 10
-	}
-
-	if options.Kind == KindPlaylist {
-		options.Kind = "playlist_without_albums"
-	}
-
-	if options.QueryURL != "" {
-		u = options.QueryURL
-	} else {
-		kind := "/" + options.Kind
-		if kind == "/" {
-			kind = ""
-		}
-
-		u, err = c.buildURL(
-                  searchURL+string(kind), true, "q", options.Query, "limit",
-                  strconv.Itoa(options.Limit), "offset",
-                  strconv.Itoa(options.Offset),
-               )
-
-		if err != nil {
-                        return nil, err
-		}
-	}
-
-	data, err := c.makeRequest("GET", u, nil)
-
-	if err != nil {
-		return nil, err
-	}
-
-	response := &PaginatedQuery{}
-	err = json.Unmarshal(data, response)
-
-	if err != nil {
-               return nil, err
-	}
-
-	return response, nil
-}

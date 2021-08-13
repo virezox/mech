@@ -100,9 +100,3 @@ func (sc *API) prepareURL(url string) (string, error) {
    }
    return url, nil
 }
-
-// IsURL is a shorthand for IsURL(url, sc.StripMobilePrefix,
-// sc.ConvertFirebaseURLs)
-func (sc *API) IsURL(url string) bool {
-   return IsURL(url, sc.StripMobilePrefix, sc.ConvertFirebaseURLs)
-}
