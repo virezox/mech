@@ -2,7 +2,7 @@ package soundcloud
 
 import (
    "fmt"
-   "io/ioutil"
+   "io"
    "net/http"
    "net/url"
    "regexp"
@@ -120,7 +120,7 @@ func FetchClientID() (string, error) {
                return "", err
 	}
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
                return "", err
 	}
@@ -147,7 +147,7 @@ func FetchClientID() (string, error) {
                return "", err
 	}
 
-	body, err = ioutil.ReadAll(resp.Body)
+	body, err = io.ReadAll(resp.Body)
 	if err != nil {
                return "", err
 	}

@@ -13,9 +13,10 @@ https://pkg.go.dev/github.com/89z/mech
 
 ## Sites
 
-1. Deezer
-2. MusicBrainz
-3. YouTube
+1. YouTube
+2. SoundCloud
+3. Deezer
+4. MusicBrainz
 
 ## Author
 

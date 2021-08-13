@@ -4,7 +4,7 @@ import (
    "bytes"
    "encoding/json"
    "fmt"
-   "io/ioutil"
+   "io"
    "net/http"
    "net/url"
    "strconv"
@@ -19,19 +19,6 @@ const (
 type client struct {
    httpClient *http.Client
    clientID   string
-}
-
-// FailedRequestError is an error response from the SoundCloud API
-type FailedRequestError struct {
-   Status int
-   ErrMsg string
-}
-
-func (f *FailedRequestError) Error() string {
-   if f.ErrMsg == "" {
-      return fmt.Sprintf("Request returned non 2xx Status: %d", f.Status)
-   }
-   return fmt.Sprintf("Request failed with Status %d: %s", f.Status, f.ErrMsg)
 }
 
 func newClient(clientID string, httpClient *http.Client) *client {
@@ -56,46 +43,36 @@ func (c *client) makeRequest(method, url string, jsonBody interface{}) ([]byte, 
    }
    res, err := c.httpClient.Do(req)
    if err != nil {
-   return nil, err
+      return nil, err
    }
    if res.StatusCode < 200 || res.StatusCode > 299 {
-   if data, err := ioutil.ReadAll(res.Body); err == nil {
-   return nil, &FailedRequestError{Status: res.StatusCode, ErrMsg: string(data)}
+      return nil, fmt.Errorf("status %v", res.Status)
    }
-   return nil, &FailedRequestError{Status: res.StatusCode}
-   }
-   data, err := ioutil.ReadAll(res.Body)
-   if err != nil {
-   return data, nil
-   }
-   return data, nil
+   return io.ReadAll(res.Body)
 }
 
 func (c *client) buildURL(base string, clientID bool, query ...string) (string, error) {
-	if len(query)%2 != 0 {
-		return "", fmt.Errorf("invalid query: URL %q Query: %q", base, strings.Join(query, ","))
-	}
-
-	u, err := url.Parse(string(base))
-	if err != nil {
-		return "", err
-	}
-	q := u.Query()
-
-	for i := 0; i < len(query); i += 2 {
-		q.Add(query[i], query[i+1])
-	}
-
-	if clientID {
-		q.Add("client_id", c.clientID)
-	}
-
-	u.RawQuery = q.Encode()
-	return u.String(), nil
+   if len(query)%2 != 0 {
+      return "", fmt.Errorf("invalid query %v", query)
+   }
+   u, err := url.Parse(string(base))
+   if err != nil {
+      return "", err
+   }
+   q := u.Query()
+   for i := 0; i < len(query); i += 2 {
+      q.Add(query[i], query[i+1])
+   }
+   if clientID {
+      q.Add("client_id", c.clientID)
+   }
+   u.RawQuery = q.Encode()
+   return u.String(), nil
 }
 
 // GetTrackInfoOptions can contain the URL of the track or the ID of the track.
-// PlaylistID and PlaylistSecretToken are necessary to retrieve private tracks in private playlists.
+// PlaylistID and PlaylistSecretToken are necessary to retrieve private tracks
+// in private playlists.
 type GetTrackInfoOptions struct {
 	URL                 string
 	ID                  []int64
@@ -239,19 +216,6 @@ func (c *client) resolve(url string) ([]byte, error) {
 	}
 
 	return data, nil
-}
-
-// SearchOptions are the parameters for executing a search
-type SearchOptions struct {
-	// This is the NextHref property of PaginatedQuery structs
-	QueryURL string
-	Query    string
-	// Number of items to return
-	Limit int
-	// Number of items to offset by (for pagination)
-	Offset int
-	// The type of item to return
-	Kind Kind
 }
 
 // Kind is a string
