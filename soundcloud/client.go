@@ -26,7 +26,7 @@ func newClient(clientID string, httpClient *http.Client) *client {
    if httpClient == nil {
       httpClient = http.DefaultClient
    }
-   return &client{clientID:   clientID, httpClient: httpClient}
+   return &client{clientID: clientID, httpClient: httpClient}
 }
 
 func (c *client) makeRequest(method, url string, jsonBody interface{}) ([]byte, error) {
@@ -237,19 +237,6 @@ func IsURL(url string, testMobile, testFirebase bool) bool {
       success = len(urlRegex.FindAllString(url, -1)) > 0
    }
    return success
-}
-
-// StripMobilePrefix removes the prefix for mobile urls. Returns the same string if an error parsing the URL occurs
-func StripMobilePrefix(u string) string {
-	if !strings.Contains(u, "m.soundcloud.com") {
-		return u
-	}
-	_url, err := url.Parse(u)
-	if err != nil {
-		return u
-	}
-	_url.Host = "soundcloud.com"
-	return _url.String()
 }
 
 func sliceContains(slice []int64, x int64) bool {

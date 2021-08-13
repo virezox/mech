@@ -6,8 +6,7 @@ import (
 )
 
 func TestSoundCloud(t *testing.T) {
-   var opt APIOptions
-   api, err := New(opt)
+   api, err := New()
    if err != nil {
       t.Fatal(err)
    }
