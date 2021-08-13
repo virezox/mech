@@ -6,8 +6,8 @@ import (
    "fmt"
    "io"
    "net/http"
-   "net/url"
-   "strconv"
+   "net/http/httputil"
+   "os"
    "strings"
 )
 
@@ -83,9 +83,7 @@ func (sc Client) GetDownloadURL(addr string) (string, error) {
    if !strings.HasPrefix(addr, "https://soundcloud.com/") {
       return "", fmt.Errorf("%q is not a track URL", addr)
    }
-   tracks, err := sc.getTrackInfo(GetTrackInfoOptions{
-      URL: addr,
-   })
+   tracks, err := sc.getTrackInfo(addr, nil)
    if err != nil {
       return "", err
    }
@@ -106,122 +104,65 @@ func (sc Client) GetDownloadURL(addr string) (string, error) {
 
 // The media URL is the actual link to the audio file for the track
 func (c Client) getMediaURL(addr string) (string, error) {
-   u, err := c.buildURL(addr, true)
+   req, err := http.NewRequest("GET", addr, nil)
    if err != nil {
       return "", err
    }
-   fmt.Println("GET", u)
-   res, err := http.Get(u)
+   q := req.URL.Query()
+   q.Set("client_id", c.ID)
+   req.URL.RawQuery = q.Encode()
+   d, err := httputil.DumpRequest(req, false)
+   if err != nil {
+      return "", err
+   }
+   os.Stdout.Write(d)
+   res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return "", err
    }
    defer res.Body.Close()
-   data, err := io.ReadAll(res.Body)
-   if err != nil {
-      return "", err
-   }
    // MediaURLResponse is the JSON response of retrieving media information of
    // a track
    var media struct {
       URL string
    }
-   if err := json.Unmarshal(data, &media); err != nil {
+   if err := json.NewDecoder(res.Body).Decode(&media); err != nil {
       return "", err
    }
    return media.URL, nil
 }
 
-func (c Client) buildURL(base string, clientID bool, query ...string) (string, error) {
-   if len(query)%2 != 0 {
-      return "", fmt.Errorf("invalid query %v", query)
+func (c Client) getTrackInfo(addr string, ids []int64) ([]Track, error) {
+   if addr == "" {
+      return nil, fmt.Errorf("%q invalid", addr)
    }
-   u, err := url.Parse(string(base))
+   req, err := http.NewRequest("GET", resolveURL, nil)
    if err != nil {
-      return "", err
+      return nil, err
    }
-   q := u.Query()
-   for i := 0; i < len(query); i += 2 {
-      q.Add(query[i], query[i+1])
+   q := req.URL.Query()
+   q.Set("client_id", c.ID)
+   q.Set("url", strings.TrimRight(addr, "/"))
+   req.URL.RawQuery = q.Encode()
+   d, err := httputil.DumpRequest(req, false)
+   if err != nil {
+      return nil, err
    }
-   if clientID {
-      q.Add("client_id", c.ID)
+   os.Stdout.Write(d)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
    }
-   u.RawQuery = q.Encode()
-   return u.String(), nil
-}
-
-func (c Client) getTrackInfo(opts GetTrackInfoOptions) ([]Track, error) {
-   var (
-      err error
-      trackInfo []Track
-      u string
-   )
-   if opts.IDs != nil && len(opts.IDs) > 0 {
-      ids := []string{}
-      for _, id := range opts.IDs {
-         ids = append(ids, strconv.FormatInt(id, 10))
-      }
-      if opts.PlaylistID == 0 && opts.PlaylistSecretToken == "" {
-         u, err = c.buildURL(trackURL, true, "ids", strings.Join(ids, ","))
-      } else {
-         u, err = c.buildURL(
-            trackURL, true, "ids", strings.Join(ids, ","), "playlistId",
-            fmt.Sprintf("%d", opts.PlaylistID), "playlistSecretToken",
-            opts.PlaylistSecretToken,
-         )
-      }
-      if err != nil {
-         return nil, err
-      }
-      fmt.Println("GET", u)
-      res, err := http.Get(u)
-      if err != nil {
-         return nil, err
-      }
-      defer res.Body.Close()
-      data, err := io.ReadAll(res.Body)
-      if err != nil {
-         return nil, err
-      }
-      if err := json.Unmarshal(data, &trackInfo); err != nil {
-         return nil, err
-      }
-   } else if opts.URL != "" {
-      u, err := c.buildURL(
-         resolveURL, true, "url", strings.TrimRight(opts.URL, "/"),
-      )
-      if err != nil {
-         return nil, err
-      }
-      fmt.Println("GET", u)
-      res, err := http.Get(u)
-      if err != nil {
-         return nil, err
-      }
-      defer res.Body.Close()
-      data, err := io.ReadAll(res.Body)
-      if err != nil {
-         return nil, err
-      }
-      var trackSingle Track
-      if err := json.Unmarshal(data, &trackSingle); err != nil {
-         return nil, err
-      }
-      trackInfo = []Track{trackSingle}
-   } else {
-      return nil, fmt.Errorf("%v invalid", opts)
+   defer res.Body.Close()
+   data, err := io.ReadAll(res.Body)
+   if err != nil {
+      return nil, err
    }
-   return trackInfo, nil
-}
-
-// GetTrackInfoOptions can contain the URL of the track or the ID of the track.
-// PlaylistID and PlaylistSecretToken are necessary to retrieve private tracks
-// in private playlists.
-type GetTrackInfoOptions struct {
-   IDs []int64
-   PlaylistID int64
-   PlaylistSecretToken string
-   URL string
+   var trackSingle Track
+   if err := json.Unmarshal(data, &trackSingle); err != nil {
+      return nil, err
+   }
+   return []Track{trackSingle}, nil
 }
 
 // Track represents the JSON response of a track's info
