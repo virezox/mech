@@ -12,7 +12,6 @@ func TestSoundCloud(t *testing.T) {
    }
    addr, err := api.GetDownloadURL(
       "https://soundcloud.com/bluewednesday/murmuration-feat-shopan",
-      "progressive",
    )
    if err != nil {
       t.Fatal(err)
