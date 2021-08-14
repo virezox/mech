@@ -34,7 +34,33 @@ type Track struct {
    }
 }
 
-func NewTrack(addr string) (*Track, error) {
+func TrackID(id string) ([]Track, error) {
+   req, err := http.NewRequest("GET", Origin + "/tracks", nil)
+   if err != nil {
+      return nil, err
+   }
+   q := req.URL.Query()
+   q.Set("client_id", clientID)
+   q.Set("ids", id)
+   req.URL.RawQuery = q.Encode()
+   d, err := httputil.DumpRequest(req, false)
+   if err != nil {
+      return nil, err
+   }
+   os.Stdout.Write(d)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   var tracks []Track
+   if err := json.NewDecoder(res.Body).Decode(&tracks); err != nil {
+      return nil, err
+   }
+   return tracks, nil
+}
+
+func TrackURL(addr string) (*Track, error) {
    req, err := http.NewRequest("GET", Origin + "/resolve", nil)
    if err != nil {
       return nil, err

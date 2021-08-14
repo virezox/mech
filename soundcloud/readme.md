@@ -12,8 +12,8 @@ Host: soundcloud.com
 In the HTML response, you should see several JavaScript assets, like this:
 
 ~~~html
-<script crossorigin src="https://a-v2.sndcdn.com/assets/2-b0e52b4d.js">
-<script crossorigin src="https://a-v2.sndcdn.com/assets/49-4b976e4f.js">
+<script crossorigin src="https://a-v2.sndcdn.com/assets/2-b0e52b4d.js"></script>
+<script crossorigin src="https://a-v2.sndcdn.com/assets/49-4b976e4f.js"></script>
 ~~~
 
 If you download asset 2, you should see this in the response:

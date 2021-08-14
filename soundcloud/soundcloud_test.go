@@ -5,16 +5,27 @@ import (
    "testing"
 )
 
-const addr = "https://soundcloud.com/bluewednesday/murmuration-feat-shopan"
+const (
+   addr = "https://soundcloud.com/pdis_inpartmaint/harold-budd-perhaps-moss"
+   id = "103650107"
+)
 
-func TestSoundCloud(t *testing.T) {
-   track, err := NewTrack(addr)
+func TestID(t *testing.T) {
+   tracks, err := TrackID(id)
    if err != nil {
       t.Fatal(err)
    }
-   m, err := track.GetMedia()
+   m, err := tracks[0].GetMedia()
    if err != nil {
       t.Fatal(err)
    }
    fmt.Printf("%+v\n", m)
+}
+
+func TestURL(t *testing.T) {
+   track, err := TrackURL(addr)
+   if err != nil {
+      t.Fatal(err)
+   }
+   fmt.Printf("%+v\n", track)
 }
