@@ -1,0 +1,47 @@
+{
+  "bodySize": 0,
+  "method": "GET",
+  "url": "https://api.vimeo.com/videos/66531465",
+  "httpVersion": "HTTP/1.1",
+  "headers": [
+    {
+      "name": "Host",
+      "value": "api.vimeo.com"
+    },
+    {
+      "name": "User-Agent",
+      "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:86.0) Gecko/20100101 Firefox/86.0"
+    },
+    {
+      "name": "Accept",
+      "value": "application/vnd.vimeo.*+json;version=3.4"
+    },
+    {
+      "name": "Accept-Language",
+      "value": "en-US,en;q=0.5"
+    },
+    {
+      "name": "Accept-Encoding",
+      "value": "gzip, deflate, br"
+    },
+    {
+      "name": "Referer",
+      "value": "https://developer.vimeo.com/api/reference/videos"
+    },
+    {
+      "name": "Authorization",
+      "value": "jwt eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2Mjg5NjU4MDAsInVzZXJfaWQiOm51bGwsImFwcF9pZCI6MjIyMSwic2NvcGVzIjoicHVibGljIHByaXZhdGUgcHVyY2hhc2VkIGNyZWF0ZSBlZGl0IGRlbGV0ZSBpbnRlcmFjdCB1cGxvYWQgcHJvbW9fY29kZXMgdmlkZW9fZmlsZXMgc2NpbSIsInRlYW1fdXNlcl9pZCI6bnVsbH0.mLsFHnY0UO1kgj33n0XiFS_CpXYoXtULBqZUptt2bRU"
+    },
+    {
+      "name": "Origin",
+      "value": "https://developer.vimeo.com"
+    },
+    {
+      "name": "Connection",
+      "value": "keep-alive"
+    }
+  ],
+  "cookies": [],
+  "queryString": [],
+  "headersSize": 710
+}
