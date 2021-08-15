@@ -7,13 +7,20 @@ import (
    "io"
    "os"
    "strconv"
-   "strings"
 )
 
-const s = `
-apps = [12, 31];
-reference = {"month": 12, "day": 31};
-`
+type quote struct{}
+
+func (q quote) Enter(n js.INode) js.IVisitor {
+   pName, ok := n.(*js.PropertyName)
+   if ok {
+      s := string(pName.Literal.Data)
+      pName.Literal.Data = strconv.AppendQuote(nil, s)
+   }
+   return q
+}
+
+func (quote) Exit(js.INode) {}
 
 func decode(r io.Reader) (map[string]string, error) {
    ast, err := js.Parse(parse.NewInput(r))
@@ -30,24 +37,24 @@ func decode(r io.Reader) (map[string]string, error) {
       if !ok {
          continue
       }
+      var q quote
+      js.Walk(q, bExpr.Y)
       m[bExpr.X.JS()] = bExpr.Y.JS()
-      /*
-      var w walker
-      js.Walk(w, s)
-      */
    }
    return m, nil
 }
 
-type walker struct{}
-
-func (w walker) Enter(n js.INode) js.IVisitor {
-   pName, ok := n.(*js.PropertyName)
-   if ok {
-      s := string(pName.Literal.Data)
-      pName.Literal.Data = strconv.AppendQuote(nil, s)
+func main() {
+   f, err := os.Open("index.js")
+   if err != nil {
+      panic(err)
    }
-   return w
+   defer f.Close()
+   m, err := decode(f)
+   if err != nil {
+      panic(err)
+   }
+   for k, v := range m {
+      fmt.Printf("%q\n%v\n", k, v)
+   }
 }
-
-func (walker) Exit(js.INode) {}
