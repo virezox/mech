@@ -1,60 +1,27 @@
 package main
 
 import (
-   "fmt"
    "github.com/tdewolff/parse/v2"
-   "github.com/tdewolff/parse/v2/js"
+   "github.com/tdewolff/parse/v2/html"
    "io"
    "os"
-   "strconv"
 )
 
-type quote struct{}
-
-func (q quote) Enter(n js.INode) js.IVisitor {
-   pName, ok := n.(*js.PropertyName)
-   if ok {
-      s := string(pName.Literal.Data)
-      pName.Literal.Data = strconv.AppendQuote(nil, s)
-   }
-   return q
+type Decoder struct {
+   *html.Lexer
 }
 
-func (quote) Exit(js.INode) {}
-
-func decode(r io.Reader) (map[string]string, error) {
-   ast, err := js.Parse(parse.NewInput(r))
-   if err != nil {
-      return nil, err
+func NewDecoder(r io.Reader) Decoder {
+   return Decoder{
+      html.NewLexer(parse.NewInput(r)),
    }
-   m := make(map[string]string)
-   for _, iStmt := range ast.BlockStmt.List {
-      eStmt, ok := iStmt.(*js.ExprStmt)
-      if !ok {
-         continue
-      }
-      bExpr, ok := eStmt.Value.(*js.BinaryExpr)
-      if !ok {
-         continue
-      }
-      var q quote
-      js.Walk(q, bExpr.Y)
-      m[bExpr.X.JS()] = bExpr.Y.JS()
-   }
-   return m, nil
 }
 
 func main() {
-   f, err := os.Open("index.js")
+   f, err := os.Open("index.html")
    if err != nil {
       panic(err)
    }
    defer f.Close()
-   m, err := decode(f)
-   if err != nil {
-      panic(err)
-   }
-   for k, v := range m {
-      fmt.Printf("%q\n%v\n", k, v)
-   }
+   NewDecoder(f)
 }

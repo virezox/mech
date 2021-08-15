@@ -23,6 +23,10 @@ func NewEncoder(w io.Writer) Encoder {
    return Encoder{Writer: w}
 }
 
+func (e *Encoder) SetIndent(indent string) {
+   e.indent = indent
+}
+
 func (e Encoder) Encode(r io.Reader) error {
    var indent []byte
    b := new(bytes.Buffer)
@@ -51,8 +55,4 @@ func (e Encoder) Encode(r io.Reader) error {
       }
    }
    return nil
-}
-
-func (e *Encoder) SetIndent(indent string) {
-   e.indent = indent
 }
