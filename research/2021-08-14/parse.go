@@ -4,18 +4,21 @@ import (
    "fmt"
    "github.com/tdewolff/parse/v2"
    "github.com/tdewolff/parse/v2/js"
-   "os"
 )
 
+// js.ObjectExpr
 func main() {
-   f, err := os.Open("index.js")
+   ast, err := js.Parse(parse.NewInputString(`y={"year":2021}`))
    if err != nil {
       panic(err)
    }
-   defer f.Close()
-   ast, err := js.Parse(parse.NewInput(f))
-   if err != nil {
-      panic(err)
+   for _, is := range ast.BlockStmt.List {
+      oe := is.(*js.ExprStmt).Value.(*js.BinaryExpr).Y.(*js.ObjectExpr)
+      for _, p := range oe.List {
+         // PropertyName
+         fmt.Println(p.Name.Computed) // <nil>
+         fmt.Println(p.Name.Literal) // year
+         fmt.Println(p.Name.Literal.JS()) // year
+      }
    }
-   fmt.Printf("%+v\n", ast)
 }
