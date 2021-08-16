@@ -7,7 +7,7 @@
 >
 > [Blood Orange (2013)](//youtube.com/watch?v=yP9JsIhHxSg)
 
-Mechanize: anonymous API access
+Mechanize
 
 Some users might want to make anonymous requests, because of privacy or any
 number of other reasons. This module allows people to do that. Most API these

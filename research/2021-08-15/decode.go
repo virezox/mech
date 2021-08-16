@@ -1,10 +1,11 @@
 package main
 
 import (
+   "fmt"
    "github.com/tdewolff/parse/v2"
    "github.com/tdewolff/parse/v2/html"
    "io"
-   "os"
+   "strings"
 )
 
 type Decoder struct {
@@ -17,11 +18,26 @@ func NewDecoder(r io.Reader) Decoder {
    }
 }
 
+const span = `
+<span class='user' id="user">John Doe</span>
+`
+
 func main() {
-   f, err := os.Open("index.html")
-   if err != nil {
-      panic(err)
+   d := NewDecoder(strings.NewReader(span))
+   for {
+      tt, data := d.Next()
+      if tt == html.ErrorToken {
+         break
+      }
+      fmt.Printf("%v %q\n", tt, data)
    }
-   defer f.Close()
-   NewDecoder(f)
 }
+
+/*
+StartTag "<span"
+Attribute " class='user'"
+Attribute " id=\"user\""
+StartTagClose ">"
+
+func Trim(s []byte, cutset string) []byte
+*/
