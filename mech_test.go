@@ -18,9 +18,7 @@ func TestDecode(t *testing.T) {
       if d.Next() == html.ErrorToken {
          break
       }
-      for _, a := range d.Token().Attr {
-         fmt.Printf("%q %q\n", a.Key, a.Val)
-      }
+      fmt.Printf("%#v\n", d.Token())
    }
 }
 
