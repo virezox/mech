@@ -1,4 +1,4 @@
-package decode
+package mech
 
 import (
    "fmt"
@@ -14,7 +14,7 @@ func TestDecode(t *testing.T) {
    defer f.Close()
    d := NewDecoder(f)
    d.NextTag("title")
-   fmt.Println(d.Data())
+   fmt.Println(d.String())
    d.NextAttr("name", "description")
    fmt.Println(d.Attr("content"))
 }

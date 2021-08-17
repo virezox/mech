@@ -33,15 +33,16 @@ func main() {
    if res.StatusCode != http.StatusOK {
       panic(res.Status)
    }
-   s := mech.NewDecoder(res.Body)
+   dec := mech.NewDecoder(res.Body)
    // This is going to kill audio and video if the page is missing og:image.
    // However that is unlikely, so we will cross that bridge when we come to it.
-   s.AttrSelector("property", "og:image")
-   fmt.Println(s.Attr("content"))
+   dec.NextAttr("property", "og:image")
+   if content, ok := dec.Attr("content"); ok {
+      fmt.Println(content)
+   }
    // audio video
-   for s.AttrSelector("type", "application/ld+json") {
-      s.TextSelector()
-      data := []byte(s.Data)
+   for dec.NextAttr("type", "application/ld+json") {
+      data := dec.Bytes()
       // audio
       var audio struct {
          ContentURL string

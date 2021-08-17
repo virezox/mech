@@ -5,8 +5,15 @@ import (
    "github.com/tdewolff/parse/v2"
    "github.com/tdewolff/parse/v2/html"
    "io"
-   "os"
 )
+
+var Void = map[string]bool{
+   "br": true,
+   "img": true,
+   "input": true,
+   "link": true,
+   "meta": true,
+}
 
 type Encoder struct {
    io.Writer
@@ -22,17 +29,28 @@ func (e *Encoder) SetIndent(indent string) {
 }
 
 func (e Encoder) Encode(r io.Reader) error {
+   var indent []byte
+   b := new(bytes.Buffer)
    z := html.NewLexer(parse.NewInput(r))
    for {
-      t, raw := z.Next()
-      switch t {
-      case html.ErrorToken:
+      t, data := z.Next()
+      if t == html.ErrorToken {
          return nil
-      case html.TextToken:
-         if bytes.TrimSpace(raw) == nil {
-            continue
-         }
       }
-      os.Stdout.Write(append(raw, '\n'))
+      if t == html.EndTagToken {
+         indent = indent[len(e.indent):]
+      }
+      if t == html.TextToken && bytes.TrimSpace(data) == nil {
+         continue
+      }
+      b.Write(indent)
+      b.Write(data)
+      b.WriteByte('\n')
+      if _, err := b.WriteTo(e.Writer); err != nil {
+         return err
+      }
+      if t == html.StartTagToken && !Void[string(z.Text())] {
+         indent = append(indent, e.indent...)
+      }
    }
 }

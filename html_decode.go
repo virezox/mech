@@ -1,4 +1,4 @@
-package decode
+package mech
 
 import (
    "github.com/tdewolff/parse/v2"
@@ -28,13 +28,13 @@ func (d Decoder) Attr(key string) (string, bool) {
    return strings.Trim(val, `'"`), true
 }
 
-func (d *Decoder) Data() string {
+func (d *Decoder) Bytes() []byte {
    for {
       switch d.TokenType {
       case html.ErrorToken:
-         return ""
+         return nil
       case html.TextToken:
-         return string(d.data)
+         return d.data
       }
       d.TokenType, d.data = d.Next()
    }
@@ -49,7 +49,7 @@ func (d *Decoder) NextAttr(key, val string) bool {
          d.attr = make(map[string]string)
       case html.AttributeToken:
          d.attr[string(d.Text())] = string(d.AttrVal())
-      case html.StartTagCloseToken:
+      case html.StartTagCloseToken, html.StartTagVoidToken:
          if v, ok := d.Attr(key); ok && v == val {
             return true
          }
@@ -68,4 +68,8 @@ func (d *Decoder) NextTag(name string) bool {
          }
       }
    }
+}
+
+func (d *Decoder) String() string {
+   return string(d.Bytes())
 }
