@@ -1,26 +1,27 @@
 package main
 
 import (
+   "bytes"
+   "encoding/json"
    "fmt"
    "github.com/tdewolff/parse/v2"
    "github.com/tdewolff/parse/v2/js"
    "io"
-   "strconv"
    "strings"
 )
 
 type quote struct{}
 
+func (quote) Exit(js.INode) {}
+
 func (q quote) Enter(n js.INode) js.IVisitor {
    pName, ok := n.(*js.PropertyName)
    if ok {
-      s := string(pName.Literal.Data)
-      pName.Literal.Data = strconv.AppendQuote(nil, s)
+      b := bytes.Trim(pName.Literal.Data, `'"`)
+      pName.Literal.Data, _ = json.Marshal(string(b))
    }
    return q
 }
-
-func (quote) Exit(js.INode) {}
 
 func decode(r io.Reader) (map[string]string, error) {
    ast, err := js.Parse(parse.NewInput(r))
@@ -45,7 +46,7 @@ func decode(r io.Reader) (map[string]string, error) {
 }
 
 func main() {
-   m, err := decode(strings.NewReader(`d={"month":12,"1day":31}`))
+   m, err := decode(strings.NewReader(`d={ab:9,'cd':9,'c"d':9,"ef":9,"e'f":9}`))
    if err != nil {
       panic(err)
    }
