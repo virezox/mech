@@ -5,8 +5,8 @@ import (
    "github.com/tdewolff/parse/v2"
    "github.com/tdewolff/parse/v2/js"
    "io"
-   "os"
    "strconv"
+   "strings"
 )
 
 type quote struct{}
@@ -45,12 +45,7 @@ func decode(r io.Reader) (map[string]string, error) {
 }
 
 func main() {
-   f, err := os.Open("index.js")
-   if err != nil {
-      panic(err)
-   }
-   defer f.Close()
-   m, err := decode(f)
+   m, err := decode(strings.NewReader(`d={"month":12,"1day":31}`))
    if err != nil {
       panic(err)
    }

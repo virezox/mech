@@ -7,34 +7,10 @@ import (
    "strings"
 )
 
-func (d *Decoder) Data() string {
-   for {
-      switch d.TokenType {
-      case html.ErrorToken:
-         return ""
-      case html.TextToken:
-         return string(d.Text())
-      }
-      d.TokenType, _ = d.Next()
-   }
-}
-
-func (d *Decoder) NextTag(name string) bool {
-   for {
-      switch d.TokenType, _ = d.Next(); d.TokenType {
-      case html.ErrorToken:
-         return false
-      case html.StartTagToken:
-         if string(d.Text()) == name {
-            return true
-         }
-      }
-   }
-}
-
 type Decoder struct {
    *html.Lexer
    html.TokenType
+   data []byte
    attr map[string]string
 }
 
@@ -52,6 +28,17 @@ func (d Decoder) Attr(key string) (string, bool) {
    return strings.Trim(val, `'"`), true
 }
 
+func (d *Decoder) Data() string {
+   for {
+      switch d.TokenType {
+      case html.ErrorToken:
+         return ""
+      case html.TextToken:
+         return string(d.data)
+      }
+      d.TokenType, d.data = d.Next()
+   }
+}
 
 func (d *Decoder) NextAttr(key, val string) bool {
    for {
@@ -59,7 +46,7 @@ func (d *Decoder) NextAttr(key, val string) bool {
       case html.ErrorToken:
          return false
       case html.StartTagToken:
-         d.attr = nil
+         d.attr = make(map[string]string)
       case html.AttributeToken:
          d.attr[string(d.Text())] = string(d.AttrVal())
       case html.StartTagCloseToken:
@@ -70,3 +57,15 @@ func (d *Decoder) NextAttr(key, val string) bool {
    }
 }
 
+func (d *Decoder) NextTag(name string) bool {
+   for {
+      switch d.TokenType, _ = d.Next(); d.TokenType {
+      case html.ErrorToken:
+         return false
+      case html.StartTagToken:
+         if string(d.Text()) == name {
+            return true
+         }
+      }
+   }
+}

@@ -1,6 +1,7 @@
 package decode
 
 import (
+   "fmt"
    "os"
    "testing"
 )
@@ -13,5 +14,7 @@ func TestDecode(t *testing.T) {
    defer f.Close()
    d := NewDecoder(f)
    d.NextTag("title")
-   d.Data()
+   fmt.Println(d.Data())
+   d.NextAttr("name", "description")
+   fmt.Println(d.Attr("content"))
 }
