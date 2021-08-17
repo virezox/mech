@@ -69,7 +69,3 @@ func (d *Decoder) NextTag(name string) bool {
       }
    }
 }
-
-func (d *Decoder) String() string {
-   return string(d.Bytes())
-}

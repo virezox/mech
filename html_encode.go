@@ -2,11 +2,12 @@ package mech
 
 import (
    "bytes"
-   "golang.org/x/net/html"
+   "github.com/tdewolff/parse/v2"
+   "github.com/tdewolff/parse/v2/html"
    "io"
 )
 
-var VoidElement = map[string]bool{
+var Void = map[string]bool{
    "br": true,
    "img": true,
    "input": true,
@@ -30,29 +31,26 @@ func (e *Encoder) SetIndent(indent string) {
 func (e Encoder) Encode(r io.Reader) error {
    var indent []byte
    b := new(bytes.Buffer)
-   z := html.NewTokenizer(r)
+   z := html.NewLexer(parse.NewInput(r))
    for {
-      t := z.Next()
+      t, data := z.Next()
       if t == html.ErrorToken {
-         break
+         return nil
       }
       if t == html.EndTagToken {
          indent = indent[len(e.indent):]
       }
-      raw := z.Raw()
-      if t == html.TextToken && bytes.TrimSpace(raw) == nil {
+      if t == html.TextToken && bytes.TrimSpace(data) == nil {
          continue
       }
       b.Write(indent)
-      b.Write(raw)
+      b.Write(data)
       b.WriteByte('\n')
-      _, err := b.WriteTo(e.Writer)
-      if err != nil {
+      if _, err := b.WriteTo(e.Writer); err != nil {
          return err
       }
-      if t == html.StartTagToken && !VoidElement[z.Token().Data] {
+      if t == html.StartTagToken && !Void[string(z.Text())] {
          indent = append(indent, e.indent...)
       }
    }
-   return nil
 }

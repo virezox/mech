@@ -2,19 +2,21 @@ package mech
 
 import (
    "fmt"
-   "os"
+   "strings"
    "testing"
 )
 
+const doc = `
+<head>
+   <title>Umber</title>
+   <link rel="icon" href="/umber/media/umber.png">
+</head>
+`
+
 func TestDecode(t *testing.T) {
-   f, err := os.Open("index.html")
-   if err != nil {
-      t.Fatal(err)
-   }
-   defer f.Close()
-   d := NewDecoder(f)
+   d := NewDecoder(strings.NewReader(doc))
    d.NextTag("title")
-   fmt.Println(d.String())
-   d.NextAttr("name", "description")
-   fmt.Println(d.Attr("content"))
+   fmt.Printf("%s\n", d.Bytes())
+   d.NextAttr("rel", "icon")
+   fmt.Println(d.Attr("href"))
 }
