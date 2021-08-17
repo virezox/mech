@@ -1,4 +1,4 @@
-package mech
+package html
 
 import (
    "os"
@@ -15,10 +15,10 @@ const htmlWrite = `
 </form>
 `
 
-func TestHtmlWrite(t *testing.T) {
-   w := NewHtmlWriter(os.Stdout)
+func TestEncode(t *testing.T) {
+   w := NewEncoder(os.Stdout)
    w.SetIndent(" ")
-   if err := w.ReadFrom(strings.NewReader(htmlWrite)); err != nil {
+   if err := w.Encode(strings.NewReader(htmlWrite)); err != nil {
       t.Fatal(err)
    }
 }

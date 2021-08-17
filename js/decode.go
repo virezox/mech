@@ -1,4 +1,4 @@
-package mech
+package js
 
 import (
    "bytes"
@@ -8,20 +8,20 @@ import (
    "io"
 )
 
-type JsReader struct {
+type Decoder struct {
    *js.AST
 }
 
-func NewJsReader(r io.Reader) (*JsReader, error) {
+func NewDecoder(r io.Reader) (*Decoder, error) {
    ast, err := js.Parse(parse.NewInput(r))
    if err != nil {
       return nil, err
    }
-   return &JsReader{ast}, nil
+   return &Decoder{ast}, nil
 }
 
-func (ast *JsReader) Read(be map[string]string) {
-   for _, iStmt := range ast.BlockStmt.List {
+func (d *Decoder) Decode(be map[string]string) {
+   for _, iStmt := range d.BlockStmt.List {
       eStmt, ok := iStmt.(*js.ExprStmt)
       if !ok {
          continue

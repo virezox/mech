@@ -3,7 +3,7 @@ package main
 import (
    "encoding/json"
    "fmt"
-   "github.com/89z/mech"
+   "github.com/89z/mech/html"
    "net/http"
    "net/http/httputil"
    "os"
@@ -33,16 +33,16 @@ func main() {
    if res.StatusCode != http.StatusOK {
       panic(res.Status)
    }
-   r := mech.NewHtmlReader(res.Body)
+   dec := html.NewDecoder(res.Body)
    // This is going to kill audio and video if the page is missing og:image.
    // However that is unlikely, so we will cross that bridge when we come to it.
-   r.NextAttr("property", "og:image")
-   if content, ok := r.Attr("content"); ok {
+   dec.NextAttr("property", "og:image")
+   if content, ok := dec.Attr("content"); ok {
       fmt.Println(content)
    }
    // audio video
-   for r.NextAttr("type", "application/ld+json") {
-      data := r.Bytes()
+   for dec.NextAttr("type", "application/ld+json") {
+      data := dec.Bytes()
       // audio
       var audio struct {
          ContentURL string

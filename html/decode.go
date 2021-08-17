@@ -1,4 +1,4 @@
-package mech
+package html
 
 import (
    "github.com/tdewolff/parse/v2"
@@ -7,63 +7,63 @@ import (
    "strings"
 )
 
-type HtmlReader struct {
+type Decoder struct {
    *html.Lexer
    html.TokenType
    data []byte
    attr map[string]string
 }
 
-func NewHtmlReader(r io.Reader) HtmlReader {
-   return HtmlReader{
+func NewDecoder(r io.Reader) Decoder {
+   return Decoder{
       Lexer: html.NewLexer(parse.NewInput(r)),
    }
 }
 
-func (h HtmlReader) Attr(key string) (string, bool) {
-   val, ok := h.attr[key]
+func (d Decoder) Attr(key string) (string, bool) {
+   val, ok := d.attr[key]
    if !ok {
       return "", false
    }
    return strings.Trim(val, `'"`), true
 }
 
-func (h *HtmlReader) Bytes() []byte {
+func (d *Decoder) Bytes() []byte {
    for {
-      switch h.TokenType {
+      switch d.TokenType {
       case html.ErrorToken:
          return nil
       case html.TextToken:
-         return h.data
+         return d.data
       }
-      h.TokenType, h.data = h.Next()
+      d.TokenType, d.data = d.Next()
    }
 }
 
-func (h *HtmlReader) NextAttr(key, val string) bool {
+func (d *Decoder) NextAttr(key, val string) bool {
    for {
-      switch h.TokenType, _ = h.Next(); h.TokenType {
+      switch d.TokenType, _ = d.Next(); d.TokenType {
       case html.ErrorToken:
          return false
       case html.StartTagToken:
-         h.attr = make(map[string]string)
+         d.attr = make(map[string]string)
       case html.AttributeToken:
-         h.attr[string(h.Text())] = string(h.AttrVal())
+         d.attr[string(d.Text())] = string(d.AttrVal())
       case html.StartTagCloseToken, html.StartTagVoidToken:
-         if v, ok := h.Attr(key); ok && v == val {
+         if v, ok := d.Attr(key); ok && v == val {
             return true
          }
       }
    }
 }
 
-func (h *HtmlReader) NextTag(name string) bool {
+func (d *Decoder) NextTag(name string) bool {
    for {
-      switch h.TokenType, _ = h.Next(); h.TokenType {
+      switch d.TokenType, _ = d.Next(); d.TokenType {
       case html.ErrorToken:
          return false
       case html.StartTagToken:
-         if string(h.Text()) == name {
+         if string(d.Text()) == name {
             return true
          }
       }

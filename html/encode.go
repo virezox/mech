@@ -1,4 +1,4 @@
-package mech
+package html
 
 import (
    "bytes"
@@ -15,20 +15,20 @@ var void = map[string]bool{
    "meta": true,
 }
 
-type HtmlWriter struct {
+type Encoder struct {
    io.Writer
    indent string
 }
 
-func NewHtmlWriter(w io.Writer) HtmlWriter {
-   return HtmlWriter{Writer: w}
+func NewEncoder(w io.Writer) Encoder {
+   return Encoder{Writer: w}
 }
 
-func (h *HtmlWriter) SetIndent(indent string) {
-   h.indent = indent
+func (e *Encoder) SetIndent(indent string) {
+   e.indent = indent
 }
 
-func (h HtmlWriter) ReadFrom(r io.Reader) error {
+func (e Encoder) Encode(r io.Reader) error {
    var indent []byte
    b := new(bytes.Buffer)
    z := html.NewLexer(parse.NewInput(r))
@@ -38,7 +38,7 @@ func (h HtmlWriter) ReadFrom(r io.Reader) error {
          return nil
       }
       if t == html.EndTagToken {
-         indent = indent[len(h.indent):]
+         indent = indent[len(e.indent):]
       }
       if t == html.TextToken && bytes.TrimSpace(data) == nil {
          continue
@@ -46,11 +46,11 @@ func (h HtmlWriter) ReadFrom(r io.Reader) error {
       b.Write(indent)
       b.Write(data)
       b.WriteByte('\n')
-      if _, err := b.WriteTo(h.Writer); err != nil {
+      if _, err := b.WriteTo(e.Writer); err != nil {
          return err
       }
       if t == html.StartTagToken && !void[string(z.Text())] {
-         indent = append(indent, h.indent...)
+         indent = append(indent, e.indent...)
       }
    }
 }

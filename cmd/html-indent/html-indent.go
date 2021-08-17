@@ -3,7 +3,7 @@ package main
 import (
    "flag"
    "fmt"
-   "github.com/89z/mech"
+   "github.com/89z/mech/html"
    "os"
 )
 
@@ -17,24 +17,25 @@ func main() {
       flag.PrintDefaults()
       return
    }
-   f, err := os.Open(flag.Arg(0))
+   arg := flag.Arg(0)
+   f, err := os.Open(arg)
    if err != nil {
       panic(err)
    }
    defer f.Close()
-   var w mech.HtmlWriter
+   var enc html.Encoder
    if output != "" {
       f, err := os.Create(output)
       if err != nil {
          panic(err)
       }
       defer f.Close()
-      w = mech.NewHtmlWriter(f)
+      enc = html.NewEncoder(f)
    } else {
-      w = mech.NewHtmlWriter(os.Stdout)
+      enc = html.NewEncoder(os.Stdout)
    }
-   w.SetIndent(indent)
-   if err := w.ReadFrom(f); err != nil {
+   enc.SetIndent(indent)
+   if err := enc.Encode(f); err != nil {
       panic(err)
    }
 }
