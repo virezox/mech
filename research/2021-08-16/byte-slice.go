@@ -8,8 +8,7 @@ import (
 )
 
 type Attribute struct {
-   Key []byte
-   Val []byte
+   Key, Val []byte
 }
 
 type Decoder struct {
@@ -24,33 +23,28 @@ func NewDecoder(r io.Reader) Decoder {
    }
 }
 
-func (d Decoder) Attribute(key string) []byte {
+func (d Decoder) Attribute(key string) ([]byte, bool) {
    for _, a := range d.Attr {
       if string(a.Key) == key {
-         return bytes.Trim(a.Val, `'"`)
+         return bytes.Trim(a.Val, `'"`), true
       }
    }
-   return nil
+   return nil, false
 }
 
-// Move to the next element with the given attribute. Set "Attr" to the element
-// attributes.
 func (d *Decoder) NextAttr(key, val string) bool {
    for {
-      t, _ := d.Next()
-      if t == html.ErrorToken {
-         break
-      }
-      if t == html.StartTagToken {
+      switch t, _ := d.Next(); t {
+      case html.ErrorToken:
+         return false
+      case html.StartTagToken:
          d.Attr = nil
-      }
-      if t == html.AttributeToken {
+      case html.AttributeToken:
          d.Attr = append(d.Attr, Attribute{
             d.Text(), d.AttrVal(),
          })
-      }
-      if t == html.StartTagCloseToken {
-         if v := d.Attribute(key); string(v) == val {
+      case html.StartTagCloseToken:
+         if v, ok := d.Attribute(key); ok && string(v) == val {
             return true
          }
       }
@@ -58,15 +52,12 @@ func (d *Decoder) NextAttr(key, val string) bool {
    return false
 }
 
-// Move to the next element with the given tag. Set "Data" to the tag name, and
-// set "Attr" to nil.
 func (d *Decoder) NextTag(name string) bool {
    for {
-      t, _ := d.Next()
-      if t == html.ErrorToken {
-         break
-      }
-      if t == html.StartTagToken {
+      switch t, _ := d.Next(); t {
+      case html.ErrorToken:
+         return false
+      case html.StartTagToken:
          if d.Data = d.Text(); string(d.Data) == name {
             return true
          }
@@ -75,16 +66,13 @@ func (d *Decoder) NextTag(name string) bool {
    return false
 }
 
-// This needs to be a separate function, as sometimes we are coming from tag,
-// and sometimes we are coming from attribute.
 func (d *Decoder) NextText() bool {
    for {
-      t, data := d.Next()
-      if t == html.ErrorToken {
-         break
-      }
-      if t == html.TextToken {
-         d.Data, d.Attr = data, nil
+      switch t, data := d.Next(); t {
+      case html.ErrorToken:
+         return false
+      case html.TextToken:
+         d.Data = data
          return true
       }
    }

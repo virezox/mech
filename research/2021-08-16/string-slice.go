@@ -8,8 +8,7 @@ import (
 )
 
 type Attribute struct {
-   Key string
-   Val string
+   Key, Val string
 }
 
 type Decoder struct {
@@ -24,31 +23,28 @@ func NewDecoder(r io.Reader) Decoder {
    }
 }
 
-func (d Decoder) Attribute(key string) string {
+func (d Decoder) Attribute(key string) (string, bool) {
    for _, a := range d.Attr {
       if a.Key == key {
-         return strings.Trim(a.Val, `'"`)
+         return strings.Trim(a.Val, `'"`), true
       }
    }
-   return ""
+   return "", false
 }
 
 func (d *Decoder) NextAttr(key, val string) bool {
    for {
-      t, _ := d.Next()
-      if t == html.ErrorToken {
-         break
-      }
-      if t == html.StartTagToken {
+      switch t, _ := d.Next(); t {
+      case html.ErrorToken:
+         return false
+      case html.StartTagToken:
          d.Attr = nil
-      }
-      if t == html.AttributeToken {
+      case html.AttributeToken:
          d.Attr = append(d.Attr, Attribute{
             string(d.Text()), string(d.AttrVal()),
          })
-      }
-      if t == html.StartTagCloseToken {
-         if v := d.Attribute(key); v == val {
+      case html.StartTagCloseToken:
+         if v, ok := d.Attribute(key); ok && v == val {
             return true
          }
       }
@@ -58,14 +54,26 @@ func (d *Decoder) NextAttr(key, val string) bool {
 
 func (d *Decoder) NextTag(name string) bool {
    for {
-      t, _ := d.Next()
-      if t == html.ErrorToken {
-         break
-      }
-      if t == html.StartTagToken {
+      switch t, _ := d.Next(); t {
+      case html.ErrorToken:
+         return false
+      case html.StartTagToken:
          if d.Data = string(d.Text()); d.Data == name {
             return true
          }
+      }
+   }
+   return false
+}
+
+func (d *Decoder) NextText() bool {
+   for {
+      switch t, data := d.Next(); t {
+      case html.ErrorToken:
+         return false
+      case html.TextToken:
+         d.Data = string(data)
+         return true
       }
    }
    return false
