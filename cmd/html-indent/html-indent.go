@@ -17,25 +17,24 @@ func main() {
       flag.PrintDefaults()
       return
    }
-   input := flag.Arg(0)
-   f, err := os.Open(input)
+   f, err := os.Open(flag.Arg(0))
    if err != nil {
       panic(err)
    }
    defer f.Close()
-   var e mech.Encoder
+   var w mech.HtmlWriter
    if output != "" {
       f, err := os.Create(output)
       if err != nil {
          panic(err)
       }
       defer f.Close()
-      e = mech.NewEncoder(f)
+      w = mech.NewHtmlWriter(f)
    } else {
-      e = mech.NewEncoder(os.Stdout)
+      w = mech.NewHtmlWriter(os.Stdout)
    }
-   e.SetIndent(indent)
-   if err := e.Encode(f); err != nil {
+   w.SetIndent(indent)
+   if err := w.ReadFrom(f); err != nil {
       panic(err)
    }
 }

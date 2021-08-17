@@ -7,63 +7,63 @@ import (
    "strings"
 )
 
-type Decoder struct {
+type HtmlReader struct {
    *html.Lexer
    html.TokenType
    data []byte
    attr map[string]string
 }
 
-func NewDecoder(r io.Reader) Decoder {
-   return Decoder{
+func NewHtmlReader(r io.Reader) HtmlReader {
+   return HtmlReader{
       Lexer: html.NewLexer(parse.NewInput(r)),
    }
 }
 
-func (d Decoder) Attr(key string) (string, bool) {
-   val, ok := d.attr[key]
+func (h HtmlReader) Attr(key string) (string, bool) {
+   val, ok := h.attr[key]
    if !ok {
       return "", false
    }
    return strings.Trim(val, `'"`), true
 }
 
-func (d *Decoder) Bytes() []byte {
+func (h *HtmlReader) Bytes() []byte {
    for {
-      switch d.TokenType {
+      switch h.TokenType {
       case html.ErrorToken:
          return nil
       case html.TextToken:
-         return d.data
+         return h.data
       }
-      d.TokenType, d.data = d.Next()
+      h.TokenType, h.data = h.Next()
    }
 }
 
-func (d *Decoder) NextAttr(key, val string) bool {
+func (h *HtmlReader) NextAttr(key, val string) bool {
    for {
-      switch d.TokenType, _ = d.Next(); d.TokenType {
+      switch h.TokenType, _ = h.Next(); h.TokenType {
       case html.ErrorToken:
          return false
       case html.StartTagToken:
-         d.attr = make(map[string]string)
+         h.attr = make(map[string]string)
       case html.AttributeToken:
-         d.attr[string(d.Text())] = string(d.AttrVal())
+         h.attr[string(h.Text())] = string(h.AttrVal())
       case html.StartTagCloseToken, html.StartTagVoidToken:
-         if v, ok := d.Attr(key); ok && v == val {
+         if v, ok := h.Attr(key); ok && v == val {
             return true
          }
       }
    }
 }
 
-func (d *Decoder) NextTag(name string) bool {
+func (h *HtmlReader) NextTag(name string) bool {
    for {
-      switch d.TokenType, _ = d.Next(); d.TokenType {
+      switch h.TokenType, _ = h.Next(); h.TokenType {
       case html.ErrorToken:
          return false
       case html.StartTagToken:
-         if string(d.Text()) == name {
+         if string(h.Text()) == name {
             return true
          }
       }
