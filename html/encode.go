@@ -17,19 +17,19 @@ var void = map[string]bool{
 
 type Encoder struct {
    io.Writer
-   indent string
+   tab string
 }
 
 func NewEncoder(w io.Writer) Encoder {
    return Encoder{Writer: w}
 }
 
-func (e *Encoder) SetIndent(indent string) {
-   e.indent = indent
+func (e *Encoder) SetIndent(tab string) {
+   e.tab = tab
 }
 
 func (e Encoder) Encode(r io.Reader) error {
-   var indent []byte
+   var tab []byte
    b := new(bytes.Buffer)
    z := html.NewLexer(parse.NewInput(r))
    for {
@@ -38,19 +38,19 @@ func (e Encoder) Encode(r io.Reader) error {
          return nil
       }
       if t == html.EndTagToken {
-         indent = indent[len(e.indent):]
+         tab = tab[len(e.tab):]
       }
       if t == html.TextToken && bytes.TrimSpace(data) == nil {
          continue
       }
-      b.Write(indent)
+      b.Write(tab)
       b.Write(data)
       b.WriteByte('\n')
       if _, err := b.WriteTo(e.Writer); err != nil {
          return err
       }
       if t == html.StartTagToken && !void[string(z.Text())] {
-         indent = append(indent, e.indent...)
+         tab = append(tab, e.tab...)
       }
    }
 }

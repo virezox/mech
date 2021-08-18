@@ -1,47 +1,51 @@
-package main
+package encode
 
 import (
-   "bytes"
    "github.com/tdewolff/parse/v2"
    "github.com/tdewolff/parse/v2/html"
    "io"
-   "os"
-   "strings"
 )
+
+var end = []byte{'\n'}
 
 type Encoder struct {
    io.Writer
-   indent string
+   tab string
 }
 
 func (e Encoder) Encode(r io.Reader) error {
-   var indent []byte
-   b := new(bytes.Buffer)
+   var tab []byte
    z := html.NewLexer(parse.NewInput(r))
    for {
-      t, data := z.Next()
-      if t == html.ErrorToken {
+      var err error
+      switch t, data := z.Next(); t {
+      case html.StartTagToken:
+         err = e.write(tab, data)
+         tab = append(tab, e.tab...)
+      case html.AttributeToken:
+         err = e.write(data)
+      case html.StartTagCloseToken:
+         err = e.write(data, end)
+      case html.TextToken:
+         err = e.write(tab, data, end)
+      case html.EndTagToken:
+         tab = tab[len(e.tab):]
+         err = e.write(tab, data, end)
+      case html.ErrorToken:
          return nil
       }
-      if t == html.EndTagToken {
-         indent = indent[len(e.indent):]
-      }
-      if t == html.TextToken && bytes.TrimSpace(data) == nil {
-         continue
-      }
-      b.Write(indent)
-      b.Write(data)
-      b.WriteByte('\n')
-      if _, err := b.WriteTo(e.Writer); err != nil {
+      if err != nil {
          return err
-      }
-      if t == html.StartTagToken {
-         indent = append(indent, e.indent...)
       }
    }
 }
 
-func main() {
-   e := Encoder{os.Stdout, " "}
-   e.Encode(strings.NewReader(`<h1><a href="/umber">Umber</a></h1>`))
+func (e Encoder) write(b ...[]byte) error {
+   for _, s := range b {
+      _, err := e.Write(s)
+      if err != nil {
+         return err
+      }
+   }
+   return nil
 }

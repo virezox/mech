@@ -20,6 +20,7 @@ func NewDecoder(r io.Reader) Decoder {
    }
 }
 
+// textContent
 func (d *Decoder) Bytes() []byte {
    for {
       switch d.TokenType {
