@@ -20,14 +20,6 @@ func NewDecoder(r io.Reader) Decoder {
    }
 }
 
-func (d Decoder) Attr(key string) (string, bool) {
-   val, ok := d.attr[key]
-   if !ok {
-      return "", false
-   }
-   return strings.Trim(val, `'"`), true
-}
-
 func (d *Decoder) Bytes() []byte {
    for {
       switch d.TokenType {
@@ -40,6 +32,19 @@ func (d *Decoder) Bytes() []byte {
    }
 }
 
+// getAttribute
+func (d Decoder) GetAttr(key string) string {
+   val := d.attr[key]
+   return strings.Trim(val, `'"`)
+}
+
+// hasAttribute
+func (d Decoder) HasAttr(key string) bool {
+   _, ok := d.attr[key]
+   return ok
+}
+
+// getElementsByClassName()
 func (d *Decoder) NextAttr(key, val string) bool {
    for {
       switch d.TokenType, _ = d.Next(); d.TokenType {
@@ -50,13 +55,14 @@ func (d *Decoder) NextAttr(key, val string) bool {
       case html.AttributeToken:
          d.attr[string(d.Text())] = string(d.AttrVal())
       case html.StartTagCloseToken, html.StartTagVoidToken:
-         if v, ok := d.Attr(key); ok && v == val {
+         if d.HasAttr(key) && d.GetAttr(key) == val {
             return true
          }
       }
    }
 }
 
+// getElementsByTagName
 func (d *Decoder) NextTag(name string) bool {
    for {
       switch d.TokenType, _ = d.Next(); d.TokenType {

@@ -37,9 +37,7 @@ func main() {
    // This is going to kill audio and video if the page is missing og:image.
    // However that is unlikely, so we will cross that bridge when we come to it.
    dec.NextAttr("property", "og:image")
-   if content, ok := dec.Attr("content"); ok {
-      fmt.Println(content)
-   }
+   fmt.Println(dec.GetAttr("content"))
    // audio video
    for dec.NextAttr("type", "application/ld+json") {
       data := dec.Bytes()

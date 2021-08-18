@@ -18,5 +18,5 @@ func TestDecode(t *testing.T) {
    d.NextTag("title")
    fmt.Printf("%s\n", d.Bytes())
    d.NextAttr("rel", "icon")
-   fmt.Println(d.Attr("href"))
+   fmt.Println(d.GetAttr("href"))
 }

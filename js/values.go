@@ -5,23 +5,17 @@ import (
    "encoding/json"
    "github.com/tdewolff/parse/v2"
    "github.com/tdewolff/parse/v2/js"
-   "io"
 )
 
-type Decoder struct {
-   *js.AST
-}
+type Values map[string]string
 
-func NewDecoder(r io.Reader) (*Decoder, error) {
-   ast, err := js.Parse(parse.NewInput(r))
+func Parse(b []byte) (Values, error) {
+   ast, err := js.Parse(parse.NewInputBytes(b))
    if err != nil {
       return nil, err
    }
-   return &Decoder{ast}, nil
-}
-
-func (d *Decoder) Decode(be map[string]string) {
-   for _, iStmt := range d.BlockStmt.List {
+   v := make(Values)
+   for _, iStmt := range ast.BlockStmt.List {
       eStmt, ok := iStmt.(*js.ExprStmt)
       if !ok {
          continue
@@ -32,8 +26,19 @@ func (d *Decoder) Decode(be map[string]string) {
       }
       var q quote
       js.Walk(q, bExpr.Y)
-      be[bExpr.X.JS()] = bExpr.Y.JS()
+      v[bExpr.X.JS()] = bExpr.Y.JS()
    }
+   return v, nil
+}
+
+func (v Values) Get(key string) []byte {
+   val := v[key]
+   return []byte(val)
+}
+
+func (v Values) Has(key string) bool {
+   _, ok := v[key]
+   return ok
 }
 
 type quote struct{}
