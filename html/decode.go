@@ -44,7 +44,7 @@ func (d Decoder) HasAttr(key string) bool {
    return ok
 }
 
-// getElementsByClassName()
+// getElementsByClassName
 func (d *Decoder) NextAttr(key, val string) bool {
    for {
       switch d.TokenType, _ = d.Next(); d.TokenType {
