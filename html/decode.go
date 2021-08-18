@@ -1,64 +1,49 @@
 package html
 
 import (
-   "github.com/tdewolff/parse/v2"
    "github.com/tdewolff/parse/v2/html"
-   "io"
    "strings"
    stdhtml "html"
 )
 
-type Decoder struct {
-   *html.Lexer
-   html.TokenType
-   data []byte
-   attr map[string]string
-}
-
-func NewDecoder(r io.Reader) Decoder {
-   return Decoder{
-      Lexer: html.NewLexer(parse.NewInput(r)),
-   }
-}
-
 // textContent
-func (d *Decoder) Bytes() []byte {
+func (l *Lexer) Bytes() []byte {
    for {
-      switch d.TokenType {
+      switch l.TokenType {
       case html.ErrorToken:
          return nil
       case html.TextToken:
-         return d.data
+         return l.data
       }
-      d.TokenType, d.data = d.Next()
+      l.TokenType, l.data = l.Next()
    }
 }
 
 // getAttribute
-func (d Decoder) GetAttr(key string) string {
-   val := d.attr[key]
+func (l Lexer) GetAttr(key string) string {
+   val := l.attr[key]
    trim := strings.Trim(val, `'"`)
    return stdhtml.UnescapeString(trim)
 }
 
 // hasAttribute
-func (d Decoder) HasAttr(key string) bool {
-   _, ok := d.attr[key]
+func (l Lexer) HasAttr(key string) bool {
+   _, ok := l.attr[key]
    return ok
 }
 
 // getElementsByClassName
-func (d *Decoder) NextAttr(key, val string) bool {
+func (l *Lexer) NextAttr(key, val string) bool {
    for {
-      switch d.TokenType, _ = d.Next(); d.TokenType {
+      switch l.TokenType, _ = l.Next(); l.TokenType {
       case html.ErrorToken:
          return false
       case html.StartTagToken:
-         d.attr = make(map[string]string)
+         l.attr = make(map[string]string)
       case html.AttributeToken:
-         d.attr[string(d.Text())] = string(d.AttrVal())
+         l.attr[string(l.Text())] = string(l.AttrVal())
       case html.StartTagCloseToken, html.StartTagVoidToken:
-         if d.HasAttr(key) && d.GetAttr(key) == val {
+         if l.HasAttr(key) && l.GetAttr(key) == val {
             return true
          }
       }
@@ -66,13 +51,13 @@ func (d *Decoder) NextAttr(key, val string) bool {
 }
 
 // getElementsByTagName
-func (d *Decoder) NextTag(name string) bool {
+func (l *Lexer) NextTag(name string) bool {
    for {
-      switch d.TokenType, _ = d.Next(); d.TokenType {
+      switch l.TokenType, _ = l.Next(); l.TokenType {
       case html.ErrorToken:
          return false
       case html.StartTagToken:
-         if string(d.Text()) == name {
+         if string(l.Text()) == name {
             return true
          }
       }

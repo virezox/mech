@@ -2,14 +2,12 @@ package html
 
 import (
    "bytes"
-   "github.com/tdewolff/parse/v2"
    "github.com/tdewolff/parse/v2/html"
    "io"
 )
 
-var end = []byte{'\n'}
-
-var void = map[string]bool{
+// html.spec.whatwg.org/multipage/syntax.html#void-elements
+var VoidElement = map[string]bool{
    "br": true,
    "img": true,
    "input": true,
@@ -17,53 +15,45 @@ var void = map[string]bool{
    "meta": true,
 }
 
-func write(w io.Writer, b ...[]byte) error {
-   for _, s := range b {
-      _, err := w.Write(s)
-      if err != nil {
-         return err
-      }
-   }
-   return nil
-}
-
-type Lexer struct {
-   *html.Lexer
-}
-
-func NewLexer(r io.Reader) Lexer {
-   z := parse.NewInput(r)
-   return Lexer{
-      html.NewLexer(z),
-   }
-}
-
+// pkg.go.dev/golang.org/x/net/html#Render
 func (l Lexer) Render(w io.Writer, indent string) error {
    var ind []byte
+   b := new(bytes.Buffer)
    for {
-      var err error
       switch t, data := l.Next(); t {
       case html.StartTagToken:
-         err = write(w, ind, data)
-         if !void[string(l.Text())] {
+         b.Write(ind)
+         b.Write(data)
+         if !VoidElement[l.TagName()] {
             ind = append(ind, indent...)
          }
       case html.AttributeToken:
-         err = write(w, data)
+         b.Write(data)
       case html.StartTagCloseToken:
-         err = write(w, data, end)
+         b.Write(data)
+         b.WriteByte('\n')
       case html.TextToken:
          if bytes.TrimSpace(data) != nil {
-            err = write(w, ind, data, end)
+            b.Write(ind)
+            b.Write(data)
+            b.WriteByte('\n')
          }
       case html.EndTagToken:
          ind = ind[len(indent):]
-         err = write(w, ind, data, end)
+         b.Write(ind)
+         b.Write(data)
+         b.WriteByte('\n')
       case html.ErrorToken:
          return nil
       }
-      if err != nil {
+      if _, err := b.WriteTo(w); err != nil {
          return err
       }
    }
+}
+
+// developer.mozilla.org/docs/Web/API/Element/tagName
+func (l Lexer) TagName() string {
+   text := l.Text()
+   return string(text)
 }
