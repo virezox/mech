@@ -1,4 +1,4 @@
-package render
+package html
 
 import (
    "github.com/tdewolff/parse/v2"
@@ -7,6 +7,14 @@ import (
 )
 
 var end = []byte{'\n'}
+
+var void = map[string]bool{
+   "br": true,
+   "img": true,
+   "input": true,
+   "link": true,
+   "meta": true,
+}
 
 func write(w io.Writer, b ...[]byte) error {
    for _, s := range b {
@@ -36,7 +44,9 @@ func (l Lexer) Render(w io.Writer, indent string) error {
       switch t, data := l.Next(); t {
       case html.StartTagToken:
          err = write(w, ind, data)
-         ind = append(ind, indent...)
+         if !void[string(l.Text())] {
+            ind = append(ind, indent...)
+         }
       case html.AttributeToken:
          err = write(w, data)
       case html.StartTagCloseToken:
