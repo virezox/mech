@@ -6,7 +6,8 @@ import (
    "testing"
 )
 
-const htmlWrite = `
+const render = `
+<meta charset="utf-8">
 <h1>
 <a href="/umber">Umber</a>
 </h1>
@@ -15,10 +16,10 @@ const htmlWrite = `
 </form>
 `
 
-func TestEncode(t *testing.T) {
-   w := NewEncoder(os.Stdout)
-   w.SetIndent(" ")
-   if err := w.Encode(strings.NewReader(htmlWrite)); err != nil {
+func TestRender(t *testing.T) {
+   r := strings.NewReader(render)
+   err := NewLexer(r).Render(os.Stdout, " ")
+   if err != nil {
       t.Fatal(err)
    }
 }

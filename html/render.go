@@ -1,6 +1,7 @@
 package html
 
 import (
+   "bytes"
    "github.com/tdewolff/parse/v2"
    "github.com/tdewolff/parse/v2/html"
    "io"
@@ -52,7 +53,9 @@ func (l Lexer) Render(w io.Writer, indent string) error {
       case html.StartTagCloseToken:
          err = write(w, data, end)
       case html.TextToken:
-         err = write(w, ind, data, end)
+         if bytes.TrimSpace(data) != nil {
+            err = write(w, ind, data, end)
+         }
       case html.EndTagToken:
          ind = ind[len(indent):]
          err = write(w, ind, data, end)
