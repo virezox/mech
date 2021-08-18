@@ -7,14 +7,6 @@ import (
    "io"
 )
 
-var void = map[string]bool{
-   "br": true,
-   "img": true,
-   "input": true,
-   "link": true,
-   "meta": true,
-}
-
 type Encoder struct {
    io.Writer
    tab string
@@ -53,4 +45,12 @@ func (e Encoder) Encode(r io.Reader) error {
          tab = append(tab, e.tab...)
       }
    }
+}
+
+var void = map[string]bool{
+   "br": true,
+   "img": true,
+   "input": true,
+   "link": true,
+   "meta": true,
 }

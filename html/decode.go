@@ -5,6 +5,7 @@ import (
    "github.com/tdewolff/parse/v2/html"
    "io"
    "strings"
+   stdhtml "html"
 )
 
 type Decoder struct {
@@ -36,7 +37,8 @@ func (d *Decoder) Bytes() []byte {
 // getAttribute
 func (d Decoder) GetAttr(key string) string {
    val := d.attr[key]
-   return strings.Trim(val, `'"`)
+   trim := strings.Trim(val, `'"`)
+   return stdhtml.UnescapeString(trim)
 }
 
 // hasAttribute
