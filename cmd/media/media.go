@@ -33,14 +33,14 @@ func main() {
    if res.StatusCode != http.StatusOK {
       panic(res.Status)
    }
-   dec := html.NewDecoder(res.Body)
+   lex := html.NewLexer(res.Body)
    // This is going to kill audio and video if the page is missing og:image.
    // However that is unlikely, so we will cross that bridge when we come to it.
-   dec.NextAttr("property", "og:image")
-   fmt.Println(dec.GetAttr("content"))
+   lex.NextAttr("property", "og:image")
+   fmt.Println(lex.GetAttr("content"))
    // audio video
-   for dec.NextAttr("type", "application/ld+json") {
-      data := dec.Bytes()
+   for lex.NextAttr("type", "application/ld+json") {
+      data := lex.Bytes()
       // audio
       var audio struct {
          ContentURL string

@@ -7,6 +7,13 @@ import (
    "os"
 )
 
+func newFile(name string) (*os.File, error) {
+   if name == "" {
+      return os.Stdout, nil
+   }
+   return os.Create(name)
+}
+
 func main() {
    var indent, output string
    flag.StringVar(&indent, "i", "", "indent")
@@ -17,25 +24,18 @@ func main() {
       flag.PrintDefaults()
       return
    }
-   arg := flag.Arg(0)
-   f, err := os.Open(arg)
+   input := flag.Arg(0)
+   r, err := os.Open(input)
    if err != nil {
       panic(err)
    }
-   defer f.Close()
-   var enc html.Encoder
-   if output != "" {
-      f, err := os.Create(output)
-      if err != nil {
-         panic(err)
-      }
-      defer f.Close()
-      enc = html.NewEncoder(f)
-   } else {
-      enc = html.NewEncoder(os.Stdout)
+   defer r.Close()
+   w, err := newFile(output)
+   if err != nil {
+      panic(err)
    }
-   enc.SetIndent(indent)
-   if err := enc.Encode(f); err != nil {
+   defer w.Close()
+   if err := html.NewLexer(r).Render(w, indent); err != nil {
       panic(err)
    }
 }
