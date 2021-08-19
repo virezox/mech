@@ -1,4 +1,4 @@
-# August 14 2021
+# August 19 2021
 
 https://developer.vimeo.com/api/reference/videos
 
@@ -15,14 +15,6 @@ then in response:
 Set-Cookie: XSRF-TOKEN=WaY1qXeM4NeWsOD24S701Md79pyJQp9qBQOcooJZ
 Set-Cookie: session=nTUmzZZ11A8tTRZdObpI0huKpcFk0zEoqJjdqutW
 
-openapi	
-paths	
-_essentials	
-paths	
-/videos/{video_id}	
-get	
-operationId	"get_video"
-x-mill-path-template	"/videos/!video_id"
 x-playground-token	"9bd75d9905527e8e298a7602…186a78bec931.1628973628"
 ~~~
 

@@ -5,16 +5,19 @@ import (
    "github.com/tdewolff/parse/v2/js"
 )
 
+// pkg.go.dev/github.com/tdewolff/parse/v2/js#Lexer
 type Lexer struct {
    *js.Lexer
 }
 
+// pkg.go.dev/github.com/tdewolff/parse/v2/js#NewLexer
 func NewLexer(b []byte) Lexer {
    return Lexer{
       js.NewLexer(parse.NewInputBytes(b)),
    }
 }
 
+// pkg.go.dev/net/url#Values
 func (l Lexer) Values() map[string][]byte {
    var k string
    vals := make(map[string][]byte)
