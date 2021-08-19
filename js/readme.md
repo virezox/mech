@@ -1,4 +1,4 @@
-# August 19 2021
+# JavaScript
 
 I think I found a better option. Instead of using the Parser, I can just use
 the Lexer. That way, the input stays as is. As long as what I said holds true,

@@ -5,17 +5,17 @@ import (
    "github.com/tdewolff/parse/v2/js"
 )
 
-type lexer struct {
+type Lexer struct {
    *js.Lexer
 }
 
-func newLexer(b []byte) lexer {
-   return lexer{
+func NewLexer(b []byte) Lexer {
+   return Lexer{
       js.NewLexer(parse.NewInputBytes(b)),
    }
 }
 
-func (l lexer) values() map[string][]byte {
+func (l Lexer) Values() map[string][]byte {
    var k string
    vals := make(map[string][]byte)
    for {
