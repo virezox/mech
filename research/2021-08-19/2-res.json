@@ -1,0 +1,10 @@
+{
+  "headers": {
+    "Accept": "application/vnd.vimeo.*+json;version=3.4",
+    "Authorization": "jwt eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2Mjk0MTEwMDAsInVzZXJfaWQiOm51bGwsImFwcF9pZCI6MjIyMSwic2NvcGVzIjoicHVibGljIHByaXZhdGUgcHVyY2hhc2VkIGNyZWF0ZSBlZGl0IGRlbGV0ZSBpbnRlcmFjdCB1cGxvYWQgcHJvbW9fY29kZXMgdmlkZW9fZmlsZXMgc2NpbSIsInRlYW1fdXNlcl9pZCI6bnVsbH0.TBvy5jdX1DqSNSXihjlmF9BdqF4cdngzK8TC4dBqMEM"
+  },
+  "url": "https://api.vimeo.com/videos/66531465",
+  "method": "get",
+  "query": null,
+  "payload": null
+}
