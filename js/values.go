@@ -7,8 +7,10 @@ import (
    "github.com/tdewolff/parse/v2/js"
 )
 
+// pkg.go.dev/net/url#Values
 type Values map[string]string
 
+// pkg.go.dev/github.com/tdewolff/parse/v2/js#Parse
 func Parse(b []byte) (Values, error) {
    ast, err := js.Parse(parse.NewInputBytes(b))
    if err != nil {
@@ -31,16 +33,19 @@ func Parse(b []byte) (Values, error) {
    return v, nil
 }
 
+// pkg.go.dev/net/url#Values.Get
 func (v Values) Get(key string) []byte {
    val := v[key]
    return []byte(val)
 }
 
+// pkg.go.dev/net/url#Values.Has
 func (v Values) Has(key string) bool {
    _, ok := v[key]
    return ok
 }
 
+// pkg.go.dev/github.com/tdewolff/parse/v2/js#IVisitor
 type quote struct{}
 
 func (q quote) Enter(n js.INode) js.IVisitor {
