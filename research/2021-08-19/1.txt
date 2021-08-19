@@ -1,3 +1,0 @@
-GET /api/reference/videos HTTP/1.1
-Host: developer.vimeo.com
-

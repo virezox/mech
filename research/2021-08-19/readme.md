@@ -4,12 +4,7 @@ https://developer.vimeo.com/api/reference/videos
 
 ## Request 1
 
-~~~
-GET /api/reference/videos HTTP/1.1
-Host: developer.vimeo.com
-~~~
-
-then in response:
+response:
 
 ~~~
 Set-Cookie: XSRF-TOKEN=WaY1qXeM4NeWsOD24S701Md79pyJQp9qBQOcooJZ
