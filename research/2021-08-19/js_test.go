@@ -1,6 +1,7 @@
 package js
 
 import (
+   "encoding/json"
    "fmt"
    "os"
    "testing"
@@ -11,7 +12,10 @@ func TestJS(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   for k, v := range newValues(b) {
-      fmt.Printf("%v\n%s\n", k, v)
+   v := newLexer(b).values()
+   var a []interface{}
+   if err := json.Unmarshal(v["apps"], &a); err != nil {
+      t.Fatal(err)
    }
+   fmt.Println(a)
 }
