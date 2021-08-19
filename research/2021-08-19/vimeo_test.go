@@ -8,7 +8,7 @@ import (
 )
 
 func TestVimeo(t *testing.T) {
-   req, err := playground("66531465")
+   req, err := newRequest("66531465")
    if err != nil {
       t.Fatal(err)
    }

@@ -15,7 +15,7 @@ const s = `
 </head>
 `
 
-func TestDecode(t *testing.T) {
+func TestNext(t *testing.T) {
    l := NewLexer(strings.NewReader(s))
    l.NextTag("title")
    fmt.Printf("%s\n", l.Bytes())
