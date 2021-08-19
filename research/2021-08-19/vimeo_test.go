@@ -1,30 +1,28 @@
-package main
+package vimeo
 
 import (
    "net/http"
    "net/http/httputil"
    "os"
+   "testing"
 )
 
-func main() {
+func TestVimeo(t *testing.T) {
    req, err := playground("66531465")
    if err != nil {
-      panic(err)
+      t.Fatal(err)
    }
    d, err := httputil.DumpRequest(req, true)
    if err != nil {
-      panic(err)
+      t.Fatal(err)
    }
    os.Stdout.Write(d)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
-      panic(err)
+      t.Fatal(err)
    }
    defer res.Body.Close()
-   f, err := os.Create("out.json")
-   if err != nil {
-      panic(err)
+   if res.StatusCode != http.StatusOK {
+      t.Fatal(res)
    }
-   defer f.Close()
-   f.ReadFrom(res.Body)
 }
