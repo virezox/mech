@@ -1,28 +1,22 @@
 package vimeo
 
 import (
-   "net/http"
-   "net/http/httputil"
-   "os"
+   "fmt"
    "testing"
 )
 
 func TestVimeo(t *testing.T) {
-   req, err := newRequest("66531465")
+   v, err := newVideos()
    if err != nil {
       t.Fatal(err)
    }
-   d, err := httputil.DumpRequest(req, true)
+   p, err := v.playground("66531465")
    if err != nil {
       t.Fatal(err)
    }
-   os.Stdout.Write(d)
-   res, err := new(http.Transport).RoundTrip(req)
+   c, err := v.callable(p)
    if err != nil {
       t.Fatal(err)
    }
-   defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      t.Fatal(res)
-   }
+   fmt.Printf("%+v\n", c)
 }
