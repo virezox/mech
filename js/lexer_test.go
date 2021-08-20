@@ -1,7 +1,6 @@
 package js
 
 import (
-   "encoding/json"
    "fmt"
    "os"
    "testing"
@@ -12,10 +11,7 @@ func TestLexer(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   v := NewLexer(b).Values()
-   var a []interface{}
-   if err := json.Unmarshal(v["apps"], &a); err != nil {
-      t.Fatal(err)
+   for k, v := range NewLexer(b).Values() {
+      fmt.Printf("%q\n%s\n\n", k, v)
    }
-   fmt.Println(a)
 }
