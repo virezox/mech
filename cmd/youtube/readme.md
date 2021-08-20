@@ -1,12 +1,12 @@
 # YouTube
 
-## How to build for Windows
+## How to build
 
 Download Go from here:
 
 https://golang.org/dl
 
-such as:
+for example with Windows:
 
 https://golang.org/dl/go1.16.7.windows-amd64.zip
 
