@@ -108,7 +108,7 @@ func (l Lexer) Render(w io.Writer, indent string) error {
          b.Write(data)
          b.WriteByte('\n')
       case html.TextToken:
-         if bytes.TrimSpace(data) != nil {
+         if data = bytes.TrimSpace(data); data != nil {
             b.Write(ind)
             b.Write(data)
             b.WriteByte('\n')
