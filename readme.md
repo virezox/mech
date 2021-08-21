@@ -20,7 +20,7 @@ is available via HTML on the primary website, usually without being logged in.
 So why can you do that with HTML, but not with the API? Well you can, using this
 module.
 
-https://pkg.go.dev/github.com/89z/mech
+https://godocs.io/github.com/89z/mech
 
 ## Sites
 

@@ -5,42 +5,41 @@ import (
    "github.com/tdewolff/parse/v2/js"
 )
 
-// pkg.go.dev/github.com/tdewolff/parse/v2/js#Lexer
+// godocs.io/github.com/tdewolff/parse/v2/js#Lexer
 type Lexer struct {
    *js.Lexer
+   *parse.Input
 }
 
-// pkg.go.dev/github.com/tdewolff/parse/v2/js#NewLexer
+// godocs.io/github.com/tdewolff/parse/v2/js#NewLexer
 func NewLexer(b []byte) Lexer {
+   z := parse.NewInputBytes(b)
    return Lexer{
-      js.NewLexer(parse.NewInputBytes(b)),
+      js.NewLexer(z), z,
    }
 }
 
-// pkg.go.dev/net/url#Values
+// godocs.io/net/url#Values
 func (l Lexer) Values() map[string][]byte {
    vals := make(map[string][]byte)
    for {
-      var (
-         in bool
-         k string
-      )
+      var k string
       // state 1: break if EqToken
+      var ident bool
       for {
-         tt, data := l.Next()
-         if tt == js.ErrorToken {
+         if tt, data := l.Next(); tt == js.ErrorToken {
             return vals
          } else if tt == js.EqToken {
             break
          } else if tt == js.IdentifierToken || tt == js.DotToken {
-            if in {
+            if ident {
                k += string(data)
             } else {
                k = string(data)
-               in = true
+               ident = true
             }
          } else {
-            in = false
+            ident = false
          }
       }
       // state 2: break if SemicolonToken
@@ -48,10 +47,12 @@ func (l Lexer) Values() map[string][]byte {
          tt, data := l.Next()
          if tt == js.SemicolonToken {
             break
-         } else if !in && tt != js.WhitespaceToken {
-            in = true
-            if tt == js.DivToken {
-               tt, data = l.RegExp()
+         } else if tt == js.WhitespaceToken {
+            continue
+         } else if tt == js.DivToken {
+            if tt, data = l.RegExp(); tt == js.ErrorToken {
+               l.Rewind(0)
+               tt, data = l.Next()
             }
          }
          vals[k] = append(vals[k], data...)

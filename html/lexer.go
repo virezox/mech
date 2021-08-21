@@ -18,7 +18,7 @@ var VoidElement = map[string]bool{
    "meta": true,
 }
 
-// pkg.go.dev/github.com/tdewolff/parse/v2/html#Lexer
+// godocs.io/github.com/tdewolff/parse/v2/html#Lexer
 type Lexer struct {
    *html.Lexer
    html.TokenType
@@ -26,7 +26,7 @@ type Lexer struct {
    attr map[string]string
 }
 
-// pkg.go.dev/github.com/tdewolff/parse/v2/html#NewLexer
+// godocs.io/github.com/tdewolff/parse/v2/html#NewLexer
 func NewLexer(r io.Reader) Lexer {
    return Lexer{
       Lexer: html.NewLexer(parse.NewInput(r)),
@@ -90,7 +90,7 @@ func (l *Lexer) NextTag(name string) bool {
    }
 }
 
-// pkg.go.dev/golang.org/x/net/html#Render
+// godocs.io/golang.org/x/net/html#Render
 func (l Lexer) Render(w io.Writer, indent string) error {
    var ind []byte
    b := new(bytes.Buffer)
