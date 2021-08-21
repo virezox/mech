@@ -1,9 +1,24 @@
 # Vimeo
 
-- https://developer.vimeo.com/api/reference/videos
-- https://github.com/silentsokolov/go-vimeo/issues/17
-- https://stackoverflow.com/questions/1361149
-- https://vimeo.com/66531465
+## vimeo.com/66531465
+
+~~~
+GET /66531465 HTTP/1.1
+Host: vimeo.com
+~~~
+
+title and date:
+
+~~~html
+<script>
+window.vimeo.clip_page_config = {
+  "clip": {
+    "title": "Gnarls Barkley - Who’s Gonna Save My Soul - From the Basement",
+    "uploaded_on": "2013-05-19 21:57:42"
+  }
+};
+</script>
+~~~
 
 ## api.vimeo.com/videos/66531465
 
@@ -13,7 +28,7 @@ Host: api.vimeo.com
 Authorization: jwt eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2Mjk2NjMwMD...
 ~~~
 
-This gets everything:
+title, date and URL:
 
 ~~~json
 {
@@ -34,7 +49,7 @@ GET /video/66531465/config HTTP/1.1
 Host: player.vimeo.com
 ~~~
 
-missing date:
+title and URL:
 
 ~~~json
 {
@@ -53,26 +68,6 @@ missing date:
 }
 ~~~
 
-## vimeo.com/66531465
-
-~~~
-GET /66531465 HTTP/1.1
-Host: vimeo.com
-~~~
-
-missing URL:
-
-~~~html
-<script>
-window.vimeo.clip_page_config = {
-  "clip": {
-    "title": "Gnarls Barkley - Who’s Gonna Save My Soul - From the Basement",
-    "uploaded_on": "2013-05-19 21:57:42"
-  }
-};
-</script>
-~~~
-
 ## vimeo.com/66531465?action=load_download_config
 
 ~~~
@@ -81,7 +76,7 @@ Host: vimeo.com
 X-Requested-With: XMLHttpRequest
 ~~~
 
-missing title and date:
+URL:
 
 ~~~json
 {
@@ -92,3 +87,8 @@ missing title and date:
   ]
 }
 ~~~
+
+- https://developer.vimeo.com/api/reference/videos
+- https://github.com/silentsokolov/go-vimeo/issues/17
+- https://stackoverflow.com/questions/1361149
+- https://vimeo.com/66531465
