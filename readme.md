@@ -25,9 +25,10 @@ https://godocs.io/github.com/89z/mech
 ## Sites
 
 1. YouTube
-2. SoundCloud
-3. Deezer
-4. MusicBrainz
+2. Vimeo
+3. SoundCloud
+4. Deezer
+5. MusicBrainz
 
 ## HTML package
 
