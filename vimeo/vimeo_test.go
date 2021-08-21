@@ -1,15 +1,18 @@
 package vimeo
 
 import (
+   "fmt"
    "testing"
 )
 
 func TestConfig(t *testing.T) {
-   c, err := newConfig("66531465")
+   c, err := NewConfig("66531465")
    if err != nil {
       t.Fatal(err)
    }
-   if err := c.videos(); err != nil {
+   v, err := c.Video()
+   if err != nil {
       t.Fatal(err)
    }
+   fmt.Printf("%+v\n", v)
 }
