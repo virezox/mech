@@ -5,19 +5,18 @@ import (
    "github.com/tdewolff/parse/v2/js"
 )
 
-// pkg.go.dev/github.com/tdewolff/parse/v2/js#Lexer
 type Lexer struct {
    *js.Lexer
+   *parse.Input
 }
 
-// pkg.go.dev/github.com/tdewolff/parse/v2/js#NewLexer
 func NewLexer(b []byte) Lexer {
+   z := parse.NewInputBytes(b)
    return Lexer{
-      js.NewLexer(parse.NewInputBytes(b)),
+      js.NewLexer(z), z,
    }
 }
 
-// pkg.go.dev/net/url#Values
 func (l Lexer) Values() map[string][]byte {
    vals := make(map[string][]byte)
    for {
@@ -48,10 +47,15 @@ func (l Lexer) Values() map[string][]byte {
          tt, data := l.Next()
          if tt == js.SemicolonToken {
             break
-         } else if !in && tt != js.WhitespaceToken {
-            in = true
-            if tt == js.DivToken {
-               tt, data = l.RegExp()
+         }
+         if tt == js.WhitespaceToken {
+            continue
+         }
+         if tt == js.DivToken {
+            tt, data = l.RegExp()
+            if tt == js.ErrorToken {
+               l.Rewind(0)
+               tt, data = l.Next()
             }
          }
          vals[k] = append(vals[k], data...)
