@@ -2,84 +2,63 @@ package vimeo
 
 import (
    "encoding/json"
+   "fmt"
    "github.com/89z/mech/html"
-   "github.com/89z/mech/js"
    "net/http"
-   "net/http/httputil"
-   "os"
+   stdhtml "html"
 )
 
 type Config struct {
-   Clip struct {
-      ID json.Number
-      Uploaded_On string
+   Request struct {
+      Files struct {
+         Progressive []struct {
+            URL string
+         }
+      }
    }
-   JWT string
-   Owner struct {
-      Display_Name string
+   Video struct {
+      Title string
    }
-   Title string
 }
 
-func NewConfig(clipID string) (*Config, error) {
-   req, err := http.NewRequest("GET", "https://vimeo.com/" + clipID, nil)
+func NewConfig(id string) (*Config, error) {
+   addr := "https://player.vimeo.com/video/" + id + "/config"
+   fmt.Println("GET", addr)
+   res, err := http.Get(addr)
    if err != nil {
       return nil, err
    }
-   d, err := httputil.DumpRequest(req, false)
-   if err != nil {
+   defer res.Body.Close()
+   cfg := new(Config)
+   if err := json.NewDecoder(res.Body).Decode(cfg); err != nil {
       return nil, err
    }
-   os.Stdout.Write(d)
-   res, err := new(http.Transport).RoundTrip(req)
+   return cfg, nil
+}
+
+type Video struct {
+   Name string
+   UploadDate string
+}
+
+func NewVideo(id string) (*Video, error) {
+   addr := "https://vimeo.com/" + id
+   fmt.Println("GET", addr)
+   res, err := http.Get(addr)
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
    lex := html.NewLexer(res.Body)
-   lex.NextAttr("class", "app_banner_container")
-   lex.NextTag("script")
-   val := js.NewLexer(lex.Bytes()).Values()
-   src := val["window.vimeo.clip_page_config"]
-   dst := new(Config)
-   if err := json.Unmarshal(src, dst); err != nil {
+   lex.NextAttr("type", "application/ld+json")
+   src := lex.Bytes()
+   var dst []Video
+   if err := json.Unmarshal(src, &dst); err != nil {
       return nil, err
    }
-   return dst, nil
+   return &dst[0], nil
 }
 
-func (c Config) Video() (*Video, error) {
-   req, err := http.NewRequest(
-      "GET", "https://api.vimeo.com/videos/" + c.Clip.ID.String(), nil,
-   )
-   if err != nil {
-      return nil, err
-   }
-   req.Header.Set("Authorization", "jwt " + c.JWT)
-   d, err := httputil.DumpRequest(req, false)
-   if err != nil {
-      return nil, err
-   }
-   os.Stdout.Write(d)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   vid := new(Video)
-   if err := json.NewDecoder(res.Body).Decode(vid); err != nil {
-      return nil, err
-   }
-   return vid, nil
-}
-
-type Video struct {
-   Files []struct {
-      Link string
-   }
-   Name string
-   Release_Time string
-   User struct {
-      Name string
-   }
+func (v Video) Title() string {
+   return stdhtml.UnescapeString(v.Name)
 }

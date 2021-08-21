@@ -52,7 +52,7 @@ func (l Lexer) Values() map[string][]byte {
          } else if tt == js.DivToken {
             if tt, data = l.RegExp(); tt == js.ErrorToken {
                l.Rewind(0)
-               tt, data = l.Next()
+               _, data = l.Next()
             }
          }
          vals[k] = append(vals[k], data...)
