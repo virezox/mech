@@ -10,7 +10,23 @@ const (
    id = "103650107"
 )
 
-func TestID(t *testing.T) {
+func TestAlternate(t *testing.T) {
+   a, err := Oembed(addr)
+   if err != nil {
+      t.Fatal(err)
+   }
+   fmt.Printf("%+v\n\n", a)
+}
+
+func TestResolve(t *testing.T) {
+   r, err := Resolve(addr)
+   if err != nil {
+      t.Fatal(err)
+   }
+   fmt.Printf("%+v\n\n", r)
+}
+
+func TestTracks(t *testing.T) {
    tracks, err := Tracks(id)
    if err != nil {
       t.Fatal(err)
@@ -19,13 +35,5 @@ func TestID(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   fmt.Printf("%+v\n", m)
-}
-
-func TestURL(t *testing.T) {
-   track, err := Resolve(addr)
-   if err != nil {
-      t.Fatal(err)
-   }
-   fmt.Printf("%+v\n", track)
+   fmt.Printf("%+v\n\n", m)
 }
