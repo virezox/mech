@@ -1,0 +1,92 @@
+{
+  "bodySize": 1819,
+  "method": "POST",
+  "url": "https://www.youtube.com/youtubei/v1/next?key=AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8",
+  "httpVersion": "HTTP/2",
+  "headers": [
+    {
+      "name": "Host",
+      "value": "www.youtube.com"
+    },
+    {
+      "name": "User-Agent",
+      "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:86.0) Gecko/20100101 Firefox/86.0"
+    },
+    {
+      "name": "Accept",
+      "value": "*/*"
+    },
+    {
+      "name": "Accept-Language",
+      "value": "en-US,en;q=0.5"
+    },
+    {
+      "name": "Accept-Encoding",
+      "value": "gzip, deflate, br"
+    },
+    {
+      "name": "Referer",
+      "value": "https://www.youtube.com/watch?v=q5UnT4Ik6KU"
+    },
+    {
+      "name": "Content-Type",
+      "value": "application/json"
+    },
+    {
+      "name": "X-Goog-Visitor-Id",
+      "value": "CgtSWFV3cEJwWTJkWSiewIqJBg%3D%3D"
+    },
+    {
+      "name": "X-Youtube-Client-Name",
+      "value": "1"
+    },
+    {
+      "name": "X-Youtube-Client-Version",
+      "value": "2.20210820.01.00"
+    },
+    {
+      "name": "Authorization",
+      "value": "SAPISIDHASH 1629659172_ea56160c574bfec592b937a612206544a46c14a9"
+    },
+    {
+      "name": "X-Goog-AuthUser",
+      "value": "0"
+    },
+    {
+      "name": "X-Origin",
+      "value": "https://www.youtube.com"
+    },
+    {
+      "name": "Origin",
+      "value": "https://www.youtube.com"
+    },
+    {
+      "name": "Content-Length",
+      "value": "1819"
+    },
+    {
+      "name": "Connection",
+      "value": "keep-alive"
+    },
+    {
+      "name": "Cookie",
+      "value": "yt-dev.storage-integrity=true; VISITOR_INFO1_LIVE=RXUwpBpY2dY; PREF=f4=4000000&tz=America.Chicago&f5=30000&volume=100; YTV_CLC=locsrc=1&locs=2&tz=America%2FChicago; YT_DEVICE_MEASUREMENT_ID=uXXhr3Q=; __Secure-3PSID=AwhNhhWtat7kdvNNmHoVeHQg6UevSqaJFWBZSDOtnMxvsTIjV589RvNwhZ_JciXHLyOlog.; __Secure-3PAPISID=zcPKpYRGiP-i4tAk/A4TlgEdajr2xeiEIO; wide=0; YSC=js7KOJSMelQ; GPS=1"
+    },
+    {
+      "name": "TE",
+      "value": "Trailers"
+    }
+  ],
+  "queryString": [
+    {
+      "name": "key",
+      "value": "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8"
+    }
+  ],
+  "headersSize": 1081,
+  "postData": {
+    "mimeType": "application/json",
+    "params": [],
+    "text": "{\"context\":{\"client\":{\"hl\":\"en\",\"gl\":\"US\",\"remoteHost\":\"72.181.23.38\",\"deviceMake\":\"\",\"deviceModel\":\"\",\"visitorData\":\"CgtSWFV3cEJwWTJkWSiewIqJBg%3D%3D\",\"userAgent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:86.0) Gecko/20100101 Firefox/86.0,gzip(gfe)\",\"clientName\":\"WEB\",\"clientVersion\":\"2.20210820.01.00\",\"osName\":\"Windows\",\"osVersion\":\"10.0\",\"originalUrl\":\"https://www.youtube.com/watch?v=q5UnT4Ik6KU\",\"screenPixelDensity\":1,\"platform\":\"DESKTOP\",\"clientFormFactor\":\"UNKNOWN_FORM_FACTOR\",\"screenDensityFloat\":1.25,\"timeZone\":\"America/Chicago\",\"browserName\":\"Firefox\",\"browserVersion\":\"86.0\",\"screenWidthPoints\":1536,\"screenHeightPoints\":699,\"utcOffsetMinutes\":-300,\"userInterfaceTheme\":\"USER_INTERFACE_THEME_LIGHT\",\"mainAppWebInfo\":{\"graftUrl\":\"https://www.youtube.com/watch?v=q5UnT4Ik6KU\",\"webDisplayMode\":\"WEB_DISPLAY_MODE_BROWSER\",\"isWebNativeShareAvailable\":false}},\"user\":{\"lockedSafetyMode\":false},\"request\":{\"useSsl\":true,\"internalExperimentFlags\":[],\"consistencyTokenJars\":[]},\"clickTracking\":{\"clickTrackingParams\":\"CJUBELsvGAIiEwjsjdW9qcXyAhUrmsIBHQ9zC-M=\"},\"adSignalsInfo\":{\"params\":[{\"key\":\"dt\",\"value\":\"1629659168762\"},{\"key\":\"flash\",\"value\":\"0\"},{\"key\":\"frm\",\"value\":\"0\"},{\"key\":\"u_tz\",\"value\":\"-300\"},{\"key\":\"u_his\",\"value\":\"1\"},{\"key\":\"u_java\",\"value\":\"false\"},{\"key\":\"u_h\",\"value\":\"864\"},{\"key\":\"u_w\",\"value\":\"1536\"},{\"key\":\"u_ah\",\"value\":\"824\"},{\"key\":\"u_aw\",\"value\":\"1536\"},{\"key\":\"u_cd\",\"value\":\"24\"},{\"key\":\"u_nplug\",\"value\":\"0\"},{\"key\":\"u_nmime\",\"value\":\"0\"},{\"key\":\"bc\",\"value\":\"31\"},{\"key\":\"bih\",\"value\":\"699\"},{\"key\":\"biw\",\"value\":\"1519\"},{\"key\":\"brdim\",\"value\":\"-7,-7,-7,-7,1536,0,1550,838,1536,699\"},{\"key\":\"vis\",\"value\":\"1\"},{\"key\":\"wgl\",\"value\":\"true\"},{\"key\":\"ca_type\",\"value\":\"image\"}]}},\"continuation\":\"Eg0SC3E1VW5UNElrNktVGAYyJSIRIgtxNVVuVDRJazZLVTAAeAJCEGNvbW1lbnRzLXNlY3Rpb24%3D\"}"
+  }
+}

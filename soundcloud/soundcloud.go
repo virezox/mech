@@ -39,8 +39,6 @@ func Oembed(addr string) (*Alternate, error) {
    return emb, nil
 }
 
-// MediaURLResponse is the JSON response of retrieving media information of a
-// track
 type Media struct {
    URL string
 }
@@ -74,11 +72,11 @@ func Resolve(addr string) (*Track, error) {
       return nil, err
    }
    defer res.Body.Close()
-   t := new(Track)
-   if err := json.NewDecoder(res.Body).Decode(t); err != nil {
+   trk := new(Track)
+   if err := json.NewDecoder(res.Body).Decode(trk); err != nil {
       return nil, err
    }
-   return t, nil
+   return trk, nil
 }
 
 func Tracks(id string) ([]Track, error) {
@@ -103,7 +101,6 @@ func Tracks(id string) ([]Track, error) {
    return tracks, nil
 }
 
-// The media URL is the actual link to the audio file for the track.
 func (t Track) GetMedia() (*Media, error) {
    var addr string
    for _, code := range t.Media.Transcodings {
@@ -124,9 +121,9 @@ func (t Track) GetMedia() (*Media, error) {
       return nil, err
    }
    defer res.Body.Close()
-   m := new(Media)
-   if err := json.NewDecoder(res.Body).Decode(&m); err != nil {
+   med := new(Media)
+   if err := json.NewDecoder(res.Body).Decode(med); err != nil {
       return nil, err
    }
-   return m, nil
+   return med, nil
 }
