@@ -3,10 +3,7 @@ Host: www.youtube.com
 
 {
   "context": {
-    "client": {
-      "clientName": "WEB",
-      "clientVersion": "2.20210820.01.00"
-    }
+    "client": {"clientName": "WEB","clientVersion": "2.20210820.01.00"}
   },
   "continuation": "Eg0SC3E1VW5UNElrNktVGAYyJSIRIgtxNVVuVDRJazZLVTAAeAJCEGNvbW1lbnRzLXNlY3Rpb24%3D"
 }
