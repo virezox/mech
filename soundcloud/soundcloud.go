@@ -2,9 +2,8 @@ package soundcloud
 
 import (
    "encoding/json"
+   "fmt"
    "net/http"
-   "net/http/httputil"
-   "os"
 )
 
 const (
@@ -16,6 +15,32 @@ const (
 // track
 type Media struct {
    URL string
+}
+
+type Oembed struct {
+   Thumbnail_URL string
+}
+
+func NewOembed(addr string) (*Oembed, error) {
+   req, err := http.NewRequest("GET", "https://soundcloud.com/oembed", nil)
+   if err != nil {
+      return nil, err
+   }
+   q := req.URL.Query()
+   q.Set("format", "json")
+   q.Set("url", addr)
+   req.URL.RawQuery = q.Encode()
+   fmt.Println("GET", req.URL)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   emb := new(Oembed)
+   if err := json.NewDecoder(res.Body).Decode(emb); err != nil {
+      return nil, err
+   }
+   return emb, nil
 }
 
 type Track struct {
@@ -31,32 +56,6 @@ type Track struct {
    }
 }
 
-func Tracks(id string) ([]Track, error) {
-   req, err := http.NewRequest("GET", Origin + "/tracks", nil)
-   if err != nil {
-      return nil, err
-   }
-   q := req.URL.Query()
-   q.Set("client_id", clientID)
-   q.Set("ids", id)
-   req.URL.RawQuery = q.Encode()
-   d, err := httputil.DumpRequest(req, false)
-   if err != nil {
-      return nil, err
-   }
-   os.Stdout.Write(d)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   var tracks []Track
-   if err := json.NewDecoder(res.Body).Decode(&tracks); err != nil {
-      return nil, err
-   }
-   return tracks, nil
-}
-
 func Resolve(addr string) (*Track, error) {
    req, err := http.NewRequest("GET", Origin + "/resolve", nil)
    if err != nil {
@@ -66,11 +65,7 @@ func Resolve(addr string) (*Track, error) {
    q.Set("client_id", clientID)
    q.Set("url", addr)
    req.URL.RawQuery = q.Encode()
-   d, err := httputil.DumpRequest(req, false)
-   if err != nil {
-      return nil, err
-   }
-   os.Stdout.Write(d)
+   fmt.Println("GET", req.URL)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -81,6 +76,28 @@ func Resolve(addr string) (*Track, error) {
       return nil, err
    }
    return t, nil
+}
+
+func Tracks(id string) ([]Track, error) {
+   req, err := http.NewRequest("GET", Origin + "/tracks", nil)
+   if err != nil {
+      return nil, err
+   }
+   q := req.URL.Query()
+   q.Set("client_id", clientID)
+   q.Set("ids", id)
+   req.URL.RawQuery = q.Encode()
+   fmt.Println("GET", req.URL)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   var tracks []Track
+   if err := json.NewDecoder(res.Body).Decode(&tracks); err != nil {
+      return nil, err
+   }
+   return tracks, nil
 }
 
 // The media URL is the actual link to the audio file for the track. "addr" is
@@ -99,11 +116,7 @@ func (t Track) GetMedia() (*Media, error) {
    q := req.URL.Query()
    q.Set("client_id", clientID)
    req.URL.RawQuery = q.Encode()
-   d, err := httputil.DumpRequest(req, false)
-   if err != nil {
-      return nil, err
-   }
-   os.Stdout.Write(d)
+   fmt.Println("GET", req.URL)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
