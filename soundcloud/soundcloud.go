@@ -18,14 +18,11 @@ type Media struct {
    URL string
 }
 
-// Track represents the JSON response of a track's info
 type Track struct {
-   // Media contains an array of transcoding for a track
+   Title string
+   Display_Date string
    Media struct {
-      // Transcoding contains information about the transcoding of a track
       Transcodings []struct {
-         // TranscodingFormat contains the protocol by which the track is
-         // delivered ("progressive" or "HLS"), and the mime type of the track
          Format struct {
             Protocol string
          }
@@ -34,7 +31,7 @@ type Track struct {
    }
 }
 
-func TrackID(id string) ([]Track, error) {
+func Tracks(id string) ([]Track, error) {
    req, err := http.NewRequest("GET", Origin + "/tracks", nil)
    if err != nil {
       return nil, err
@@ -60,7 +57,7 @@ func TrackID(id string) ([]Track, error) {
    return tracks, nil
 }
 
-func TrackURL(addr string) (*Track, error) {
+func Resolve(addr string) (*Track, error) {
    req, err := http.NewRequest("GET", Origin + "/resolve", nil)
    if err != nil {
       return nil, err

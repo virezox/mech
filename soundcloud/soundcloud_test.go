@@ -11,7 +11,7 @@ const (
 )
 
 func TestID(t *testing.T) {
-   tracks, err := TrackID(id)
+   tracks, err := Tracks(id)
    if err != nil {
       t.Fatal(err)
    }
@@ -23,7 +23,7 @@ func TestID(t *testing.T) {
 }
 
 func TestURL(t *testing.T) {
-   track, err := TrackURL(addr)
+   track, err := Resolve(addr)
    if err != nil {
       t.Fatal(err)
    }

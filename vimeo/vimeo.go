@@ -46,9 +46,9 @@ func NewConfig(id string) (*Config, error) {
 }
 
 type Video struct {
-   Thumbnail_URL string
    Title string
    Upload_Date string
+   Thumbnail_URL string
 }
 
 func NewVideo(id string) (*Video, error) {
