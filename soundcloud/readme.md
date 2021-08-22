@@ -1,5 +1,23 @@
 # SoundCloud
 
+artworks:
+
+~~~
+https://soundcloud.com/oembed?format=json&url=https://soundcloud.com/western_vinyl/jessica-risker-cut-my-hair
+~~~
+
+placeholder:
+
+~~~
+https://soundcloud.com/oembed?format=json&url=https://soundcloud.com/pdis_inpartmaint/harold-budd-perhaps-moss
+~~~
+
+avatars:
+
+~~~
+https://soundcloud.com/oembed?format=json&url=https://soundcloud.com/pdis_inpartmaint
+~~~
+
 ## How to get `client_id`
 
 First, make a request like this:
