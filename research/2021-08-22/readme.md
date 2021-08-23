@@ -1,5 +1,6 @@
 # August 22 2021
 
+
 ~~~
 next
 request
@@ -7,7 +8,7 @@ continuationCommand
 
 next
 response
-commentThreadRenderer commentRenderer
+commentThreadRenderer commentRenderer -language:json
 ~~~
 
 YouTube API for comments?
@@ -20,6 +21,30 @@ So we can search for a comment that identifies the end song.
 The unbiased journalism we need
 ~~~
 
+- https://github.com/DeDiS/protobuf
+- https://github.com/iv-org/invidious/blob/master/src/invidious/comments.cr
 - https://github.com/user234683/youtube-local/blob/master/youtube/comments.py
 - https://github.com/user234683/youtube-local/blob/master/youtube/proto.py
-- https://pkg.go.dev/google.golang.org/protobuf/encoding/protowire
+- https://godocs.io/google.golang.org/protobuf/encoding/protowire
+
+## size difference
+
+next:
+
+~~~
+Content-Encoding: gzip
+Content-Length: 34976
+~~~
+
+watch:
+
+~~~
+Content-Encoding: gzip
+79,940 bytes
+~~~
+
+make sure "next next" actually works before deleting proto stuff.
+
+## clients
+
+Check different clients

@@ -1,6 +1,7 @@
 POST /youtubei/v1/next HTTP/1.1
 Host: www.youtube.com
 X-Goog-Api-Key: AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8
+Accept-Encoding: deflate, gzip, br
 
 {
    "context":{

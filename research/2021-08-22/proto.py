@@ -25,12 +25,15 @@ def varint_encode(offset):
     encoded_bytes[-1] = offset & 127 # leave first bit as zero for
     return bytes(encoded_bytes)
 
-offset = 0
-sort = 0
 video_id = b'q5UnT4Ik6KU'
-page_info = string(4,video_id) + uint(6, sort)
-page_params = string(2, video_id)
-offset_information = string(4, page_info) + uint(5, offset)
-result = string(2, page_params) + uint(3,6) + string(6, offset_information)
+
+result = string(
+   2, string(2, video_id),
+) + uint(3,6) + string(
+   6, string(
+      4, string(4,video_id),
+   ),
+)
+
 ctoken = base64.urlsafe_b64encode(result).decode('ascii')
 print(ctoken)
