@@ -1,5 +1,11 @@
 # August 23 2021
 
+~~~
+protobuf wire in:readme language:go stars:>0
+~~~
+
+https://pkg.go.dev/google.golang.org/protobuf/testing/protopack
+
 we need to call `proto.Marshal`:
 
 https://pkg.go.dev/google.golang.org/protobuf/proto#Marshal
