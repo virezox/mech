@@ -1,30 +1,23 @@
 package main
 
 import (
-   "bytes"
+   "encoding/base64"
    "fmt"
-   pp "google.golang.org/protobuf/testing/protopack"
+   p "google.golang.org/protobuf/testing/protopack"
 )
 
 func main() {
-   a := []byte("\x12\r\x12\vq5UnT4Ik6KU\x18\x062\x0f\"\r\"\vq5UnT4Ik6KU")
-   m := pp.Message{
-      pp.Tag{2, pp.BytesType},
-      pp.LengthPrefix{
-         pp.Tag{2, pp.BytesType},
-         pp.String("q5UnT4Ik6KU"),
+   m := p.Message{
+      p.Tag{2, p.BytesType}, p.LengthPrefix{
+         p.Tag{2, p.BytesType}, p.String("q5UnT4Ik6KU"),
       },
-      pp.Tag{3, pp.VarintType},
-      pp.Uvarint(6),
-      pp.Tag{6, pp.BytesType},
-      pp.LengthPrefix{
-         pp.Tag{4, pp.BytesType},
-         pp.LengthPrefix{
-            pp.Tag{4, pp.BytesType},
-            pp.String("q5UnT4Ik6KU"),
+      p.Tag{3, p.VarintType}, p.Varint(6),
+      p.Tag{6, p.BytesType}, p.LengthPrefix{
+         p.Tag{4, p.BytesType}, p.LengthPrefix{
+            p.Tag{4, p.BytesType}, p.String("q5UnT4Ik6KU"),
          },
       },
    }
-   b := m.Marshal()
-   fmt.Println(bytes.Equal(a, b))
+   s := base64.StdEncoding.EncodeToString(m.Marshal())
+   fmt.Println(s)
 }
