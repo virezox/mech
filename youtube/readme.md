@@ -107,7 +107,6 @@ References:
 
 - <https://github.com/Hexer10/youtube_explode_dart/issues>
 - https://github.com/Athlon1600/youtube-downloader/issues
-- https://github.com/DzenanJupic/rustube/issues
 - https://github.com/Tyrrrz/YoutubeDownloader/issues
 - https://github.com/Tyrrrz/YoutubeExplode/issues
 - https://github.com/iawia002/annie/issues
