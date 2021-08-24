@@ -1,23 +1,22 @@
-package main
+package comment
 
 import (
    "encoding/base64"
-   "fmt"
    p "google.golang.org/protobuf/testing/protopack"
 )
 
-func main() {
+func continuation(videoID string) string {
    m := p.Message{
       p.Tag{2, p.BytesType}, p.LengthPrefix{
-         p.Tag{2, p.BytesType}, p.String("q5UnT4Ik6KU"),
+         p.Tag{2, p.BytesType}, p.String(videoID),
       },
       p.Tag{3, p.VarintType}, p.Varint(6),
       p.Tag{6, p.BytesType}, p.LengthPrefix{
          p.Tag{4, p.BytesType}, p.LengthPrefix{
-            p.Tag{4, p.BytesType}, p.String("q5UnT4Ik6KU"),
+            p.Tag{4, p.BytesType}, p.String(videoID),
          },
       },
    }
-   s := base64.StdEncoding.EncodeToString(m.Marshal())
-   fmt.Println(s)
+   b := m.Marshal()
+   return base64.StdEncoding.EncodeToString(b)
 }
