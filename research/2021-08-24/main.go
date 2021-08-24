@@ -2,8 +2,8 @@ package main
 import "fmt"
 
 func main() {
-   for _, p := range params["FEATURES"] {
-      s := encode(p.decode)
-      fmt.Println(s)
+   for k, v := range params["FEATURES"] {
+      val := encode(v)
+      fmt.Print(k, "\n", val, "\n\n")
    }
 }
