@@ -27,8 +27,15 @@ https://godocs.io/github.com/89z/mech
 1. YouTube
 2. Vimeo
 3. SoundCloud
-4. Deezer
-5. MusicBrainz
+4. MusicBrainz
+
+## Deezer
+
+I have an implementation here:
+
+https://github.com/89z/mech/tree/9dadd39c
+
+However I have removed it for now, as I am busy with other stuff.
 
 ## HTML package
 
