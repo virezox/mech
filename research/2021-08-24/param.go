@@ -5,53 +5,58 @@ import (
    p "google.golang.org/protobuf/testing/protopack"
 )
 
+type param struct {
+   human string
+   decode p.Message
+}
+
 var params = map[string][]param{
    "SORT BY": {
       {
-         "Relevance", "CAA=", p.Message{
+         "Relevance", p.Message{
             p.Tag{1, p.VarintType}, p.Varint(0),
          },
       }, {
-         "Rating", "CAE=", p.Message{
+         "Rating", p.Message{
             p.Tag{1, p.VarintType}, p.Varint(1),
          },
       }, {
-         "Upload date", "CAI=", p.Message{
+         "Upload date", p.Message{
             p.Tag{1, p.VarintType}, p.Varint(2),
          },
       }, {
-         "View count", "CAM=", p.Message{
+         "View count", p.Message{
             p.Tag{1, p.VarintType}, p.Varint(3),
          },
       },
    },
    "UPLOAD DATE": {
       {
-         "Last hour", "EgIIAQ==", p.Message{
+         "Last hour", p.Message{
             p.Tag{2, p.BytesType}, p.LengthPrefix{
                p.Tag{1, p.VarintType}, p.Varint(1),
             },
          },
       }, {
-         "Today", "EgIIAg==", p.Message{
+         "Today", p.Message{
             p.Tag{2, p.BytesType}, p.LengthPrefix{
                p.Tag{1, p.VarintType}, p.Varint(2),
             },
          },
       }, {
-         "This week", "EgIIAw==", p.Message{
+         "This week", p.Message{
             p.Tag{2, p.BytesType}, p.LengthPrefix{
                p.Tag{1, p.VarintType}, p.Varint(3),
             },
          },
       }, {
-         "This month", "EgIIBA==", p.Message{
+         "This month", p.Message{
             p.Tag{2, p.BytesType}, p.LengthPrefix{
                p.Tag{1, p.VarintType}, p.Varint(4),
             },
          },
       }, {
-         "This year", "EgIIBQ==", p.Message{
+         "This year", p.Message{
             p.Tag{2, p.BytesType}, p.LengthPrefix{
                p.Tag{1, p.VarintType}, p.Varint(5),
             },
@@ -60,25 +65,25 @@ var params = map[string][]param{
    },
    "TYPE": {
       {
-         "Video", "EgIQAQ==", p.Message{
+         "Video", p.Message{
             p.Tag{2, p.BytesType}, p.LengthPrefix{
                p.Tag{2, p.VarintType}, p.Varint(1),
             },
          },
       }, {
-         "Channel", "EgIQAg==", p.Message{
+         "Channel", p.Message{
             p.Tag{2, p.BytesType}, p.LengthPrefix{
                p.Tag{2, p.VarintType}, p.Varint(2),
             },
          },
       }, {
-         "Playlist", "EgIQAw==", p.Message{
+         "Playlist", p.Message{
             p.Tag{2, p.BytesType}, p.LengthPrefix{
                p.Tag{2, p.VarintType}, p.Varint(3),
             },
          },
       }, {
-         "Movie", "EgIQBA==", p.Message{
+         "Movie", p.Message{
             p.Tag{2, p.BytesType}, p.LengthPrefix{
                p.Tag{2, p.VarintType}, p.Varint(4),
             },
@@ -87,19 +92,19 @@ var params = map[string][]param{
    },
    "DURATION": {
       {
-         "Under 4 minutes", "EgIYAQ==", p.Message{
+         "Under 4 minutes", p.Message{
             p.Tag{2, p.BytesType}, p.LengthPrefix{
                p.Tag{3, p.VarintType}, p.Varint(1),
             },
          },
       }, {
-         "Over 20 minutes", "EgIYAg==", p.Message{
+         "Over 20 minutes", p.Message{
             p.Tag{2, p.BytesType}, p.LengthPrefix{
                p.Tag{3, p.VarintType}, p.Varint(2),
             },
          },
       }, {
-         "4 - 20 minutes", "EgIYAw==", p.Message{
+         "4 - 20 minutes", p.Message{
             p.Tag{2, p.BytesType}, p.LengthPrefix{
                p.Tag{3, p.VarintType}, p.Varint(3),
             },
@@ -108,46 +113,70 @@ var params = map[string][]param{
    },
    "FEATURES": {
       {
-         "360°", "EgJ4AQ==", nil,
+         "HD", p.Message{
+            p.Tag{2, p.BytesType}, p.LengthPrefix{
+               p.Tag{4, p.VarintType}, p.Varint(1),
+            },
+         },
       }, {
-         "3D", "EgI4AQ==", nil,
+         "Subtitles/CC", p.Message{
+            p.Tag{2, p.BytesType}, p.LengthPrefix{
+               p.Tag{5, p.VarintType}, p.Varint(1),
+            },
+         },
       }, {
-         "4K", "EgJwAQ==", nil,
+         "Creative Commons", p.Message{
+            p.Tag{2, p.BytesType}, p.LengthPrefix{
+               p.Tag{6, p.VarintType}, p.Varint(1),
+            },
+         },
       }, {
-         "Creative Commons", "EgIwAQ==", nil,
+         "3D", p.Message{
+            p.Tag{2, p.BytesType}, p.LengthPrefix{
+               p.Tag{7, p.VarintType}, p.Varint(1),
+            },
+         },
       }, {
-         "HD", "EgIgAQ==", nil,
+         "Live", p.Message{
+            p.Tag{2, p.BytesType}, p.LengthPrefix{
+               p.Tag{8, p.VarintType}, p.Varint(1),
+            },
+         },
       }, {
-         "HDR", "EgPIAQE=", nil,
+         "4K", p.Message{
+            p.Tag{2, p.BytesType}, p.LengthPrefix{
+               p.Tag{14, p.VarintType}, p.Varint(1),
+            },
+         },
       }, {
-         "Live", "EgJAAQ==", nil,
+         "360°", p.Message{
+            p.Tag{2, p.BytesType}, p.LengthPrefix{
+               p.Tag{15, p.VarintType}, p.Varint(1),
+            },
+         },
       }, {
-         "Location", "EgO4AQE=", nil,
+         "Location", p.Message{
+            p.Tag{2, p.BytesType}, p.LengthPrefix{
+               p.Tag{23, p.VarintType}, p.Varint(1),
+            },
+         },
       }, {
-         "Subtitles/CC", "EgIoAQ==", nil,
+         "HDR", p.Message{
+            p.Tag{2, p.BytesType}, p.LengthPrefix{
+               p.Tag{25, p.VarintType}, p.Varint(1),
+            },
+         },
       }, {
-         "VR180", "EgPQAQE=", nil,
+         "VR180", p.Message{
+            p.Tag{2, p.BytesType}, p.LengthPrefix{
+               p.Tag{26, p.VarintType}, p.Varint(1),
+            },
+         },
       },
    },
-}
-
-func decode(param string) (p.Message, error) {
-   b, err := base64.StdEncoding.DecodeString(param)
-   if err != nil {
-      return nil, err
-   }
-   var m p.Message
-   m.UnmarshalAbductive(b, nil)
-   return m, nil
 }
 
 func encode(m p.Message) string {
    return "youtube.com/results?search_query=autechre&sp=" +
    base64.StdEncoding.EncodeToString(m.Marshal())
-}
-
-type param struct {
-   human string
-   encode string
-   decode p.Message
 }
