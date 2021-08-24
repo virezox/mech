@@ -6,6 +6,58 @@ import (
 )
 
 var params = map[string][]param{
+   "SORT BY": {
+      {
+         "Relevance", "CAA=", p.Message{
+            p.Tag{1, p.VarintType}, p.Varint(0),
+         },
+      }, {
+         "Rating", "CAE=", p.Message{
+            p.Tag{1, p.VarintType}, p.Varint(1),
+         },
+      }, {
+         "Upload date", "CAI=", p.Message{
+            p.Tag{1, p.VarintType}, p.Varint(2),
+         },
+      }, {
+         "View count", "CAM=", p.Message{
+            p.Tag{1, p.VarintType}, p.Varint(3),
+         },
+      },
+   },
+   "UPLOAD DATE": {
+      {
+         "Last hour", "EgIIAQ==", p.Message{
+            p.Tag{2, p.BytesType}, p.LengthPrefix{
+               p.Tag{1, p.VarintType}, p.Varint(1),
+            },
+         },
+      }, {
+         "Today", "EgIIAg==", p.Message{
+            p.Tag{2, p.BytesType}, p.LengthPrefix{
+               p.Tag{1, p.VarintType}, p.Varint(2),
+            },
+         },
+      }, {
+         "This week", "EgIIAw==", p.Message{
+            p.Tag{2, p.BytesType}, p.LengthPrefix{
+               p.Tag{1, p.VarintType}, p.Varint(3),
+            },
+         },
+      }, {
+         "This month", "EgIIBA==", p.Message{
+            p.Tag{2, p.BytesType}, p.LengthPrefix{
+               p.Tag{1, p.VarintType}, p.Varint(4),
+            },
+         },
+      }, {
+         "This year", "EgIIBQ==", p.Message{
+            p.Tag{2, p.BytesType}, p.LengthPrefix{
+               p.Tag{1, p.VarintType}, p.Varint(5),
+            },
+         },
+      },
+   },
    "TYPE": {
       {
          "Video", "EgIQAQ==", p.Message{
@@ -54,30 +106,28 @@ var params = map[string][]param{
          },
       },
    },
-   "UPLOAD DATE": {
-      {"Last hour", "EgIIAQ==", nil},
-      {"Today", "EgQIAhAB", nil},
-      {"This week", "EgQIAxAB", nil},
-      {"This month", "EgQIBBAB", nil},
-      {"This year", "EgQIBRAB", nil},
-   },
    "FEATURES": {
-      {"360°", "EgJ4AQ==", nil},
-      {"3D", "EgI4AQ==", nil},
-      {"4K", "EgJwAQ==", nil},
-      {"Creative Commons", "EgIwAQ==", nil},
-      {"HD", "EgIgAQ==", nil},
-      {"HDR", "EgPIAQE=", nil},
-      {"Live", "EgJAAQ==", nil},
-      {"Location", "EgO4AQE=", nil},
-      {"Subtitles/CC", "EgIoAQ==", nil},
-      {"VR180", "EgPQAQE=", nil},
-   },
-   "SORT BY": {
-      {"Relevance", "CAASAhAB", nil},
-      {"Upload date", "CAISAhAB", nil},
-      {"View count", "CAMSAhAB", nil},
-      {"Rating", "CAESAhAB", nil},
+      {
+         "360°", "EgJ4AQ==", nil,
+      }, {
+         "3D", "EgI4AQ==", nil,
+      }, {
+         "4K", "EgJwAQ==", nil,
+      }, {
+         "Creative Commons", "EgIwAQ==", nil,
+      }, {
+         "HD", "EgIgAQ==", nil,
+      }, {
+         "HDR", "EgPIAQE=", nil,
+      }, {
+         "Live", "EgJAAQ==", nil,
+      }, {
+         "Location", "EgO4AQE=", nil,
+      }, {
+         "Subtitles/CC", "EgIoAQ==", nil,
+      }, {
+         "VR180", "EgPQAQE=", nil,
+      },
    },
 }
 
