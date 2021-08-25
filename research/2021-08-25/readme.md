@@ -1,4 +1,4 @@
-# August 24 2021
+# August 25 2021
 
 YouTube API for comments?
 
@@ -9,7 +9,3 @@ So we can search for a comment that identifies the end song.
 ~~~
 The unbiased journalism we need
 ~~~
-
-## clients
-
-Check different clients
