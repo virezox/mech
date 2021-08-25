@@ -154,10 +154,26 @@ type LengthPrefix = protopack.LengthPrefix
 
 type Message protopack.Message
 
+func Continuation(videoID string) Message {
+   return Message{
+      Tag{2, BytesType}, LengthPrefix{
+         Tag{2, BytesType}, String(videoID),
+      },
+      Tag{3, VarintType}, Varint(6),
+      Tag{6, BytesType}, LengthPrefix{
+         Tag{4, BytesType}, LengthPrefix{
+            Tag{4, BytesType}, String(videoID),
+         },
+      },
+   }
+}
+
 func (m Message) Encode() string {
    b := protopack.Message(m).Marshal()
    return base64.StdEncoding.EncodeToString(b)
 }
+
+type String = protopack.String
 
 type Tag = protopack.Tag
 
