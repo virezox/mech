@@ -23,7 +23,6 @@ client  | MeJVWBSsPAY
 Android | pass
 Embed   | fail
 Mweb    | fail
-TV      | fail
 
 Need Embed:
 
@@ -32,7 +31,6 @@ client  | QWlNyzzwgcc
 Android | fail
 Embed   | pass
 Mweb    | fail
-TV      | fail
 
 Need Mweb:
 
@@ -41,7 +39,6 @@ client  | aN76CmldknI publishDate
 Android | fail
 Embed   | fail
 Mweb    | pass
-TV      | fail
 
 ## Cover art
 

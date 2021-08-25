@@ -1,4 +1,4 @@
-package next
+package main
 
 import (
    "bytes"
@@ -8,6 +8,7 @@ import (
    "net/http"
    "net/http/httputil"
    "os"
+   "time"
 )
 
 type youTubeI struct {
@@ -18,22 +19,8 @@ type youTubeI struct {
 }
 
 var clients = []struct{name, version string}{
-   {"ANDROID", "16.07.34"},
-   {"ANDROID_CREATOR", "21.06.103"},
-   {"ANDROID_EMBEDDED_PLAYER", "16.20"},
-   {"ANDROID_KIDS", "6.02.3"},
-   {"ANDROID_MUSIC", "4.32"},
    {"IOS", "16.05.7"},
-   {"IOS_CREATOR", "20.47.100"},
-   {"IOS_KIDS", "5.42.2"},
-   {"IOS_MUSIC", "4.16.1"},
-   {"MWEB", "2.19700101"},
-   {"TVHTML5", "7.20210224.00.00"},
    {"WEB", "2.20210223.09.00"},
-   {"WEB_CREATOR", "1.20210223.01.00"},
-   {"WEB_EMBEDDED_PLAYER", "1.20210620.0.1"},
-   {"WEB_KIDS", "2.1.3"},
-   {"WEB_REMIX", "0.1"},
 }
 
 func main() {
@@ -70,6 +57,7 @@ func main() {
       }
       defer f.Close()
       f.ReadFrom(res.Body)
+      time.Sleep(100 * time.Millisecond)
    }
 }
 
