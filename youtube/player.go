@@ -147,6 +147,7 @@ type youTubeI struct {
       Client Client `json:"client"`
       ThirdParty *thirdParty `json:"thirdParty,omitempty"`
    } `json:"context"`
+   Continuation string `json:"continuation,omitempty"`
    Params string `json:"params,omitempty"`
    Query string `json:"query,omitempty"`
    RacyCheckOK bool `json:"racyCheckOk,omitempty"`

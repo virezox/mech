@@ -2,12 +2,7 @@ package youtube
 
 import (
    "encoding/base64"
-   "google.golang.org/protobuf/testing/protopack"
-)
-
-const (
-   BytesType = protopack.BytesType
-   VarintType = protopack.VarintType
+   . "google.golang.org/protobuf/testing/protopack"
 )
 
 var Params = map[string]map[string]Message{
@@ -150,10 +145,6 @@ var Params = map[string]map[string]Message{
    },
 }
 
-type LengthPrefix = protopack.LengthPrefix
-
-type Message protopack.Message
-
 func Continuation(videoID string) Message {
    return Message{
       Tag{2, BytesType}, LengthPrefix{
@@ -168,13 +159,7 @@ func Continuation(videoID string) Message {
    }
 }
 
-func (m Message) Encode() string {
-   b := protopack.Message(m).Marshal()
+func ProtoEncode(m Message) string {
+   b := m.Marshal()
    return base64.StdEncoding.EncodeToString(b)
 }
-
-type String = protopack.String
-
-type Tag = protopack.Tag
-
-type Varint = protopack.Varint

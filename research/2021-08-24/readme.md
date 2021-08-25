@@ -1,9 +1,5 @@
 # August 24 2021
 
-~~~
-commentThreadRenderer commentRenderer
-~~~
-
 YouTube API for comments?
 
 https://www.youtube.com/watch?v=q5UnT4Ik6KU
