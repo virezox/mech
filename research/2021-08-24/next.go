@@ -1,4 +1,4 @@
-package main
+package next
 
 import (
    "bytes"
@@ -38,7 +38,7 @@ var clients = []struct{name, version string}{
 
 func main() {
    var i youTubeI
-   i.Continuation = youtube.ProtoEncode(youtube.Continuation("q5UnT4Ik6KU"))
+   i.Continuation = youtube.Continuation("q5UnT4Ik6KU").Encode()
    buf := new(bytes.Buffer)
    for _, client := range clients {
       i.Context.Client.Name = client.name
@@ -80,7 +80,11 @@ type next struct {
             CommentThreadRenderer struct {
                Comment struct {
                   CommentRenderer struct {
-                     ContentText youtube.Text
+                     ContentText struct {
+                        Runs []struct {
+                           Text string
+                        }
+                     }
                   }
                }
             }

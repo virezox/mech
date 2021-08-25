@@ -1,4 +1,4 @@
-package main
+package variance
 
 func distance(x, y int, v []float64, data [][]float64) float64 {
    var sum float64

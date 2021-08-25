@@ -6,55 +6,55 @@ import (
 )
 
 var (
-   WebP = PictureFormat{0, "vi_webp", "webp"}
-   JPG = PictureFormat{1, "vi", "jpg"}
+   webP = pictureFormat{0, "vi_webp", "webp"}
+   jpg = pictureFormat{1, "vi", "jpg"}
 )
 
 var Pictures = PictureSlice{
-   {120, 90, 68, "default", JPG},
-   {120, 90, 90, "1", JPG},
-   {120, 90, 90, "2", JPG},
-   {120, 90, 90, "3", JPG},
-   {120, 90, 68, "default", WebP},
-   {120, 90, 90, "1", WebP},
-   {120, 90, 90, "2", WebP},
-   {120, 90, 90, "3", WebP},
-   {320, 180, 180, "mqdefault", JPG},
-   {320, 180, 320, "mq1", JPG},
-   {320, 180, 320, "mq2", JPG},
-   {320, 180, 320, "mq3", JPG},
-   {320, 180, 180, "mqdefault", WebP},
-   {320, 180, 320, "mq1", WebP},
-   {320, 180, 320, "mq2", WebP},
-   {320, 180, 320, "mq3", WebP},
-   {480, 360, 270, "0", JPG},
-   {480, 360, 270, "hqdefault", JPG},
-   {480, 360, 360, "hq1", JPG},
-   {480, 360, 360, "hq2", JPG},
-   {480, 360, 360, "hq3", JPG},
-   {480, 360, 270, "0", WebP},
-   {480, 360, 270, "hqdefault", WebP},
-   {480, 360, 360, "hq1", WebP},
-   {480, 360, 360, "hq2", WebP},
-   {480, 360, 360, "hq3", WebP},
-   {640, 480, 360, "sddefault", JPG},
-   {640, 480, 480, "sd1", JPG},
-   {640, 480, 480, "sd2", JPG},
-   {640, 480, 480, "sd3", JPG},
-   {640, 480, 360, "sddefault", WebP},
-   {640, 480, 480, "sd1", WebP},
-   {640, 480, 480, "sd2", WebP},
-   {640, 480, 480, "sd3", WebP},
-   {1280, 720, 720, "hq720", JPG},
-   {1280, 720, 720, "maxres1", JPG},
-   {1280, 720, 720, "maxres2", JPG},
-   {1280, 720, 720, "maxres3", JPG},
-   {1280, 720, 720, "maxresdefault", JPG},
-   {1280, 720, 720, "hq720", WebP},
-   {1280, 720, 720, "maxres1", WebP},
-   {1280, 720, 720, "maxres2", WebP},
-   {1280, 720, 720, "maxres3", WebP},
-   {1280, 720, 720, "maxresdefault", WebP},
+   {120, 90, 68, "default", jpg},
+   {120, 90, 90, "1", jpg},
+   {120, 90, 90, "2", jpg},
+   {120, 90, 90, "3", jpg},
+   {120, 90, 68, "default", webP},
+   {120, 90, 90, "1", webP},
+   {120, 90, 90, "2", webP},
+   {120, 90, 90, "3", webP},
+   {320, 180, 180, "mqdefault", jpg},
+   {320, 180, 320, "mq1", jpg},
+   {320, 180, 320, "mq2", jpg},
+   {320, 180, 320, "mq3", jpg},
+   {320, 180, 180, "mqdefault", webP},
+   {320, 180, 320, "mq1", webP},
+   {320, 180, 320, "mq2", webP},
+   {320, 180, 320, "mq3", webP},
+   {480, 360, 270, "0", jpg},
+   {480, 360, 270, "hqdefault", jpg},
+   {480, 360, 360, "hq1", jpg},
+   {480, 360, 360, "hq2", jpg},
+   {480, 360, 360, "hq3", jpg},
+   {480, 360, 270, "0", webP},
+   {480, 360, 270, "hqdefault", webP},
+   {480, 360, 360, "hq1", webP},
+   {480, 360, 360, "hq2", webP},
+   {480, 360, 360, "hq3", webP},
+   {640, 480, 360, "sddefault", jpg},
+   {640, 480, 480, "sd1", jpg},
+   {640, 480, 480, "sd2", jpg},
+   {640, 480, 480, "sd3", jpg},
+   {640, 480, 360, "sddefault", webP},
+   {640, 480, 480, "sd1", webP},
+   {640, 480, 480, "sd2", webP},
+   {640, 480, 480, "sd3", webP},
+   {1280, 720, 720, "hq720", jpg},
+   {1280, 720, 720, "maxres1", jpg},
+   {1280, 720, 720, "maxres2", jpg},
+   {1280, 720, 720, "maxres3", jpg},
+   {1280, 720, 720, "maxresdefault", jpg},
+   {1280, 720, 720, "hq720", webP},
+   {1280, 720, 720, "maxres1", webP},
+   {1280, 720, 720, "maxres2", webP},
+   {1280, 720, 720, "maxres3", webP},
+   {1280, 720, 720, "maxresdefault", webP},
 }
 
 type Picture struct {
@@ -62,7 +62,7 @@ type Picture struct {
    Height int
    SubHeight int
    Base string
-   Format PictureFormat
+   Format pictureFormat
 }
 
 func (p Picture) Address(id string) string {
@@ -71,7 +71,7 @@ func (p Picture) Address(id string) string {
    )
 }
 
-type PictureFormat struct {
+type pictureFormat struct {
    Size int
    Dir string
    Ext string

@@ -1,4 +1,3 @@
-// YouTube
 package youtube
 
 import (
