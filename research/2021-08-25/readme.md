@@ -1,9 +1,12 @@
 # August 25 2021
 
 ~~~
-enums.Client.WEB_KIDS,
-enums.GoogleClient.YOUTUBE_PEGASUS_WEB,
+"X-Goog-Device-Auth"
 ~~~
+
+- https://gist.github.com/leptos-null/5ae739d2a561f5d1910fd9af3bb8a945
+- https://gist.github.com/tombulled/d313c54a0681fcf0ba6d8092f11411e6
+- https://github.com/socialAPIS/YoutubeDownloader
 
 ## done
 
@@ -13,6 +16,8 @@ TVHTML5 7
 WEB 1
 WEB_CREATOR 76
 WEB_EMBEDDED_PLAYER 56
+WEB_KIDS 67
+WEB_REMIX 62
 ~~~
 
 ## todo
@@ -27,9 +32,6 @@ IOS 5
 IOS_CREATOR 15
 IOS_KIDS 19
 IOS_MUSIC 26
-WEB_KIDS 67
-WEB_REMIX 62
 ~~~
 
-- https://github.com/tombulled/innertube/blob/main/innertube/enums.py
-- https://github.com/tombulled/innertube/blob/main/innertube/infos.py
+https://github.com/tombulled/innertube/blob/main/innertube/enums.py
