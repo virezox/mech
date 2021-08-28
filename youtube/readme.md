@@ -108,6 +108,5 @@ References:
 - https://github.com/Tyrrrz/YoutubeExplode/issues
 - https://github.com/iawia002/annie/issues
 - https://github.com/kkdai/youtube/issues
-- https://github.com/pytube/pytube/issues
 - https://github.com/yt-dlp/yt-dlp/issues
 - https://github.com/ytdl-org/youtube-dl/issues
