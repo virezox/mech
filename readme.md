@@ -25,8 +25,8 @@ https://godocs.io/github.com/89z/mech
 ## Sites
 
 1. YouTube
-2. Vimeo
-3. SoundCloud
+2. SoundCloud
+3. Vimeo
 4. MusicBrainz
 
 ## Deezer
