@@ -13,7 +13,7 @@ func encode(value interface{}) (string, error) {
    return base64.StdEncoding.EncodeToString(b), nil
 }
 
-func pUint32(v uint32) *uint32 {
+func pUint(v uint) *uint {
    return &v
 }
 
@@ -21,7 +21,7 @@ type Continuation struct {
    A struct {
       VideoID string `plenc:"2"`
    } `plenc:"2"`
-   B uint32 `plenc:"3"`
+   B uint `plenc:"3"`
    C struct {
       A struct {
          VideoID string `plenc:"4"`
@@ -42,22 +42,22 @@ func (c Continuation) Encode() (string, error) {
 }
 
 type Param struct {
-   SortBy *uint32 `plenc:"1"`
+   SortBy *uint `plenc:"1"`
    Filter struct {
-      UploadDate *uint32 `plenc:"1"`
-      Type *uint32 `plenc:"2"`
-      Duration *uint32 `plenc:"3"`
-      HD *uint32 `plenc:"4"`
-      Subtitles *uint32 `plenc:"5"`
-      CreativeCommons *uint32 `plenc:"6"`
-      ThreeD *uint32 `plenc:"7"`
-      Live *uint32 `plenc:"8"`
-      Purchased *uint32 `plenc:"9"`
-      FourK *uint32 `plenc:"14"`
-      ThreeSixty *uint32 `plenc:"15"`
-      Location *uint32 `plenc:"23"`
-      HDR *uint32 `plenc:"25"`
-      VR180 *uint32 `plenc:"26"`
+      UploadDate *uint `plenc:"1"`
+      Type *uint `plenc:"2"`
+      Duration *uint `plenc:"3"`
+      HD *uint `plenc:"4"`
+      Subtitles *uint `plenc:"5"`
+      CreativeCommons *uint `plenc:"6"`
+      ThreeD *uint `plenc:"7"`
+      Live *uint `plenc:"8"`
+      Purchased *uint `plenc:"9"`
+      FourK *uint `plenc:"14"`
+      ThreeSixty *uint `plenc:"15"`
+      Location *uint `plenc:"23"`
+      HDR *uint `plenc:"25"`
+      VR180 *uint `plenc:"26"`
    } `plenc:"2"`
 }
 
@@ -67,135 +67,135 @@ func (p Param) Encode() (string, error) {
 
 // 1
 func (p *Param) Relevance() {
-   p.SortBy = pUint32(0)
+   p.SortBy = pUint(0)
 }
 
 // 1
 func (p *Param) Rating() {
-   p.SortBy = pUint32(1)
+   p.SortBy = pUint(1)
 }
 
 // 1
 func (p *Param) UploadDate() {
-   p.SortBy = pUint32(2)
+   p.SortBy = pUint(2)
 }
 
 // 1
 func (p *Param) ViewCount() {
-   p.SortBy = pUint32(3)
+   p.SortBy = pUint(3)
 }
 
 // 2 1
 func (p *Param) LastHour() {
-   p.Filter.UploadDate = pUint32(1)
+   p.Filter.UploadDate = pUint(1)
 }
 
 // 2 1
 func (p *Param) Today() {
-   p.Filter.UploadDate = pUint32(2)
+   p.Filter.UploadDate = pUint(2)
 }
 
 // 2 1
 func (p *Param) ThisWeek() {
-   p.Filter.UploadDate = pUint32(3)
+   p.Filter.UploadDate = pUint(3)
 }
 
 // 2 1
 func (p *Param) ThisMonth() {
-   p.Filter.UploadDate = pUint32(4)
+   p.Filter.UploadDate = pUint(4)
 }
 
 // 2 1
 func (p *Param) ThisYear() {
-   p.Filter.UploadDate = pUint32(5)
+   p.Filter.UploadDate = pUint(5)
 }
 
 // 2 2
 func (p *Param) Video() {
-   p.Filter.Type = pUint32(1)
+   p.Filter.Type = pUint(1)
 }
 
 // 2 2
 func (p *Param) Channel() {
-   p.Filter.Type = pUint32(2)
+   p.Filter.Type = pUint(2)
 }
 
 // 2 2
 func (p *Param) Playlist() {
-   p.Filter.Type = pUint32(3)
+   p.Filter.Type = pUint(3)
 }
 
 // 2 2
 func (p *Param) Movie() {
-   p.Filter.Type = pUint32(4)
+   p.Filter.Type = pUint(4)
 }
 
 // 2 3
 func (p *Param) UnderFourMinutes() {
-   p.Filter.Duration = pUint32(1)
+   p.Filter.Duration = pUint(1)
 }
 
 // 2 3
 func (p *Param) OverTwentyMinutes() {
-   p.Filter.Duration = pUint32(2)
+   p.Filter.Duration = pUint(2)
 }
 
 // 2 3
 func (p *Param) FourToTwentyMinutes() {
-   p.Filter.Duration = pUint32(3)
+   p.Filter.Duration = pUint(3)
 }
 
 // 2 4
 func (p *Param) HD() {
-   p.Filter.HD = pUint32(1)
+   p.Filter.HD = pUint(1)
 }
 
 // 2 5
 func (p *Param) Subtitles() {
-   p.Filter.Subtitles = pUint32(1)
+   p.Filter.Subtitles = pUint(1)
 }
 
 // 2 6
 func (p *Param) CreativeCommons() {
-   p.Filter.CreativeCommons = pUint32(1)
+   p.Filter.CreativeCommons = pUint(1)
 }
 
 // 2 7
 func (p *Param) ThreeD() {
-   p.Filter.ThreeD = pUint32(1)
+   p.Filter.ThreeD = pUint(1)
 }
 
 // 2 8
 func (p *Param) Live() {
-   p.Filter.Live = pUint32(1)
+   p.Filter.Live = pUint(1)
 }
 
 // 2 9
 func (p *Param) Purchased() {
-   p.Filter.Purchased = pUint32(1)
+   p.Filter.Purchased = pUint(1)
 }
 
 // 2 14
 func (p *Param) FourK() {
-   p.Filter.FourK = pUint32(1)
+   p.Filter.FourK = pUint(1)
 }
 
 // 2 15
 func (p *Param) ThreeSixty() {
-   p.Filter.ThreeSixty = pUint32(1)
+   p.Filter.ThreeSixty = pUint(1)
 }
 
 // 2 23
 func (p *Param) Location() {
-   p.Filter.Location = pUint32(1)
+   p.Filter.Location = pUint(1)
 }
 
 // 2 25
 func (p *Param) HDR() {
-   p.Filter.HDR = pUint32(1)
+   p.Filter.HDR = pUint(1)
 }
 
 // 2 26
 func (p *Param) VR180() {
-   p.Filter.VR180 = pUint32(1)
+   p.Filter.VR180 = pUint(1)
 }

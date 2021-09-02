@@ -1,12 +1,8 @@
-package youtube_test
-
-import (
-   "github.com/89z/mech/youtube"
-   "testing"
-)
+package youtube
+import "testing"
 
 func TestContinue(t *testing.T) {
-   s, err := youtube.NewContinuation("q5UnT4Ik6KU").Encode()
+   s, err := NewContinuation("q5UnT4Ik6KU").Encode()
    if err != nil {
       t.Fatal(err)
    }
@@ -15,14 +11,31 @@ func TestContinue(t *testing.T) {
    }
 }
 
+type test struct {
+   name string
+   fn func(*Param)
+   want string
+}
+
+var tests = []test{
+   {"Channel", (*Param).Channel, "EgIQAg=="},
+   {"FourK", (*Param).FourK, "EgJwAQ=="},
+   {"FourToTwentyMinutes", (*Param).FourToTwentyMinutes, "EgIYAw=="},
+   {"Today", (*Param).Today, "EgIIAg=="},
+   {"UploadDate", (*Param).UploadDate, "CAISAA=="},
+   {"Video", (*Param).Video, "EgIQAQ=="},
+}
+
 func TestParam(t *testing.T) {
-   var p youtube.Param
-   p.Video()
-   s, err := p.Encode()
-   if err != nil {
-      t.Fatal(err)
-   }
-   if s != "EgIQAQ==" {
-      t.Fatal(s)
+   for _, each := range tests {
+      var p Param
+      each.fn(&p)
+      s, err := p.Encode()
+      if err != nil {
+         t.Fatal(err)
+      }
+      if s != each.want {
+         t.Fatal(s)
+      }
    }
 }
