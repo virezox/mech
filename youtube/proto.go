@@ -2,177 +2,200 @@ package youtube
 
 import (
    "encoding/base64"
-   "google.golang.org/protobuf/testing/protopack"
+   "github.com/philpearl/plenc"
 )
 
-const (
-   bytesType = protopack.BytesType
-   varintType = protopack.VarintType
-)
-
-var Params = map[string]map[string]Message{
-   "SORT BY": {
-      "Relevance": {
-         tag{1, varintType}, varint(0),
-      },
-      "Rating": {
-         tag{1, varintType}, varint(1),
-      },
-      "Upload date": {
-         tag{1, varintType}, varint(2),
-      },
-      "View count": {
-         tag{1, varintType}, varint(3),
-      },
-   },
-   "UPLOAD DATE": {
-      "Last hour": {
-         tag{2, bytesType}, lengthPrefix{
-            tag{1, varintType}, varint(1),
-         },
-      },
-      "Today": {
-         tag{2, bytesType}, lengthPrefix{
-            tag{1, varintType}, varint(2),
-         },
-      },
-      "This week": {
-         tag{2, bytesType}, lengthPrefix{
-            tag{1, varintType}, varint(3),
-         },
-      },
-      "This month": {
-         tag{2, bytesType}, lengthPrefix{
-            tag{1, varintType}, varint(4),
-         },
-      },
-      "This year": {
-         tag{2, bytesType}, lengthPrefix{
-            tag{1, varintType}, varint(5),
-         },
-      },
-   },
-   "TYPE": {
-      "Video": {
-         tag{2, bytesType}, lengthPrefix{
-            tag{2, varintType}, varint(1),
-         },
-      },
-      "Channel": {
-         tag{2, bytesType}, lengthPrefix{
-            tag{2, varintType}, varint(2),
-         },
-      },
-      "Playlist": {
-         tag{2, bytesType}, lengthPrefix{
-            tag{2, varintType}, varint(3),
-         },
-      },
-      "Movie": {
-         tag{2, bytesType}, lengthPrefix{
-            tag{2, varintType}, varint(4),
-         },
-      },
-   },
-   "DURATION": {
-      "Under 4 minutes": {
-         tag{2, bytesType}, lengthPrefix{
-            tag{3, varintType}, varint(1),
-         },
-      },
-      "Over 20 minutes": {
-         tag{2, bytesType}, lengthPrefix{
-            tag{3, varintType}, varint(2),
-         },
-      },
-      "4 - 20 minutes": {
-         tag{2, bytesType}, lengthPrefix{
-            tag{3, varintType}, varint(3),
-         },
-      },
-   },
-   "FEATURES": {
-      "HD": {
-         tag{2, bytesType}, lengthPrefix{
-            tag{4, varintType}, varint(1),
-         },
-      },
-      "Subtitles/CC": {
-         tag{2, bytesType}, lengthPrefix{
-            tag{5, varintType}, varint(1),
-         },
-      },
-      "Creative Commons": {
-         tag{2, bytesType}, lengthPrefix{
-            tag{6, varintType}, varint(1),
-         },
-      },
-      "3D": {
-         tag{2, bytesType}, lengthPrefix{
-            tag{7, varintType}, varint(1),
-         },
-      },
-      "Live": {
-         tag{2, bytesType}, lengthPrefix{
-            tag{8, varintType}, varint(1),
-         },
-      },
-      "Purchased": {
-         tag{2, bytesType}, lengthPrefix{
-            tag{9, varintType}, varint(1),
-         },
-      },
-      "4K": {
-         tag{2, bytesType}, lengthPrefix{
-            tag{14, varintType}, varint(1),
-         },
-      },
-      "360°": {
-         tag{2, bytesType}, lengthPrefix{
-            tag{15, varintType}, varint(1),
-         },
-      },
-      "Location": {
-         tag{2, bytesType}, lengthPrefix{
-            tag{23, varintType}, varint(1),
-         },
-      },
-      "HDR": {
-         tag{2, bytesType}, lengthPrefix{
-            tag{25, varintType}, varint(1),
-         },
-      },
-      "VR180": {
-         tag{2, bytesType}, lengthPrefix{
-            tag{26, varintType}, varint(1),
-         },
-      },
-   },
-}
-
-type lengthPrefix = protopack.LengthPrefix
-
-type Message protopack.Message
-
-func Continuation(videoID string) Message {
-   return Message{
-      tag{2, bytesType}, lengthPrefix{
-         tag{2, bytesType}, protopack.String(videoID),
-      },
-      tag{3, varintType}, varint(6),
-      tag{6, bytesType}, lengthPrefix{
-         tag{4, bytesType}, lengthPrefix{
-            tag{4, bytesType}, protopack.String(videoID),
-         },
-      },
+func encode(value interface{}) (string, error) {
+   b, err := plenc.Marshal(nil, value)
+   if err != nil {
+      return "", err
    }
+   return base64.StdEncoding.EncodeToString(b), nil
 }
 
-func (m Message) Encode() string {
-   b := protopack.Message(m).Marshal()
-   return base64.StdEncoding.EncodeToString(b)
+func pUint32(v uint32) *uint32 {
+   return &v
 }
 
-type tag = protopack.Tag
+type Continuation struct {
+   A struct {
+      VideoID string `plenc:"2"`
+   } `plenc:"2"`
+   B uint32 `plenc:"3"`
+   C struct {
+      A struct {
+         VideoID string `plenc:"4"`
+      } `plenc:"4"`
+   } `plenc:"6"`
+}
 
-type varint = protopack.Varint
+func NewContinuation(videoID string) Continuation {
+   var con Continuation
+   con.A.VideoID = videoID
+   con.B = 6
+   con.C.A.VideoID = videoID
+   return con
+}
+
+func (c Continuation) Encode() (string, error) {
+   return encode(c)
+}
+
+type Param struct {
+   SortBy *uint32 `plenc:"1"`
+   Filter struct {
+      UploadDate *uint32 `plenc:"1"`
+      Type *uint32 `plenc:"2"`
+      Duration *uint32 `plenc:"3"`
+      HD *uint32 `plenc:"4"`
+      Subtitles *uint32 `plenc:"5"`
+      CreativeCommons *uint32 `plenc:"6"`
+      ThreeD *uint32 `plenc:"7"`
+      Live *uint32 `plenc:"8"`
+      Purchased *uint32 `plenc:"9"`
+      FourK *uint32 `plenc:"14"`
+      ThreeSixty *uint32 `plenc:"15"`
+      Location *uint32 `plenc:"23"`
+      HDR *uint32 `plenc:"25"`
+      VR180 *uint32 `plenc:"26"`
+   } `plenc:"2"`
+}
+
+func (p Param) Encode() (string, error) {
+   return encode(p)
+}
+
+// 1
+func (p *Param) Relevance() {
+   p.SortBy = pUint32(0)
+}
+
+// 1
+func (p *Param) Rating() {
+   p.SortBy = pUint32(1)
+}
+
+// 1
+func (p *Param) UploadDate() {
+   p.SortBy = pUint32(2)
+}
+
+// 1
+func (p *Param) ViewCount() {
+   p.SortBy = pUint32(3)
+}
+
+// 2 1
+func (p *Param) LastHour() {
+   p.Filter.UploadDate = pUint32(1)
+}
+
+// 2 1
+func (p *Param) Today() {
+   p.Filter.UploadDate = pUint32(2)
+}
+
+// 2 1
+func (p *Param) ThisWeek() {
+   p.Filter.UploadDate = pUint32(3)
+}
+
+// 2 1
+func (p *Param) ThisMonth() {
+   p.Filter.UploadDate = pUint32(4)
+}
+
+// 2 1
+func (p *Param) ThisYear() {
+   p.Filter.UploadDate = pUint32(5)
+}
+
+// 2 2
+func (p *Param) Video() {
+   p.Filter.Type = pUint32(1)
+}
+
+// 2 2
+func (p *Param) Channel() {
+   p.Filter.Type = pUint32(2)
+}
+
+// 2 2
+func (p *Param) Playlist() {
+   p.Filter.Type = pUint32(3)
+}
+
+// 2 2
+func (p *Param) Movie() {
+   p.Filter.Type = pUint32(4)
+}
+
+// 2 3
+func (p *Param) UnderFourMinutes() {
+   p.Filter.Duration = pUint32(1)
+}
+
+// 2 3
+func (p *Param) OverTwentyMinutes() {
+   p.Filter.Duration = pUint32(2)
+}
+
+// 2 3
+func (p *Param) FourToTwentyMinutes() {
+   p.Filter.Duration = pUint32(3)
+}
+
+// 2 4
+func (p *Param) HD() {
+   p.Filter.HD = pUint32(1)
+}
+
+// 2 5
+func (p *Param) Subtitles() {
+   p.Filter.Subtitles = pUint32(1)
+}
+
+// 2 6
+func (p *Param) CreativeCommons() {
+   p.Filter.CreativeCommons = pUint32(1)
+}
+
+// 2 7
+func (p *Param) ThreeD() {
+   p.Filter.ThreeD = pUint32(1)
+}
+
+// 2 8
+func (p *Param) Live() {
+   p.Filter.Live = pUint32(1)
+}
+
+// 2 9
+func (p *Param) Purchased() {
+   p.Filter.Purchased = pUint32(1)
+}
+
+// 2 14
+func (p *Param) FourK() {
+   p.Filter.FourK = pUint32(1)
+}
+
+// 2 15
+func (p *Param) ThreeSixty() {
+   p.Filter.ThreeSixty = pUint32(1)
+}
+
+// 2 23
+func (p *Param) Location() {
+   p.Filter.Location = pUint32(1)
+}
+
+// 2 25
+func (p *Param) HDR() {
+   p.Filter.HDR = pUint32(1)
+}
+
+// 2 26
+func (p *Param) VR180() {
+   p.Filter.VR180 = pUint32(1)
+}
