@@ -1,4 +1,4 @@
-package proto
+package youtube
 
 import (
    "encoding/base64"
