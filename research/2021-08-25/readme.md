@@ -2,8 +2,7 @@
 
 We can get the current Android version number here:
 
-- https://apkpure.com/youtube/com.google.android.youtube
-- https://play.google.com/store/apps/details?id=com.google.android.youtube
+https://apkpure.com/youtube/com.google.android.youtube
 
 do we really need Android?
 
