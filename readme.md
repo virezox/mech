@@ -24,10 +24,11 @@ https://godocs.io/github.com/89z/mech
 
 ## Sites
 
-1. YouTube
-2. SoundCloud
-3. Vimeo
-4. MusicBrainz
+- Google Play
+- MusicBrainz
+- SoundCloud
+- Vimeo
+- YouTube
 
 ## Deezer
 

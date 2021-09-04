@@ -15,12 +15,12 @@ func TestRead(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   a := ac2dm{q}
-   o, err := a.oauth2()
+   a := Ac2dm{q}
+   o, err := a.OAuth2()
    if err != nil {
       t.Fatal(err)
    }
-   b, err := o.details("38B5418D8683ADBB")
+   b, err := o.Details("38B5418D8683ADBB", "com.google.android.youtube")
    if err != nil {
       t.Fatal(err)
    }
@@ -28,7 +28,7 @@ func TestRead(t *testing.T) {
 }
 
 func TestWrite(t *testing.T) {
-   a, err := newAc2dm("oauth2_4/0AX4XfWg_wCzC2clsA3NJxGiVetvJcSA7kxw3k6ucbt-1j0Zex0WrVkzWFx2CM858fvhlEQ")
+   a, err := NewAc2dm("oauth2_4/0AX4XfWg_wCzC2clsA3NJxGiVetvJcSA7kxw3k6ucbt-1j0Zex0WrVkzWFx2CM858fvhlEQ")
    if err != nil {
       t.Fatal(err)
    }

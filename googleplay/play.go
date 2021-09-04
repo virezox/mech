@@ -25,7 +25,7 @@ type Ac2dm struct {
    url.Values
 }
 
-// 1. exchange embedded token (oauth2_4) for refresh token (aas_et)
+// Exchange embedded token (oauth2_4) for refresh token (aas_et).
 // accounts.google.com/EmbeddedSetup
 func NewAc2dm(token string) (*Ac2dm, error) {
    req, err := http.NewRequest(
@@ -54,7 +54,7 @@ func NewAc2dm(token string) (*Ac2dm, error) {
    }, nil
 }
 
-// 2. exchange refresh token (aas_et) for access token (Auth)
+// Exchange refresh token (aas_et) for access token (Auth).
 func (a Ac2dm) OAuth2() (*OAuth2, error) {
    req, err := http.NewRequest(
       "POST", "https://android.clients.google.com/auth", nil,
@@ -85,8 +85,8 @@ type OAuth2 struct {
    url.Values
 }
 
-// ID is Google Service Framework
-func (o OAuth2) Details(id string) ([]byte, error) {
+// device is Google Service Framework.
+func (o OAuth2) Details(device, app string) ([]byte, error) {
    req, err := http.NewRequest(
       "GET", "https://android.clients.google.com/fdfe/details", nil,
    )
@@ -94,10 +94,10 @@ func (o OAuth2) Details(id string) ([]byte, error) {
       return nil, err
    }
    q := req.URL.Query()
-   q.Set("doc", "com.google.android.youtube")
+   q.Set("doc", app)
    req.URL.RawQuery = q.Encode()
    req.Header.Set("Authorization", "Bearer " + o.Get("Auth"))
-   req.Header.Set("X-DFE-Device-Id", id)
+   req.Header.Set("X-DFE-Device-Id", device)
    b, err := httputil.DumpRequest(req, false)
    if err != nil {
       return nil, err
