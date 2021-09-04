@@ -10,6 +10,8 @@ import (
    "os"
 )
 
+const Origin = "https://android.clients.google.com"
+
 // text/plain encoding algorithm
 // html.spec.whatwg.org/multipage/form-control-infrastructure.html
 func ParseQuery(query []byte) url.Values {
@@ -28,9 +30,7 @@ type Ac2dm struct {
 // Exchange embedded token (oauth2_4) for refresh token (aas_et).
 // accounts.google.com/EmbeddedSetup
 func NewAc2dm(token string) (*Ac2dm, error) {
-   req, err := http.NewRequest(
-      "POST", "https://android.clients.google.com/auth", nil,
-   )
+   req, err := http.NewRequest("POST", Origin + "/auth", nil)
    if err != nil {
       return nil, err
    }
@@ -56,9 +56,7 @@ func NewAc2dm(token string) (*Ac2dm, error) {
 
 // Exchange refresh token (aas_et) for access token (Auth).
 func (a Ac2dm) OAuth2() (*OAuth2, error) {
-   req, err := http.NewRequest(
-      "POST", "https://android.clients.google.com/auth", nil,
-   )
+   req, err := http.NewRequest("POST", Origin + "/auth", nil)
    if err != nil {
       return nil, err
    }
@@ -87,9 +85,7 @@ type OAuth2 struct {
 
 // device is Google Service Framework.
 func (o OAuth2) Details(device, app string) ([]byte, error) {
-   req, err := http.NewRequest(
-      "GET", "https://android.clients.google.com/fdfe/details", nil,
-   )
+   req, err := http.NewRequest("GET", Origin + "/fdfe/details", nil)
    if err != nil {
       return nil, err
    }
