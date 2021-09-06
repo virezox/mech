@@ -8,7 +8,7 @@ https://golang.org/dl
 
 for example with Windows:
 
-https://golang.org/dl/go1.16.7.windows-amd64.zip
+https://golang.org/dl/go1.17.windows-amd64.zip
 
 and extract archive. Then download Mech:
 

@@ -25,7 +25,7 @@ var clients = []struct{name, version string}{
 
 func main() {
    var i youTubeI
-   i.Continuation = youtube.Continuation("q5UnT4Ik6KU").Encode()
+   //i.Continuation = youtube.Continuation("q5UnT4Ik6KU").Encode()
    buf := new(bytes.Buffer)
    for _, client := range clients {
       i.Context.Client.Name = client.name
