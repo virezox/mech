@@ -9,7 +9,6 @@ import (
    "net/http/httputil"
    "net/url"
    "os"
-   "play"
    "strings"
 )
 
@@ -43,7 +42,7 @@ func main() {
    }
    config := &tls.Config{ServerName: req.URL.Host}
    tlsConn := tls.UClient(tcpConn, config, tls.HelloCustom)
-   if err := tlsConn.ApplyPreset(play.Preset); err != nil {
+   if err := tlsConn.ApplyPreset(preset); err != nil {
       panic(err)
    }
    if err := req.Write(tlsConn); err != nil {

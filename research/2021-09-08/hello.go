@@ -1,4 +1,4 @@
-package play
+package main
 import "github.com/refraction-networking/utls"
 
 var ciphers = []uint16{
@@ -47,7 +47,7 @@ var ciphers = []uint16{
    tls.FAKE_TLS_EMPTY_RENEGOTIATION_INFO_SCSV,
 }
 
-var Preset = &tls.ClientHelloSpec{
+var preset = &tls.ClientHelloSpec{
    CipherSuites: ciphers,
    Extensions: []tls.TLSExtension{
       &tls.SNIExtension{}, // 0
@@ -58,7 +58,7 @@ var Preset = &tls.ClientHelloSpec{
          []tls.CurveID{
             tls.X25519, // 0x001D
             tls.CurveP256, // 0x0017
-            0x001E, // X448
+            0x001E, // Curve448
             tls.CurveP521, // 0x0019
             tls.CurveP384, // 0x0018
          },

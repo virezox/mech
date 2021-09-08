@@ -28,7 +28,7 @@ func TestRead(t *testing.T) {
 }
 
 func TestWrite(t *testing.T) {
-   a, err := NewAc2dm("oauth2_4/0AX4XfWg_wCzC2clsA3NJxGiVetvJcSA7kxw3k6ucbt-1j0Zex0WrVkzWFx2CM858fvhlEQ")
+   a, err := NewAc2dm("oauth2_4/0AX4XfWhSw5Vdq96VAC28j7ZEdoryJMWUbLibNDbgC9NsIk_3WHAqkDRi7PfwEa7kEDsDnw")
    if err != nil {
       t.Fatal(err)
    }
