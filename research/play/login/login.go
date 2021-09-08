@@ -9,6 +9,7 @@ import (
    "net/http/httputil"
    "net/url"
    "os"
+   "play"
    "strings"
 )
 
@@ -36,19 +37,19 @@ func main() {
       panic(err)
    }
    os.Stdout.Write(append(dReq, '\n'))
-   config := tls.Config{ServerName: req.URL.Host}
-   dialConn, err := net.Dial("tcp", req.URL.Host + ":" + req.URL.Scheme)
+   tcpConn, err := net.Dial("tcp", req.URL.Host + ":" + req.URL.Scheme)
    if err != nil {
       panic(err)
    }
-   uTlsConn := tls.UClient(dialConn, &config, tls.HelloCustom)
-   if err := uTlsConn.ApplyPreset(preset); err != nil {
+   config := &tls.Config{ServerName: req.URL.Host}
+   tlsConn := tls.UClient(tcpConn, config, tls.HelloCustom)
+   if err := tlsConn.ApplyPreset(play.Preset); err != nil {
       panic(err)
    }
-   if err := req.Write(uTlsConn); err != nil {
+   if err := req.Write(tlsConn); err != nil {
       panic(err)
    }
-   res, err := http.ReadResponse(bufio.NewReader(uTlsConn), req)
+   res, err := http.ReadResponse(bufio.NewReader(tlsConn), req)
    if err != nil {
       panic(err)
    }
