@@ -50,35 +50,35 @@ var ciphers = []uint16{
 var preset = &tls.ClientHelloSpec{
    CipherSuites: ciphers,
    Extensions: []tls.TLSExtension{
-      &tls.SNIExtension{}, // 0
-      &tls.SupportedPointsExtension{ // 11
+      &tls.SNIExtension{},
+      &tls.SupportedPointsExtension{
          SupportedPoints: []byte{0, 1, 2},
       },
-      &tls.SupportedCurvesExtension{ // 10
+      &tls.SupportedCurvesExtension{
          []tls.CurveID{
-            tls.X25519, // 0x001D
-            tls.CurveP256, // 0x0017
+            tls.X25519,
+            tls.CurveP256,
             0x001E, // Curve448
-            tls.CurveP521, // 0x0019
-            tls.CurveP384, // 0x0018
+            tls.CurveP521,
+            tls.CurveP384,
          },
       },
-      &tls.SessionTicketExtension{}, // 35
-      &tls.GenericExtension{Id:0x0016}, // 22
-      &tls.UtlsExtendedMasterSecretExtension{}, // 23
-      &tls.SignatureAlgorithmsExtension{ // 13
+      &tls.SessionTicketExtension{},
+      &tls.GenericExtension{Id:0x0016}, // encrypt_then_mac
+      &tls.UtlsExtendedMasterSecretExtension{},
+      &tls.SignatureAlgorithmsExtension{
          SupportedSignatureAlgorithms: []tls.SignatureScheme{
-            tls.ECDSAWithP256AndSHA256,// = 0x0403
-            tls.PKCS1WithSHA256,  //= 0x0401
+            tls.ECDSAWithP256AndSHA256,
+            tls.PKCS1WithSHA256,
          },
       },
-      &tls.SupportedVersionsExtension{ // 43
+      &tls.SupportedVersionsExtension{
          []uint16{tls.VersionTLS12},
       },
-      &tls.PSKKeyExchangeModesExtension{ // 45
+      &tls.PSKKeyExchangeModesExtension{
          []uint8{tls.PskModeDHE},
       },
-      &tls.KeyShareExtension{ // 51
+      &tls.KeyShareExtension{
          []tls.KeyShare{
             {Group: tls.X25519},
          },
