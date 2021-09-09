@@ -1,11 +1,11 @@
-package tls
+package iana
 
 import (
    "fmt"
    "testing"
 )
 
-var ciphers = []uint16{
+var ids = []uint16{
    0x1302, // 
    0x1303, // 
    0x1301, // 
@@ -52,11 +52,11 @@ var ciphers = []uint16{
 }
 
 func TestTLS(t *testing.T) {
-   m, err := newIana()
+   c, err := newCipherSuites()
    if err != nil {
       t.Fatal(err)
    }
-   for _, id := range ciphers {
-      fmt.Printf("0x%04X, // %v\n", id, m.get(id))
+   for _, id := range ids {
+      fmt.Printf("0x%04X, // %v\n", id, c.get(id))
    }
 }

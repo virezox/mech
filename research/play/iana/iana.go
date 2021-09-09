@@ -1,4 +1,4 @@
-package tls
+package iana
 
 import (
    "bufio"
@@ -10,9 +10,9 @@ import (
 const param =
    "https://www.iana.org/assignments/tls-parameters/tls-parameters.txt"
 
-type iana map[string]string
+type cipherSuites map[string]string
 
-func newIana() (*iana, error) {
+func newCipherSuites() (*cipherSuites, error) {
    fmt.Println("GET", param)
    r, err := http.Get(param)
    if err != nil {
@@ -20,7 +20,7 @@ func newIana() (*iana, error) {
    }
    defer r.Body.Close()
    s := bufio.NewScanner(r.Body)
-   m := make(iana)
+   m := make(cipherSuites)
    for s.Scan() {
       field := strings.Fields(s.Text())
       if len(field) >= 2 {
@@ -30,8 +30,8 @@ func newIana() (*iana, error) {
    return &m, nil
 }
 
-func (i iana) get(key uint16) string {
+func (c cipherSuites) get(key uint16) string {
    hi := byte(key >> 8)
    lo := byte(key)
-   return i[fmt.Sprintf("0x%02X,0x%02X", hi, lo)]
+   return c[fmt.Sprintf("0x%02X,0x%02X", hi, lo)]
 }
