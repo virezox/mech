@@ -1,4 +1,4 @@
-package play
+package main
 import "github.com/refraction-networking/utls"
 
 var cipherSuites = []uint16{
@@ -48,7 +48,7 @@ var cipherSuites = []uint16{
 }
 
 // iana.org/assignments/tls-extensiontype-values/tls-extensiontype-values.xhtml
-var Preset = &tls.ClientHelloSpec{
+var preset = &tls.ClientHelloSpec{
    CipherSuites: cipherSuites,
    Extensions: []tls.TLSExtension{
       &tls.SNIExtension{},
@@ -64,8 +64,8 @@ var Preset = &tls.ClientHelloSpec{
             tls.CurveP384,
          },
       },
-      &tls.GenericExtension{Id:35}, // session_ticket
-      &tls.GenericExtension{Id:22}, // encrypt_then_mac
+      &tls.GenericExtension{Id: 35}, // session_ticket
+      &tls.GenericExtension{Id: 22}, // encrypt_then_mac
       &tls.UtlsExtendedMasterSecretExtension{},
       &tls.SignatureAlgorithmsExtension{
          SupportedSignatureAlgorithms: []tls.SignatureScheme{
