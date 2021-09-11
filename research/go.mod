@@ -3,6 +3,7 @@ module research
 go 1.17
 
 require (
+	github.com/89z/ja3 v1.0.9
 	github.com/89z/mech v1.28.7
 	github.com/refraction-networking/utls v0.0.0-20210713165636-0b2885c8c0d4
 )
