@@ -6,6 +6,8 @@ import (
    "net/http"
 )
 
+var Verbose bool
+
 // vimeo.com/7350260
 // vimeo.com/66531465
 // vimeo.com/196937578
@@ -21,18 +23,24 @@ type Config struct {
    Request struct {
       Files struct {
          Progressive []struct {
+            Height int
             URL string
          }
       }
    }
    Video struct {
+      Owner struct {
+         Name string
+      }
       Title string
    }
 }
 
 func NewConfig(id string) (*Config, error) {
    addr := "https://player.vimeo.com/video/" + id + "/config"
-   fmt.Println("GET", addr)
+   if Verbose {
+      fmt.Println("GET", addr)
+   }
    res, err := http.Get(addr)
    if err != nil {
       return nil, err
@@ -53,7 +61,9 @@ type Video struct {
 
 func NewVideo(id string) (*Video, error) {
    addr := "https://vimeo.com/api/oembed.json?url=//vimeo.com/" + id
-   fmt.Println("GET", addr)
+   if Verbose {
+      fmt.Println("GET", addr)
+   }
    res, err := http.Get(addr)
    if err != nil {
       return nil, err
