@@ -1,9 +1,5 @@
 # GPS OAuth
 
-https://tlsfingerprint.io/find/cipher/ccaa
-
-## Python
-
 ~~~
 pip install pycryptodomex
 pip install requests
