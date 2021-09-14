@@ -1,4 +1,0 @@
-GET / HTTP/2
-Host: soundcloud.com
-User-Agent: iPad
-

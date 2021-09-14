@@ -9,7 +9,7 @@ import (
 const (
    Origin = "https://api-v2.soundcloud.com"
    Placeholder = "https://soundcloud.com/images/fb_placeholder.png"
-   clientID = "fSSdm5yTnDka1g0Fz1CO5Yx6z0NbeHAj"
+   clientID = "iZIs9mchVcX5lhVRyQGGAYlNPVldzAoX"
 )
 
 type Alternate struct {
