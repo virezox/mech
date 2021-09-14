@@ -72,6 +72,9 @@ func Resolve(addr string) (*Track, error) {
       return nil, err
    }
    defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return nil, fmt.Errorf("status %q", res.Status)
+   }
    trk := new(Track)
    if err := json.NewDecoder(res.Body).Decode(trk); err != nil {
       return nil, err
