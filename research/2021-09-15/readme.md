@@ -4,6 +4,25 @@
 
 This doesnt work, as it requires Captcha
 
+## `bandcamp.com/oauth_token`
+
+We can try this:
+
+~~~
+POST /oauth_token HTTP/1.1
+host: bandcamp.com
+
+client_id=134&
+client_secret=1myK12VeCL3dWl9o%2FncV2VyUUbOJuNPVJK6bZZJxHvk%3D&
+grant_type=client_credentials
+~~~
+
+Result:
+
+~~~
+Only third-party clients can use client_credentials
+~~~
+
 ## `bandcamp.com/oauth_login`
 
 This works:
@@ -25,22 +44,3 @@ We can get `x-bandcamp-dm` from Android, but its only good for three minutes. I
 found an implementation online, but it seems BandCamp has changed the algorithm:
 
 https://github.com/the-eater/camp-collective/issues/5
-
-## `bandcamp.com/oauth_token`
-
-We can try this:
-
-~~~
-POST /oauth_token HTTP/1.1
-host: bandcamp.com
-
-client_id=134&
-client_secret=1myK12VeCL3dWl9o%2FncV2VyUUbOJuNPVJK6bZZJxHvk%3D&
-grant_type=client_credentials
-~~~
-
-Result:
-
-~~~
-Only third-party clients can use client_credentials
-~~~
