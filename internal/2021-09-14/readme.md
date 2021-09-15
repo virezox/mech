@@ -2,10 +2,11 @@
 
 ## Bandcamp
 
-https://github.com/ytdl-org/youtube-dl/issues/29966
+~~~html
+<script type="application/ld+json">
+{"inAlbum":{"@id":"https://duststoredigital.com/album/silenced","name":"Silenc...
+</script>
+~~~
 
-## SoundCloud
-
-Amon Tobin - Easy Muffin, replace BackBlaze version with this:
-
-<https://soundcloud.com/sauuul/amon_tobin_easy_muffin-mp3>
+- https://duststoredigital.com/track/sudden-intake
+- https://github.com/ytdl-org/youtube-dl/issues/29966
