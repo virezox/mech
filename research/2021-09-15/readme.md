@@ -1,5 +1,10 @@
 # September 15 2021
 
+~~~
+bandcamp.com/api/mobile/24
+bandcamp.com/api/url/1/info
+~~~
+
 ## `bandcamp.com/login_cb`
 
 This doesnt work, as it requires Captcha

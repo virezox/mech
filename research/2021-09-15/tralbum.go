@@ -30,7 +30,7 @@ func track(band, track string) (*http.Response, error) {
    q := req.URL.Query()
    q.Set("band_id", band)
    q.Set("tralbum_type", "t")
-   q.Set("tralbum_id", "714939036")
+   q.Set("tralbum_id", track)
    req.URL.RawQuery = q.Encode()
    return new(http.Transport).RoundTrip(req)
 }
