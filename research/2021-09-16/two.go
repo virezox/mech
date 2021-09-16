@@ -1,65 +1,61 @@
 package bandcamp
 
-func dm(String p8, int p9) string {
-   char[] v8_1 = p8.toCharArray()
-   int v0 = v8_1.length
-   int v2 = 0
-   if ((p9 % 2) != 0) {
-      int v1_1 = 3
-      while ((v1_1 * v1_1) <= p9) {
-         if ((p9 % v1_1) != 0) {
-            v1_1 += 2
+func dm(sInput string, nInput int) string {
+   bInput := []byte(sInput)
+   if nInput % 2 != 0 {
+      v11 := 3
+      for v11 * v11 <= nInput {
+         if nInput % v11 != 0 {
+            v11 += 2
          } else {
-            int v1_0 = 0
+            int v10 = 0
          }
-         if (v1_0 != 0) {
-            p9++
+         if v10 != 0 {
+            nInput++
          }
       }
-      v1_0 = 1
+      v10 = 1
    }
-   int v1_3 = new boolean[(p9 + 1)]
-   v1_3[0] = 1
-   v1_3[1] = 1
-   int v4_1 = -1
-   int v5_0 = -1
+   int v13 = new boolean[nInput + 1]
+   v13[0] = 1
+   v13[1] = 1
+   int v41 = -1
+   int v50 = -1
    int v6 = 2
-   while (v6 <= p9) {
-      if (v1_3[v6] == 0) {
-         int v4_9 = (v6 + v6)
-         while (v4_9 <= p9) {
-            v1_3[v4_9] = 1
-            v4_9 += v6
+   for v6 <= nInput {
+      if v13[v6] == 0 {
+         int v49 = v6 + v6
+         for v49 <= nInput {
+            v13[v49] = 1
+            v49 += v6
          }
-         v4_1 = v5_0
-         v5_0 = v6
+         v41 = v50
+         v50 = v6
       }
       v6++
    }
-   String v9_1 = (10 - (v4_1 % 10))
-   int v1_4 = (26 - (v5_0 % 26))
-   while (v2 < v0) {
-      int v3_0
-      v3_0 = v8_1[v2]
-      if ((v3_0 < 97) || (v3_0 > 122)) {
-         if ((v3_0 < 65) || (v3_0 > 90)) {
-            if ((v3_0 >= 48) && (v3_0 <= 57)) {
-               v3_0 += v9_1
-               if (v3_0 > 57) {
-                  v3_0 -= 10
+   String v91 = 10 - (v41 % 10)
+   int v14 = 26 - (v50 % 26)
+   for v2 := 0; v2 < len(bInput); v2++ {
+      int v30 = bInput[v2]
+      if v30 < 97 || v30 > 122 {
+         if v30 < 65 || v30 > 90 {
+            if v30 >= 48 && v30 <= 57 {
+               v30 += v91
+               if v30 > 57 {
+                  v30 -= 10
                }
             }
          } else {
-            v3_0 += v1_4
-            if (v3_0 > 90) {
-               v3_0 -= 26
+            v30 += v14
+            if v30 > 90 {
+               v30 -= 26
             }
          }
       } else {
-         v3_0 += v1_4
+         v30 += v14
       }
-      v8_1[v2] = ((char) v3_0)
-      v2++
+      bInput[v2] = (char) v30
    }
-   return new String(v8_1)
+   return string(bInput)
 }
