@@ -1,23 +1,66 @@
 # September 16 2021
 
-https://github.com/porschuetz/dev-budzillus.shalomsalon.de/blob/master/wordpress/wp-content/plugins/wp-bandcamp/components/bandcampClient.php
+## /api/album
 
-## /api/album/1/info
+- <http://bandcamp.com/api/album/2/info?key=veidihundr&album_id=79940049>
+- <http://bandcamp.com/api/album/1/info?key=veidihundr&album_id=79940049>
 
-<http://bandcamp.com/api/album/1/info?key=thrjozkaskhjastaurrtygitylpt&album_id=79940049>
+## /api/band
 
-## /api/band/1/info
+- <http://bandcamp.com/api/band/3/info?key=veidihundr&band_id=2853020814>
+- <http://bandcamp.com/api/band/2/info?key=veidihundr&band_id=2853020814>
+- <http://bandcamp.com/api/band/1/info?key=veidihundr&band_url=duststoredigital.com>
+- <http://bandcamp.com/api/band/1/info?key=veidihundr&band_id=2853020814>
 
-- <http://bandcamp.com/api/band/1/info?key=thrjozkaskhjastaurrtygitylpt&band_id=2853020814>
-- <http://bandcamp.com/api/band/1/info?key=thrjozkaskhjastaurrtygitylpt&band_url=duststoredigital.com>
+## /api/mobile
 
-## /api/mobile/24/tralbum\_details
+- <http://bandcamp.com/api/mobile/24/tralbum_details?tralbum_type=t&band_id=2853020814&tralbum_id=714939036>
+- <http://bandcamp.com/api/mobile/23/tralbum_details?tralbum_type=t&band_id=2853020814&tralbum_id=714939036>
+- <http://bandcamp.com/api/mobile/22/tralbum_details?tralbum_type=t&band_id=2853020814&tralbum_id=714939036>
+- <http://bandcamp.com/api/mobile/21/tralbum_details?tralbum_type=t&band_id=2853020814&tralbum_id=714939036>
+- <http://bandcamp.com/api/mobile/20/tralbum_details?tralbum_type=t&band_id=2853020814&tralbum_id=714939036>
+- <http://bandcamp.com/api/mobile/18/tralbum_details?tralbum_type=t&band_id=2853020814&tralbum_id=714939036>
+- <http://bandcamp.com/api/mobile/17/tralbum_details?tralbum_type=t&band_id=2853020814&tralbum_id=714939036>
+- <http://bandcamp.com/api/mobile/16/tralbum_details?tralbum_type=t&band_id=2853020814&tralbum_id=714939036>
+- <http://bandcamp.com/api/mobile/15/tralbum_details?tralbum_type=t&band_id=2853020814&tralbum_id=714939036>
+- <http://bandcamp.com/api/mobile/14/tralbum_details?tralbum_type=t&band_id=2853020814&tralbum_id=714939036>
+- <http://bandcamp.com/api/mobile/13/tralbum_details?tralbum_type=t&band_id=2853020814&tralbum_id=714939036>
+- <http://bandcamp.com/api/mobile/12/tralbum_details?tralbum_type=t&band_id=2853020814&tralbum_id=714939036>
+- <http://bandcamp.com/api/mobile/11/tralbum_details?tralbum_type=t&band_id=2853020814&tralbum_id=714939036>
+- <http://bandcamp.com/api/mobile/10/tralbum_details?tralbum_type=t&band_id=2853020814&tralbum_id=714939036>
+- <http://bandcamp.com/api/mobile/9/tralbum_details?tralbum_type=t&band_id=2853020814&tralbum_id=714939036>
+- <http://bandcamp.com/api/mobile/8/tralbum_details?tralbum_type=t&band_id=2853020814&tralbum_id=714939036>
 
-<http://bandcamp.com/api/mobile/24/tralbum_details?tralbum_type=t&band_id=2853020814&tralbum_id=714939036>
+## /api/track
 
-## /api/url/1/info
 
-http://bandcamp.com/api/url/1/info?key=thrjozkaskhjastaurrtygitylpt&url=https://duststoredigital.com/track/trojan-horus-part-1
+- <http://bandcamp.com/api/track/3/info?key=veidihundr&track_id=714939036>
+- <http://bandcamp.com/api/track/1/info?key=veidihundr&track_id=714939036>
+
+## /api/url
+
+- http://bandcamp.com/api/url/2/info?key=veidihundr&url=duststoredigital.com
+- http://bandcamp.com/api/url/1/info?key=veidihundr&url=duststoredigital.com/track/sudden-intake
+- http://bandcamp.com/api/url/1/info?key=veidihundr&url=duststoredigital.com/album/silenced
+- http://bandcamp.com/api/url/1/info?key=veidihundr&url=duststoredigital.com
+
+## key
+
+pass:
+
+~~~
+thrjozkaskhjastaurrtygitylpt
+throtaudvinroftignmarkreina
+veidihundr
+~~~
+
+fail:
+
+~~~
+inganwbxhyy
+snaefellsjokull
+vatnajokull
+~~~
 
 ## /login\_cb
 
