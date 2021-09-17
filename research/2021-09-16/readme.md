@@ -1,7 +1,5 @@
 # September 16 2021
 
-<https://github.com/Virusmater/plugin.audio.kxmxpxtx.bandcamp/blob/master/resources/lib/bandcamp_api/bandcamp.py>
-
 ## /api/album
 
 - <http://bandcamp.com/api/album/2/info?key=veidihundr&album_id=79940049>
@@ -16,6 +14,7 @@
 
 ## /api/mobile
 
+- <http://bandcamp.com/api/mobile/24/band_details?band_id=2853020814>
 - <http://bandcamp.com/api/mobile/24/tralbum_details?tralbum_type=t&band_id=2853020814&tralbum_id=714939036>
 - <http://bandcamp.com/api/mobile/23/tralbum_details?tralbum_type=t&band_id=2853020814&tralbum_id=714939036>
 - <http://bandcamp.com/api/mobile/22/tralbum_details?tralbum_type=t&band_id=2853020814&tralbum_id=714939036>
