@@ -5,8 +5,11 @@ import (
    "testing"
 )
 
+const albumID = "79940049"
+
 func TestAlbum(t *testing.T) {
-   a, err := AlbumGet("79940049")
+   a := new(Album)
+   err := a.Get(albumID)
    if err != nil {
       t.Fatal(err)
    }

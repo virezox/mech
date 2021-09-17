@@ -13,23 +13,19 @@ type Album struct {
    URL string
 }
 
-func AlbumGet(id string) (*Album, error) {
+func (a *Album) Get(id string) error {
    req, err := http.NewRequest("GET", Origin + "/api/album/2/info", nil)
    if err != nil {
-      return nil, err
+      return err
    }
    q := req.URL.Query()
    q.Set("album_id", id)
    q.Set("key", key)
    req.URL.RawQuery = q.Encode()
-   alb := new(Album)
-   if err := roundTrip(req, alb); err != nil {
-      return nil, err
-   }
-   return alb, nil
+   return roundTrip(req, a)
 }
 
-func AlbumPost(id string) (*Album, error) {
+func (a *Album) Post(id string) error {
    val := url.Values{
       "album_id": {id}, "key": {key},
    }
@@ -37,11 +33,7 @@ func AlbumPost(id string) (*Album, error) {
       "POST", "/api/album/2/info", strings.NewReader(val.Encode()),
    )
    if err != nil {
-      return nil, err
+      return err
    }
-   alb := new(Album)
-   if err := roundTrip(req, alb); err != nil {
-      return nil, err
-   }
-   return alb, nil
+   return roundTrip(req, a)
 }
