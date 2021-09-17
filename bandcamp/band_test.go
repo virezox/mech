@@ -7,14 +7,14 @@ import (
 
 func TestBand(t *testing.T) {
    {
-      b, err := BandID("2853020814")
+      b, err := BandGet("2853020814")
       if err != nil {
          t.Fatal(err)
       }
       fmt.Printf("%+v\n", b)
    }
    {
-      b, err := BandURL("duststoredigital.com")
+      b, err := BandPost("2853020814")
       if err != nil {
          t.Fatal(err)
       }

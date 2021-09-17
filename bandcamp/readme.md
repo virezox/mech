@@ -1,5 +1,11 @@
 # Bandcamp
 
+https://stackoverflow.com/questions/65085046/how-do-i-pull-album-art
+
+## Band
+
+<http://bandcamp.com/api/band/3/discography?key=veidihundr&band_id=2853020814>
+
 ## Mobile
 
 ~~~
