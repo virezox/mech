@@ -15,20 +15,17 @@
 
 First get Android Studio:
 
-https://developer.android.com/studio#downloads
+<https://developer.android.com/studio#downloads>
 
 Click More Actions, AVD Manager, Create Virtual Device. Use the default device
 defintion, then click Next. Click "x86 Images" and download "Nougat API 25 x86
-Google APIs".
+Google APIs". Then Download HTTP Toolkit:
 
-Download HTTP Toolkit:
+<https://httptoolkit.tech>
 
-https://httptoolkit.tech
-
-Click Android device connected via ADB.
-
+Just extract, dont need to install. Click Android device connected via ADB.
 Then download APK:
 
-https://apkpure.com/bandcamp/com.bandcamp.android
+<https://apkpure.com/bandcamp/com.bandcamp.android>
 
 Drag APK to device home screen to install.
