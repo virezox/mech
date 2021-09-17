@@ -41,9 +41,9 @@ public class d implements java.util.Observer {
         return;
     }
 
-    private String a(byte[] p2)
+    private String a(byte[] body)
     {
-        return this.a(this.a(), p2);
+        return this.a(this.a(), body);
     }
 
     private byte[] a()
@@ -55,12 +55,12 @@ public class d implements java.util.Observer {
         return v0_0;
     }
 
-    public String a(byte[] p4, byte[] p5)
+    public String a(byte[] p4, byte[] body)
     {
-        if (p5 != null) {
-            byte[] v1_6 = new byte[(p4.length + p5.length)];
+        if (body != null) {
+            byte[] v1_6 = new byte[(p4.length + body.length)];
             System.arraycopy(p4, 0, v1_6, 0, p4.length);
-            System.arraycopy(p5, 0, v1_6, p4.length, p5.length);
+            System.arraycopy(body, 0, v1_6, p4.length, body.length);
             p4 = v1_6;
         }
         String v5_1 = this.d;
