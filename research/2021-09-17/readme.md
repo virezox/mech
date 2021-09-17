@@ -1,19 +1,5 @@
 # September 17 2021
 
-keys:
-
-~~~
-thrjozkaskhjastaurrtygitylpt
-throtaudvinroftignmarkreina
-ullrettkalladrhampa
-veidihundr
-~~~
-
-## Album
-
-- <http://bandcamp.com/api/album/2/info?key=veidihundr&album_id=79940049>
-- <http://bandcamp.com/api/album/1/info?key=veidihundr&album_id=79940049>
-
 ## Band
 
 - <http://bandcamp.com/api/band/3/info?key=veidihundr&band_id=2853020814>
