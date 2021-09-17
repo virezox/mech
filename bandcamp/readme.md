@@ -1,11 +1,4 @@
-# September 17 2021
-
-## Band
-
-- <http://bandcamp.com/api/band/3/info?key=veidihundr&band_id=2853020814>
-- <http://bandcamp.com/api/band/2/info?key=veidihundr&band_id=2853020814>
-- <http://bandcamp.com/api/band/1/info?key=veidihundr&band_url=duststoredigital.com>
-- <http://bandcamp.com/api/band/1/info?key=veidihundr&band_id=2853020814>
+# Bandcamp
 
 ## Mobile
 
