@@ -14,6 +14,13 @@
 
 ## /api/mobile
 
+~~~
+POST /api/mobile/22/band_details HTTP/1.1
+Host: bandcamp.com
+
+{"band_id":"1196681540"}
+~~~
+
 - <http://bandcamp.com/api/mobile/24/band_details?band_id=2853020814>
 - <http://bandcamp.com/api/mobile/24/tralbum_details?tralbum_type=t&band_id=2853020814&tralbum_id=714939036>
 - <http://bandcamp.com/api/mobile/23/tralbum_details?tralbum_type=t&band_id=2853020814&tralbum_id=714939036>
@@ -34,11 +41,17 @@
 
 ## /api/track
 
-
 - <http://bandcamp.com/api/track/3/info?key=veidihundr&track_id=714939036>
 - <http://bandcamp.com/api/track/1/info?key=veidihundr&track_id=714939036>
 
 ## /api/url
+
+~~~
+POST /api/url/2/info HTTP/1.1
+Host: bandcamp.com
+
+{"key":"veidihundr","url":"duststoredigital.com"}
+~~~
 
 - http://bandcamp.com/api/url/2/info?key=veidihundr&url=duststoredigital.com
 - http://bandcamp.com/api/url/1/info?key=veidihundr&url=duststoredigital.com/track/sudden-intake
