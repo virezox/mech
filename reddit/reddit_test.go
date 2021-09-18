@@ -13,10 +13,13 @@ func TestReddit(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   fmt.Printf("%+v\n", p)
-   media, err := p.MPD()
+   t3, err := p.T3()
    if err != nil {
       t.Fatal(err)
    }
-   fmt.Printf("%+v\n", media)
+   m, err := t3.MPD()
+   if err != nil {
+      t.Fatal(err)
+   }
+   fmt.Printf("%+v\n", m)
 }

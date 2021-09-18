@@ -27,6 +27,7 @@ https://godocs.io/github.com/89z/mech
 - Bandcamp
 - Google Play
 - MusicBrainz
+- Reddit
 - SoundCloud
 - Vimeo
 - YouTube

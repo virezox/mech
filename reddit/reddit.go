@@ -15,6 +15,7 @@ type MPD struct {
       AdaptationSet []struct {
          Representation []struct {
             BaseURL string
+            Height int `xml:"height,attr"`
          }
       }
    }
@@ -22,17 +23,21 @@ type MPD struct {
 
 type Post []struct {
    Data struct {
-      Children []struct {
-         Data struct {
-            Media *struct {
-               Reddit_Video struct {
-                  DASH_URL string
-               }
-            }
-            URL string
+      Children []json.RawMessage
+   }
+}
+
+func (p Post) T3() (*T3, error) {
+   for _, list := range p {
+      for _, child := range list.Data.Children {
+         t3 := new(T3)
+         if err := json.Unmarshal(child, t3); err != nil {
+            return nil, err
          }
+         return t3, nil
       }
    }
+   return nil, fmt.Errorf("post length %v", len(p))
 }
 
 func NewPost(id string) (*Post, error) {
@@ -61,8 +66,20 @@ func NewPost(id string) (*Post, error) {
    return pos, nil
 }
 
-func (p Post) MPD() (*MPD, error) {
-   addr := p.dashURL()
+
+type T3 struct {
+   Data struct {
+      Media struct {
+         Reddit_Video struct {
+            DASH_URL string
+         }
+      }
+      URL string
+   }
+}
+
+func (t T3) MPD() (*MPD, error) {
+   addr := html.UnescapeString(t.Data.Media.Reddit_Video.DASH_URL)
    if Verbose {
       fmt.Println("GET", addr)
    }
@@ -76,13 +93,4 @@ func (p Post) MPD() (*MPD, error) {
       return nil, err
    }
    return media, nil
-}
-
-func (p Post) dashURL() string {
-   for _, list := range p {
-      for _, c := range list.Data.Children {
-         return html.UnescapeString(c.Data.Media.Reddit_Video.DASH_URL)
-      }
-   }
-   return ""
 }
