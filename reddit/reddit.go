@@ -10,6 +10,14 @@ import (
 
 var Verbose bool
 
+// redd.it/pql06n
+func ValidID(id string) error {
+   if len(id) == 6 {
+      return nil
+   }
+   return fmt.Errorf("%q invalid as ID", id)
+}
+
 type MPD struct {
    Period struct {
       AdaptationSet []struct {
@@ -25,19 +33,6 @@ type Post []struct {
    Data struct {
       Children []json.RawMessage
    }
-}
-
-func (p Post) T3() (*T3, error) {
-   for _, list := range p {
-      for _, child := range list.Data.Children {
-         t3 := new(T3)
-         if err := json.Unmarshal(child, t3); err != nil {
-            return nil, err
-         }
-         return t3, nil
-      }
-   }
-   return nil, fmt.Errorf("post length %v", len(p))
 }
 
 func NewPost(id string) (*Post, error) {
@@ -66,6 +61,18 @@ func NewPost(id string) (*Post, error) {
    return pos, nil
 }
 
+func (p Post) T3() (*T3, error) {
+   for _, list := range p {
+      for _, child := range list.Data.Children {
+         t3 := new(T3)
+         if err := json.Unmarshal(child, t3); err != nil {
+            return nil, err
+         }
+         return t3, nil
+      }
+   }
+   return nil, fmt.Errorf("post length %v", len(p))
+}
 
 type T3 struct {
    Data struct {
@@ -74,6 +81,8 @@ type T3 struct {
             DASH_URL string
          }
       }
+      Subreddit string
+      Title string
       URL string
    }
 }
