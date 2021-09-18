@@ -1,6 +1,8 @@
 package bandcamp
 
 import (
+   "bytes"
+   "encoding/json"
    "net/http"
    "net/url"
    "strings"
@@ -26,14 +28,34 @@ func (a *Album) Get(id string) error {
 }
 
 func (a *Album) Post(id string) error {
+   ar := albumRequest{
+      json.Number(id), key,
+   }
+   buf := new(bytes.Buffer)
+   if err := json.NewEncoder(buf).Encode(ar); err != nil {
+      return err
+   }
+   req, err := http.NewRequest("POST", Origin + "/api/album/2/info", buf)
+   if err != nil {
+      return err
+   }
+   return roundTrip(req, a)
+}
+
+func (a *Album) PostForm(id string) error {
    val := url.Values{
       "album_id": {id}, "key": {key},
    }
    req, err := http.NewRequest(
-      "POST", "/api/album/2/info", strings.NewReader(val.Encode()),
+      "POST", Origin + "/api/album/2/info", strings.NewReader(val.Encode()),
    )
    if err != nil {
       return err
    }
    return roundTrip(req, a)
+}
+
+type albumRequest struct {
+   Album_ID json.Number `json:"album_id"`
+   Key string `json:"key"`
 }

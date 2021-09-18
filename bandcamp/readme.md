@@ -2,10 +2,6 @@
 
 https://stackoverflow.com/questions/65085046/how-do-i-pull-album-art
 
-## Band
-
-<http://bandcamp.com/api/band/3/discography?key=veidihundr&band_id=2853020814>
-
 ## Mobile
 
 ~~~
@@ -39,13 +35,6 @@ Host: bandcamp.com
 - <http://bandcamp.com/api/track/1/info?key=veidihundr&track_id=714939036>
 
 ## URL
-
-~~~
-POST /api/url/2/info HTTP/1.1
-Host: bandcamp.com
-
-{"key":"veidihundr","url":"duststoredigital.com"}
-~~~
 
 - http://bandcamp.com/api/url/2/info?key=veidihundr&url=duststoredigital.com
 - http://bandcamp.com/api/url/1/info?key=veidihundr&url=duststoredigital.com/track/sudden-intake
