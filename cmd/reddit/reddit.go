@@ -10,8 +10,8 @@ import (
    "strings"
 )
 
-func download(t3 *reddit.T3, base, typ string) error {
-   addr := t3.URL + "/" + base
+func download(link *reddit.Link, base, typ string) error {
+   addr := link.URL + "/" + base
    fmt.Println("GET", addr)
    res, err := http.Get(addr)
    if err != nil {
@@ -22,7 +22,7 @@ func download(t3 *reddit.T3, base, typ string) error {
    if err != nil {
       return err
    }
-   name := t3.Subreddit + "-" + t3.Title + ext
+   name := link.Subreddit + "-" + link.Title + ext
    file, err := os.Create(strings.Map(mech.Clean, name))
    if err != nil {
       return err
@@ -57,11 +57,11 @@ func main() {
    if err != nil {
       panic(err)
    }
-   t3, err := post.T3()
+   link, err := post.Link()
    if err != nil {
       panic(err)
    }
-   mpd, err := t3.MPD()
+   mpd, err := link.MPD()
    if err != nil {
       panic(err)
    }
@@ -70,7 +70,7 @@ func main() {
          if info {
             fmt.Printf("%+v\n", rep)
          } else if rep.Height == 0 || rep.Height == height {
-            err := download(t3, rep.BaseURL, ada.MimeType)
+            err := download(link, rep.BaseURL, ada.MimeType)
             if err != nil {
                panic(err)
             }

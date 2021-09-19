@@ -8,11 +8,15 @@ import (
    "net/url"
 )
 
+const Origin = "https://api.reddit.com"
+
 var Verbose bool
 
+// redd.it/ppbsh
 // redd.it/pql06n
 func ValidID(id string) error {
-   if len(id) == 6 {
+   switch len(id) {
+   case 5, 6:
       return nil
    }
    return fmt.Errorf("%q invalid as ID", id)
@@ -26,13 +30,45 @@ type Adaptation struct {
    }
 }
 
+type Link struct {
+   Media struct {
+      Reddit_Video struct {
+         DASH_URL string
+      }
+   }
+   Subreddit string
+   Title string
+   URL string // https://v.redd.it/pjn0j2z4v6o71
+}
+
+func (l Link) MPD() (*MPD, error) {
+   addr, err := url.Parse(l.Media.Reddit_Video.DASH_URL)
+   if err != nil {
+      return nil, err
+   }
+   addr.RawQuery = ""
+   if Verbose {
+      fmt.Println("GET", addr)
+   }
+   r, err := http.Get(addr.String())
+   if err != nil {
+      return nil, err
+   }
+   defer r.Body.Close()
+   media := new(MPD)
+   if err := xml.NewDecoder(r.Body).Decode(media); err != nil {
+      return nil, err
+   }
+   return media, nil
+}
+
 type MPD struct {
    Period struct {
       AdaptationSet []Adaptation
    }
 }
 
-type Post []struct {
+type Post struct {
    Data struct {
       Children []struct {
          Kind string
@@ -42,9 +78,7 @@ type Post []struct {
 }
 
 func NewPost(id string) (*Post, error) {
-   req, err := http.NewRequest(
-      "GET", "https://www.reddit.com/comments/" + id + ".json", nil,
-   )
+   req, err := http.NewRequest("GET", Origin + "/by_id/t3_" + id, nil)
    if err != nil {
       return nil, err
    }
@@ -67,51 +101,15 @@ func NewPost(id string) (*Post, error) {
    return pos, nil
 }
 
-func (p Post) T3() (*T3, error) {
-   var kinds []string
-   for _, list := range p {
-      for _, child := range list.Data.Children {
-         if child.Kind == "t3" {
-            t3 := new(T3)
-            if err := json.Unmarshal(child.Data, t3); err != nil {
-               return nil, err
-            }
-            return t3, nil
+func (p Post) Link() (*Link, error) {
+   for _, child := range p.Data.Children {
+      if child.Kind == "t3" {
+         lin := new(Link)
+         if err := json.Unmarshal(child.Data, lin); err != nil {
+            return nil, err
          }
-         kinds = append(kinds, child.Kind)
+         return lin, nil
       }
    }
-   return nil, fmt.Errorf("kinds %v", kinds)
-}
-
-type T3 struct {
-   Media struct {
-      Reddit_Video struct {
-         DASH_URL string
-      }
-   }
-   Subreddit string
-   Title string
-   URL string // https://v.redd.it/pjn0j2z4v6o71
-}
-
-func (t T3) MPD() (*MPD, error) {
-   addr, err := url.Parse(t.Media.Reddit_Video.DASH_URL)
-   if err != nil {
-      return nil, err
-   }
-   addr.RawQuery = ""
-   if Verbose {
-      fmt.Println("GET", addr)
-   }
-   r, err := http.Get(addr.String())
-   if err != nil {
-      return nil, err
-   }
-   defer r.Body.Close()
-   media := new(MPD)
-   if err := xml.NewDecoder(r.Body).Decode(media); err != nil {
-      return nil, err
-   }
-   return media, nil
+   return nil, fmt.Errorf("children %v", p.Data.Children)
 }

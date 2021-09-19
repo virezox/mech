@@ -13,11 +13,11 @@ func TestReddit(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   t3, err := p.T3()
+   l, err := p.Link()
    if err != nil {
       t.Fatal(err)
    }
-   m, err := t3.MPD()
+   m, err := l.MPD()
    if err != nil {
       t.Fatal(err)
    }
