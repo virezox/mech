@@ -3,12 +3,36 @@ package main
 import (
    "flag"
    "fmt"
+   "github.com/89z/mech"
    "github.com/89z/mech/reddit"
+   "net/http"
    "os"
    "strings"
-   //"net/http"
-   //"path"
 )
+
+func download(t3 *reddit.T3, base, typ string) error {
+   addr := t3.URL + "/" + base
+   fmt.Println("GET", addr)
+   res, err := http.Get(addr)
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   ext, err := mech.Ext(typ)
+   if err != nil {
+      return err
+   }
+   name := t3.Subreddit + "-" + t3.Title + ext
+   file, err := os.Create(strings.Map(mech.Clean, name))
+   if err != nil {
+      return err
+   }
+   defer file.Close()
+   if _, err := file.ReadFrom(res.Body); err != nil {
+      return err
+   }
+   return nil
+}
 
 func main() {
    var (
@@ -41,54 +65,16 @@ func main() {
    if err != nil {
       panic(err)
    }
-   // info
-   if info {
-      fmt.Println(t3.Data.URL)
-      for _, set := range mpd.Period.AdaptationSet {
-         for _, rep := range set.Representation {
+   for _, ada := range mpd.Period.AdaptationSet {
+      for _, rep := range ada.Representation {
+         if info {
             fmt.Printf("%+v\n", rep)
-         }
-      }
-      return
-   }
-   for _, set := range mpd.Period.AdaptationSet {
-      for _, rep := range set.Representation {
-         if rep.Height == 0 || rep.Height == height {
-            /*
-            err := download(cfg, f.URL)
+         } else if rep.Height == 0 || rep.Height == height {
+            err := download(t3, rep.BaseURL, ada.MimeType)
             if err != nil {
                panic(err)
             }
-            */
          }
       }
    }
-}
-
-/*
-func download(cfg *reddit.Config, addr string) error {
-   fmt.Println("GET", addr)
-   res, err := http.Get(addr)
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   name := cfg.Video.Owner.Name + "-" + cfg.Video.Title + path.Ext(addr)
-   file, err := os.Create(strings.Map(clean, name))
-   if err != nil {
-      return err
-   }
-   defer file.Close()
-   if _, err := file.ReadFrom(res.Body); err != nil {
-      return err
-   }
-   return nil
-}
-*/
-
-func clean(r rune) rune {
-   if strings.ContainsRune(`"*/:<>?\|`, r) {
-      return -1
-   }
-   return r
 }

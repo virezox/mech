@@ -3,6 +3,7 @@ package main
 import (
    "flag"
    "fmt"
+   "github.com/89z/mech"
    "github.com/89z/mech/youtube"
    "os"
    "strings"
@@ -119,13 +120,6 @@ func numberFormat(d int64, a ...string) string {
    return fmt.Sprintf("%.1f", e) + a[f]
 }
 
-func clean(r rune) rune {
-   if strings.ContainsRune(`"*/:<>?\|`, r) {
-      return -1
-   }
-   return r
-}
-
 func getInfo(id string) error {
    p, err := youtube.NewPlayer(id, youtube.Key, youtube.Mweb)
    if err != nil {
@@ -149,8 +143,12 @@ func getInfo(id string) error {
 }
 
 func download(p *youtube.Player, f youtube.Format) error {
-   name := p.Author() + "-" + p.Title() + f.Ext()
-   file, err := os.Create(strings.Map(clean, name))
+   ext, err := mech.Ext(f.MimeType)
+   if err != nil {
+      return err
+   }
+   name := p.Author() + "-" + p.Title() + ext
+   file, err := os.Create(strings.Map(mech.Clean, name))
    if err != nil {
       return err
    }
