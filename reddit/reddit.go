@@ -4,8 +4,8 @@ import (
    "encoding/json"
    "encoding/xml"
    "fmt"
-   "html"
    "net/http"
+   "net/url"
 )
 
 var Verbose bool
@@ -96,11 +96,15 @@ type T3 struct {
 }
 
 func (t T3) MPD() (*MPD, error) {
-   addr := html.UnescapeString(t.Media.Reddit_Video.DASH_URL)
+   addr, err := url.Parse(t.Media.Reddit_Video.DASH_URL)
+   if err != nil {
+      return nil, err
+   }
+   addr.RawQuery = ""
    if Verbose {
       fmt.Println("GET", addr)
    }
-   r, err := http.Get(addr)
+   r, err := http.Get(addr.String())
    if err != nil {
       return nil, err
    }
