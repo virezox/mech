@@ -11,7 +11,7 @@ func TestNetrc(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   req, err := http.NewRequest("HEAD", "https://api.github.com/rate_limit", nil)
+   req, err := http.NewRequest("GET", "https://api.github.com/rate_limit", nil)
    if err != nil {
       t.Fatal(err)
    }
