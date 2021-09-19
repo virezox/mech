@@ -18,20 +18,26 @@ func ValidID(id string) error {
    return fmt.Errorf("%q invalid as ID", id)
 }
 
+type Adaptation struct {
+   MimeType string `xml:"mimeType,attr"`
+   Representation []struct {
+      BaseURL string
+      Height int `xml:"height,attr"`
+   }
+}
+
 type MPD struct {
    Period struct {
-      AdaptationSet []struct {
-         Representation []struct {
-            BaseURL string
-            Height int `xml:"height,attr"`
-         }
-      }
+      AdaptationSet []Adaptation
    }
 }
 
 type Post []struct {
    Data struct {
-      Children []json.RawMessage
+      Children []struct {
+         Kind string
+         Data json.RawMessage
+      }
    }
 }
 
@@ -62,33 +68,35 @@ func NewPost(id string) (*Post, error) {
 }
 
 func (p Post) T3() (*T3, error) {
+   var kinds []string
    for _, list := range p {
       for _, child := range list.Data.Children {
-         t3 := new(T3)
-         if err := json.Unmarshal(child, t3); err != nil {
-            return nil, err
+         if child.Kind == "t3" {
+            t3 := new(T3)
+            if err := json.Unmarshal(child.Data, t3); err != nil {
+               return nil, err
+            }
+            return t3, nil
          }
-         return t3, nil
+         kinds = append(kinds, child.Kind)
       }
    }
-   return nil, fmt.Errorf("post length %v", len(p))
+   return nil, fmt.Errorf("kinds %v", kinds)
 }
 
 type T3 struct {
-   Data struct {
-      Media struct {
-         Reddit_Video struct {
-            DASH_URL string
-         }
+   Media struct {
+      Reddit_Video struct {
+         DASH_URL string
       }
-      Subreddit string
-      Title string
-      URL string
    }
+   Subreddit string
+   Title string
+   URL string // https://v.redd.it/pjn0j2z4v6o71
 }
 
 func (t T3) MPD() (*MPD, error) {
-   addr := html.UnescapeString(t.Data.Media.Reddit_Video.DASH_URL)
+   addr := html.UnescapeString(t.Media.Reddit_Video.DASH_URL)
    if Verbose {
       fmt.Println("GET", addr)
    }

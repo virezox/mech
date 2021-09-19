@@ -3,6 +3,7 @@ package main
 import (
    "flag"
    "fmt"
+   "github.com/89z/mech"
    "github.com/89z/mech/vimeo"
    "net/http"
    "os"
@@ -51,13 +52,6 @@ func main() {
    }
 }
 
-func clean(r rune) rune {
-   if strings.ContainsRune(`"*/:<>?\|`, r) {
-      return -1
-   }
-   return r
-}
-
 func download(cfg *vimeo.Config, addr string) error {
    fmt.Println("GET", addr)
    res, err := http.Get(addr)
@@ -66,7 +60,7 @@ func download(cfg *vimeo.Config, addr string) error {
    }
    defer res.Body.Close()
    name := cfg.Video.Owner.Name + "-" + cfg.Video.Title + path.Ext(addr)
-   file, err := os.Create(strings.Map(clean, name))
+   file, err := os.Create(strings.Map(mech.Clean, name))
    if err != nil {
       return err
    }
