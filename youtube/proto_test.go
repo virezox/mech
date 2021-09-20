@@ -1,16 +1,6 @@
 package youtube
 import "testing"
 
-func TestContinue(t *testing.T) {
-   s, err := NewContinuation("q5UnT4Ik6KU").Encode()
-   if err != nil {
-      t.Fatal(err)
-   }
-   if s != "Eg0SC3E1VW5UNElrNktVGAYyDyINIgtxNVVuVDRJazZLVQ==" {
-      t.Fatal(s)
-   }
-}
-
 type test struct {
    name string
    fn func(*Param)

@@ -11,10 +11,7 @@ import (
 
 const origin = "https://www.youtube.com"
 
-var (
-   Key = Auth{"X-Goog-Api-Key", "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8"}
-   Verbose = false
-)
+var Verbose bool
 
 var (
    Android = Client{Name: "ANDROID", Version: "16.05"}
@@ -22,12 +19,47 @@ var (
    Mweb = Client{Name: "MWEB", Version: "2.19700101"}
 )
 
+// youtube.com/watch?v=hi8ryzFqrAE
 func ValidID(id string) error {
    if len(id) == 11 {
       return nil
    }
    return fmt.Errorf("%q invalid as ID", id)
 }
+
+type Client struct {
+   Name string `json:"clientName"`
+   Screen string `json:"clientScreen,omitempty"`
+   Version string `json:"clientVersion"`
+}
+
+type Player struct {
+   Microformat struct {
+      PlayerMicroformatRenderer struct {
+         AvailableCountries []string
+         PublishDate string
+      }
+   }
+   PlayabilityStatus struct {
+      Reason string
+      Status string
+   }
+   StreamingData struct {
+      AdaptiveFormats FormatSlice
+      // just including this so I can bail if video is Dash Manifest
+      DashManifestURL string
+   }
+   VideoDetails struct {
+      Author string
+      ShortDescription string
+      Title string
+      ViewCount float64 `json:"viewCount,string"`
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+var Key = Auth{"X-Goog-Api-Key", "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8"}
 
 func post(url string, head Auth, body youTubeI) (*http.Response, error) {
    buf := new(bytes.Buffer)
@@ -61,41 +93,10 @@ type Auth struct {
    Value string
 }
 
-type Client struct {
-   Name string `json:"clientName"`
-   Screen string `json:"clientScreen,omitempty"`
-   Version string `json:"clientVersion"`
-}
-
-type Player struct {
-   Microformat struct {
-      PlayerMicroformatRenderer struct {
-         AvailableCountries []string
-         PublishDate string
-      }
-   }
-   PlayabilityStatus struct {
-      Reason string
-      Status string
-   }
-   StreamingData struct {
-      AdaptiveFormats FormatSlice
-      // just including this so I can bail if video is Dash Manifest
-      DashManifestURL string
-   }
-   VideoDetails struct {
-      Author string
-      ShortDescription string
-      Title string
-      ViewCount int `json:"viewCount,string"`
-   }
-}
-
 func NewPlayer(id string, head Auth, body Client) (*Player, error) {
    var i youTubeI
    i.Context.Client = body
    i.VideoID = id
-   // OAuth
    if head != Key {
       i.RacyCheckOK = true
    }
@@ -132,10 +133,6 @@ func (p Player) Description() string {
 
 func (p Player) Title() string {
    return p.VideoDetails.Title
-}
-
-func (p Player) Views() int {
-   return p.VideoDetails.ViewCount
 }
 
 type thirdParty struct {

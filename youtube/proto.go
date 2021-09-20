@@ -5,14 +5,6 @@ import (
    "github.com/philpearl/plenc"
 )
 
-func encode(value interface{}) (string, error) {
-   b, err := plenc.Marshal(nil, value)
-   if err != nil {
-      return "", err
-   }
-   return base64.StdEncoding.EncodeToString(b), nil
-}
-
 func pUint(v uint) *uint {
    return &v
 }
@@ -38,7 +30,11 @@ type Param struct {
 }
 
 func (p Param) Encode() (string, error) {
-   return encode(p)
+   b, err := plenc.Marshal(nil, p)
+   if err != nil {
+      return "", err
+   }
+   return base64.StdEncoding.EncodeToString(b), nil
 }
 
 // 1
