@@ -18,8 +18,18 @@ func main() {
       return
    }
    github.Verbose = true
+   // exchange
    if exchange {
       err := authExchange()
+      if err != nil {
+         panic(err)
+      }
+      return
+   }
+   // construct
+   var exc github.Exchange
+   if construct {
+      err := authConstruct(&exc)
       if err != nil {
          panic(err)
       }

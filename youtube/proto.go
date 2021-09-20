@@ -17,30 +17,6 @@ func pUint(v uint) *uint {
    return &v
 }
 
-type Continuation struct {
-   A struct {
-      VideoID string `plenc:"2"`
-   } `plenc:"2"`
-   B uint `plenc:"3"`
-   C struct {
-      A struct {
-         VideoID string `plenc:"4"`
-      } `plenc:"4"`
-   } `plenc:"6"`
-}
-
-func NewContinuation(videoID string) Continuation {
-   var con Continuation
-   con.A.VideoID = videoID
-   con.B = 6
-   con.C.A.VideoID = videoID
-   return con
-}
-
-func (c Continuation) Encode() (string, error) {
-   return encode(c)
-}
-
 type Param struct {
    SortBy *uint `plenc:"1"`
    Filter struct {

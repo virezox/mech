@@ -1,9 +1,5 @@
 package youtube
-
-import (
-   "fmt"
-   "sort"
-)
+import "sort"
 
 var (
    webP = pictureFormat{0, "vi_webp", "webp"}
@@ -66,9 +62,9 @@ type Picture struct {
 }
 
 func (p Picture) Address(id string) string {
-   return fmt.Sprintf(
-      "http://i.ytimg.com/%v/%v/%v.%v", p.Format.Dir, id, p.Base, p.Format.Ext,
-   )
+   add := "http://i.ytimg.com/" + p.Format.Dir
+   add += "/" + id
+   return add + "/" + p.Base + "." + p.Format.Ext
 }
 
 type pictureFormat struct {

@@ -12,9 +12,21 @@ import (
 
 const chunk = 10_000_000
 
+func numberFormat(val float64, met []string) string {
+   var key int
+   for val >= 1000 {
+      val /= 1000
+      key++
+   }
+   if key >= len(met) {
+      return ""
+   }
+   return fmt.Sprintf("%.3f", val) + met[key]
+}
+
 type Format struct {
-   Bitrate int64
-   ContentLength int64 `json:"contentLength,string"`
+   Bitrate bitrate
+   ContentLength contentLength `json:"contentLength,string"`
    Height int
    Itag int
    MimeType string
@@ -26,7 +38,7 @@ func (f Format) Write(w io.Writer) error {
    if err != nil {
       return err
    }
-   var pos int64
+   var pos contentLength
    dump, err := httputil.DumpRequest(req, false)
    if err != nil {
       return err
@@ -92,4 +104,18 @@ func (f FormatSlice) Sort(less ...func(a, b Format) bool) {
       }
       return false
    })
+}
+
+type bitrate int64
+
+func (b bitrate) String() string {
+   met := []string{"", " kb/s", " mb/s", " gb/s"}
+   return numberFormat(float64(b), met)
+}
+
+type contentLength int64
+
+func (c contentLength) String() string {
+   met := []string{"", " kB", " MB", " GB"}
+   return numberFormat(float64(c), met)
 }

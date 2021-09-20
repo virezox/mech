@@ -58,11 +58,12 @@ func main() {
    // head
    auth := youtube.Key
    if construct {
-      x, err := authConstruct()
+      var exc youtube.Exchange
+      err := authConstruct(&exc)
       if err != nil {
          panic(err)
       }
-      auth = youtube.Auth{"Authorization", "Bearer " + x.Access_Token}
+      auth = youtube.Auth{"Authorization", "Bearer " + exc.Access_Token}
    }
    // body
    client := youtube.Android
@@ -108,18 +109,6 @@ func main() {
    }
 }
 
-func numberFormat(d int64, a ...string) string {
-   var (
-      e = float64(d)
-      f int
-   )
-   for e >= 1000 {
-      e /= 1000
-      f++
-   }
-   return fmt.Sprintf("%.1f", e) + a[f]
-}
-
 func getInfo(id string) error {
    p, err := youtube.NewPlayer(id, youtube.Key, youtube.Mweb)
    if err != nil {
@@ -132,11 +121,7 @@ func getInfo(id string) error {
    for _, f := range p.StreamingData.AdaptiveFormats {
       fmt.Printf(
          "itag %v, height %v, %v, %v, %v\n",
-         f.Itag,
-         f.Height,
-         numberFormat(f.Bitrate, "", " kb/s", " mb/s", " gb/s"),
-         numberFormat(f.ContentLength, "", " kB", " MB", " GB"),
-         f.MimeType,
+         f.Itag, f.Height, f.Bitrate, f.ContentLength, f.MimeType,
       )
    }
    return nil

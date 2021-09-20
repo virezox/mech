@@ -7,21 +7,17 @@ import (
    "os"
 )
 
-func authConstruct() (*youtube.Exchange, error) {
+func authConstruct(exc *github.Exchange) error {
    cac, err := os.UserCacheDir()
    if err != nil {
-      return nil, err
+      return err
    }
-   fil, err := os.Open(cac + "/mech/youtube.json")
+   fil, err := os.Open(cac + "/mech/github.json")
    if err != nil {
-      return nil, err
+      return err
    }
    defer fil.Close()
-   exc := new(youtube.Exchange)
-   if err := json.NewDecoder(fil).Decode(exc); err != nil {
-      return nil, err
-   }
-   return exc, nil
+   return json.NewDecoder(fil).Decode(exc)
 }
 
 func authExchange() error {
