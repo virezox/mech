@@ -2,15 +2,18 @@ package github
 
 import (
    "encoding/json"
-   "fmt"
    "net/http"
+   "net/http/httputil"
+   "net/url"
+   "os"
+   "strconv"
 )
 
 const Origin = "https://api.github.com"
 
 var Verbose bool
 
-type RepoSearch struct {
+type Repos struct {
    Items []struct {
       HTML_URL string
       Language string
@@ -18,30 +21,55 @@ type RepoSearch struct {
    }
 }
 
-func (x Exchange) RepoSearch(query, page string) (*RepoSearch, error) {
+type Search struct {
+   url.Values
+}
+
+func NewSearch(q string) Search {
+   return Search{
+      url.Values{
+         "q": {q},
+      },
+   }
+}
+
+// default 1
+func (s Search) Page(value int) {
+   val := strconv.Itoa(value)
+   s.Set("page", val)
+}
+
+// default 30, max 100
+func (s Search) PerPage(value int) {
+   val := strconv.Itoa(value)
+   s.Set("per_page", val)
+}
+
+// Set "x" to "nil" for no authentication.
+func (s Search) Repos(x *Exchange) (*Repos, error) {
    req, err := http.NewRequest("GET", Origin + "/search/repositories", nil)
    if err != nil {
       return nil, err
    }
-   q := req.URL.Query()
-   q.Set("per_page", "100")
-   q.Set("q", query)
-   q.Set("page", page)
-   req.URL.RawQuery = q.Encode()
-   if x.Access_Token != "" {
+   req.URL.RawQuery = s.Encode()
+   if x != nil {
       req.Header.Set("Authorization", "Bearer " + x.Access_Token)
    }
    if Verbose {
-      fmt.Println(req.Method, req.URL)
+      d, err := httputil.DumpRequest(req, false)
+      if err != nil {
+         return nil, err
+      }
+      os.Stdout.Write(d)
    }
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
-   rs := new(RepoSearch)
-   if err := json.NewDecoder(res.Body).Decode(rs); err != nil {
+   rep := new(Repos)
+   if err := json.NewDecoder(res.Body).Decode(rep); err != nil {
       return nil, err
    }
-   return rs, nil
+   return rep, nil
 }
