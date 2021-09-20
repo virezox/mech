@@ -58,25 +58,3 @@ func authConstruct() (*youtube.Exchange, error) {
    }
    return exc, nil
 }
-
-func authRefresh() error {
-   exc, err := authConstruct()
-   if err != nil {
-      return err
-   }
-   if err := exc.Refresh(); err != nil {
-      return err
-   }
-   cac, err := os.UserCacheDir()
-   if err != nil {
-      return err
-   }
-   fil, err := os.Create(cac + "/mech/youtube.json")
-   if err != nil {
-      return err
-   }
-   defer fil.Close()
-   enc := json.NewEncoder(fil)
-   enc.SetIndent("", " ")
-   return enc.Encode(exc)
-}

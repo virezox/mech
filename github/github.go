@@ -56,11 +56,11 @@ func (s Search) Repos(x *Exchange) (*Repos, error) {
       req.Header.Set("Authorization", "Bearer " + x.Access_Token)
    }
    if Verbose {
-      d, err := httputil.DumpRequest(req, false)
+      dum, err := httputil.DumpRequest(req, false)
       if err != nil {
          return nil, err
       }
-      os.Stdout.Write(d)
+      os.Stdout.Write(dum)
    }
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
