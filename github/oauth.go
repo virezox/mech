@@ -8,6 +8,9 @@ import (
    "strings"
 )
 
+const HtmlOrigin = "https://github.com"
+
+// GitHub Android
 const clientID = "3f8b8834a91f0caad392"
 
 type Exchange struct {
@@ -26,7 +29,8 @@ func NewOAuth() (*OAuth, error) {
       "client_id": {clientID},
    }
    req, err := http.NewRequest(
-      "POST", Origin + "/login/device/code", strings.NewReader(val.Encode()),
+      "POST", HtmlOrigin + "/login/device/code",
+      strings.NewReader(val.Encode()),
    )
    req.Header.Set("Accept", "application/json")
    res, err := new(http.Transport).RoundTrip(req)
@@ -51,7 +55,7 @@ func (o OAuth) Exchange() (*Exchange, error) {
       "grant_type":  {"urn:ietf:params:oauth:grant-type:device_code"},
    }
    req, err := http.NewRequest(
-      "POST", Origin + "/login/oauth/access_token",
+      "POST", HtmlOrigin + "/login/oauth/access_token",
       strings.NewReader(val.Encode()),
    )
    req.Header.Set("Accept", "application/json")

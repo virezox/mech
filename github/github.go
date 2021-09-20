@@ -18,7 +18,7 @@ type RepoSearch struct {
    }
 }
 
-func NewRepoSearch(query, page string) (*RepoSearch, error) {
+func (x Exchange) RepoSearch(query, page string) (*RepoSearch, error) {
    req, err := http.NewRequest("GET", Origin + "/search/repositories", nil)
    if err != nil {
       return nil, err
@@ -28,6 +28,9 @@ func NewRepoSearch(query, page string) (*RepoSearch, error) {
    q.Set("q", query)
    q.Set("page", page)
    req.URL.RawQuery = q.Encode()
+   if x.Access_Token != "" {
+      req.Header.Set("Authorization", "Bearer " + x.Access_Token)
+   }
    if Verbose {
       fmt.Println(req.Method, req.URL)
    }

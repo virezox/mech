@@ -5,8 +5,9 @@
 
 ## Rate limiting
 
-For API requests using Basic Authentication or OAuth, you can make up to 5,000
-requests per hour. For unauthenticated requests, the rate limit allows for up
-to 60 requests per hour.
+The Search API has a custom rate limit. For requests using Basic
+Authentication, OAuth, or client ID and secret, you can make up to 30 requests
+per minute. For unauthenticated requests, the rate limit allows you to make up
+to 10 requests per minute.
 
-https://docs.github.com/rest/overview/resources-in-the-rest-api
+https://docs.github.com/en/rest/reference/search
