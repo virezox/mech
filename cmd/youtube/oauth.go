@@ -7,6 +7,23 @@ import (
    "os"
 )
 
+func authConstruct() (*youtube.Exchange, error) {
+   cac, err := os.UserCacheDir()
+   if err != nil {
+      return nil, err
+   }
+   fil, err := os.Open(cac + "/mech/youtube.json")
+   if err != nil {
+      return nil, err
+   }
+   defer fil.Close()
+   exc := new(youtube.Exchange)
+   if err := json.NewDecoder(fil).Decode(exc); err != nil {
+      return nil, err
+   }
+   return exc, nil
+}
+
 func authExchange() error {
    oau, err := youtube.NewOAuth()
    if err != nil {
@@ -18,9 +35,7 @@ func authExchange() error {
 2. Enter this code
 %v
 
-3. Sign in to your Google Account
-
-4. Press Enter to continue`, oau.Verification_URL, oau.User_Code)
+3. Press Enter to continue`, oau.Verification_URL, oau.User_Code)
    fmt.Scanln()
    exc, err := oau.Exchange()
    if err != nil {
@@ -40,23 +55,6 @@ func authExchange() error {
    enc := json.NewEncoder(fil)
    enc.SetIndent("", " ")
    return enc.Encode(exc)
-}
-
-func authConstruct() (*youtube.Exchange, error) {
-   cac, err := os.UserCacheDir()
-   if err != nil {
-      return nil, err
-   }
-   fil, err := os.Open(cac + "/mech/youtube.json")
-   if err != nil {
-      return nil, err
-   }
-   defer fil.Close()
-   exc := new(youtube.Exchange)
-   if err := json.NewDecoder(fil).Decode(exc); err != nil {
-      return nil, err
-   }
-   return exc, nil
 }
 
 func authRefresh() error {

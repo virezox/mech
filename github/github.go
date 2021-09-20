@@ -2,10 +2,9 @@ package github
 
 import (
    "encoding/json"
+   "fmt"
    "net/http"
-   "net/http/httputil"
    "net/url"
-   "os"
    "strconv"
 )
 
@@ -56,17 +55,17 @@ func (s Search) Repos(x *Exchange) (*Repos, error) {
       req.Header.Set("Authorization", "Bearer " + x.Access_Token)
    }
    if Verbose {
-      dum, err := httputil.DumpRequest(req, false)
-      if err != nil {
-         return nil, err
-      }
-      os.Stdout.Write(dum)
+      fmt.Println(req.Method, req.URL)
    }
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
+   if Verbose {
+      key := "X-Ratelimit-Remaining"
+      fmt.Println(key, res.Header.Get(key))
+   }
    rep := new(Repos)
    if err := json.NewDecoder(res.Body).Decode(rep); err != nil {
       return nil, err

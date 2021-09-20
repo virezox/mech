@@ -16,8 +16,6 @@ func TestOAuth(t *testing.T) {
 
 2. Enter this code
 %v
-
-3. Sign in to your Google Account
 `, o.Verification_URL, o.User_Code)
    for range [9]struct{}{} {
       time.Sleep(9 * time.Second)
