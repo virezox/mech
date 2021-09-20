@@ -18,8 +18,8 @@ func Ext(typ string) (string, error) {
    if err != nil {
       return "", err
    }
-   for _, ext := range exts {
-      return ext, nil
+   if exts == nil {
+      return "", fmt.Errorf("%q has no associated extension", typ)
    }
-   return "", fmt.Errorf("%q has no associated extension", typ)
+   return exts[0], nil
 }

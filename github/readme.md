@@ -1,6 +1,7 @@
 # GitHub
 
-https://docs.github.com/rest/reference/search
+- https://docs.github.com/rest/reference/search
+- https://github.com/octokit/auth-oauth-device.js/blob/main/test/index.test.ts
 
 ## Rate limiting
 

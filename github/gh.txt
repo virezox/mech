@@ -1,0 +1,4 @@
+GET /rate_limit HTTP/1.1
+Host: api.github.com
+Authorization: Bearer gho_u5GmrvYMzlqnIL0GI42fzJIIq6gySH1...
+
