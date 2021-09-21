@@ -45,9 +45,9 @@ func (f Format) Write(w io.Writer) error {
    }
    os.Stdout.Write(dump)
    for pos < f.ContentLength {
-      bytes := fmt.Sprintf("bytes=%v-%v", pos, pos+chunk-1)
+      bytes := fmt.Sprintf("bytes=%d-%d", pos, pos+chunk-1)
       req.Header.Set("Range", bytes)
-      fmt.Printf("%v%% %v\n", 100*pos/f.ContentLength, bytes)
+      fmt.Printf("%d%% %v\n", 100*pos/f.ContentLength, bytes)
       // this sometimes redirects, so cannot use http.Transport
       res, err := new(http.Client).Do(req)
       if err != nil {
