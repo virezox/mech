@@ -42,6 +42,24 @@ https://github.com/89z/mech/tree/9dadd39c
 
 However I have removed it for now, as I am busy with other stuff.
 
+## Android
+
+First get Android Studio [1]. Click More Actions, AVD Manager, Create Virtual
+Device. Use the default device defintion, then click Next. Click "x86 Images"
+and download:
+
+Release Name | API Level | ABI | Target
+-------------|-----------|-----|------------
+Nougat       | 25        | x86 | Google APIs
+
+Then Download HTTP Toolkit [2]. Just extract, dont need to install. Click
+Android device connected via ADB. Then download APK [3]. Drag APK to device
+home screen to install.
+
+1. https://developer.android.com/studio#downloads
+2. https://httptoolkit.tech
+3. https://apkpure.com
+
 ## Author
 
 Steven Penny

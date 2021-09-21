@@ -21,7 +21,7 @@ func numberFormat(val float64, met []string) string {
    if key >= len(met) {
       return ""
    }
-   return fmt.Sprintf("%.3f", val) + met[key]
+   return fmt.Sprintf("%.1f", val) + met[key]
 }
 
 type Format struct {

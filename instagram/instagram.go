@@ -58,7 +58,11 @@ func NewSidecar(id string) (*Sidecar, error) {
    }
    defer res.Body.Close()
    if res.StatusCode != http.StatusOK {
-      return nil, fmt.Errorf("status %q", res.Status)
+      d, err := httputil.DumpResponse(res, false)
+      if err != nil {
+         return nil, err
+      }
+      return nil, fmt.Errorf("%s", d)
    }
    car := new(Sidecar)
    if err := json.NewDecoder(res.Body).Decode(car); err != nil {
