@@ -1,4 +1,0 @@
-GET /graphql/query/?query_hash=8c2a529969ee035a5063f2fc8602a0fd&variables={"id":"294582047","first":1} HTTP/1.1
-Host: www.instagram.com
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:86.0) Gecko/20100101
-

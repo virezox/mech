@@ -1,9 +1,0 @@
-POST /graphql/query/ HTTP/1.1
-Host: www.instagram.com
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:86.0) Gecko/20100101
-Content-Type: application/json
-
-{
-   "query_hash": "6ff3f5c474a240353993056428fb851e",
-   "variables": {"shortcode":"CT-cnxGhvvO"}
-}

@@ -3,13 +3,19 @@ package instagram
 import (
    "fmt"
    "testing"
+   "time"
 )
+
+const id = "CT-cnxGhvvO"
 
 func TestInsta(t *testing.T) {
    Verbose = true
-   c, err := NewSidecar("CT-cnxGhvvO")
-   if err != nil {
-      t.Fatal(err)
+   for range [16]struct{}{} {
+      c, err := NewSidecar(id)
+      if err != nil {
+         t.Fatal(err)
+      }
+      fmt.Println(c)
+      time.Sleep(time.Second)
    }
-   fmt.Printf("%+v\n", c)
 }
