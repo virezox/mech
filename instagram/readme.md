@@ -3,14 +3,6 @@
 This method is severely rate limited:
 
 ~~~
-GET /p/CT-cnxGhvvO/?__a=1 HTTP/1.1
-Host: www.instagram.com
-User-Agent: Mozilla
-~~~
-
-Same here:
-
-~~~
 GET /tv/CT-cnxGhvvO/?__a=1 HTTP/1.1
 Host: www.instagram.com
 User-Agent: Mozilla
