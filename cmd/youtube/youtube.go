@@ -29,16 +29,7 @@ func main() {
       flag.PrintDefaults()
       return
    }
-   id := flag.Arg(0)
    youtube.Verbose = true
-   // info
-   if info {
-      err := getInfo(id)
-      if err != nil {
-         panic(err)
-      }
-      return
-   }
    // exchange
    if exchange {
       err := authExchange()
@@ -50,6 +41,20 @@ func main() {
    // refresh
    if refresh {
       err := authRefresh()
+      if err != nil {
+         panic(err)
+      }
+      return
+   }
+   // id
+   id := flag.Arg(0)
+   err := youtube.ValidID(id)
+   if err != nil {
+      panic(err)
+   }
+   // info
+   if info {
+      err := getInfo(id)
       if err != nil {
          panic(err)
       }
