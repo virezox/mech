@@ -8,10 +8,10 @@ import (
 
 const id = "CT-cnxGhvvO"
 
-func TestEmbed(t *testing.T) {
+func TestHtmlEmbed(t *testing.T) {
    for i := range [16]struct{}{} {
       fmt.Println(i)
-      err := embed(id)
+      err := htmlEmbed(id)
       if err != nil {
          t.Fatal(err)
       }
@@ -19,10 +19,10 @@ func TestEmbed(t *testing.T) {
    }
 }
 
-func TestGraphQL(t *testing.T) {
+func TestHtmlP(t *testing.T) {
    for i := range [16]struct{}{} {
       fmt.Println(i)
-      err := graphql(id)
+      err := htmlP(id)
       if err != nil {
          t.Fatal(err)
       }
@@ -30,10 +30,10 @@ func TestGraphQL(t *testing.T) {
    }
 }
 
-func TestP(t *testing.T) {
+func TestJsonGraphQL(t *testing.T) {
    for i := range [16]struct{}{} {
       fmt.Println(i)
-      err := p(id)
+      err := jsonGraphQL(id)
       if err != nil {
          t.Fatal(err)
       }
@@ -41,10 +41,21 @@ func TestP(t *testing.T) {
    }
 }
 
-func TestTV(t *testing.T) {
+func TestJsonP(t *testing.T) {
    for i := range [16]struct{}{} {
       fmt.Println(i)
-      err := tv(id)
+      err := jsonP(id)
+      if err != nil {
+         t.Fatal(err)
+      }
+      time.Sleep(time.Second)
+   }
+}
+
+func TestJsonTV(t *testing.T) {
+   for i := range [16]struct{}{} {
+      fmt.Println(i)
+      err := jsonTV(id)
       if err != nil {
          t.Fatal(err)
       }

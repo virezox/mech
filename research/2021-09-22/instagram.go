@@ -17,7 +17,7 @@ const body = `
 
 const origin = "https://www.instagram.com"
 
-func embed(id string) error {
+func htmlEmbed(id string) error {
    req, err := http.NewRequest("GET", origin + "/p/" + id + "/embed/", nil)
    if err != nil {
       return err
@@ -43,7 +43,34 @@ func embed(id string) error {
    return nil
 }
 
-func graphql(id string) error {
+func htmlP(id string) error {
+   req, err := http.NewRequest("GET", origin + "/p/" + id + "/", nil)
+   if err != nil {
+      return err
+   }
+   req.Header.Set("User-Agent", "Mozilla")
+   dum, err := httputil.DumpRequest(req, false)
+   if err != nil {
+      return err
+   }
+   os.Stdout.Write(dum)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      dum, err := httputil.DumpResponse(res, false)
+      if err != nil {
+         return err
+      }
+      return fmt.Errorf("%s", dum)
+   }
+   return nil
+}
+
+// severe rate limit
+func jsonGraphQL(id string) error {
    req, err := http.NewRequest(
       "POST", "https://www.instagram.com/graphql/query/",
       strings.NewReader(body),
@@ -70,7 +97,8 @@ func graphql(id string) error {
    return nil
 }
 
-func p(id string) error {
+// severe rate limit
+func jsonP(id string) error {
    req, err := http.NewRequest("GET", origin + "/p/" + id + "/", nil)
    if err != nil {
       return err
@@ -99,7 +127,8 @@ func p(id string) error {
    return nil
 }
 
-func tv(id string) error {
+// severe rate limit
+func jsonTV(id string) error {
    req, err := http.NewRequest("GET", origin + "/tv/" + id + "/", nil)
    if err != nil {
       return err
