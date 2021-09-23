@@ -1,24 +1,20 @@
 # September 22 2021
 
-This method is severely rate limited:
+This works with authentication:
 
 ~~~
-GET /tv/CT-cnxGhvvO/?__a=1 HTTP/1.1
-Host: www.instagram.com
-User-Agent: Mozilla
-~~~
-
-This requires authentication:
-
-~~~
-GET /api/v1/media/2665693907534674894/info/ HTTP/1.1
+GET /api/v1/media/2662073270019671428/info/ HTTP/2.0
 Host: i.instagram.com
+user-agent: Instagram 206.1.0.34.121 Android
+authorization: Bearer IGT:2:eyJkc191c2VyX2lkIjoiNDkzOTg0NTg5MDUiLCJzZXNzaW9uaW...
 ~~~
 
-This works, although it returns HTML, so not ideal:
+## MITM
 
 ~~~
-GET /p/CT-cnxGhvvO/embed/ HTTP/1.1
-Host: www.instagram.com
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36
+IPv4 Address. . . . . . . . . . . : 192.168.0.3
 ~~~
+
+- https://docs.mitmproxy.org/stable/overview-getting-started/
+- https://github.com/mitmproxy/mitmproxy/issues/4630
+- https://medium.com/testvagrant/intercept-ios-android-network-calls-using-mitmproxy-4d3c94831f62
