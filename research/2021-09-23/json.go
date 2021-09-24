@@ -15,9 +15,34 @@ const body = `
 }
 `
 
-/*
-curl -v -A 'Instagram 1.1.1' https://i.instagram.com/api/v1/users/181306552/info/
-*/
+func jsonChannel(name string) error {
+   req, err := http.NewRequest("GET", origin + "/" + name + "/channel/", nil)
+   if err != nil {
+      return err
+   }
+   q := req.URL.Query()
+   q.Set("__a", "1")
+   req.URL.RawQuery = q.Encode()
+   req.Header.Set("User-Agent", "Mozilla")
+   dum, err := httputil.DumpRequest(req, false)
+   if err != nil {
+      return err
+   }
+   os.Stdout.Write(dum)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      dum, err := httputil.DumpResponse(res, false)
+      if err != nil {
+         return err
+      }
+      return fmt.Errorf("%s", dum)
+   }
+   return nil
+}
 
 // severe rate limit
 func jsonGraphQL(id string) error {
@@ -86,6 +111,34 @@ func jsonTV(id string) error {
    val.Set("__a", "1")
    req.URL.RawQuery = val.Encode()
    req.Header.Set("User-Agent", "Mozilla")
+   dum, err := httputil.DumpRequest(req, false)
+   if err != nil {
+      return err
+   }
+   os.Stdout.Write(dum)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      dum, err := httputil.DumpResponse(res, false)
+      if err != nil {
+         return err
+      }
+      return fmt.Errorf("%s", dum)
+   }
+   return nil
+}
+
+func jsonUsers(id string) error {
+   req, err := http.NewRequest(
+      "GET", "https://i.instagram.com/api/v1/users/" + id + "/info/", nil,
+   )
+   if err != nil {
+      return err
+   }
+   req.Header.Set("User-Agent", "Instagram 1.1.1")
    dum, err := httputil.DumpRequest(req, false)
    if err != nil {
       return err

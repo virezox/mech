@@ -9,7 +9,7 @@ import (
 func TestHtmlEmbed(t *testing.T) {
    for i := range [16]struct{}{} {
       fmt.Println(i)
-      err := htmlEmbed(id)
+      err := htmlEmbed(shortcode)
       if err != nil {
          t.Fatal(err)
       }
@@ -20,7 +20,7 @@ func TestHtmlEmbed(t *testing.T) {
 func TestHtmlP(t *testing.T) {
    for i := range [16]struct{}{} {
       fmt.Println(i)
-      err := htmlP(id)
+      err := htmlP(shortcode)
       if err != nil {
          t.Fatal(err)
       }

@@ -6,10 +6,21 @@ import (
    "time"
 )
 
+func TestJsonChannel(t *testing.T) {
+   for i := range [16]struct{}{} {
+      fmt.Println(i)
+      err := jsonChannel(name)
+      if err != nil {
+         t.Fatal(err)
+      }
+      time.Sleep(time.Second)
+   }
+}
+
 func TestJsonGraphQL(t *testing.T) {
    for i := range [16]struct{}{} {
       fmt.Println(i)
-      err := jsonGraphQL(id)
+      err := jsonGraphQL(shortcode)
       if err != nil {
          t.Fatal(err)
       }
@@ -20,7 +31,7 @@ func TestJsonGraphQL(t *testing.T) {
 func TestJsonP(t *testing.T) {
    for i := range [16]struct{}{} {
       fmt.Println(i)
-      err := jsonP(id)
+      err := jsonP(shortcode)
       if err != nil {
          t.Fatal(err)
       }
@@ -31,7 +42,18 @@ func TestJsonP(t *testing.T) {
 func TestJsonTV(t *testing.T) {
    for i := range [16]struct{}{} {
       fmt.Println(i)
-      err := jsonTV(id)
+      err := jsonTV(shortcode)
+      if err != nil {
+         t.Fatal(err)
+      }
+      time.Sleep(time.Second)
+   }
+}
+
+func TestJsonUsers(t *testing.T) {
+   for i := range [16]struct{}{} {
+      fmt.Println(i)
+      err := jsonUsers(user)
       if err != nil {
          t.Fatal(err)
       }
