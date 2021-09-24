@@ -1,5 +1,20 @@
 # September 23 2021
 
+48. https://github.com/uriyyo/instapi/issues/130
+47. https://github.com/gusfahmi/Social-Media-Downloader/issues/7
+46. https://github.com/siongui/instago/issues/6
+45. https://github.com/oktaysenkan/instagram-api/issues/5
+44. https://github.com/tnychn/instascrape/issues/35
+43. https://github.com/M1n007/node-insta-web-api/issues/19
+42. https://github.com/veltzer/pyscrapers/issues/4
+41. https://github.com/RipMeApp/ripme/issues/1719
+40. https://github.com/iamatulsingh/instaDataScrap/issues/6
+39. <https://github.com/xcodeOn1/Info_Instagram/issues/4>
+38. https://github.com/kaex/insta-story/issues/3
+37. https://github.com/labteral/pygram/issues/6
+36. https://github.com/ThinhVu/Mmosoft.Instagram.Sdk/issues/3
+35. https://github.com/deni2312/InstagramAPI/issues/1
+34. https://github.com/AbirHasan2005/instagram-dl/issues/2
 33. https://github.com/dx4iot/insta-scraper/issues/2
 32. https://github.com/stanvanrooy/instauto/issues/209
 31. https://github.com/AssetKid/raider-release/issues/95
@@ -16,7 +31,7 @@
 20. https://github.com/NicklasWallgren/instagram-api/issues/56
 19. https://github.com/ScriptSmith/instamancer/issues/58
 18. https://github.com/oorestisime/gatsby-source-instagram/issues/219
-17. https://github.com/instaloader/instaloader/issues/1291
+17. https://github.com/instaloader/instaloader/issues/1263
 16. https://github.com/drawrowfly/instagram-scraper/issues/62
 15. https://github.com/gippy/instagram-scraper/issues/137
 14. https://github.com/althonos/InstaLooter/issues/309
