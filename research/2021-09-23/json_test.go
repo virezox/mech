@@ -17,21 +17,10 @@ func TestJsonChannel(t *testing.T) {
    }
 }
 
-func TestJsonGraphQL1(t *testing.T) {
+func TestJsonGraphQL(t *testing.T) {
    for i := range [16]struct{}{} {
       fmt.Println(i)
-      err := jsonGraphQL1(shortcode)
-      if err != nil {
-         t.Fatal(err)
-      }
-      time.Sleep(time.Second)
-   }
-}
-
-func TestJsonGraphQL2(t *testing.T) {
-   for i := range [16]struct{}{} {
-      fmt.Println(i)
-      err := jsonGraphQL2(shortcode)
+      err := jsonGraphQL(shortcode)
       if err != nil {
          t.Fatal(err)
       }

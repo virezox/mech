@@ -1,6 +1,6 @@
 # September 23 2021
 
-## shortcode hash
+## shortcode https://www.instagram.com/graphql/query/?query\_hash
 
 ~~~
 1 result:
@@ -10,6 +10,8 @@
 1f950d414a6e11c98c556aa007b3157d
 cf28bf5eb45d62d4dc8e77cdb99d750d
 
+---
+
 7:
 a9441f24ac73000fa17fe6e6da11d59d
 
@@ -17,8 +19,6 @@ a9441f24ac73000fa17fe6e6da11d59d
 2c4c2e343a8f64c625ba02b2aa12c7f8
 d4e8ae69cb68f66329dcebe82fb69f6d
 ~~~
-
-https://github.com/mikf/gallery-dl
 
 ## Issues
 

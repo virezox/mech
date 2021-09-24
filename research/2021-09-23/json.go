@@ -38,51 +38,25 @@ func jsonChannel(name string) error {
    return nil
 }
 
-const body1 = `
-{
-   "query_hash": "2c4c2e343a8f64c625ba02b2aa12c7f8",
-   "variables": {"shortcode":"CT-cnxGhvvO"}
+var hashes = []string{
+   "1f950d414a6e11c98c556aa007b3157d",
+   "2c4c2e343a8f64c625ba02b2aa12c7f8",
+   "971f52b26328008c768b7d8e4ac9ce3c",
+   "a9441f24ac73000fa17fe6e6da11d59d",
+   "cf28bf5eb45d62d4dc8e77cdb99d750d",
+   "d4e8ae69cb68f66329dcebe82fb69f6d",
 }
-`
 
 // severe rate limit
-func jsonGraphQL1(id string) error {
-   req, err := http.NewRequest(
-      "POST", origin + "/graphql/query/", strings.NewReader(body1),
-   )
-   if err != nil {
-      return err
-   }
-   req.Header = http.Header{
-      "Content-Type": {"application/json"},
-      "User-Agent": {"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:86.0)"},
-   }
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      dum, err := httputil.DumpResponse(res, false)
-      if err != nil {
-         return err
-      }
-      return fmt.Errorf("%s", dum)
-   }
-   return nil
-}
-
-const body2 = `
+func jsonGraphQL(id string) error {
+   body := fmt.Sprintf(`
 {
-   "query_hash": "cf28bf5eb45d62d4dc8e77cdb99d750d",
+   "query_hash": %q,
    "variables": {"shortcode":"CT-cnxGhvvO"}
 }
-`
-
-// severe rate limit
-func jsonGraphQL2(id string) error {
+   `, hashes[0])
    req, err := http.NewRequest(
-      "POST", origin + "/graphql/query/", strings.NewReader(body2),
+      "POST", origin + "/graphql/query/", strings.NewReader(body),
    )
    if err != nil {
       return err
