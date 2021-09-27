@@ -50,13 +50,13 @@ func (l Link) MPD() (*MPD, error) {
    if Verbose {
       fmt.Println("GET", addr)
    }
-   r, err := http.Get(addr.String())
+   res, err := http.Get(addr.String())
    if err != nil {
       return nil, err
    }
-   defer r.Body.Close()
+   defer res.Body.Close()
    media := new(MPD)
-   if err := xml.NewDecoder(r.Body).Decode(media); err != nil {
+   if err := xml.NewDecoder(res.Body).Decode(media); err != nil {
       return nil, err
    }
    return media, nil
