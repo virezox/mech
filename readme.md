@@ -8,7 +8,7 @@
 >
 > [Heat (1995)](//f002.backblazeb2.com/file/ql8mlh/Heat.1995.mp4)
 
-Mechanize
+Anonymous API access
 
 Some users might want to make anonymous requests, because of privacy or any
 number of other reasons. This module allows people to do that. Most API these
