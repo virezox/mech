@@ -10,14 +10,26 @@ import (
 
 const Origin = "https://www.instagram.com"
 
+var Verbose bool
+
+// instagram.com/p/CT-cnxGhvvO
+func ValidID(id string) error {
+   if len(id) == 11 {
+      return nil
+   }
+   return fmt.Errorf("%q invalid as ID", id)
+}
+
+type Edge struct {
+   Node struct {
+      Display_URL string
+   }
+}
+
 type Sidecar struct {
    Shortcode_Media struct {
       Edge_Sidecar_To_Children struct {
-         Edges []struct {
-            Node struct {
-               Display_URL string
-            }
-         }
+         Edges []Edge
       }
    }
 }
@@ -48,4 +60,8 @@ func NewSidecar(id string) (*Sidecar, error) {
       }
    }
    return nil, fmt.Errorf("%s not found", media)
+}
+
+func (s Sidecar) Edges() []Edge {
+   return s.Shortcode_Media.Edge_Sidecar_To_Children.Edges
 }
