@@ -45,7 +45,22 @@ However I have removed it for now, as I am busy with other stuff.
 
 ## Android
 
-First get Android Studio [1]. Click More Actions, AVD Manager, Create Virtual
+To setup MitmProxy, first download [1]. Then get IP address:
+
+~~~
+Get-NetIPAddress
+~~~
+
+Will look like this:
+
+~~~
+IPAddress         : 192.168.0.4
+InterfaceIndex    : 11
+InterfaceAlias    : Ethernet
+~~~
+
+Then start MitmProxy. Port will be in the bottom right corner, should be `8080`.
+Then get Android Studio [2]. Click More Actions, AVD Manager, Create Virtual
 Device. Use the default device defintion, then click Next. Click "x86 Images"
 and download:
 
@@ -53,12 +68,18 @@ Release Name | API Level | ABI | Target
 -------------|-----------|-----|------------
 Nougat       | 25        | x86 | Google APIs
 
-Then Download HTTP Toolkit [2]. Just extract, dont need to install. Click
-Android device connected via ADB. Then download APK [3]. Drag APK to device
-home screen to install.
+Launch the Android Emulator. Open Extended Controls by clicking "more". Click
+settings, Proxy. Uncheck "Use Android Studio HTTP proxy settings". Click "Manual
+proxy configuration", then enter IP address from above as "Host name", and port
+from above as "Port number". Click Apply, you should see Proxy status Success.
+Close Extended Controls. Open Chrome and browse to <https://mitm.it>. Click on
+the Android certificate. Certificate name MITM.
 
-1. https://developer.android.com/studio#downloads
-2. https://httptoolkit.tech
+Then if need be, you can download APKs [3]. Drag APK to device home screen to
+install.
+
+1. https://mitmproxy.org/downloads
+2. https://developer.android.com/studio#downloads
 3. https://apkpure.com
 
 ## Author

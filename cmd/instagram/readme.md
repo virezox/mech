@@ -1,5 +1,0 @@
-# Instagram
-
-~~~
-CT-cnxGhvvO
-~~~
