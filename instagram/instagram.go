@@ -8,9 +8,9 @@ import (
    "net/http"
 )
 
-const origin = "https://www.instagram.com"
+const Origin = "https://www.instagram.com"
 
-type sidecar struct {
+type Sidecar struct {
    Shortcode_Media struct {
       Edge_Sidecar_To_Children struct {
          Edges []struct {
@@ -22,8 +22,8 @@ type sidecar struct {
    }
 }
 
-func newSidecar(id string) (*sidecar, error) {
-   req, err := http.NewRequest("GET", origin + "/p/" + id + "/embed/", nil)
+func NewSidecar(id string) (*Sidecar, error) {
+   req, err := http.NewRequest("GET", Origin + "/p/" + id + "/embed/", nil)
    if err != nil {
       return nil, err
    }
@@ -35,10 +35,11 @@ func newSidecar(id string) (*sidecar, error) {
    }
    defer res.Body.Close()
    lex := html.NewLexer(res.Body)
+   media := []byte(`"shortcode_media"`)
    for lex.NextTag("script") {
       extra := lex.Bytes()
-      if bytes.Contains(extra, []byte(`"shortcode_media"`)) {
-         car := new(sidecar)
+      if bytes.Contains(extra, media) {
+         car := new(Sidecar)
          err := json.UnmarshalObject(extra, car)
          if err != nil {
             return nil, err
@@ -46,4 +47,5 @@ func newSidecar(id string) (*sidecar, error) {
          return car, nil
       }
    }
+   return nil, fmt.Errorf("%s not found", media)
 }
