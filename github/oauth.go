@@ -32,6 +32,9 @@ func NewOAuth() (*OAuth, error) {
       "POST", HtmlOrigin + "/login/device/code",
       strings.NewReader(val.Encode()),
    )
+   if err != nil {
+      return nil, err
+   }
    req.Header.Set("Accept", "application/json")
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
@@ -58,6 +61,9 @@ func (o OAuth) Exchange() (*Exchange, error) {
       "POST", HtmlOrigin + "/login/oauth/access_token",
       strings.NewReader(val.Encode()),
    )
+   if err != nil {
+      return nil, err
+   }
    req.Header.Set("Accept", "application/json")
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
