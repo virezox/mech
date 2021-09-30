@@ -6,6 +6,8 @@ import (
    "time"
 )
 
+const shortcode = "CT-cnxGhvvO"
+
 func TestHtmlEmbed(t *testing.T) {
    for i := range [16]struct{}{} {
       fmt.Println(i)
