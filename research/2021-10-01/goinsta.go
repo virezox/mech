@@ -217,31 +217,20 @@ func (insta *Instagram) sync(args ...map[string]string) error {
 }
 
 func (insta *Instagram) verifyLogin(body []byte) error {
-	res := accountResp{}
-	err := json.Unmarshal(body, &res)
-	if err != nil {
-		return fmt.Errorf("failed to parse json from login response with err: %s", err.Error())
-	}
-
-	if res.Status != "ok" {
-		err := errors.New(
-			fmt.Sprintf(
-				"Failed to login: %s, %s",
-				res.ErrorType, res.Message,
-			),
-		)
-		insta.warnHandler(err)
-
-		switch res.ErrorType {
-		case "bad_password":
-			return ErrBadPassword
-		}
-		return err
-	}
-
-	insta.Account = &res.Account
-	insta.Account.insta = insta
-	insta.rankToken = strconv.FormatInt(insta.Account.ID, 10) + "_" + insta.uuid
-
-	return nil
+   res := accountResp{}
+   err := json.Unmarshal(body, &res)
+   if err != nil {
+      return fmt.Errorf("failed to parse json from login response %q", err)
+   }
+   if res.Status != "ok" {
+      switch res.ErrorType {
+      case "bad_password":
+         return ErrBadPassword
+      }
+      return fmt.Errorf("Failed to login: %v, %v", res.ErrorType, res.Message)
+   }
+   insta.Account = &res.Account
+   insta.Account.insta = insta
+   insta.rankToken = strconv.FormatInt(insta.Account.ID, 10) + "_" + insta.uuid
+   return nil
 }
