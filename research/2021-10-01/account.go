@@ -12,10 +12,7 @@ type accountResp struct {
 	ErrorType         string         `json:"error_type"`
 	Message           string         `json:"message"`
 	TwoFactorRequired bool           `json:"two_factor_required"`
-	TwoFactorInfo     *TwoFactorInfo `json:"two_factor_info"`
-
 	PhoneVerificationSettings phoneVerificationSettings `json:"phone_verification_settings"`
-	Challenge                 *Challenge                `json:"challenge"`
 }
 
 // Account is personal account object

@@ -81,28 +81,7 @@ func createUserAgent(device Device) string {
 	)
 }
 
-func MergeMapI(one map[string]interface{}, extra ...map[string]interface{}) map[string]interface{} {
-	for _, e := range extra {
-		for k, v := range e {
-			one[k] = v
-		}
-	}
-	return one
-}
-
-func MergeMapS(one map[string]string, extra ...map[string]string) map[string]string {
-	for _, e := range extra {
-		for k, v := range e {
-			one[k] = v
-		}
-	}
-	return one
-}
-
-
-const (
-	volatileSeed = "12345"
-)
+const volatileSeed = "12345"
 
 func generateMD5Hash(text string) string {
 	hasher := md5.New()
@@ -154,67 +133,6 @@ func generateUUID() string {
 		return "cb479ee7-a50d-49e7-8b7b-60cc1a105e22" // default value when error occurred
 	}
 	return uuid
-}
-
-type ChallengeStepData struct {
-	Choice           string      `json:"choice"`
-	FbAccessToken    string      `json:"fb_access_token"`
-	BigBlueToken     string      `json:"big_blue_token"`
-	GoogleOauthToken string      `json:"google_oauth_token"`
-	Email            string      `json:"email"`
-	SecurityCode     string      `json:"security_code"`
-	ResendDelay      interface{} `json:"resend_delay"`
-	ContactPoint     string      `json:"contact_point"`
-	FormType         string      `json:"form_type"`
-}
-
-type Challenge struct {
-	insta *Instagram
-
-	LoggedInUser *Account `json:"logged_in_user,omitempty"`
-	UserID       int64    `json:"user_id"`
-	Status       string   `json:"status"`
-
-	ApiPath           string            `json:"api_path"`
-	Context           *ChallengeContext `json:"challenge_context"`
-	FlowRenderType    int               `json:"flow_render_type"`
-	HideWebviewHeader bool              `json:"hide_webview_header"`
-	Lock              bool              `json:"lock"`
-	Logout            bool              `json:"logout"`
-	NativeFlow        bool              `json:"native_flow"`
-	URL               string            `json:"url"`
-
-	TwoFactorRequired bool
-	TwoFactorInfo     TwoFactorInfo
-}
-
-type ChallengeContext struct {
-	TypeEnum    string            `json:"challenge_type_enum"`
-	IsStateless bool              `json:"is_stateless"`
-	Action      string            `json:"action"`
-	NonceCode   string            `json:"nonce_code"`
-	StepName    string            `json:"step_name"`
-	StepData    ChallengeStepData `json:"step_data"`
-	UserID      int64             `json:"user_id"`
-}
-
-type TwoFactorInfo struct {
-	insta *Instagram
-
-	ElegibleForMultipleTotp    bool   `json:"elegible_for_multiple_totp"`
-	ObfuscatedPhoneNr          string `json:"obfuscated_phone_number"`
-	PendingTrustedNotification bool   `json:"pending_trusted_notification"`
-	ShouldOptInTrustedDevice   bool   `json:"should_opt_in_trusted_device_option"`
-	ShowMessengerCodeOption    bool   `json:"show_messenger_code_option"`
-	ShowTrustedDeviceOption    bool   `json:"show_trusted_device_option"`
-	SMSNotAllowedReason        string `json:"sms_not_allowed_reason"`
-	SMSTwoFactorOn             bool   `json:"sms_two_factor_on"`
-	TotpTwoFactorOn            bool   `json:"totp_two_factor_on"`
-	WhatsappTwoFactorOn        bool   `json:"whatsapp_two_factor_on"`
-	TwoFactorIdentifier        string `json:"two_factor_identifier"`
-	Username                   string `json:"username"`
-
-	PhoneVerificationSettings phoneVerificationSettings `json:"phone_verification_settings"`
 }
 
 type phoneVerificationSettings struct {

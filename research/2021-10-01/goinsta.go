@@ -69,16 +69,9 @@ type Instagram struct {
 	userAgent string
 	// Account stores all personal data of the user and his/her options.
 	Account *Account
-	// Challenge stores the challenge info if provided
-	Challenge *Challenge
-	// TwoFactorInfo enabled 2FA
-	TwoFactorInfo *TwoFactorInfo
-
 	c *http.Client
-
 	// Set to true to debug reponses
 	Debug bool
-
 	// Non-error message handlers.
 	// By default they will be printed out, alternatively you can e.g. pass them to a logger
 	infoHandler  func(...interface{})
@@ -257,12 +250,6 @@ func (insta *Instagram) verifyLogin(body []byte) error {
 		switch res.ErrorType {
 		case "bad_password":
 			return ErrBadPassword
-		case "two_factor_required":
-			insta.TwoFactorInfo = res.TwoFactorInfo
-			insta.TwoFactorInfo.insta = insta
-		case "checkpoint_challenge_required":
-			insta.Challenge = res.Challenge
-			insta.Challenge.insta = insta
 		}
 		return err
 	}
