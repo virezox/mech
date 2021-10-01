@@ -15,5 +15,5 @@ func TestInsta(t *testing.T) {
    if err != nil {
       panic(err)
    }
-   insta.Export("ig.json")
+   insta.ExportIO(os.Stdout)
 }

@@ -9,7 +9,6 @@ const (
 	instaAPIUrlb   = "https://b.i.instagram.com/api/v1/"
 	instaAPIUrlv2  = "https://i.instagram.com/api/v2/"
 	instaAPIUrlv2b = "https://b.i.instagram.com/api/v2/"
-
 	// header values
 	bloksVerID         = "927f06374b80864ae6a0b04757048065714dc50ff15d2b8b3de8d0b6de961649"
 	fbAnalytics        = "567067343352427"
@@ -19,15 +18,6 @@ const (
 	locale             = "en_US"
 	appVersion         = "195.0.0.31.123"
 	appVersionCode     = "302733750"
-
-	// Used for supported_capabilities value used in some requests, e.g. tray requests
-	supportedSdkVersions = "100.0,101.0,102.0,103.0,104.0,105.0,106.0,107.0,108.0,109.0,110.0,111.0,112.0,113.0,114.0,115.0,116.0,117.0"
-	facetrackerVersion   = "14"
-	segmentation         = "segmentation_enabled"
-	compression          = "ETC2_COMPRESSION"
-	worldTracker         = "world_tracker_enabled"
-	gyroscope            = "gyroscope_enabled"
-
 	// Other
 	software = "Android RP1A.200720.012.G975FXXSBFUF3"
 	hmacKey  = "iN4$aGr0m"
@@ -127,99 +117,6 @@ const (
 	urlConsent          = "consent/existing_user_flow/"
 	urlNotifBadge       = "notifications/badge/"
 	urlFeaturedAccounts = "multiple_accounts/get_featured_accounts/"
-	// Account and profile
-	urlFollowers = "friendships/%d/followers/"
-	urlFollowing = "friendships/%d/following/"
-	// Users
-	urlUserArchived      = "feed/only_me_feed/"
-	urlUserByName        = "users/%s/usernameinfo/"
-	urlUserByID          = "users/%s/info/"
-	urlUserBlock         = "friendships/block/%d/"
-	urlUserUnblock       = "friendships/unblock/%d/"
-	urlUserMute          = "friendships/mute_posts_or_story_from_follow/"
-	urlUserUnmute        = "friendships/unmute_posts_or_story_from_follow/"
-	urlUserFollow        = "friendships/create/%d/"
-	urlUserUnfollow      = "friendships/destroy/%d/"
-	urlUserFeed          = "feed/user/%d/"
-	urlFriendship        = "friendships/show/%d/"
-	urlFriendshipPending = "friendships/pending/"
-	urlUserStories       = "feed/user/%d/story/"
-	urlUserTags          = "usertags/%d/feed/"
-	urlBlockedList       = "users/blocked_list/"
-	urlUserInfo          = "users/%d/info/"
-	urlUserHighlights    = "highlights/%d/highlights_tray/"
-	// Timeline
-	urlTimeline  = "feed/timeline/"
-	urlStories   = "feed/reels_tray/"
-	urlReelMedia = "feed/reels_media/"
-	// Search
-	urlSearchTop           = "fbsearch/topsearch_flat/"
-	urlSearchUser          = "users/search/"
-	urlSearchTag           = "tags/search/"
-	urlSearchLocation      = "fbsearch/places/"
-	urlSearchRecent        = "fbsearch/recent_searches/"
-	urlSearchNullState     = "fbsearch/nullstate_dynamic_sections/"
-	urlSearchRegisterClick = "fbsearch/register_recent_search_click/"
-	// Feeds
-	urlFeedLocationID    = "feed/location/%d/"
-	urlFeedLocations     = "locations/%d/sections/"
-	urlFeedTag           = "feed/tag/%s/"
-	urlFeedNewPostsExist = "feed/new_feed_posts_exist/"
-	// Media
-	urlMediaInfo    = "media/%s/info/"
-	urlMediaDelete  = "media/%s/delete/"
-	urlMediaLike    = "media/%s/like/"
-	urlMediaUnlike  = "media/%s/unlike/"
-	urlMediaSave    = "media/%s/save/"
-	urlMediaUnsave  = "media/%s/unsave/"
-	urlMediaSeen    = "media/seen/"
-	urlMediaLikers  = "media/%s/likers/"
-	urlMediaBlocked = "media/blocked/"
-	// Broadcasts
-	urlLiveInfo      = "live/%d/info/"
-	urlLiveComments  = "live/%d/get_comment/"
-	urlLiveLikeCount = "live/%d/get_like_count/"
-	urlLiveHeartbeat = "live/%d/heartbeat_and_get_viewer_count/"
-	urlLiveChaining  = "live/get_live_chaining/"
-	// IGTV
-	urlIGTVDiscover = "igtv/discover/"
-	urlIGTVChannel  = "igtv/channel/"
-	urlIGTVSeries   = "igtv/series/all_user_series/%d/"
-	urlIGTVSeen     = "igtv/write_seen_state/"
-	// Discover
-	urlDiscoverExplore = "discover/topical_explore/"
-	// Comments
-	urlCommentAdd        = "media/%d/comment/"
-	urlCommentDelete     = "media/%s/comment/%s/delete/"
-	urlCommentBulkDelete = "media/%s/comment/bulk_delete/"
-	urlCommentSync       = "media/%s/comments/"
-	urlCommentDisable    = "media/%s/disable_comments/"
-	urlCommentEnable     = "media/%s/enable_comments/"
-	urlCommentLike       = "media/%s/comment_like/"
-	urlCommentUnlike     = "media/%s/comment_unlike/"
-	urlCommentOffensive  = "media/comment/check_offensive_comment/"
-	// Activity
-	urlActivityFollowing = "news/"
-	urlActivityRecent    = "news/inbox/"
-	// Inbox
-	urlInbox             = "direct_v2/inbox/"
-	urlInboxPending      = "direct_v2/pending_inbox/"
-	urlInboxSend         = "direct_v2/threads/broadcast/text/"
-	urlInboxSendLike     = "direct_v2/threads/broadcast/like/"
-	urlReplyStory        = "direct_v2/threads/broadcast/reel_share/"
-	urlGetByParticipants = "direct_v2/threads/get_by_participants/"
-	// Tags
-	urlTagInfo    = "tags/%s/info/"
-	urlTagStories = "tags/%s/story/"
-	urlTagContent = "tags/%s/ranked_sections/"
-	// Upload
-	urlUploadPhoto      = "rupload_igphoto/%s"
-	urlUploadVideo      = "rupload_igvideo/%s"
-	urlUploadFinishVid  = "media/upload_finish/?video=1"
-	urlConfigure        = "media/configure/"
-	urlConfigureSidecar = "media/configure_sidecar/"
-	urlConfigureIGTV    = "media/configure_to_igtv/?video=1"
-	urlConfigureStory   = "media/configure_to_story/"
 )
 
 // Errors

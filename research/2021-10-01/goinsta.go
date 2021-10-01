@@ -1,21 +1,19 @@
 package goinsta
 
 import (
-	"encoding/json"
-	"errors"
-	"fmt"
-	"io"
-	"io/ioutil"
-	"net/http"
-	"net/http/cookiejar"
-	neturl "net/url"
-	"os"
-	"path/filepath"
-	"strconv"
-	"sync"
-	"time"
-
-	"github.com/Davincible/goinsta/utilities"
+   "encoding/json"
+   "errors"
+   "fmt"
+   "github.com/Davincible/goinsta/utilities"
+   "io"
+   "io/ioutil"
+   "net/http"
+   "net/http/cookiejar"
+   "os"
+   "strconv"
+   "sync"
+   "time"
+   neturl "net/url"
 )
 
 // Instagram represent the main API handler
@@ -76,8 +74,6 @@ type Instagram struct {
 	userAgent string
 	// Account stores all personal data of the user and his/her options.
 	Account *Account
-	// Activity are instagram notifications.
-	Activity *Activity
 	// Challenge stores the challenge info if provided
 	Challenge *Challenge
 	// TwoFactorInfo enabled 2FA
@@ -209,16 +205,6 @@ func New(username, password string) *Instagram {
 
 func (insta *Instagram) init() {
 	insta.Challenge = newChallenge(insta)
-	insta.Activity = newActivity(insta)
-}
-
-// Save exports config to ~/.goinsta
-func (insta *Instagram) Save() error {
-	home := os.Getenv("HOME")
-	if home == "" {
-		home = os.Getenv("home") // for plan9
-	}
-	return insta.Export(filepath.Join(home, ".goinsta"))
 }
 
 // Export exports *Instagram object options
@@ -424,14 +410,6 @@ func (insta *Instagram) Login() (err error) {
 		return errors.New("Sync returned empty public key and/or public key id")
 	}
 	return insta.login()
-}
-
-// Logout closes current session
-func (insta *Instagram) Logout() error {
-	_, err := insta.sendSimpleRequest(urlLogout)
-	insta.c.Jar = nil
-	insta.c = nil
-	return err
 }
 
 func (insta *Instagram) login() error {

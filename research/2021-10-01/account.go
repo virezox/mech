@@ -107,35 +107,6 @@ type profResp struct {
 	Account Account `json:"user"`
 }
 
-func (account *Account) changePublic(endpoint string) error {
-	insta := account.insta
-	data, err := json.Marshal(
-		map[string]string{
-			"_uid":  toString(insta.Account.ID),
-			"_uuid": insta.uuid,
-		})
-	if err != nil {
-		return err
-	}
-
-	body, _, err := insta.sendRequest(
-		&reqOptions{
-			Endpoint: endpoint,
-			IsPost:   true,
-			Query:    generateSignature(data),
-		},
-	)
-	if err == nil {
-		resp := profResp{}
-		err = json.Unmarshal(body, &resp)
-		if err == nil {
-			*account = resp.Account
-			account.insta = insta
-		}
-	}
-	return err
-}
-
 type SyncAnswer struct {
 	Users []struct {
 		Pk                         int64  `json:"pk"`

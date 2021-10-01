@@ -1,9 +1,8 @@
 package goinsta
 
 import (
-	"encoding/json"
-	"fmt"
-	"strconv"
+   "encoding/json"
+   "strconv"
 )
 
 // Users is a struct that stores many user's returned by many different methods.
@@ -260,6 +259,7 @@ func (insta *Instagram) NewUser() *User {
 	return &User{insta: insta}
 }
 
+/*
 // Info updates user info
 // extra query arguments can be passes one after another as func(key, value).
 // Only if an even number of string arguements will be passed, they will be
@@ -286,8 +286,9 @@ func (user *User) Info(params ...interface{}) error {
 	err = json.Unmarshal(body, user)
 	return err
 }
-
 // Sync wraps User.Info() 1:1
 func (user *User) Sync(params ...interface{}) error {
 	return user.Info(params...)
 }
+*/
+
