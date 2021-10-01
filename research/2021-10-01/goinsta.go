@@ -13,6 +13,10 @@ import (
    neturl "net/url"
 )
 
+func defaultHandler(args ...interface{}) {
+   fmt.Println(args...)
+}
+
 // Instagram represent the main API handler
 //
 // Timeline:     Represents instagram's main timeline.
@@ -77,10 +81,6 @@ type Instagram struct {
 	infoHandler  func(...interface{})
 	warnHandler  func(...interface{})
 	debugHandler func(...interface{})
-}
-
-func defaultHandler(args ...interface{}) {
-	fmt.Println(args...)
 }
 
 // New creates Instagram structure
@@ -189,6 +189,54 @@ func (insta *Instagram) Login() (err error) {
 	return insta.login()
 }
 
+func (insta *Instagram) contactPrefill() error {
+	data, err := json.Marshal(
+		map[string]string{
+			"phone_id": insta.fID,
+			"usage":    "prefill",
+		},
+	)
+	if err != nil {
+		return err
+	}
+
+	// ignore the error returned by the request, because 429 if often returned
+	//   and body is not needed. Request is non-critical.
+	insta.sendRequest(
+		&reqOptions{
+			Endpoint: urlContactPrefill,
+			IsPost:   true,
+			Query:    generateSignature(data),
+		},
+	)
+	return nil
+}
+
+func (insta *Instagram) getPrefill() error {
+	data, err := json.Marshal(
+		map[string]string{
+			"android_device_id": insta.dID,
+			"phone_id":          insta.fID,
+			"usages":            "[\"account_recovery_omnibox\"]",
+			"device_id":         insta.uuid,
+		},
+	)
+	if err != nil {
+		return err
+	}
+
+	// ignore the error returned by the request, because 429 if often returned.
+	// request is non-critical.
+	insta.sendRequest(
+		&reqOptions{
+			Endpoint: urlGetPrefill,
+			IsPost:   true,
+			Query:    generateSignature(data),
+		},
+	)
+	return nil
+}
+
 func (insta *Instagram) login() error {
 	timestamp := strconv.Itoa(int(time.Now().Unix()))
 	if insta.pubKey == "" || insta.pubKeyID == 0 {
@@ -229,124 +277,6 @@ func (insta *Instagram) login() error {
 		return err
 	}
 	return insta.verifyLogin(body)
-}
-
-func (insta *Instagram) verifyLogin(body []byte) error {
-	res := accountResp{}
-	err := json.Unmarshal(body, &res)
-	if err != nil {
-		return fmt.Errorf("failed to parse json from login response with err: %s", err.Error())
-	}
-
-	if res.Status != "ok" {
-		err := errors.New(
-			fmt.Sprintf(
-				"Failed to login: %s, %s",
-				res.ErrorType, res.Message,
-			),
-		)
-		insta.warnHandler(err)
-
-		switch res.ErrorType {
-		case "bad_password":
-			return ErrBadPassword
-		}
-		return err
-	}
-
-	insta.Account = &res.Account
-	insta.Account.insta = insta
-	insta.rankToken = strconv.FormatInt(insta.Account.ID, 10) + "_" + insta.uuid
-
-	return nil
-}
-
-func (insta *Instagram) getPrefill() error {
-	data, err := json.Marshal(
-		map[string]string{
-			"android_device_id": insta.dID,
-			"phone_id":          insta.fID,
-			"usages":            "[\"account_recovery_omnibox\"]",
-			"device_id":         insta.uuid,
-		},
-	)
-	if err != nil {
-		return err
-	}
-
-	// ignore the error returned by the request, because 429 if often returned.
-	// request is non-critical.
-	insta.sendRequest(
-		&reqOptions{
-			Endpoint: urlGetPrefill,
-			IsPost:   true,
-			Query:    generateSignature(data),
-		},
-	)
-	return nil
-}
-
-func (insta *Instagram) contactPrefill() error {
-	data, err := json.Marshal(
-		map[string]string{
-			"phone_id": insta.fID,
-			"usage":    "prefill",
-		},
-	)
-	if err != nil {
-		return err
-	}
-
-	// ignore the error returned by the request, because 429 if often returned
-	//   and body is not needed. Request is non-critical.
-	insta.sendRequest(
-		&reqOptions{
-			Endpoint: urlContactPrefill,
-			IsPost:   true,
-			Query:    generateSignature(data),
-		},
-	)
-	return nil
-}
-
-func (insta *Instagram) zrToken() error {
-	body, _, err := insta.sendRequest(
-		&reqOptions{
-			Endpoint: urlZrToken,
-			IsPost:   false,
-			Query: map[string]string{
-				"device_id":        insta.dID,
-				"token_hash":       "",
-				"custom_device_id": insta.uuid,
-				"fetch_reason":     "token_expired",
-			},
-			IgnoreHeaders: []string{
-				"X-Pigeon-Session-Id",
-				"X-Pigeon-Rawclienttime",
-				"X-Ig-App-Locale",
-				"X-Ig-Device-Locale",
-				"X-Ig-Mapped-Locale",
-				"X-Ig-App-Startup-Country",
-			},
-		},
-	)
-	if err != nil {
-		return nil
-	}
-
-	var res map[string]interface{}
-	err = json.Unmarshal(body, &res)
-	if err != nil {
-		return err
-	}
-
-	// Get the expiry time of the token
-	token := res["token"].(map[string]interface{})
-	ttl := token["ttl"].(float64)
-	t := token["request_time"].(float64)
-	insta.xmidExpiry = int64(t + ttl)
-
-	return err
 }
 
 func (insta *Instagram) sync(args ...map[string]string) error {
@@ -395,4 +325,74 @@ func (insta *Instagram) sync(args ...map[string]string) error {
    insta.pubKey = key
    insta.pubKeyID = id
    return nil
+}
+
+func (insta *Instagram) verifyLogin(body []byte) error {
+	res := accountResp{}
+	err := json.Unmarshal(body, &res)
+	if err != nil {
+		return fmt.Errorf("failed to parse json from login response with err: %s", err.Error())
+	}
+
+	if res.Status != "ok" {
+		err := errors.New(
+			fmt.Sprintf(
+				"Failed to login: %s, %s",
+				res.ErrorType, res.Message,
+			),
+		)
+		insta.warnHandler(err)
+
+		switch res.ErrorType {
+		case "bad_password":
+			return ErrBadPassword
+		}
+		return err
+	}
+
+	insta.Account = &res.Account
+	insta.Account.insta = insta
+	insta.rankToken = strconv.FormatInt(insta.Account.ID, 10) + "_" + insta.uuid
+
+	return nil
+}
+
+func (insta *Instagram) zrToken() error {
+	body, _, err := insta.sendRequest(
+		&reqOptions{
+			Endpoint: urlZrToken,
+			IsPost:   false,
+			Query: map[string]string{
+				"device_id":        insta.dID,
+				"token_hash":       "",
+				"custom_device_id": insta.uuid,
+				"fetch_reason":     "token_expired",
+			},
+			IgnoreHeaders: []string{
+				"X-Pigeon-Session-Id",
+				"X-Pigeon-Rawclienttime",
+				"X-Ig-App-Locale",
+				"X-Ig-Device-Locale",
+				"X-Ig-Mapped-Locale",
+				"X-Ig-App-Startup-Country",
+			},
+		},
+	)
+	if err != nil {
+		return nil
+	}
+
+	var res map[string]interface{}
+	err = json.Unmarshal(body, &res)
+	if err != nil {
+		return err
+	}
+
+	// Get the expiry time of the token
+	token := res["token"].(map[string]interface{})
+	ttl := token["ttl"].(float64)
+	t := token["request_time"].(float64)
+	insta.xmidExpiry = int64(t + ttl)
+
+	return err
 }
