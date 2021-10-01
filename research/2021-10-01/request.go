@@ -66,7 +66,6 @@ func (insta *Instagram) sendRequest(o *reqOptions) (body []byte, h http.Header, 
    if insta == nil {
       return nil, nil, fmt.Errorf("calling %s: %s", o.Endpoint, ErrInstaNotDefined)
    }
-   insta.checkXmidExpiry()
    method := "GET"
    if o.IsPost {
       method = "POST"
@@ -226,14 +225,6 @@ func (insta *Instagram) sendRequest(o *reqOptions) (body []byte, h http.Header, 
       }
    }
    return body, resp.Header.Clone(), err
-}
-
-func (insta *Instagram) checkXmidExpiry() {
-	t := time.Now().Unix()
-	if insta.xmidExpiry != -1 && t > insta.xmidExpiry-10 {
-		insta.xmidExpiry = -1
-		insta.zrToken()
-	}
 }
 
 func (insta *Instagram) extractHeaders(h http.Header) {

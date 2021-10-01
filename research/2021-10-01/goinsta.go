@@ -127,23 +127,14 @@ func (insta *Instagram) ExportIO(writer io.Writer) error {
 // Login performs instagram login sequence in close resemblance to the android
 // apk. Password will be deleted after login.
 func (insta *Instagram) Login() (err error) {
-	// pre-login sequence
-	err = insta.zrToken()
-	if err != nil {
-		return
-	}
-	err = insta.sync()
-	if err != nil {
-		return
-	}
-	err = insta.sync()
-	if err != nil {
-		return
-	}
-	if insta.pubKey == "" || insta.pubKeyID == 0 {
-		return errors.New("Sync returned empty public key and/or public key id")
-	}
-	return insta.login()
+   err = insta.sync()
+   if err != nil {
+      return
+   }
+   if insta.pubKey == "" || insta.pubKeyID == 0 {
+      return errors.New("Sync returned empty public key and/or public key id")
+   }
+   return insta.login()
 }
 
 func (insta *Instagram) login() error {
@@ -253,44 +244,4 @@ func (insta *Instagram) verifyLogin(body []byte) error {
 	insta.rankToken = strconv.FormatInt(insta.Account.ID, 10) + "_" + insta.uuid
 
 	return nil
-}
-
-func (insta *Instagram) zrToken() error {
-	body, _, err := insta.sendRequest(
-		&reqOptions{
-			Endpoint: urlZrToken,
-			IsPost:   false,
-			Query: map[string]string{
-				"device_id":        insta.dID,
-				"token_hash":       "",
-				"custom_device_id": insta.uuid,
-				"fetch_reason":     "token_expired",
-			},
-			IgnoreHeaders: []string{
-				"X-Pigeon-Session-Id",
-				"X-Pigeon-Rawclienttime",
-				"X-Ig-App-Locale",
-				"X-Ig-Device-Locale",
-				"X-Ig-Mapped-Locale",
-				"X-Ig-App-Startup-Country",
-			},
-		},
-	)
-	if err != nil {
-		return nil
-	}
-
-	var res map[string]interface{}
-	err = json.Unmarshal(body, &res)
-	if err != nil {
-		return err
-	}
-
-	// Get the expiry time of the token
-	token := res["token"].(map[string]interface{})
-	ttl := token["ttl"].(float64)
-	t := token["request_time"].(float64)
-	insta.xmidExpiry = int64(t + ttl)
-
-	return err
 }
