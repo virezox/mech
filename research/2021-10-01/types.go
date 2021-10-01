@@ -161,26 +161,6 @@ type Cooldowns struct {
 	} `json:"surfaces"`
 }
 
-type ScoresBootstrapUsers struct {
-	Status   string `json:"status"`
-	Surfaces []struct {
-		Name      string         `json:"name"`
-		RankToken string         `json:"rank_token"`
-		Scores    map[string]int `json:"scores"`
-		TTLSecs   int            `json:"ttl_secs"`
-	} `json:"surfaces"`
-	Users []*User `json:"users"`
-}
-
-type CommentOffensive struct {
-	BullyClassifier  float64 `json:"bully_classifier"`
-	SexualClassifier float64 `json:"sexual_classifier"`
-	HateClassifier   float64 `json:"hate_classifier"`
-	IsOffensive      bool    `json:"is_offensive"`
-	Status           string  `json:"status"`
-	TextLanguage     string  `json:"text_language"`
-}
-
 type plainAcc struct {
 	Name     string
 	Username string
