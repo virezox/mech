@@ -90,77 +90,6 @@ func defaultHandler(args ...interface{}) {
 	fmt.Println(args...)
 }
 
-func (insta *Instagram) SetInfoHandler(f func(...interface{})) {
-	insta.infoHandler = f
-}
-
-func (insta *Instagram) SetWarnHandler(f func(...interface{})) {
-	insta.warnHandler = f
-}
-
-func (insta *Instagram) SetDebugHandler(f func(...interface{})) {
-	insta.debugHandler = f
-}
-
-// SetHTTPClient sets http client.  This further allows users to use this functionality
-// for HTTP testing using a mocking HTTP client Transport, which avoids direct calls to
-// the Instagram, instead of returning mocked responses.
-func (insta *Instagram) SetHTTPClient(client *http.Client) {
-	insta.c = client
-}
-
-// SetHTTPTransport sets http transport. This further allows users to tweak the underlying
-// low level transport for adding additional fucntionalities.
-func (insta *Instagram) SetHTTPTransport(transport http.RoundTripper) {
-	insta.c.Transport = transport
-}
-
-// SetDeviceID sets device id | android-1923fjnma8123
-func (insta *Instagram) SetDeviceID(id string) {
-	insta.dID = id
-}
-
-// SetUUID sets v4 uuid | 71cd1aec-e146-4380-8d60-d216127c7b4e
-func (insta *Instagram) SetUUID(uuid string) {
-	insta.uuid = uuid
-}
-
-// SetPhoneID sets phone id, v4 uuid | fbf767a4-260a-490d-bcbb-ee7c9ed7c576
-func (insta *Instagram) SetPhoneID(id string) {
-	insta.pid = id
-}
-
-// SetPhoneID sets phone family id, v4 uuid | 8b13e7b3-28f7-4e05-9474-358c6602e3f8
-func (insta *Instagram) SetFamilyID(id string) {
-	insta.fID = id
-}
-
-// SetAdID sets the ad id, v4 uuid |  5b23a92b-3228-4cff-b6ab-3199f531f05b
-func (insta *Instagram) SetAdID(id string) {
-	insta.adid = id
-}
-
-// SetDevice allows you to set a custom device. This will also change the
-//   user agent based on the new device.
-func (insta *Instagram) SetDevice(device Device) {
-	insta.device = device
-	insta.userAgent = createUserAgent(device)
-}
-
-// SetCookieJar sets the Cookie Jar. This further allows to use a custom implementation
-// of a cookie jar which may be backed by a different data store such as redis.
-func (insta *Instagram) SetCookieJar(jar http.CookieJar) error {
-	url, err := neturl.Parse(instaAPIUrl)
-	if err != nil {
-		return err
-	}
-	// First grab the cookies from the existing jar and we'll put it in the new jar.
-	cookies := insta.c.Jar.Cookies(url)
-	insta.c.Jar = jar
-	insta.c.Jar.SetCookies(url, cookies)
-	return nil
-}
-
 // New creates Instagram structure
 func New(username, password string) *Instagram {
 	// this call never returns error
@@ -234,9 +163,8 @@ func (insta *Instagram) ExportIO(writer io.Writer) error {
 	return err
 }
 
-// Login performs instagram login sequence in close resemblance to the android apk.
-//
-// Password will be deleted after login
+// Login performs instagram login sequence in close resemblance to the android
+// apk. Password will be deleted after login.
 func (insta *Instagram) Login() (err error) {
 	// pre-login sequence
 	err = insta.zrToken()
@@ -304,8 +232,6 @@ func (insta *Instagram) login() error {
 			IsPost:   true,
 		},
 	)
-
-	insta.pass = ""
 	if err != nil {
 		return err
 	}
