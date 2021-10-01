@@ -74,16 +74,10 @@ type Instagram struct {
 	device Device
 	// User-Agent
 	userAgent string
-	// Discover provides access to the discover/explore page
-	Discover *Discover
 	// Account stores all personal data of the user and his/her options.
 	Account *Account
 	// Activity are instagram notifications.
 	Activity *Activity
-	// Contacts provides address book sync/unsync methods
-	Contacts *Contacts
-	// Locations provide feed by location ID. To find location feeds by name use Searchbar
-	Locations *LocationInstance
 	// Challenge stores the challenge info if provided
 	Challenge *Challenge
 	// TwoFactorInfo enabled 2FA
@@ -216,9 +210,6 @@ func New(username, password string) *Instagram {
 func (insta *Instagram) init() {
 	insta.Challenge = newChallenge(insta)
 	insta.Activity = newActivity(insta)
-	insta.Contacts = newContacts(insta)
-	insta.Locations = newLocation(insta)
-	insta.Discover = newDiscover(insta)
 }
 
 // Save exports config to ~/.goinsta

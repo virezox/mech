@@ -1,16 +1,18 @@
 package goinsta
 
 import (
-	"crypto/hmac"
-	"crypto/md5"
-	"crypto/rand"
-	"crypto/sha256"
-	"encoding/base64"
-	"encoding/hex"
-	"encoding/json"
-	"fmt"
-	"io"
-	"time"
+   "bytes"
+   "crypto/hmac"
+   "crypto/md5"
+   "crypto/sha256"
+   "encoding/base64"
+   "encoding/hex"
+   "encoding/json"
+   "fmt"
+   "io"
+   //"math/rand"
+   "time"
+   "crypto/rand"
 )
 
 // Activity is the recent activity menu.
@@ -215,4 +217,11 @@ func generateUUID() string {
 		return "cb479ee7-a50d-49e7-8b7b-60cc1a105e22" // default value when error occurred
 	}
 	return uuid
+}
+
+
+func readFile(f io.Reader) (*bytes.Buffer, error) {
+	buf := new(bytes.Buffer)
+	_, err := buf.ReadFrom(f)
+	return buf, err
 }

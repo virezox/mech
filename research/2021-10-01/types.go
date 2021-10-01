@@ -180,39 +180,6 @@ type SuggestedUsers struct {
 	TrackingToken    string `json:"tracking_token"`
 }
 
-// Friendship stores the details of the relationship between two users.
-type Friendship struct {
-	Following       bool `json:"following"`
-	FollowedBy      bool `json:"followed_by"`
-	IncomingRequest bool `json:"incoming_request"`
-	OutgoingRequest bool `json:"outgoing_request"`
-	Muting          bool `json:"muting"`
-	Blocking        bool `json:"blocking"`
-	IsBestie        bool `json:"is_bestie"`
-	IsBlockingReel  bool `json:"is_blocking_reel"`
-	IsMutingReel    bool `json:"is_muting_reel"`
-	IsPrivate       bool `json:"is_private"`
-	IsRestricted    bool `jsoN:"is_restricted"`
-}
-
-// Images are different quality images
-type Images struct {
-	Versions []Candidate `json:"candidates"`
-}
-
-// GetBest returns the URL of the image with the best quality.
-func (img Images) GetBest() string {
-	best := ""
-	var mh, mw int
-	for _, v := range img.Versions {
-		if v.Width > mw || v.Height > mh {
-			best = v.URL
-			mh, mw = v.Height, v.Width
-		}
-	}
-	return best
-}
-
 // Candidate is something that I really have no idea what it is.
 type Candidate struct {
 	Width        int    `json:"width"`
@@ -229,49 +196,6 @@ type Tag struct {
 		StartTimeInVideoInSec interface{} `json:"start_time_in_video_in_sec"`
 		DurationInVideoInSec  interface{} `json:"duration_in_video_in_sec"`
 	} `json:"in"`
-}
-
-// Caption is media caption
-type Caption struct {
-	ID              int64  `json:"pk"`
-	UserID          int64  `json:"user_id"`
-	Text            string `json:"text"`
-	Type            int    `json:"type"`
-	CreatedAt       int64  `json:"created_at"`
-	CreatedAtUtc    int64  `json:"created_at_utc"`
-	ContentType     string `json:"content_type"`
-	Status          string `json:"status"`
-	BitFlags        int    `json:"bit_flags"`
-	User            User   `json:"user"`
-	DidReportAsSpam bool   `json:"did_report_as_spam"`
-	MediaID         int64  `json:"media_id"`
-	HasTranslation  bool   `json:"has_translation"`
-}
-
-// Mentions is a user being mentioned on media.
-type Mentions struct {
-	X        float64 `json:"x"`
-	Y        float64 `json:"y"`
-	Z        int64   `json:"z"`
-	Width    float64 `json:"width"`
-	Height   float64 `json:"height"`
-	Rotation float64 `json:"rotation"`
-	IsPinned int     `json:"is_pinned"`
-	User     User    `json:"user"`
-}
-
-// Video are different quality videos
-type Video struct {
-	Type   int    `json:"type"`
-	Width  int    `json:"width"`
-	Height int    `json:"height"`
-	URL    string `json:"url"`
-	ID     string `json:"id"`
-}
-
-type trayResp struct {
-	Reels  map[string]Reel `json:"reels"`
-	Status string          `json:"status"`
 }
 
 type ErrChallengeProcess struct {

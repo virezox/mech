@@ -227,9 +227,7 @@ type User struct {
 	FbPageCallToActionID         string       `json:"fb_page_call_to_action_id"`
 	FbPayExperienceEnabled       bool         `json:"fbpay_experience_enabled"`
 	Zip                          string       `json:"zip"`
-	Friendship                   Friendship   `json:"friendship_status"`
 	AutoExpandChaining           bool         `json:"auto_expand_chaining"`
-
 	AllowedToCreateNonprofitFundraisers        bool          `json:"is_allowed_to_create_standalone_nonprofit_fundraisers"`
 	AllowedToCreatePersonalFundraisers         bool          `json:"is_allowed_to_create_standalone_personal_fundraisers"`
 	IsElegibleToShowFbCrossSharingNux          bool          `json:"is_eligible_to_show_fb_cross_sharing_nux"`
