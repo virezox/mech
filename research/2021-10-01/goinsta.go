@@ -1,7 +1,6 @@
 package goinsta
 
 import (
-	"crypto/tls"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -75,15 +74,10 @@ type Instagram struct {
 	device Device
 	// User-Agent
 	userAgent string
-
-	// Instagram objects
-
 	// Timeline provides access to your timeline
 	Timeline *Timeline
 	// Discover provides access to the discover/explore page
 	Discover *Discover
-	// Profiles provides methods for interaction with other user's profiles
-	Profiles *Profiles
 	// IGTV allows you to fetch the IGTV Discover page
 	IGTV *IGTV
 	// Account stores all personal data of the user and his/her options.
@@ -231,7 +225,6 @@ func New(username, password string) *Instagram {
 
 func (insta *Instagram) init() {
 	insta.Challenge = newChallenge(insta)
-	insta.Profiles = newProfiles(insta)
 	insta.Activity = newActivity(insta)
 	insta.Timeline = newTimeline(insta)
 	insta.Searchbar = newSearch(insta)
@@ -241,26 +234,6 @@ func (insta *Instagram) init() {
 	insta.Discover = newDiscover(insta)
 	insta.Collections = newCollections(insta)
 	insta.IGTV = newIGTV(insta)
-}
-
-// SetProxy sets proxy for connection.
-func (insta *Instagram) SetProxy(url string, insecure bool, forceHTTP2 bool) error {
-	uri, err := neturl.Parse(url)
-	if err == nil {
-		insta.c.Transport = &http.Transport{
-			Proxy:             http.ProxyURL(uri),
-			ForceAttemptHTTP2: forceHTTP2,
-			TLSClientConfig: &tls.Config{
-				InsecureSkipVerify: insecure,
-			},
-		}
-	}
-	return err
-}
-
-// UnsetProxy unsets proxy for connection.
-func (insta *Instagram) UnsetProxy() {
-	insta.c.Transport = nil
 }
 
 // Save exports config to ~/.goinsta
