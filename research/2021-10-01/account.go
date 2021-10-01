@@ -11,7 +11,6 @@ import (
    "encoding/pem"
    "errors"
    "fmt"
-   "net/http"
    "strconv"
    "time"
 )
@@ -201,7 +200,6 @@ type ConfigFile struct {
 	PhoneID       string            `json:"phone_id"`
 	XmidExpiry    int64             `json:"xmid_expiry"`
 	HeaderOptions map[string]string `json:"header_options"`
-	Cookies       []*http.Cookie    `json:"cookies"`
 	Account       *Account          `json:"account"`
 	Device        Device            `json:"device"`
 }

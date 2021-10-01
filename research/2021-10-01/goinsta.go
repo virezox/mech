@@ -6,11 +6,9 @@ import (
    "fmt"
    "io"
    "net/http"
-   "net/http/cookiejar"
    "strconv"
    "sync"
    "time"
-   neturl "net/url"
 )
 
 func defaultHandler(args ...interface{}) {
@@ -19,26 +17,10 @@ func defaultHandler(args ...interface{}) {
 
 // Instagram represent the main API handler
 //
-// Timeline:     Represents instagram's main timeline.
-// Profiles:     Represents instagram's user profile.
-// Account:      Represents instagram's personal account.
-// Collections:  Represents instagram's saved post collections.
-// Searchbar:    Represents instagram's search.
-// Activity:     Represents instagram's user activity and notifications.
-// Feed:         Represents instagram's feed for e.g. user pages and hashtags.
-// Contacts:     Represents instagram's sync with contact book.
-// Inbox:        Represents instagram's messages.
-// Locations:    Represents instagram's locations.
-// Challenges:   Represents instagram's url challenges
-// TwoFactorInfo Represents Instagram's 2FA login
-//
-// See Scheme section in README.md for more information.
-//
 // We recommend to use Export and Import functions after first Login.
 //
 // Also you can use SetProxy and UnsetProxy to set and unset proxy.
 // Golang also provides the option to set a proxy using HTTP_PROXY env var.
-//
 type Instagram struct {
 	user string
 	pass string
@@ -85,8 +67,6 @@ type Instagram struct {
 
 // New creates Instagram structure
 func New(username, password string) *Instagram {
-	// this call never returns error
-	jar, _ := cookiejar.New(nil)
 	insta := &Instagram{
 		user: username,
 		pass: password,
@@ -105,7 +85,6 @@ func New(username, password string) *Instagram {
 			Transport: &http.Transport{
 				Proxy: http.ProxyFromEnvironment,
 			},
-			Jar: jar,
 		},
 		infoHandler:  defaultHandler,
 		warnHandler:  defaultHandler,
@@ -121,11 +100,6 @@ func New(username, password string) *Instagram {
 
 // Export exports selected *Instagram object options to an io.Writer
 func (insta *Instagram) ExportIO(writer io.Writer) error {
-	url, err := neturl.Parse(instaAPIUrl)
-	if err != nil {
-		return err
-	}
-
 	config := ConfigFile{
 		ID:            insta.Account.ID,
 		User:          insta.user,
@@ -137,16 +111,13 @@ func (insta *Instagram) ExportIO(writer io.Writer) error {
 		PhoneID:       insta.pid,
 		XmidExpiry:    insta.xmidExpiry,
 		HeaderOptions: map[string]string{},
-		Cookies:       insta.c.Jar.Cookies(url),
 		Account:       insta.Account,
 		Device:        insta.device,
 	}
-
 	setHeaders := func(key, value interface{}) bool {
 		config.HeaderOptions[key.(string)] = value.(string)
 		return true
 	}
-
 	insta.headerOptions.Range(setHeaders)
 	bytes, err := json.Marshal(config)
 	if err != nil {
@@ -168,17 +139,10 @@ func (insta *Instagram) Login() (err error) {
 	if err != nil {
 		return
 	}
-
 	err = insta.getPrefill()
 	if err != nil {
 		insta.warnHandler("Non fatal error while fetching prefill:", err)
 	}
-
-	err = insta.contactPrefill()
-	if err != nil {
-		insta.warnHandler("Non fatal error while fetching contact prefill:", err)
-	}
-
 	err = insta.sync()
 	if err != nil {
 		return
@@ -187,29 +151,6 @@ func (insta *Instagram) Login() (err error) {
 		return errors.New("Sync returned empty public key and/or public key id")
 	}
 	return insta.login()
-}
-
-func (insta *Instagram) contactPrefill() error {
-	data, err := json.Marshal(
-		map[string]string{
-			"phone_id": insta.fID,
-			"usage":    "prefill",
-		},
-	)
-	if err != nil {
-		return err
-	}
-
-	// ignore the error returned by the request, because 429 if often returned
-	//   and body is not needed. Request is non-critical.
-	insta.sendRequest(
-		&reqOptions{
-			Endpoint: urlContactPrefill,
-			IsPost:   true,
-			Query:    generateSignature(data),
-		},
-	)
-	return nil
 }
 
 func (insta *Instagram) getPrefill() error {

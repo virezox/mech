@@ -9,12 +9,14 @@ import (
    "fmt"
    "io"
    "io/ioutil"
-   mathRand "math/rand"
    "net/http"
+   "net/http/httputil"
    "net/url"
+   "os"
    "strconv"
    "strings"
    "time"
+   mathRand "math/rand"
 )
 
 type reqOptions struct {
@@ -65,7 +67,6 @@ func (insta *Instagram) sendRequest(o *reqOptions) (body []byte, h http.Header, 
 		return nil, nil, fmt.Errorf("Error while calling %s: %s", o.Endpoint, ErrInstaNotDefined)
 	}
 	insta.checkXmidExpiry()
-
 	method := "GET"
 	if o.IsPost {
 		method = "POST"
@@ -73,11 +74,9 @@ func (insta *Instagram) sendRequest(o *reqOptions) (body []byte, h http.Header, 
 	if o.Connection == "" {
 		o.Connection = "close"
 	}
-
 	if o.Timestamp == "" {
 		o.Timestamp = strconv.Itoa(int(time.Now().Unix()))
 	}
-
 	var nu string
 	if o.Useb {
 		nu = instaAPIUrlb
@@ -93,27 +92,22 @@ func (insta *Instagram) sendRequest(o *reqOptions) (body []byte, h http.Header, 
 		nu = baseUrl
 		o.IgnoreHeaders = append(o.IgnoreHeaders, omitAPIHeadersExclude...)
 	}
-
 	u, err := url.Parse(nu + o.Endpoint)
 	if err != nil {
 		return nil, nil, err
 	}
-
 	vs := url.Values{}
 	bf := bytes.NewBuffer([]byte{})
 	reqData := bytes.NewBuffer([]byte{})
-
 	for k, v := range o.Query {
 		vs.Add(k, v)
 	}
-
 	// If DataBytes has been passed, use that as data, else use Query
 	if o.DataBytes != nil {
 		reqData = o.DataBytes
 	} else {
 		reqData.WriteString(vs.Encode())
 	}
-
 	var contentEncoding string
 	if o.IsPost && o.Gzip {
 		// If gzip encoding needs to be applied
@@ -137,13 +131,11 @@ func (insta *Instagram) sendRequest(o *reqOptions) (body []byte, h http.Header, 
 
 		u.RawQuery = vs.Encode()
 	}
-
 	var req *http.Request
 	req, err = http.NewRequest(method, u.String(), bf)
 	if err != nil {
 		return
 	}
-
 	ignoreHeader := func(h string) bool {
 		for _, k := range o.IgnoreHeaders {
 			if k == h {
@@ -152,7 +144,6 @@ func (insta *Instagram) sendRequest(o *reqOptions) (body []byte, h http.Header, 
 		}
 		return false
 	}
-
 	setHeaders := func(h map[string]string) {
 		for k, v := range h {
 			if v != "" && !ignoreHeader(k) {
@@ -167,7 +158,6 @@ func (insta *Instagram) sendRequest(o *reqOptions) (body []byte, h http.Header, 
 		}
 		return true
 	}
-
 	headers := map[string]string{
 		"Accept-Language":             locale,
 		"Accept-Encoding":             "gzip,deflate",
@@ -205,23 +195,26 @@ func (insta *Instagram) sendRequest(o *reqOptions) (body []byte, h http.Header, 
 	if contentEncoding != "" {
 		headers["Content-Encoding"] = contentEncoding
 	}
-
 	setHeaders(headers)
 	setHeaders(o.ExtraHeaders)
 	insta.headerOptions.Range(setHeadersAsync)
-
+      
+      dum, err := httputil.DumpRequest(req, true)
+	if err != nil {
+		return nil, nil, err
+	}
+         os.Stdout.Write(append(dum, '\n'))
+         
 	resp, err := insta.c.Do(req)
 	if err != nil {
 		return nil, nil, err
 	}
 	defer resp.Body.Close()
-
 	body, err = ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return nil, nil, err
 	}
 	insta.extractHeaders(resp.Header)
-
 	// Decode gzip encoded responses
 	encoding := resp.Header.Get("Content-Encoding")
 	if encoding != "" && encoding == "gzip" {
