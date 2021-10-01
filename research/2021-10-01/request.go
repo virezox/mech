@@ -57,15 +57,6 @@ type reqOptions struct {
 	Timestamp string
 }
 
-func (insta *Instagram) sendSimpleRequest(uri string, a ...interface{}) (body []byte, err error) {
-	body, _, err = insta.sendRequest(
-		&reqOptions{
-			Endpoint: fmt.Sprintf(uri, a...),
-		},
-	)
-	return body, err
-}
-
 func (insta *Instagram) sendRequest(o *reqOptions) (body []byte, h http.Header, err error) {
 	if insta == nil {
 		return nil, nil, fmt.Errorf("Error while calling %s: %s", o.Endpoint, ErrInstaNotDefined)

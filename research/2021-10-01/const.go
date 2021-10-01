@@ -18,9 +18,6 @@ const (
 	locale             = "en_US"
 	appVersion         = "195.0.0.31.123"
 	appVersionCode     = "302733750"
-	// Other
-	software = "Android RP1A.200720.012.G975FXXSBFUF3"
-	hmacKey  = "iN4$aGr0m"
 )
 
 var (

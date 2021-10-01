@@ -2,10 +2,8 @@ package goinsta
 
 import (
    "bytes"
-   "crypto/hmac"
    "crypto/md5"
    "crypto/rand"
-   "crypto/sha256"
    "encoding/base64"
    "encoding/hex"
    "fmt"
@@ -154,24 +152,9 @@ func generateMD5Hash(text string) string {
 	return hex.EncodeToString(hasher.Sum(nil))
 }
 
-func generateHMAC(text, key string) string {
-	hasher := hmac.New(sha256.New, []byte(key))
-	hasher.Write([]byte(text))
-	return hex.EncodeToString(hasher.Sum(nil))
-}
-
 func generateDeviceID(seed string) string {
 	hash := generateMD5Hash(seed + volatileSeed)
 	return "android-" + hash[:16]
-}
-
-func generateUserBreadcrumb(text string) string {
-	ts := time.Now().Unix()
-	d := fmt.Sprintf("%d %d %d %d%d",
-		len(text), 0, random(3000, 10000), ts, random(100, 999))
-	hmac := base64.StdEncoding.EncodeToString([]byte(generateHMAC(d, hmacKey)))
-	enc := base64.StdEncoding.EncodeToString([]byte(d))
-	return hmac + "\n" + enc + "\n"
 }
 
 func generateSignature(d interface{}, extra ...map[string]string) map[string]string {
@@ -215,9 +198,70 @@ func generateUUID() string {
 	return uuid
 }
 
+type ChallengeStepData struct {
+	Choice           string      `json:"choice"`
+	FbAccessToken    string      `json:"fb_access_token"`
+	BigBlueToken     string      `json:"big_blue_token"`
+	GoogleOauthToken string      `json:"google_oauth_token"`
+	Email            string      `json:"email"`
+	SecurityCode     string      `json:"security_code"`
+	ResendDelay      interface{} `json:"resend_delay"`
+	ContactPoint     string      `json:"contact_point"`
+	FormType         string      `json:"form_type"`
+}
 
-func readFile(f io.Reader) (*bytes.Buffer, error) {
-	buf := new(bytes.Buffer)
-	_, err := buf.ReadFrom(f)
-	return buf, err
+type Challenge struct {
+	insta *Instagram
+
+	LoggedInUser *Account `json:"logged_in_user,omitempty"`
+	UserID       int64    `json:"user_id"`
+	Status       string   `json:"status"`
+
+	ApiPath           string            `json:"api_path"`
+	Context           *ChallengeContext `json:"challenge_context"`
+	FlowRenderType    int               `json:"flow_render_type"`
+	HideWebviewHeader bool              `json:"hide_webview_header"`
+	Lock              bool              `json:"lock"`
+	Logout            bool              `json:"logout"`
+	NativeFlow        bool              `json:"native_flow"`
+	URL               string            `json:"url"`
+
+	TwoFactorRequired bool
+	TwoFactorInfo     TwoFactorInfo
+}
+
+type ChallengeContext struct {
+	TypeEnum    string            `json:"challenge_type_enum"`
+	IsStateless bool              `json:"is_stateless"`
+	Action      string            `json:"action"`
+	NonceCode   string            `json:"nonce_code"`
+	StepName    string            `json:"step_name"`
+	StepData    ChallengeStepData `json:"step_data"`
+	UserID      int64             `json:"user_id"`
+}
+
+type TwoFactorInfo struct {
+	insta *Instagram
+
+	ElegibleForMultipleTotp    bool   `json:"elegible_for_multiple_totp"`
+	ObfuscatedPhoneNr          string `json:"obfuscated_phone_number"`
+	PendingTrustedNotification bool   `json:"pending_trusted_notification"`
+	ShouldOptInTrustedDevice   bool   `json:"should_opt_in_trusted_device_option"`
+	ShowMessengerCodeOption    bool   `json:"show_messenger_code_option"`
+	ShowTrustedDeviceOption    bool   `json:"show_trusted_device_option"`
+	SMSNotAllowedReason        string `json:"sms_not_allowed_reason"`
+	SMSTwoFactorOn             bool   `json:"sms_two_factor_on"`
+	TotpTwoFactorOn            bool   `json:"totp_two_factor_on"`
+	WhatsappTwoFactorOn        bool   `json:"whatsapp_two_factor_on"`
+	TwoFactorIdentifier        string `json:"two_factor_identifier"`
+	Username                   string `json:"username"`
+
+	PhoneVerificationSettings phoneVerificationSettings `json:"phone_verification_settings"`
+}
+
+type phoneVerificationSettings struct {
+	MaxSMSCount          int  `json:"max_sms_count"`
+	ResendSMSDelaySec    int  `json:"resend_sms_delay_sec"`
+	RobocallAfterMaxSms  bool `json:"robocall_after_max_sms"`
+	RobocallCountDownSec int  `json:"robocall_count_down_time_sec"`
 }

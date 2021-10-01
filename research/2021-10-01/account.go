@@ -23,7 +23,6 @@ type accountResp struct {
 // See examples: examples/account/*
 type Account struct {
 	insta *Instagram
-
 	ID                         int64        `json:"pk"`
 	Username                   string       `json:"username"`
 	FullName                   string       `json:"full_name"`
@@ -125,10 +124,6 @@ type SyncAnswer struct {
 }
 
 var ErrAllSaved = errors.New("Unable to call function for collection all posts")
-
-type actionLog struct {
-	Description string `json:"description"`
-}
 
 type (
 	fetchReason string

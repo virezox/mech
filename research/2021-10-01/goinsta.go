@@ -193,54 +193,12 @@ func New(username, password string) *Instagram {
 		warnHandler:  defaultHandler,
 		debugHandler: defaultHandler,
 	}
-	insta.init()
 
 	for k, v := range defaultHeaderOptions {
 		insta.headerOptions.Store(k, v)
 	}
 
 	return insta
-}
-
-func (insta *Instagram) init() {
-	insta.Challenge = newChallenge(insta)
-}
-
-// Export exports *Instagram object options
-func (insta *Instagram) Export(path string) error {
-	url, err := neturl.Parse(instaAPIUrl)
-	if err != nil {
-		return err
-	}
-
-	config := ConfigFile{
-		ID:            insta.Account.ID,
-		User:          insta.user,
-		DeviceID:      insta.dID,
-		FamilyID:      insta.fID,
-		UUID:          insta.uuid,
-		RankToken:     insta.rankToken,
-		Token:         insta.token,
-		PhoneID:       insta.pid,
-		XmidExpiry:    insta.xmidExpiry,
-		HeaderOptions: map[string]string{},
-		Cookies:       insta.c.Jar.Cookies(url),
-		Account:       insta.Account,
-		Device:        insta.device,
-	}
-
-	setHeaders := func(key, value interface{}) bool {
-		config.HeaderOptions[key.(string)] = value.(string)
-		return true
-	}
-	insta.headerOptions.Range(setHeaders)
-
-	bytes, err := json.Marshal(config)
-	if err != nil {
-		return err
-	}
-
-	return ioutil.WriteFile(path, bytes, 0o644)
 }
 
 // Export exports selected *Instagram object options to an io.Writer
@@ -338,8 +296,6 @@ func ImportConfig(config ConfigFile, args ...interface{}) (*Instagram, error) {
 	for k, v := range config.HeaderOptions {
 		insta.headerOptions.Store(k, v)
 	}
-
-	insta.init()
 
 	dontSync := false
 	if len(args) != 0 {
