@@ -94,8 +94,6 @@ type Instagram struct {
 	Searchbar *Search
 	// Activity are instagram notifications.
 	Activity *Activity
-	// Inbox provides to Instagram's message/chat system
-	Inbox *Inbox
 	// Feed provides access to secondary feeds such as user's and hashtag's feeds
 	Feed *Feed
 	// Contacts provides address book sync/unsync methods
@@ -237,7 +235,6 @@ func (insta *Instagram) init() {
 	insta.Activity = newActivity(insta)
 	insta.Timeline = newTimeline(insta)
 	insta.Searchbar = newSearch(insta)
-	insta.Inbox = newInbox(insta)
 	insta.Feed = newFeed(insta)
 	insta.Contacts = newContacts(insta)
 	insta.Locations = newLocation(insta)
@@ -477,19 +474,7 @@ func (insta *Instagram) Login() (err error) {
 	if insta.pubKey == "" || insta.pubKeyID == 0 {
 		return errors.New("Sync returned empty public key and/or public key id")
 	}
-
-	err = insta.login()
-	if err != nil {
-		return err
-	}
-
-	// post-login sequence
-	err = insta.OpenApp()
-	if err != nil {
-		return err
-	}
-
-	return
+	return insta.login()
 }
 
 // Logout closes current session
@@ -498,171 +483,6 @@ func (insta *Instagram) Logout() error {
 	insta.c.Jar = nil
 	insta.c = nil
 	return err
-}
-
-func (insta *Instagram) OpenApp() (err error) {
-	// First refresh tokens after being logged in
-	err = insta.zrToken()
-	if err != nil {
-		return
-	}
-
-	if err := insta.sync(); err != nil {
-		return err
-	}
-
-	// Second start open app routine async
-	// this was first done synchronously, but the IO limitations make it take
-	//   too long. On the offical app these requests also happen withing one
-	//   to two seconds, instad of 10+.
-	wg := &sync.WaitGroup{}
-	errChan := make(chan error, 15)
-
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		err := insta.getAccountFamily()
-		if err != nil {
-			insta.warnHandler("Non fatal error while fetching account family:", err)
-		}
-	}()
-
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		if err := insta.getNdxSteps(); err != nil {
-			insta.warnHandler("Non fatal error while fetching ndx steps:", err)
-		}
-	}()
-
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		if !insta.Timeline.Next() {
-			err := insta.Timeline.Error()
-			if err != ErrNoMore {
-				errChan <- errors.New("Failed to fetch timeline: " +
-					err.Error())
-			}
-		}
-	}()
-
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		if err := insta.callNotifBadge(); err != nil {
-			insta.warnHandler("Non fatal error while fetching notify badge", err)
-		}
-	}()
-
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		if err := insta.banyan(); err != nil {
-			insta.warnHandler("Non fatal error while fetching banyan", err)
-		}
-	}()
-
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		if err = insta.callMediaBlocked(); err != nil {
-			insta.warnHandler("Non fatal error while fetching blocked media", err)
-		}
-	}()
-
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		// no clue what theses values could be used for
-		_, err = insta.getCooldowns()
-		if err != nil {
-			insta.warnHandler("Non fatal error while fetching cool downs", err)
-		}
-	}()
-
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		if !insta.Discover.Next() {
-			insta.warnHandler("Non fatal error while fetching explore page",
-				insta.Discover.Error())
-		}
-	}()
-
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		if err := insta.getConfig(); err != nil {
-			insta.warnHandler("Non fatal error while fetching config", err)
-		}
-	}()
-
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		// no clue what theses values could be used for
-		_, err = insta.getScoresBootstrapUsers()
-		if err != nil {
-			insta.warnHandler("Non fatal error while fetching bootstrap user scores", err)
-		}
-	}()
-
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		if !insta.Activity.Next() {
-			err := insta.Activity.Error()
-			if err != ErrNoMore {
-				errChan <- errors.New("Failed to fetch recent activity: " +
-					err.Error())
-			}
-		}
-	}()
-
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		if err := insta.sendAdID(); err != nil {
-			insta.warnHandler("Non fatal error while sending ad id", err)
-		}
-	}()
-
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		if err := insta.callStClPushPerm(); err != nil {
-			insta.warnHandler("Non fatal error while calling store client push permissions", err)
-		}
-	}()
-
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		if !insta.Inbox.InitialSnapshot() {
-			err := insta.Inbox.Error()
-			if err != ErrNoMore {
-				errChan <- errors.New("Failed to fetch initial messages inbox snapshot: " +
-					err.Error())
-			}
-		}
-	}()
-
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		if err := insta.callContPointSig(); err != nil {
-			insta.warnHandler("Non fatal error while calling contact point signal:", err)
-		}
-	}()
-
-	wg.Wait()
-	select {
-	case err := <-errChan:
-		return err
-	default:
-		return nil
-	}
 }
 
 func (insta *Instagram) login() error {

@@ -2,7 +2,6 @@ package goinsta
 
 import (
 	"encoding/json"
-	"errors"
 	"strings"
 )
 
@@ -209,79 +208,6 @@ func (c *Challenge) Process(apiURL string) error {
 	}
 
 	return ErrChallengeProcess{StepName: c.Context.StepName}
-}
-
-// Check2FATrusted checks whether the device has been trusted.
-// When you enable 2FA, you can verify, or trust, the device with one of your
-//   other devices. This method will check if this device has been trusted.
-// if so, it will login, if not, it will return an error.
-// The android app calls this method every 3 seconds
-func (info *TwoFactorInfo) Check2FATrusted() error {
-	insta := info.insta
-	body, _, err := insta.sendRequest(
-		&reqOptions{
-			Endpoint: url2FACheckTrusted,
-			Query: map[string]string{
-				"two_factor_identifier": info.TwoFactorIdentifier,
-				"username":              insta.user,
-				"device_id":             insta.dID,
-			},
-		},
-	)
-	if err != nil {
-		return err
-	}
-
-	stat := struct {
-		ReviewStatus int    `json:"review_status"`
-		Status       string `json:"status"`
-	}{}
-	err = json.Unmarshal(body, &stat)
-	if stat.ReviewStatus == 0 {
-		return errors.New("Two factor authentication not yet verified")
-	}
-
-	err = info.Login2FA("")
-	return err
-}
-
-// Login2FA allows for a login through 2FA
-func (info *TwoFactorInfo) Login2FA(code string) error {
-	insta := info.insta
-	data, err := json.Marshal(
-		map[string]string{
-			"verification_code":     code,
-			"phone_id":              insta.fID,
-			"two_factor_identifier": info.TwoFactorIdentifier,
-			"username":              insta.user,
-			"trust_this_device":     "1",
-			"guid":                  insta.uuid,
-			"device_id":             insta.dID,
-			"waterfall_id":          generateUUID(),
-			"verification_method":   "4",
-		},
-	)
-	if err != nil {
-		return err
-	}
-	body, _, err := insta.sendRequest(
-		&reqOptions{
-			Endpoint: url2FALogin,
-			IsPost:   true,
-			Query:    generateSignature(data),
-		},
-	)
-	if err != nil {
-		return err
-	}
-
-	err = insta.verifyLogin(body)
-	if err != nil {
-		return err
-	}
-
-	err = insta.OpenApp()
-	return err
 }
 
 func (c *ChallengeError) Process() ([]byte, error) {
