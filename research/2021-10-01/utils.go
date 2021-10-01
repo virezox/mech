@@ -66,24 +66,6 @@ func toString(i interface{}) string {
 	return ""
 }
 
-func prepareRecipients(cc interface{}) (bb string, err error) {
-	var b []byte
-	ids := make([][]int64, 0)
-	switch c := cc.(type) {
-	case *Conversation:
-		for i := range c.Users {
-			ids = append(ids, []int64{c.Users[i].ID})
-		}
-	case *Item:
-		ids = append(ids, []int64{c.User.ID})
-	case int64:
-		ids = append(ids, []int64{c})
-	}
-	b, err = json.Marshal(ids)
-	bb = string(b)
-	return
-}
-
 // getImageSize return image dimension , types is .jpg and .png
 func getImageSize(b []byte) (int, int, error) {
 	buf := bytes.NewReader(b)

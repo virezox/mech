@@ -250,10 +250,6 @@ const (
 	urlConfigureSidecar = "media/configure_sidecar/"
 	urlConfigureIGTV    = "media/configure_to_igtv/?video=1"
 	urlConfigureStory   = "media/configure_to_story/"
-
-	// 2FA
-	url2FACheckTrusted = "two_factor/check_trusted_notification_status/"
-	url2FALogin        = "accounts/two_factor_login/"
 )
 
 // Errors

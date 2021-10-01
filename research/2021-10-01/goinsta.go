@@ -74,22 +74,12 @@ type Instagram struct {
 	device Device
 	// User-Agent
 	userAgent string
-	// Timeline provides access to your timeline
-	Timeline *Timeline
 	// Discover provides access to the discover/explore page
 	Discover *Discover
-	// IGTV allows you to fetch the IGTV Discover page
-	IGTV *IGTV
 	// Account stores all personal data of the user and his/her options.
 	Account *Account
-	// Collections represents your collections with saved posts
-	Collections *Collections
-	// Searchbar provides methods to access IG's search functionalities
-	Searchbar *Search
 	// Activity are instagram notifications.
 	Activity *Activity
-	// Feed provides access to secondary feeds such as user's and hashtag's feeds
-	Feed *Feed
 	// Contacts provides address book sync/unsync methods
 	Contacts *Contacts
 	// Locations provide feed by location ID. To find location feeds by name use Searchbar
@@ -226,14 +216,9 @@ func New(username, password string) *Instagram {
 func (insta *Instagram) init() {
 	insta.Challenge = newChallenge(insta)
 	insta.Activity = newActivity(insta)
-	insta.Timeline = newTimeline(insta)
-	insta.Searchbar = newSearch(insta)
-	insta.Feed = newFeed(insta)
 	insta.Contacts = newContacts(insta)
 	insta.Locations = newLocation(insta)
 	insta.Discover = newDiscover(insta)
-	insta.Collections = newCollections(insta)
-	insta.IGTV = newIGTV(insta)
 }
 
 // Save exports config to ~/.goinsta
@@ -678,17 +663,4 @@ func (insta *Instagram) sync(args ...map[string]string) error {
 	insta.pubKeyID = id
 
 	return nil
-}
-
-// GetMedia returns media specified by id.
-//
-// The argument can be int64 or string
-//
-// See example: examples/media/like.go
-func (insta *Instagram) GetMedia(o interface{}) (*FeedMedia, error) {
-	media := &FeedMedia{
-		insta:  insta,
-		NextID: o,
-	}
-	return media, media.Sync()
 }

@@ -3,7 +3,6 @@ package goinsta
 import (
 	"encoding/json"
 	"fmt"
-	"time"
 )
 
 // StoryReelMention represent story reel mention
@@ -38,11 +37,10 @@ type StoryCTA struct {
 	} `json:"links"`
 }
 
-// StoryMedia is the struct that handles the information from the methods to get info about Stories.
+// StoryMedia is the struct that handles the information from the methods to
+// get info about Stories.
 type StoryMedia struct {
 	Reel       Reel         `json:"reel"`
-	Broadcast  *Broadcast   `json:"broadcast"`
-	Broadcasts []*Broadcast `json:"broadcasts"`
 	Status     string       `json:"status"`
 }
 
@@ -87,56 +85,7 @@ type Reel struct {
 	User                 User   `json:"user"`
 }
 
-// Stories will fetch a user's stories.
-func (user *User) Stories() (*StoryMedia, error) {
-	return user.insta.fetchStories(user.ID)
-}
-
-// Highlights will fetch a user's highlights.
-func (user *User) Highlights() ([]*Reel, error) {
-	data, err := getSupCap()
-	if err != nil {
-		return nil, err
-	}
-
-	body, _, err := user.insta.sendRequest(
-		&reqOptions{
-			Endpoint: fmt.Sprintf(urlUserHighlights, user.ID),
-			Query:    map[string]string{"supported_capabilities_new": data},
-		},
-	)
-	if err != nil {
-		return nil, err
-	}
-
-	tray := &Tray{}
-	err = json.Unmarshal(body, &tray)
-	if err != nil {
-		return nil, err
-	}
-
-	tray.set(user.insta)
-	return tray.Stories, nil
-}
-
-// Deletes ALL user's instagram stories.
-// If you want to remove a single story, pick one from StoryMedia.Items, and
-//   call Item.Delete()
-//
-// See example: examples/media/deleteStories.go
-func (media *Reel) Delete() error {
-	// TODO: update to reel
-	for _, item := range media.Items {
-		err := item.Delete()
-		if err != nil {
-			return err
-		}
-		time.Sleep(200 * time.Millisecond)
-
-	}
-	return nil
-}
-
+/*
 func (media *StoryMedia) setValues(insta *Instagram) {
 	media.Reel.setValues(insta)
 	if media.Broadcast != nil {
@@ -146,6 +95,7 @@ func (media *StoryMedia) setValues(insta *Instagram) {
 		br.setValues(insta)
 	}
 }
+*/
 
 func (media *Reel) setValues(insta *Instagram) {
 	media.insta = insta
@@ -156,64 +106,9 @@ func (media *Reel) setValues(insta *Instagram) {
 	}
 }
 
-// Seen marks story as seen.
-/*
-func (media *StoryMedia) Seen() error {
-	insta := media.inst
-	data, err := insta.prepareData(
-		map[string]interface{}{
-			"container_module":   "feed_timeline",
-			"live_vods_skipped":  "",
-			"nuxes_skipped":      "",
-			"nuxes":              "",
-			"reels":              "", // TODO xd
-			"live_vods":          "",
-			"reel_media_skipped": "",
-		},
-	)
-	if err == nil {
-		_, _, err = insta.sendRequest(
-			&reqOptions{
-				Endpoint: urlMediaSeen, // reel=1&live_vod=0
-				Query:    generateSignature(data),
-				IsPost:   true,
-				UseV2:    true,
-			},
-		)
-	}
-	return err
-}
-*/
-
 type trayRequest struct {
 	Name  string `json:"name"`
 	Value string `json:"value"`
-}
-
-func (insta *Instagram) fetchStories(id int64) (*StoryMedia, error) {
-	supCap, err := getSupCap()
-	if err != nil {
-		return nil, err
-	}
-
-	body, _, err := insta.sendRequest(
-		&reqOptions{
-			Endpoint: fmt.Sprintf(urlUserStories, id),
-			Query:    map[string]string{"supported_capabilities_new": supCap},
-		},
-	)
-	if err != nil {
-		return nil, err
-	}
-
-	m := &StoryMedia{}
-	err = json.Unmarshal(body, m)
-	if err != nil {
-		return nil, err
-	}
-
-	m.setValues(insta)
-	return m, nil
 }
 
 // Sync function is used when Highlights must be sync.
