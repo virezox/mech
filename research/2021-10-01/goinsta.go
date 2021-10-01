@@ -350,55 +350,49 @@ func (insta *Instagram) zrToken() error {
 }
 
 func (insta *Instagram) sync(args ...map[string]string) error {
-	var query map[string]string
-	if insta.Account == nil {
-		query = map[string]string{
-			"id":                      insta.uuid,
-			"server_config_retrieval": "1",
-		}
-	} else {
-		// if logged in
-		query = map[string]string{
-			"id":                      toString(insta.Account.ID),
-			"_id":                     toString(insta.Account.ID),
-			"_uuid":                   insta.uuid,
-			"server_config_retrieval": "1",
-		}
-	}
-	data, err := json.Marshal(query)
-	if err != nil {
-		return err
-	}
-
-	_, h, err := insta.sendRequest(
-		&reqOptions{
-			Endpoint: urlSync,
-			Query:    generateSignature(data),
-			IsPost:   true,
-			IgnoreHeaders: []string{
-				"Authorization",
-			},
-		},
-	)
-	if err != nil {
-		return err
-	}
-
-	hkey := h["Ig-Set-Password-Encryption-Pub-Key"]
-	hkeyID := h["Ig-Set-Password-Encryption-Key-Id"]
-	var key string
-	var keyID string
-	if len(hkey) > 0 && len(hkeyID) > 0 && hkey[0] != "" && hkeyID[0] != "" {
-		key = hkey[0]
-		keyID = hkeyID[0]
-	}
-
-	id, err := strconv.Atoi(keyID)
-	if err != nil {
-		insta.warnHandler(fmt.Errorf("Failed to parse public key id: %s", err))
-	}
-	insta.pubKey = key
-	insta.pubKeyID = id
-
-	return nil
+   var query map[string]string
+   if insta.Account == nil {
+      query = map[string]string{
+         "id":                      insta.uuid,
+         "server_config_retrieval": "1",
+      }
+   } else {
+      // if logged in
+      query = map[string]string{
+         "id": strconv.FormatInt(insta.Account.ID, 10),
+         "_id": strconv.FormatInt(insta.Account.ID, 10),
+         "_uuid": insta.uuid,
+         "server_config_retrieval": "1",
+      }
+   }
+   data, err := json.Marshal(query)
+   if err != nil {
+      return err
+   }
+   _, h, err := insta.sendRequest(
+      &reqOptions{
+         Endpoint: urlSync,
+         Query:    generateSignature(data),
+         IsPost:   true,
+         IgnoreHeaders: []string{"Authorization"},
+      },
+   )
+   if err != nil {
+      return err
+   }
+   hkey := h["Ig-Set-Password-Encryption-Pub-Key"]
+   hkeyID := h["Ig-Set-Password-Encryption-Key-Id"]
+   var key string
+   var keyID string
+   if len(hkey) > 0 && len(hkeyID) > 0 && hkey[0] != "" && hkeyID[0] != "" {
+      key = hkey[0]
+      keyID = hkeyID[0]
+   }
+   id, err := strconv.Atoi(keyID)
+   if err != nil {
+      insta.warnHandler(fmt.Errorf("Failed to parse public key id: %s", err))
+   }
+   insta.pubKey = key
+   insta.pubKeyID = id
+   return nil
 }
