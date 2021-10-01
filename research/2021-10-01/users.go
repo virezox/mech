@@ -258,37 +258,3 @@ func (user *User) SetInstagram(insta *Instagram) {
 func (insta *Instagram) NewUser() *User {
 	return &User{insta: insta}
 }
-
-/*
-// Info updates user info
-// extra query arguments can be passes one after another as func(key, value).
-// Only if an even number of string arguements will be passed, they will be
-//   used in the query.
-//
-// See example: examples/user/friendship.go
-func (user *User) Info(params ...interface{}) error {
-	insta := user.insta
-	query := map[string]string{}
-	if len(params)%2 == 0 {
-		for i := 0; i < len(params); i = i + 2 {
-			query[params[i].(string)] = params[i+1].(string)
-		}
-	}
-
-	body, _, err := insta.sendRequest(&reqOptions{
-		Endpoint: fmt.Sprintf(urlUserInfo, user.ID),
-		Query:    query,
-	})
-	if err != nil {
-		return err
-	}
-
-	err = json.Unmarshal(body, user)
-	return err
-}
-// Sync wraps User.Info() 1:1
-func (user *User) Sync(params ...interface{}) error {
-	return user.Info(params...)
-}
-*/
-

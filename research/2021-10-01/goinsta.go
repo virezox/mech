@@ -4,7 +4,6 @@ import (
    "encoding/json"
    "errors"
    "fmt"
-   "github.com/Davincible/goinsta/utilities"
    "io"
    "io/ioutil"
    "net/http"
@@ -419,7 +418,7 @@ func (insta *Instagram) login() error {
 			"No public key or public key ID set. Please call Instagram.Sync() and verify that it works correctly",
 		)
 	}
-	encrypted, err := utilities.EncryptPassword(insta.pass, insta.pubKey, insta.pubKeyID, timestamp)
+	encrypted, err := EncryptPassword(insta.pass, insta.pubKey, insta.pubKeyID, timestamp)
 	if err != nil {
 		return err
 	}
