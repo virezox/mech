@@ -138,66 +138,6 @@ type Nametag struct {
 	SelfieSticker json.Number `json:"selfie_sticker,Number"`
 }
 
-// Location stores media location information.
-type Location struct {
-	insta *Instagram
-
-	ID               int64   `json:"pk"`
-	Name             string  `json:"name"`
-	Address          string  `json:"address"`
-	City             string  `json:"city"`
-	ShortName        string  `json:"short_name"`
-	Lng              float64 `json:"lng"`
-	Lat              float64 `json:"lat"`
-	ExternalSource   string  `json:"external_source"`
-	FacebookPlacesID int64   `json:"facebook_places_id"`
-}
-
-// SuggestedUsers stores the information about user suggestions.
-type SuggestedUsers struct {
-	Type        int `json:"type"`
-	Suggestions []struct {
-		User            User          `json:"user"`
-		Algorithm       string        `json:"algorithm"`
-		SocialContext   string        `json:"social_context"`
-		Icon            string        `json:"icon"`
-		Caption         string        `json:"caption"`
-		MediaIds        []interface{} `json:"media_ids"`
-		ThumbnailUrls   []interface{} `json:"thumbnail_urls"`
-		LargeUrls       []interface{} `json:"large_urls"`
-		MediaInfos      []interface{} `json:"media_infos"`
-		Value           float64       `json:"value"`
-		IsNewSuggestion bool          `json:"is_new_suggestion"`
-	} `json:"suggestions"`
-	LandingSiteType  string `json:"landing_site_type"`
-	Title            string `json:"title"`
-	ViewAllText      string `json:"view_all_text"`
-	LandingSiteTitle string `json:"landing_site_title"`
-	NetegoType       string `json:"netego_type"`
-	UpsellFbPos      string `json:"upsell_fb_pos"`
-	AutoDvance       string `json:"auto_dvance"`
-	ID               string `json:"id"`
-	TrackingToken    string `json:"tracking_token"`
-}
-
-// Candidate is something that I really have no idea what it is.
-type Candidate struct {
-	Width        int    `json:"width"`
-	Height       int    `json:"height"`
-	URL          string `json:"url"`
-	ScansProfile string `json:"scans_profile"`
-}
-
-// Tag is the information of an user being tagged on any media.
-type Tag struct {
-	In []struct {
-		User                  User        `json:"user"`
-		Position              []float64   `json:"position"`
-		StartTimeInVideoInSec interface{} `json:"start_time_in_video_in_sec"`
-		DurationInVideoInSec  interface{} `json:"duration_in_video_in_sec"`
-	} `json:"in"`
-}
-
 type ErrChallengeProcess struct {
 	StepName string
 }

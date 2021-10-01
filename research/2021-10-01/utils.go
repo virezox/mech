@@ -3,12 +3,9 @@ package goinsta
 import (
    "bytes"
    "encoding/base64"
-   "encoding/binary"
    "fmt"
    "strconv"
    "time"
-   _ "image/jpeg"
-   _ "image/png"
 )
 
 func toString(i interface{}) string {
@@ -138,34 +135,4 @@ func MergeMapS(one map[string]string, extra ...map[string]string) map[string]str
 		}
 	}
 	return one
-}
-
-func read16(b []byte, keys []string, offset int) (int, error) {
-	start, err := getStartByte(b, keys, offset)
-	if err != nil {
-		return -1, nil
-	}
-	r := binary.BigEndian.Uint16(b[start+offset:])
-	return int(r), nil
-}
-
-func read32(b []byte, keys []string, offset int) (int, error) {
-	start, err := getStartByte(b, keys, offset)
-	if err != nil {
-		return -1, nil
-	}
-	r := binary.BigEndian.Uint32(b[start+offset:])
-	return int(r), nil
-}
-
-func getStartByte(b []byte, keys []string, offset int) (int, error) {
-	start := 0
-	for _, key := range keys {
-		n := bytes.Index(b[start:], []byte(key))
-		if n == -1 {
-			return -1, ErrByteIndexNotFound
-		}
-		start += n + len(key)
-	}
-	return start, nil
 }
