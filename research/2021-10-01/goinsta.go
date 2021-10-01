@@ -139,10 +139,6 @@ func (insta *Instagram) Login() (err error) {
 	if err != nil {
 		return
 	}
-	err = insta.getPrefill()
-	if err != nil {
-		insta.warnHandler("Non fatal error while fetching prefill:", err)
-	}
 	err = insta.sync()
 	if err != nil {
 		return
@@ -151,31 +147,6 @@ func (insta *Instagram) Login() (err error) {
 		return errors.New("Sync returned empty public key and/or public key id")
 	}
 	return insta.login()
-}
-
-func (insta *Instagram) getPrefill() error {
-	data, err := json.Marshal(
-		map[string]string{
-			"android_device_id": insta.dID,
-			"phone_id":          insta.fID,
-			"usages":            "[\"account_recovery_omnibox\"]",
-			"device_id":         insta.uuid,
-		},
-	)
-	if err != nil {
-		return err
-	}
-
-	// ignore the error returned by the request, because 429 if often returned.
-	// request is non-critical.
-	insta.sendRequest(
-		&reqOptions{
-			Endpoint: urlGetPrefill,
-			IsPost:   true,
-			Query:    generateSignature(data),
-		},
-	)
-	return nil
 }
 
 func (insta *Instagram) login() error {
