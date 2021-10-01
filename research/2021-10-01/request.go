@@ -1,17 +1,16 @@
 package goinsta
 
 import (
-	"bytes"
-	"compress/gzip"
-	"encoding/json"
-	"fmt"
-	"io/ioutil"
-	"math/rand"
-	"net/http"
-	"net/url"
-	"strconv"
-	"strings"
-	"time"
+   "bytes"
+   "compress/gzip"
+   "fmt"
+   "io/ioutil"
+   "math/rand"
+   "net/http"
+   "net/url"
+   "strconv"
+   "strings"
+   "time"
 )
 
 type reqOptions struct {
@@ -214,12 +213,6 @@ func (insta *Instagram) sendRequest(o *reqOptions) (body []byte, h http.Header, 
 	defer resp.Body.Close()
 
 	body, err = ioutil.ReadAll(resp.Body)
-	if err == nil {
-		err = insta.isError(resp.StatusCode, body, resp.Status, o.Endpoint)
-	}
-	if insta.Debug {
-		insta.debugHandler(fmt.Errorf("Status code: %d : %s, body: %s,", resp.StatusCode, o.Endpoint, string(body)))
-	}
 	if err != nil {
 		return nil, nil, err
 	}
@@ -280,70 +273,6 @@ func (insta *Instagram) extractHeaders(h http.Header) {
 	extract("Ig-Set-Ig-U-Shbts", "Ig-U-Shbts")
 	extract("Ig-Set-Ig-U-Rur", "Ig-U-Rur")
 	extract("Ig-Set-Ig-U-Ds-User-Id", "Ig-U-Ds-User-Id")
-}
-
-func (insta *Instagram) isError(code int, body []byte, status, endpoint string) (err error) {
-	switch code {
-	case 200:
-	case 202:
-	case 400:
-		ierr := Error400{Endpoint: endpoint}
-		err = json.Unmarshal(body, &ierr)
-		if err == nil {
-			switch ierr.Message {
-			case "Sorry, this media has been deleted":
-				return ErrMediaDeleted
-			case "challenge_required":
-
-				// This was a first attempt at auto challenge solving
-				// Haven't figured it out yet
-				// insta.WarnHandler(ierr)
-				// ierr.ChallengeError.insta = insta
-				// ierr.ChallengeError.Process()
-
-				return ierr.ChallengeError
-			case "The password you entered is incorrect. Please try again.":
-				return ErrBadPassword
-			default:
-				return ierr
-			}
-		}
-
-	case 403:
-		ierr := Error400{
-			Code:     403,
-			Endpoint: endpoint,
-		}
-		ierr.Message = string(body)
-		return ierr
-	case 429:
-		return ErrTooManyRequests
-	case 500:
-		ierr := ErrorN{
-			Endpoint:  endpoint,
-			Status:    "500",
-			Message:   string(body),
-			ErrorType: status,
-		}
-		return ierr
-	case 503:
-		return Error503{
-			Message: "Instagram API error. Try it later.",
-		}
-	default:
-		ierr := ErrorN{
-			Endpoint:  endpoint,
-			Status:    strconv.Itoa(code),
-			Message:   string(body),
-			ErrorType: status,
-		}
-		err = json.Unmarshal(body, &ierr)
-		if ierr.Message == "Transcode not finished yet." {
-			return nil
-		}
-		return ierr
-	}
-	return nil
 }
 
 func random(min, max int) int {

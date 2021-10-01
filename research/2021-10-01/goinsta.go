@@ -53,8 +53,6 @@ type Instagram struct {
 	pid string
 	// ads id: 5b23a92b-3228-4cff-b6ab-3199f531f05b
 	adid string
-	// challenge URL
-	challengeURL string
 	// pigeonSessionId
 	psID string
 	// contains header options set by Instagram
