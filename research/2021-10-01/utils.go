@@ -1,10 +1,8 @@
 package goinsta
 
 import (
-   "bytes"
    "crypto/md5"
    "crypto/rand"
-   "encoding/base64"
    "encoding/hex"
    "fmt"
    "io"
@@ -81,46 +79,6 @@ func createUserAgent(device Device) string {
 		locale,
 		appVersionCode,
 	)
-}
-
-// ExportAsBytes exports selected *Instagram object as []byte
-func (insta *Instagram) ExportAsBytes() ([]byte, error) {
-	buffer := &bytes.Buffer{}
-	err := insta.ExportIO(buffer)
-	if err != nil {
-		return nil, err
-	}
-	return buffer.Bytes(), nil
-}
-
-// ExportAsBase64String exports selected *Instagram object as base64 encoded string
-func (insta *Instagram) ExportAsBase64String() (string, error) {
-	bytes, err := insta.ExportAsBytes()
-	if err != nil {
-		return "", err
-	}
-
-	sEnc := base64.StdEncoding.EncodeToString(bytes)
-	return sEnc, nil
-}
-
-// ImportFromBytes imports instagram configuration from an array of bytes.
-//
-// This function does not set proxy automatically. Use SetProxy after this call.
-func ImportFromBytes(inputBytes []byte, args ...interface{}) (*Instagram, error) {
-	return ImportReader(bytes.NewReader(inputBytes), args...)
-}
-
-// ImportFromBase64String imports instagram configuration from a base64 encoded string.
-//
-// This function does not set proxy automatically. Use SetProxy after this call.
-func ImportFromBase64String(base64String string, args ...interface{}) (*Instagram, error) {
-	sDec, err := base64.StdEncoding.DecodeString(base64String)
-	if err != nil {
-		return nil, err
-	}
-
-	return ImportFromBytes(sDec, args...)
 }
 
 func MergeMapI(one map[string]interface{}, extra ...map[string]interface{}) map[string]interface{} {

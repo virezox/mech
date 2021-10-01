@@ -5,10 +5,8 @@ import (
    "errors"
    "fmt"
    "io"
-   "io/ioutil"
    "net/http"
    "net/http/cookiejar"
-   "os"
    "strconv"
    "sync"
    "time"
@@ -236,101 +234,6 @@ func (insta *Instagram) ExportIO(writer io.Writer) error {
 	}
 	_, err = writer.Write(bytes)
 	return err
-}
-
-// ImportReader imports instagram configuration from io.Reader
-//
-// This function does not set proxy automatically. Use SetProxy after this call.
-func ImportReader(r io.Reader, args ...interface{}) (*Instagram, error) {
-	bytes, err := ioutil.ReadAll(r)
-	if err != nil {
-		return nil, err
-	}
-
-	config := ConfigFile{}
-	err = json.Unmarshal(bytes, &config)
-	if err != nil {
-		return nil, err
-	}
-	return ImportConfig(config, args...)
-}
-
-// ImportConfig imports instagram configuration from a configuration object.
-//
-// This function does not set proxy automatically. Use SetProxy after this call.
-func ImportConfig(config ConfigFile, args ...interface{}) (*Instagram, error) {
-	url, err := neturl.Parse(baseUrl)
-	if err != nil {
-		return nil, err
-	}
-
-	insta := &Instagram{
-		user:          config.User,
-		dID:           config.DeviceID,
-		fID:           config.FamilyID,
-		uuid:          config.UUID,
-		rankToken:     config.RankToken,
-		token:         config.Token,
-		pid:           config.PhoneID,
-		xmidExpiry:    config.XmidExpiry,
-		headerOptions: sync.Map{},
-		device:        config.Device,
-		c: &http.Client{
-			Transport: &http.Transport{
-				Proxy: http.ProxyFromEnvironment,
-			},
-		},
-		Account: config.Account,
-
-		infoHandler:  defaultHandler,
-		warnHandler:  defaultHandler,
-		debugHandler: defaultHandler,
-	}
-	insta.userAgent = createUserAgent(insta.device)
-	insta.c.Jar, err = cookiejar.New(nil)
-	if err != nil {
-		return insta, err
-	}
-	insta.c.Jar.SetCookies(url, config.Cookies)
-
-	for k, v := range config.HeaderOptions {
-		insta.headerOptions.Store(k, v)
-	}
-
-	dontSync := false
-	if len(args) != 0 {
-		switch v := args[0].(type) {
-		case bool:
-			dontSync = v
-		}
-	}
-
-	if dontSync {
-		insta.Account.insta = insta
-	} else {
-		insta.Account = &Account{
-			insta: insta,
-			ID:    config.ID,
-		}
-		err = insta.Account.Sync()
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	return insta, nil
-}
-
-// Import imports instagram configuration
-//
-// This function does not set proxy automatically. Use SetProxy after this call.
-func Import(path string, args ...interface{}) (*Instagram, error) {
-	f, err := os.Open(path)
-	if err != nil {
-		return nil, err
-	}
-	defer f.Close()
-	return ImportReader(f, args...)
 }
 
 // Login performs instagram login sequence in close resemblance to the android apk.
