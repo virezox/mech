@@ -180,3 +180,15 @@ type CommentOffensive struct {
 	Status           string  `json:"status"`
 	TextLanguage     string  `json:"text_language"`
 }
+
+type plainAcc struct {
+	Name     string
+	Username string
+	Password string
+}
+
+type encAcc struct {
+	Username string
+	Line     string
+	Base64   string
+}
