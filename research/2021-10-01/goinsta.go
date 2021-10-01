@@ -7,7 +7,6 @@ import (
    "io"
    "net/http"
    "strconv"
-   "sync"
    "time"
 )
 
@@ -42,7 +41,7 @@ type Instagram struct {
 	// pigeonSessionId
 	psID string
 	// contains header options set by Instagram
-	headerOptions sync.Map
+	headerOptions map[string]string
 	// expiry of X-Mid cookie
 	xmidExpiry int64
 	// Public Key
@@ -77,7 +76,7 @@ func New(username, password string) *Instagram {
 		pid:           generateUUID(),
 		fID:           generateUUID(),
 		psID:          "UFS-" + generateUUID() + "-0",
-		headerOptions: sync.Map{},
+		headerOptions: map[string]string{},
 		xmidExpiry:    -1,
 		device:        GalaxyS10,
 		userAgent:     createUserAgent(GalaxyS10),
@@ -90,9 +89,9 @@ func New(username, password string) *Instagram {
 		warnHandler:  defaultHandler,
 		debugHandler: defaultHandler,
 	}
-
+         
 	for k, v := range defaultHeaderOptions {
-		insta.headerOptions.Store(k, v)
+		insta.headerOptions[k] = v
 	}
 
 	return insta
@@ -114,11 +113,9 @@ func (insta *Instagram) ExportIO(writer io.Writer) error {
 		Account:       insta.Account,
 		Device:        insta.device,
 	}
-	setHeaders := func(key, value interface{}) bool {
-		config.HeaderOptions[key.(string)] = value.(string)
-		return true
-	}
-	insta.headerOptions.Range(setHeaders)
+         for key, value := range insta.headerOptions {
+            config.HeaderOptions[key] = value
+         }
 	bytes, err := json.Marshal(config)
 	if err != nil {
 		return err
@@ -150,62 +147,51 @@ func (insta *Instagram) Login() (err error) {
 }
 
 func (insta *Instagram) login() error {
-	timestamp := strconv.Itoa(int(time.Now().Unix()))
-	if insta.pubKey == "" || insta.pubKeyID == 0 {
-		return errors.New(
-			"No public key or public key ID set. Please call Instagram.Sync() and verify that it works correctly",
-		)
-	}
-	encrypted, err := EncryptPassword(insta.pass, insta.pubKey, insta.pubKeyID, timestamp)
-	if err != nil {
-		return err
-	}
-
-	result, err := json.Marshal(
-		map[string]interface{}{
-			"jazoest":             jazoest(insta.dID),
-			"country_code":        "[{\"country_code\":\"44\",\"source\":[\"default\"]}]",
-			"phone_id":            insta.fID,
-			"enc_password":        encrypted,
-			"username":            insta.user,
-			"adid":                insta.adid,
-			"guid":                insta.uuid,
-			"device_id":           insta.dID,
-			"google_tokens":       "[]",
-			"login_attempt_count": 0,
-		},
-	)
-	if err != nil {
-		return err
-	}
-	body, _, err := insta.sendRequest(
-		&reqOptions{
-			Endpoint: urlLogin,
-			Query:    map[string]string{"signed_body": "SIGNATURE." + string(result)},
-			IsPost:   true,
-		},
-	)
-	if err != nil {
-		return err
-	}
-	return insta.verifyLogin(body)
+   timestamp := strconv.Itoa(int(time.Now().Unix()))
+   if insta.pubKey == "" || insta.pubKeyID == 0 {
+      return errors.New(
+         "No public key or public key ID set. Please call Instagram.Sync() " +
+         "and verify that it works correctly",
+      )
+   }
+   encrypted, err := EncryptPassword(insta.pass, insta.pubKey, insta.pubKeyID, timestamp)
+   if err != nil {
+      return err
+   }
+   result, err := json.Marshal(
+      map[string]interface{}{
+         "adid":                insta.adid,
+         "country_code":        "[{\"country_code\":\"44\",\"source\":[\"default\"]}]",
+         "device_id":           insta.dID,
+         "enc_password":        encrypted,
+         "google_tokens":       "[]",
+         "guid":                insta.uuid,
+         "jazoest":             jazoest(insta.dID),
+         "login_attempt_count": 0,
+         "phone_id":            insta.fID,
+         "username":            insta.user,
+      },
+   )
+   if err != nil {
+      return err
+   }
+   body, _, err := insta.sendRequest(
+      &reqOptions{
+         Endpoint: urlLogin,
+         IsPost:   true,
+         Query:    map[string]string{"signed_body": "SIGNATURE." + string(result)},
+      },
+   )
+   if err != nil {
+      return err
+   }
+   return insta.verifyLogin(body)
 }
 
 func (insta *Instagram) sync(args ...map[string]string) error {
-   var query map[string]string
-   if insta.Account == nil {
-      query = map[string]string{
-         "id":                      insta.uuid,
-         "server_config_retrieval": "1",
-      }
-   } else {
-      // if logged in
-      query = map[string]string{
-         "id": strconv.FormatInt(insta.Account.ID, 10),
-         "_id": strconv.FormatInt(insta.Account.ID, 10),
-         "_uuid": insta.uuid,
-         "server_config_retrieval": "1",
-      }
+   query := map[string]string{
+      "id":                      insta.uuid,
+      "server_config_retrieval": "1",
    }
    data, err := json.Marshal(query)
    if err != nil {

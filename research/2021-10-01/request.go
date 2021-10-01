@@ -150,13 +150,6 @@ func (insta *Instagram) sendRequest(o *reqOptions) (body []byte, h http.Header, 
          }
       }
    }
-   setHeadersAsync := func(key, value interface{}) bool {
-      k, v := key.(string), value.(string)
-      if v != "" && !ignoreHeader(k) {
-         req.Header.Set(k, v)
-      }
-      return true
-   }
    headers := map[string]string{
       "Accept-Encoding":             "gzip,deflate",
       "Accept-Language":             locale,
@@ -196,7 +189,11 @@ func (insta *Instagram) sendRequest(o *reqOptions) (body []byte, h http.Header, 
    }
    setHeaders(headers)
    setHeaders(o.ExtraHeaders)
-   insta.headerOptions.Range(setHeadersAsync)
+   for key, value := range insta.headerOptions {
+      if value != "" && !ignoreHeader(key) {
+         req.Header.Set(key, value)
+      }
+   }
    dum, err := httputil.DumpRequest(req, true)
    if err != nil {
       return nil, nil, err
@@ -240,33 +237,31 @@ func (insta *Instagram) checkXmidExpiry() {
 }
 
 func (insta *Instagram) extractHeaders(h http.Header) {
-	extract := func(in string, out string) {
-		x := h[in]
-		if len(x) > 0 && x[0] != "" {
-			// prevent from auth being set without token post login
-			if in == "Ig-Set-Authorization" {
-				old, ok := insta.headerOptions.Load(out)
-				if ok && len(old.(string)) != 0 {
-					current := strings.Split(old.(string), ":")
-					newHeader := strings.Split(x[0], ":")
-					if len(current[2]) > len(newHeader[2]) {
-						return
-					}
-
-				}
-			}
-			insta.headerOptions.Store(out, x[0])
-		}
-	}
-
-	extract("Ig-Set-Authorization", "Authorization")
-	extract("Ig-Set-X-Mid", "X-Mid")
-	extract("X-Ig-Set-Www-Claim", "X-Ig-Www-Claim")
-	extract("Ig-Set-Ig-U-Ig-Direct-Region-Hint", "Ig-U-Ig-Direct-Region-Hint")
-	extract("Ig-Set-Ig-U-Shbid", "Ig-U-Shbid")
-	extract("Ig-Set-Ig-U-Shbts", "Ig-U-Shbts")
-	extract("Ig-Set-Ig-U-Rur", "Ig-U-Rur")
-	extract("Ig-Set-Ig-U-Ds-User-Id", "Ig-U-Ds-User-Id")
+   extract := func(in string, out string) {
+      x := h[in]
+      if len(x) > 0 && x[0] != "" {
+         // prevent from auth being set without token post login
+         if in == "Ig-Set-Authorization" {
+            old, ok := insta.headerOptions[out]
+            if ok && len(old) != 0 {
+               current := strings.Split(old, ":")
+               newHeader := strings.Split(x[0], ":")
+               if len(current[2]) > len(newHeader[2]) {
+                  return
+               }
+            }
+         }
+         insta.headerOptions[out] = x[0]
+      }
+   }
+   extract("Ig-Set-Authorization", "Authorization")
+   extract("Ig-Set-Ig-U-Ds-User-Id", "Ig-U-Ds-User-Id")
+   extract("Ig-Set-Ig-U-Ig-Direct-Region-Hint", "Ig-U-Ig-Direct-Region-Hint")
+   extract("Ig-Set-Ig-U-Rur", "Ig-U-Rur")
+   extract("Ig-Set-Ig-U-Shbid", "Ig-U-Shbid")
+   extract("Ig-Set-Ig-U-Shbts", "Ig-U-Shbts")
+   extract("Ig-Set-X-Mid", "X-Mid")
+   extract("X-Ig-Set-Www-Claim", "X-Ig-Www-Claim")
 }
 
 func random(min, max int) int {
