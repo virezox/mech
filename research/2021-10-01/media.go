@@ -3,11 +3,8 @@ package goinsta
 import (
 	"encoding/json"
 	"fmt"
-	"io"
-	neturl "net/url"
 	"os"
 	"path"
-	"regexp"
 	"strings"
 )
 
@@ -221,50 +218,6 @@ type Item struct {
 	} `json:"story_music_stickers,omitempty"`
 }
 
-func (item *Item) comment(text string) error {
-	insta := item.insta
-	query := map[string]string{
-		// "feed_position":           "",
-		"container_module":        "feed_timeline",
-		"user_breadcrumb":         generateUserBreadcrumb(text),
-		"nav_chain":               "",
-		"_uid":                    toString(insta.Account.ID),
-		"_uuid":                   insta.uuid,
-		"idempotence_token":       generateUUID(),
-		"radio_type":              "wifi-none",
-		"is_carousel_bumped_post": "false", // not sure when this would be true
-		"comment_text":            text,
-	}
-	if item.module != "" {
-		query["container_module"] = item.module
-	}
-	if item.IsCommercial {
-		query["delivery_class"] = "ad"
-	} else {
-		query["delivery_class"] = "organic"
-	}
-	if item.InventorySource != "" {
-		query["inventory_source"] = item.InventorySource
-	}
-	if len(item.CarouselMedia) > 0 || item.CarouselParentID != "" {
-		query["carousel_index"] = "0"
-	}
-	b, err := json.Marshal(query)
-	if err != nil {
-		return err
-	}
-
-	// ignoring response
-	_, _, err = insta.sendRequest(
-		&reqOptions{
-			Endpoint: fmt.Sprintf(urlCommentAdd, item.Pk),
-			Query:    map[string]string{"signed_body": "SIGNATURE." + string(b)},
-			IsPost:   true,
-		},
-	)
-	return err
-}
-
 func (item *Item) CommentCheckOffensive(comment string) (*CommentOffensive, error) {
 	insta := item.insta
 	data, err := json.Marshal(map[string]string{
@@ -374,95 +327,4 @@ func GetBest(obj interface{}) string {
 		}
 	}
 	return m.url
-}
-
-var rxpTags = regexp.MustCompile(`#\w+`)
-
-// Download downloads media item (video or image) with the best quality.
-//
-// Input parameters are folder and filename. If filename is "" will be saved with
-// the default value name.
-//
-// If file exists it will be saved
-// This function makes folder automatically
-//
-// See example: examples/media/itemDownload.go
-func (item *Item) Download(folder, name string) (err error) {
-	insta := item.insta
-	os.MkdirAll(folder, 0o777)
-
-	switch item.MediaType {
-	case 1:
-		return insta.download(folder, name, item.Images.Versions)
-	case 2:
-		return insta.download(folder, name, item.Videos)
-	case 8:
-		return item.downloadCarousel(folder, name)
-	}
-
-	insta.warnHandler(
-		fmt.Sprintf(
-			"Unable to download %s media (media type %d), this has not been implemented",
-			item.MediaToString(),
-			item.MediaType,
-		),
-	)
-	return ErrNoMedia
-}
-
-func (item *Item) downloadCarousel(folder, name string) error {
-	if name == "" {
-		name = item.ID
-	}
-	for i, media := range item.CarouselMedia {
-		n := fmt.Sprintf("%s_%d", name, i+1)
-		if err := media.Download(folder, n); err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-func (insta *Instagram) download(folder, name string, media interface{}) error {
-	url := GetBest(media)
-	name, err := getDownloadName(url, name)
-	if err != nil {
-		return err
-	}
-	dst := path.Join(folder, name)
-
-	file, err := os.Create(dst)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-
-	resp, err := insta.c.Get(url)
-	if err != nil {
-		return err
-	}
-
-	_, err = io.Copy(file, resp.Body)
-	return err
-}
-
-func getDownloadName(url, name string) (string, error) {
-	u, err := neturl.Parse(url)
-	if err != nil {
-		return "", err
-	}
-	ext := path.Ext(u.Path)
-	if name == "" {
-		name = path.Base(u.Path)
-	} else if !strings.HasSuffix(name, ext) {
-		name += ext
-	}
-	name = getname(name)
-	return name, nil
-}
-
-// StoryIsCloseFriends returns a bool
-// If the returned value is true the story was published only for close friends
-func (item *Item) StoryIsCloseFriends() bool {
-	return item.Audience == "besties"
 }

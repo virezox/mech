@@ -112,7 +112,6 @@ const (
 	urlBootstrapUserScores        = "scores/bootstrap/users/"
 	urlStoreClientPushPermissions = "notifications/store_client_push_permissions/"
 	urlProcessContactPointSignals = "accounts/process_contact_point_signals/"
-
 	// Account
 	urlCurrentUser      = "accounts/current_user/"
 	urlChangePass       = "accounts/change_password/"
@@ -128,19 +127,9 @@ const (
 	urlConsent          = "consent/existing_user_flow/"
 	urlNotifBadge       = "notifications/badge/"
 	urlFeaturedAccounts = "multiple_accounts/get_featured_accounts/"
-
-	// Collections
-	urlCollectionsList     = "collections/list/"
-	urlCollectionsCreate   = "collections/create/"
-	urlCollectionEdit      = "collections/%s/edit/"
-	urlCollectionDelete    = "collections/%s/delete/"
-	urlCollectionFeedAll   = "feed/collection/%s/all/"
-	urlCollectionFeedPosts = "feed/collection/%s/posts/"
-
 	// Account and profile
 	urlFollowers = "friendships/%d/followers/"
 	urlFollowing = "friendships/%d/following/"
-
 	// Users
 	urlUserArchived      = "feed/only_me_feed/"
 	urlUserByName        = "users/%s/usernameinfo/"
@@ -159,12 +148,10 @@ const (
 	urlBlockedList       = "users/blocked_list/"
 	urlUserInfo          = "users/%d/info/"
 	urlUserHighlights    = "highlights/%d/highlights_tray/"
-
 	// Timeline
 	urlTimeline  = "feed/timeline/"
 	urlStories   = "feed/reels_tray/"
 	urlReelMedia = "feed/reels_media/"
-
 	// Search
 	urlSearchTop           = "fbsearch/topsearch_flat/"
 	urlSearchUser          = "users/search/"
@@ -173,13 +160,11 @@ const (
 	urlSearchRecent        = "fbsearch/recent_searches/"
 	urlSearchNullState     = "fbsearch/nullstate_dynamic_sections/"
 	urlSearchRegisterClick = "fbsearch/register_recent_search_click/"
-
 	// Feeds
 	urlFeedLocationID    = "feed/location/%d/"
 	urlFeedLocations     = "locations/%d/sections/"
 	urlFeedTag           = "feed/tag/%s/"
 	urlFeedNewPostsExist = "feed/new_feed_posts_exist/"
-
 	// Media
 	urlMediaInfo    = "media/%s/info/"
 	urlMediaDelete  = "media/%s/delete/"
@@ -190,23 +175,19 @@ const (
 	urlMediaSeen    = "media/seen/"
 	urlMediaLikers  = "media/%s/likers/"
 	urlMediaBlocked = "media/blocked/"
-
 	// Broadcasts
 	urlLiveInfo      = "live/%d/info/"
 	urlLiveComments  = "live/%d/get_comment/"
 	urlLiveLikeCount = "live/%d/get_like_count/"
 	urlLiveHeartbeat = "live/%d/heartbeat_and_get_viewer_count/"
 	urlLiveChaining  = "live/get_live_chaining/"
-
 	// IGTV
 	urlIGTVDiscover = "igtv/discover/"
 	urlIGTVChannel  = "igtv/channel/"
 	urlIGTVSeries   = "igtv/series/all_user_series/%d/"
 	urlIGTVSeen     = "igtv/write_seen_state/"
-
 	// Discover
 	urlDiscoverExplore = "discover/topical_explore/"
-
 	// Comments
 	urlCommentAdd        = "media/%d/comment/"
 	urlCommentDelete     = "media/%s/comment/%s/delete/"
@@ -217,11 +198,9 @@ const (
 	urlCommentLike       = "media/%s/comment_like/"
 	urlCommentUnlike     = "media/%s/comment_unlike/"
 	urlCommentOffensive  = "media/comment/check_offensive_comment/"
-
 	// Activity
 	urlActivityFollowing = "news/"
 	urlActivityRecent    = "news/inbox/"
-
 	// Inbox
 	urlInbox             = "direct_v2/inbox/"
 	urlInboxPending      = "direct_v2/pending_inbox/"
@@ -229,19 +208,10 @@ const (
 	urlInboxSendLike     = "direct_v2/threads/broadcast/like/"
 	urlReplyStory        = "direct_v2/threads/broadcast/reel_share/"
 	urlGetByParticipants = "direct_v2/threads/get_by_participants/"
-	urlInboxThread       = "direct_v2/threads/%s/"
-	urlInboxMute         = "direct_v2/threads/%s/mute/"
-	urlInboxUnmute       = "direct_v2/threads/%s/unmute/"
-	urlInboxGetItems      = "direct_v2/threads/%s/get_items/"
-	urlInboxMsgSeen      = "direct_v2/threads/%s/items/%s/seen/"
-	urlInboxApprove      = "direct_v2/threads/%s/approve/"
-	urlInboxHide         = "direct_v2/threads/%s/hide/"
-
 	// Tags
 	urlTagInfo    = "tags/%s/info/"
 	urlTagStories = "tags/%s/story/"
 	urlTagContent = "tags/%s/ranked_sections/"
-
 	// Upload
 	urlUploadPhoto      = "rupload_igphoto/%s"
 	urlUploadVideo      = "rupload_igvideo/%s"

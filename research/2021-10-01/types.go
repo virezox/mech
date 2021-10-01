@@ -138,11 +138,6 @@ type Nametag struct {
 	SelfieSticker json.Number `json:"selfie_sticker,Number"`
 }
 
-type friendResp struct {
-	Status     string     `json:"status"`
-	Friendship Friendship `json:"friendship_status"`
-}
-
 // Location stores media location information.
 type Location struct {
 	insta *Instagram

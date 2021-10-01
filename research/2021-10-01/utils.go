@@ -16,18 +16,6 @@ import (
 	"time"
 )
 
-func formatID(id interface{}) string {
-	switch s := id.(type) {
-	case string:
-		return s
-	case int64:
-		return strconv.FormatInt(s, 10)
-	case json.Number:
-		return string(s)
-	}
-	return ""
-}
-
 func toString(i interface{}) string {
 	switch s := i.(type) {
 	case string:
@@ -244,12 +232,4 @@ func getSupCap() (string, error) {
 		return "", err
 	}
 	return string(data), nil
-}
-
-func randNum(l int) string {
-	var num string
-	for i := 0; i < l; i++ {
-		num += toString(random(0, 9))
-	}
-	return num
 }
