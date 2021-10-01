@@ -1,19 +1,17 @@
 package goinsta
 
 import (
-	"bytes"
-	"encoding/base64"
-	"encoding/binary"
-	"encoding/json"
-	"image"
-	"math"
-
-	// Required for getImageDimensionFromReader in jpg and png format
-	"fmt"
-	_ "image/jpeg"
-	_ "image/png"
-	"strconv"
-	"time"
+   "bytes"
+   "encoding/base64"
+   "encoding/binary"
+   "encoding/json"
+   "fmt"
+   "image"
+   "math"
+   "strconv"
+   "time"
+   _ "image/jpeg"
+   _ "image/png"
 )
 
 func toString(i interface{}) string {
@@ -232,4 +230,90 @@ func getSupCap() (string, error) {
 		return "", err
 	}
 	return string(data), nil
+}
+
+
+// StoryReelMention represent story reel mention
+type StoryReelMention struct {
+	X           float64 `json:"x"`
+	Y           float64 `json:"y"`
+	Z           int     `json:"z"`
+	Width       float64 `json:"width"`
+	Height      float64 `json:"height"`
+	Rotation    float64 `json:"rotation"`
+	IsPinned    int     `json:"is_pinned"`
+	IsHidden    int     `json:"is_hidden"`
+	IsSticker   int     `json:"is_sticker"`
+	IsFBSticker int     `json:"is_fb_sticker"`
+	User        User
+	DisplayType string `json:"display_type"`
+}
+
+// StoryCTA represent story cta
+type StoryCTA struct {
+	Links []struct {
+		LinkType                                int         `json:"linkType"`
+		WebURI                                  string      `json:"webUri"`
+		AndroidClass                            string      `json:"androidClass"`
+		Package                                 string      `json:"package"`
+		DeeplinkURI                             string      `json:"deeplinkUri"`
+		CallToActionTitle                       string      `json:"callToActionTitle"`
+		RedirectURI                             interface{} `json:"redirectUri"`
+		LeadGenFormID                           string      `json:"leadGenFormId"`
+		IgUserID                                string      `json:"igUserId"`
+		AppInstallObjectiveInvalidationBehavior interface{} `json:"appInstallObjectiveInvalidationBehavior"`
+	} `json:"links"`
+}
+
+// StoryMedia is the struct that handles the information from the methods to
+// get info about Stories.
+type StoryMedia struct {
+	Reel       Reel         `json:"reel"`
+	Status     string       `json:"status"`
+}
+
+// Reel represents a single user's story collection.
+// Every user has one reel, and one reel can contain many story items
+type Reel struct {
+	insta *Instagram
+
+	ID                     interface{} `json:"id"`
+	Items                  []*Item     `json:"items"`
+	MediaCount             int         `json:"media_count"`
+	MediaIDs               []int64     `json:"media_ids"`
+	Muted                  bool        `json:"muted"`
+	LatestReelMedia        int64       `json:"latest_reel_media"`
+	LatestBestiesReelMedia float64     `json:"latest_besties_reel_media"`
+	ExpiringAt             float64     `json:"expiring_at"`
+	Seen                   float64     `json:"seen"`
+	SeenRankedPosition     int         `json:"seen_ranked_position"`
+	CanReply               bool        `json:"can_reply"`
+	CanGifQuickReply       bool        `json:"can_gif_quick_reply"`
+	ClientPrefetchScore    float64     `json:"client_prefetch_score"`
+	Title                  string      `json:"title"`
+	CanReshare             bool        `json:"can_reshare"`
+	ReelType               string      `json:"reel_type"`
+	ReelMentions           []string    `json:"reel_mentions"`
+	PrefetchCount          int         `json:"prefetch_count"`
+	// this field can be int or bool
+	HasBestiesMedia       interface{} `json:"has_besties_media"`
+	HasPrideMedia         bool        `json:"has_pride_media"`
+	HasVideo              bool        `json:"has_video"`
+	IsCacheable           bool        `json:"is_cacheable"`
+	IsSensitiveVerticalAd bool        `json:"is_sensitive_vertical_ad"`
+	RankedPosition        int         `json:"ranked_position"`
+	RankerScores          struct {
+		Fp   float64 `json:"fp"`
+		Ptap float64 `json:"ptap"`
+		Vm   float64 `json:"vm"`
+	} `json:"ranker_scores"`
+	StoryRankingToken    string `json:"story_ranking_token"`
+	FaceFilterNuxVersion int    `json:"face_filter_nux_version"`
+	HasNewNuxStory       bool   `json:"has_new_nux_story"`
+	User                 User   `json:"user"`
+}
+
+type trayRequest struct {
+	Name  string `json:"name"`
+	Value string `json:"value"`
 }
