@@ -17,52 +17,37 @@ import (
    "strconv"
    "strings"
    "time"
-   mathRand "math/rand"
 )
 
 type reqOptions struct {
-	// Connection is connection header. Default is "close".
-	Connection string
-
-	// Endpoint is the request path of instagram api
-	Endpoint string
-
-	// Omit API omit the /api/v1/ part of the url
-	OmitAPI bool
-
-	// IsPost set to true will send request with POST method.
-	//
-	// By default this option is false.
-	IsPost bool
-
-	// Compress post form data with gzip
-	Gzip bool
-
-	// UseV2 is set when API endpoint uses v2 url.
-	UseV2 bool
-
-	// Use b.i.instagram.com
-	Useb bool
-
-	// Query is the parameters of the request
-	//
-	// This parameters are independents of the request method (POST|GET)
-	Query map[string]string
-
-	// DataBytes can be used to pass raw data to a request, instead of a
-	//   form using the Query param. This is used for e.g. photo and vieo uploads.
-	DataBytes *bytes.Buffer
-
-	// List of headers to ignore
-	IgnoreHeaders []string
-
-	// Extra headers to add
-	ExtraHeaders map[string]string
-
-	// Timestamp
-	Timestamp string
+   // Connection is connection header. Default is "close".
+   Connection string
+   // Endpoint is the request path of instagram api
+   Endpoint string
+   // Omit API omit the /api/v1/ part of the url
+   OmitAPI bool
+   // IsPost set to true will send request with POST method. By default this
+   // option is false.
+   IsPost bool
+   // Compress post form data with gzip
+   Gzip bool
+   // UseV2 is set when API endpoint uses v2 url.
+   UseV2 bool
+   // Use b.i.instagram.com
+   Useb bool
+   // Query is the parameters of the request. This parameters are independents
+   // of the request method (POST|GET)
+   Query map[string]string
+   // DataBytes can be used to pass raw data to a request, instead of a form
+   // using the Query param. This is used for e.g. photo and vieo uploads.
+   DataBytes *bytes.Buffer
+   // List of headers to ignore
+   IgnoreHeaders []string
+   // Extra headers to add
+   ExtraHeaders map[string]string
+   // Timestamp
+   Timestamp string
 }
-
 
 func (insta *Instagram) sendRequest(o *reqOptions) (body []byte, h http.Header, err error) {
    if insta == nil {
@@ -156,33 +141,15 @@ func (insta *Instagram) sendRequest(o *reqOptions) (body []byte, h http.Header, 
       }
    }
    headers := map[string]string{
-      "Accept-Encoding":             "gzip,deflate",
-      "Accept-Language":             locale,
-      "Connection":                  o.Connection,
-      "Content-Type":                "application/x-www-form-urlencoded; charset=UTF-8",
+      "Accept-Encoding": "gzip,deflate",
+      "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
       "User-Agent":                  insta.userAgent,
       "X-Bloks-Is-Layout-Rtl":       "false",
       "X-Bloks-Is-Panorama-Enabled": "true",
-      "X-Bloks-Version-Id":          bloksVerID,
       "X-Fb-Client-Ip":              "True",
       "X-Fb-Http-Engine":            "Liger",
       "X-Fb-Server-Cluster":         "True",
-      "X-Ig-Android-Id":             insta.dID,
-      "X-Ig-App-Id":                 fbAnalytics,
-      "X-Ig-App-Locale":             locale,
       "X-Ig-App-Startup-Country":    "unkown",
-      "X-Ig-Bandwidth-Speed-KBPS":   fmt.Sprintf("%d.000", random(1000, 9000)),
-      "X-Ig-Bandwidth-TotalBytes-B": strconv.Itoa(random(1000000, 5000000)),
-      "X-Ig-Bandwidth-Totaltime-Ms": strconv.Itoa(random(200, 800)),
-      "X-Ig-Capabilities":           igCapabilities,
-      "X-Ig-Connection-Type":        connType,
-      "X-Ig-Device-Id":              insta.uuid,
-      "X-Ig-Device-Locale":          locale,
-      "X-Ig-Family-Device-Id":       insta.fID,
-      "X-Ig-Mapped-Locale":          locale,
-      "X-Ig-Timezone-Offset":        timeOffset,
-      "X-Pigeon-Rawclienttime":      fmt.Sprintf("%s.%d", o.Timestamp, random(100, 900)),
-      "X-Pigeon-Session-Id":         insta.psID,
    }
    if contentEncoding != "" {
       headers["Content-Encoding"] = contentEncoding
@@ -256,18 +223,6 @@ func (insta *Instagram) extractHeaders(h http.Header) {
    extract("X-Ig-Set-Www-Claim", "X-Ig-Www-Claim")
 }
 
-func random(min, max int) int {
-	mathRand.Seed(time.Now().UnixNano())
-	return mathRand.Intn(max-min) + min
-}
-
-var timeOffset = getTimeOffset()
-
-func getTimeOffset() string {
-   _, offset := time.Now().Zone()
-   return strconv.Itoa(offset)
-}
-
 const volatileSeed = "12345"
 
 func generateMD5Hash(text string) string {
@@ -279,23 +234,6 @@ func generateMD5Hash(text string) string {
 func generateDeviceID(seed string) string {
    hash := generateMD5Hash(seed + volatileSeed)
    return "android-" + hash[:16]
-}
-
-func generateSignature(d interface{}, extra ...map[string]string) map[string]string {
-   var data string
-   switch x := d.(type) {
-   case []byte:
-      data = string(x)
-   case string:
-      data = x
-   }
-   r := map[string]string{"signed_body": "SIGNATURE." + data}
-   for _, e := range extra {
-      for k, v := range e {
-         r[k] = v
-      }
-   }
-   return r
 }
 
 func newUUID() (string, error) {

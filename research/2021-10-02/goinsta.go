@@ -188,22 +188,19 @@ func (insta *Instagram) Login() error {
 
 // Endpoints (with format vars)
 const (
-   urlLogin                      = "accounts/login/"
-   // urls
+   appVersion = "195.0.0.31.123"
+   appVersionCode = "302733750"
    baseUrl        = "https://i.instagram.com/"
+   bloksVerID = "927f06374b80864ae6a0b04757048065714dc50ff15d2b8b3de8d0b6de961649"
+   connType = "WIFI"
+   fbAnalytics = "567067343352427"
+   igCapabilities = "3brTvx0="
    instaAPIUrl    = "https://i.instagram.com/api/v1/"
    instaAPIUrlb   = "https://b.i.instagram.com/api/v1/"
    instaAPIUrlv2  = "https://i.instagram.com/api/v2/"
    instaAPIUrlv2b = "https://b.i.instagram.com/api/v2/"
-   // header values
-   bloksVerID         = "927f06374b80864ae6a0b04757048065714dc50ff15d2b8b3de8d0b6de961649"
-   fbAnalytics        = "567067343352427"
-   igCapabilities     = "3brTvx0="
-   connType           = "WIFI"
-   instaSigKeyVersion = "4"
-   locale             = "en_US"
-   appVersion         = "195.0.0.31.123"
-   appVersionCode     = "302733750"
+   locale = "en_US"
+   urlLogin                      = "accounts/login/"
 )
 
 var defaultHeaderOptions = map[string]string{"X-Ig-Www-Claim": "0"}
