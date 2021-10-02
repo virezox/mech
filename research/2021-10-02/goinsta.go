@@ -21,107 +21,104 @@ func defaultHandler(args ...interface{}) {
 // Also you can use SetProxy and UnsetProxy to set and unset proxy.
 // Golang also provides the option to set a proxy using HTTP_PROXY env var.
 type Instagram struct {
-	user string
-	pass string
-
-	// device id: android-1923fjnma8123
-	dID string
-	// family device id, v4 uuid: 8b13e7b3-28f7-4e05-9474-358c6602e3f8
-	fID string
-	// uuid: 8493-1233-4312312-5123
-	uuid string
-	// rankToken
-	rankToken string
-	// token -- I think this is depricated, as I don't see any csrf tokens being used anymore, but not 100% sure
-	token string
-	// phone id v4 uuid: fbf767a4-260a-490d-bcbb-ee7c9ed7c576
-	pid string
-	// ads id: 5b23a92b-3228-4cff-b6ab-3199f531f05b
-	adid string
-	// pigeonSessionId
-	psID string
-	// contains header options set by Instagram
-	headerOptions map[string]string
-	// expiry of X-Mid cookie
-	xmidExpiry int64
-	// Public Key
-	pubKey string
-	// Public Key ID
-	pubKeyID int
-	// Device Settings
-	device Device
-	// User-Agent
-	userAgent string
-	// Account stores all personal data of the user and his/her options.
-	Account *Account
-	c *http.Client
-	// Set to true to debug reponses
-	Debug bool
-	// Non-error message handlers.
-	// By default they will be printed out, alternatively you can e.g. pass them to a logger
-	infoHandler  func(...interface{})
-	warnHandler  func(...interface{})
-	debugHandler func(...interface{})
+   user string
+   pass string
+   // device id: android-1923fjnma8123
+   dID string
+   // family device id, v4 uuid: 8b13e7b3-28f7-4e05-9474-358c6602e3f8
+   fID string
+   // uuid: 8493-1233-4312312-5123
+   uuid string
+   // rankToken
+   rankToken string
+   // token -- I think this is depricated, as I don't see any csrf tokens being used anymore, but not 100% sure
+   token string
+   // phone id v4 uuid: fbf767a4-260a-490d-bcbb-ee7c9ed7c576
+   pid string
+   // ads id: 5b23a92b-3228-4cff-b6ab-3199f531f05b
+   adid string
+   // pigeonSessionId
+   psID string
+   // contains header options set by Instagram
+   headerOptions map[string]string
+   // expiry of X-Mid cookie
+   xmidExpiry int64
+   // Public Key
+   pubKey string
+   // Public Key ID
+   pubKeyID int
+   // Device Settings
+   device Device
+   // User-Agent
+   userAgent string
+   // Account stores all personal data of the user and his/her options.
+   Account *Account
+   c *http.Client
+   // Set to true to debug reponses
+   Debug bool
+   // Non-error message handlers.
+   // By default they will be printed out, alternatively you can e.g. pass them to a logger
+   infoHandler  func(...interface{})
+   warnHandler  func(...interface{})
+   debugHandler func(...interface{})
 }
 
 // New creates Instagram structure
 func New(username, password string) *Instagram {
-	insta := &Instagram{
-		user: username,
-		pass: password,
-		dID: generateDeviceID(
-			generateMD5Hash(username + password),
-		),
-		uuid:          generateUUID(),
-		pid:           generateUUID(),
-		fID:           generateUUID(),
-		psID:          "UFS-" + generateUUID() + "-0",
-		headerOptions: map[string]string{},
-		xmidExpiry:    -1,
-		device:        GalaxyS10,
-		userAgent:     createUserAgent(GalaxyS10),
-		c: &http.Client{
-			Transport: &http.Transport{
-				Proxy: http.ProxyFromEnvironment,
-			},
-		},
-		infoHandler:  defaultHandler,
-		warnHandler:  defaultHandler,
-		debugHandler: defaultHandler,
-	}
-         
-	for k, v := range defaultHeaderOptions {
-		insta.headerOptions[k] = v
-	}
-
-	return insta
+   insta := &Instagram{
+      c: &http.Client{
+         Transport: &http.Transport{Proxy: http.ProxyFromEnvironment},
+      },
+      dID: generateDeviceID(
+         generateMD5Hash(username + password),
+      ),
+      debugHandler: defaultHandler,
+      device:        GalaxyS10,
+      fID:           generateUUID(),
+      headerOptions: map[string]string{},
+      infoHandler:  defaultHandler,
+      pass: password,
+      pid:           generateUUID(),
+      psID:          "UFS-" + generateUUID() + "-0",
+      user: username,
+      userAgent:     createUserAgent(GalaxyS10),
+      uuid:          generateUUID(),
+      warnHandler:  defaultHandler,
+      xmidExpiry:    -1,
+   }
+   for k, v := range defaultHeaderOptions {
+      insta.headerOptions[k] = v
+   }
+   return insta
 }
 
 // Export exports selected *Instagram object options to an io.Writer
 func (insta *Instagram) ExportIO(writer io.Writer) error {
-	config := ConfigFile{
-		ID:            insta.Account.ID,
-		User:          insta.user,
-		DeviceID:      insta.dID,
-		FamilyID:      insta.fID,
-		UUID:          insta.uuid,
-		RankToken:     insta.rankToken,
-		Token:         insta.token,
-		PhoneID:       insta.pid,
-		XmidExpiry:    insta.xmidExpiry,
-		HeaderOptions: map[string]string{},
-		Account:       insta.Account,
-		Device:        insta.device,
-	}
-         for key, value := range insta.headerOptions {
-            config.HeaderOptions[key] = value
-         }
-	bytes, err := json.Marshal(config)
-	if err != nil {
-		return err
-	}
-	_, err = writer.Write(bytes)
-	return err
+   config := ConfigFile{
+      Account:       insta.Account,
+      Device:        insta.device,
+      DeviceID:      insta.dID,
+      FamilyID:      insta.fID,
+      HeaderOptions: map[string]string{},
+      ID:            insta.Account.ID,
+      PhoneID:       insta.pid,
+      RankToken:     insta.rankToken,
+      Token:         insta.token,
+      UUID:          insta.uuid,
+      User:          insta.user,
+      XmidExpiry:    insta.xmidExpiry,
+   }
+   for key, value := range insta.headerOptions {
+      config.HeaderOptions[key] = value
+   }
+   bytes, err := json.Marshal(config)
+   if err != nil {
+      return err
+   }
+   if _, err := writer.Write(bytes); err != nil {
+      return err
+   }
+   return nil
 }
 
 // Login performs instagram login sequence in close resemblance to the android
