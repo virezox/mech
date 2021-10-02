@@ -137,54 +137,15 @@ func (insta *Instagram) Login() (err error) {
    return insta.login()
 }
 
-func EncryptPassword(password, pubKeyEncoded string, pubKeyVersion int, t string) (string, error) {
-	if t == "" {
-		t = strconv.Itoa(int(time.Now().Unix()))
-	}
-	// Get the public key
-	publicKey, err := RSADecodePublicKeyFromBase64(pubKeyEncoded)
-	if err != nil {
-		return "", err
-	}
-	// Data to be encrypted by RSA PKCS1
-	randKey := make([]byte, 32)
-	rand.Read(randKey)
-	// Encrypt the random key that will be used to encrypt the password
-	randKeyEncrypted, err := rsa.EncryptPKCS1v15(rand.Reader, publicKey, randKey)
-	if err != nil {
-		return "", err
-	}
-	// Get the size of the encrypted random key
-	randKeyEncryptedSize := make([]byte, 2)
-	binary.LittleEndian.PutUint16(randKeyEncryptedSize[:], uint16(len(randKeyEncrypted)))
-	// Encrypt the password using AES GCM with the random key
-	iv, encrypted, tag, err := AESGCMEncrypt(randKey, []byte(password), []byte(t))
-	if err != nil {
-		return "", err
-	}
-	// Combine the parts
-	s := []byte{}
-	prefix := []byte{1, byte(pubKeyVersion)}
-	parts := [][]byte{prefix, iv, randKeyEncryptedSize, randKeyEncrypted, tag, encrypted}
-	for _, b := range parts {
-		s = append(s, b...)
-	}
-	encoded := base64.StdEncoding.EncodeToString(s)
-	return fmt.Sprintf("#PWD_INSTAGRAM:4:%s:%s", t, encoded), nil
-}
-
 func (insta *Instagram) login() error {
-   timestamp := strconv.Itoa(int(time.Now().Unix()))
    if insta.pubKey == "" || insta.pubKeyID == 0 {
       return errors.New(
          "No public key or public key ID set. Please call Instagram.Sync() " +
          "and verify that it works correctly",
       )
    }
-   encrypted, err := EncryptPassword(insta.pass, insta.pubKey, insta.pubKeyID, timestamp)
-   if err != nil {
-      return err
-   }
+   timestamp := strconv.Itoa(int(time.Now().Unix()))
+   encrypted := fmt.Sprintf("#PWD_INSTAGRAM:0:%s:%s", timestamp, insta.pass)
    result, err := json.Marshal(
       map[string]interface{}{
          "adid":                insta.adid,
