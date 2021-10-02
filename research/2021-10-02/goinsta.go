@@ -2,7 +2,6 @@ package goinsta
 
 import (
    "encoding/json"
-   "errors"
    "fmt"
    "io"
    "net/http"
@@ -57,20 +56,29 @@ type Instagram struct {
    debugHandler func(...interface{})
 }
 
-// Default
-var GalaxyS10 = Device{
-   AndroidRelease:   11,
-   AndroidVersion:   30,
-   Chipset:          "exynos9820",
-   CodeName:         "beyond2",
-   Manufacturer:     "samsung",
-   Model:            "SM-G975F",
-   ScreenDpi:        "560dpi",
-   ScreenResolution: "1440x2898",
+type Device struct {
+   AndroidRelease   int    `json:"android_release"`
+   AndroidVersion   int    `json:"android_version"`
+   Chipset          string `json:"chipset"`
+   CodeName         string `json:"code_name"`
+   Manufacturer     string `json:"manufacturer"`
+   Model            string `json:"model"`
+   ScreenDpi        string `json:"screen_dpi"`
+   ScreenResolution string `json:"screen_resolution"`
 }
 
 // New creates Instagram structure
 func New(username, password string) *Instagram {
+   dev := Device{
+      AndroidRelease:   11,
+      AndroidVersion:   30,
+      Chipset:          "exynos9820",
+      CodeName:         "beyond2",
+      Manufacturer:     "samsung",
+      Model:            "SM-G975F",
+      ScreenDpi:        "560dpi",
+      ScreenResolution: "1440x2898",
+   }
    insta := &Instagram{
       c: &http.Client{
          Transport: &http.Transport{Proxy: http.ProxyFromEnvironment},
@@ -86,7 +94,20 @@ func New(username, password string) *Instagram {
       pid:           generateUUID(),
       psID:          "UFS-" + generateUUID() + "-0",
       user: username,
-      userAgent:     createUserAgent(GalaxyS10),
+      userAgent: fmt.Sprintf(
+         "Instagram %s Android (%d/%d; %s; %s; %s; %s; %s; %s; %s; %s)",
+         appVersion,
+         dev.AndroidVersion,
+         dev.AndroidRelease,
+         dev.ScreenDpi,
+         dev.ScreenResolution,
+         dev.Manufacturer,
+         dev.Model,
+         dev.CodeName,
+         dev.Chipset,
+         locale,
+         appVersionCode,
+      ),
       uuid:          generateUUID(),
       warnHandler:  defaultHandler,
       xmidExpiry:    -1,
@@ -163,7 +184,17 @@ func (insta *Instagram) login() error {
    if err != nil {
       return err
    }
-   return insta.verifyLogin(body)
+   res := accountResp{}
+   if err := json.Unmarshal(body, &res); err != nil {
+      return err
+   }
+   if res.Status != "ok" {
+      return fmt.Errorf("failed to login: %v, %v", res.ErrorType, res.Message)
+   }
+   insta.Account = &res.Account
+   insta.Account.insta = insta
+   insta.rankToken = strconv.FormatInt(insta.Account.ID, 10) + "_" + insta.uuid
+   return nil
 }
 
 func (insta *Instagram) sync(args ...map[string]string) error {
@@ -184,25 +215,6 @@ func (insta *Instagram) sync(args ...map[string]string) error {
       },
    )
    return err
-}
-
-func (insta *Instagram) verifyLogin(body []byte) error {
-   res := accountResp{}
-   err := json.Unmarshal(body, &res)
-   if err != nil {
-      return fmt.Errorf("failed to parse json from login response %q", err)
-   }
-   if res.Status != "ok" {
-      switch res.ErrorType {
-      case "bad_password":
-         return errors.New("password is incorrect")
-      }
-      return fmt.Errorf("failed to login: %v, %v", res.ErrorType, res.Message)
-   }
-   insta.Account = &res.Account
-   insta.Account.insta = insta
-   insta.rankToken = strconv.FormatInt(insta.Account.ID, 10) + "_" + insta.uuid
-   return nil
 }
 
 // Endpoints (with format vars)
@@ -251,7 +263,7 @@ var omitAPIHeadersExclude = []string{
 }
 
 type Account struct {
-   ID                         int64        `json:"pk"`
+   ID int64        `json:"pk"`
    insta *Instagram
 }
 
@@ -259,7 +271,6 @@ type Account struct {
 // exported or imported.
 type ConfigFile struct {
    Account       *Account          `json:"account"`
-   Device        Device            `json:"device"`
    DeviceID      string            `json:"device_id"`
    FamilyID      string            `json:"family_id"`
    HeaderOptions map[string]string `json:"header_options"`
@@ -270,17 +281,6 @@ type ConfigFile struct {
    UUID          string            `json:"uuid"`
    User          string            `json:"username"`
    XmidExpiry    int64             `json:"xmid_expiry"`
-}
-
-type Device struct {
-   AndroidRelease   int    `json:"android_release"`
-   AndroidVersion   int    `json:"android_version"`
-   Chipset          string `json:"chipset"`
-   CodeName         string `json:"code_name"`
-   Manufacturer     string `json:"manufacturer"`
-   Model            string `json:"model"`
-   ScreenDpi        string `json:"screen_dpi"`
-   ScreenResolution string `json:"screen_resolution"`
 }
 
 type accountResp struct {

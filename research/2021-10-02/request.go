@@ -273,75 +273,54 @@ func getTimeOffset() string {
    return strconv.Itoa(offset)
 }
 
-func createUserAgent(dev Device) string {
-   // Instagram 195.0.0.31.123 Android (28/9; 560dpi; 1440x2698; LGE/lge; LG-H870DS; lucye; lucye; en_GB; 302733750)
-   // Instagram 195.0.0.31.123 Android (30/11; 560dpi; 1440x2898; samsung; SM-G975F; beyond2; exynos9820; en_US; 302733750)
-   return fmt.Sprintf(
-      "Instagram %s Android (%d/%d; %s; %s; %s; %s; %s; %s; %s; %s)",
-      appVersion,
-      dev.AndroidVersion,
-      dev.AndroidRelease,
-      dev.ScreenDpi,
-      dev.ScreenResolution,
-      dev.Manufacturer,
-      dev.Model,
-      dev.CodeName,
-      dev.Chipset,
-      locale,
-      appVersionCode,
-   )
-}
-
 const volatileSeed = "12345"
 
 func generateMD5Hash(text string) string {
-	hasher := md5.New()
-	hasher.Write([]byte(text))
-	return hex.EncodeToString(hasher.Sum(nil))
+   hasher := md5.New()
+   hasher.Write([]byte(text))
+   return hex.EncodeToString(hasher.Sum(nil))
 }
 
 func generateDeviceID(seed string) string {
-	hash := generateMD5Hash(seed + volatileSeed)
-	return "android-" + hash[:16]
+   hash := generateMD5Hash(seed + volatileSeed)
+   return "android-" + hash[:16]
 }
 
 func generateSignature(d interface{}, extra ...map[string]string) map[string]string {
-	var data string
-	switch x := d.(type) {
-	case []byte:
-		data = string(x)
-	case string:
-		data = x
-	}
-	r := map[string]string{
-		"signed_body": "SIGNATURE." + data,
-	}
-	for _, e := range extra {
-		for k, v := range e {
-			r[k] = v
-		}
-	}
-
-	return r
+   var data string
+   switch x := d.(type) {
+   case []byte:
+      data = string(x)
+   case string:
+      data = x
+   }
+   r := map[string]string{"signed_body": "SIGNATURE." + data}
+   for _, e := range extra {
+      for k, v := range e {
+         r[k] = v
+      }
+   }
+   return r
 }
 
 func newUUID() (string, error) {
-	uuid := make([]byte, 16)
-	n, err := io.ReadFull(rand.Reader, uuid)
-	if n != len(uuid) || err != nil {
-		return "", err
-	}
-	// variant bits; see section 4.1.1
-	uuid[8] = uuid[8]&^0xc0 | 0x80
-	// version 4 (pseudo-random); see section 4.1.3
-	uuid[6] = uuid[6]&^0xf0 | 0x40
-	return fmt.Sprintf("%x-%x-%x-%x-%x", uuid[0:4], uuid[4:6], uuid[6:8], uuid[8:10], uuid[10:]), nil
+   uuid := make([]byte, 16)
+   n, err := io.ReadFull(rand.Reader, uuid)
+   if n != len(uuid) || err != nil {
+      return "", err
+   }
+   // variant bits; see section 4.1.1
+   uuid[8] = uuid[8]&^0xc0 | 0x80
+   // version 4 (pseudo-random); see section 4.1.3
+   uuid[6] = uuid[6]&^0xf0 | 0x40
+   return fmt.Sprintf("%x-%x-%x-%x-%x", uuid[0:4], uuid[4:6], uuid[6:8], uuid[8:10], uuid[10:]), nil
 }
 
 func generateUUID() string {
-	uuid, err := newUUID()
-	if err != nil {
-		return "cb479ee7-a50d-49e7-8b7b-60cc1a105e22" // default value when error occurred
-	}
-	return uuid
+   uuid, err := newUUID()
+   if err != nil {
+      // default value when error occurred
+      return "cb479ee7-a50d-49e7-8b7b-60cc1a105e22"
+   }
+   return uuid
 }
