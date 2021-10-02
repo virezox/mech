@@ -4,7 +4,6 @@ import (
    "bytes"
    "compress/gzip"
    "crypto/md5"
-   "crypto/rand"
    "encoding/hex"
    "encoding/json"
    "errors"
@@ -19,44 +18,10 @@ import (
    "time"
 )
 
-func generateDeviceID(seed string) string {
-   hash := generateMD5Hash(seed + "12345")
-   return "android-" + hash[:16]
-}
-
 func generateMD5Hash(text string) string {
    hasher := md5.New()
    hasher.Write([]byte(text))
    return hex.EncodeToString(hasher.Sum(nil))
-}
-
-func newUUID() (string, error) {
-   id := make([]byte, 16)
-   n, err := io.ReadFull(rand.Reader, id)
-   if n != len(id) || err != nil {
-      return "", err
-   }
-   // variant bits; see section 4.1.1
-   id[8] = id[8]&^0xc0 | 0x80
-   // version 4 (pseudo-random); see section 4.1.3
-   id[6] = id[6]&^0xf0 | 0x40
-   return fmt.Sprintf(
-      "%x-%x-%x-%x-%x", id[0:4], id[4:6], id[6:8], id[8:10], id[10:],
-   ), nil
-}
-
-
-// ConfigFile is a structure to store the session information so that can be
-// exported or imported.
-type ConfigFile struct {
-   DeviceID      string            `json:"device_id"`
-   FamilyID      string            `json:"family_id"`
-   HeaderOptions map[string]string `json:"header_options"`
-   ID            int64             `json:"id"`
-   PhoneID       string            `json:"phone_id"`
-   Token         string            `json:"token"`
-   User          string            `json:"username"`
-   XmidExpiry    int64             `json:"xmid_expiry"`
 }
 
 type Device struct {
@@ -70,31 +35,20 @@ type Device struct {
    ScreenResolution string `json:"screen_resolution"`
 }
 
-// Instagram represent the main API handler
-//
-// We recommend to use Export and Import functions after first Login.
-//
-// Also you can use SetProxy and UnsetProxy to set and unset proxy.
-// Golang also provides the option to set a proxy using HTTP_PROXY env var.
+// Instagram represent the main API handler. We recommend to use Export and
+// Import functions after first Login. Also you can use SetProxy and UnsetProxy
+// to set and unset proxy. Golang also provides the option to set a proxy using
+// HTTP_PROXY env var.
 type Instagram struct {
    user string
    pass string
    // id: android-1923fjnma8123
    dID string
-   // token -- I think this is depricated, as I don't see any csrf tokens being
-   // used anymore, but not 100% sure
-   token string
-   // ads id: 5b23a92b-3228-4cff-b6ab-3199f531f05b
-   adid string
    // contains header options set by Instagram
    headerOptions map[string]string
-   // expiry of X-Mid cookie
-   xmidExpiry int64
    // User-Agent
    userAgent string
    c *http.Client
-   // Set to true to debug reponses
-   Debug bool
 }
 
 // New creates Instagram structure
@@ -109,13 +63,13 @@ func New(username, password string) *Instagram {
       ScreenDpi:        "560dpi",
       ScreenResolution: "1440x2898",
    }
+   seed := generateMD5Hash(username + password)
+   hash := generateMD5Hash(seed + "12345")
    insta := &Instagram{
       c: &http.Client{
          Transport: &http.Transport{Proxy: http.ProxyFromEnvironment},
       },
-      dID: generateDeviceID(
-         generateMD5Hash(username + password),
-      ),
+      dID: "android-" + hash[:16],
       headerOptions: map[string]string{},
       pass: password,
       user: username,
@@ -133,7 +87,6 @@ func New(username, password string) *Instagram {
          "en_US",
          "302733750",
       ),
-      xmidExpiry:    -1,
    }
    insta.headerOptions["X-Ig-Www-Claim"] = "0"
    return insta
@@ -141,23 +94,7 @@ func New(username, password string) *Instagram {
 
 // Export exports selected *Instagram object options to an io.Writer
 func (insta *Instagram) ExportIO(writer io.Writer) error {
-   config := ConfigFile{
-      HeaderOptions: map[string]string{},
-      Token:         insta.token,
-      User:          insta.user,
-      XmidExpiry:    insta.xmidExpiry,
-   }
-   for key, value := range insta.headerOptions {
-      config.HeaderOptions[key] = value
-   }
-   bytes, err := json.Marshal(config)
-   if err != nil {
-      return err
-   }
-   if _, err := writer.Write(bytes); err != nil {
-      return err
-   }
-   return nil
+   return json.NewEncoder(writer).Encode(insta.headerOptions)
 }
 
 // Login performs instagram login sequence in close resemblance to the android
@@ -171,7 +108,6 @@ func (insta *Instagram) Login() error {
          "device_id":           insta.dID,
          // maybe
          "enc_password":        encrypted,
-         "adid":                insta.adid,
          "country_code":        "[{\"country_code\":\"44\",\"source\":[\"default\"]}]",
          "google_tokens":       "[]",
          "login_attempt_count": 0,
@@ -211,7 +147,6 @@ func (insta *Instagram) extractHeaders(h http.Header) {
    extract := func(in string, out string) {
       x := h[in]
       if len(x) > 0 && x[0] != "" {
-         // prevent from auth being set without token post login
          if in == "Ig-Set-Authorization" {
             old, ok := insta.headerOptions[out]
             if ok && len(old) != 0 {
