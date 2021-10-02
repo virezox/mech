@@ -184,11 +184,6 @@ func (insta *Instagram) sendRequest(o *reqOptions) (body []byte, h http.Header, 
       "X-Pigeon-Rawclienttime":      fmt.Sprintf("%s.%d", o.Timestamp, random(100, 900)),
       "X-Pigeon-Session-Id":         insta.psID,
    }
-   if insta.Account != nil {
-      req.Header.Set("Ig-Intended-User-Id", strconv.Itoa(int(insta.Account.ID)))
-   } else {
-      req.Header.Set("Ig-Intended-User-Id", "0")
-   }
    if contentEncoding != "" {
       headers["Content-Encoding"] = contentEncoding
    }

@@ -28,9 +28,8 @@ type Instagram struct {
    fID string
    // uuid: 8493-1233-4312312-5123
    uuid string
-   // rankToken
-   rankToken string
-   // token -- I think this is depricated, as I don't see any csrf tokens being used anymore, but not 100% sure
+   // token -- I think this is depricated, as I don't see any csrf tokens being
+   // used anymore, but not 100% sure
    token string
    // phone id v4 uuid: fbf767a4-260a-490d-bcbb-ee7c9ed7c576
    pid string
@@ -44,8 +43,6 @@ type Instagram struct {
    xmidExpiry int64
    // User-Agent
    userAgent string
-   // Account stores all personal data of the user and his/her options.
-   Account *Account
    c *http.Client
    // Set to true to debug reponses
    Debug bool
@@ -121,12 +118,9 @@ func New(username, password string) *Instagram {
 // Export exports selected *Instagram object options to an io.Writer
 func (insta *Instagram) ExportIO(writer io.Writer) error {
    config := ConfigFile{
-      Account:       insta.Account,
       FamilyID:      insta.fID,
       HeaderOptions: map[string]string{},
-      ID:            insta.Account.ID,
       PhoneID:       insta.pid,
-      RankToken:     insta.rankToken,
       Token:         insta.token,
       UUID:          insta.uuid,
       User:          insta.user,
@@ -147,15 +141,7 @@ func (insta *Instagram) ExportIO(writer io.Writer) error {
 
 // Login performs instagram login sequence in close resemblance to the android
 // apk. Password will be deleted after login.
-func (insta *Instagram) Login() (err error) {
-   err = insta.sync()
-   if err != nil {
-      return
-   }
-   return insta.login()
-}
-
-func (insta *Instagram) login() error {
+func (insta *Instagram) Login() error {
    timestamp := strconv.Itoa(int(time.Now().Unix()))
    encrypted := fmt.Sprintf("#PWD_INSTAGRAM:0:%s:%s", timestamp, insta.pass)
    result, err := json.Marshal(
@@ -178,50 +164,31 @@ func (insta *Instagram) login() error {
       &reqOptions{
          Endpoint: urlLogin,
          IsPost:   true,
-         Query:    map[string]string{"signed_body": "SIGNATURE." + string(result)},
+         Query: map[string]string{
+            "signed_body": "SIGNATURE." + string(result),
+         },
       },
    )
    if err != nil {
       return err
    }
-   res := accountResp{}
+   var res struct {
+      Error_Type string
+      Message string
+      Status  string
+   }
    if err := json.Unmarshal(body, &res); err != nil {
       return err
    }
    if res.Status != "ok" {
-      return fmt.Errorf("failed to login: %v, %v", res.ErrorType, res.Message)
+      return fmt.Errorf("%+v", res)
    }
-   insta.Account = &res.Account
-   insta.Account.insta = insta
-   insta.rankToken = strconv.FormatInt(insta.Account.ID, 10) + "_" + insta.uuid
    return nil
-}
-
-func (insta *Instagram) sync(args ...map[string]string) error {
-   query := map[string]string{
-      "id":                      insta.uuid,
-      "server_config_retrieval": "1",
-   }
-   data, err := json.Marshal(query)
-   if err != nil {
-      return err
-   }
-   _, _, err = insta.sendRequest(
-      &reqOptions{
-         Endpoint: urlSync,
-         Query:    generateSignature(data),
-         IsPost:   true,
-         IgnoreHeaders: []string{"Authorization"},
-      },
-   )
-   return err
 }
 
 // Endpoints (with format vars)
 const (
-   // Login
    urlLogin                      = "accounts/login/"
-   urlSync                       = "launcher/sync/"
    // urls
    baseUrl        = "https://i.instagram.com/"
    instaAPIUrl    = "https://i.instagram.com/api/v1/"
@@ -262,31 +229,16 @@ var omitAPIHeadersExclude = []string{
    "X-Pigeon-Rawclienttime",
 }
 
-type Account struct {
-   ID int64        `json:"pk"`
-   insta *Instagram
-}
-
 // ConfigFile is a structure to store the session information so that can be
 // exported or imported.
 type ConfigFile struct {
-   Account       *Account          `json:"account"`
    DeviceID      string            `json:"device_id"`
    FamilyID      string            `json:"family_id"`
    HeaderOptions map[string]string `json:"header_options"`
    ID            int64             `json:"id"`
    PhoneID       string            `json:"phone_id"`
-   RankToken     string            `json:"rank_token"`
    Token         string            `json:"token"`
    UUID          string            `json:"uuid"`
    User          string            `json:"username"`
    XmidExpiry    int64             `json:"xmid_expiry"`
-}
-
-type accountResp struct {
-   Account Account `json:"logged_in_user"`
-   ErrorType         string         `json:"error_type"`
-   Message           string         `json:"message"`
-   Status  string  `json:"status"`
-   TwoFactorRequired bool           `json:"two_factor_required"`
 }
