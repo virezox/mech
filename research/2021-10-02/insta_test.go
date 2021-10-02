@@ -13,7 +13,6 @@ func TestInsta(t *testing.T) {
    insta := New("srpen6", pass)
    err := insta.Login()
    if err != nil {
-      panic(err)
+      t.Fatal(err)
    }
-   insta.ExportIO(os.Stdout)
 }
