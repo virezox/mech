@@ -10,8 +10,7 @@ func TestInsta(t *testing.T) {
    if ! ok {
       t.Fatal("PASS")
    }
-   insta := New("srpen6", pass)
-   err := insta.Login()
+   err := login("srpen6", pass)
    if err != nil {
       t.Fatal(err)
    }
