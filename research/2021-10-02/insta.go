@@ -2,7 +2,6 @@ package insta
 
 import (
    "bytes"
-   "compress/gzip"
    "crypto/md5"
    "encoding/hex"
    "encoding/json"
@@ -117,12 +116,9 @@ func (insta *Instagram) Login() error {
    if err != nil {
       return err
    }
-   body, _, err := insta.sendRequest(
-      &reqOptions{
-         Endpoint: "accounts/login/",
-         Query: map[string]string{
-            "signed_body": "SIGNATURE." + string(result),
-         },
+   body, err := insta.sendRequest(
+      map[string]string{
+         "signed_body": "SIGNATURE." + string(result),
       },
    )
    if err != nil {
@@ -169,47 +165,27 @@ func (insta *Instagram) extractHeaders(h http.Header) {
    extract("X-Ig-Set-Www-Claim", "X-Ig-Www-Claim")
 }
 
-func (insta *Instagram) sendRequest(o *reqOptions) (body []byte, h http.Header, err error) {
+func (insta *Instagram) sendRequest(query map[string]string) ([]byte, error) {
    if insta == nil {
-      return nil, nil, errors.New(
+      return nil, errors.New(
          "insta has not been defined, this is most likely a bug in the code. " +
          "Please backtrack which call this error came from, and open an issue " +
          "detailing exactly how you got to this error",
       )
    }
-   method := "POST"
-   u, err := url.Parse("https://i.instagram.com/api/v1/" + o.Endpoint)
-   if err != nil {
-      return nil, nil, err
-   }
-   vs := url.Values{}
-   bf := bytes.NewBuffer([]byte{})
-   reqData := bytes.NewBuffer([]byte{})
-   for k, v := range o.Query {
+   vs := make(url.Values)
+   for k, v := range query {
       vs.Add(k, v)
    }
-   // If DataBytes has been passed, use that as data, else use Query
-   if o.DataBytes != nil {
-      reqData = o.DataBytes
-   } else {
-      reqData.WriteString(vs.Encode())
-   }
-   var contentEncoding string
-   bf = reqData
-   var req *http.Request
-   req, err = http.NewRequest(method, u.String(), bf)
+   reqData := bytes.NewBuffer([]byte{})
+   reqData.WriteString(vs.Encode())
+   req, err := http.NewRequest(
+      "POST", "https://i.instagram.com/api/v1/accounts/login/", reqData,
+   )
    if err != nil {
-      return
-   }
-   setHeaders := func(h map[string]string) {
-      for k, v := range h {
-         if v != "" {
-            req.Header.Set(k, v)
-         }
-      }
+      return nil, err
    }
    headers := map[string]string{
-      "Accept-Encoding": "gzip,deflate",
       "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
       "User-Agent":                  insta.userAgent,
       "X-Bloks-Is-Layout-Rtl":       "false",
@@ -219,10 +195,9 @@ func (insta *Instagram) sendRequest(o *reqOptions) (body []byte, h http.Header, 
       "X-Fb-Server-Cluster":         "True",
       "X-Ig-App-Startup-Country":    "unkown",
    }
-   if contentEncoding != "" {
-      headers["Content-Encoding"] = contentEncoding
+   for key, val := range headers {
+      req.Header.Set(key, val)
    }
-   setHeaders(headers)
    for key, value := range insta.headerOptions {
       if value != "" {
          req.Header.Set(key, value)
@@ -230,43 +205,18 @@ func (insta *Instagram) sendRequest(o *reqOptions) (body []byte, h http.Header, 
    }
    dum, err := httputil.DumpRequest(req, true)
    if err != nil {
-      return nil, nil, err
+      return nil, err
    }
    os.Stdout.Write(append(dum, '\n'))
    resp, err := insta.c.Do(req)
    if err != nil {
-      return nil, nil, err
+      return nil, err
    }
    defer resp.Body.Close()
-   body, err = io.ReadAll(resp.Body)
+   body, err := io.ReadAll(resp.Body)
    if err != nil {
-      return nil, nil, err
+      return nil, err
    }
    insta.extractHeaders(resp.Header)
-   encoding := resp.Header.Get("Content-Encoding")
-   if encoding != "" && encoding == "gzip" {
-      buf := bytes.NewBuffer(body)
-      zr, err := gzip.NewReader(buf)
-      if err != nil {
-         return nil, nil, err
-      }
-      body, err = io.ReadAll(zr)
-      if err != nil {
-         return nil, nil, err
-      }
-      if err := zr.Close(); err != nil {
-         return nil, nil, err
-      }
-   }
-   return body, resp.Header.Clone(), err
-}
-
-type reqOptions struct {
-   Endpoint string
-   // Query is the parameters of the request. This parameters are independents
-   // of the request method (POST|GET)
-   Query map[string]string
-   // DataBytes can be used to pass raw data to a request, instead of a form
-   // using the Query param. This is used for e.g. photo and vieo uploads.
-   DataBytes *bytes.Buffer
+   return body, nil
 }
