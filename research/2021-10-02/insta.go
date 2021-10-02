@@ -19,31 +19,6 @@ import (
    "time"
 )
 
-var omitAPIHeadersExclude = []string{
-   "Ig-Intended-User-Id",
-   "Ig-U-Shbts",
-   "X-Bloks-Is-Layout-Rtl",
-   "X-Bloks-Is-Panorama-Enabled",
-   "X-Bloks-Version-Id",
-   "X-Ig-Android-Id",
-   "X-Ig-App-Locale",
-   "X-Ig-App-Startup-Country",
-   "X-Ig-Bandwidth-Speed-Kbps",
-   "X-Ig-Bandwidth-Totalbytes-B",
-   "X-Ig-Bandwidth-Totaltime-Ms",
-   "X-Ig-Device-Id",
-   "X-Ig-Device-Locale",
-   "X-Ig-Family-Device-Id",
-   "X-Ig-Mapped-Locale",
-   "X-Ig-Timezone-Offset",
-   "X-Ig-Www-Claim",
-   "X-Pigeon-Rawclienttime",
-}
-
-func defaultHandler(args ...interface{}) {
-   fmt.Println(args...)
-}
-
 func generateDeviceID(seed string) string {
    hash := generateMD5Hash(seed + "12345")
    return "android-" + hash[:16]
@@ -55,26 +30,19 @@ func generateMD5Hash(text string) string {
    return hex.EncodeToString(hasher.Sum(nil))
 }
 
-func generateUUID() string {
-   uuid, err := newUUID()
-   if err != nil {
-      // default value when error occurred
-      return "cb479ee7-a50d-49e7-8b7b-60cc1a105e22"
-   }
-   return uuid
-}
-
 func newUUID() (string, error) {
-   uuid := make([]byte, 16)
-   n, err := io.ReadFull(rand.Reader, uuid)
-   if n != len(uuid) || err != nil {
+   id := make([]byte, 16)
+   n, err := io.ReadFull(rand.Reader, id)
+   if n != len(id) || err != nil {
       return "", err
    }
    // variant bits; see section 4.1.1
-   uuid[8] = uuid[8]&^0xc0 | 0x80
+   id[8] = id[8]&^0xc0 | 0x80
    // version 4 (pseudo-random); see section 4.1.3
-   uuid[6] = uuid[6]&^0xf0 | 0x40
-   return fmt.Sprintf("%x-%x-%x-%x-%x", uuid[0:4], uuid[4:6], uuid[6:8], uuid[8:10], uuid[10:]), nil
+   id[6] = id[6]&^0xf0 | 0x40
+   return fmt.Sprintf(
+      "%x-%x-%x-%x-%x", id[0:4], id[4:6], id[6:8], id[8:10], id[10:],
+   ), nil
 }
 
 
@@ -87,7 +55,6 @@ type ConfigFile struct {
    ID            int64             `json:"id"`
    PhoneID       string            `json:"phone_id"`
    Token         string            `json:"token"`
-   UUID          string            `json:"uuid"`
    User          string            `json:"username"`
    XmidExpiry    int64             `json:"xmid_expiry"`
 }
@@ -114,19 +81,11 @@ type Instagram struct {
    pass string
    // id: android-1923fjnma8123
    dID string
-   // family id, v4 uuid: 8b13e7b3-28f7-4e05-9474-358c6602e3f8
-   fID string
-   // uuid: 8493-1233-4312312-5123
-   uuid string
    // token -- I think this is depricated, as I don't see any csrf tokens being
    // used anymore, but not 100% sure
    token string
-   // phone id v4 uuid: fbf767a4-260a-490d-bcbb-ee7c9ed7c576
-   pid string
    // ads id: 5b23a92b-3228-4cff-b6ab-3199f531f05b
    adid string
-   // pigeonSessionId
-   psID string
    // contains header options set by Instagram
    headerOptions map[string]string
    // expiry of X-Mid cookie
@@ -136,11 +95,6 @@ type Instagram struct {
    c *http.Client
    // Set to true to debug reponses
    Debug bool
-   // Non-error message handlers. By default they will be printed out,
-   // alternatively you can e.g. pass them to a logger
-   infoHandler  func(...interface{})
-   warnHandler  func(...interface{})
-   debugHandler func(...interface{})
 }
 
 // New creates Instagram structure
@@ -162,13 +116,8 @@ func New(username, password string) *Instagram {
       dID: generateDeviceID(
          generateMD5Hash(username + password),
       ),
-      debugHandler: defaultHandler,
-      fID:           generateUUID(),
       headerOptions: map[string]string{},
-      infoHandler:  defaultHandler,
       pass: password,
-      pid:           generateUUID(),
-      psID:          "UFS-" + generateUUID() + "-0",
       user: username,
       userAgent: fmt.Sprintf(
          "Instagram %s Android (%d/%d; %s; %s; %s; %s; %s; %s; %s; %s)",
@@ -184,8 +133,6 @@ func New(username, password string) *Instagram {
          "en_US",
          "302733750",
       ),
-      uuid:          generateUUID(),
-      warnHandler:  defaultHandler,
       xmidExpiry:    -1,
    }
    insta.headerOptions["X-Ig-Www-Claim"] = "0"
@@ -195,11 +142,8 @@ func New(username, password string) *Instagram {
 // Export exports selected *Instagram object options to an io.Writer
 func (insta *Instagram) ExportIO(writer io.Writer) error {
    config := ConfigFile{
-      FamilyID:      insta.fID,
       HeaderOptions: map[string]string{},
-      PhoneID:       insta.pid,
       Token:         insta.token,
-      UUID:          insta.uuid,
       User:          insta.user,
       XmidExpiry:    insta.xmidExpiry,
    }
@@ -223,14 +167,14 @@ func (insta *Instagram) Login() error {
    encrypted := fmt.Sprintf("#PWD_INSTAGRAM:0:%s:%s", timestamp, insta.pass)
    result, err := json.Marshal(
       map[string]interface{}{
+         // need this
+         "device_id":           insta.dID,
+         // maybe
+         "enc_password":        encrypted,
          "adid":                insta.adid,
          "country_code":        "[{\"country_code\":\"44\",\"source\":[\"default\"]}]",
-         "device_id":           insta.dID,
-         "enc_password":        encrypted,
          "google_tokens":       "[]",
-         "guid":                insta.uuid,
          "login_attempt_count": 0,
-         "phone_id":            insta.fID,
          "username":            insta.user,
       },
    )
@@ -319,10 +263,6 @@ func (insta *Instagram) sendRequest(o *reqOptions) (body []byte, h http.Header, 
       nu = "https://i.instagram.com/api/v2/"
    } else if o.UseV2 && o.Useb {
       nu = "https://b.i.instagram.com/api/v2/"
-   }
-   if o.OmitAPI {
-      nu = "https://i.instagram.com/"
-      o.IgnoreHeaders = append(o.IgnoreHeaders, omitAPIHeadersExclude...)
    }
    u, err := url.Parse(nu + o.Endpoint)
    if err != nil {
@@ -442,8 +382,6 @@ type reqOptions struct {
    Connection string
    // Endpoint is the request path of instagram api
    Endpoint string
-   // Omit API omit the /api/v1/ part of the url
-   OmitAPI bool
    // IsPost set to true will send request with POST method. By default this
    // option is false.
    IsPost bool
