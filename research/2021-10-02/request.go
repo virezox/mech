@@ -6,6 +6,7 @@ import (
    "crypto/md5"
    "crypto/rand"
    "encoding/hex"
+   "errors"
    "fmt"
    "io"
    "io/ioutil"
@@ -62,9 +63,14 @@ type reqOptions struct {
 	Timestamp string
 }
 
+
 func (insta *Instagram) sendRequest(o *reqOptions) (body []byte, h http.Header, err error) {
    if insta == nil {
-      return nil, nil, fmt.Errorf("calling %s: %s", o.Endpoint, ErrInstaNotDefined)
+      return nil, nil, errors.New(
+         "insta has not been defined, this is most likely a bug in the code. " +
+         "Please backtrack which call this error came from, and open an issue " +
+         "detailing exactly how you got to this error",
+      )
    }
    method := "GET"
    if o.IsPost {
@@ -260,19 +266,11 @@ func random(min, max int) int {
 	return mathRand.Intn(max-min) + min
 }
 
+var timeOffset = getTimeOffset()
 
 func getTimeOffset() string {
-	_, offset := time.Now().Zone()
-	return strconv.Itoa(offset)
-}
-
-func jazoest(str string) string {
-	b := []byte(str)
-	var s int
-	for v := range b {
-		s += v
-	}
-	return "2" + strconv.Itoa(s)
+   _, offset := time.Now().Zone()
+   return strconv.Itoa(offset)
 }
 
 func createUserAgent(dev Device) string {

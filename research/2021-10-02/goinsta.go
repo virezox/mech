@@ -2,6 +2,7 @@ package goinsta
 
 import (
    "encoding/json"
+   "errors"
    "fmt"
    "io"
    "net/http"
@@ -194,12 +195,98 @@ func (insta *Instagram) verifyLogin(body []byte) error {
    if res.Status != "ok" {
       switch res.ErrorType {
       case "bad_password":
-         return ErrBadPassword
+         return errors.New("password is incorrect")
       }
-      return fmt.Errorf("Failed to login: %v, %v", res.ErrorType, res.Message)
+      return fmt.Errorf("failed to login: %v, %v", res.ErrorType, res.Message)
    }
    insta.Account = &res.Account
    insta.Account.insta = insta
    insta.rankToken = strconv.FormatInt(insta.Account.ID, 10) + "_" + insta.uuid
    return nil
+}
+
+// Endpoints (with format vars)
+const (
+   // Login
+   urlLogin                      = "accounts/login/"
+   urlSync                       = "launcher/sync/"
+   // urls
+   baseUrl        = "https://i.instagram.com/"
+   instaAPIUrl    = "https://i.instagram.com/api/v1/"
+   instaAPIUrlb   = "https://b.i.instagram.com/api/v1/"
+   instaAPIUrlv2  = "https://i.instagram.com/api/v2/"
+   instaAPIUrlv2b = "https://b.i.instagram.com/api/v2/"
+   // header values
+   bloksVerID         = "927f06374b80864ae6a0b04757048065714dc50ff15d2b8b3de8d0b6de961649"
+   fbAnalytics        = "567067343352427"
+   igCapabilities     = "3brTvx0="
+   connType           = "WIFI"
+   instaSigKeyVersion = "4"
+   locale             = "en_US"
+   appVersion         = "195.0.0.31.123"
+   appVersionCode     = "302733750"
+)
+
+var defaultHeaderOptions = map[string]string{"X-Ig-Www-Claim": "0"}
+
+var omitAPIHeadersExclude = []string{
+   "Ig-Intended-User-Id",
+   "Ig-U-Shbts",
+   "X-Bloks-Is-Layout-Rtl",
+   "X-Bloks-Is-Panorama-Enabled",
+   "X-Bloks-Version-Id",
+   "X-Ig-Android-Id",
+   "X-Ig-App-Locale",
+   "X-Ig-App-Startup-Country",
+   "X-Ig-Bandwidth-Speed-Kbps",
+   "X-Ig-Bandwidth-Totalbytes-B",
+   "X-Ig-Bandwidth-Totaltime-Ms",
+   "X-Ig-Device-Id",
+   "X-Ig-Device-Locale",
+   "X-Ig-Family-Device-Id",
+   "X-Ig-Mapped-Locale",
+   "X-Ig-Timezone-Offset",
+   "X-Ig-Www-Claim",
+   "X-Pigeon-Rawclienttime",
+}
+
+type Account struct {
+   ID                         int64        `json:"pk"`
+   insta *Instagram
+}
+
+// ConfigFile is a structure to store the session information so that can be
+// exported or imported.
+type ConfigFile struct {
+   Account       *Account          `json:"account"`
+   Device        Device            `json:"device"`
+   DeviceID      string            `json:"device_id"`
+   FamilyID      string            `json:"family_id"`
+   HeaderOptions map[string]string `json:"header_options"`
+   ID            int64             `json:"id"`
+   PhoneID       string            `json:"phone_id"`
+   RankToken     string            `json:"rank_token"`
+   Token         string            `json:"token"`
+   UUID          string            `json:"uuid"`
+   User          string            `json:"username"`
+   XmidExpiry    int64             `json:"xmid_expiry"`
+}
+
+type Device struct {
+   AndroidRelease   int    `json:"android_release"`
+   AndroidVersion   int    `json:"android_version"`
+   Chipset          string `json:"chipset"`
+   CodeName         string `json:"code_name"`
+   Manufacturer     string `json:"manufacturer"`
+   Model            string `json:"model"`
+   ScreenDpi        string `json:"screen_dpi"`
+   ScreenResolution string `json:"screen_resolution"`
+}
+
+type accountResp struct {
+   Account Account `json:"logged_in_user"`
+   ErrorType         string         `json:"error_type"`
+   Message           string         `json:"message"`
+   Status  string  `json:"status"`
+   TwoFactorRequired bool           `json:"two_factor_required"`
 }
