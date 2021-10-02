@@ -2,7 +2,6 @@ package goinsta
 
 import (
    "encoding/json"
-   "errors"
    "fmt"
    "io"
    "net/http"
@@ -23,9 +22,9 @@ func defaultHandler(args ...interface{}) {
 type Instagram struct {
    user string
    pass string
-   // device id: android-1923fjnma8123
+   // id: android-1923fjnma8123
    dID string
-   // family device id, v4 uuid: 8b13e7b3-28f7-4e05-9474-358c6602e3f8
+   // family id, v4 uuid: 8b13e7b3-28f7-4e05-9474-358c6602e3f8
    fID string
    // uuid: 8493-1233-4312312-5123
    uuid string
@@ -43,12 +42,6 @@ type Instagram struct {
    headerOptions map[string]string
    // expiry of X-Mid cookie
    xmidExpiry int64
-   // Public Key
-   pubKey string
-   // Public Key ID
-   pubKeyID int
-   // Device Settings
-   device Device
    // User-Agent
    userAgent string
    // Account stores all personal data of the user and his/her options.
@@ -56,11 +49,23 @@ type Instagram struct {
    c *http.Client
    // Set to true to debug reponses
    Debug bool
-   // Non-error message handlers.
-   // By default they will be printed out, alternatively you can e.g. pass them to a logger
+   // Non-error message handlers. By default they will be printed out,
+   // alternatively you can e.g. pass them to a logger
    infoHandler  func(...interface{})
    warnHandler  func(...interface{})
    debugHandler func(...interface{})
+}
+
+// Default
+var GalaxyS10 = Device{
+   AndroidRelease:   11,
+   AndroidVersion:   30,
+   Chipset:          "exynos9820",
+   CodeName:         "beyond2",
+   Manufacturer:     "samsung",
+   Model:            "SM-G975F",
+   ScreenDpi:        "560dpi",
+   ScreenResolution: "1440x2898",
 }
 
 // New creates Instagram structure
@@ -73,7 +78,6 @@ func New(username, password string) *Instagram {
          generateMD5Hash(username + password),
       ),
       debugHandler: defaultHandler,
-      device:        GalaxyS10,
       fID:           generateUUID(),
       headerOptions: map[string]string{},
       infoHandler:  defaultHandler,
@@ -96,8 +100,6 @@ func New(username, password string) *Instagram {
 func (insta *Instagram) ExportIO(writer io.Writer) error {
    config := ConfigFile{
       Account:       insta.Account,
-      Device:        insta.device,
-      DeviceID:      insta.dID,
       FamilyID:      insta.fID,
       HeaderOptions: map[string]string{},
       ID:            insta.Account.ID,
@@ -128,19 +130,10 @@ func (insta *Instagram) Login() (err error) {
    if err != nil {
       return
    }
-   if insta.pubKey == "" || insta.pubKeyID == 0 {
-      return errors.New("Sync returned empty public key and/or public key id")
-   }
    return insta.login()
 }
 
 func (insta *Instagram) login() error {
-   if insta.pubKey == "" || insta.pubKeyID == 0 {
-      return errors.New(
-         "No public key or public key ID set. Please call Instagram.Sync() " +
-         "and verify that it works correctly",
-      )
-   }
    timestamp := strconv.Itoa(int(time.Now().Unix()))
    encrypted := fmt.Sprintf("#PWD_INSTAGRAM:0:%s:%s", timestamp, insta.pass)
    result, err := json.Marshal(
@@ -151,7 +144,6 @@ func (insta *Instagram) login() error {
          "enc_password":        encrypted,
          "google_tokens":       "[]",
          "guid":                insta.uuid,
-         "jazoest":             jazoest(insta.dID),
          "login_attempt_count": 0,
          "phone_id":            insta.fID,
          "username":            insta.user,
@@ -182,7 +174,7 @@ func (insta *Instagram) sync(args ...map[string]string) error {
    if err != nil {
       return err
    }
-   _, h, err := insta.sendRequest(
+   _, _, err = insta.sendRequest(
       &reqOptions{
          Endpoint: urlSync,
          Query:    generateSignature(data),
@@ -190,24 +182,7 @@ func (insta *Instagram) sync(args ...map[string]string) error {
          IgnoreHeaders: []string{"Authorization"},
       },
    )
-   if err != nil {
-      return err
-   }
-   hkey := h["Ig-Set-Password-Encryption-Pub-Key"]
-   hkeyID := h["Ig-Set-Password-Encryption-Key-Id"]
-   var key string
-   var keyID string
-   if len(hkey) > 0 && len(hkeyID) > 0 && hkey[0] != "" && hkeyID[0] != "" {
-      key = hkey[0]
-      keyID = hkeyID[0]
-   }
-   id, err := strconv.Atoi(keyID)
-   if err != nil {
-      insta.warnHandler(fmt.Errorf("Failed to parse public key id: %s", err))
-   }
-   insta.pubKey = key
-   insta.pubKeyID = id
-   return nil
+   return err
 }
 
 func (insta *Instagram) verifyLogin(body []byte) error {

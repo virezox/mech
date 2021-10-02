@@ -20,7 +20,6 @@ const (
    urlLogAttribution             = "attribution/log_attribution/"
    urlMegaphoneLog               = "megaphone/log/"
    urlExpose                     = "qe/expose/"
-   urlGetNdxSteps                = "devices/ndx/api/async_get_ndx_ig_steps/"
    urlBanyan                     = "banyan/banyan/"
    urlCooldowns                  = "qp/get_cooldowns/"
    urlFetchConfig                = "loom/fetch_config/"
@@ -57,17 +56,6 @@ var ErrAllSaved = errors.New("Unable to call function for collection all posts")
 var defaultHeaderOptions = map[string]string{"X-Ig-Www-Claim": "0"}
 var timeOffset = getTimeOffset()
 
-// Default Device
-var GalaxyS10 = Device{
-   AndroidRelease:   11,
-   AndroidVersion:   30,
-   Chipset:          "exynos9820",
-   CodeName:         "beyond2",
-   Manufacturer:     "samsung",
-   Model:            "SM-G975F",
-   ScreenDpi:        "560dpi",
-   ScreenResolution: "1440x2898",
-}
 
 var omitAPIHeadersExclude = []string{
    "Ig-Intended-User-Id",
@@ -95,7 +83,8 @@ type Account struct {
    insta *Instagram
 }
 
-// ConfigFile is a structure to store the session information so that can be exported or imported.
+// ConfigFile is a structure to store the session information so that can be
+// exported or imported.
 type ConfigFile struct {
    Account       *Account          `json:"account"`
    Device        Device            `json:"device"`

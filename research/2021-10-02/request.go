@@ -275,23 +275,23 @@ func jazoest(str string) string {
 	return "2" + strconv.Itoa(s)
 }
 
-func createUserAgent(device Device) string {
-	// Instagram 195.0.0.31.123 Android (28/9; 560dpi; 1440x2698; LGE/lge; LG-H870DS; lucye; lucye; en_GB; 302733750)
-	// Instagram 195.0.0.31.123 Android (28/9; 560dpi; 1440x2872; Genymotion/Android; Samsung Galaxy S10; vbox86p; vbox86; en_US; 302733773)  # version_code: 302733773
-	// Instagram 195.0.0.31.123 Android (30/11; 560dpi; 1440x2898; samsung; SM-G975F; beyond2; exynos9820; en_US; 302733750)
-	return fmt.Sprintf("Instagram %s Android (%d/%d; %s; %s; %s; %s; %s; %s; %s; %s)",
-		appVersion,
-		device.AndroidVersion,
-		device.AndroidRelease,
-		device.ScreenDpi,
-		device.ScreenResolution,
-		device.Manufacturer,
-		device.Model,
-		device.CodeName,
-		device.Chipset,
-		locale,
-		appVersionCode,
-	)
+func createUserAgent(dev Device) string {
+   // Instagram 195.0.0.31.123 Android (28/9; 560dpi; 1440x2698; LGE/lge; LG-H870DS; lucye; lucye; en_GB; 302733750)
+   // Instagram 195.0.0.31.123 Android (30/11; 560dpi; 1440x2898; samsung; SM-G975F; beyond2; exynos9820; en_US; 302733750)
+   return fmt.Sprintf(
+      "Instagram %s Android (%d/%d; %s; %s; %s; %s; %s; %s; %s; %s)",
+      appVersion,
+      dev.AndroidVersion,
+      dev.AndroidRelease,
+      dev.ScreenDpi,
+      dev.ScreenResolution,
+      dev.Manufacturer,
+      dev.Model,
+      dev.CodeName,
+      dev.Chipset,
+      locale,
+      appVersionCode,
+   )
 }
 
 const volatileSeed = "12345"
