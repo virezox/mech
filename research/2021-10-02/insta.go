@@ -120,7 +120,6 @@ func (insta *Instagram) Login() error {
    body, _, err := insta.sendRequest(
       &reqOptions{
          Endpoint: "accounts/login/",
-         IsPost:   true,
          Query: map[string]string{
             "signed_body": "SIGNATURE." + string(result),
          },
@@ -178,28 +177,8 @@ func (insta *Instagram) sendRequest(o *reqOptions) (body []byte, h http.Header, 
          "detailing exactly how you got to this error",
       )
    }
-   method := "GET"
-   if o.IsPost {
-      method = "POST"
-   }
-   if o.Connection == "" {
-      o.Connection = "close"
-   }
-   if o.Timestamp == "" {
-      o.Timestamp = strconv.Itoa(int(time.Now().Unix()))
-   }
-   var nu string
-   if o.Useb {
-      nu = "https://b.i.instagram.com/api/v1/"
-   } else {
-      nu = "https://i.instagram.com/api/v1/"
-   }
-   if o.UseV2 && !o.Useb {
-      nu = "https://i.instagram.com/api/v2/"
-   } else if o.UseV2 && o.Useb {
-      nu = "https://b.i.instagram.com/api/v2/"
-   }
-   u, err := url.Parse(nu + o.Endpoint)
+   method := "POST"
+   u, err := url.Parse("https://i.instagram.com/api/v1/" + o.Endpoint)
    if err != nil {
       return nil, nil, err
    }
@@ -216,43 +195,15 @@ func (insta *Instagram) sendRequest(o *reqOptions) (body []byte, h http.Header, 
       reqData.WriteString(vs.Encode())
    }
    var contentEncoding string
-   if o.IsPost && o.Gzip {
-      // If gzip encoding needs to be applied
-      zw := gzip.NewWriter(bf)
-      defer zw.Close()
-      if _, err := zw.Write(reqData.Bytes()); err != nil {
-         return nil, nil, err
-      }
-      if err := zw.Close(); err != nil {
-         return nil, nil, err
-      }
-      contentEncoding = "gzip"
-   } else if o.IsPost {
-      // use post form if POST request
-      bf = reqData
-   } else {
-      // append query to url if GET request
-      for k, v := range u.Query() {
-         vs.Add(k, strings.Join(v, " "))
-      }
-      u.RawQuery = vs.Encode()
-   }
+   bf = reqData
    var req *http.Request
    req, err = http.NewRequest(method, u.String(), bf)
    if err != nil {
       return
    }
-   ignoreHeader := func(h string) bool {
-      for _, k := range o.IgnoreHeaders {
-         if k == h {
-            return true
-         }
-      }
-      return false
-   }
    setHeaders := func(h map[string]string) {
       for k, v := range h {
-         if v != "" && !ignoreHeader(k) {
+         if v != "" {
             req.Header.Set(k, v)
          }
       }
@@ -272,9 +223,8 @@ func (insta *Instagram) sendRequest(o *reqOptions) (body []byte, h http.Header, 
       headers["Content-Encoding"] = contentEncoding
    }
    setHeaders(headers)
-   setHeaders(o.ExtraHeaders)
    for key, value := range insta.headerOptions {
-      if value != "" && !ignoreHeader(key) {
+      if value != "" {
          req.Header.Set(key, value)
       }
    }
@@ -293,7 +243,6 @@ func (insta *Instagram) sendRequest(o *reqOptions) (body []byte, h http.Header, 
       return nil, nil, err
    }
    insta.extractHeaders(resp.Header)
-   // Decode gzip encoded responses
    encoding := resp.Header.Get("Content-Encoding")
    if encoding != "" && encoding == "gzip" {
       buf := bytes.NewBuffer(body)
@@ -313,29 +262,11 @@ func (insta *Instagram) sendRequest(o *reqOptions) (body []byte, h http.Header, 
 }
 
 type reqOptions struct {
-   // Connection is connection header. Default is "close".
-   Connection string
-   // Endpoint is the request path of instagram api
    Endpoint string
-   // IsPost set to true will send request with POST method. By default this
-   // option is false.
-   IsPost bool
-   // Compress post form data with gzip
-   Gzip bool
-   // UseV2 is set when API endpoint uses v2 url.
-   UseV2 bool
-   // Use b.i.instagram.com
-   Useb bool
    // Query is the parameters of the request. This parameters are independents
    // of the request method (POST|GET)
    Query map[string]string
    // DataBytes can be used to pass raw data to a request, instead of a form
    // using the Query param. This is used for e.g. photo and vieo uploads.
    DataBytes *bytes.Buffer
-   // List of headers to ignore
-   IgnoreHeaders []string
-   // Extra headers to add
-   ExtraHeaders map[string]string
-   // Timestamp
-   Timestamp string
 }
