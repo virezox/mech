@@ -1,15 +1,7 @@
 package goinsta
 
 import (
-   "crypto/aes"
-   "crypto/cipher"
-   "crypto/rand"
-   "crypto/rsa"
-   "crypto/x509"
-   "encoding/base64"
-   "encoding/pem"
    "errors"
-   "fmt"
 )
 
 // Endpoints (with format vars)
@@ -53,12 +45,12 @@ const (
 )
 
 // Account & Login Errors
-var ErrBadPassword     = errors.New("Password is incorrect")
+var ErrBadPassword = errors.New("password is incorrect")
 
 var ErrInstaNotDefined = errors.New(
-   "Insta has not been defined, this is most likely a bug in the code. Please " +
+   "insta has not been defined, this is most likely a bug in the code. Please " +
    "backtrack which call this error came from, and open an issue detailing " +
-   "exactly how you got to this error.",
+   "exactly how you got to this error",
 )
 
 var ErrAllSaved = errors.New("Unable to call function for collection all posts")
@@ -98,49 +90,6 @@ var omitAPIHeadersExclude = []string{
    "X-Pigeon-Rawclienttime",
 }
 
-func AESGCMEncrypt(key, data, additionalData []byte) (iv, encrypted, tag []byte, err error) {
-	iv = make([]byte, 12)
-	rand.Read(iv)
-
-	var block cipher.Block
-	block, err = aes.NewCipher(key)
-	if err != nil {
-		err = errors.New(fmt.Sprintf("error when creating cipher: %s", err))
-		fmt.Println(err)
-		return
-	}
-
-	var aesgcm cipher.AEAD
-	aesgcm, err = cipher.NewGCM(block)
-	if err != nil {
-		err = errors.New(fmt.Sprintf("error when creating gcm: %s", err))
-		fmt.Println(err)
-		return
-	}
-
-	encrypted = aesgcm.Seal(nil, iv, data, additionalData)
-	tag = encrypted[len(encrypted)-16:]       // Extracting last 16 bytes authentication tag
-	encrypted = encrypted[:len(encrypted)-16] // Extracting raw Encrypted data without IV & Tag for use in NodeJS
-
-	return
-}
-
-func RSADecodePublicKeyFromBase64(pubKeyBase64 string) (*rsa.PublicKey, error) {
-	pubKey, err := base64.StdEncoding.DecodeString(pubKeyBase64)
-	if err != nil {
-		fmt.Println(err)
-		return nil, err
-	}
-
-	block, _ := pem.Decode(pubKey)
-	pKey, err := x509.ParsePKIXPublicKey(block.Bytes)
-	if err != nil {
-		fmt.Println(err)
-		return nil, err
-	}
-	return pKey.(*rsa.PublicKey), nil
-}
-
 type Account struct {
    ID                         int64        `json:"pk"`
    insta *Instagram
@@ -148,18 +97,18 @@ type Account struct {
 
 // ConfigFile is a structure to store the session information so that can be exported or imported.
 type ConfigFile struct {
-	ID            int64             `json:"id"`
-	User          string            `json:"username"`
-	DeviceID      string            `json:"device_id"`
-	FamilyID      string            `json:"family_id"`
-	UUID          string            `json:"uuid"`
-	RankToken     string            `json:"rank_token"`
-	Token         string            `json:"token"`
-	PhoneID       string            `json:"phone_id"`
-	XmidExpiry    int64             `json:"xmid_expiry"`
-	HeaderOptions map[string]string `json:"header_options"`
-	Account       *Account          `json:"account"`
-	Device        Device            `json:"device"`
+   Account       *Account          `json:"account"`
+   Device        Device            `json:"device"`
+   DeviceID      string            `json:"device_id"`
+   FamilyID      string            `json:"family_id"`
+   HeaderOptions map[string]string `json:"header_options"`
+   ID            int64             `json:"id"`
+   PhoneID       string            `json:"phone_id"`
+   RankToken     string            `json:"rank_token"`
+   Token         string            `json:"token"`
+   UUID          string            `json:"uuid"`
+   User          string            `json:"username"`
+   XmidExpiry    int64             `json:"xmid_expiry"`
 }
 
 type Device struct {
