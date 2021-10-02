@@ -1,4 +1,4 @@
-package goinsta
+package insta
 
 import (
    "os"

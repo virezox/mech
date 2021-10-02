@@ -1,4 +1,4 @@
-package goinsta
+package insta
 
 import (
    "bytes"
@@ -10,7 +10,6 @@ import (
    "errors"
    "fmt"
    "io"
-   "io/ioutil"
    "net/http"
    "net/http/httputil"
    "net/url"
@@ -19,25 +18,6 @@ import (
    "strings"
    "time"
 )
-
-// Endpoints (with format vars)
-const (
-   appVersion = "195.0.0.31.123"
-   appVersionCode = "302733750"
-   baseUrl        = "https://i.instagram.com/"
-   bloksVerID = "927f06374b80864ae6a0b04757048065714dc50ff15d2b8b3de8d0b6de961649"
-   connType = "WIFI"
-   fbAnalytics = "567067343352427"
-   igCapabilities = "3brTvx0="
-   instaAPIUrl    = "https://i.instagram.com/api/v1/"
-   instaAPIUrlb   = "https://b.i.instagram.com/api/v1/"
-   instaAPIUrlv2  = "https://i.instagram.com/api/v2/"
-   instaAPIUrlv2b = "https://b.i.instagram.com/api/v2/"
-   locale = "en_US"
-   urlLogin                      = "accounts/login/"
-)
-
-var defaultHeaderOptions = map[string]string{"X-Ig-Www-Claim": "0"}
 
 var omitAPIHeadersExclude = []string{
    "Ig-Intended-User-Id",
@@ -63,6 +43,40 @@ var omitAPIHeadersExclude = []string{
 func defaultHandler(args ...interface{}) {
    fmt.Println(args...)
 }
+
+func generateDeviceID(seed string) string {
+   hash := generateMD5Hash(seed + "12345")
+   return "android-" + hash[:16]
+}
+
+func generateMD5Hash(text string) string {
+   hasher := md5.New()
+   hasher.Write([]byte(text))
+   return hex.EncodeToString(hasher.Sum(nil))
+}
+
+func generateUUID() string {
+   uuid, err := newUUID()
+   if err != nil {
+      // default value when error occurred
+      return "cb479ee7-a50d-49e7-8b7b-60cc1a105e22"
+   }
+   return uuid
+}
+
+func newUUID() (string, error) {
+   uuid := make([]byte, 16)
+   n, err := io.ReadFull(rand.Reader, uuid)
+   if n != len(uuid) || err != nil {
+      return "", err
+   }
+   // variant bits; see section 4.1.1
+   uuid[8] = uuid[8]&^0xc0 | 0x80
+   // version 4 (pseudo-random); see section 4.1.3
+   uuid[6] = uuid[6]&^0xf0 | 0x40
+   return fmt.Sprintf("%x-%x-%x-%x-%x", uuid[0:4], uuid[4:6], uuid[6:8], uuid[8:10], uuid[10:]), nil
+}
+
 
 // ConfigFile is a structure to store the session information so that can be
 // exported or imported.
@@ -158,7 +172,7 @@ func New(username, password string) *Instagram {
       user: username,
       userAgent: fmt.Sprintf(
          "Instagram %s Android (%d/%d; %s; %s; %s; %s; %s; %s; %s; %s)",
-         appVersion,
+         "195.0.0.31.123",
          dev.AndroidVersion,
          dev.AndroidRelease,
          dev.ScreenDpi,
@@ -167,16 +181,14 @@ func New(username, password string) *Instagram {
          dev.Model,
          dev.CodeName,
          dev.Chipset,
-         locale,
-         appVersionCode,
+         "en_US",
+         "302733750",
       ),
       uuid:          generateUUID(),
       warnHandler:  defaultHandler,
       xmidExpiry:    -1,
    }
-   for k, v := range defaultHeaderOptions {
-      insta.headerOptions[k] = v
-   }
+   insta.headerOptions["X-Ig-Www-Claim"] = "0"
    return insta
 }
 
@@ -227,7 +239,7 @@ func (insta *Instagram) Login() error {
    }
    body, _, err := insta.sendRequest(
       &reqOptions{
-         Endpoint: urlLogin,
+         Endpoint: "accounts/login/",
          IsPost:   true,
          Query: map[string]string{
             "signed_body": "SIGNATURE." + string(result),
@@ -299,17 +311,17 @@ func (insta *Instagram) sendRequest(o *reqOptions) (body []byte, h http.Header, 
    }
    var nu string
    if o.Useb {
-      nu = instaAPIUrlb
+      nu = "https://b.i.instagram.com/api/v1/"
    } else {
-      nu = instaAPIUrl
+      nu = "https://i.instagram.com/api/v1/"
    }
    if o.UseV2 && !o.Useb {
-      nu = instaAPIUrlv2
+      nu = "https://i.instagram.com/api/v2/"
    } else if o.UseV2 && o.Useb {
-      nu = instaAPIUrlv2b
+      nu = "https://b.i.instagram.com/api/v2/"
    }
    if o.OmitAPI {
-      nu = baseUrl
+      nu = "https://i.instagram.com/"
       o.IgnoreHeaders = append(o.IgnoreHeaders, omitAPIHeadersExclude...)
    }
    u, err := url.Parse(nu + o.Endpoint)
@@ -401,7 +413,7 @@ func (insta *Instagram) sendRequest(o *reqOptions) (body []byte, h http.Header, 
       return nil, nil, err
    }
    defer resp.Body.Close()
-   body, err = ioutil.ReadAll(resp.Body)
+   body, err = io.ReadAll(resp.Body)
    if err != nil {
       return nil, nil, err
    }
@@ -414,7 +426,7 @@ func (insta *Instagram) sendRequest(o *reqOptions) (body []byte, h http.Header, 
       if err != nil {
          return nil, nil, err
       }
-      body, err = ioutil.ReadAll(zr)
+      body, err = io.ReadAll(zr)
       if err != nil {
          return nil, nil, err
       }
@@ -423,42 +435,6 @@ func (insta *Instagram) sendRequest(o *reqOptions) (body []byte, h http.Header, 
       }
    }
    return body, resp.Header.Clone(), err
-}
-
-
-const volatileSeed = "12345"
-
-func generateDeviceID(seed string) string {
-   hash := generateMD5Hash(seed + volatileSeed)
-   return "android-" + hash[:16]
-}
-
-func generateMD5Hash(text string) string {
-   hasher := md5.New()
-   hasher.Write([]byte(text))
-   return hex.EncodeToString(hasher.Sum(nil))
-}
-
-func generateUUID() string {
-   uuid, err := newUUID()
-   if err != nil {
-      // default value when error occurred
-      return "cb479ee7-a50d-49e7-8b7b-60cc1a105e22"
-   }
-   return uuid
-}
-
-func newUUID() (string, error) {
-   uuid := make([]byte, 16)
-   n, err := io.ReadFull(rand.Reader, uuid)
-   if n != len(uuid) || err != nil {
-      return "", err
-   }
-   // variant bits; see section 4.1.1
-   uuid[8] = uuid[8]&^0xc0 | 0x80
-   // version 4 (pseudo-random); see section 4.1.3
-   uuid[6] = uuid[6]&^0xf0 | 0x40
-   return fmt.Sprintf("%x-%x-%x-%x-%x", uuid[0:4], uuid[4:6], uuid[6:8], uuid[8:10], uuid[10:]), nil
 }
 
 type reqOptions struct {
