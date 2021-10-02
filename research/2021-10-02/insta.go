@@ -1,11 +1,9 @@
 package insta
 
 import (
-   "bytes"
    "crypto/md5"
    "encoding/hex"
    "encoding/json"
-   "errors"
    "fmt"
    "io"
    "net/http"
@@ -116,74 +114,17 @@ func (insta *Instagram) Login() error {
    if err != nil {
       return err
    }
-   body, err := insta.sendRequest(
-      map[string]string{
-         "signed_body": "SIGNATURE." + string(result),
+   val := url.Values{
+      "signed_body": {
+         "SIGNATURE." + string(result),
       },
-   )
-   if err != nil {
-      return err
    }
-   var res struct {
-      Error_Type string
-      Message string
-      Status  string
-   }
-   if err := json.Unmarshal(body, &res); err != nil {
-      return err
-   }
-   if res.Status != "ok" {
-      return fmt.Errorf("%+v", res)
-   }
-   return nil
-}
-
-func (insta *Instagram) extractHeaders(h http.Header) {
-   extract := func(in string, out string) {
-      x := h[in]
-      if len(x) > 0 && x[0] != "" {
-         if in == "Ig-Set-Authorization" {
-            old, ok := insta.headerOptions[out]
-            if ok && len(old) != 0 {
-               current := strings.Split(old, ":")
-               newHeader := strings.Split(x[0], ":")
-               if len(current[2]) > len(newHeader[2]) {
-                  return
-               }
-            }
-         }
-         insta.headerOptions[out] = x[0]
-      }
-   }
-   extract("Ig-Set-Authorization", "Authorization")
-   extract("Ig-Set-Ig-U-Ds-User-Id", "Ig-U-Ds-User-Id")
-   extract("Ig-Set-Ig-U-Ig-Direct-Region-Hint", "Ig-U-Ig-Direct-Region-Hint")
-   extract("Ig-Set-Ig-U-Rur", "Ig-U-Rur")
-   extract("Ig-Set-Ig-U-Shbid", "Ig-U-Shbid")
-   extract("Ig-Set-Ig-U-Shbts", "Ig-U-Shbts")
-   extract("Ig-Set-X-Mid", "X-Mid")
-   extract("X-Ig-Set-Www-Claim", "X-Ig-Www-Claim")
-}
-
-func (insta *Instagram) sendRequest(query map[string]string) ([]byte, error) {
-   if insta == nil {
-      return nil, errors.New(
-         "insta has not been defined, this is most likely a bug in the code. " +
-         "Please backtrack which call this error came from, and open an issue " +
-         "detailing exactly how you got to this error",
-      )
-   }
-   vs := make(url.Values)
-   for k, v := range query {
-      vs.Add(k, v)
-   }
-   reqData := bytes.NewBuffer([]byte{})
-   reqData.WriteString(vs.Encode())
    req, err := http.NewRequest(
-      "POST", "https://i.instagram.com/api/v1/accounts/login/", reqData,
+      "POST", "https://i.instagram.com/api/v1/accounts/login/",
+      strings.NewReader(val.Encode()),
    )
    if err != nil {
-      return nil, err
+      return err
    }
    headers := map[string]string{
       "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
@@ -203,20 +144,20 @@ func (insta *Instagram) sendRequest(query map[string]string) ([]byte, error) {
          req.Header.Set(key, value)
       }
    }
-   dum, err := httputil.DumpRequest(req, true)
+   dReq, err := httputil.DumpRequest(req, true)
    if err != nil {
-      return nil, err
+      return err
    }
-   os.Stdout.Write(append(dum, '\n'))
+   os.Stdout.Write(append(dReq, '\n'))
    resp, err := insta.c.Do(req)
    if err != nil {
-      return nil, err
+      return err
    }
    defer resp.Body.Close()
-   body, err := io.ReadAll(resp.Body)
+   dRes, err := httputil.DumpResponse(resp, true)
    if err != nil {
-      return nil, err
+      return err
    }
-   insta.extractHeaders(resp.Header)
-   return body, nil
+   os.Stdout.Write(dRes)
+   return nil
 }
