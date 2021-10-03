@@ -1,12 +1,18 @@
 # Instagram
 
-Embed object:
+Single image:
+
+~~~
+CUV3UsjL1WM
+~~~
+
+Multiple image:
 
 ~~~
 CT-cnxGhvvO
 ~~~
 
-Embed null:
+Video:
 
 ~~~
 CUWBw4TM6Np

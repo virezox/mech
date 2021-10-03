@@ -8,21 +8,21 @@ import (
    "net/url"
    "os"
    "path"
+   "time"
 )
 
 func main() {
    var (
       auth, info bool
-      username, password, shortcode string
+      username, password string
    )
    flag.BoolVar(&auth, "a", false, "use authentication")
    flag.BoolVar(&info, "i", false, "info only")
    flag.StringVar(&username, "u", "", "username")
    flag.StringVar(&password, "p", "", "password")
-   flag.StringVar(&shortcode, "s", "", "shortcode")
    flag.Parse()
    if len(os.Args) == 1 {
-      fmt.Println("instagram [flags]")
+      fmt.Println("instagram [flags] [shortcode]")
       flag.PrintDefaults()
       return
    }
@@ -48,6 +48,7 @@ func main() {
       }
       return
    }
+   shortcode := flag.Arg(0)
    var log instagram.Login
    if auth {
       cache, err := os.UserCacheDir()
@@ -71,16 +72,29 @@ func main() {
       fmt.Printf("%+v", car.Shortcode_Media)
       return
    }
+   // download video
+   if car.Shortcode_Media.Video_URL != "" {
+      err := download(car.Shortcode_Media.Video_URL)
+      if err != nil {
+         panic(err)
+      }
+      return
+   }
+   // download image
+   if car.Edges() == nil {
+      err := download(car.Shortcode_Media.Display_URL)
+      if err != nil {
+         panic(err)
+      }
+      return
+   }
    // download images
    for _, edge := range car.Edges() {
       err := download(edge.Node.Display_URL)
       if err != nil {
          panic(err)
       }
-   }
-   // download video
-   if err := download(car.Shortcode_Media.Video_URL); err != nil {
-      panic(err)
+      time.Sleep(100 * time.Millisecond)
    }
 }
 
