@@ -1,11 +1,4 @@
-# Instagram
-
-## Better login
-
-- <https://github.com/softcoder24/insta_share/blob/master/insta_share/instagram.py>
-- https://github.com/pgrimaud/instagram-user-feed/commit/96ad4cf5
-
-## Construct
+# October 3 2021
 
 ~~~
 GET /api/v1/media/2662073270019671428/info/ HTTP/2.0
