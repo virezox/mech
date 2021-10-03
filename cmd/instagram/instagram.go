@@ -8,6 +8,7 @@ import (
    "net/url"
    "os"
    "path"
+   "time"
 )
 
 func main() {
@@ -71,16 +72,29 @@ func main() {
       fmt.Printf("%+v", car.Shortcode_Media)
       return
    }
+   // download video
+   if car.Shortcode_Media.Video_URL != "" {
+      err := download(car.Shortcode_Media.Video_URL)
+      if err != nil {
+         panic(err)
+      }
+      return
+   }
+   // download image
+   if car.Edges() == nil {
+      err := download(car.Shortcode_Media.Display_URL)
+      if err != nil {
+         panic(err)
+      }
+      return
+   }
    // download images
    for _, edge := range car.Edges() {
       err := download(edge.Node.Display_URL)
       if err != nil {
          panic(err)
       }
-   }
-   // download video
-   if err := download(car.Shortcode_Media.Video_URL); err != nil {
-      panic(err)
+      time.Sleep(100 * time.Millisecond)
    }
 }
 
