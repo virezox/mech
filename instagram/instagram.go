@@ -43,6 +43,12 @@ func roundTrip(req *http.Request) (*http.Response, error) {
    return res, nil
 }
 
+type Edge struct {
+   Node struct {
+      Display_URL string
+   }
+}
+
 type Item struct {
    Media struct {
       Video_Versions []struct {
@@ -55,13 +61,8 @@ type Login struct {
    http.Header
 }
 
-func Decode(r io.Reader) (*Login, error) {
-   var log Login
-   err := json.NewDecoder(r).Decode(&log.Header)
-   if err != nil {
-      return nil, err
-   }
-   return &log, nil
+func (l *Login) Decode(r io.Reader) error {
+   return json.NewDecoder(r).Decode(&l.Header)
 }
 
 func NewLogin(username, password string) (*Login, error) {
@@ -96,13 +97,13 @@ func (l Login) Encode(w io.Writer) error {
    return enc.Encode(l.Header)
 }
 
-func (l Login) Item(code string) (*Item, error) {
+func (l Login) Item(shortcode string) (*Item, error) {
    req, err := http.NewRequest("GET", Origin + "/api/v1/clips/item/", nil)
    if err != nil {
       return nil, err
    }
    val := req.URL.Query()
-   val.Set("clips_media_shortcode", code)
+   val.Set("clips_media_shortcode", shortcode)
    req.URL.RawQuery = val.Encode()
    req.Header.Set("User-Agent", userAgent)
    req.Header.Set("Authorization", l.Get("Ig-Set-Authorization"))
@@ -125,10 +126,10 @@ type Query struct {
    } `json:"variables"`
 }
 
-func NewQuery(code string) Query {
+func NewQuery(shortcode string) Query {
    var q Query
    q.Query_Hash = "1f950d414a6e11c98c556aa007b3157d"
-   q.Variables.Shortcode = code
+   q.Variables.Shortcode = shortcode
    return q
 }
 
@@ -166,12 +167,12 @@ type Sidecar struct {
    Data struct {
       Shortcode_Media struct {
          Edge_Sidecar_To_Children struct {
-            Edges []struct {
-               Node struct {
-                  Display_URL string
-               }
-            }
+            Edges []Edge
          }
       }
    }
+}
+
+func (s Sidecar) Edges() []Edge {
+   return s.Data.Shortcode_Media.Edge_Sidecar_To_Children.Edges
 }

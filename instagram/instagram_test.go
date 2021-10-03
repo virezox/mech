@@ -7,16 +7,16 @@ import (
 )
 
 func TestRead(t *testing.T) {
-   f, err := os.Open("ig.json")
+   f, err := os.Open("instagram.json")
    if err != nil {
       t.Fatal(err)
    }
    defer f.Close()
-   auth, err := Decode(f)
-   if err != nil {
+   var auth Login
+   if err := auth.Decode(f); err != nil {
       t.Fatal(err)
    }
-   c, err := NewQuery("CT-cnxGhvvO").Sidecar(auth)
+   c, err := NewQuery("CT-cnxGhvvO").Sidecar(&auth)
    if err != nil {
       t.Fatal(err)
    }
