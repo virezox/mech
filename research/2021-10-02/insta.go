@@ -1,60 +1,55 @@
 package insta
 
 import (
+   "bytes"
    "encoding/json"
    "fmt"
    "net/http"
    "net/http/httputil"
-   "net/url"
    "os"
-   "strings"
+   "strconv"
    "time"
 )
 
-func login(username, password string) error {
-   // BEGIN ////////////////////////////////////////////////////////////////////
+const (
+   origin = "https://i.instagram.com"
+   userAgent = "Instagram 207.0.0.39.120 Android"
+)
+
+type login http.Header
+
+// Ig-Set-Authorization
+func newLogin(user, pass string) (login, error) {
+   buf := bytes.NewBufferString("signed_body=SIGNATURE.")
+   now := strconv.FormatInt(time.Now().Unix(), 10)
    sig := map[string]string{
-      "device_id": "android-0123456789abcdef",
-      "enc_password": fmt.Sprintf(
-         "#PWD_INSTAGRAM:0:%v:%v", time.Now().Unix(), password,
-      ),
-      "username": username,
+      "device_id": userAgent,
+      "enc_password": "#PWD_INSTAGRAM:0:" + now + ":" + pass,
+      "username": user,
    }
-   result, err := json.Marshal(sig)
+   if err := json.NewEncoder(buf).Encode(sig); err != nil {
+      return nil, err
+   }
+   req, err := http.NewRequest("POST", origin + "/api/v1/accounts/login/", buf)
    if err != nil {
-      return err
-   }
-   val := url.Values{
-      "signed_body": {
-         "SIGNATURE." + string(result),
-      },
-   }
-   // END //////////////////////////////////////////////////////////////////////
-   req, err := http.NewRequest(
-      "POST", "https://i.instagram.com/api/v1/accounts/login/",
-      strings.NewReader(val.Encode()),
-   )
-   if err != nil {
-      return err
+      return nil, err
    }
    req.Header = http.Header{
-      "Content-Type": {"application/x-www-form-urlencoded; charset=UTF-8"},
-      "User-Agent": {"Instagram 195.0.0.31.123 Android (30/11; 560dpi; 1440x2898; samsung; SM-G975F; beyond2; exynos9820; en_US; 302733750)"},
+      "Content-Type": {"application/x-www-form-urlencoded"},
+      "User-Agent": {userAgent},
    }
-   dReq, err := httputil.DumpRequest(req, true)
+   dum, err := httputil.DumpRequest(req, true)
    if err != nil {
-      return err
+      return nil, err
    }
-   os.Stdout.Write(dReq)
-   resp, err := new(http.Transport).RoundTrip(req)
+   os.Stdout.Write(dum)
+   res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
-      return err
+      return nil, err
    }
-   defer resp.Body.Close()
-   dRes, err := httputil.DumpResponse(resp, true)
-   if err != nil {
-      return err
+   defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return nil, fmt.Errorf("status %q", res.Status)
    }
-   os.Stdout.Write(dRes)
-   return nil
+   return login(res.Header), nil
 }
