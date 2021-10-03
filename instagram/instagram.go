@@ -4,6 +4,7 @@ import (
    "bytes"
    "encoding/json"
    "fmt"
+   "io"
    "net/http"
    "net/http/httputil"
    "os"
@@ -16,6 +17,24 @@ const (
 
 var Verbose bool
 
+func roundTrip(req *http.Request) (*http.Response, error) {
+   if Verbose {
+      dum, err := httputil.DumpRequest(req, true)
+      if err != nil {
+         return nil, err
+      }
+      os.Stdout.Write(dum)
+   }
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   if res.StatusCode != http.StatusOK {
+      return nil, fmt.Errorf("status %q", res.Status)
+   }
+   return res, nil
+}
+
 type Item struct {
    Media struct {
       Video_Versions []struct {
@@ -26,6 +45,15 @@ type Item struct {
 
 type Login struct {
    http.Header
+}
+
+func Decode(r io.Reader) (*Login, error) {
+   var log Login
+   err := json.NewDecoder(r).Decode(&log.Header)
+   if err != nil {
+      return nil, err
+   }
+   return &log, nil
 }
 
 func NewLogin(username, password string) (*Login, error) {
@@ -46,22 +74,18 @@ func NewLogin(username, password string) (*Login, error) {
       "Content-Type": {"application/x-www-form-urlencoded"},
       "User-Agent": {userAgent},
    }
-   if Verbose {
-      dum, err := httputil.DumpRequest(req, true)
-      if err != nil {
-         return nil, err
-      }
-      os.Stdout.Write(dum)
-   }
-   res, err := new(http.Transport).RoundTrip(req)
+   res, err := roundTrip(req)
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return nil, fmt.Errorf("status %q", res.Status)
-   }
    return &Login{res.Header}, nil
+}
+
+func (l Login) Encode(w io.Writer) error {
+   enc := json.NewEncoder(w)
+   enc.SetIndent("", " ")
+   return enc.Encode(l.Header)
 }
 
 func (l Login) Item(code string) (*Item, error) {
@@ -74,7 +98,14 @@ func (l Login) Item(code string) (*Item, error) {
    req.URL.RawQuery = val.Encode()
    req.Header.Set("User-Agent", userAgent)
    req.Header.Set("Authorization", l.Get("Ig-Set-Authorization"))
-   if Verbose {
+   res, err := roundTrip(req)
+   if err != nil {
+      return nil, err
    }
-   return nil, nil
+   defer res.Body.Close()
+   item := new(Item)
+   if err := json.NewDecoder(res.Body).Decode(item); err != nil {
+      return nil, err
+   }
+   return item, nil
 }
