@@ -11,7 +11,8 @@ import (
 )
 
 const (
-   Origin = "https://i.instagram.com"
+   OriginI = "https://i.instagram.com"
+   OriginWWW = "https://www.instagram.com"
    userAgent = "Instagram 207.0.0.39.120 Android"
 )
 
@@ -38,7 +39,11 @@ func roundTrip(req *http.Request) (*http.Response, error) {
       return nil, err
    }
    if res.StatusCode != http.StatusOK {
-      return nil, fmt.Errorf("status %q", res.Status)
+      dum, err := httputil.DumpResponse(res, true)
+      if err != nil {
+         return nil, err
+      }
+      return nil, fmt.Errorf("%s", dum)
    }
    return res, nil
 }
@@ -75,7 +80,7 @@ func NewLogin(username, password string) (*Login, error) {
    if err := json.NewEncoder(buf).Encode(sig); err != nil {
       return nil, err
    }
-   req, err := http.NewRequest("POST", Origin + "/api/v1/accounts/login/", buf)
+   req, err := http.NewRequest("POST", OriginI + "/api/v1/accounts/login/", buf)
    if err != nil {
       return nil, err
    }
@@ -98,7 +103,7 @@ func (l Login) Encode(w io.Writer) error {
 }
 
 func (l Login) Item(shortcode string) (*Item, error) {
-   req, err := http.NewRequest("GET", Origin + "/api/v1/clips/item/", nil)
+   req, err := http.NewRequest("GET", OriginI + "/api/v1/clips/item/", nil)
    if err != nil {
       return nil, err
    }
@@ -140,7 +145,7 @@ func (q Query) Sidecar(auth *Login) (*Sidecar, error) {
    if err != nil {
       return nil, err
    }
-   req, err := http.NewRequest("POST", Origin + "/graphql/query/", buf)
+   req, err := http.NewRequest("POST", OriginI + "/graphql/query/", buf)
    if err != nil {
       return nil, err
    }

@@ -33,12 +33,7 @@ func TestWrite(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   f, err := os.Create("ig.json")
-   if err != nil {
-      t.Fatal(err)
-   }
-   defer f.Close()
-   if err := l.Encode(f); err != nil {
+   if err := l.Encode(os.Stdout); err != nil {
       t.Fatal(err)
    }
 }
