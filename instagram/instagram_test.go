@@ -16,7 +16,7 @@ func TestRead(t *testing.T) {
    if err := auth.Decode(f); err != nil {
       t.Fatal(err)
    }
-   c, err := NewQuery("CT-cnxGhvvO").Sidecar(&auth)
+   c, err := GraphQL("CT-cnxGhvvO", &auth)
    if err != nil {
       t.Fatal(err)
    }

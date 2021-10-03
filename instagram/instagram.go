@@ -129,23 +129,10 @@ func (l Login) Item(shortcode string) (*Item, error) {
    return item, nil
 }
 
-type Query struct {
-   Query_Hash string `json:"query_hash"`
-   Variables struct {
-      Shortcode string `json:"shortcode"`
-   } `json:"variables"`
-}
-
-func NewQuery(shortcode string) Query {
-   var q Query
-   q.Query_Hash = "1f950d414a6e11c98c556aa007b3157d"
-   q.Variables.Shortcode = shortcode
-   return q
-}
-
-type Sidecar struct {
+type Media struct {
    Shortcode_Media struct {
-      Edge_Sidecar_To_Children struct {
+      Display_URL string
+      Edge_Sidecar_To_Children *struct {
          Edges []Edge
       }
       Video_URL string
@@ -153,7 +140,7 @@ type Sidecar struct {
 }
 
 // If `auth` is `nil`, then anonymous request will be used.
-func (q Query) Data(auth *Login) (*Sidecar, error) {
+func (q Query) Data(auth *Login) (*Media, error) {
    buf := new(bytes.Buffer)
    err := json.NewEncoder(buf).Encode(q)
    if err != nil {
@@ -176,7 +163,7 @@ func (q Query) Data(auth *Login) (*Sidecar, error) {
    }
    defer res.Body.Close()
    var car struct {
-      Data Sidecar
+      Data Media
    }
    if err := json.NewDecoder(res.Body).Decode(&car); err != nil {
       return nil, err
@@ -185,7 +172,7 @@ func (q Query) Data(auth *Login) (*Sidecar, error) {
 }
 
 // If `auth` is `nil`, then anonymous request will be used.
-func GraphQL(shortcode string, auth *Login) (*Sidecar, error) {
+func GraphQL(shortcode string, auth *Login) (*Media, error) {
    req, err := http.NewRequest("GET", OriginWWW + "/p/" + shortcode + "/", nil)
    if err != nil {
       return nil, err
@@ -205,7 +192,7 @@ func GraphQL(shortcode string, auth *Login) (*Sidecar, error) {
    }
    defer res.Body.Close()
    var car struct {
-      GraphQL Sidecar
+      GraphQL Media
    }
    if err := json.NewDecoder(res.Body).Decode(&car); err != nil {
       return nil, err
@@ -213,6 +200,23 @@ func GraphQL(shortcode string, auth *Login) (*Sidecar, error) {
    return &car.GraphQL, nil
 }
 
-func (s Sidecar) Edges() []Edge {
-   return s.Shortcode_Media.Edge_Sidecar_To_Children.Edges
+func (m Media) Edges() []Edge {
+   if m.Shortcode_Media.Edge_Sidecar_To_Children == nil {
+      return nil
+   }
+   return m.Shortcode_Media.Edge_Sidecar_To_Children.Edges
+}
+
+type Query struct {
+   Query_Hash string `json:"query_hash"`
+   Variables struct {
+      Shortcode string `json:"shortcode"`
+   } `json:"variables"`
+}
+
+func NewQuery(shortcode string) Query {
+   var q Query
+   q.Query_Hash = "1f950d414a6e11c98c556aa007b3157d"
+   q.Variables.Shortcode = shortcode
+   return q
 }
