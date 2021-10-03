@@ -109,3 +109,61 @@ func (l Login) Item(code string) (*Item, error) {
    }
    return item, nil
 }
+
+type Query struct {
+   Query_Hash string `json:"query_hash"`
+   Variables struct {
+      Shortcode string `json:"shortcode"`
+   } `json:"variables"`
+}
+
+func NewQuery(code string) Query {
+   var q Query
+   q.Query_Hash = "1f950d414a6e11c98c556aa007b3157d"
+   q.Variables.Shortcode = code
+   return q
+}
+
+// If `auth` is `nil`, then anonymous request will be used.
+func (q Query) Sidecar(auth *Login) (*Sidecar, error) {
+   buf := new(bytes.Buffer)
+   err := json.NewEncoder(buf).Encode(q)
+   if err != nil {
+      return nil, err
+   }
+   req, err := http.NewRequest("POST", Origin + "/graphql/query/", buf)
+   if err != nil {
+      return nil, err
+   }
+   req.Header = http.Header{
+      "Content-Type": {"application/json"},
+      "User-Agent": {userAgent},
+   }
+   if auth != nil {
+      req.Header.Set("Authorization", auth.Get("Ig-Set-Authorization"))
+   }
+   res, err := roundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   car := new(Sidecar)
+   if err := json.NewDecoder(res.Body).Decode(car); err != nil {
+      return nil, err
+   }
+   return car, nil
+}
+
+type Sidecar struct {
+   Data struct {
+      Shortcode_Media struct {
+         Edge_Sidecar_To_Children struct {
+            Edges []struct {
+               Node struct {
+                  Display_URL string
+               }
+            }
+         }
+      }
+   }
+}

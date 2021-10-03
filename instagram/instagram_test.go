@@ -12,11 +12,15 @@ func TestRead(t *testing.T) {
       t.Fatal(err)
    }
    defer f.Close()
-   l, err := Decode(f)
+   auth, err := Decode(f)
    if err != nil {
       t.Fatal(err)
    }
-   fmt.Println(l)
+   c, err := NewQuery("CT-cnxGhvvO").Sidecar(auth)
+   if err != nil {
+      t.Fatal(err)
+   }
+   fmt.Printf("%+v\n", c)
 }
 
 func TestWrite(t *testing.T) {
