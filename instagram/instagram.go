@@ -17,6 +17,14 @@ const (
 
 var Verbose bool
 
+// instagram.com/p/CT-cnxGhvvO
+func Valid(shortcode string) error {
+   if len(shortcode) == 11 {
+      return nil
+   }
+   return fmt.Errorf("%q invalid as shortcode", shortcode)
+}
+
 func roundTrip(req *http.Request) (*http.Response, error) {
    if Verbose {
       dum, err := httputil.DumpRequest(req, true)
