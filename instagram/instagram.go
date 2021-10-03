@@ -66,10 +66,6 @@ type Login struct {
    http.Header
 }
 
-func (l *Login) Decode(r io.Reader) error {
-   return json.NewDecoder(r).Decode(&l.Header)
-}
-
 func NewLogin(username, password string) (*Login, error) {
    buf := bytes.NewBufferString("signed_body=SIGNATURE.")
    sig := map[string]string{
@@ -96,6 +92,11 @@ func NewLogin(username, password string) (*Login, error) {
    return &Login{res.Header}, nil
 }
 
+// This can be used to decode an existing login response.
+func (l *Login) Decode(r io.Reader) error {
+   return json.NewDecoder(r).Decode(&l.Header)
+}
+
 func (l Login) Encode(w io.Writer) error {
    enc := json.NewEncoder(w)
    enc.SetIndent("", " ")
@@ -110,8 +111,12 @@ func (l Login) Item(shortcode string) (*Item, error) {
    val := req.URL.Query()
    val.Set("clips_media_shortcode", shortcode)
    req.URL.RawQuery = val.Encode()
-   req.Header.Set("User-Agent", userAgent)
-   req.Header.Set("Authorization", l.Get("Ig-Set-Authorization"))
+   req.Header = http.Header{
+      "Authorization": {
+         l.Get("Ig-Set-Authorization"),
+      },
+      "User-Agent": {userAgent},
+   }
    res, err := roundTrip(req)
    if err != nil {
       return nil, err
@@ -138,8 +143,17 @@ func NewQuery(shortcode string) Query {
    return q
 }
 
+type Sidecar struct {
+   Shortcode_Media struct {
+      Edge_Sidecar_To_Children struct {
+         Edges []Edge
+      }
+      Video_URL string
+   }
+}
+
 // If `auth` is `nil`, then anonymous request will be used.
-func (q Query) Sidecar(auth *Login) (*Sidecar, error) {
+func (q Query) Data(auth *Login) (*Sidecar, error) {
    buf := new(bytes.Buffer)
    err := json.NewEncoder(buf).Encode(q)
    if err != nil {
@@ -161,23 +175,44 @@ func (q Query) Sidecar(auth *Login) (*Sidecar, error) {
       return nil, err
    }
    defer res.Body.Close()
-   car := new(Sidecar)
-   if err := json.NewDecoder(res.Body).Decode(car); err != nil {
+   var car struct {
+      Data Sidecar
+   }
+   if err := json.NewDecoder(res.Body).Decode(&car); err != nil {
       return nil, err
    }
-   return car, nil
+   return &car.Data, nil
 }
 
-type Sidecar struct {
-   Data struct {
-      Shortcode_Media struct {
-         Edge_Sidecar_To_Children struct {
-            Edges []Edge
-         }
-      }
+// If `auth` is `nil`, then anonymous request will be used.
+func GraphQL(shortcode string, auth *Login) (*Sidecar, error) {
+   req, err := http.NewRequest("GET", OriginWWW + "/p/" + shortcode + "/", nil)
+   if err != nil {
+      return nil, err
    }
+   val := req.URL.Query()
+   val.Set("__a", "1")
+   req.URL.RawQuery = val.Encode()
+   req.Header = http.Header{
+      "User-Agent": {userAgent},
+   }
+   if auth != nil {
+      req.Header.Set("Authorization", auth.Get("Ig-Set-Authorization"))
+   }
+   res, err := roundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   var car struct {
+      GraphQL Sidecar
+   }
+   if err := json.NewDecoder(res.Body).Decode(&car); err != nil {
+      return nil, err
+   }
+   return &car.GraphQL, nil
 }
 
 func (s Sidecar) Edges() []Edge {
-   return s.Data.Shortcode_Media.Edge_Sidecar_To_Children.Edges
+   return s.Shortcode_Media.Edge_Sidecar_To_Children.Edges
 }

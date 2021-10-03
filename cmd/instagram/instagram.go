@@ -63,19 +63,24 @@ func main() {
          panic(err)
       }
    }
-   car, err := instagram.NewQuery(shortcode).Sidecar(&log)
+   car, err := instagram.GraphQL(shortcode, &log)
    if err != nil {
       panic(err)
    }
+   if info {
+      fmt.Printf("%+v", car.Shortcode_Media)
+      return
+   }
+   // download images
    for _, edge := range car.Edges() {
-      if info {
-         fmt.Printf("%+v\n", edge)
-      } else {
-         err := download(edge.Node.Display_URL)
-         if err != nil {
-            panic(err)
-         }
+      err := download(edge.Node.Display_URL)
+      if err != nil {
+         panic(err)
       }
+   }
+   // download video
+   if err := download(car.Shortcode_Media.Video_URL); err != nil {
+      panic(err)
    }
 }
 
