@@ -1,13 +1,4 @@
-# October 3 2021
-
-~~~
-GET /api/v1/media/2662073270019671428/info/ HTTP/2.0
-Host: i.instagram.com
-user-agent: Instagram 206.1.0.34.121 Android
-authorization: Bearer IGT:2:eyJkc191c2VyX2lkIjoiNDkzOTg0NTg5MDUiLCJzZXNzaW9uaW...
-~~~
-
-Clip:
+# Instagram
 
 ~~~
 GET /api/v1/clips/item/?clips_media_shortcode=CUWBw4TM6Np HTTP/2.0

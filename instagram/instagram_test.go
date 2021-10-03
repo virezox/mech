@@ -1,4 +1,4 @@
-package insta
+package instagram
 
 import (
    "fmt"
@@ -11,7 +11,8 @@ func TestLogin(t *testing.T) {
    if ! ok {
       t.Fatal("PASS")
    }
-   log, err := newLogin("srpen6", pass)
+   Verbose = true
+   log, err := NewLogin("srpen6", pass)
    if err != nil {
       t.Fatal(err)
    }
