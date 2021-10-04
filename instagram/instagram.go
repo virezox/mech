@@ -13,6 +13,7 @@ import (
 const (
    OriginI = "https://i.instagram.com"
    OriginWWW = "https://www.instagram.com"
+   queryHash = "2efa04f61586458cef44441f474eee7c"
    userAgent = "Instagram 207.0.0.39.120 Android"
 )
 
@@ -136,38 +137,6 @@ type Media struct {
 }
 
 // If `auth` is `nil`, then anonymous request will be used.
-func (q Query) Data(auth *Login) (*Media, error) {
-   buf := new(bytes.Buffer)
-   err := json.NewEncoder(buf).Encode(q)
-   if err != nil {
-      return nil, err
-   }
-   req, err := http.NewRequest("POST", OriginI + "/graphql/query/", buf)
-   if err != nil {
-      return nil, err
-   }
-   req.Header = http.Header{
-      "Content-Type": {"application/json"},
-      "User-Agent": {userAgent},
-   }
-   if auth != nil && auth.Header != nil {
-      req.Header.Set("Authorization", auth.Get("Ig-Set-Authorization"))
-   }
-   res, err := roundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   var car struct {
-      Data Media
-   }
-   if err := json.NewDecoder(res.Body).Decode(&car); err != nil {
-      return nil, err
-   }
-   return &car.Data, nil
-}
-
-// If `auth` is `nil`, then anonymous request will be used.
 func GraphQL(shortcode string, auth *Login) (*Media, error) {
    req, err := http.NewRequest("GET", OriginWWW + "/p/" + shortcode + "/", nil)
    if err != nil {
@@ -212,7 +181,39 @@ type Query struct {
 
 func NewQuery(shortcode string) Query {
    var q Query
-   q.Query_Hash = "1f950d414a6e11c98c556aa007b3157d"
+   q.Query_Hash = queryHash
    q.Variables.Shortcode = shortcode
    return q
+}
+
+// If `auth` is `nil`, then anonymous request will be used.
+func (q Query) Data(auth *Login) (*Media, error) {
+   buf := new(bytes.Buffer)
+   err := json.NewEncoder(buf).Encode(q)
+   if err != nil {
+      return nil, err
+   }
+   req, err := http.NewRequest("POST", OriginI + "/graphql/query/", buf)
+   if err != nil {
+      return nil, err
+   }
+   req.Header = http.Header{
+      "Content-Type": {"application/json"},
+      "User-Agent": {userAgent},
+   }
+   if auth != nil && auth.Header != nil {
+      req.Header.Set("Authorization", auth.Get("Ig-Set-Authorization"))
+   }
+   res, err := roundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   var car struct {
+      Data Media
+   }
+   if err := json.NewDecoder(res.Body).Decode(&car); err != nil {
+      return nil, err
+   }
+   return &car.Data, nil
 }

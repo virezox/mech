@@ -49,6 +49,10 @@ func main() {
       return
    }
    shortcode := flag.Arg(0)
+   err := instagram.Valid(shortcode)
+   if err != nil {
+      panic(err)
+   }
    var log instagram.Login
    if auth {
       cache, err := os.UserCacheDir()

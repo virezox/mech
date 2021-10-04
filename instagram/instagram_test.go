@@ -6,6 +6,24 @@ import (
    "testing"
 )
 
+func TestData(t *testing.T) {
+   f, err := os.Open("instagram.json")
+   if err != nil {
+      t.Fatal(err)
+   }
+   defer f.Close()
+   var auth Login
+   if err := auth.Decode(f); err != nil {
+      t.Fatal(err)
+   }
+   Verbose = true
+   m, err := NewQuery("CT-cnxGhvvO").Data(&auth)
+   if err != nil {
+      t.Fatal(err)
+   }
+   fmt.Printf("%+v\n", m)
+}
+
 func TestRead(t *testing.T) {
    f, err := os.Open("instagram.json")
    if err != nil {
@@ -16,11 +34,11 @@ func TestRead(t *testing.T) {
    if err := auth.Decode(f); err != nil {
       t.Fatal(err)
    }
-   c, err := GraphQL("CT-cnxGhvvO", &auth)
+   m, err := GraphQL("CT-cnxGhvvO", &auth)
    if err != nil {
       t.Fatal(err)
    }
-   fmt.Printf("%+v\n", c)
+   fmt.Printf("%+v\n", m)
 }
 
 func TestWrite(t *testing.T) {
