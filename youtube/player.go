@@ -20,7 +20,7 @@ var (
 )
 
 // youtube.com/watch?v=hi8ryzFqrAE
-func ValidID(id string) error {
+func Valid(id string) error {
    if len(id) == 11 {
       return nil
    }

@@ -14,7 +14,7 @@ var Verbose bool
 
 // redd.it/ppbsh
 // redd.it/pql06n
-func ValidID(id string) error {
+func Valid(id string) error {
    switch len(id) {
    case 5, 6:
       return nil

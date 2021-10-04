@@ -9,6 +9,7 @@ import (
 const albumID = "79940049"
 
 func TestAlbum(t *testing.T) {
+   Verbose = true
    a := new(Album)
    if err := a.Get(albumID); err != nil {
       t.Fatal(err)

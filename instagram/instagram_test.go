@@ -6,8 +6,14 @@ import (
    "testing"
 )
 
+const (
+   mech = `C:\Users\Steven\AppData\Local\mech\instagram.json`
+   sidecar = "CT-cnxGhvvO"
+   video = "CUWBw4TM6Np"
+)
+
 func TestData(t *testing.T) {
-   f, err := os.Open("instagram.json")
+   f, err := os.Open(mech)
    if err != nil {
       t.Fatal(err)
    }
@@ -17,15 +23,15 @@ func TestData(t *testing.T) {
       t.Fatal(err)
    }
    Verbose = true
-   m, err := NewQuery("CT-cnxGhvvO").Data(&auth)
+   m, err := NewQuery(sidecar).Data(&auth)
    if err != nil {
       t.Fatal(err)
    }
    fmt.Printf("%+v\n", m)
 }
 
-func TestRead(t *testing.T) {
-   f, err := os.Open("instagram.json")
+func TestItem(t *testing.T) {
+   f, err := os.Open(mech)
    if err != nil {
       t.Fatal(err)
    }
@@ -34,7 +40,25 @@ func TestRead(t *testing.T) {
    if err := auth.Decode(f); err != nil {
       t.Fatal(err)
    }
-   m, err := GraphQL("CT-cnxGhvvO", &auth)
+   Verbose = true
+   i, err := auth.Item(video)
+   if err != nil {
+      t.Fatal(err)
+   }
+   fmt.Printf("%+v\n", i)
+}
+
+func TestRead(t *testing.T) {
+   f, err := os.Open(mech)
+   if err != nil {
+      t.Fatal(err)
+   }
+   defer f.Close()
+   var auth Login
+   if err := auth.Decode(f); err != nil {
+      t.Fatal(err)
+   }
+   m, err := GraphQL(sidecar, &auth)
    if err != nil {
       t.Fatal(err)
    }

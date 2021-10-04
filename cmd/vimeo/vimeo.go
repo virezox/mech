@@ -25,7 +25,7 @@ func main() {
       return
    }
    id := flag.Arg(0)
-   err := vimeo.ValidID(id)
+   err := vimeo.Valid(id)
    if err != nil {
       panic(err)
    }

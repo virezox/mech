@@ -48,7 +48,7 @@ func main() {
    }
    // id
    id := flag.Arg(0)
-   err := youtube.ValidID(id)
+   err := youtube.Valid(id)
    if err != nil {
       panic(err)
    }

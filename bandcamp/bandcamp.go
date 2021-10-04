@@ -18,11 +18,14 @@ var Verbose bool
 
 func roundTrip(req *http.Request, v interface{}) error {
    if Verbose {
-      d, err := httputil.DumpRequest(req, true)
+      dum, err := httputil.DumpRequest(req, true)
       if err != nil {
          return err
       }
-      os.Stdout.Write(d)
+      if dum[len(dum)-1] != '\n' {
+         dum = append(dum, '\n')
+      }
+      os.Stdout.Write(dum)
    }
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {

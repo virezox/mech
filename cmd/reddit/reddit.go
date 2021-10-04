@@ -48,7 +48,7 @@ func main() {
       return
    }
    id := flag.Arg(0)
-   err := reddit.ValidID(id)
+   err := reddit.Valid(id)
    if err != nil {
       panic(err)
    }
