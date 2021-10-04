@@ -3,17 +3,14 @@ package musicbrainz
 
 import (
    "encoding/json"
+   "github.com/89z/mech"
    "net/http"
-   "net/http/httputil"
    "net/url"
-   "os"
    "strings"
    "time"
 )
 
 const API = "http://musicbrainz.org/ws/2/release"
-
-var Verbose = false
 
 type Release struct {
    ArtistCredit []struct {
@@ -49,21 +46,16 @@ func NewRelease(releaseID string) (*Release, error) {
       return nil, err
    }
    req.Header.Set("content-type", "application/x-www-form-urlencoded")
-   if Verbose {
-      d, err := httputil.DumpRequest(req, true)
-      if err != nil {
-         return nil, err
-      }
-      os.Stdout.Write(append(d, '\n'))
-   }
-   res, err := new(http.Transport).RoundTrip(req)
+   res, err := mech.RoundTrip(req)
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
-   r := new(Release)
-   json.NewDecoder(res.Body).Decode(r)
-   return r, nil
+   rls := new(Release)
+   if err := json.NewDecoder(res.Body).Decode(rls); err != nil {
+      return nil, err
+   }
+   return rls, nil
 }
 
 func (r Release) date(width int) string {

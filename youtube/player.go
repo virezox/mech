@@ -4,14 +4,13 @@ import (
    "bytes"
    "encoding/json"
    "fmt"
+   "github.com/89z/mech"
    "net/http"
-   "net/http/httputil"
-   "os"
 )
 
 const origin = "https://www.youtube.com"
 
-var Verbose bool
+var Verbose = mech.Verbose
 
 var (
    Android = Client{Name: "ANDROID", Version: "16.05"}
@@ -57,8 +56,6 @@ type Player struct {
    }
 }
 
-////////////////////////////////////////////////////////////////////////////////
-
 var Key = Auth{"X-Goog-Api-Key", "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8"}
 
 func post(url string, head Auth, body youTubeI) (*http.Response, error) {
@@ -71,21 +68,7 @@ func post(url string, head Auth, body youTubeI) (*http.Response, error) {
       return nil, err
    }
    req.Header.Set(head.Key, head.Value)
-   if Verbose {
-      d, err := httputil.DumpRequest(req, true)
-      if err != nil {
-         return nil, err
-      }
-      os.Stdout.Write(d)
-   }
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   if res.StatusCode != http.StatusOK {
-      return nil, fmt.Errorf("status %v", res.Status)
-   }
-   return res, nil
+   return mech.RoundTrip(req)
 }
 
 type Auth struct {

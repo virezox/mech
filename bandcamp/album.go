@@ -16,9 +16,7 @@ const Origin = "http://bandcamp.com"
 // ullrettkalladrhampa
 const key = "veidihundr"
 
-func Verbose(v bool) {
-   mech.Verbose(v)
-}
+var Verbose = mech.Verbose
 
 type Album struct {
    Tracks []struct {

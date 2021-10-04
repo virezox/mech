@@ -4,10 +4,9 @@ import (
    "bytes"
    "encoding/json"
    "fmt"
+   "github.com/89z/mech"
    "io"
    "net/http"
-   "net/http/httputil"
-   "os"
 )
 
 const (
@@ -17,7 +16,7 @@ const (
    userAgent = "Instagram 207.0.0.39.120 Android"
 )
 
-var Verbose bool
+var Verbose = mech.Verbose
 
 // instagram.com/p/CT-cnxGhvvO
 func Valid(shortcode string) error {
@@ -25,28 +24,6 @@ func Valid(shortcode string) error {
       return nil
    }
    return fmt.Errorf("%q invalid as shortcode", shortcode)
-}
-
-func roundTrip(req *http.Request) (*http.Response, error) {
-   if Verbose {
-      dum, err := httputil.DumpRequest(req, true)
-      if err != nil {
-         return nil, err
-      }
-      os.Stdout.Write(dum)
-   }
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   if res.StatusCode != http.StatusOK {
-      dum, err := httputil.DumpResponse(res, true)
-      if err != nil {
-         return nil, err
-      }
-      return nil, fmt.Errorf("%s", dum)
-   }
-   return res, nil
 }
 
 type Edge struct {
@@ -85,7 +62,7 @@ func NewLogin(username, password string) (*Login, error) {
       "Content-Type": {"application/x-www-form-urlencoded"},
       "User-Agent": {userAgent},
    }
-   res, err := roundTrip(req)
+   res, err := mech.RoundTrip(req)
    if err != nil {
       return nil, err
    }
@@ -114,7 +91,7 @@ func (l Login) Item(shortcode string) (*Item, error) {
    req.URL.RawQuery = val.Encode()
    req.Header.Set("Authorization", l.Get("Ig-Set-Authorization"))
    req.Header.Set("User-Agent", userAgent)
-   res, err := roundTrip(req)
+   res, err := mech.RoundTrip(req)
    if err != nil {
       return nil, err
    }
@@ -151,7 +128,7 @@ func GraphQL(shortcode string, auth *Login) (*Media, error) {
    if auth != nil && auth.Header != nil {
       req.Header.Set("Authorization", auth.Get("Ig-Set-Authorization"))
    }
-   res, err := roundTrip(req)
+   res, err := mech.RoundTrip(req)
    if err != nil {
       return nil, err
    }
@@ -204,7 +181,7 @@ func (q Query) Data(auth *Login) (*Media, error) {
    if auth != nil && auth.Header != nil {
       req.Header.Set("Authorization", auth.Get("Ig-Set-Authorization"))
    }
-   res, err := roundTrip(req)
+   res, err := mech.RoundTrip(req)
    if err != nil {
       return nil, err
    }

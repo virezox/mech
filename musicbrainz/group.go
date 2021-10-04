@@ -2,12 +2,13 @@ package musicbrainz
 
 import (
    "encoding/json"
+   "github.com/89z/mech"
    "net/http"
-   "net/http/httputil"
-   "os"
    "sort"
    "strconv"
 )
+
+var Verbose = mech.Verbose
 
 type Group struct {
    ReleaseCount int `json:"release-count"`
@@ -30,19 +31,16 @@ func GroupFromArtist(artistID string, offset int) (*Group, error) {
       val.Set("offset", strconv.Itoa(offset))
    }
    req.URL.RawQuery = val.Encode()
-   d, err := httputil.DumpRequest(req, false)
-   if err != nil {
-      return nil, err
-   }
-   os.Stdout.Write(d)
-   res, err := new(http.Transport).RoundTrip(req)
+   res, err := mech.RoundTrip(req)
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
-   g := new(Group)
-   json.NewDecoder(res.Body).Decode(g)
-   return g, nil
+   grp := new(Group)
+   if err := json.NewDecoder(res.Body).Decode(grp); err != nil {
+      return nil, err
+   }
+   return grp, nil
 }
 
 func NewGroup(groupID string) (*Group, error) {
@@ -55,19 +53,16 @@ func NewGroup(groupID string) (*Group, error) {
    val.Set("inc", "artist-credits recordings")
    val.Set("release-group", groupID)
    req.URL.RawQuery = val.Encode()
-   d, err := httputil.DumpRequest(req, false)
-   if err != nil {
-      return nil, err
-   }
-   os.Stdout.Write(d)
-   res, err := new(http.Transport).RoundTrip(req)
+   res, err := mech.RoundTrip(req)
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
-   g := new(Group)
-   json.NewDecoder(res.Body).Decode(g)
-   return g, nil
+   grp := new(Group)
+   if err := json.NewDecoder(res.Body).Decode(grp); err != nil {
+      return nil, err
+   }
+   return grp, nil
 }
 
 func (g Group) Sort() {

@@ -3,14 +3,15 @@ package googleplay
 import (
    "bytes"
    "fmt"
+   "github.com/89z/mech"
    "io"
    "net/http"
-   "net/http/httputil"
    "net/url"
-   "os"
 )
 
 const Origin = "https://android.clients.google.com"
+
+var Verbose = mech.Verbose
 
 // text/plain encoding algorithm
 // html.spec.whatwg.org/multipage/form-control-infrastructure.html
@@ -94,12 +95,7 @@ func (o OAuth2) Details(device, app string) ([]byte, error) {
    req.URL.RawQuery = q.Encode()
    req.Header.Set("Authorization", "Bearer " + o.Get("Auth"))
    req.Header.Set("X-DFE-Device-Id", device)
-   b, err := httputil.DumpRequest(req, false)
-   if err != nil {
-      return nil, err
-   }
-   os.Stdout.Write(b)
-   res, err := new(http.Transport).RoundTrip(req)
+   res, err := mech.RoundTrip(req)
    if err != nil {
       return nil, err
    }

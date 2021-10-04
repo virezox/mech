@@ -9,6 +9,7 @@ import (
 const bandID = "2853020814"
 
 func TestBand(t *testing.T) {
+   Verbose(true)
    b := new(Band)
    if err := b.Get(bandID); err != nil {
       t.Fatal(err)
