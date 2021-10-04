@@ -1,9 +1,5 @@
 # Instagram
 
-## DMCA Circumvention Violations by Mgp25 and Related Forks
-
-https://github.com/github/dmca/blob/master/2020/01/2020-01-22-facebook.md
-
 ## How to get User-Agent?
 
 https://apkpure.com/instagram/com.instagram.android
@@ -45,3 +41,14 @@ var
 ~~~
 
 The first variable should be the target `query_hash`.
+
+## Issues
+
+- https://github.com/adw0rd/instagrapi/issues
+- https://github.com/dilame/instagram-private-api/issues
+- https://github.com/drawrowfly/instagram-scraper/issues
+- https://github.com/gippy/instagram-scraper/issues
+- https://github.com/instaloader/instaloader/issues
+- https://github.com/pgrimaud/instagram-user-feed/issues
+- https://github.com/postaddictme/instagram-php-scraper/issues
+- https://github.com/realsirjoe/instagram-scraper/issues
