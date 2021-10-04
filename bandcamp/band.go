@@ -3,6 +3,7 @@ package bandcamp
 import (
    "bytes"
    "encoding/json"
+   "github.com/89z/mech"
    "net/http"
    "net/url"
    "strings"
@@ -22,22 +23,32 @@ func (b *Band) Get(id string) error {
    q.Set("band_id", id)
    q.Set("key", key)
    req.URL.RawQuery = q.Encode()
-   return roundTrip(req, b)
+   res, err := mech.RoundTrip(req)
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   return json.NewDecoder(res.Body).Decode(b)
 }
 
 func (b *Band) Post(id string) error {
-   br := bandRequest{
+   bReq := bandRequest{
       json.Number(id), key,
    }
    buf := new(bytes.Buffer)
-   if err := json.NewEncoder(buf).Encode(br); err != nil {
+   if err := json.NewEncoder(buf).Encode(bReq); err != nil {
       return err
    }
    req, err := http.NewRequest("POST", Origin + "/api/band/3/info", buf)
    if err != nil {
       return err
    }
-   return roundTrip(req, b)
+   res, err := mech.RoundTrip(req)
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   return json.NewDecoder(res.Body).Decode(b)
 }
 
 func (b *Band) PostForm(id string) error {
@@ -50,7 +61,12 @@ func (b *Band) PostForm(id string) error {
    if err != nil {
       return err
    }
-   return roundTrip(req, b)
+   res, err := mech.RoundTrip(req)
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   return json.NewDecoder(res.Body).Decode(b)
 }
 
 type Discography struct {
@@ -68,22 +84,32 @@ func (d *Discography) Get(id string) error {
    q.Set("band_id", id)
    q.Set("key", key)
    req.URL.RawQuery = q.Encode()
-   return roundTrip(req, d)
+   res, err := mech.RoundTrip(req)
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   return json.NewDecoder(res.Body).Decode(d)
 }
 
 func (d *Discography) Post(id string) error {
-   br := bandRequest{
+   bReq := bandRequest{
       json.Number(id), key,
    }
    buf := new(bytes.Buffer)
-   if err := json.NewEncoder(buf).Encode(br); err != nil {
+   if err := json.NewEncoder(buf).Encode(bReq); err != nil {
       return err
    }
    req, err := http.NewRequest("POST", Origin + "/api/band/3/discography", buf)
    if err != nil {
       return err
    }
-   return roundTrip(req, d)
+   res, err := mech.RoundTrip(req)
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   return json.NewDecoder(res.Body).Decode(d)
 }
 
 func (d *Discography) PostForm(id string) error {
@@ -97,7 +123,12 @@ func (d *Discography) PostForm(id string) error {
    if err != nil {
       return err
    }
-   return roundTrip(req, d)
+   res, err := mech.RoundTrip(req)
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   return json.NewDecoder(res.Body).Decode(d)
 }
 
 type bandRequest struct {

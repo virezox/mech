@@ -9,7 +9,7 @@ import (
    "os"
 )
 
-var Verbose bool
+var verbose bool
 
 func Clean(r rune) rune {
    if strings.ContainsRune(`"*/:<>?\|`, r) {
@@ -30,7 +30,7 @@ func Ext(typ string) (string, error) {
 }
 
 func RoundTrip(req *http.Request) (*http.Response, error) {
-   if Verbose {
+   if verbose {
       dum, err := httputil.DumpRequest(req, true)
       if err != nil {
          return nil, err
@@ -45,7 +45,15 @@ func RoundTrip(req *http.Request) (*http.Response, error) {
       return nil, err
    }
    if res.StatusCode != http.StatusOK {
-      return nil, fmt.Errorf("status %q", res.Status)
+      dum, err := httputil.DumpResponse(res, true)
+      if err != nil {
+         return nil, err
+      }
+      return nil, fmt.Errorf("%s", dum)
    }
    return res, nil
+}
+
+func Verbose(v bool) {
+   verbose = v
 }

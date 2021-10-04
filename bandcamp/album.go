@@ -3,10 +3,22 @@ package bandcamp
 import (
    "bytes"
    "encoding/json"
+   "github.com/89z/mech"
    "net/http"
    "net/url"
    "strings"
 )
+
+const Origin = "http://bandcamp.com"
+
+// thrjozkaskhjastaurrtygitylpt
+// throtaudvinroftignmarkreina
+// ullrettkalladrhampa
+const key = "veidihundr"
+
+func Verbose(v bool) {
+   mech.Verbose(v)
+}
 
 type Album struct {
    Tracks []struct {
@@ -20,26 +32,36 @@ func (a *Album) Get(id string) error {
    if err != nil {
       return err
    }
-   q := req.URL.Query()
-   q.Set("album_id", id)
-   q.Set("key", key)
-   req.URL.RawQuery = q.Encode()
-   return roundTrip(req, a)
+   val := req.URL.Query()
+   val.Set("album_id", id)
+   val.Set("key", key)
+   req.URL.RawQuery = val.Encode()
+   res, err := mech.RoundTrip(req)
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   return json.NewDecoder(res.Body).Decode(a)
 }
 
 func (a *Album) Post(id string) error {
-   ar := albumRequest{
+   aReq := albumRequest{
       json.Number(id), key,
    }
    buf := new(bytes.Buffer)
-   if err := json.NewEncoder(buf).Encode(ar); err != nil {
+   if err := json.NewEncoder(buf).Encode(aReq); err != nil {
       return err
    }
    req, err := http.NewRequest("POST", Origin + "/api/album/2/info", buf)
    if err != nil {
       return err
    }
-   return roundTrip(req, a)
+   res, err := mech.RoundTrip(req)
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   return json.NewDecoder(res.Body).Decode(a)
 }
 
 func (a *Album) PostForm(id string) error {
@@ -52,7 +74,12 @@ func (a *Album) PostForm(id string) error {
    if err != nil {
       return err
    }
-   return roundTrip(req, a)
+   res, err := mech.RoundTrip(req)
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   return json.NewDecoder(res.Body).Decode(a)
 }
 
 type albumRequest struct {
