@@ -38,12 +38,12 @@ func (f Format) Write(w io.Writer) error {
    if err != nil {
       return err
    }
-   var pos contentLength
-   dump, err := httputil.DumpRequest(req, false)
+   dum, err := httputil.DumpRequest(req, false)
    if err != nil {
       return err
    }
-   os.Stdout.Write(dump)
+   os.Stdout.Write(dum)
+   var pos contentLength
    for pos < f.ContentLength {
       bytes := fmt.Sprintf("bytes=%d-%d", pos, pos+chunk-1)
       req.Header.Set("Range", bytes)
