@@ -5,7 +5,6 @@ import (
    "encoding/json"
    "github.com/89z/mech"
    "net/http"
-   "net/url"
    "strconv"
 )
 
@@ -14,27 +13,6 @@ type Album struct {
    Tracks []struct {
       Title string
    }
-}
-
-func (a *Album) Get(id int) error {
-   req, err := http.NewRequest("GET", MobileTralbum, nil)
-   if err != nil {
-      return err
-   }
-   val := url.Values{
-      "band_id": {"1"},
-      "tralbum_id": {
-         strconv.Itoa(id),
-      },
-      "tralbum_type": {"a"},
-   }
-   req.URL.RawQuery = val.Encode()
-   res, err := mech.RoundTrip(req)
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   return json.NewDecoder(res.Body).Decode(a)
 }
 
 func (a *Album) Post(id int) error {
