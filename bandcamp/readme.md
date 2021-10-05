@@ -30,10 +30,6 @@ You can fix it by just adding `band_id=1`:
 
 No key needed!
 
-## Mobile
-
-<http://bandcamp.com/api/mobile/24/tralbum_details?tralbum_type=t&band_id=2853020814&tralbum_id=714939036>
-
 ## Question
 
 https://stackoverflow.com/questions/65085046/how-do-i-pull-album-art

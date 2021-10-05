@@ -7,6 +7,10 @@ import (
    "net/http"
 )
 
+const Origin = "http://bandcamp.com"
+
+var Verbose = mech.Verbose
+
 func (d *Discography) Get(id string) error {
    req, err := http.NewRequest(
       "GET", Origin + "/api/mobile/24/band_details", nil,
@@ -43,4 +47,28 @@ func (d *Discography) Post(id string) error {
    }
    defer res.Body.Close()
    return json.NewDecoder(res.Body).Decode(d)
+}
+
+type Track struct {
+   Bandcamp_URL string
+}
+
+func (t *Track) Get(id string) error {
+   req, err := http.NewRequest(
+      "GET", Origin + "/api/mobile/24/tralbum_details", nil,
+   )
+   if err != nil {
+      return err
+   }
+   val := req.URL.Query()
+   val.Set("band_id", "1")
+   val.Set("tralbum_id", id)
+   val.Set("tralbum_type", "t")
+   req.URL.RawQuery = val.Encode()
+   res, err := mech.RoundTrip(req)
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   return json.NewDecoder(res.Body).Decode(t)
 }
