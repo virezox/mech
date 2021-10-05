@@ -75,43 +75,6 @@ type Discography struct {
    }
 }
 
-func (d *Discography) Get(id string) error {
-   req, err := http.NewRequest("GET", Origin + "/api/band/3/discography", nil)
-   if err != nil {
-      return err
-   }
-   q := req.URL.Query()
-   q.Set("band_id", id)
-   q.Set("key", key)
-   req.URL.RawQuery = q.Encode()
-   res, err := mech.RoundTrip(req)
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   return json.NewDecoder(res.Body).Decode(d)
-}
-
-func (d *Discography) Post(id string) error {
-   bReq := bandRequest{
-      json.Number(id), key,
-   }
-   buf := new(bytes.Buffer)
-   if err := json.NewEncoder(buf).Encode(bReq); err != nil {
-      return err
-   }
-   req, err := http.NewRequest("POST", Origin + "/api/band/3/discography", buf)
-   if err != nil {
-      return err
-   }
-   res, err := mech.RoundTrip(req)
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   return json.NewDecoder(res.Body).Decode(d)
-}
-
 func (d *Discography) PostForm(id string) error {
    val := url.Values{
       "band_id": {id}, "key": {key},
