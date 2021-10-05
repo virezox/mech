@@ -1,4 +1,4 @@
-package main
+package resolve
 
 import (
    "fmt"
@@ -24,19 +24,14 @@ func session() ([]string, error) {
    return vals, nil
 }
 
-func trackID(session string) (int, error) {
-   var id int
-   _, err := fmt.Sscanf(session, "1\tr:[\"nilZ0t%vx", &id)
+func tralbum(session string) (rune, int, error) {
+   var (
+      typ rune
+      id int
+   )
+   _, err := fmt.Sscanf(session, "1\tr:[\"nilZ0%c%vx", &typ, &id)
    if err != nil {
-      return 0, err
+      return 0, 0, err
    }
-   return id, nil
-}
-
-func main() {
-   id, err := trackID("1\tr:[\"nilZ0t2809477874x1633469972\"]\tt:1633469972")
-   if err != nil {
-      panic(err)
-   }
-   fmt.Println(id == 2809477874)
+   return typ, id, nil
 }

@@ -7,7 +7,6 @@ import (
    "net/http"
    "net/url"
    "strconv"
-   "strings"
 )
 
 type Album struct {
@@ -49,28 +48,6 @@ func (a *Album) Post(id int) error {
       return err
    }
    req, err := http.NewRequest("POST", MobileTralbum, buf)
-   if err != nil {
-      return err
-   }
-   res, err := mech.RoundTrip(req)
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   return json.NewDecoder(res.Body).Decode(a)
-}
-
-func (a *Album) PostForm(id int) error {
-   val := url.Values{
-      "band_id": {"1"},
-      "tralbum_id": {
-         strconv.Itoa(id),
-      },
-      "tralbum_type": {"a"},
-   }
-   req, err := http.NewRequest(
-      "POST", MobileTralbum, strings.NewReader(val.Encode()),
-   )
    if err != nil {
       return err
    }

@@ -5,9 +5,7 @@ import (
    "encoding/json"
    "github.com/89z/mech"
    "net/http"
-   "net/url"
    "strconv"
-   "strings"
 )
 
 const (
@@ -21,27 +19,6 @@ type Track struct {
    Bandcamp_URL string
 }
 
-func (t *Track) Get(id int) error {
-   req, err := http.NewRequest("GET", MobileTralbum, nil)
-   if err != nil {
-      return err
-   }
-   val := url.Values{
-      "band_id": {"1"},
-      "tralbum_id": {
-         strconv.Itoa(id),
-      },
-      "tralbum_type": {"t"},
-   }
-   req.URL.RawQuery = val.Encode()
-   res, err := mech.RoundTrip(req)
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   return json.NewDecoder(res.Body).Decode(t)
-}
-
 func (t *Track) Post(id int) error {
    body := map[string]string{
       "band_id": "1",
@@ -53,28 +30,6 @@ func (t *Track) Post(id int) error {
       return err
    }
    req, err := http.NewRequest("POST", MobileTralbum, buf)
-   if err != nil {
-      return err
-   }
-   res, err := mech.RoundTrip(req)
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   return json.NewDecoder(res.Body).Decode(t)
-}
-
-func (t *Track) PostForm(id int) error {
-   val := url.Values{
-      "band_id": {"1"},
-      "tralbum_id": {
-         strconv.Itoa(id),
-      },
-      "tralbum_type": {"t"},
-   }
-   req, err := http.NewRequest(
-      "POST", MobileTralbum, strings.NewReader(val.Encode()),
-   )
    if err != nil {
       return err
    }
