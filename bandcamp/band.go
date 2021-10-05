@@ -6,6 +6,7 @@ import (
    "github.com/89z/mech"
    "net/http"
    "net/url"
+   "strconv"
    "strings"
 )
 
@@ -13,15 +14,16 @@ type Band struct {
    Bandcamp_URL string
 }
 
-func (b *Band) Get(id string) error {
-   req, err := http.NewRequest(
-      "GET", Origin + "/api/mobile/24/band_details", nil,
-   )
+func (b *Band) Get(id int) error {
+   req, err := http.NewRequest("GET", MobileBand, nil)
    if err != nil {
       return err
    }
-   val := req.URL.Query()
-   val.Set("band_id", id)
+   val := url.Values{
+      "band_id": {
+         strconv.Itoa(id),
+      },
+   }
    req.URL.RawQuery = val.Encode()
    res, err := mech.RoundTrip(req)
    if err != nil {
@@ -31,15 +33,13 @@ func (b *Band) Get(id string) error {
    return json.NewDecoder(res.Body).Decode(b)
 }
 
-func (b *Band) Post(id string) error {
-   body := map[string]string{"band_id": id}
+func (b *Band) Post(id int) error {
+   body := map[string]int{"band_id": id}
    buf := new(bytes.Buffer)
    if err := json.NewEncoder(buf).Encode(body); err != nil {
       return err
    }
-   req, err := http.NewRequest(
-      "POST", Origin + "/api/mobile/24/band_details", buf,
-   )
+   req, err := http.NewRequest("POST", MobileBand, buf)
    if err != nil {
       return err
    }
@@ -51,13 +51,14 @@ func (b *Band) Post(id string) error {
    return json.NewDecoder(res.Body).Decode(b)
 }
 
-func (b *Band) PostForm(id string) error {
+func (b *Band) PostForm(id int) error {
    val := url.Values{
-      "band_id": {id},
+      "band_id": {
+         strconv.Itoa(id),
+      },
    }
    req, err := http.NewRequest(
-      "POST", Origin + "/api/mobile/24/band_details",
-      strings.NewReader(val.Encode()),
+      "POST", MobileBand, strings.NewReader(val.Encode()),
    )
    if err != nil {
       return err

@@ -6,7 +6,7 @@ import (
    "time"
 )
 
-const albumID = "79940049"
+const albumID = 79940049
 
 func TestAlbum(t *testing.T) {
    Verbose(true)

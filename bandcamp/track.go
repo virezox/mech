@@ -10,7 +10,10 @@ import (
    "strings"
 )
 
-const Origin = "http://bandcamp.com"
+const (
+   MobileBand = "http://bandcamp.com/api/mobile/24/band_details"
+   MobileTralbum = "http://bandcamp.com/api/mobile/24/tralbum_details"
+)
 
 var Verbose = mech.Verbose
 
@@ -19,9 +22,7 @@ type Track struct {
 }
 
 func (t *Track) Get(id int) error {
-   req, err := http.NewRequest(
-      "GET", Origin + "/api/mobile/24/tralbum_details", nil,
-   )
+   req, err := http.NewRequest("GET", MobileTralbum, nil)
    if err != nil {
       return err
    }
@@ -51,9 +52,7 @@ func (t *Track) Post(id int) error {
    if err := json.NewEncoder(buf).Encode(body); err != nil {
       return err
    }
-   req, err := http.NewRequest(
-      "POST", Origin + "/api/mobile/24/tralbum_details", buf,
-   )
+   req, err := http.NewRequest("POST", MobileTralbum, buf)
    if err != nil {
       return err
    }
@@ -74,8 +73,7 @@ func (t *Track) PostForm(id int) error {
       "tralbum_type": {"t"},
    }
    req, err := http.NewRequest(
-      "POST", Origin + "/api/mobile/24/tralbum_details",
-      strings.NewReader(val.Encode()),
+      "POST", MobileTralbum, strings.NewReader(val.Encode()),
    )
    if err != nil {
       return err

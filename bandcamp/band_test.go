@@ -6,7 +6,7 @@ import (
    "time"
 )
 
-const bandID = "2853020814"
+const bandID = 2853020814
 
 func TestBand(t *testing.T) {
    Verbose(true)

@@ -18,9 +18,7 @@ type Album struct {
 }
 
 func (a *Album) Get(id int) error {
-   req, err := http.NewRequest(
-      "GET", Origin + "/api/mobile/24/tralbum_details", nil,
-   )
+   req, err := http.NewRequest("GET", MobileTralbum, nil)
    if err != nil {
       return err
    }
@@ -50,9 +48,7 @@ func (a *Album) Post(id int) error {
    if err := json.NewEncoder(buf).Encode(body); err != nil {
       return err
    }
-   req, err := http.NewRequest(
-      "POST", Origin + "/api/mobile/24/tralbum_details", buf,
-   )
+   req, err := http.NewRequest("POST", MobileTralbum, buf)
    if err != nil {
       return err
    }
@@ -73,8 +69,7 @@ func (a *Album) PostForm(id int) error {
       "tralbum_type": {"a"},
    }
    req, err := http.NewRequest(
-      "POST", Origin + "/api/mobile/24/tralbum_details",
-      strings.NewReader(val.Encode()),
+      "POST", MobileTralbum, strings.NewReader(val.Encode()),
    )
    if err != nil {
       return err
