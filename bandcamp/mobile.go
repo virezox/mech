@@ -11,6 +11,12 @@ const Origin = "http://bandcamp.com"
 
 var Verbose = mech.Verbose
 
+type Discography struct {
+   Discography []struct {
+      URL string
+   }
+}
+
 func (d *Discography) Get(id string) error {
    req, err := http.NewRequest(
       "GET", Origin + "/api/mobile/24/band_details", nil,
