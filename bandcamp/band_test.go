@@ -10,19 +10,19 @@ const bandID = "2853020814"
 
 func TestBand(t *testing.T) {
    Verbose(true)
-   b := new(Band)
-   if err := b.Get(bandID); err != nil {
+   ban := new(Band)
+   if err := ban.Get(bandID); err != nil {
       t.Fatal(err)
    }
-   fmt.Printf("%+v\n", b)
+   fmt.Printf("%+v\n", ban)
    time.Sleep(100 * time.Millisecond)
-   if err := b.Post(bandID); err != nil {
+   if err := ban.Post(bandID); err != nil {
       t.Fatal(err)
    }
-   fmt.Printf("%+v\n", b)
+   fmt.Printf("%+v\n", ban)
    time.Sleep(100 * time.Millisecond)
-   if err := b.PostForm(bandID); err != nil {
+   if err := ban.PostForm(bandID); err != nil {
       t.Fatal(err)
    }
-   fmt.Printf("%+v\n", b)
+   fmt.Printf("%+v\n", ban)
 }

@@ -10,19 +10,19 @@ const albumID = "79940049"
 
 func TestAlbum(t *testing.T) {
    Verbose(true)
-   a := new(Album)
-   if err := a.Get(albumID); err != nil {
+   alb := new(Album)
+   if err := alb.Get(albumID); err != nil {
       t.Fatal(err)
    }
-   fmt.Printf("%+v\n", a)
+   fmt.Printf("%+v\n", alb)
    time.Sleep(100 * time.Millisecond)
-   if err := a.Post(albumID); err != nil {
+   if err := alb.Post(albumID); err != nil {
       t.Fatal(err)
    }
-   fmt.Printf("%+v\n", a)
+   fmt.Printf("%+v\n", alb)
    time.Sleep(100 * time.Millisecond)
-   if err := a.PostForm(albumID); err != nil {
+   if err := alb.PostForm(albumID); err != nil {
       t.Fatal(err)
    }
-   fmt.Printf("%+v\n", a)
+   fmt.Printf("%+v\n", alb)
 }

@@ -6,6 +6,7 @@ import (
    "github.com/89z/mech"
    "net/http"
    "net/url"
+   "strconv"
    "strings"
 )
 
@@ -17,17 +18,20 @@ type Track struct {
    Bandcamp_URL string
 }
 
-func (t *Track) Get(id string) error {
+func (t *Track) Get(id int) error {
    req, err := http.NewRequest(
       "GET", Origin + "/api/mobile/24/tralbum_details", nil,
    )
    if err != nil {
       return err
    }
-   val := req.URL.Query()
-   val.Set("band_id", "1")
-   val.Set("tralbum_id", id)
-   val.Set("tralbum_type", "t")
+   val := url.Values{
+      "band_id": {"1"},
+      "tralbum_id": {
+         strconv.Itoa(id),
+      },
+      "tralbum_type": {"t"},
+   }
    req.URL.RawQuery = val.Encode()
    res, err := mech.RoundTrip(req)
    if err != nil {
@@ -37,10 +41,10 @@ func (t *Track) Get(id string) error {
    return json.NewDecoder(res.Body).Decode(t)
 }
 
-func (t *Track) Post(id string) error {
+func (t *Track) Post(id int) error {
    body := map[string]string{
       "band_id": "1",
-      "tralbum_id": id,
+      "tralbum_id": strconv.Itoa(id),
       "tralbum_type": "t",
    }
    buf := new(bytes.Buffer)
@@ -61,9 +65,13 @@ func (t *Track) Post(id string) error {
    return json.NewDecoder(res.Body).Decode(t)
 }
 
-func (t *Track) PostForm(id string) error {
+func (t *Track) PostForm(id int) error {
    val := url.Values{
-      "band_id": {"1"}, "tralbum_id": {id}, "tralbum_type": {"t"},
+      "band_id": {"1"},
+      "tralbum_id": {
+         strconv.Itoa(id),
+      },
+      "tralbum_type": {"t"},
    }
    req, err := http.NewRequest(
       "POST", Origin + "/api/mobile/24/tralbum_details",

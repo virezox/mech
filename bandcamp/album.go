@@ -6,6 +6,7 @@ import (
    "github.com/89z/mech"
    "net/http"
    "net/url"
+   "strconv"
    "strings"
 )
 
@@ -16,17 +17,20 @@ type Album struct {
    }
 }
 
-func (a *Album) Get(id string) error {
+func (a *Album) Get(id int) error {
    req, err := http.NewRequest(
       "GET", Origin + "/api/mobile/24/tralbum_details", nil,
    )
    if err != nil {
       return err
    }
-   val := req.URL.Query()
-   val.Set("band_id", "1")
-   val.Set("tralbum_id", id)
-   val.Set("tralbum_type", "a")
+   val := url.Values{
+      "band_id": {"1"},
+      "tralbum_id": {
+         strconv.Itoa(id),
+      },
+      "tralbum_type": {"a"},
+   }
    req.URL.RawQuery = val.Encode()
    res, err := mech.RoundTrip(req)
    if err != nil {
@@ -36,9 +40,11 @@ func (a *Album) Get(id string) error {
    return json.NewDecoder(res.Body).Decode(a)
 }
 
-func (a *Album) Post(id string) error {
+func (a *Album) Post(id int) error {
    body := map[string]string{
-      "band_id": "1", "tralbum_type": "a", "tralbum_id": id,
+      "band_id": "1",
+      "tralbum_id": strconv.Itoa(id),
+      "tralbum_type": "a",
    }
    buf := new(bytes.Buffer)
    if err := json.NewEncoder(buf).Encode(body); err != nil {
@@ -58,9 +64,13 @@ func (a *Album) Post(id string) error {
    return json.NewDecoder(res.Body).Decode(a)
 }
 
-func (a *Album) PostForm(id string) error {
+func (a *Album) PostForm(id int) error {
    val := url.Values{
-      "band_id": {"1"}, "tralbum_id": {id}, "tralbum_type": {"a"},
+      "band_id": {"1"},
+      "tralbum_id": {
+         strconv.Itoa(id),
+      },
+      "tralbum_type": {"a"},
    }
    req, err := http.NewRequest(
       "POST", Origin + "/api/mobile/24/tralbum_details",
