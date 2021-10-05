@@ -7,6 +7,8 @@ import (
    "net/http"
 )
 
+const MobileBand = "http://bandcamp.com/api/mobile/24/band_details"
+
 type Band struct {
    Bandcamp_URL string
 }
