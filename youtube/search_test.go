@@ -1,14 +1,13 @@
-package youtube_test
+package youtube
 
 import (
    "fmt"
-   "github.com/89z/mech/youtube"
    "testing"
 )
 
 func TestSearch(t *testing.T) {
-   youtube.Verbose = true
-   s, err := youtube.NewSearch("oneohtrix point never along")
+   Verbose(true)
+   s, err := NewSearch("oneohtrix point never along")
    if err != nil {
       t.Fatal(err)
    }

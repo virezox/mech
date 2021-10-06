@@ -7,13 +7,13 @@ import (
 )
 
 const (
-   mech = `C:\Users\Steven\AppData\Local\mech\instagram.json`
+   appData = `C:\Users\Steven\AppData\Local\mech\instagram.json`
    sidecar = "CT-cnxGhvvO"
    video = "CUWBw4TM6Np"
 )
 
 func TestData(t *testing.T) {
-   f, err := os.Open(mech)
+   f, err := os.Open(appData)
    if err != nil {
       t.Fatal(err)
    }
@@ -22,7 +22,7 @@ func TestData(t *testing.T) {
    if err := auth.Decode(f); err != nil {
       t.Fatal(err)
    }
-   Verbose = true
+   Verbose(true)
    m, err := NewQuery(sidecar).Data(&auth)
    if err != nil {
       t.Fatal(err)
@@ -31,7 +31,7 @@ func TestData(t *testing.T) {
 }
 
 func TestItem(t *testing.T) {
-   f, err := os.Open(mech)
+   f, err := os.Open(appData)
    if err != nil {
       t.Fatal(err)
    }
@@ -40,7 +40,7 @@ func TestItem(t *testing.T) {
    if err := auth.Decode(f); err != nil {
       t.Fatal(err)
    }
-   Verbose = true
+   Verbose(true)
    i, err := auth.Item(video)
    if err != nil {
       t.Fatal(err)
@@ -49,7 +49,7 @@ func TestItem(t *testing.T) {
 }
 
 func TestRead(t *testing.T) {
-   f, err := os.Open(mech)
+   f, err := os.Open(appData)
    if err != nil {
       t.Fatal(err)
    }
@@ -70,7 +70,7 @@ func TestWrite(t *testing.T) {
    if ! ok {
       t.Fatal("PASS")
    }
-   Verbose = true
+   Verbose(true)
    l, err := NewLogin("srpen6", pass)
    if err != nil {
       t.Fatal(err)

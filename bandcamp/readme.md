@@ -1,8 +1,5 @@
 # Bandcamp
 
-What is the speed different between resolve methods? First old:
-
-
 ## Resolve
 
 I found a workaround for this. You can make a request like this:
@@ -32,8 +29,6 @@ which will return error:
 You can fix it by just adding `band_id=1`:
 
 <http://bandcamp.com/api/mobile/24/tralbum_details?band_id=1&tralbum_type=t&tralbum_id=2809477874>
-
-No key needed!
 
 ## Question
 
