@@ -1,23 +1,33 @@
 package resolve
 
 import (
-   "fmt"
    "testing"
    "time"
 )
 
-var tests = []string{
-   "https://schnaussandmunk.bandcamp.com/track/amaris-2",
-   "https://schnaussandmunk.bandcamp.com/album/passage-2",
+type test struct {
+   in string
+   typ byte
+   id int
+}
+
+var tests = []test{
+   {"https://schnaussandmunk.bandcamp.com/album/passage-2", 'a', 1670971920},
+   {"https://schnaussandmunk.bandcamp.com/track/amaris-2", 't', 2809477874},
 }
 
 func TestResolve(t *testing.T) {
    for _, test := range tests {
-      d, err := newDetails(test)
+      d, err := newDetails(test.in)
       if err != nil {
          t.Fatal(err)
       }
-      fmt.Printf("%+v\n", d)
+      if d.Tralbum_Type != test.typ {
+         t.Fatal(d.Tralbum_Type)
+      }
+      if d.Tralbum_ID != test.id {
+         t.Fatal(d.Tralbum_ID)
+      }
       time.Sleep(99 * time.Millisecond)
    }
 }
