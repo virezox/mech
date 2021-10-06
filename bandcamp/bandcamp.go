@@ -7,10 +7,14 @@ import (
    "net/http"
    "regexp"
    "strconv"
+   "time"
 )
 
 const (
+   ApiAlbum = "http://bandcamp.com/api/album/2/info"
+   ApiBand = "http://bandcamp.com/api/band/1/info"
    ApiMobile = "http://bandcamp.com/api/mobile/24/tralbum_details"
+   ApiTrack = "http://bandcamp.com/api/track/3/info"
    ApiUrl = "http://bandcamp.com/api/url/2/info"
 )
 
@@ -19,7 +23,29 @@ const (
 // ullrettkalladrhampa
 const key = "veidihundr"
 
+var Heights = map[int]int{
+   100: 3,
+   124: 8,
+   135: 15,
+   138: 12,
+   150: 7,
+   172: 11,
+   210: 9,
+   300: 4,
+   350: 2,
+   368: 14,
+   380: 13,
+   700: 5,
+   1200: 10,
+   1500: 1,
+}
+
 var Verbose = mech.Verbose
+
+func ArtUrl(id, height int) string {
+   hID := Heights[height]
+   return fmt.Sprintf("http://f4.bcbits.com/img/a%v_%v.jpg", id, hID)
+}
 
 // URL to track_id or album_id, anonymous
 func Head(addr string) (byte, int, error) {
@@ -45,6 +71,62 @@ func Head(addr string) (byte, int, error) {
       }
    }
    return 0, 0, fmt.Errorf("cookies %v", res.Cookies())
+}
+
+type Album struct {
+   Large_Art_URL string // 350 x 350
+   Release_Date int64
+}
+
+func NewAlbum(id int) (*Album, error) {
+   req, err := http.NewRequest("GET", ApiAlbum, nil)
+   if err != nil {
+      return nil, err
+   }
+   val := req.URL.Query()
+   val.Set("key", key)
+   val.Set("album_id", strconv.Itoa(id))
+   req.URL.RawQuery = val.Encode()
+   res, err := mech.RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   alb := new(Album)
+   if err := json.NewDecoder(res.Body).Decode(alb); err != nil {
+      return nil, err
+   }
+   return alb, nil
+}
+
+func (a Album) Unix() time.Time {
+   return time.Unix(a.Release_Date, 0)
+}
+
+type Band struct {
+   Name string
+   URL string
+}
+
+func NewBand(id int) (*Band, error) {
+   req, err := http.NewRequest("GET", ApiBand, nil)
+   if err != nil {
+      return nil, err
+   }
+   val := req.URL.Query()
+   val.Set("key", key)
+   val.Set("band_id", strconv.Itoa(id))
+   req.URL.RawQuery = val.Encode()
+   res, err := mech.RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   ban := new(Band)
+   if err := json.NewDecoder(res.Body).Decode(ban); err != nil {
+      return nil, err
+   }
+   return ban, nil
 }
 
 type Info struct {
@@ -75,11 +157,44 @@ func NewInfo(addr string) (*Info, error) {
    return inf, nil
 }
 
-type Tralbum struct {
-   Bandcamp_URL string
-   Tracks []struct {
-      Title string
+type Track struct {
+   Album_ID int
+   Streaming_URL string
+   Title string
+}
+
+func NewTrack(id int) (*Track, error) {
+   req, err := http.NewRequest("GET", ApiTrack, nil)
+   if err != nil {
+      return nil, err
    }
+   val := req.URL.Query()
+   val.Set("key", key)
+   val.Set("track_id", strconv.Itoa(id))
+   req.URL.RawQuery = val.Encode()
+   res, err := mech.RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   tra := new(Track)
+   if err := json.NewDecoder(res.Body).Decode(tra); err != nil {
+      return nil, err
+   }
+   return tra, nil
+}
+
+// All fields available with Track and Album
+type Tralbum struct {
+   Art_ID int
+   Release_Date int64
+   Title string
+   Tracks []struct {
+      Streaming_URL struct {
+         MP3_128 string `json:"mp3-128"`
+      }
+   }
+   Tralbum_Artist string
 }
 
 func NewTralbum(typ byte, id int) (*Tralbum, error) {
@@ -102,4 +217,8 @@ func NewTralbum(typ byte, id int) (*Tralbum, error) {
       return nil, err
    }
    return tra, nil
+}
+
+func (t Tralbum) Unix() time.Time {
+   return time.Unix(t.Release_Date, 0)
 }

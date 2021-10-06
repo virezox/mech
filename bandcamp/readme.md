@@ -1,8 +1,5 @@
 # Bandcamp
 
-What is the speed different between resolve methods? First old:
-
-
 ## Resolve
 
 I found a workaround for this. You can make a request like this:
@@ -33,8 +30,12 @@ You can fix it by just adding `band_id=1`:
 
 <http://bandcamp.com/api/mobile/24/tralbum_details?band_id=1&tralbum_type=t&tralbum_id=2809477874>
 
-No key needed!
-
 ## Question
 
 https://stackoverflow.com/questions/65085046/how-do-i-pull-album-art
+
+## Issues
+
+- https://github.com/gpchelkin/scdlbot/issues
+- https://github.com/iheanyi/bandcamp-dl/issues
+- https://github.com/masterT/bandcamp-scraper/issues

@@ -26,7 +26,7 @@ func main() {
       flag.PrintDefaults()
       return
    }
-   instagram.Verbose = true
+   instagram.Verbose(true)
    if username != "" {
       log, err := instagram.NewLogin(username, password)
       if err != nil {
