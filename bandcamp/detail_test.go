@@ -7,18 +7,19 @@ import (
 
 type test struct {
    in string
-   typ byte
+   typ string
    id int
 }
 
 var tests = []test{
-   {"https://schnaussandmunk.bandcamp.com/album/passage-2", 'a', 1670971920},
-   {"https://schnaussandmunk.bandcamp.com/track/amaris-2", 't', 2809477874},
+   {"https://schnaussandmunk.bandcamp.com/album/passage-2", "a", 1670971920},
+   {"https://schnaussandmunk.bandcamp.com/track/amaris-2", "t", 2809477874},
 }
 
-func TestDetails(t *testing.T) {
+func TestDetail(t *testing.T) {
+   Verbose(true)
    for _, test := range tests {
-      d, err := NewDetails(test.in)
+      d, err := TralbumDetail(test.in)
       if err != nil {
          t.Fatal(err)
       }

@@ -4,19 +4,17 @@ import (
    "fmt"
    "github.com/89z/mech"
    "net/http"
+   "regexp"
    "strconv"
-   "strings"
 )
 
-const nilZ0 = "nilZ0"
-
-type Details struct {
-   Band_ID int
-   Tralbum_ID int
-   Tralbum_Type byte
+type Detail struct {
+   Band_ID int `json:"band_id"`
+   Tralbum_ID int `json:"tralbum_id,omitempty"`
+   Tralbum_Type string `json:"tralbum_type,omitempty"`
 }
 
-func NewDetails(addr string) (*Details, error) {
+func TralbumDetail(addr string) (*Detail, error) {
    req, err := http.NewRequest("HEAD", addr, nil)
    if err != nil {
       return nil, err
@@ -25,25 +23,22 @@ func NewDetails(addr string) (*Details, error) {
    if err != nil {
       return nil, err
    }
+   reg := regexp.MustCompile(`nilZ0([at])(\d+)x`)
    for _, c := range res.Cookies() {
       if c.Name != "session" {
          continue
       }
-      r := strings.Index(c.Value, nilZ0)
-      if r == -1 {
+      find := reg.FindStringSubmatch(c.Value)
+      if find == nil {
          continue
       }
-      x := strings.IndexByte(c.Value, 'x')
-      if x == -1 {
-         continue
-      }
-      r += len(nilZ0)
-      id, err := strconv.Atoi(c.Value[r+1:x])
+      // [nilZ0t2809477874x t 2809477874]
+      id, err := strconv.Atoi(find[2])
       if err != nil {
          continue
       }
-      return &Details{
-         Tralbum_Type: c.Value[r], Tralbum_ID: id,
+      return &Detail{
+         1, id, find[1],
       }, nil
    }
    return nil, fmt.Errorf("cookies %v", res.Cookies())

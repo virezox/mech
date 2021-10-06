@@ -5,25 +5,18 @@ import (
    "testing"
 )
 
-const (
-   albumID = 79940049
-   trackID = 2809477874
-)
-
-func TestAlbum(t *testing.T) {
-   Verbose(true)
-   alb := new(Album)
-   if err := alb.Post(albumID); err != nil {
-      t.Fatal(err)
-   }
-   fmt.Printf("%+v\n", alb)
+var details = []Detail{
+   {1, 79940049, "a"},
+   {1, 2809477874, "t"},
 }
 
-func TestTrack(t *testing.T) {
+func TestTralbum(t *testing.T) {
    Verbose(true)
-   tra := new(Track)
-   if err := tra.Post(trackID); err != nil {
-      t.Fatal(err)
+   for _, detail := range details {
+      tra, err := detail.Tralbum()
+      if err != nil {
+         t.Fatal(err)
+      }
+      fmt.Printf("%+v\n", tra)
    }
-   fmt.Printf("%+v\n", tra)
 }
