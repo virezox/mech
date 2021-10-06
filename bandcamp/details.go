@@ -1,7 +1,8 @@
-package resolve
+package bandcamp
 
 import (
    "fmt"
+   "github.com/89z/mech"
    "net/http"
    "strconv"
    "strings"
@@ -9,15 +10,18 @@ import (
 
 const nilZ0 = "nilZ0"
 
-type details struct {
+type Details struct {
    Band_ID int
    Tralbum_ID int
    Tralbum_Type byte
 }
 
-func newDetails(addr string) (*details, error) {
-   fmt.Println("HEAD", addr)
-   res, err := http.Head(addr)
+func NewDetails(addr string) (*Details, error) {
+   req, err := http.NewRequest("HEAD", addr, nil)
+   if err != nil {
+      return nil, err
+   }
+   res, err := mech.RoundTrip(req)
    if err != nil {
       return nil, err
    }
@@ -38,7 +42,7 @@ func newDetails(addr string) (*details, error) {
       if err != nil {
          continue
       }
-      return &details{
+      return &Details{
          Tralbum_Type: c.Value[r], Tralbum_ID: id,
       }, nil
    }

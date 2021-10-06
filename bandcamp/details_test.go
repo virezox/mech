@@ -1,4 +1,4 @@
-package resolve
+package bandcamp
 
 import (
    "testing"
@@ -16,9 +16,9 @@ var tests = []test{
    {"https://schnaussandmunk.bandcamp.com/track/amaris-2", 't', 2809477874},
 }
 
-func TestResolve(t *testing.T) {
+func TestDetails(t *testing.T) {
    for _, test := range tests {
-      d, err := newDetails(test.in)
+      d, err := NewDetails(test.in)
       if err != nil {
          t.Fatal(err)
       }
