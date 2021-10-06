@@ -1,6 +1,11 @@
 # Bandcamp
 
-I think I found a workaround for this. You can make a request like this:
+What is the speed different between resolve methods? First old:
+
+
+## Resolve
+
+I found a workaround for this. You can make a request like this:
 
 ~~~
 HEAD /track/amaris-2 HTTP/1.1

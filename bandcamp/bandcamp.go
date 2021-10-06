@@ -10,7 +10,12 @@ import (
    "strconv"
 )
 
-const MobileTralbum = "http://bandcamp.com/api/mobile/24/tralbum_details"
+const Mobile = "http://bandcamp.com/api/mobile/24/tralbum_details"
+
+// thrjozkaskhjastaurrtygitylpt
+// throtaudvinroftignmarkreina
+// ullrettkalladrhampa
+const key = "veidihundr"
 
 var Verbose = mech.Verbose
 
@@ -55,7 +60,7 @@ func (d Detail) Tralbum() (*Tralbum, error) {
    if err := json.NewEncoder(buf).Encode(d); err != nil {
       return nil, err
    }
-   req, err := http.NewRequest("POST", MobileTralbum, buf)
+   req, err := http.NewRequest("POST", Mobile, buf)
    if err != nil {
       return nil, err
    }
