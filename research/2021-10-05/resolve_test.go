@@ -1,28 +1,23 @@
 package resolve
-import "testing"
 
-type test struct {
-   in string
-   typ rune
-   id int
-}
+import (
+   "fmt"
+   "testing"
+   "time"
+)
 
-var tests = []test{
-   {"1\tr:[\"nilZ0a1670971920x1633449063\"]\tt:1633449063", 'a', 1670971920},
-   {"1\tr:[\"nilZ0t2809477874x1633469972\"]\tt:1633469972", 't', 2809477874},
+var tests = []string{
+   "https://schnaussandmunk.bandcamp.com/track/amaris-2",
+   "https://schnaussandmunk.bandcamp.com/album/passage-2",
 }
 
 func TestResolve(t *testing.T) {
    for _, test := range tests {
-      typ, id, err := tralbum(test.in)
+      d, err := newDetails(test)
       if err != nil {
          t.Fatal(err)
       }
-      if typ != test.typ {
-         t.Fatal(typ)
-      }
-      if id != test.id {
-         t.Fatal(id)
-      }
+      fmt.Printf("%+v\n", d)
+      time.Sleep(99 * time.Millisecond)
    }
 }

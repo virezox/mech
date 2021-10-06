@@ -4,34 +4,67 @@ import (
    "fmt"
    "net/http"
    "net/url"
+   "strconv"
+   "strings"
 )
 
-func session() ([]string, error) {
-   res, err := http.Head("https://schnaussandmunk.bandcamp.com/track/amaris-2")
+const NilZ0 = "nilZ0"
+
+type details struct {
+   Band_ID int
+   Tralbum_ID int
+   Tralbum_Type byte
+}
+
+func newDetails(s string) (*details, error) {
+   r := strings.Index(s, NilZ0)
+   if r == -1 {
+      return nil, notFound{NilZ0}
+   }
+   x := strings.IndexByte(s, 'x')
+   if x == -1 {
+      return nil, notFound{'x'}
+   }
+   r += len(NilZ0)
+   id, err := strconv.Atoi(s[r+1:x])
    if err != nil {
       return nil, err
    }
-   var vals []string
-   for _, cook := range res.Cookies() {
-      if cook.Name == "session" {
-         val, err := url.PathUnescape(cook.Value)
-         if err != nil {
-            return nil, err
-         }
-         vals = append(vals, val)
-      }
-   }
-   return vals, nil
+   return &details{
+      Tralbum_Type: s[r], Tralbum_ID: id,
+   }, nil
 }
 
-func tralbum(session string) (rune, int, error) {
-   var (
-      typ rune
-      id int
-   )
-   _, err := fmt.Sscanf(session, "1\tr:[\"nilZ0%c%vx", &typ, &id)
+func oldDetails(addr string) (*details, error) {
+   fmt.Println("HEAD", addr)
+   res, err := http.Head(addr)
    if err != nil {
-      return 0, 0, err
+      return nil, err
    }
-   return typ, id, nil
+   for _, cook := range res.Cookies() {
+      if cook.Name != "session" {
+         continue
+      }
+      val, err := url.PathUnescape(cook.Value)
+      if err != nil {
+         return nil, err
+      }
+      var d details
+      if _, err := fmt.Sscanf(
+         val, "1\tr:[\"nilZ0%c%vx%v\"]", &d.Tralbum_Type, &d.Tralbum_ID,
+      ); err != nil {
+         fmt.Println(err)
+      } else {
+         return &d, nil
+      }
+   }
+   return nil, fmt.Errorf("cookies %v", res.Cookies())
+}
+
+type notFound struct {
+   value interface{}
+}
+
+func (n notFound) Error() string {
+   return fmt.Sprintf("%q not found", n.value)
 }
