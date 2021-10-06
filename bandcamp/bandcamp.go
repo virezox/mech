@@ -10,14 +10,6 @@ import (
    "strconv"
 )
 
-type Detail struct {
-   Band_ID int `json:"band_id"`
-   Tralbum_ID int `json:"tralbum_id,omitempty"`
-   Tralbum_Type string `json:"tralbum_type,omitempty"`
-}
-
-const Mobile = "http://bandcamp.com/api/mobile/24/tralbum_details"
-
 var Verbose = mech.Verbose
 
 func (d Detail) Tralbum() (*Tralbum, error) {
@@ -25,7 +17,7 @@ func (d Detail) Tralbum() (*Tralbum, error) {
    if err := json.NewEncoder(buf).Encode(d); err != nil {
       return nil, err
    }
-   req, err := http.NewRequest("POST", Mobile, buf)
+   req, err := http.NewRequest("POST", ApiMobile, buf)
    if err != nil {
       return nil, err
    }
@@ -41,31 +33,15 @@ func (d Detail) Tralbum() (*Tralbum, error) {
    return tra, nil
 }
 
-type Tralbum struct {
-   Bandcamp_URL string
-   Tracks []struct {
-      Title string
-   }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-// thrjozkaskhjastaurrtygitylpt
-// throtaudvinroftignmarkreina
-// ullrettkalladrhampa
-const key = "veidihundr"
-
-// URL to ID, key
-
-// URL to ID, anonymous
-func TralbumDetail(addr string) (*Detail, error) {
+// URL to track_id or album_id, anonymous
+func (d *Detail) Head(addr string) error {
    req, err := http.NewRequest("HEAD", addr, nil)
    if err != nil {
-      return nil, err
+      return err
    }
    res, err := mech.RoundTrip(req)
    if err != nil {
-      return nil, err
+      return err
    }
    reg := regexp.MustCompile(`nilZ0([at])(\d+)x`)
    for _, c := range res.Cookies() {
@@ -81,9 +57,10 @@ func TralbumDetail(addr string) (*Detail, error) {
       if err != nil {
          continue
       }
-      return &Detail{
-         1, id, find[1],
-      }, nil
+      d.Band_ID = 1
+      d.Tralbum_ID = id
+      d.Tralbum_Type = find[1]
+      return nil
    }
-   return nil, fmt.Errorf("cookies %v", res.Cookies())
+   return fmt.Errorf("cookies %v", res.Cookies())
 }
