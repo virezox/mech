@@ -4,7 +4,6 @@ import (
    "bytes"
    "fmt"
    "github.com/89z/mech"
-   "google.golang.org/protobuf/testing/protopack"
    "io"
    "net/http"
    "net/url"
@@ -26,9 +25,7 @@ func main() {
    if err != nil {
       panic(err)
    }
-   var mes protopack.Message
-   mes.UnmarshalAbductive(data, nil)
-   fmt.Printf("%+v\n", mes)
+   fmt.Printf("%q\n", data)
 }
 
 const Origin = "https://android.clients.google.com"

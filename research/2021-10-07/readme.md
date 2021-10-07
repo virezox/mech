@@ -1,3 +1,9 @@
 # October 7 2021
 
-https://github.com/Juby210/gplayapi-go/issues/3
+1. https://github.com/golang/protobuf/issues/1370
+
+~~~
+protobuf language:go pushed:>2020-10-07 stars:>1
+~~~
+
+https://github.com/philpearl/plenc/issues/2
