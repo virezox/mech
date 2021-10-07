@@ -6,6 +6,7 @@ import (
    "io"
    "net/http"
    "net/url"
+   "strings"
 )
 
 const Origin = "https://android.clients.google.com"
@@ -54,17 +55,21 @@ func NewAc2dm(token string) (*Ac2dm, error) {
 
 // Exchange refresh token (aas_et) for access token (Auth).
 func (a Ac2dm) OAuth2() (*OAuth2, error) {
-   req, err := http.NewRequest("POST", Origin + "/auth", nil)
-   if err != nil {
-      return nil, err
-   }
    val := url.Values{
       "Token": {
          a.Get("Token"),
       },
       "service": {"oauth2:https://www.googleapis.com/auth/googleplay"},
    }
-   req.URL.RawQuery = val.Encode()
+   req, err := http.NewRequest(
+      "POST", Origin + "/auth", strings.NewReader(val.Encode()),
+   )
+   if err != nil {
+      return nil, err
+   }
+   req.Header = http.Header{
+      "Content-Type": {"application/x-www-form-urlencoded"},
+   }
    res, err := mech.RoundTrip(req)
    if err != nil {
       return nil, err
