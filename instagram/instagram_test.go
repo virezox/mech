@@ -66,12 +66,8 @@ func TestRead(t *testing.T) {
 }
 
 func TestWrite(t *testing.T) {
-   pass, ok := os.LookupEnv("PASS")
-   if ! ok {
-      t.Fatal("PASS")
-   }
    Verbose(true)
-   l, err := NewLogin("srpen6", pass)
+   l, err := NewLogin("srpen6", password)
    if err != nil {
       t.Fatal(err)
    }
