@@ -2,7 +2,6 @@ package googleplay
 
 import (
    "bytes"
-   "fmt"
    "github.com/89z/mech"
    "io"
    "net/http"
@@ -35,13 +34,11 @@ func NewAc2dm(token string) (*Ac2dm, error) {
    if err != nil {
       return nil, err
    }
-   q := req.URL.Query()
-   q.Set("ACCESS_TOKEN", "1")
-   q.Set("service", "ac2dm")
-   q.Set("Token", token)
-   req.URL.RawQuery = q.Encode()
-   fmt.Println(req.Method, req.URL)
-   res, err := new(http.Transport).RoundTrip(req)
+   val := url.Values{
+      "ACCESS_TOKEN": {"1"}, "Token": {token}, "service": {"ac2dm"},
+   }
+   req.URL.RawQuery = val.Encode()
+   res, err := mech.RoundTrip(req)
    if err != nil {
       return nil, err
    }
@@ -61,12 +58,14 @@ func (a Ac2dm) OAuth2() (*OAuth2, error) {
    if err != nil {
       return nil, err
    }
-   q := req.URL.Query()
-   q.Set("Token", a.Get("Token"))
-   q.Set("service", "oauth2:https://www.googleapis.com/auth/googleplay")
-   req.URL.RawQuery = q.Encode()
-   fmt.Println(req.Method, req.URL)
-   res, err := new(http.Transport).RoundTrip(req)
+   val := url.Values{
+      "Token": {
+         a.Get("Token"),
+      },
+      "service": {"oauth2:https://www.googleapis.com/auth/googleplay"},
+   }
+   req.URL.RawQuery = val.Encode()
+   res, err := mech.RoundTrip(req)
    if err != nil {
       return nil, err
    }
@@ -90,11 +89,16 @@ func (o OAuth2) Details(device, app string) ([]byte, error) {
    if err != nil {
       return nil, err
    }
-   q := req.URL.Query()
-   q.Set("doc", app)
-   req.URL.RawQuery = q.Encode()
-   req.Header.Set("Authorization", "Bearer " + o.Get("Auth"))
-   req.Header.Set("X-DFE-Device-Id", device)
+   req.Header = http.Header{
+      "Authorization": {
+         "Bearer " + o.Get("Auth"),
+      },
+      "X-DFE-Device-Id": {device},
+   }
+   val := url.Values{
+      "doc": {app},
+   }
+   req.URL.RawQuery = val.Encode()
    res, err := mech.RoundTrip(req)
    if err != nil {
       return nil, err
