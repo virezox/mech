@@ -96,11 +96,9 @@ Host: www.youtube.com
 "grant_type":"http://oauth.net/grant_type/device/1.0"}
 ~~~
 
-References:
-
 1. <https://github.com/youtube/cobalt/blob/master/src/cobalt/browser/user_agent_string.cc>
 
-## other repos
+## Issues
 
 - <https://github.com/Hexer10/youtube_explode_dart/issues>
 - https://github.com/iawia002/annie/issues
