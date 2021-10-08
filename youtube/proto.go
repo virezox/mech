@@ -37,137 +37,137 @@ func (p Param) Encode() (string, error) {
    return base64.StdEncoding.EncodeToString(b), nil
 }
 
-// 1
+// CAASAA==
 func (p *Param) Relevance() {
    p.SortBy = pUint(0)
 }
 
-// 1
+// CAESAA==
 func (p *Param) Rating() {
    p.SortBy = pUint(1)
 }
 
-// 1
+// CAISAA==
 func (p *Param) UploadDate() {
    p.SortBy = pUint(2)
 }
 
-// 1
+// CAMSAA==
 func (p *Param) ViewCount() {
    p.SortBy = pUint(3)
 }
 
-// 2 1
+// EgIIAQ==
 func (p *Param) LastHour() {
    p.Filter.UploadDate = pUint(1)
 }
 
-// 2 1
+// EgIIAg==
 func (p *Param) Today() {
    p.Filter.UploadDate = pUint(2)
 }
 
-// 2 1
+// EgIIAw==
 func (p *Param) ThisWeek() {
    p.Filter.UploadDate = pUint(3)
 }
 
-// 2 1
+// EgIIBA==
 func (p *Param) ThisMonth() {
    p.Filter.UploadDate = pUint(4)
 }
 
-// 2 1
+// EgIIBQ==
 func (p *Param) ThisYear() {
    p.Filter.UploadDate = pUint(5)
 }
 
-// 2 2
+// EgIQAQ==
 func (p *Param) Video() {
    p.Filter.Type = pUint(1)
 }
 
-// 2 2
+// EgIQAg==
 func (p *Param) Channel() {
    p.Filter.Type = pUint(2)
 }
 
-// 2 2
+// EgIQAw==
 func (p *Param) Playlist() {
    p.Filter.Type = pUint(3)
 }
 
-// 2 2
+// EgIQBA==
 func (p *Param) Movie() {
    p.Filter.Type = pUint(4)
 }
 
-// 2 3
+// EgIYAQ==
 func (p *Param) UnderFourMinutes() {
    p.Filter.Duration = pUint(1)
 }
 
-// 2 3
+// EgIYAg==
 func (p *Param) OverTwentyMinutes() {
    p.Filter.Duration = pUint(2)
 }
 
-// 2 3
+// EgIYAw==
 func (p *Param) FourToTwentyMinutes() {
    p.Filter.Duration = pUint(3)
 }
 
-// 2 4
+// EgIgAQ==
 func (p *Param) HD() {
    p.Filter.HD = pUint(1)
 }
 
-// 2 5
+// EgIoAQ==
 func (p *Param) Subtitles() {
    p.Filter.Subtitles = pUint(1)
 }
 
-// 2 6
+// EgIwAQ==
 func (p *Param) CreativeCommons() {
    p.Filter.CreativeCommons = pUint(1)
 }
 
-// 2 7
+// EgI4AQ==
 func (p *Param) ThreeD() {
    p.Filter.ThreeD = pUint(1)
 }
 
-// 2 8
+// EgJAAQ==
 func (p *Param) Live() {
    p.Filter.Live = pUint(1)
 }
 
-// 2 9
+// EgJIAQ==
 func (p *Param) Purchased() {
    p.Filter.Purchased = pUint(1)
 }
 
-// 2 14
+// EgJwAQ==
 func (p *Param) FourK() {
    p.Filter.FourK = pUint(1)
 }
 
-// 2 15
+// EgJ4AQ==
 func (p *Param) ThreeSixty() {
    p.Filter.ThreeSixty = pUint(1)
 }
 
-// 2 23
+// EgO4AQE=
 func (p *Param) Location() {
    p.Filter.Location = pUint(1)
 }
 
-// 2 25
+// EgPIAQE=
 func (p *Param) HDR() {
    p.Filter.HDR = pUint(1)
 }
 
-// 2 26
+// EgPQAQE=
 func (p *Param) VR180() {
    p.Filter.VR180 = pUint(1)
 }

@@ -1,31 +1,53 @@
 package youtube
-import "testing"
+
+import (
+   "fmt"
+   "testing"
+)
 
 type test struct {
-   name string
-   fn func(*Param)
-   want string
+   key string
+   val func(*Param)
 }
 
 var tests = []test{
-   {"Channel", (*Param).Channel, "EgIQAg=="},
-   {"FourK", (*Param).FourK, "EgJwAQ=="},
-   {"FourToTwentyMinutes", (*Param).FourToTwentyMinutes, "EgIYAw=="},
-   {"Today", (*Param).Today, "EgIIAg=="},
-   {"UploadDate", (*Param).UploadDate, "CAISAA=="},
-   {"Video", (*Param).Video, "EgIQAQ=="},
+   {"Channel", (*Param).Channel},
+   {"CreativeCommons", (*Param).CreativeCommons},
+   {"FourK", (*Param).FourK},
+   {"FourToTwentyMinutes", (*Param).FourToTwentyMinutes},
+   {"HD", (*Param).HD},
+   {"HDR", (*Param).HDR},
+   {"LastHour", (*Param).LastHour},
+   {"Live", (*Param).Live},
+   {"Location", (*Param).Location},
+   {"Movie", (*Param).Movie},
+   {"OverTwentyMinutes", (*Param).OverTwentyMinutes},
+   {"Playlist", (*Param).Playlist},
+   {"Purchased", (*Param).Purchased},
+   {"Rating", (*Param).Rating},
+   {"Relevance", (*Param).Relevance},
+   {"Subtitles", (*Param).Subtitles},
+   {"ThisMonth", (*Param).ThisMonth},
+   {"ThisWeek", (*Param).ThisWeek},
+   {"ThisYear", (*Param).ThisYear},
+   {"ThreeD", (*Param).ThreeD},
+   {"ThreeSixty", (*Param).ThreeSixty},
+   {"Today", (*Param).Today},
+   {"UnderFourMinutes", (*Param).UnderFourMinutes},
+   {"UploadDate", (*Param).UploadDate},
+   {"VR180", (*Param).VR180},
+   {"Video", (*Param).Video},
+   {"ViewCount", (*Param).ViewCount},
 }
 
 func TestParam(t *testing.T) {
    for _, each := range tests {
       var p Param
-      each.fn(&p)
+      each.val(&p)
       s, err := p.Encode()
       if err != nil {
          t.Fatal(err)
       }
-      if s != each.want {
-         t.Fatal(s)
-      }
+      fmt.Print(each.key, "\n", s, "\n\n")
    }
 }
