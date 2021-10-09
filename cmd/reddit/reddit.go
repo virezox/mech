@@ -70,11 +70,7 @@ func main() {
          if info {
             fmt.Printf("%+v\n", rep)
          } else if rep.Height == 0 || rep.Height == height {
-            mime := ada.MimeType
-            if mime == "" {
-               mime = rep.MimeType
-            }
-            err := download(link, rep.BaseURL, mime)
+            err := download(link, rep.BaseURL, ada.MimeType + rep.MimeType)
             if err != nil {
                panic(err)
             }
