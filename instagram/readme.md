@@ -51,4 +51,3 @@ The first variable should be the target `query_hash`.
 - https://github.com/instaloader/instaloader/issues
 - https://github.com/pgrimaud/instagram-user-feed/issues
 - https://github.com/postaddictme/instagram-php-scraper/issues
-- https://github.com/realsirjoe/instagram-scraper/issues

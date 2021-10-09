@@ -52,7 +52,7 @@ func main() {
    if err != nil {
       panic(err)
    }
-   reddit.Verbose = true
+   mech.Verbose(true)
    post, err := reddit.NewPost(id)
    if err != nil {
       panic(err)
@@ -70,7 +70,11 @@ func main() {
          if info {
             fmt.Printf("%+v\n", rep)
          } else if rep.Height == 0 || rep.Height == height {
-            err := download(link, rep.BaseURL, ada.MimeType)
+            mime := ada.MimeType
+            if mime == "" {
+               mime = rep.MimeType
+            }
+            err := download(link, rep.BaseURL, mime)
             if err != nil {
                panic(err)
             }
