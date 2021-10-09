@@ -4,13 +4,13 @@ import (
    "encoding/json"
    "encoding/xml"
    "fmt"
+   "github.com/89z/mech"
    "net/http"
-   "net/url"
 )
 
 const Origin = "https://api.reddit.com"
 
-var Verbose bool
+var Verbose = mech.Verbose
 
 // redd.it/ppbsh
 // redd.it/pql06n
@@ -27,6 +27,7 @@ type Adaptation struct {
    Representation []struct {
       BaseURL string
       Height int `xml:"height,attr"`
+      MimeType string `xml:"mimeType,attr"`
    }
 }
 
@@ -42,15 +43,12 @@ type Link struct {
 }
 
 func (l Link) MPD() (*MPD, error) {
-   addr, err := url.Parse(l.Media.Reddit_Video.DASH_URL)
+   req, err := http.NewRequest("GET", l.Media.Reddit_Video.DASH_URL, nil)
    if err != nil {
       return nil, err
    }
-   addr.RawQuery = ""
-   if Verbose {
-      fmt.Println("GET", addr)
-   }
-   res, err := http.Get(addr.String())
+   req.URL.RawQuery = ""
+   res, err := mech.RoundTrip(req)
    if err != nil {
       return nil, err
    }
@@ -83,17 +81,11 @@ func NewPost(id string) (*Post, error) {
       return nil, err
    }
    req.Header.Set("User-Agent", "Mozilla")
-   if Verbose {
-      fmt.Println(req.Method, req.URL)
-   }
-   res, err := new(http.Transport).RoundTrip(req)
+   res, err := mech.RoundTrip(req)
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return nil, fmt.Errorf("status %q", res.Status)
-   }
    pos := new(Post)
    if err := json.NewDecoder(res.Body).Decode(pos); err != nil {
       return nil, err

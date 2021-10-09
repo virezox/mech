@@ -97,9 +97,3 @@ Host: www.youtube.com
 ~~~
 
 1. <https://github.com/youtube/cobalt/blob/master/src/cobalt/browser/user_agent_string.cc>
-
-## Issues
-
-- <https://github.com/Hexer10/youtube_explode_dart/issues>
-- https://github.com/iawia002/annie/issues
-- https://github.com/ytdl-org/youtube-dl/issues

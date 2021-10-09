@@ -40,9 +40,3 @@ which will return error:
 You can fix it by just adding `band_id=1`:
 
 <http://bandcamp.com/api/mobile/24/tralbum_details?band_id=1&tralbum_type=t&tralbum_id=2809477874>
-
-## Issues
-
-- https://github.com/gpchelkin/scdlbot/issues
-- https://github.com/iheanyi/bandcamp-dl/issues
-- https://github.com/masterT/bandcamp-scraper/issues

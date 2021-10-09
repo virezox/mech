@@ -92,3 +92,19 @@ install.
 ## Author
 
 Steven Penny
+
+## Issues
+
+- <https://github.com/Hexer10/youtube_explode_dart/issues>
+- https://github.com/adw0rd/instagrapi/issues
+- https://github.com/dilame/instagram-private-api/issues
+- https://github.com/drawrowfly/instagram-scraper/issues
+- https://github.com/gippy/instagram-scraper/issues
+- https://github.com/gpchelkin/scdlbot/issues
+- https://github.com/iawia002/annie/issues
+- https://github.com/iheanyi/bandcamp-dl/issues
+- https://github.com/instaloader/instaloader/issues
+- https://github.com/masterT/bandcamp-scraper/issues
+- https://github.com/pgrimaud/instagram-user-feed/issues
+- https://github.com/postaddictme/instagram-php-scraper/issues
+- https://github.com/ytdl-org/youtube-dl/issues
