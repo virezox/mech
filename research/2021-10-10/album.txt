@@ -1,0 +1,4 @@
+GET /album/4Aumawi2PZuCxo10dQc3vn HTTP/1.1
+Host: open.spotify.com
+User-Agent: Firefox/60
+
