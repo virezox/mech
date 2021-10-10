@@ -9,6 +9,12 @@ import (
 
 const Origin = "https://api.spotify.com"
 
+type Album struct {
+   Tracks struct {
+      Items []Track
+   }
+}
+
 type Config struct {
    AccessToken string
 }
@@ -33,6 +39,25 @@ func NewConfig() (*Config, error) {
    return cfg, nil
 }
 
+func (c Config) Album(id string) (*Album, error) {
+   req, err := http.NewRequest("GET", Origin + "/v1/albums/" + id, nil)
+   if err != nil {
+      return nil, err
+   }
+   req.Header.Set("Authorization", "Bearer " + c.AccessToken)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   alb := new(Album)
+   if err := json.NewDecoder(res.Body).Decode(alb); err != nil {
+      return nil, err
+   }
+   return alb, nil
+}
+
+// This can be used to decode a previously saved token.
 func (c *Config) Decode(r io.Reader) error {
    return json.NewDecoder(r).Decode(c)
 }
@@ -64,9 +89,11 @@ func (c Config) Playlist(id string) (*Playlist, error) {
 type Playlist struct {
    Tracks struct {
       Items []struct {
-         Track struct {
-            Name string
-         }
+         Track Track
       }
    }
+}
+
+type Track struct {
+   Name string
 }

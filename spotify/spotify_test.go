@@ -6,7 +6,24 @@ import (
    "testing"
 )
 
-func TestRead(t *testing.T) {
+func TestAlbum(t *testing.T) {
+   f, err := os.Open("spotify.json")
+   if err != nil {
+      t.Fatal(err)
+   }
+   defer f.Close()
+   var c Config
+   if err := c.Decode(f); err != nil {
+      t.Fatal(err)
+   }
+   a, err := c.Album("4Aumawi2PZuCxo10dQc3vn")
+   if err != nil {
+      t.Fatal(err)
+   }
+   fmt.Printf("%+v\n", a)
+}
+
+func TestPlaylist(t *testing.T) {
    f, err := os.Open("spotify.json")
    if err != nil {
       t.Fatal(err)
