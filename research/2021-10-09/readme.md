@@ -1,0 +1,11 @@
+# October 9 2021
+
+Token last about an hour:
+
+~~~json
+"accessTokenExpirationTimestampMs":1633838840465
+"accessTokenExpirationTimestampMs":1633842139279
+~~~
+
+- https://github.com/AliAkhtari78/SpotifyScraper/issues/10
+- https://github.com/brianstrauch/spotify/issues/11
