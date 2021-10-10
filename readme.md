@@ -34,6 +34,7 @@ https://godocs.io/github.com/89z/mech
 - MusicBrainz
 - Reddit
 - SoundCloud
+- Spotify
 - Vimeo
 - YouTube
 
