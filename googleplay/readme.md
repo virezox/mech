@@ -7,7 +7,7 @@ https://accounts.google.com/EmbeddedSetup
 
 ## Protocol buffer
 
-Need to find a better Unmarshal for arbitrary bytes.
+I have implemented a parser for unknown bytes.
 
 ## EncryptedPasswd
 

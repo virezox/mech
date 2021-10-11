@@ -16,6 +16,7 @@ func TestAlbum(t *testing.T) {
    if err := c.Decode(f); err != nil {
       t.Fatal(err)
    }
+   Verbose(true)
    a, err := c.Album("4Aumawi2PZuCxo10dQc3vn")
    if err != nil {
       t.Fatal(err)

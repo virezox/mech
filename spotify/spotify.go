@@ -2,12 +2,15 @@ package spotify
 
 import (
    "encoding/json"
+   "github.com/89z/mech"
    "github.com/89z/parse/html"
    "io"
    "net/http"
 )
 
 const Origin = "https://api.spotify.com"
+
+var Verbose = mech.Verbose
 
 type Album struct {
    Tracks struct {
@@ -25,7 +28,7 @@ func NewConfig() (*Config, error) {
       return nil, err
    }
    req.Header.Set("User-Agent", "Firefox/60")
-   res, err := new(http.Transport).RoundTrip(req)
+   res, err := mech.RoundTrip(req)
    if err != nil {
       return nil, err
    }
@@ -45,7 +48,7 @@ func (c Config) Album(id string) (*Album, error) {
       return nil, err
    }
    req.Header.Set("Authorization", "Bearer " + c.AccessToken)
-   res, err := new(http.Transport).RoundTrip(req)
+   res, err := mech.RoundTrip(req)
    if err != nil {
       return nil, err
    }
@@ -74,7 +77,7 @@ func (c Config) Playlist(id string) (*Playlist, error) {
       return nil, err
    }
    req.Header.Set("Authorization", "Bearer " + c.AccessToken)
-   res, err := new(http.Transport).RoundTrip(req)
+   res, err := mech.RoundTrip(req)
    if err != nil {
       return nil, err
    }
