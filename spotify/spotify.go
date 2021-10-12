@@ -89,6 +89,24 @@ func (c Config) Playlist(id string) (*Playlist, error) {
    return list, nil
 }
 
+func (c Config) Track(id string) (*Track, error) {
+   req, err := http.NewRequest("GET", Origin + "/v1/tracks/" + id, nil)
+   if err != nil {
+      return nil, err
+   }
+   req.Header.Set("Authorization", "Bearer " + c.AccessToken)
+   res, err := mech.RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   trk := new(Track)
+   if err := json.NewDecoder(res.Body).Decode(trk); err != nil {
+      return nil, err
+   }
+   return trk, nil
+}
+
 type Playlist struct {
    Tracks struct {
       Items []struct {
@@ -98,5 +116,6 @@ type Playlist struct {
 }
 
 type Track struct {
+   ID string
    Name string
 }

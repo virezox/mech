@@ -107,7 +107,6 @@ Steven Penny
 - https://github.com/adw0rd/instagrapi/issues
 - https://github.com/dilame/instagram-private-api/issues
 - https://github.com/gippy/instagram-scraper/issues
-- https://github.com/gpchelkin/scdlbot/issues
 - https://github.com/iawia002/annie/issues
 - https://github.com/iheanyi/bandcamp-dl/issues
 - https://github.com/instaloader/instaloader/issues

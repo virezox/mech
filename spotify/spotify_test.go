@@ -6,6 +6,24 @@ import (
    "testing"
 )
 
+func TestTrack(t *testing.T) {
+   f, err := os.Open("spotify.json")
+   if err != nil {
+      t.Fatal(err)
+   }
+   defer f.Close()
+   var c Config
+   if err := c.Decode(f); err != nil {
+      t.Fatal(err)
+   }
+   Verbose(true)
+   a, err := c.Track("4xZnHa9LaRHohviKQNytQR")
+   if err != nil {
+      t.Fatal(err)
+   }
+   fmt.Printf("%+v\n", a)
+}
+
 func TestAlbum(t *testing.T) {
    f, err := os.Open("spotify.json")
    if err != nil {
@@ -41,7 +59,7 @@ func TestPlaylist(t *testing.T) {
    fmt.Printf("%+v\n", p)
 }
 
-func TestWrite(t *testing.T) {
+func TestEncode(t *testing.T) {
    c, err := NewConfig()
    if err != nil {
       t.Fatal(err)
