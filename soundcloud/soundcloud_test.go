@@ -6,28 +6,31 @@ import (
 )
 
 const (
-   addr = "https://soundcloud.com/pdis_inpartmaint/harold-budd-perhaps-moss"
-   id = "103650107"
+   addr = "https://soundcloud.com/afterhour-sounds/premiere-ele-bisu-caradamom-coffee"
+   ids = "1021056175"
 )
 
 func TestAlternate(t *testing.T) {
+   Verbose(true)
    a, err := Oembed(addr)
    if err != nil {
       t.Fatal(err)
    }
-   fmt.Printf("%+v\n\n", a)
+   fmt.Printf("%+v\n", a)
 }
 
 func TestResolve(t *testing.T) {
+   Verbose(true)
    r, err := Resolve(addr)
    if err != nil {
       t.Fatal(err)
    }
-   fmt.Printf("%+v\n\n", r)
+   fmt.Printf("%+v\n", r)
 }
 
 func TestTracks(t *testing.T) {
-   tracks, err := Tracks(id)
+   Verbose(true)
+   tracks, err := Tracks(ids)
    if err != nil {
       t.Fatal(err)
    }
@@ -35,5 +38,5 @@ func TestTracks(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   fmt.Printf("%+v\n\n", m)
+   fmt.Printf("%+v\n", m)
 }

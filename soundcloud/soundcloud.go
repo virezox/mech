@@ -3,6 +3,7 @@ package soundcloud
 import (
    "encoding/json"
    "fmt"
+   "github.com/89z/mech"
    "net/http"
 )
 
@@ -11,6 +12,8 @@ const (
    Placeholder = "https://soundcloud.com/images/fb_placeholder.png"
    clientID = "iZIs9mchVcX5lhVRyQGGAYlNPVldzAoX"
 )
+
+var Verbose = mech.Verbose
 
 type Alternate struct {
    Thumbnail_URL string
@@ -22,12 +25,11 @@ func Oembed(addr string) (*Alternate, error) {
    if err != nil {
       return nil, err
    }
-   q := req.URL.Query()
-   q.Set("format", "json")
-   q.Set("url", addr)
-   req.URL.RawQuery = q.Encode()
-   fmt.Println("GET", req.URL)
-   res, err := new(http.Transport).RoundTrip(req)
+   val := req.URL.Query()
+   val.Set("format", "json")
+   val.Set("url", addr)
+   req.URL.RawQuery = val.Encode()
+   res, err := mech.RoundTrip(req)
    if err != nil {
       return nil, err
    }
@@ -40,11 +42,12 @@ func Oembed(addr string) (*Alternate, error) {
 }
 
 type Media struct {
+   // cf-media.sndcdn.com/QaV7QR1lxpc6.128.mp3?Policy=eyJTdGF0ZW1lbnQiOlt7IlJl...
    URL string
 }
 
 type Track struct {
-   ID json.Number
+   ID int
    Title string
    Display_Date string
    Media struct {
@@ -52,8 +55,13 @@ type Track struct {
          Format struct {
             Protocol string
          }
+         // api-v2.soundcloud.com/media/soundcloud:tracks:103650107/
+         // aca81dd5-2feb-4fc4-a102-036fb35fe44a/stream/progressive
          URL string
       }
+   }
+   User struct {
+      Username string
    }
 }
 
@@ -62,19 +70,15 @@ func Resolve(addr string) (*Track, error) {
    if err != nil {
       return nil, err
    }
-   q := req.URL.Query()
-   q.Set("client_id", clientID)
-   q.Set("url", addr)
-   req.URL.RawQuery = q.Encode()
-   fmt.Println("GET", req.URL)
-   res, err := new(http.Transport).RoundTrip(req)
+   val := req.URL.Query()
+   val.Set("client_id", clientID)
+   val.Set("url", addr)
+   req.URL.RawQuery = val.Encode()
+   res, err := mech.RoundTrip(req)
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return nil, fmt.Errorf("status %q", res.Status)
-   }
    trk := new(Track)
    if err := json.NewDecoder(res.Body).Decode(trk); err != nil {
       return nil, err
@@ -82,17 +86,16 @@ func Resolve(addr string) (*Track, error) {
    return trk, nil
 }
 
-func Tracks(id string) ([]Track, error) {
+func Tracks(ids string) ([]Track, error) {
    req, err := http.NewRequest("GET", Origin + "/tracks", nil)
    if err != nil {
       return nil, err
    }
-   q := req.URL.Query()
-   q.Set("client_id", clientID)
-   q.Set("ids", id)
-   req.URL.RawQuery = q.Encode()
-   fmt.Println("GET", req.URL)
-   res, err := new(http.Transport).RoundTrip(req)
+   val := req.URL.Query()
+   val.Set("client_id", clientID)
+   val.Set("ids", ids)
+   req.URL.RawQuery = val.Encode()
+   res, err := mech.RoundTrip(req)
    if err != nil {
       return nil, err
    }
@@ -104,22 +107,28 @@ func Tracks(id string) ([]Track, error) {
    return tracks, nil
 }
 
-func (t Track) GetMedia() (*Media, error) {
-   var addr string
+func (t Track) progressive() (string, error) {
    for _, code := range t.Media.Transcodings {
       if code.Format.Protocol == "progressive" {
-         addr = code.URL
+         return code.URL, nil
       }
+   }
+   return "", fmt.Errorf("transcodings %+v", t.Media.Transcodings)
+}
+
+func (t Track) GetMedia() (*Media, error) {
+   addr, err := t.progressive()
+   if err != nil {
+      return nil, err
    }
    req, err := http.NewRequest("GET", addr, nil)
    if err != nil {
       return nil, err
    }
-   q := req.URL.Query()
-   q.Set("client_id", clientID)
-   req.URL.RawQuery = q.Encode()
-   fmt.Println("GET", req.URL)
-   res, err := new(http.Transport).RoundTrip(req)
+   val := req.URL.Query()
+   val.Set("client_id", clientID)
+   req.URL.RawQuery = val.Encode()
+   res, err := mech.RoundTrip(req)
    if err != nil {
       return nil, err
    }
