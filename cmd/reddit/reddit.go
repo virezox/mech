@@ -35,15 +35,11 @@ func download(link *reddit.Link, base, typ string) error {
 }
 
 func main() {
-   var (
-      height int
-      info bool
-   )
+   var info bool
    flag.BoolVar(&info, "i", false, "info only")
-   flag.IntVar(&height, "h", 720, "height")
    flag.Parse()
    if len(os.Args) == 1 {
-      fmt.Println("reddit [flags] [post ID]")
+      fmt.Println("reddit [-i] [post ID]")
       flag.PrintDefaults()
       return
    }
@@ -66,15 +62,16 @@ func main() {
       panic(err)
    }
    for _, ada := range mpd.Period.AdaptationSet {
+      ada.Representation.Sort()
       for _, rep := range ada.Representation {
-         if info {
-            fmt.Printf("%+v\n", rep)
-         } else if rep.Height == 0 || rep.Height == height {
+         if ! info {
             err := download(link, rep.BaseURL, ada.MimeType + rep.MimeType)
             if err != nil {
                panic(err)
             }
+            break
          }
+         fmt.Printf("%+v\n", rep)
       }
    }
 }

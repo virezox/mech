@@ -111,6 +111,7 @@ Steven Penny
 - https://github.com/iheanyi/bandcamp-dl/issues
 - https://github.com/instaloader/instaloader/issues
 - https://github.com/masterT/bandcamp-scraper/issues
+- https://github.com/nathom/streamrip/issues
 - https://github.com/pgrimaud/instagram-user-feed/issues
 - https://github.com/postaddictme/instagram-php-scraper/issues
 - https://github.com/ytdl-org/youtube-dl/issues

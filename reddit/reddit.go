@@ -6,6 +6,7 @@ import (
    "fmt"
    "github.com/89z/mech"
    "net/http"
+   "sort"
 )
 
 const Origin = "https://api.reddit.com"
@@ -24,11 +25,7 @@ func Valid(id string) error {
 
 type Adaptation struct {
    MimeType string `xml:"mimeType,attr"`
-   Representation []struct {
-      BaseURL string
-      Height int `xml:"height,attr"`
-      MimeType string `xml:"mimeType,attr"`
-   }
+   Representation Representation
 }
 
 type Link struct {
@@ -104,4 +101,16 @@ func (p Post) Link() (*Link, error) {
       }
    }
    return nil, fmt.Errorf("children %v", p.Data.Children)
+}
+
+type Representation []struct {
+   BaseURL string
+   Height int `xml:"height,attr"`
+   MimeType string `xml:"mimeType,attr"`
+}
+
+func (r Representation) Sort() {
+   sort.Slice(r, func(a, b int) bool {
+      return r[b].Height < r[a].Height
+   })
 }
