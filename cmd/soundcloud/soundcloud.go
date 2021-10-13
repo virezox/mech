@@ -20,7 +20,7 @@ func main() {
       return
    }
    addr := flag.Arg(0)
-   soundcloud.Verbose(true)
+   mech.Verbose(true)
    track, err := soundcloud.Resolve(addr)
    if err != nil {
       panic(err)

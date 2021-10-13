@@ -4,10 +4,9 @@ import (
    "fmt"
    "io"
    "net/http"
-   "net/http/httputil"
-   "os"
    "sort"
    "strings"
+   "time"
 )
 
 const chunk = 10_000_000
@@ -38,16 +37,14 @@ func (f Format) Write(w io.Writer) error {
    if err != nil {
       return err
    }
-   dum, err := httputil.DumpRequest(req, false)
-   if err != nil {
-      return err
-   }
-   os.Stdout.Write(dum)
+   fmt.Println(req.Method, req.URL)
+   begin := time.Now()
    var pos contentLength
    for pos < f.ContentLength {
       bytes := fmt.Sprintf("bytes=%d-%d", pos, pos+chunk-1)
       req.Header.Set("Range", bytes)
-      fmt.Printf("%d%% %v\n", 100*pos/f.ContentLength, bytes)
+      end := time.Since(begin)
+      fmt.Printf("%d%% %v %v\n", 100*pos/f.ContentLength, bytes, end)
       // this sometimes redirects, so cannot use http.Transport
       res, err := new(http.Client).Do(req)
       if err != nil {
