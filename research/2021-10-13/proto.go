@@ -2,7 +2,6 @@ package youtube
 
 import (
    "encoding/base64"
-   "fmt"
    "github.com/segmentio/encoding/proto"
 )
 
@@ -27,117 +26,117 @@ type param struct {
 }
 
 func (p param) Encode() (string, error) {
-   b, err := plenc.Marshal(nil, p)
+   data, err := proto.Marshal(p)
    if err != nil {
       return "", err
    }
-   return base64.StdEncoding.EncodeToString(b), nil
+   return base64.StdEncoding.EncodeToString(data), nil
 }
 
 func (p *param) Relevance() {
-   p.SortBy = pUint(0)
+   p.SortBy = 0
 }
 
 func (p *param) Rating() {
-   p.SortBy = pUint(1)
+   p.SortBy = 1
 }
 
 func (p *param) UploadDate() {
-   p.SortBy = pUint(2)
+   p.SortBy = 2
 }
 
 func (p *param) ViewCount() {
-   p.SortBy = pUint(3)
+   p.SortBy = 3
 }
 
 func (p *param) LastHour() {
-   p.Filter.UploadDate = pUint(1)
+   p.Filter.UploadDate = 1
 }
 
 func (p *param) Today() {
-   p.Filter.UploadDate = pUint(2)
+   p.Filter.UploadDate = 2
 }
 
 func (p *param) ThisWeek() {
-   p.Filter.UploadDate = pUint(3)
+   p.Filter.UploadDate = 3
 }
 
 func (p *param) ThisMonth() {
-   p.Filter.UploadDate = pUint(4)
+   p.Filter.UploadDate = 4
 }
 
 func (p *param) ThisYear() {
-   p.Filter.UploadDate = pUint(5)
+   p.Filter.UploadDate = 5
 }
 
 func (p *param) Video() {
-   p.Filter.Type = pUint(1)
+   p.Filter.Type = 1
 }
 
 func (p *param) Channel() {
-   p.Filter.Type = pUint(2)
+   p.Filter.Type = 2
 }
 
 func (p *param) Playlist() {
-   p.Filter.Type = pUint(3)
+   p.Filter.Type = 3
 }
 
 func (p *param) Movie() {
-   p.Filter.Type = pUint(4)
+   p.Filter.Type = 4
 }
 
 func (p *param) UnderFourMinutes() {
-   p.Filter.Duration = pUint(1)
+   p.Filter.Duration = 1
 }
 
 func (p *param) OverTwentyMinutes() {
-   p.Filter.Duration = pUint(2)
+   p.Filter.Duration = 2
 }
 
 func (p *param) FourToTwentyMinutes() {
-   p.Filter.Duration = pUint(3)
+   p.Filter.Duration = 3
 }
 
 func (p *param) HD() {
-   p.Filter.HD = pUint(1)
+   p.Filter.HD = 1
 }
 
 func (p *param) Subtitles() {
-   p.Filter.Subtitles = pUint(1)
+   p.Filter.Subtitles = 1
 }
 
 func (p *param) CreativeCommons() {
-   p.Filter.CreativeCommons = pUint(1)
+   p.Filter.CreativeCommons = 1
 }
 
 func (p *param) ThreeD() {
-   p.Filter.ThreeD = pUint(1)
+   p.Filter.ThreeD = 1
 }
 
 func (p *param) Live() {
-   p.Filter.Live = pUint(1)
+   p.Filter.Live = 1
 }
 
 func (p *param) Purchased() {
-   p.Filter.Purchased = pUint(1)
+   p.Filter.Purchased = 1
 }
 
 func (p *param) FourK() {
-   p.Filter.FourK = pUint(1)
+   p.Filter.FourK = 1
 }
 
 func (p *param) ThreeSixty() {
-   p.Filter.ThreeSixty = pUint(1)
+   p.Filter.ThreeSixty = 1
 }
 
 func (p *param) Location() {
-   p.Filter.Location = pUint(1)
+   p.Filter.Location = 1
 }
 
 func (p *param) HDR() {
-   p.Filter.HDR = pUint(1)
+   p.Filter.HDR = 1
 }
 
 func (p *param) VR180() {
-   p.Filter.VR180 = pUint(1)
+   p.Filter.VR180 = 1
 }
