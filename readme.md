@@ -101,17 +101,16 @@ install.
 
 Steven Penny
 
-## Issues
+## Watch, Custom, Issues
 
-- <https://github.com/Hexer10/youtube_explode_dart/issues>
-- https://github.com/adw0rd/instagrapi/issues
-- https://github.com/dilame/instagram-private-api/issues
-- https://github.com/gippy/instagram-scraper/issues
-- https://github.com/iawia002/annie/issues
-- https://github.com/iheanyi/bandcamp-dl/issues
-- https://github.com/instaloader/instaloader/issues
-- https://github.com/masterT/bandcamp-scraper/issues
-- https://github.com/nathom/streamrip/issues
-- https://github.com/pgrimaud/instagram-user-feed/issues
-- https://github.com/postaddictme/instagram-php-scraper/issues
-- https://github.com/ytdl-org/youtube-dl/issues
+- <https://github.com/Hexer10/youtube_explode_dart>
+- https://github.com/adw0rd/instagrapi
+- https://github.com/dilame/instagram-private-api
+- https://github.com/gippy/instagram-scraper
+- https://github.com/iheanyi/bandcamp-dl
+- https://github.com/instaloader/instaloader
+- https://github.com/masterT/bandcamp-scraper
+- https://github.com/nathom/streamrip
+- https://github.com/pgrimaud/instagram-user-feed
+- https://github.com/postaddictme/instagram-php-scraper
+- https://github.com/ytdl-org/youtube-dl
