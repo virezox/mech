@@ -48,6 +48,7 @@ func TestParam(t *testing.T) {
       if err != nil {
          t.Fatal(err)
       }
-      fmt.Print(each.key, "\n", s, "\n\n")
+      fmt.Println(each.key)
+      fmt.Print("youtube.com/results?search_query=hello&sp=", s, "\n\n")
    }
 }
