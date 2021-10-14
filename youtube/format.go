@@ -20,7 +20,7 @@ func numberFormat(val float64, met []string) string {
    if key >= len(met) {
       return ""
    }
-   return fmt.Sprintf("%.1f", val) + met[key]
+   return fmt.Sprintf("%.1f ", val) + met[key]
 }
 
 type Format struct {
@@ -43,8 +43,8 @@ func (f Format) Write(w io.Writer) error {
    for pos < f.ContentLength {
       bytes := fmt.Sprintf("bytes=%d-%d", pos, pos+chunk-1)
       req.Header.Set("Range", bytes)
-      end := time.Since(begin)
-      fmt.Printf("%d%% %v %v\n", 100*pos/f.ContentLength, bytes, end)
+      speed := newBitrate(pos, begin)
+      fmt.Printf("%d%% %v %v\n", 100*pos/f.ContentLength, bytes, speed)
       // this sometimes redirects, so cannot use http.Transport
       res, err := new(http.Client).Do(req)
       if err != nil {
@@ -105,14 +105,23 @@ func (f FormatSlice) Sort(less ...func(a, b Format) bool) {
 
 type bitrate int64
 
+func newBitrate(c contentLength, t time.Time) bitrate {
+   end := time.Since(t).Seconds()
+   if end == 0 {
+      return 0
+   }
+   speed := c / contentLength(end)
+   return bitrate(speed)
+}
+
 func (b bitrate) String() string {
-   met := []string{"", " kb/s", " mb/s", " gb/s"}
+   met := []string{"B/s", "kB/s", "MB/s", "GB/s"}
    return numberFormat(float64(b), met)
 }
 
 type contentLength int64
 
 func (c contentLength) String() string {
-   met := []string{"", " kB", " MB", " GB"}
+   met := []string{"B", "kB", "MB", "GB"}
    return numberFormat(float64(c), met)
 }

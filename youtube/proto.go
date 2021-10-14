@@ -30,7 +30,7 @@ func (p *Param) Channel() {
    p.Filter.Type = 2
 }
 
-// "EgIwAQ==
+// "EgIwAQ=="
 func (p *Param) CreativeCommons() {
    p.Filter.CreativeCommons = 1
 }
