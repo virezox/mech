@@ -1,0 +1,207 @@
+<smil xmlns="http://www.w3.org/2005/SMIL21/Language">
+<head>
+	<meta name="refreshToken" content="017c84928410d6517aee07acd26e2b2b60ea27fe7d1c19de3bb1c54d9fc828413b40e7004373"/>
+</head>
+<body>
+<seq>
+<par>
+	<video src="https://nbcmpx-vh.akamaihd.net/i/prod/video/1j7/mXg/9000199358/CEyiDynfCGvaJjdJ0uGUx/HD_TVE_SATURDAYNIGHTLIVE_10022021_V2_,35,783,483,300,185,86,0k.mp4.csmil/master.m3u8?hdnea=st=1634303789~exp=1634316419~acl=/i/prod/video/1j7/mXg/9000199358/CEyiDynfCGvaJjdJ0uGUx/HD_TVE_SATURDAYNIGHTLIVE_10022021_V2_*~id=aeaf2afd-7d1f-4eb5-897b-34692d3a2e4f~hmac=ede45c3095f92f4b03949f1989090cecb11bd7bd9c925631659c5c3b3bd9a662" title="October 2 - Owen Wilson" abstract="Owen Wilson hosts Saturday Night Live on October 2, 2021, with musical guest Kacey Musgraves." dur="3973570ms" guid="9000199358" categories="Series/Saturday Night Live" keywords="snl,Kacey Musgraves,saturday night live,Owen Wilson" ratings="urn%3Av-chip:tv-14" provider="NBC Entertainment" type="application/x-mpegURL" height="288" width="512" clipBegin="0:00" clipEnd="13:34.033">
+		<param name="airDate" value="1633215600000"/>
+		<param name="airOrder" value="1"/>
+		<param name="dayPart" value="Primetime"/>
+		<param name="entitlement" value="free"/>
+		<param name="episodeTmsId" value="EP000037101320"/>
+		<param name="externalAdvertiserId" value="NBC_VOD_9000199358"/>
+		<param name="fullEpisode" value="true"/>
+		<param name="permalink" value=""/>
+		<param name="primaryCategory[0]" value="Comedy"/>
+		<param name="programmingType" value="Full Episode"/>
+		<param name="seasonNumber" value="47"/>
+		<param name="seriesShortTitle" value="SNL"/>
+		<param name="seriesTmsId" value="SH000037100000"/>
+		<param name="shortTitle" value="October 2 - Owen Wilson"/>
+		<param name="tuneInTime" value="Saturdays 11:35/10:35c"/>
+	</video>
+	<textstream src="https://mpxstatic-nbcmpx.nbcuni.com/caption/397/15/TLVOD-0000079732-GTMV0000675247-102395_Text1.tt" lang="en" type="application/smptett+xml"/>
+	<textstream src="https://mpxstatic-nbcmpx.nbcuni.com/caption/397/15/TLVOD-0000079732-GTMV0000675247-102395_Text1__441712.tt" lang="en" type="application/smptett+xml"/>
+	<imagestream src="https://mpxstatic-nbcmpx.nbcuni.com/image/397/15/HD_TVE_SATURDAYNIGHTLIVE_10022021_V2_860k.fs" width="190" height="107" type="application/filmstrip+json"/>
+</par>
+<par>
+	<video src="https://nbcmpx-vh.akamaihd.net/i/prod/video/1j7/mXg/9000199358/CEyiDynfCGvaJjdJ0uGUx/HD_TVE_SATURDAYNIGHTLIVE_10022021_V2_,35,783,483,300,185,86,0k.mp4.csmil/master.m3u8?hdnea=st=1634303789~exp=1634316419~acl=/i/prod/video/1j7/mXg/9000199358/CEyiDynfCGvaJjdJ0uGUx/HD_TVE_SATURDAYNIGHTLIVE_10022021_V2_*~id=aeaf2afd-7d1f-4eb5-897b-34692d3a2e4f~hmac=ede45c3095f92f4b03949f1989090cecb11bd7bd9c925631659c5c3b3bd9a662" title="October 2 - Owen Wilson" abstract="Owen Wilson hosts Saturday Night Live on October 2, 2021, with musical guest Kacey Musgraves." dur="3973570ms" guid="9000199358" categories="Series/Saturday Night Live" keywords="snl,Kacey Musgraves,saturday night live,Owen Wilson" ratings="urn%3Av-chip:tv-14" provider="NBC Entertainment" type="application/x-mpegURL" height="288" width="512" clipBegin="13:34.033" clipEnd="25:11.033">
+		<param name="airDate" value="1633215600000"/>
+		<param name="airOrder" value="1"/>
+		<param name="dayPart" value="Primetime"/>
+		<param name="entitlement" value="free"/>
+		<param name="episodeTmsId" value="EP000037101320"/>
+		<param name="externalAdvertiserId" value="NBC_VOD_9000199358"/>
+		<param name="fullEpisode" value="true"/>
+		<param name="permalink" value=""/>
+		<param name="primaryCategory[0]" value="Comedy"/>
+		<param name="programmingType" value="Full Episode"/>
+		<param name="seasonNumber" value="47"/>
+		<param name="seriesShortTitle" value="SNL"/>
+		<param name="seriesTmsId" value="SH000037100000"/>
+		<param name="shortTitle" value="October 2 - Owen Wilson"/>
+		<param name="tuneInTime" value="Saturdays 11:35/10:35c"/>
+	</video>
+	<textstream src="https://mpxstatic-nbcmpx.nbcuni.com/caption/397/15/TLVOD-0000079732-GTMV0000675247-102395_Text1.tt" lang="en" type="application/smptett+xml"/>
+	<textstream src="https://mpxstatic-nbcmpx.nbcuni.com/caption/397/15/TLVOD-0000079732-GTMV0000675247-102395_Text1__441712.tt" lang="en" type="application/smptett+xml"/>
+	<imagestream src="https://mpxstatic-nbcmpx.nbcuni.com/image/397/15/HD_TVE_SATURDAYNIGHTLIVE_10022021_V2_860k.fs" width="190" height="107" type="application/filmstrip+json"/>
+</par>
+<par>
+	<video src="https://nbcmpx-vh.akamaihd.net/i/prod/video/1j7/mXg/9000199358/CEyiDynfCGvaJjdJ0uGUx/HD_TVE_SATURDAYNIGHTLIVE_10022021_V2_,35,783,483,300,185,86,0k.mp4.csmil/master.m3u8?hdnea=st=1634303789~exp=1634316419~acl=/i/prod/video/1j7/mXg/9000199358/CEyiDynfCGvaJjdJ0uGUx/HD_TVE_SATURDAYNIGHTLIVE_10022021_V2_*~id=aeaf2afd-7d1f-4eb5-897b-34692d3a2e4f~hmac=ede45c3095f92f4b03949f1989090cecb11bd7bd9c925631659c5c3b3bd9a662" title="October 2 - Owen Wilson" abstract="Owen Wilson hosts Saturday Night Live on October 2, 2021, with musical guest Kacey Musgraves." dur="3973570ms" guid="9000199358" categories="Series/Saturday Night Live" keywords="snl,Kacey Musgraves,saturday night live,Owen Wilson" ratings="urn%3Av-chip:tv-14" provider="NBC Entertainment" type="application/x-mpegURL" height="288" width="512" clipBegin="25:11.033" clipEnd="31:44.033">
+		<param name="airDate" value="1633215600000"/>
+		<param name="airOrder" value="1"/>
+		<param name="dayPart" value="Primetime"/>
+		<param name="entitlement" value="free"/>
+		<param name="episodeTmsId" value="EP000037101320"/>
+		<param name="externalAdvertiserId" value="NBC_VOD_9000199358"/>
+		<param name="fullEpisode" value="true"/>
+		<param name="permalink" value=""/>
+		<param name="primaryCategory[0]" value="Comedy"/>
+		<param name="programmingType" value="Full Episode"/>
+		<param name="seasonNumber" value="47"/>
+		<param name="seriesShortTitle" value="SNL"/>
+		<param name="seriesTmsId" value="SH000037100000"/>
+		<param name="shortTitle" value="October 2 - Owen Wilson"/>
+		<param name="tuneInTime" value="Saturdays 11:35/10:35c"/>
+	</video>
+	<textstream src="https://mpxstatic-nbcmpx.nbcuni.com/caption/397/15/TLVOD-0000079732-GTMV0000675247-102395_Text1.tt" lang="en" type="application/smptett+xml"/>
+	<textstream src="https://mpxstatic-nbcmpx.nbcuni.com/caption/397/15/TLVOD-0000079732-GTMV0000675247-102395_Text1__441712.tt" lang="en" type="application/smptett+xml"/>
+	<imagestream src="https://mpxstatic-nbcmpx.nbcuni.com/image/397/15/HD_TVE_SATURDAYNIGHTLIVE_10022021_V2_860k.fs" width="190" height="107" type="application/filmstrip+json"/>
+</par>
+<par>
+	<video src="https://nbcmpx-vh.akamaihd.net/i/prod/video/1j7/mXg/9000199358/CEyiDynfCGvaJjdJ0uGUx/HD_TVE_SATURDAYNIGHTLIVE_10022021_V2_,35,783,483,300,185,86,0k.mp4.csmil/master.m3u8?hdnea=st=1634303789~exp=1634316419~acl=/i/prod/video/1j7/mXg/9000199358/CEyiDynfCGvaJjdJ0uGUx/HD_TVE_SATURDAYNIGHTLIVE_10022021_V2_*~id=aeaf2afd-7d1f-4eb5-897b-34692d3a2e4f~hmac=ede45c3095f92f4b03949f1989090cecb11bd7bd9c925631659c5c3b3bd9a662" title="October 2 - Owen Wilson" abstract="Owen Wilson hosts Saturday Night Live on October 2, 2021, with musical guest Kacey Musgraves." dur="3973570ms" guid="9000199358" categories="Series/Saturday Night Live" keywords="snl,Kacey Musgraves,saturday night live,Owen Wilson" ratings="urn%3Av-chip:tv-14" provider="NBC Entertainment" type="application/x-mpegURL" height="288" width="512" clipBegin="31:44.033" clipEnd="35:01.100">
+		<param name="airDate" value="1633215600000"/>
+		<param name="airOrder" value="1"/>
+		<param name="dayPart" value="Primetime"/>
+		<param name="entitlement" value="free"/>
+		<param name="episodeTmsId" value="EP000037101320"/>
+		<param name="externalAdvertiserId" value="NBC_VOD_9000199358"/>
+		<param name="fullEpisode" value="true"/>
+		<param name="permalink" value=""/>
+		<param name="primaryCategory[0]" value="Comedy"/>
+		<param name="programmingType" value="Full Episode"/>
+		<param name="seasonNumber" value="47"/>
+		<param name="seriesShortTitle" value="SNL"/>
+		<param name="seriesTmsId" value="SH000037100000"/>
+		<param name="shortTitle" value="October 2 - Owen Wilson"/>
+		<param name="tuneInTime" value="Saturdays 11:35/10:35c"/>
+	</video>
+	<textstream src="https://mpxstatic-nbcmpx.nbcuni.com/caption/397/15/TLVOD-0000079732-GTMV0000675247-102395_Text1.tt" lang="en" type="application/smptett+xml"/>
+	<textstream src="https://mpxstatic-nbcmpx.nbcuni.com/caption/397/15/TLVOD-0000079732-GTMV0000675247-102395_Text1__441712.tt" lang="en" type="application/smptett+xml"/>
+	<imagestream src="https://mpxstatic-nbcmpx.nbcuni.com/image/397/15/HD_TVE_SATURDAYNIGHTLIVE_10022021_V2_860k.fs" width="190" height="107" type="application/filmstrip+json"/>
+</par>
+<par>
+	<video src="https://nbcmpx-vh.akamaihd.net/i/prod/video/1j7/mXg/9000199358/CEyiDynfCGvaJjdJ0uGUx/HD_TVE_SATURDAYNIGHTLIVE_10022021_V2_,35,783,483,300,185,86,0k.mp4.csmil/master.m3u8?hdnea=st=1634303789~exp=1634316419~acl=/i/prod/video/1j7/mXg/9000199358/CEyiDynfCGvaJjdJ0uGUx/HD_TVE_SATURDAYNIGHTLIVE_10022021_V2_*~id=aeaf2afd-7d1f-4eb5-897b-34692d3a2e4f~hmac=ede45c3095f92f4b03949f1989090cecb11bd7bd9c925631659c5c3b3bd9a662" title="October 2 - Owen Wilson" abstract="Owen Wilson hosts Saturday Night Live on October 2, 2021, with musical guest Kacey Musgraves." dur="3973570ms" guid="9000199358" categories="Series/Saturday Night Live" keywords="snl,Kacey Musgraves,saturday night live,Owen Wilson" ratings="urn%3Av-chip:tv-14" provider="NBC Entertainment" type="application/x-mpegURL" height="288" width="512" clipBegin="35:01.100" clipEnd="48:27.033">
+		<param name="airDate" value="1633215600000"/>
+		<param name="airOrder" value="1"/>
+		<param name="dayPart" value="Primetime"/>
+		<param name="entitlement" value="free"/>
+		<param name="episodeTmsId" value="EP000037101320"/>
+		<param name="externalAdvertiserId" value="NBC_VOD_9000199358"/>
+		<param name="fullEpisode" value="true"/>
+		<param name="permalink" value=""/>
+		<param name="primaryCategory[0]" value="Comedy"/>
+		<param name="programmingType" value="Full Episode"/>
+		<param name="seasonNumber" value="47"/>
+		<param name="seriesShortTitle" value="SNL"/>
+		<param name="seriesTmsId" value="SH000037100000"/>
+		<param name="shortTitle" value="October 2 - Owen Wilson"/>
+		<param name="tuneInTime" value="Saturdays 11:35/10:35c"/>
+	</video>
+	<textstream src="https://mpxstatic-nbcmpx.nbcuni.com/caption/397/15/TLVOD-0000079732-GTMV0000675247-102395_Text1.tt" lang="en" type="application/smptett+xml"/>
+	<textstream src="https://mpxstatic-nbcmpx.nbcuni.com/caption/397/15/TLVOD-0000079732-GTMV0000675247-102395_Text1__441712.tt" lang="en" type="application/smptett+xml"/>
+	<imagestream src="https://mpxstatic-nbcmpx.nbcuni.com/image/397/15/HD_TVE_SATURDAYNIGHTLIVE_10022021_V2_860k.fs" width="190" height="107" type="application/filmstrip+json"/>
+</par>
+<par>
+	<video src="https://nbcmpx-vh.akamaihd.net/i/prod/video/1j7/mXg/9000199358/CEyiDynfCGvaJjdJ0uGUx/HD_TVE_SATURDAYNIGHTLIVE_10022021_V2_,35,783,483,300,185,86,0k.mp4.csmil/master.m3u8?hdnea=st=1634303789~exp=1634316419~acl=/i/prod/video/1j7/mXg/9000199358/CEyiDynfCGvaJjdJ0uGUx/HD_TVE_SATURDAYNIGHTLIVE_10022021_V2_*~id=aeaf2afd-7d1f-4eb5-897b-34692d3a2e4f~hmac=ede45c3095f92f4b03949f1989090cecb11bd7bd9c925631659c5c3b3bd9a662" title="October 2 - Owen Wilson" abstract="Owen Wilson hosts Saturday Night Live on October 2, 2021, with musical guest Kacey Musgraves." dur="3973570ms" guid="9000199358" categories="Series/Saturday Night Live" keywords="snl,Kacey Musgraves,saturday night live,Owen Wilson" ratings="urn%3Av-chip:tv-14" provider="NBC Entertainment" type="application/x-mpegURL" height="288" width="512" clipBegin="48:27.033" clipEnd="52:26.033">
+		<param name="airDate" value="1633215600000"/>
+		<param name="airOrder" value="1"/>
+		<param name="dayPart" value="Primetime"/>
+		<param name="entitlement" value="free"/>
+		<param name="episodeTmsId" value="EP000037101320"/>
+		<param name="externalAdvertiserId" value="NBC_VOD_9000199358"/>
+		<param name="fullEpisode" value="true"/>
+		<param name="permalink" value=""/>
+		<param name="primaryCategory[0]" value="Comedy"/>
+		<param name="programmingType" value="Full Episode"/>
+		<param name="seasonNumber" value="47"/>
+		<param name="seriesShortTitle" value="SNL"/>
+		<param name="seriesTmsId" value="SH000037100000"/>
+		<param name="shortTitle" value="October 2 - Owen Wilson"/>
+		<param name="tuneInTime" value="Saturdays 11:35/10:35c"/>
+	</video>
+	<textstream src="https://mpxstatic-nbcmpx.nbcuni.com/caption/397/15/TLVOD-0000079732-GTMV0000675247-102395_Text1.tt" lang="en" type="application/smptett+xml"/>
+	<textstream src="https://mpxstatic-nbcmpx.nbcuni.com/caption/397/15/TLVOD-0000079732-GTMV0000675247-102395_Text1__441712.tt" lang="en" type="application/smptett+xml"/>
+	<imagestream src="https://mpxstatic-nbcmpx.nbcuni.com/image/397/15/HD_TVE_SATURDAYNIGHTLIVE_10022021_V2_860k.fs" width="190" height="107" type="application/filmstrip+json"/>
+</par>
+<par>
+	<video src="https://nbcmpx-vh.akamaihd.net/i/prod/video/1j7/mXg/9000199358/CEyiDynfCGvaJjdJ0uGUx/HD_TVE_SATURDAYNIGHTLIVE_10022021_V2_,35,783,483,300,185,86,0k.mp4.csmil/master.m3u8?hdnea=st=1634303789~exp=1634316419~acl=/i/prod/video/1j7/mXg/9000199358/CEyiDynfCGvaJjdJ0uGUx/HD_TVE_SATURDAYNIGHTLIVE_10022021_V2_*~id=aeaf2afd-7d1f-4eb5-897b-34692d3a2e4f~hmac=ede45c3095f92f4b03949f1989090cecb11bd7bd9c925631659c5c3b3bd9a662" title="October 2 - Owen Wilson" abstract="Owen Wilson hosts Saturday Night Live on October 2, 2021, with musical guest Kacey Musgraves." dur="3973570ms" guid="9000199358" categories="Series/Saturday Night Live" keywords="snl,Kacey Musgraves,saturday night live,Owen Wilson" ratings="urn%3Av-chip:tv-14" provider="NBC Entertainment" type="application/x-mpegURL" height="288" width="512" clipBegin="52:26.033" clipEnd="55:23.033">
+		<param name="airDate" value="1633215600000"/>
+		<param name="airOrder" value="1"/>
+		<param name="dayPart" value="Primetime"/>
+		<param name="entitlement" value="free"/>
+		<param name="episodeTmsId" value="EP000037101320"/>
+		<param name="externalAdvertiserId" value="NBC_VOD_9000199358"/>
+		<param name="fullEpisode" value="true"/>
+		<param name="permalink" value=""/>
+		<param name="primaryCategory[0]" value="Comedy"/>
+		<param name="programmingType" value="Full Episode"/>
+		<param name="seasonNumber" value="47"/>
+		<param name="seriesShortTitle" value="SNL"/>
+		<param name="seriesTmsId" value="SH000037100000"/>
+		<param name="shortTitle" value="October 2 - Owen Wilson"/>
+		<param name="tuneInTime" value="Saturdays 11:35/10:35c"/>
+	</video>
+	<textstream src="https://mpxstatic-nbcmpx.nbcuni.com/caption/397/15/TLVOD-0000079732-GTMV0000675247-102395_Text1.tt" lang="en" type="application/smptett+xml"/>
+	<textstream src="https://mpxstatic-nbcmpx.nbcuni.com/caption/397/15/TLVOD-0000079732-GTMV0000675247-102395_Text1__441712.tt" lang="en" type="application/smptett+xml"/>
+	<imagestream src="https://mpxstatic-nbcmpx.nbcuni.com/image/397/15/HD_TVE_SATURDAYNIGHTLIVE_10022021_V2_860k.fs" width="190" height="107" type="application/filmstrip+json"/>
+</par>
+<par>
+	<video src="https://nbcmpx-vh.akamaihd.net/i/prod/video/1j7/mXg/9000199358/CEyiDynfCGvaJjdJ0uGUx/HD_TVE_SATURDAYNIGHTLIVE_10022021_V2_,35,783,483,300,185,86,0k.mp4.csmil/master.m3u8?hdnea=st=1634303789~exp=1634316419~acl=/i/prod/video/1j7/mXg/9000199358/CEyiDynfCGvaJjdJ0uGUx/HD_TVE_SATURDAYNIGHTLIVE_10022021_V2_*~id=aeaf2afd-7d1f-4eb5-897b-34692d3a2e4f~hmac=ede45c3095f92f4b03949f1989090cecb11bd7bd9c925631659c5c3b3bd9a662" title="October 2 - Owen Wilson" abstract="Owen Wilson hosts Saturday Night Live on October 2, 2021, with musical guest Kacey Musgraves." dur="3973570ms" guid="9000199358" categories="Series/Saturday Night Live" keywords="snl,Kacey Musgraves,saturday night live,Owen Wilson" ratings="urn%3Av-chip:tv-14" provider="NBC Entertainment" type="application/x-mpegURL" height="288" width="512" clipBegin="55:23.033" clipEnd="59:14.033">
+		<param name="airDate" value="1633215600000"/>
+		<param name="airOrder" value="1"/>
+		<param name="dayPart" value="Primetime"/>
+		<param name="entitlement" value="free"/>
+		<param name="episodeTmsId" value="EP000037101320"/>
+		<param name="externalAdvertiserId" value="NBC_VOD_9000199358"/>
+		<param name="fullEpisode" value="true"/>
+		<param name="permalink" value=""/>
+		<param name="primaryCategory[0]" value="Comedy"/>
+		<param name="programmingType" value="Full Episode"/>
+		<param name="seasonNumber" value="47"/>
+		<param name="seriesShortTitle" value="SNL"/>
+		<param name="seriesTmsId" value="SH000037100000"/>
+		<param name="shortTitle" value="October 2 - Owen Wilson"/>
+		<param name="tuneInTime" value="Saturdays 11:35/10:35c"/>
+	</video>
+	<textstream src="https://mpxstatic-nbcmpx.nbcuni.com/caption/397/15/TLVOD-0000079732-GTMV0000675247-102395_Text1.tt" lang="en" type="application/smptett+xml"/>
+	<textstream src="https://mpxstatic-nbcmpx.nbcuni.com/caption/397/15/TLVOD-0000079732-GTMV0000675247-102395_Text1__441712.tt" lang="en" type="application/smptett+xml"/>
+	<imagestream src="https://mpxstatic-nbcmpx.nbcuni.com/image/397/15/HD_TVE_SATURDAYNIGHTLIVE_10022021_V2_860k.fs" width="190" height="107" type="application/filmstrip+json"/>
+</par>
+<par>
+	<video src="https://nbcmpx-vh.akamaihd.net/i/prod/video/1j7/mXg/9000199358/CEyiDynfCGvaJjdJ0uGUx/HD_TVE_SATURDAYNIGHTLIVE_10022021_V2_,35,783,483,300,185,86,0k.mp4.csmil/master.m3u8?hdnea=st=1634303789~exp=1634316419~acl=/i/prod/video/1j7/mXg/9000199358/CEyiDynfCGvaJjdJ0uGUx/HD_TVE_SATURDAYNIGHTLIVE_10022021_V2_*~id=aeaf2afd-7d1f-4eb5-897b-34692d3a2e4f~hmac=ede45c3095f92f4b03949f1989090cecb11bd7bd9c925631659c5c3b3bd9a662" title="October 2 - Owen Wilson" abstract="Owen Wilson hosts Saturday Night Live on October 2, 2021, with musical guest Kacey Musgraves." dur="3973570ms" guid="9000199358" categories="Series/Saturday Night Live" keywords="snl,Kacey Musgraves,saturday night live,Owen Wilson" ratings="urn%3Av-chip:tv-14" provider="NBC Entertainment" type="application/x-mpegURL" height="288" width="512" clipBegin="59:14.033">
+		<param name="airDate" value="1633215600000"/>
+		<param name="airOrder" value="1"/>
+		<param name="dayPart" value="Primetime"/>
+		<param name="entitlement" value="free"/>
+		<param name="episodeTmsId" value="EP000037101320"/>
+		<param name="externalAdvertiserId" value="NBC_VOD_9000199358"/>
+		<param name="fullEpisode" value="true"/>
+		<param name="permalink" value=""/>
+		<param name="primaryCategory[0]" value="Comedy"/>
+		<param name="programmingType" value="Full Episode"/>
+		<param name="seasonNumber" value="47"/>
+		<param name="seriesShortTitle" value="SNL"/>
+		<param name="seriesTmsId" value="SH000037100000"/>
+		<param name="shortTitle" value="October 2 - Owen Wilson"/>
+		<param name="tuneInTime" value="Saturdays 11:35/10:35c"/>
+	</video>
+	<textstream src="https://mpxstatic-nbcmpx.nbcuni.com/caption/397/15/TLVOD-0000079732-GTMV0000675247-102395_Text1.tt" lang="en" type="application/smptett+xml"/>
+	<textstream src="https://mpxstatic-nbcmpx.nbcuni.com/caption/397/15/TLVOD-0000079732-GTMV0000675247-102395_Text1__441712.tt" lang="en" type="application/smptett+xml"/>
+	<imagestream src="https://mpxstatic-nbcmpx.nbcuni.com/image/397/15/HD_TVE_SATURDAYNIGHTLIVE_10022021_V2_860k.fs" width="190" height="107" type="application/filmstrip+json"/>
+</par>
+</seq>
+</body>
+</smil>
