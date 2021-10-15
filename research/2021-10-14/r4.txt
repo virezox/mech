@@ -1,0 +1,12 @@
+
+[ThePlatform] 9000199358: Downloading m3u8 information
+GET /i/prod/video/1j7/mXg/9000199358/CEyiDynfCGvaJjdJ0uGUx/HD_TVE_SATURDAYNIGHTLIVE_10022021_V2_,185,783,483,300,86,35,0k.mp4.csmil/master.m3u8?hdnea=st=1634267857~exp=1634280487~acl=/i/prod/video/1j7/mXg/9000199358/CEyiDynfCGvaJjdJ0uGUx/HD_TVE_SATURDAYNIGHTLIVE_10022021_V2_*~id=4720ba91-93f5-409b-b5ce-1dfc38d1db99~hmac=f0ece90bce58633b57d4e52f07266e75076d5c001de310838bc78718a69f1622 HTTP/1.1
+Host: nbcmpx-vh.akamaihd.net
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.9 Safari/537.36
+Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.7
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Encoding: gzip, deflate
+Accept-Language: en-us,en;q=0.5
+Connection: close
+
+

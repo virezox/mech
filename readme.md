@@ -10,7 +10,7 @@
 >
 > [Syriana (2005)](//f002.backblazeb2.com/file/ql8mlh/Syriana.2005.mp4)
 
-Download media and API connections
+Download media or send API requests
 
 Some users might want to make anonymous requests, because of privacy or any
 number of other reasons. This module allows people to do that. Most API these
