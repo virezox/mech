@@ -10,7 +10,7 @@
 >
 > [Syriana (2005)](//f002.backblazeb2.com/file/ql8mlh/Syriana.2005.mp4)
 
-Anonymous API access
+Download media and API connections
 
 Some users might want to make anonymous requests, because of privacy or any
 number of other reasons. This module allows people to do that. Most API these
@@ -24,18 +24,6 @@ So why can you do that with HTML, but not with the API? Well you can, using this
 module.
 
 https://godocs.io/github.com/89z/mech
-
-## Sites
-
-- Bandcamp
-- Google Play
-- Instagram
-- MusicBrainz
-- Reddit
-- SoundCloud
-- Spotify
-- Vimeo
-- YouTube
 
 ## Deezer
 
@@ -103,14 +91,25 @@ Steven Penny
 
 ## Watch, Custom, Issues
 
-- <https://github.com/Hexer10/youtube_explode_dart>
+Bandcamp:
+
+- https://github.com/iheanyi/bandcamp-dl
+- https://github.com/masterT/bandcamp-scraper
+
+Instagram:
+
 - https://github.com/adw0rd/instagrapi
 - https://github.com/dilame/instagram-private-api
 - https://github.com/gippy/instagram-scraper
-- https://github.com/iheanyi/bandcamp-dl
 - https://github.com/instaloader/instaloader
-- https://github.com/masterT/bandcamp-scraper
-- https://github.com/nathom/streamrip
 - https://github.com/pgrimaud/instagram-user-feed
 - https://github.com/postaddictme/instagram-php-scraper
+
+SoundCloud:
+
+https://github.com/nathom/streamrip
+
+YouTube:
+
+- <https://github.com/Hexer10/youtube_explode_dart>
 - https://github.com/ytdl-org/youtube-dl

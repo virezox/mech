@@ -2,11 +2,11 @@ package main
 
 import (
    "bytes"
-   "fmt"
    "github.com/89z/mech"
    "io"
    "net/http"
    "net/url"
+   "os"
    "strings"
 )
 
@@ -25,7 +25,12 @@ func main() {
    if err != nil {
       panic(err)
    }
-   fmt.Printf("%q\n", data)
+   f, err := os.Create("details.txt")
+   if err != nil {
+      panic(err)
+   }
+   defer f.Close()
+   f.Write(data)
 }
 
 const Origin = "https://android.clients.google.com"
