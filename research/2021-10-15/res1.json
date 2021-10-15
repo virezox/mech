@@ -1,0 +1,24 @@
+{
+  "data": {
+    "bonanzaPage": {
+      "metadata": {
+        "description": "Owen Wilson hosts Saturday Night Live on October 2, 2021, with musical guest Kacey Musgraves.",
+        "episodeNumber": "1",
+        "keywords": [
+          "SNL",
+          "Kacey Musgraves",
+          "Saturday Night Live",
+          "Owen Wilson"
+        ],
+        "locked": false,
+        "mpxAccountId": "2410887629",
+        "mpxGuid": "9000199358",
+        "rating": "TV-14",
+        "resourceId": "nbcentertainment",
+        "seasonNumber": "47",
+        "secondaryTitle": "October 2 - Owen Wilson",
+        "seriesShortTitle": "Saturday Night Live"
+      }
+    }
+  }
+}
