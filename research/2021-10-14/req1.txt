@@ -1,9 +1,3 @@
 GET /v2/graphql?query=query+bonanzaPage%28%0A++%24app%3A+NBCUBrands%21+%3D+nbc%0A++%24name%3A+String%21%0A++%24oneApp%3A+Boolean%0A++%24platform%3A+SupportedPlatforms%21+%3D+web%0A++%24type%3A+EntityPageType%21+%3D+VIDEO%0A++%24userId%3A+String%21%0A%29+%7B%0A++bonanzaPage%28%0A++++app%3A+%24app%0A++++name%3A+%24name%0A++++oneApp%3A+%24oneApp%0A++++platform%3A+%24platform%0A++++type%3A+%24type%0A++++userId%3A+%24userId%0A++%29+%7B%0A++++metadata+%7B%0A++++++...+on+VideoPageData+%7B%0A++++++++description%0A++++++++episodeNumber%0A++++++++keywords%0A++++++++locked%0A++++++++mpxAccountId%0A++++++++mpxGuid%0A++++++++rating%0A++++++++resourceId%0A++++++++seasonNumber%0A++++++++secondaryTitle%0A++++++++seriesShortTitle%0A++++++%7D%0A++++%7D%0A++%7D%0A%7D&variables=%7B%22name%22%3A+%22http%3A%2F%2Fwww.nbc.com%2Fsaturday-night-live%2Fvideo%2Foctober-2-owen-wilson%2F9000199358%22%2C+%22oneApp%22%3A+true%2C+%22userId%22%3A+%220%22%7D HTTP/1.1
 Host: friendship.nbc.co
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.9 Safari/537.36
-Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.7
-Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
-Accept-Encoding: gzip, deflate
-Accept-Language: en-us,en;q=0.5
-Connection: close
 

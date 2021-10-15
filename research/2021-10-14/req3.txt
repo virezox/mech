@@ -1,0 +1,3 @@
+GET /s/NnzsPC/media/guid/2410887629/9000199358?mbr=true&manifest=m3u&format=SMIL HTTP/1.1
+Host: link.theplatform.com
+

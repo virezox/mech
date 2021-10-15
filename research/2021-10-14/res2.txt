@@ -1,0 +1,101 @@
+{
+	"$xmlns": {
+		"nbcu": "http://xml.nbcuni.com/tve/field"
+	},
+	"adPolicy": null,
+	"author": "",
+	"captions": [
+		{
+			"type": "application/smptett+xml",
+			"lang": "en",
+			"closedCaptions": false,
+			"src": "https://mpxstatic-nbcmpx.nbcuni.com/caption/397/15/TLVOD-0000079732-GTMV0000675247-102395_Text1.tt"
+		},
+		{
+			"type": "application/smptett+xml",
+			"lang": "en",
+			"closedCaptions": false,
+			"src": "https://mpxstatic-nbcmpx.nbcuni.com/caption/397/15/TLVOD-0000079732-GTMV0000675247-102395_Text1__441712.tt"
+		}
+	],
+	"categories": [
+		{
+			"name": "Series/Saturday Night Live"
+		}
+	],
+	"chapters": [
+		{
+			"startTime": 0,
+			"endTime": 814033
+		},
+		{
+			"startTime": 814033,
+			"endTime": 1511033
+		},
+		{
+			"startTime": 1511033,
+			"endTime": 1904033
+		},
+		{
+			"startTime": 1904033,
+			"endTime": 2101100
+		},
+		{
+			"startTime": 2101100,
+			"endTime": 2907033
+		},
+		{
+			"startTime": 2907033,
+			"endTime": 3146033
+		},
+		{
+			"startTime": 3146033,
+			"endTime": 3323033
+		},
+		{
+			"startTime": 3323033,
+			"endTime": 3554033
+		},
+		{
+			"startTime": 3554033
+		}
+	],
+	"copyright": "",
+	"defaultThumbnailUrl": "https://mpxstatic-nbcmpx.nbcuni.com/image/397/15/SNL1806_S47E01_OwenWilson_20211002__636197.jpg",
+	"description": "Owen Wilson hosts Saturday Night Live on October 2, 2021, with musical guest Kacey Musgraves.",
+	"duration": 3973570,
+	"expression": "full",
+	"guid": "9000199358",
+	"keywords": "snl,Kacey Musgraves,saturday night live,Owen Wilson",
+	"id": "http://data.media.theplatform.com/media/data/Media/1957846595686",
+	"mediaPid": "DEFwDJCQMino",
+	"ownerId": "http://access.auth.theplatform.com/data/Account/2410887629",
+	"billingCode": "NBCU-COM",
+	"pid": "jUzY0qw3LRjj",
+	"provider": "NBC Entertainment",
+	"pubDate": 1633215600000,
+	"ratings": [
+		{
+			"scheme": "urn:v-chip",
+			"rating": "tv-14",
+			"subRatings": [
+			]
+		}
+	],
+	"title": "October 2 - Owen Wilson",
+	"nbcu$episodeTmsId": "EP000037101320",
+	"nbcu$airOrder": 1,
+	"nbcu$seriesShortTitle": "SNL",
+	"nbcu$fullEpisode": true,
+	"nbcu$tuneInTime": "Saturdays 11:35/10:35c",
+	"nbcu$primaryCategory": ["Comedy"],
+	"nbcu$dayPart": "Primetime",
+	"nbcu$externalAdvertiserId": "NBC_VOD_9000199358",
+	"nbcu$programmingType": "Full Episode",
+	"nbcu$shortTitle": "October 2 - Owen Wilson",
+	"nbcu$airDate": 1633215600000,
+	"nbcu$permalink": "",
+	"nbcu$seasonNumber": 47,
+	"nbcu$entitlement": "free",
+	"nbcu$seriesTmsId": "SH000037100000"
+}
