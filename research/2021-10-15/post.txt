@@ -1,0 +1,8 @@
+POST /v2/graphql HTTP/1.1
+Host: friendship.nbc.co
+Content-Type: application/json
+
+{
+   "extensions":{"persistedQuery":{"sha256Hash":"c594b18a26f54ad76a6d74f94f4e3d03a48db0615dfb9115f1f894a0b918dac2"}},
+   "variables":{"app":"nbc","name":"saturday-night-live/video/october-2-owen-wilson/9000199358","platform":"web","type":"VIDEO","userId":"2746124636930297065"}
+}

@@ -1,4 +1,0 @@
-GET /i/prod/video/1j7/mXg/9000199358/CEyiDynfCGvaJjdJ0uGUx/HD_TVE_SATURDAYNIGHTLIVE_10022021_V2_,185,783,483,300,86,35,0k.mp4.csmil/index_1_av.m3u8?null=0&id=AgBItRcmFy81YfDyaGGl3NjtcNaCFh6+fmwlBodz3fqvrLfZSL23EHhV5ddT2krYepBAD1Co6TTp9w%3d%3d&hdntl=exp=1634354288~acl=%2fi%2fprod%2fvideo%2f1j7%2fmXg%2f9000199358%2fCEyiDynfCGvaJjdJ0uGUx%2fHD_TVE_SATURDAYNIGHTLIVE_10022021_V2_*~data=hdntl~hmac=b01b784a50885f78d11b4ae56632d53e51762c6fd7dc38aae3178e98d37f94a6 HTTP/1.1
-Host: nbcmpx-vh.akamaihd.net
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.9 Safari/537.36
-
