@@ -1,4 +1,4 @@
-# October 15 2021
+# October 16 2021
 
 - https://github.com/ytdl-org/youtube-dl/issues/29191
 - https://www.nbc.com/saturday-night-live/video/october-2-owen-wilson/9000199358
@@ -83,39 +83,3 @@ https://api.nbc.com/v4.28.0/videos/63c301b6-5bd7-4f9f-97fb-536cf7c7a9ac
 
 Version 3 and 4 are in the HAR file.
 
-https://github.com/Fuzion24/JustTrustMe
-
-## Charles
-
-Method CONNECT
-
-## Burp Suite
-
-~~~
-Unable to Connect
-7.25.4
-7.0.0
-4.19.1
-4.18.1
-4.0.1
-~~~
-
-## HTTP Toolkit
-
-~~~
-4.19.1
-spin forever
-
-4.18.1
-NBC has stopped
-~~~
-
-## MITM Proxy
-
-~~~
-4.19.1
-Unable to Connect
-
-4.18.1
-Unable to Connect
-~~~

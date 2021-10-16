@@ -53,6 +53,20 @@ Then in Android Emulator, browse to:
 https://example.com
 ~~~
 
+Then with PowerShell, enter:
+
+~~~
+Get-NetIPAddress
+~~~
+
+Will look like this:
+
+~~~
+IPAddress         : 192.168.0.4
+InterfaceIndex    : 11
+InterfaceAlias    : Ethernet
+~~~
+
 Then in Android Emulator, change the proxy to your IP address [2], for example:
 
 ~~~

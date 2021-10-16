@@ -20,24 +20,9 @@ the **Your Virtual Devices** screen, click **Launch this AVD in the emulator**.
 
 If you need to configure a proxy, in the emulator click **More**. On the
 **Extended Controls** screen, click **Settings**, **Proxy**. Uncheck **Use
-Android Studio HTTP proxy settings**. Click **Manual proxy configuration**. To
-get IP address, you can use this with PowerShell:
-
-~~~
-Get-NetIPAddress
-~~~
-
-Will look like this:
-
-~~~
-IPAddress         : 192.168.0.4
-InterfaceIndex    : 11
-InterfaceAlias    : Ethernet
-~~~
-
-Enter IP address as **Host name**. For **Port number**, enter the number that
-your tool is using. Click **Apply**, and you should see **Proxy status
-Success**.
+Android Studio HTTP proxy settings**. Click **Manual proxy configuration**.
+Enter **Host name** and **Port number** as determined by the proxy program you
+are using. Click **Apply**, and you should see **Proxy status Success**.
 
 ## Uninstall
 
