@@ -1,0 +1,57 @@
+# Android Studio
+
+First download the package [1]. Start the program, and click **More Actions**,
+**AVD Manager**, **Create Virtual Device**.
+
+On the **Select Hardware** screen, click **Next**. On the **System Image**
+screen, click **x86 Images**. Find this entry:
+
+Release Name | API Level | ABI | Target
+-------------|-----------|-----|------------
+Nougat       | 24        | x86 | Google APIs
+
+and click **Download**. Then click **Next**. On the **Android Virtual Device**
+screen, click **Finish**. On the **Your Virtual Devices** screen, click
+**Launch this AVD in the emulator**.
+
+1. https://developer.android.com/studio#downloads
+
+## APK
+
+You can download APKs from different sites [1][2]. To install, drag file to
+emulator home screen.
+
+1. https://apkpure.com
+2. https://apkmirror.com
+
+## Proxy
+
+If you need to configure a proxy, in the emulator click **More**. On the
+**Extended Controls** screen, click **Settings**, **Proxy**. Uncheck **Use
+Android Studio HTTP proxy settings**. Click **Manual proxy configuration**. To
+get IP address, you can use this with PowerShell:
+
+~~~
+Get-NetIPAddress
+~~~
+
+Will look like this:
+
+~~~
+IPAddress         : 192.168.0.4
+InterfaceIndex    : 11
+InterfaceAlias    : Ethernet
+~~~
+
+Enter IP address has **Host name**. For **Port number**, enter the number that
+your tool is using. Click **Apply**, and you should see **Proxy status
+Success**.
+
+## Uninstall
+
+The two big folders are here:
+
+~~~
+C:\Users\Steven\.android
+C:\Users\Steven\AppData\Local\Android
+~~~
