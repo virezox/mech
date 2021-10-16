@@ -32,10 +32,9 @@ click **Export Certificate in DER format**. Then click **Next**. Save the file
 as `cacert.cer`. Drag the file to emulator home screen to copy. Then in
 emulator, open Settings App. Then click **Security**. Then click **Install from
 SD card**. Then click **Android SDK**. Then click **Download**. Then click
-`cacert.cer`. Under **Certificate name**, enter BURP, and click **OK**.
-
-Then in Burp Suite, click **Proxy** and **HTTP history**. In the emulator, open
-Google Chrome and browse to:
+`cacert.cer`. Under **Certificate name**, enter BURP, and click **OK**. Then in
+Burp Suite, click **Proxy** and **HTTP history**. In the emulator, open Google
+Chrome and browse to:
 
 ~~~
 https://example.com

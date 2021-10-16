@@ -16,14 +16,6 @@ the **Your Virtual Devices** screen, click **Launch this AVD in the emulator**.
 
 1. https://developer.android.com/studio#downloads
 
-## APK
-
-You can download APKs from different sites [1][2]. To install, drag file to
-emulator home screen.
-
-1. https://apkpure.com
-2. https://apkmirror.com
-
 ## Proxy
 
 If you need to configure a proxy, in the emulator click **More**. On the
