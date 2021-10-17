@@ -3,17 +3,17 @@
 Single image:
 
 ~~~
-CUV3UsjL1WM
+CU9ett-rP7I
 ~~~
 
-Multiple image:
+Single video:
 
 ~~~
-CT-cnxGhvvO
+CUDJ4YhpF0Z
 ~~~
 
-Video:
+Image and video:
 
 ~~~
-CUWBw4TM6Np
+CUK-1wjqqsP
 ~~~

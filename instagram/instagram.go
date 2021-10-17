@@ -29,7 +29,15 @@ func Valid(shortcode string) error {
 type Edge struct {
    Node struct {
       Display_URL string
+      Video_URL string
    }
+}
+
+func (e Edge) URL() string {
+   if e.Node.Video_URL != "" {
+      return e.Node.Video_URL
+   }
+   return e.Node.Display_URL
 }
 
 type Item struct {

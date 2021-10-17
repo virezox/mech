@@ -47,17 +47,20 @@ func ArtUrl(id, height int) string {
    return fmt.Sprintf("http://f4.bcbits.com/img/a%v_%v.jpg", id, hID)
 }
 
-// URL to track_id or album_id, anonymous
+// URL to type and ID, anonymous
 func Head(addr string) (byte, int, error) {
    req, err := http.NewRequest("HEAD", addr, nil)
    if err != nil {
       return 0, 0, err
    }
+   if req.URL.Path == "" {
+      req.URL.Path = "/music"
+   }
    res, err := mech.RoundTrip(req)
    if err != nil {
       return 0, 0, err
    }
-   reg := regexp.MustCompile(`nilZ0([at])(\d+)x`)
+   reg := regexp.MustCompile(`nilZ0([ait])(\d+)x`)
    for _, c := range res.Cookies() {
       if c.Name == "session" {
          // [nilZ0t2809477874x t 2809477874]

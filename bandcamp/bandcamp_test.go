@@ -7,14 +7,16 @@ import (
    "testing"
 )
 
+const id = 2809477874
+
 const (
-   addr = "https://schnaussandmunk.bandcamp.com/track/amaris-2"
-   id = 2809477874
+   band = "https://schnaussandmunk.bandcamp.com"
+   track = "https://schnaussandmunk.bandcamp.com/track/amaris-2"
 )
 
 func TestTrack(t *testing.T) {
    Verbose(true)
-   inf, err := NewInfo(addr)
+   inf, err := NewInfo(track)
    if err != nil {
       t.Fatal(err)
    }
@@ -33,7 +35,7 @@ func TestInfo(t *testing.T) {
    }
    q := req.URL.Query()
    q.Set("key", key)
-   q.Set("url", addr)
+   q.Set("url", track)
    req.URL.RawQuery = q.Encode()
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
@@ -45,13 +47,20 @@ func TestInfo(t *testing.T) {
 
 // 0.405s
 func TestHead(t *testing.T) {
-   req, err := http.NewRequest("HEAD", addr, nil)
+   Verbose(true)
+   typ, id, err := Head(band)
    if err != nil {
       t.Fatal(err)
    }
-   res, err := new(http.Transport).RoundTrip(req)
+   if typ != 'i' {
+      t.Fatal(typ)
+   }
+   if id != 3454424886 {
+      t.Fatal(id)
+   }
+   b, err := NewBand(id)
    if err != nil {
       t.Fatal(err)
    }
-   fmt.Println(res.Cookies())
+   fmt.Printf("%+v\n", b)
 }

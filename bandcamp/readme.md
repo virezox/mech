@@ -13,7 +13,7 @@ bandcamp.com/developer for updates.
 
 ## Resolve
 
-I found a workaround for this. You can make a request like this:
+For tracks and albums, you can make a request like this:
 
 ~~~
 HEAD /track/amaris-2 HTTP/1.1
@@ -23,20 +23,20 @@ Host: schnaussandmunk.bandcamp.com
 and in the response should be this:
 
 ~~~
-Set-Cookie: session=1 r:["nilZ0t2809477874x1633448962"]	t:1633448962; domain=.bandcamp.com; path=/; expires=Fri, 19 Nov 2021 15:49:22 -0000
+Set-Cookie: session=1 r:["nilZ0t2809477874x1633448962"]	t:1633448962
 ~~~
 
 In this case, `t` is the `tralbum_type` and `2809477874` is the `tralbum_id`.
-You can then try a request like this:
-
-<http://bandcamp.com/api/mobile/24/tralbum_details?tralbum_type=t&tralbum_id=2809477874>
-
-which will return error:
+You can then make a request like this:
 
 ~~~
-{"error_message":"band_id required","error":true}
+GET /api/mobile/24/tralbum_details?band_id=1&tralbum_type=t&tralbum_id=2809477874 HTTP/1.1
+Host: bandcamp.com
 ~~~
 
-You can fix it by just adding `band_id=1`:
+For bands, you can make a request like this:
 
-<http://bandcamp.com/api/mobile/24/tralbum_details?band_id=1&tralbum_type=t&tralbum_id=2809477874>
+~~~
+HEAD /music HTTP/1.1
+Host: schnaussandmunk.bandcamp.com
+~~~

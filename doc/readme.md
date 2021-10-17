@@ -9,18 +9,6 @@ drag to **App info**.
 1. https://apkpure.com
 2. https://apkmirror.com
 
-## Apps
-
-- https://apkpure.com/bandcamp/com.bandcamp.android
-- https://apkpure.com/google-play-store/com.android.vending
-- https://apkpure.com/instagram/com.instagram.android
-- https://apkpure.com/musicbrainz/org.metabrainz.android
-- https://apkpure.com/reddit/com.reddit.frontpage
-- https://apkpure.com/sound-cloud-android/com.soundcloud.android
-- https://apkpure.com/spotify-music-i/com.spotify.music
-- https://apkpure.com/vimeo/com.vimeo.android.videoapp
-- https://apkpure.com/youtube/com.google.android.youtube
-
 ## Mozilla Firefox
 
 Open a new tab. Click **Open menu**, **Web Developer**, **Network**. Then click

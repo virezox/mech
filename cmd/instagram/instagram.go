@@ -92,9 +92,9 @@ func main() {
       }
       return
    }
-   // download images
+   // download image and video
    for _, edge := range med.Edges() {
-      err := download(edge.Node.Display_URL)
+      err := download(edge.URL())
       if err != nil {
          panic(err)
       }

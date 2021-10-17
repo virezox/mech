@@ -1,9 +1,5 @@
 # Certificate pinning
 
-Use this APK as an example:
-
-https://apkpure.com/musicbrainz/org.metabrainz.android
-
 ## Stack Exchange
 
 Check questions, and ask question if need be:
