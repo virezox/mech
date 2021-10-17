@@ -40,3 +40,5 @@ For bands, you can make a request like this:
 HEAD /music HTTP/1.1
 Host: schnaussandmunk.bandcamp.com
 ~~~
+
+https://github.com/masterT/bandcamp-scraper/issues/59
