@@ -9,6 +9,12 @@ drag to **App info**.
 1. https://apkpure.com
 2. https://apkmirror.com
 
+## Java
+
+- https://adoptium.net
+- https://jdk.java.net
+- https://sap.github.io/SapMachine
+
 ## Mozilla Firefox
 
 Open a new tab. Click **Open menu**, **Web Developer**, **Network**. Then click
