@@ -114,6 +114,9 @@ func (l Login) Item(shortcode string) (*Item, error) {
 type Media struct {
    Shortcode_Media struct {
       Display_URL string
+      Edge_Media_Preview_Like struct {
+         Count int
+      }
       Edge_Sidecar_To_Children *struct {
          Edges []Edge
       }

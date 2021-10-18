@@ -8,9 +8,18 @@ import (
 
 const (
    appData = `C:\Users\Steven\AppData\Local\mech\instagram.json`
-   sidecar = "CT-cnxGhvvO"
+   like = "CUrAS88Pr1G"
    video = "CUWBw4TM6Np"
 )
+
+func TestLike(t *testing.T) {
+   Verbose(true)
+   m, err := GraphQL(like, nil)
+   if err != nil {
+      t.Fatal(err)
+   }
+   fmt.Printf("%+v\n", m)
+}
 
 func TestData(t *testing.T) {
    f, err := os.Open(appData)
@@ -23,7 +32,7 @@ func TestData(t *testing.T) {
       t.Fatal(err)
    }
    Verbose(true)
-   m, err := NewQuery(sidecar).Data(&auth)
+   m, err := NewQuery(like).Data(&auth)
    if err != nil {
       t.Fatal(err)
    }
@@ -46,23 +55,6 @@ func TestItem(t *testing.T) {
       t.Fatal(err)
    }
    fmt.Printf("%+v\n", i)
-}
-
-func TestRead(t *testing.T) {
-   f, err := os.Open(appData)
-   if err != nil {
-      t.Fatal(err)
-   }
-   defer f.Close()
-   var auth Login
-   if err := auth.Decode(f); err != nil {
-      t.Fatal(err)
-   }
-   m, err := GraphQL(sidecar, &auth)
-   if err != nil {
-      t.Fatal(err)
-   }
-   fmt.Printf("%+v\n", m)
 }
 
 func TestWrite(t *testing.T) {
