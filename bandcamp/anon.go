@@ -10,7 +10,10 @@ import (
    "time"
 )
 
-const ApiMobile = "http://bandcamp.com/api/mobile/24/tralbum_details"
+const (
+   MobileBand = "http://bandcamp.com/api/mobile/24/band_details"
+   MobileTralbum = "http://bandcamp.com/api/mobile/24/tralbum_details"
+)
 
 var Heights = map[int]int{
    100: 3,
@@ -65,6 +68,44 @@ func Head(addr string) (byte, int, error) {
    return 0, 0, fmt.Errorf("cookies %v", res.Cookies())
 }
 
+type Band struct {
+   Bandcamp_URL string
+   Discography []Item
+}
+
+// ID to Band. Request is anonymous.
+func NewBand(id int) (*Band, error) {
+   req, err := http.NewRequest("GET", MobileBand, nil)
+   if err != nil {
+      return nil, err
+   }
+   val := req.URL.Query()
+   val.Set("band_id", strconv.Itoa(id))
+   req.URL.RawQuery = val.Encode()
+   res, err := mech.RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   ban := new(Band)
+   if err := json.NewDecoder(res.Body).Decode(ban); err != nil {
+      return nil, err
+   }
+   return ban, nil
+}
+
+type Item struct {
+   Item_ID int
+   Item_Type string
+}
+
+func (i Item) Tralbum() (*Tralbum, error) {
+   if i.Item_Type == "" {
+      return nil, fmt.Errorf("%+v", i)
+   }
+   return NewTralbum(i.Item_Type[0], i.Item_ID)
+}
+
 // All fields available with Track and Album
 type Tralbum struct {
    Art_ID int
@@ -80,7 +121,7 @@ type Tralbum struct {
 
 // ID to Tralbum. Request is anonymous.
 func NewTralbum(typ byte, id int) (*Tralbum, error) {
-   req, err := http.NewRequest("GET", ApiMobile, nil)
+   req, err := http.NewRequest("GET", MobileTralbum, nil)
    if err != nil {
       return nil, err
    }

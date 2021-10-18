@@ -7,7 +7,7 @@ import (
 
 const band = "https://schnaussandmunk.bandcamp.com"
 
-func TestHead(t *testing.T) {
+func TestBand(t *testing.T) {
    Verbose(true)
    typ, id, err := Head(band)
    if err != nil {
@@ -23,5 +23,9 @@ func TestHead(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   fmt.Printf("%+v\n", b)
+   a, err := b.Discography[0].Tralbum()
+   if err != nil {
+      t.Fatal(err)
+   }
+   fmt.Printf("%+v\n", a)
 }

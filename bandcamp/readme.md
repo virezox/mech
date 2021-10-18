@@ -1,5 +1,9 @@
 # Bandcamp
 
+https://github.com/masterT/bandcamp-scraper/issues/59
+
+## Key
+
 ~~~
 Date: Fri, 17 Sep 2021 21:31:29 +0000
 From: Bandcamp Support <support@bandcamp.com>
@@ -40,5 +44,3 @@ For bands, you can make a request like this:
 HEAD /music HTTP/1.1
 Host: schnaussandmunk.bandcamp.com
 ~~~
-
-https://github.com/masterT/bandcamp-scraper/issues/59

@@ -39,4 +39,5 @@ https://github.com/nathom/streamrip
 YouTube:
 
 - <https://github.com/Hexer10/youtube_explode_dart>
+- https://github.com/kkdai/youtube
 - https://github.com/ytdl-org/youtube-dl
