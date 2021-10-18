@@ -22,28 +22,28 @@ Open a new tab. Click **Open menu**, **Web Developer**, **Network**. Then click
 browse to the page you want to capture. Once you are ready, click **Pause**,
 then click **Network Settings**, **Save All As HAR**.
 
-## Watch, Custom, Issues
+## Stack Exchange
 
-Bandcamp:
+Check questions, and ask question if need be:
 
-- https://github.com/iheanyi/bandcamp-dl
-- https://github.com/masterT/bandcamp-scraper
+https://android.stackexchange.com/search?q=certificate+pinning
 
-Instagram:
+## EdXposed
 
-- https://github.com/adw0rd/instagrapi
-- https://github.com/dilame/instagram-private-api
-- https://github.com/gippy/instagram-scraper
-- https://github.com/instaloader/instaloader
-- https://github.com/pgrimaud/instagram-user-feed
-- https://github.com/postaddictme/instagram-php-scraper
+- https://github.com/ElderDrivers/EdXposed
+- https://github.com/ViRb3/TrustMeAlready
 
-SoundCloud:
+First need to get Magisk:
 
-https://github.com/nathom/streamrip
+https://github.com/topjohnwu/Magisk
 
-YouTube:
+## APK MITM
 
-- <https://github.com/Hexer10/youtube_explode_dart>
-- https://github.com/kkdai/youtube
-- https://github.com/ytdl-org/youtube-dl
+CLI application that automatically removes certificate pinning from Android APK
+files:
+
+https://github.com/shroudedcode/apk-mitm/issues/72
+
+## JustTrustMe
+
+https://github.com/Fuzion24/JustTrustMe/issues/61

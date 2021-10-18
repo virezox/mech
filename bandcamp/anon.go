@@ -70,8 +70,8 @@ func NewBand(id int) (*Band, error) {
 }
 
 type Item struct {
-   Item_ID int
    Item_Type string
+   Item_ID int
 }
 
 // URL to Item. Request is anonymous.
@@ -96,7 +96,7 @@ func NewItem(addr string) (*Item, error) {
             id, err := strconv.Atoi(find[2])
             if err == nil {
                return &Item{
-                  id, find[1],
+                  find[1], id,
                }, nil
             }
          }

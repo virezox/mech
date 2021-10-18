@@ -14,6 +14,15 @@ start.
 1. https://github.com/httptoolkit/httptoolkit-desktop/releases
 2. https://github.com/httptoolkit/httptoolkit/issues/171
 
+## Certificate pinning
+
+https://httptoolkit.tech/blog/frida-certificate-pinning
+
 ## Is HTTP Toolkit open source?
 
 No.
+
+## Issues
+
+- https://github.com/httptoolkit/httptoolkit/issues/171
+- https://github.com/httptoolkit/httptoolkit/issues/192

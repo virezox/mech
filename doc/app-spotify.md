@@ -1,5 +1,5 @@
 # Spotify
 
-40.0 MB
+Size 40.0 MB.
 
 https://apkpure.com/spotify-music-i/com.spotify.music
