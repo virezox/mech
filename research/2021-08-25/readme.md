@@ -4,7 +4,7 @@ We can get the current Android version number here:
 
 https://apkpure.com/youtube/com.google.android.youtube
 
-do we really need Android?
+Do we really need Android? Yes.
 
 ~~~
 ANDROID 3
