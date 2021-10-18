@@ -106,8 +106,9 @@ func (f FormatSlice) Sort(less ...func(a, b Format) bool) {
 type bitrate int64
 
 func newBitrate(c contentLength, t time.Time) bitrate {
+   // this is float64
    end := time.Since(t).Seconds()
-   if end == 0 {
+   if end < 1 {
       return 0
    }
    speed := c / contentLength(end)

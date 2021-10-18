@@ -9,10 +9,10 @@ import (
 )
 
 const (
-   ApiAlbum = "http://bandcamp.com/api/album/2/info"
-   ApiBand = "http://bandcamp.com/api/band/1/info"
-   ApiTrack = "http://bandcamp.com/api/track/3/info"
-   ApiUrl = "http://bandcamp.com/api/url/2/info"
+   apiAlbum = "http://bandcamp.com/api/album/2/info"
+   apiBand = "http://bandcamp.com/api/band/1/info"
+   apiTrack = "http://bandcamp.com/api/track/3/info"
+   apiUrl = "http://bandcamp.com/api/url/2/info"
 )
 
 // thrjozkaskhjastaurrtygitylpt
@@ -27,7 +27,7 @@ type AlbumInfo struct {
 
 // ID to AlbumInfo. Request uses key.
 func NewAlbumInfo(id int) (*AlbumInfo, error) {
-   req, err := http.NewRequest("GET", ApiAlbum, nil)
+   req, err := http.NewRequest("GET", apiAlbum, nil)
    if err != nil {
       return nil, err
    }
@@ -58,7 +58,7 @@ type BandInfo struct {
 
 // ID to BandInfo. Request uses key.
 func NewBandInfo(id int) (*BandInfo, error) {
-   req, err := http.NewRequest("GET", ApiBand, nil)
+   req, err := http.NewRequest("GET", apiBand, nil)
    if err != nil {
       return nil, err
    }
@@ -86,7 +86,7 @@ type TrackInfo struct {
 
 // ID to TrackInfo. Request uses key.
 func NewTrackInfo(id int) (*TrackInfo, error) {
-   req, err := http.NewRequest("GET", ApiTrack, nil)
+   req, err := http.NewRequest("GET", apiTrack, nil)
    if err != nil {
       return nil, err
    }
@@ -114,7 +114,7 @@ type UrlInfo struct {
 
 // URL to UrlInfo. Request uses key.
 func NewUrlInfo(addr string) (*UrlInfo, error) {
-   req, err := http.NewRequest("GET", ApiUrl, nil)
+   req, err := http.NewRequest("GET", apiUrl, nil)
    if err != nil {
       return nil, err
    }
