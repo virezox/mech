@@ -39,36 +39,11 @@ func ArtUrl(id, height int) string {
    return fmt.Sprintf("http://f4.bcbits.com/img/a%v_%v.jpg", id, hID)
 }
 
-// URL to type and ID. Request is anonymous.
-func Head(addr string) (byte, int, error) {
-   req, err := http.NewRequest("HEAD", addr, nil)
-   if err != nil {
-      return 0, 0, err
-   }
-   if req.URL.Path == "" {
-      req.URL.Path = "/music"
-   }
-   res, err := mech.RoundTrip(req)
-   if err != nil {
-      return 0, 0, err
-   }
-   reg := regexp.MustCompile(`nilZ0([ait])(\d+)x`)
-   for _, c := range res.Cookies() {
-      if c.Name == "session" {
-         // [nilZ0t2809477874x t 2809477874]
-         find := reg.FindStringSubmatch(c.Value)
-         if find != nil {
-            id, err := strconv.Atoi(find[2])
-            if err == nil {
-               return find[1][0], id, nil
-            }
-         }
-      }
-   }
-   return 0, 0, fmt.Errorf("cookies %v", res.Cookies())
-}
-
 type Band struct {
+   Artists []struct {
+      ID int
+      Name string
+   }
    Bandcamp_URL string
    Discography []Item
 }
@@ -99,11 +74,61 @@ type Item struct {
    Item_Type string
 }
 
+// URL to Item. Request is anonymous.
+func NewItem(addr string) (*Item, error) {
+   req, err := http.NewRequest("HEAD", addr, nil)
+   if err != nil {
+      return nil, err
+   }
+   if req.URL.Path == "" {
+      req.URL.Path = "/music"
+   }
+   res, err := mech.RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   reg := regexp.MustCompile(`nilZ0([ait])(\d+)x`)
+   for _, c := range res.Cookies() {
+      if c.Name == "session" {
+         // [nilZ0t2809477874x t 2809477874]
+         find := reg.FindStringSubmatch(c.Value)
+         if find != nil {
+            id, err := strconv.Atoi(find[2])
+            if err == nil {
+               return &Item{
+                  id, find[1],
+               }, nil
+            }
+         }
+      }
+   }
+   return nil, fmt.Errorf("cookies %v", res.Cookies())
+}
+
+// Item to Tralbum. Request is anonymous.
 func (i Item) Tralbum() (*Tralbum, error) {
    if i.Item_Type == "" {
       return nil, fmt.Errorf("%+v", i)
    }
-   return NewTralbum(i.Item_Type[0], i.Item_ID)
+   req, err := http.NewRequest("GET", MobileTralbum, nil)
+   if err != nil {
+      return nil, err
+   }
+   val := req.URL.Query()
+   val.Set("band_id", "1")
+   val.Set("tralbum_id", strconv.Itoa(i.Item_ID))
+   val.Set("tralbum_type", i.Item_Type[:1])
+   req.URL.RawQuery = val.Encode()
+   res, err := mech.RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   tra := new(Tralbum)
+   if err := json.NewDecoder(res.Body).Decode(tra); err != nil {
+      return nil, err
+   }
+   return tra, nil
 }
 
 // All fields available with Track and Album
@@ -117,29 +142,6 @@ type Tralbum struct {
       }
    }
    Tralbum_Artist string
-}
-
-// ID to Tralbum. Request is anonymous.
-func NewTralbum(typ byte, id int) (*Tralbum, error) {
-   req, err := http.NewRequest("GET", MobileTralbum, nil)
-   if err != nil {
-      return nil, err
-   }
-   val := req.URL.Query()
-   val.Set("band_id", "1")
-   val.Set("tralbum_type", string(typ))
-   val.Set("tralbum_id", strconv.Itoa(id))
-   req.URL.RawQuery = val.Encode()
-   res, err := mech.RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   tra := new(Tralbum)
-   if err := json.NewDecoder(res.Body).Decode(tra); err != nil {
-      return nil, err
-   }
-   return tra, nil
 }
 
 func (t Tralbum) Unix() time.Time {

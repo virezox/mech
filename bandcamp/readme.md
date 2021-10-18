@@ -1,6 +1,7 @@
 # Bandcamp
 
-https://github.com/masterT/bandcamp-scraper/issues/59
+- <http://bandcamp.com/api/mobile/24/band_details?band_id=846803195>
+- https://github.com/masterT/bandcamp-scraper/issues/59
 
 ## Key
 

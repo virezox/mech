@@ -5,21 +5,19 @@ import (
    "testing"
 )
 
-const band = "https://schnaussandmunk.bandcamp.com"
+const label = "https://multiculti.bandcamp.com"
 
 func TestBand(t *testing.T) {
    Verbose(true)
-   typ, id, err := Head(band)
+   i, err := NewItem(label)
    if err != nil {
       t.Fatal(err)
    }
-   if typ != 'i' {
-      t.Fatal(typ)
+   l, err := NewBand(i.Item_ID)
+   if err != nil {
+      t.Fatal(err)
    }
-   if id != 3454424886 {
-      t.Fatal(id)
-   }
-   b, err := NewBand(id)
+   b, err := NewBand(l.Artists[0].ID)
    if err != nil {
       t.Fatal(err)
    }
