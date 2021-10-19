@@ -14,5 +14,11 @@ and extract archive. Then download Mech:
 
 https://github.com/89z/mech/archive/refs/heads/master.zip
 
-and extract archive. Then just navigate to `mech/cmd/youtube` and run
-`go build`.
+and extract archive. Then just navigate to `mech/cmd` and enter one of these:
+
+~~~
+go run darwin.go
+go run windows.go
+~~~
+
+https://freshman.tech/snippets/go/cross-compile-go-programs
