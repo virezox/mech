@@ -133,3 +133,10 @@ func NewUrlInfo(addr string) (*UrlInfo, error) {
    }
    return inf, nil
 }
+
+func (i UrlInfo) Tralbum() (*Tralbum, error) {
+   if i.Track_ID != 0 {
+      return NewTralbum('t', i.Track_ID)
+   }
+   return NewTralbum('a', i.Album_ID)
+}
