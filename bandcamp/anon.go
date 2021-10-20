@@ -34,7 +34,7 @@ var Heights = map[int]int{
 
 var Verbose = mech.Verbose
 
-func ArtUrl(id, height int) string {
+func ArtURL(id, height int) string {
    hID := Heights[height]
    return fmt.Sprintf("http://f4.bcbits.com/img/a%v_%v.jpg", id, hID)
 }

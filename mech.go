@@ -9,6 +9,13 @@ import (
    "os"
 )
 
+var extensions = map[string][]string{
+   "audio/mp4": {".m4a"},
+   "audio/webm": {".weba"},
+   "video/mp4": {".m4v", ".mp4", ".mp4v"},
+   "video/webm": {".webm"},
+}
+
 var verbose bool
 
 func Clean(r rune) rune {
@@ -18,15 +25,13 @@ func Clean(r rune) rune {
    return r
 }
 
-func Ext(typ string) (string, error) {
-   exts, err := mime.ExtensionsByType(typ)
+// github.com/golang/go/issues/22318
+func ExtensionsByType(typ string) ([]string, error) {
+   justType, _, err := mime.ParseMediaType(typ)
    if err != nil {
-      return "", err
+      return nil, err
    }
-   if exts == nil {
-      return "", fmt.Errorf("%q has no associated extension", typ)
-   }
-   return exts[0], nil
+   return extensions[justType], nil
 }
 
 func RoundTrip(req *http.Request) (*http.Response, error) {

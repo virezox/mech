@@ -58,12 +58,12 @@ type Player struct {
 
 var Key = Auth{"X-Goog-Api-Key", "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8"}
 
-func post(url string, head Auth, body youTubeI) (*http.Response, error) {
+func post(addr string, head Auth, body youTubeI) (*http.Response, error) {
    buf := new(bytes.Buffer)
    if err := json.NewEncoder(buf).Encode(body); err != nil {
       return nil, err
    }
-   req, err := http.NewRequest("POST", url, buf)
+   req, err := http.NewRequest("POST", addr, buf)
    if err != nil {
       return nil, err
    }

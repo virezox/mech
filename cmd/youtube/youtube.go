@@ -133,11 +133,14 @@ func getInfo(id string) error {
 }
 
 func download(p *youtube.Player, f youtube.Format) error {
-   ext, err := mech.Ext(f.MimeType)
+   exts, err := mech.ExtensionsByType(f.MimeType)
    if err != nil {
       return err
    }
-   name := p.Author() + "-" + p.Title() + ext
+   if exts == nil {
+      return fmt.Errorf("extensionsByType %q", f.MimeType)
+   }
+   name := p.Author() + "-" + p.Title() + exts[0]
    file, err := os.Create(strings.Map(mech.Clean, name))
    if err != nil {
       return err

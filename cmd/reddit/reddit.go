@@ -18,11 +18,14 @@ func download(link *reddit.Link, base, typ string) error {
       return err
    }
    defer res.Body.Close()
-   ext, err := mech.Ext(typ)
+   exts, err := mech.ExtensionsByType(typ)
    if err != nil {
       return err
    }
-   name := link.Subreddit + "-" + link.Title + ext
+   if exts == nil {
+      return fmt.Errorf("extensionsByType %q", typ)
+   }
+   name := link.Subreddit + "-" + link.Title + exts[0]
    file, err := os.Create(strings.Map(mech.Clean, name))
    if err != nil {
       return err

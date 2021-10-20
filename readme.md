@@ -25,6 +25,32 @@ module.
 
 https://godocs.io/github.com/89z/mech
 
+## How to build?
+
+Check here first:
+
+https://github.com/89z/mech/releases
+
+I dont do a build for every tag, but some tags will have builds available. If
+you need a newer build, and cant build yourself for some reason, comment on this
+thread:
+
+https://github.com/89z/mech/issues/7
+
+To build yourself, download Go from here:
+
+https://golang.org/dl
+
+and extract archive. Then download Mech:
+
+https://github.com/89z/mech/archive/refs/heads/master.zip
+
+and extract archive. Then navigate to `mech-master/cmd/youtube`, and enter:
+
+~~~
+go build
+~~~
+
 ## Deezer
 
 I have an implementation here:
