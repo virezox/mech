@@ -1,14 +1,11 @@
 # Mech
 
-> When I was your age, in Pakistan, there was always in the distance,
-> snow-covered mountains.
+> Listen, um, I don’t really know what’s going on here, but I’m leaving. I
+> don’t know where exactly, but I’m gonna start over.
 >
-> Yes, I know, Papa.
+> Come with me. Please.
 >
-> That’s right. Three hours away, but right there. Across the entire sky, like
-> you could reach out and touch them. Snow-covered mountains.
->
-> [Syriana (2005)](//f002.backblazeb2.com/file/ql8mlh/Syriana.2005.mp4)
+> [Paint it Black (2016)][1]
 
 Download media or send API requests
 
@@ -70,3 +67,5 @@ However I have removed it for now, as I am busy with other stuff.
 ## Author
 
 Steven Penny
+
+[1]://f002.backblazeb2.com/file/ql8mlh/Paint.It.Black.2016.mp4
