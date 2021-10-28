@@ -1,5 +1,5 @@
-github.com/89z/parse v1.4.2 h1:O8Pleqq8YUb6KEQwrZK9IVLRY6qL0+MSADIUatRPTGQ=
-github.com/89z/parse v1.4.2/go.mod h1:tEBbkS1ysJNYYuMjGi9MFnJu3A3bdwBiWvugmHMsq4A=
+github.com/89z/parse v1.4.6 h1:bj6utIAkie+KG3BBrmsdUDYeiWeKVCLOtXL9e8qVX4U=
+github.com/89z/parse v1.4.6/go.mod h1:tEBbkS1ysJNYYuMjGi9MFnJu3A3bdwBiWvugmHMsq4A=
 github.com/golang/protobuf v1.5.0/go.mod h1:FsONVRAS9T7sI+LIUmWTfcYkHO4aIWwzhcaSAoJOfIk=
 github.com/google/go-cmp v0.5.5/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/gNBxE=
 github.com/klauspost/cpuid/v2 v2.0.6 h1:dQ5ueTiftKxp0gyjKSx5+8BtPWkyQbd95m8Gys/RarI=
