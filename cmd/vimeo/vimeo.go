@@ -25,9 +25,8 @@ func main() {
       return
    }
    id := flag.Arg(0)
-   err := vimeo.Valid(id)
-   if err != nil {
-      panic(err)
+   if ! vimeo.Valid(id) {
+      panic("invalid ID")
    }
    vimeo.Verbose = true
    cfg, err := vimeo.NewConfig(id)

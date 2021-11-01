@@ -49,9 +49,8 @@ func main() {
       return
    }
    shortcode := flag.Arg(0)
-   err := instagram.Valid(shortcode)
-   if err != nil {
-      panic(err)
+   if ! instagram.Valid(shortcode) {
+      panic("invalid shortcode")
    }
    var log instagram.Login
    if auth {

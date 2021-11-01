@@ -11,12 +11,12 @@ var Verbose bool
 // vimeo.com/7350260
 // vimeo.com/66531465
 // vimeo.com/196937578
-func Valid(id string) error {
+func Valid(id string) bool {
    switch len(id) {
    case 7, 8, 9:
-      return nil
+      return true
    }
-   return fmt.Errorf("%q invalid as ID", id)
+   return false
 }
 
 type Config struct {

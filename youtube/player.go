@@ -3,7 +3,6 @@ package youtube
 import (
    "bytes"
    "encoding/json"
-   "fmt"
    "github.com/89z/mech"
    "net/http"
 )
@@ -19,11 +18,8 @@ var (
 )
 
 // youtube.com/watch?v=hi8ryzFqrAE
-func Valid(id string) error {
-   if len(id) == 11 {
-      return nil
-   }
-   return fmt.Errorf("%q invalid as ID", id)
+func Valid(id string) bool {
+   return len(id) == 11
 }
 
 type Client struct {

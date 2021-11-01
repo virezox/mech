@@ -3,7 +3,7 @@ module github.com/89z/mech
 go 1.17
 
 require (
-	github.com/89z/parse v1.5.0
+	github.com/89z/parse v1.5.3
 	github.com/segmentio/encoding v0.2.21
 )
 

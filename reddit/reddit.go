@@ -15,12 +15,12 @@ var Verbose = mech.Verbose
 
 // redd.it/ppbsh
 // redd.it/pql06n
-func Valid(id string) error {
+func Valid(id string) bool {
    switch len(id) {
    case 5, 6:
-      return nil
+      return true
    }
-   return fmt.Errorf("%q invalid as ID", id)
+   return false
 }
 
 type Adaptation struct {

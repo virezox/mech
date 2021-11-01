@@ -48,9 +48,8 @@ func main() {
    }
    // id
    id := flag.Arg(0)
-   err := youtube.Valid(id)
-   if err != nil {
-      panic(err)
+   if ! youtube.Valid(id) {
+      panic("invalid ID")
    }
    // info
    if info {
@@ -134,11 +133,8 @@ func getInfo(id string) error {
 
 func download(p *youtube.Player, f youtube.Format) error {
    exts, err := mech.ExtensionsByType(f.MimeType)
-   if err != nil {
-      return err
-   }
    if exts == nil {
-      return fmt.Errorf("extensionsByType %q", f.MimeType)
+      return fmt.Errorf("exts %v, err %v", exts, err)
    }
    name := p.Author() + "-" + p.Title() + exts[0]
    file, err := os.Create(strings.Map(mech.Clean, name))

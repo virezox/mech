@@ -3,7 +3,6 @@ package instagram
 import (
    "bytes"
    "encoding/json"
-   "fmt"
    "github.com/89z/mech"
    "io"
    "net/http"
@@ -19,11 +18,8 @@ const (
 var Verbose = mech.Verbose
 
 // instagram.com/p/CT-cnxGhvvO
-func Valid(shortcode string) error {
-   if len(shortcode) == 11 {
-      return nil
-   }
-   return fmt.Errorf("%q invalid as shortcode", shortcode)
+func Valid(shortcode string) bool {
+   return len(shortcode) == 11
 }
 
 type Edge struct {

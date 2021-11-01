@@ -107,19 +107,19 @@ func Tracks(ids string) ([]Track, error) {
    return tracks, nil
 }
 
-func (t Track) progressive() (string, error) {
+func (t Track) progressive() string {
    for _, code := range t.Media.Transcodings {
       if code.Format.Protocol == "progressive" {
-         return code.URL, nil
+         return code.URL
       }
    }
-   return "", fmt.Errorf("transcodings %+v", t.Media.Transcodings)
+   return ""
 }
 
 func (t Track) GetMedia() (*Media, error) {
-   addr, err := t.progressive()
-   if err != nil {
-      return nil, err
+   addr := t.progressive()
+   if addr == "" {
+      return nil, fmt.Errorf("%+v", t)
    }
    req, err := http.NewRequest("GET", addr, nil)
    if err != nil {

@@ -19,11 +19,8 @@ func download(link *reddit.Link, base, typ string) error {
    }
    defer res.Body.Close()
    exts, err := mech.ExtensionsByType(typ)
-   if err != nil {
-      return err
-   }
    if exts == nil {
-      return fmt.Errorf("extensionsByType %q", typ)
+      return fmt.Errorf("exts %v, err %v", exts, err)
    }
    name := link.Subreddit + "-" + link.Title + exts[0]
    file, err := os.Create(strings.Map(mech.Clean, name))
@@ -47,9 +44,8 @@ func main() {
       return
    }
    id := flag.Arg(0)
-   err := reddit.Valid(id)
-   if err != nil {
-      panic(err)
+   if ! reddit.Valid(id) {
+      panic("invalid ID")
    }
    mech.Verbose(true)
    post, err := reddit.NewPost(id)
