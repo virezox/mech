@@ -27,7 +27,7 @@ func GroupFromArtist(artistID string, offset int) (*Group, error) {
    val.Set("limit", "100")
    val.Set("status", "official")
    val.Set("type", "album")
-   if offset > 0 {
+   if offset >= 1 {
       val.Set("offset", strconv.Itoa(offset))
    }
    req.URL.RawQuery = val.Encode()
