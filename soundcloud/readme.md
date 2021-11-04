@@ -39,3 +39,7 @@ In the HTML response, you should see something like this:
 The `client_id` seems to last at least a year:
 
 https://github.com/rrosajp/soundcloud-archive/commit/c02809dc
+
+More info:
+
+https://archive.ph/IOglb
