@@ -3,7 +3,7 @@
 > Listen, um, I don’t really know what’s going on here, but I’m leaving. I
 > don’t know where exactly, but I’m gonna start over.
 >
-> Come with me. Please.
+> Come with me.
 >
 > [Paint it Black (2016)][1]
 
