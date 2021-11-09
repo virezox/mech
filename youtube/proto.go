@@ -2,168 +2,62 @@ package youtube
 
 import (
    "encoding/base64"
-   "github.com/segmentio/encoding/proto"
+   "github.com/89z/parse/protobuf"
 )
 
-type Param struct {
-   SortBy int `protobuf:"varint,1"`
-   Filter struct {
-      UploadDate int `protobuf:"varint,1"`
-      Type int `protobuf:"varint,2"`
-      Duration int `protobuf:"varint,3"`
-      HD int `protobuf:"varint,4"`
-      Subtitles int `protobuf:"varint,5"`
-      CreativeCommons int `protobuf:"varint,6"`
-      ThreeD int `protobuf:"varint,7"`
-      Live int `protobuf:"varint,8"`
-      Purchased int `protobuf:"varint,9"`
-      FourK int `protobuf:"varint,14"`
-      ThreeSixty int `protobuf:"varint,15"`
-      Location int `protobuf:"varint,23"`
-      HDR int `protobuf:"varint,25"`
-      VR180 int `protobuf:"varint,26"`
-   } `protobuf:"bytes,2"`
+const (
+   // UPLOAD DATE
+   UploadDateLastHour = 1
+   UploadDateToday = 2
+   UploadDateThisWeek = 3
+   UploadDateThisMonth = 4
+   UploadDateThisYear = 5
+   // TYPE
+   TypeVideo = 1
+   TypeChannel = 2
+   TypePlaylist = 3
+   TypeMovie = 4
+   // DURATION
+   DurationUnderFourMinutes = 1
+   DurationOverTwentyMinutes = 2
+   DurationFourToTwentyMinutes = 3
+   // SORT BY
+   SortByRelevance = 0
+   SortByRating = 1
+   SortByUploadDate = 2
+   SortByViewCount = 3
+)
+
+type Filter struct {
+   UploadDate int `json:"1,omitempty"`
+   Type int `json:"2,omitempty"`
+   Duration int `json:"3,omitempty"`
+   HD bool `json:"4,omitempty"`
+   Subtitles bool `json:"5,omitempty"`
+   CreativeCommons bool `json:"6,omitempty"`
+   ThreeD bool `json:"7,omitempty"`
+   Live bool `json:"8,omitempty"`
+   Purchased bool `json:"9,omitempty"`
+   FourK bool `json:"14,omitempty"`
+   ThreeSixty bool `json:"15,omitempty"`
+   Location bool `json:"23,omitempty"`
+   HDR bool `json:"25,omitempty"`
+   VR180 bool `json:"26,omitempty"`
 }
 
-// "EgIQAg=="
-func (p *Param) Channel() {
-   p.Filter.Type = 2
+type Params struct {
+   SortBy int `json:"1,omitempty"`
+   Filter *Filter `json:"2,omitempty"`
 }
 
-// "EgIwAQ=="
-func (p *Param) CreativeCommons() {
-   p.Filter.CreativeCommons = 1
-}
-
-func (p Param) Encode() (string, error) {
-   buf, err := proto.Marshal(p)
+func (p Params) Encode() (string, error) {
+   enc, err := protobuf.NewEncoder(p)
+   if err != nil {
+      return "", err
+   }
+   buf, err := enc.Encode()
    if err != nil {
       return "", err
    }
    return base64.StdEncoding.EncodeToString(buf), nil
-}
-
-// "EgJwAQ=="
-func (p *Param) FourK() {
-   p.Filter.FourK = 1
-}
-
-// "EgIYAw=="
-func (p *Param) FourToTwentyMinutes() {
-   p.Filter.Duration = 3
-}
-
-// "EgIgAQ=="
-func (p *Param) HD() {
-   p.Filter.HD = 1
-}
-
-// "EgPIAQE="
-func (p *Param) HDR() {
-   p.Filter.HDR = 1
-}
-
-// "EgIIAQ=="
-func (p *Param) LastHour() {
-   p.Filter.UploadDate = 1
-}
-
-// "EgJAAQ=="
-func (p *Param) Live() {
-   p.Filter.Live = 1
-}
-
-// "EgO4AQE="
-func (p *Param) Location() {
-   p.Filter.Location = 1
-}
-
-// "EgIQBA=="
-func (p *Param) Movie() {
-   p.Filter.Type = 4
-}
-
-// "EgIYAg=="
-func (p *Param) OverTwentyMinutes() {
-   p.Filter.Duration = 2
-}
-
-// "EgIQAw=="
-func (p *Param) Playlist() {
-   p.Filter.Type = 3
-}
-
-// "EgJIAQ=="
-func (p *Param) Purchased() {
-   p.Filter.Purchased = 1
-}
-
-// "CAE="
-func (p *Param) Rating() {
-   p.SortBy = 1
-}
-
-// ""
-func (p *Param) Relevance() {
-   p.SortBy = 0
-}
-
-// "EgIoAQ=="
-func (p *Param) Subtitles() {
-   p.Filter.Subtitles = 1
-}
-
-// "EgIIBA=="
-func (p *Param) ThisMonth() {
-   p.Filter.UploadDate = 4
-}
-
-// "EgIIAw=="
-func (p *Param) ThisWeek() {
-   p.Filter.UploadDate = 3
-}
-
-// "EgIIBQ=="
-func (p *Param) ThisYear() {
-   p.Filter.UploadDate = 5
-}
-
-// "EgI4AQ=="
-func (p *Param) ThreeD() {
-   p.Filter.ThreeD = 1
-}
-
-// "EgJ4AQ=="
-func (p *Param) ThreeSixty() {
-   p.Filter.ThreeSixty = 1
-}
-
-// "EgIIAg=="
-func (p *Param) Today() {
-   p.Filter.UploadDate = 2
-}
-
-// "EgIYAQ=="
-func (p *Param) UnderFourMinutes() {
-   p.Filter.Duration = 1
-}
-
-// "CAI="
-func (p *Param) UploadDate() {
-   p.SortBy = 2
-}
-
-// "EgPQAQE="
-func (p *Param) VR180() {
-   p.Filter.VR180 = 1
-}
-
-// "EgIQAQ=="
-func (p *Param) Video() {
-   p.Filter.Type = 1
-}
-
-// "CAM="
-func (p *Param) ViewCount() {
-   p.SortBy = 3
 }

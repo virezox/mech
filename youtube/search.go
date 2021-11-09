@@ -28,8 +28,9 @@ type Search struct {
 func NewSearch(query string) (*Search, error) {
    var body youTubeI
    body.Context.Client = Mweb
-   var par Param
-   par.Video()
+   par := Params{
+      Filter: &Filter{Type: TypeVideo},
+   }
    enc, err := par.Encode()
    if err != nil {
       return nil, err

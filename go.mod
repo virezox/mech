@@ -2,13 +2,9 @@ module github.com/89z/mech
 
 go 1.17
 
-require (
-	github.com/89z/parse v1.7.0
-	github.com/segmentio/encoding v0.2.21
-)
+require github.com/89z/parse v1.7.0
 
 require (
-	github.com/klauspost/cpuid/v2 v2.0.6 // indirect
-	github.com/segmentio/asm v1.0.1 // indirect
 	github.com/tdewolff/parse/v2 v2.5.22 // indirect
+	google.golang.org/protobuf v1.27.1 // indirect
 )
