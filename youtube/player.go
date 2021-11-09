@@ -12,9 +12,9 @@ const origin = "https://www.youtube.com"
 var Verbose = mech.Verbose
 
 var (
-   Android = Client{Name: "ANDROID", Version: "16.05"}
-   Embed = Client{Name: "ANDROID", Screen: "EMBED", Version: "16.05"}
-   Mweb = Client{Name: "MWEB", Version: "2.19700101"}
+   Android = Client{Name: "ANDROID", Version: "16.43.34"}
+   Embed = Client{Name: "ANDROID", Screen: "EMBED", Version: "16.43.34"}
+   Mweb = Client{Name: "MWEB", Version: "2.20211109.01.00"}
 )
 
 // youtube.com/watch?v=hi8ryzFqrAE

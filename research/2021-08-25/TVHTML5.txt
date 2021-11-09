@@ -1,4 +1,0 @@
-GET /tv HTTP/1.1
-Host: www.youtube.com
-User-Agent: Mozilla/5.0 (ChromiumStylePlatform) Cobalt/Version
-
