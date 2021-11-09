@@ -36,11 +36,11 @@ func (p *Param) CreativeCommons() {
 }
 
 func (p Param) Encode() (string, error) {
-   data, err := proto.Marshal(p)
+   buf, err := proto.Marshal(p)
    if err != nil {
       return "", err
    }
-   return base64.StdEncoding.EncodeToString(data), nil
+   return base64.StdEncoding.EncodeToString(buf), nil
 }
 
 // "EgJwAQ=="

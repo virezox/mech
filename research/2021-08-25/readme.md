@@ -1,9 +1,5 @@
 # August 25 2021
 
-We can get the current Android version number here:
-
-https://apkpure.com/youtube/com.google.android.youtube
-
 Do we really need Android? Yes.
 
 ~~~

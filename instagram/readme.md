@@ -2,7 +2,7 @@
 
 ## How to get User-Agent?
 
-https://apkpure.com/instagram/com.instagram.android
+https://github.com/89z/googleplay
 
 ## How to get `query_hash`?
 
