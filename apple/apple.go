@@ -2,7 +2,6 @@ package apple
 
 import (
    "encoding/json"
-   "fmt"
    "github.com/89z/mech"
    "github.com/89z/parse/html"
    "net/http"
@@ -55,5 +54,13 @@ func NewAudio(addr string) (*Audio, error) {
          return aud, nil
       }
    }
-   return nil, fmt.Errorf("%q not found", podcast)
+   return nil, notFound{podcast}
+}
+
+type notFound struct {
+   string
+}
+
+func (n notFound) Error() string {
+   return strconv.Quote(n.string) + " not found"
 }
