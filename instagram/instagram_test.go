@@ -7,6 +7,7 @@ import (
 )
 
 const (
+   appData = `C:\Users\Steven\AppData\Local\mech\instagram.json`
    like = "CUrAS88Pr1G"
    video = "CUWBw4TM6Np"
 )

@@ -5,10 +5,10 @@ import (
 )
 
 func TestFilter(t *testing.T) {
-   p := param{
-      Filter: &filter{UploadDate: uploadDateLastHour},
+   p := Params{
+      Filter: &Filter{UploadDate: UploadDateLastHour},
    }
-   s, err := p.encode()
+   s, err := p.Encode()
    if err != nil {
       t.Fatal(err)
    }
@@ -18,8 +18,8 @@ func TestFilter(t *testing.T) {
 }
 
 func TestSort(t *testing.T) {
-   p := param{SortBy: sortByRating}
-   s, err := p.encode()
+   p := Params{SortBy: SortByRating}
+   s, err := p.Encode()
    if err != nil {
       t.Fatal(err)
    }
