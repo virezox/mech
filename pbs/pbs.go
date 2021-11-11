@@ -6,12 +6,14 @@ import (
    "net/http"
    "path"
    "strings"
+   "time"
 )
 
 const Origin = "http://content.services.pbs.org"
 
 type Asset struct {
    Resource struct {
+      Duration Duration
       MP4_Videos []struct {
          URL string
       }
@@ -27,7 +29,7 @@ func NewAsset(slug string) (*Asset, error) {
    }
    req.Header.Set("x-pbs-platformversion", "5.4.2")
    req.SetBasicAuth("android", "baXE7humuVat")
-   res, err := new(http.Transport).RoundTrip(req)
+   res, err := mech.RoundTrip(req)
    if err != nil {
       return nil, err
    }
@@ -37,6 +39,13 @@ func NewAsset(slug string) (*Asset, error) {
       return nil, err
    }
    return ass, nil
+}
+
+type Duration int64
+
+func (d Duration) String() string {
+   dur := time.Duration(d) * time.Second
+   return dur.String()
 }
 
 type Episode struct {
@@ -55,7 +64,11 @@ func NewEpisode(addr string) (*Episode, error) {
       return nil, mech.NotFound{"/video/"}
    }
    addr = addr[:ind] + "/api" + addr[ind:]
-   res, err := http.Get(addr)
+   req, err := http.NewRequest("GET", addr, nil)
+   if err != nil {
+      return nil, err
+   }
+   res, err := mech.RoundTrip(req)
    if err != nil {
       return nil, err
    }

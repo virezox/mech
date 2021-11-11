@@ -10,9 +10,13 @@ click `Network Settings`, `Save All As HAR`. Rename file to JSON.
 ## How to add a new site?
 
 1. see how YT-DLP does it
-2. check media page for JSON requests
-3. check HAR file
-4. check HTML
-5. monitor APK for JSON requests
-6. APK tool
-7. AndroGuard
+
+2. try navigating to the target page from home screen, instead of going directly
+   to page
+
+3. check media page for JSON requests
+4. check HAR file
+5. check HTML
+6. monitor APK for JSON requests
+7. APK tool
+8. AndroGuard

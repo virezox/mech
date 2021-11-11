@@ -2,6 +2,7 @@ package pbs
 
 import (
    "fmt"
+   "github.com/89z/mech"
    "testing"
 )
 
@@ -11,6 +12,7 @@ const addr =
 const slug = "nova-universe-revealed-milky-way-4io957"
 
 func TestAsset(t *testing.T) {
+   mech.Verbose(true)
    ass, err := NewAsset(slug)
    if err != nil {
       t.Fatal(err)
