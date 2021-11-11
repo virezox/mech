@@ -11,9 +11,8 @@ click `Network Settings`, `Save All As HAR`. Rename file to JSON.
 
 1. see how YT-DLP does it
 2. check media page for JSON requests
-3. check HAR file for JSON requests
-4. check HAR file for media
-5. check HTML for JSON
-6. check HTML for media
-7. monitor APK for JSON requests
-8. parse HTML
+3. check HAR file
+4. check HTML
+5. monitor APK for JSON requests
+6. APK tool
+7. AndroGuard

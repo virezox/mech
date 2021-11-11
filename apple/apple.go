@@ -54,13 +54,5 @@ func NewAudio(addr string) (*Audio, error) {
          return aud, nil
       }
    }
-   return nil, notFound{podcast}
-}
-
-type notFound struct {
-   string
-}
-
-func (n notFound) Error() string {
-   return strconv.Quote(n.string) + " not found"
+   return nil, mech.NotFound{podcast}
 }

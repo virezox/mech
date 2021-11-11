@@ -7,6 +7,7 @@ import (
    "net/http"
    "net/http/httputil"
    "os"
+   "strconv"
 )
 
 var extensions = map[string][]string{
@@ -62,3 +63,12 @@ func RoundTrip(req *http.Request) (*http.Response, error) {
 func Verbose(v bool) {
    verbose = v
 }
+
+type NotFound struct {
+   String string
+}
+
+func (n NotFound) Error() string {
+   return strconv.Quote(n.String) + " not found"
+}
+
