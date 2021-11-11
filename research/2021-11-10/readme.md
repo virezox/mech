@@ -1,4 +1,4 @@
-# November 9 2021
+# November 10 2021
 
 ~~~
 com.pbs.video
@@ -23,3 +23,8 @@ https://urs.pbs.org/redirect/a56c28d5b7a04345b01ce5f3b77fbcb3/?format=jsonp&call
 ~~~
 
 https://github.com/ytdl-org/youtube-dl/issues/30205
+
+~~~
+Authorization: Basic YW5kcm9pZDpiYVhFN2h1bXVWYXQ=
+android:baXE7humuVat
+~~~
