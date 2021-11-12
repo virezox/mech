@@ -17,6 +17,6 @@ click `Network Settings`, `Save All As HAR`. Rename file to JSON.
 3. check media page for JSON requests
 4. check HAR file
 5. check HTML
-6. monitor APK for JSON requests
+6. MITM Proxy APK for JSON requests
 7. APK tool
 8. AndroGuard

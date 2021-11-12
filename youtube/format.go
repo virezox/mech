@@ -18,8 +18,8 @@ func bitrate(pos int64, begin time.Time) string {
       return ""
    }
    rate := float64(pos) / end
-   met := []string{"B/s", "kB/s", "MB/s", "GB/s"}
-   return mech.NumberFormat(rate, met)
+   metric := []string{"B/s", "kB/s", "MB/s", "GB/s"}
+   return mech.NumberFormat(rate, metric)
 }
 
 type Format struct {

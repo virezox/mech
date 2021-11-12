@@ -21,11 +21,11 @@ func main() {
    }
    addr := flag.Arg(0)
    mech.Verbose = true
-   ep, err := pbs.NewEpisode(addr)
+   slug, err := pbs.Slug(addr)
    if err != nil {
       panic(err)
    }
-   asset, err := ep.FullLength()
+   asset, err := pbs.NewAsset(slug)
    if err != nil {
       panic(err)
    }
@@ -41,7 +41,7 @@ func main() {
    }
 }
 
-func download(title string, video pbs.Video) error {
+func download(title string, video pbs.AssetVideo) error {
    fmt.Println("GET", video.URL)
    res, err := http.Get(video.URL)
    if err != nil {
@@ -53,7 +53,10 @@ func download(title string, video pbs.Video) error {
    if err != nil {
       return err
    }
+   defer file.Close()
    pro := pbs.NewProgress(res)
-   file.ReadFrom(pro)
-   return file.Close()
+   if _, err := file.ReadFrom(pro); err != nil {
+      return err
+   }
+   return nil
 }

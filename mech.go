@@ -35,16 +35,16 @@ func ExtensionsByType(typ string) ([]string, error) {
    return extensions[justType], nil
 }
 
-func NumberFormat(val float64, met []string) string {
+func NumberFormat(val float64, metric []string) string {
    var key int
    for val >= 1000 {
       val /= 1000
       key++
    }
-   if key >= len(met) {
+   if key >= len(metric) {
       return ""
    }
-   return fmt.Sprintf("%.3f ", val) + met[key]
+   return fmt.Sprintf("%.3f ", val) + metric[key]
 }
 
 func Percent(pos, length int64) string {
