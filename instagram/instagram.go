@@ -15,8 +15,6 @@ const (
    userAgent = "Instagram 207.0.0.39.120 Android"
 )
 
-var Verbose = mech.Verbose
-
 // instagram.com/p/CT-cnxGhvvO
 func Valid(shortcode string) bool {
    return len(shortcode) == 11

@@ -2,11 +2,11 @@ package vimeo
 
 import (
    "encoding/json"
-   "fmt"
+   "github.com/89z/mech"
    "net/http"
 )
 
-var Verbose bool
+const origin = "https://player.vimeo.com"
 
 // vimeo.com/7350260
 // vimeo.com/66531465
@@ -37,20 +37,20 @@ type Config struct {
 }
 
 func NewConfig(id string) (*Config, error) {
-   addr := "https://player.vimeo.com/video/" + id + "/config"
-   if Verbose {
-      fmt.Println("GET", addr)
+   req, err := http.NewRequest("GET", origin + "/video/" + id + "/config", nil)
+   if err != nil {
+      return nil, err
    }
-   res, err := http.Get(addr)
+   res, err := mech.RoundTrip(req)
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
-   cfg := new(Config)
-   if err := json.NewDecoder(res.Body).Decode(cfg); err != nil {
+   con := new(Config)
+   if err := json.NewDecoder(res.Body).Decode(con); err != nil {
       return nil, err
    }
-   return cfg, nil
+   return con, nil
 }
 
 type Video struct {
@@ -60,11 +60,13 @@ type Video struct {
 }
 
 func NewVideo(id string) (*Video, error) {
-   addr := "https://vimeo.com/api/oembed.json?url=//vimeo.com/" + id
-   if Verbose {
-      fmt.Println("GET", addr)
+   req, err := http.NewRequest(
+      "GET", "https://vimeo.com/api/oembed.json?url=//vimeo.com/" + id, nil,
+   )
+   if err != nil {
+      return nil, err
    }
-   res, err := http.Get(addr)
+   res, err := mech.RoundTrip(req)
    if err != nil {
       return nil, err
    }

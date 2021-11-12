@@ -3,6 +3,7 @@ package main
 import (
    "flag"
    "fmt"
+   "github.com/89z/mech"
    "github.com/89z/mech/instagram"
    "net/http"
    "net/url"
@@ -26,7 +27,7 @@ func main() {
       flag.PrintDefaults()
       return
    }
-   instagram.Verbose(true)
+   mech.Verbose = true
    if username != "" {
       log, err := instagram.NewLogin(username, password)
       if err != nil {

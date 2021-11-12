@@ -12,9 +12,19 @@ import (
 
 const chunk = 10_000_000
 
+func bitrate(pos int64, begin time.Time) string {
+   end := time.Since(begin).Seconds()
+   if end < 1 {
+      return ""
+   }
+   rate := float64(pos) / end
+   met := []string{"B/s", "kB/s", "MB/s", "GB/s"}
+   return mech.NumberFormat(rate, met)
+}
+
 type Format struct {
-   Bitrate bitrate
-   ContentLength mech.ContentLength `json:"contentLength,string"`
+   Bitrate int64
+   ContentLength int64 `json:"contentLength,string"`
    Height int
    Itag int
    MimeType string
@@ -28,12 +38,12 @@ func (f Format) Write(w io.Writer) error {
    }
    fmt.Println(req.Method, req.URL)
    begin := time.Now()
-   var pos mech.ContentLength
+   var pos int64
    for pos < f.ContentLength {
       bytes := fmt.Sprintf("bytes=%d-%d", pos, pos+chunk-1)
       req.Header.Set("Range", bytes)
-      speed := newBitrate(pos, begin)
-      fmt.Printf("%d%% %v %v\n", 100*pos/f.ContentLength, bytes, speed)
+      percent := mech.Percent(pos, f.ContentLength)
+      fmt.Println(percent, bytes, bitrate(pos, begin))
       // this sometimes redirects, so cannot use http.Transport
       res, err := new(http.Client).Do(req)
       if err != nil {
@@ -90,21 +100,4 @@ func (f FormatSlice) Sort(less ...func(a, b Format) bool) {
       }
       return false
    })
-}
-
-type bitrate int64
-
-func newBitrate(c mech.ContentLength, t time.Time) bitrate {
-   // this is float64
-   end := time.Since(t).Seconds()
-   if end < 1 {
-      return 0
-   }
-   speed := c / mech.ContentLength(end)
-   return bitrate(speed)
-}
-
-func (b bitrate) String() string {
-   met := []string{"B/s", "kB/s", "MB/s", "GB/s"}
-   return mech.NumberFormat(float64(b), met)
 }

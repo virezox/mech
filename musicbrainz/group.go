@@ -8,8 +8,6 @@ import (
    "strconv"
 )
 
-var Verbose = mech.Verbose
-
 type Group struct {
    ReleaseCount int `json:"release-count"`
    Releases []*Release

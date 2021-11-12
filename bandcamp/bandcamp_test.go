@@ -8,7 +8,6 @@ import (
 const label = "https://multiculti.bandcamp.com"
 
 func TestBand(t *testing.T) {
-   Verbose(true)
    i, err := NewItem(label)
    if err != nil {
       t.Fatal(err)

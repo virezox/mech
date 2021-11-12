@@ -11,8 +11,6 @@ import (
 
 const Origin = "https://api.reddit.com"
 
-var Verbose = mech.Verbose
-
 // redd.it/ppbsh
 // redd.it/pql06n
 func Valid(id string) bool {

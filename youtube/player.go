@@ -9,8 +9,6 @@ import (
 
 const origin = "https://www.youtube.com"
 
-var Verbose = mech.Verbose
-
 var (
    Android = Client{Name: "ANDROID", Version: "16.43.34"}
    Embed = Client{Name: "ANDROID", Screen: "EMBED", Version: "16.43.34"}

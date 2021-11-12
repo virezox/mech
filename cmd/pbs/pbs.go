@@ -20,7 +20,7 @@ func main() {
       return
    }
    addr := flag.Arg(0)
-   mech.Verbose(true)
+   mech.Verbose = true
    ep, err := pbs.NewEpisode(addr)
    if err != nil {
       panic(err)
@@ -53,6 +53,7 @@ func download(title string, video pbs.Video) error {
    if err != nil {
       return err
    }
-   file.ReadFrom(mech.NewProgress(res))
+   pro := pbs.NewProgress(res)
+   file.ReadFrom(pro)
    return file.Close()
 }

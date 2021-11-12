@@ -13,8 +13,6 @@ const (
    clientID = "iZIs9mchVcX5lhVRyQGGAYlNPVldzAoX"
 )
 
-var Verbose = mech.Verbose
-
 type Alternate struct {
    Thumbnail_URL string
    Author_URL string

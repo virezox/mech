@@ -8,7 +8,6 @@ import (
 const id = "pqfqoy"
 
 func TestReddit(t *testing.T) {
-   Verbose(true)
    p, err := NewPost(id)
    if err != nil {
       t.Fatal(err)

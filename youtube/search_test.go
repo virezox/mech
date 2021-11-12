@@ -6,7 +6,6 @@ import (
 )
 
 func TestSearch(t *testing.T) {
-   Verbose(true)
    s, err := NewSearch("oneohtrix point never along")
    if err != nil {
       t.Fatal(err)

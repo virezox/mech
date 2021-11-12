@@ -29,7 +29,7 @@ func main() {
       flag.PrintDefaults()
       return
    }
-   youtube.Verbose(true)
+   mech.Verbose = true
    // exchange
    if exchange {
       err := authExchange()

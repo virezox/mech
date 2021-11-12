@@ -10,8 +10,6 @@ import (
 
 const Origin = "https://api.spotify.com"
 
-var Verbose = mech.Verbose
-
 type Album struct {
    Tracks struct {
       Items []Track

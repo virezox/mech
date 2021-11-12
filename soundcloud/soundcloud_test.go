@@ -11,7 +11,6 @@ const (
 )
 
 func TestAlternate(t *testing.T) {
-   Verbose(true)
    a, err := Oembed(addr)
    if err != nil {
       t.Fatal(err)
@@ -20,7 +19,6 @@ func TestAlternate(t *testing.T) {
 }
 
 func TestResolve(t *testing.T) {
-   Verbose(true)
    r, err := Resolve(addr)
    if err != nil {
       t.Fatal(err)
@@ -29,7 +27,6 @@ func TestResolve(t *testing.T) {
 }
 
 func TestTracks(t *testing.T) {
-   Verbose(true)
    tracks, err := Tracks(ids)
    if err != nil {
       t.Fatal(err)

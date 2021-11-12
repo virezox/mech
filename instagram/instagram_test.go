@@ -13,7 +13,6 @@ const (
 )
 
 func TestLike(t *testing.T) {
-   Verbose(true)
    m, err := GraphQL(like, nil)
    if err != nil {
       t.Fatal(err)
@@ -31,7 +30,6 @@ func TestData(t *testing.T) {
    if err := auth.Decode(f); err != nil {
       t.Fatal(err)
    }
-   Verbose(true)
    m, err := NewQuery(like).Data(&auth)
    if err != nil {
       t.Fatal(err)
@@ -49,7 +47,6 @@ func TestItem(t *testing.T) {
    if err := auth.Decode(f); err != nil {
       t.Fatal(err)
    }
-   Verbose(true)
    i, err := auth.Item(video)
    if err != nil {
       t.Fatal(err)
@@ -58,7 +55,6 @@ func TestItem(t *testing.T) {
 }
 
 func TestWrite(t *testing.T) {
-   Verbose(true)
    l, err := NewLogin("srpen6", password)
    if err != nil {
       t.Fatal(err)
