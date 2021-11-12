@@ -35,6 +35,18 @@ func ExtensionsByType(typ string) ([]string, error) {
    return extensions[justType], nil
 }
 
+func NumberFormat(val float64, met []string) string {
+   var key int
+   for val >= 1000 {
+      val /= 1000
+      key++
+   }
+   if key >= len(met) {
+      return ""
+   }
+   return fmt.Sprintf("%.1f ", val) + met[key]
+}
+
 func RoundTrip(req *http.Request) (*http.Response, error) {
    if verbose {
       dum, err := httputil.DumpRequest(req, true)
@@ -64,6 +76,13 @@ func Verbose(v bool) {
    verbose = v
 }
 
+type ContentLength int64
+
+func (c ContentLength) String() string {
+   met := []string{"B", "kB", "MB", "GB"}
+   return NumberFormat(float64(c), met)
+}
+
 type NotFound struct {
    String string
 }
@@ -72,3 +91,29 @@ func (n NotFound) Error() string {
    return strconv.Quote(n.String) + " not found"
 }
 
+type Progress struct {
+   *http.Response
+   x, xMax int
+   y ContentLength
+}
+
+func NewProgress(res *http.Response) *Progress {
+   return &Progress{Response: res, xMax: 10_000_000}
+}
+
+func (p *Progress) Read(buf []byte) (int, error) {
+   if p.x == 0 {
+      percent := 100 * int64(p.y) / p.ContentLength
+      fmt.Printf("%v%% %v\n", percent, p.y)
+   }
+   num, err := p.Body.Read(buf)
+   if err != nil {
+      return 0, err
+   }
+   p.y += ContentLength(num)
+   p.x += num
+   if p.x >= p.xMax {
+      p.x = 0
+   }
+   return num, nil
+}

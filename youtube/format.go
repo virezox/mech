@@ -2,6 +2,7 @@ package youtube
 
 import (
    "fmt"
+   "github.com/89z/mech"
    "io"
    "net/http"
    "sort"
@@ -11,21 +12,9 @@ import (
 
 const chunk = 10_000_000
 
-func numberFormat(val float64, met []string) string {
-   var key int
-   for val >= 1000 {
-      val /= 1000
-      key++
-   }
-   if key >= len(met) {
-      return ""
-   }
-   return fmt.Sprintf("%.1f ", val) + met[key]
-}
-
 type Format struct {
    Bitrate bitrate
-   ContentLength contentLength `json:"contentLength,string"`
+   ContentLength mech.ContentLength `json:"contentLength,string"`
    Height int
    Itag int
    MimeType string
@@ -39,7 +28,7 @@ func (f Format) Write(w io.Writer) error {
    }
    fmt.Println(req.Method, req.URL)
    begin := time.Now()
-   var pos contentLength
+   var pos mech.ContentLength
    for pos < f.ContentLength {
       bytes := fmt.Sprintf("bytes=%d-%d", pos, pos+chunk-1)
       req.Header.Set("Range", bytes)
@@ -105,24 +94,17 @@ func (f FormatSlice) Sort(less ...func(a, b Format) bool) {
 
 type bitrate int64
 
-func newBitrate(c contentLength, t time.Time) bitrate {
+func newBitrate(c mech.ContentLength, t time.Time) bitrate {
    // this is float64
    end := time.Since(t).Seconds()
    if end < 1 {
       return 0
    }
-   speed := c / contentLength(end)
+   speed := c / mech.ContentLength(end)
    return bitrate(speed)
 }
 
 func (b bitrate) String() string {
    met := []string{"B/s", "kB/s", "MB/s", "GB/s"}
-   return numberFormat(float64(b), met)
-}
-
-type contentLength int64
-
-func (c contentLength) String() string {
-   met := []string{"B", "kB", "MB", "GB"}
-   return numberFormat(float64(c), met)
+   return mech.NumberFormat(float64(b), met)
 }

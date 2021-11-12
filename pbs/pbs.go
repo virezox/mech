@@ -9,20 +9,24 @@ import (
    "time"
 )
 
-const Origin = "http://content.services.pbs.org"
+const origin = "http://content.services.pbs.org"
+
+type Video struct {
+   Profile string
+   URL string
+}
 
 type Asset struct {
    Resource struct {
       Duration Duration
-      MP4_Videos []struct {
-         URL string
-      }
+      MP4_Videos []Video
+      Title string
    }
 }
 
 func NewAsset(slug string) (*Asset, error) {
    req, err := http.NewRequest(
-      "GET", Origin + "/v3/android/screens/video-assets/" + slug + "/", nil,
+      "GET", origin + "/v3/android/screens/video-assets/" + slug + "/", nil,
    )
    if err != nil {
       return nil, err
@@ -73,12 +77,14 @@ func NewEpisode(addr string) (*Episode, error) {
       return nil, err
    }
    defer res.Body.Close()
-   var vid video
-   if err := json.NewDecoder(res.Body).Decode(&vid); err != nil {
+   var video struct {
+      Episodes []Episode
+   }
+   if err := json.NewDecoder(res.Body).Decode(&video); err != nil {
       return nil, err
    }
    slug := path.Base(addr)
-   for _, ep := range vid.Episodes {
+   for _, ep := range video.Episodes {
       if ep.Slug == slug {
          return &ep, nil
       }
@@ -86,6 +92,11 @@ func NewEpisode(addr string) (*Episode, error) {
    return nil, mech.NotFound{slug}
 }
 
-type video struct {
-   Episodes []Episode
+func (e Episode) FullLength() (*Asset, error) {
+   for _, asset := range e.Episode.Assets {
+      if asset.Object_Type == "full_length" {
+         return NewAsset(asset.Slug)
+      }
+   }
+   return nil, mech.NotFound{"full_length"}
 }

@@ -6,22 +6,23 @@ import (
    "testing"
 )
 
-const addr =
-   "https://www.pbs.org/wgbh/nova/video/nova-universe-revealed-milky-way/"
+const tAsset = "nova-universe-revealed-milky-way-4io957"
 
-const slug = "nova-universe-revealed-milky-way-4io957"
+const tEpisode =
+   "https://www.pbs.org/wgbh/nova/video/nova-universe-revealed-milky-way/"
 
 func TestAsset(t *testing.T) {
    mech.Verbose(true)
-   ass, err := NewAsset(slug)
+   asset, err := NewAsset(tAsset)
    if err != nil {
       t.Fatal(err)
    }
-   fmt.Printf("%+v\n", ass)
+   fmt.Printf("%+v\n", asset)
 }
 
 func TestEpisode(t *testing.T) {
-   ep, err := NewEpisode(addr)
+   mech.Verbose(true)
+   ep, err := NewEpisode(tEpisode)
    if err != nil {
       t.Fatal(err)
    }

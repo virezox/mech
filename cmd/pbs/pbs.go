@@ -3,10 +3,10 @@ package main
 import (
    "flag"
    "fmt"
+   "github.com/89z/mech"
    "github.com/89z/mech/pbs"
    "net/http"
    "os"
-   "path"
    "strings"
 )
 
@@ -21,37 +21,38 @@ func main() {
    }
    addr := flag.Arg(0)
    mech.Verbose(true)
-   audio, err := apple.NewAudio(addr)
+   ep, err := pbs.NewEpisode(addr)
+   if err != nil {
+      panic(err)
+   }
+   asset, err := ep.FullLength()
    if err != nil {
       panic(err)
    }
    if info {
-      fmt.Printf("%+v\n", audio)
+      fmt.Printf("%+v\n", asset)
       return
    }
-   for _, asset := range audio.D {
-      err := download(asset.Attributes)
+   for _, video := range asset.Resource.MP4_Videos {
+      err := download(asset.Resource.Title, video)
       if err != nil {
          panic(err)
       }
    }
 }
 
-func download(attr apple.Attributes) error {
-   fmt.Println("GET", attr.AssetURL)
-   res, err := http.Get(attr.AssetURL)
+func download(title string, video pbs.Video) error {
+   fmt.Println("GET", video.URL)
+   res, err := http.Get(video.URL)
    if err != nil {
       return err
    }
    defer res.Body.Close()
-   name := attr.ArtistName + "-" + attr.Name + path.Ext(attr.AssetURL)
+   name := title + "-" + video.Profile + ".mp4"
    file, err := os.Create(strings.Map(mech.Clean, name))
    if err != nil {
       return err
    }
-   defer file.Close()
-   if _, err := file.ReadFrom(res.Body); err != nil {
-      return err
-   }
-   return nil
+   file.ReadFrom(mech.NewProgress(res))
+   return file.Close()
 }
