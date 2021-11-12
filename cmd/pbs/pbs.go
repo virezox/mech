@@ -21,11 +21,11 @@ func main() {
    }
    addr := flag.Arg(0)
    mech.Verbose = true
-   ep, err := pbs.NewEpisode(addr)
+   slug, err := pbs.Slug(addr)
    if err != nil {
       panic(err)
    }
-   asset, err := ep.FullLength()
+   asset, err := pbs.NewAsset(slug)
    if err != nil {
       panic(err)
    }

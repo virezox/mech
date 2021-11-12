@@ -5,16 +5,55 @@ import (
    "fmt"
    "github.com/89z/mech"
    "net/http"
+   "net/url"
    "path"
    "strings"
    "time"
 )
 
-const origin = "http://content.services.pbs.org"
+const (
+   Origin = "http://content.services.pbs.org"
+   android = "baXE7humuVat"
+   platformVersion = "5.4.2"
+)
 
-type Video struct {
-   Profile string
-   URL string
+func Slug(addr string) (string, error) {
+   par, err := url.Parse(addr)
+   if err != nil {
+      return "", err
+   }
+   ind := strings.Index(par.Path, "/video/")
+   if ind == -1 {
+      return "", mech.NotFound{"/video/"}
+   }
+   slug := path.Base(par.Path)
+   if ind == 0 {
+      return slug, nil
+   }
+   par.Path = par.Path[:ind] + "/api" + par.Path[ind:]
+   req, err := http.NewRequest("GET", par.String(), nil)
+   if err != nil {
+      return "", err
+   }
+   res, err := mech.RoundTrip(req)
+   if err != nil {
+      return "", err
+   }
+   defer res.Body.Close()
+   var vid video
+   if err := json.NewDecoder(res.Body).Decode(&vid); err != nil {
+      return "", err
+   }
+   for _, ep := range vid.Episodes {
+      if ep.Slug == slug {
+         for _, asset := range ep.Episode.Assets {
+            if asset.Object_Type == "full_length" {
+               return asset.Slug, nil
+            }
+         }
+      }
+   }
+   return "", mech.NotFound{slug}
 }
 
 type Asset struct {
@@ -27,13 +66,13 @@ type Asset struct {
 
 func NewAsset(slug string) (*Asset, error) {
    req, err := http.NewRequest(
-      "GET", origin + "/v3/android/screens/video-assets/" + slug + "/", nil,
+      "GET", Origin + "/v3/android/screens/video-assets/" + slug + "/", nil,
    )
    if err != nil {
       return nil, err
    }
-   req.Header.Set("x-pbs-platformversion", "5.4.2")
-   req.SetBasicAuth("android", "baXE7humuVat")
+   req.Header.Set("x-pbs-platformversion", platformVersion)
+   req.SetBasicAuth("android", android)
    res, err := mech.RoundTrip(req)
    if err != nil {
       return nil, err
@@ -51,55 +90,6 @@ type Duration int64
 func (d Duration) String() string {
    dur := time.Duration(d) * time.Second
    return dur.String()
-}
-
-type Episode struct {
-   Episode struct {
-      Assets []struct {
-         Object_Type string
-         Slug string
-      }
-   }
-   Slug string
-}
-
-func NewEpisode(addr string) (*Episode, error) {
-   ind := strings.Index(addr, "/video/")
-   if ind == -1 {
-      return nil, mech.NotFound{"/video/"}
-   }
-   addr = addr[:ind] + "/api" + addr[ind:]
-   req, err := http.NewRequest("GET", addr, nil)
-   if err != nil {
-      return nil, err
-   }
-   res, err := mech.RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   var video struct {
-      Episodes []Episode
-   }
-   if err := json.NewDecoder(res.Body).Decode(&video); err != nil {
-      return nil, err
-   }
-   slug := path.Base(addr)
-   for _, ep := range video.Episodes {
-      if ep.Slug == slug {
-         return &ep, nil
-      }
-   }
-   return nil, mech.NotFound{slug}
-}
-
-func (e Episode) FullLength() (*Asset, error) {
-   for _, asset := range e.Episode.Assets {
-      if asset.Object_Type == "full_length" {
-         return NewAsset(asset.Slug)
-      }
-   }
-   return nil, mech.NotFound{"full_length"}
 }
 
 type Progress struct {
@@ -132,4 +122,21 @@ func (p *Progress) Read(buf []byte) (int, error) {
       p.x = 0
    }
    return num, nil
+}
+
+type Video struct {
+   Profile string
+   URL string
+}
+
+type video struct {
+   Episodes []struct {
+      Episode struct {
+         Assets []struct {
+            Object_Type string
+            Slug string
+         }
+      }
+      Slug string
+   }
 }
