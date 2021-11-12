@@ -10,12 +10,11 @@ import (
    "time"
 )
 
-const origin = "http://content.services.pbs.org"
-
-type Video struct {
-   Profile string
-   URL string
-}
+const (
+   Origin = "http://content.services.pbs.org"
+   android = "baXE7humuVat"
+   platformVersion = "5.4.2"
+)
 
 type Asset struct {
    Resource struct {
@@ -27,13 +26,13 @@ type Asset struct {
 
 func NewAsset(slug string) (*Asset, error) {
    req, err := http.NewRequest(
-      "GET", origin + "/v3/android/screens/video-assets/" + slug + "/", nil,
+      "GET", Origin + "/v3/android/screens/video-assets/" + slug + "/", nil,
    )
    if err != nil {
       return nil, err
    }
-   req.Header.Set("x-pbs-platformversion", "5.4.2")
-   req.SetBasicAuth("android", "baXE7humuVat")
+   req.Header.Set("x-pbs-platformversion", platformVersion)
+   req.SetBasicAuth("android", android)
    res, err := mech.RoundTrip(req)
    if err != nil {
       return nil, err
@@ -78,14 +77,12 @@ func NewEpisode(addr string) (*Episode, error) {
       return nil, err
    }
    defer res.Body.Close()
-   var video struct {
-      Episodes []Episode
-   }
-   if err := json.NewDecoder(res.Body).Decode(&video); err != nil {
+   var vid video
+   if err := json.NewDecoder(res.Body).Decode(&vid); err != nil {
       return nil, err
    }
    slug := path.Base(addr)
-   for _, ep := range video.Episodes {
+   for _, ep := range vid.Episodes {
       if ep.Slug == slug {
          return &ep, nil
       }
@@ -132,4 +129,13 @@ func (p *Progress) Read(buf []byte) (int, error) {
       p.x = 0
    }
    return num, nil
+}
+
+type Video struct {
+   Profile string
+   URL string
+}
+
+type video struct {
+   Episodes []Episode
 }
