@@ -35,9 +35,7 @@ func main() {
    }
    // info
    if info {
-      for _, f := range cfg.Request.Files.Progressive {
-         fmt.Printf("%+v\n", f)
-      }
+      fmt.Printf("%+v\n", cfg)
       return
    }
    // download

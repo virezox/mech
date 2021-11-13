@@ -4,6 +4,7 @@ import (
    "encoding/json"
    "github.com/89z/mech"
    "net/http"
+   "net/url"
    "sort"
    "strconv"
 )
@@ -18,13 +19,14 @@ func GroupFromArtist(artistID string, offset int) (*Group, error) {
    if err != nil {
       return nil, err
    }
-   val := req.URL.Query()
-   val.Set("artist", artistID)
-   val.Set("fmt", "json")
-   val.Set("inc", "release-groups")
-   val.Set("limit", "100")
-   val.Set("status", "official")
-   val.Set("type", "album")
+   val := url.Values{
+      "artist": {artistID},
+      "fmt": {"json"},
+      "inc": {"release-groups"},
+      "limit": {"100"},
+      "status": {"official"},
+      "type": {"album"},
+   }
    if offset >= 1 {
       val.Set("offset", strconv.Itoa(offset))
    }
@@ -46,11 +48,11 @@ func NewGroup(groupID string) (*Group, error) {
    if err != nil {
       return nil, err
    }
-   val := req.URL.Query()
-   val.Set("fmt", "json")
-   val.Set("inc", "artist-credits recordings")
-   val.Set("release-group", groupID)
-   req.URL.RawQuery = val.Encode()
+   req.URL.RawQuery = url.Values{
+      "fmt": {"json"},
+      "inc": {"artist-credits recordings"},
+      "release-group": {groupID},
+   }.Encode()
    res, err := mech.RoundTrip(req)
    if err != nil {
       return nil, err

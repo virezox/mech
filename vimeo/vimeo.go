@@ -4,6 +4,7 @@ import (
    "encoding/json"
    "github.com/89z/mech"
    "net/http"
+   "time"
 )
 
 const origin = "https://player.vimeo.com"
@@ -29,6 +30,7 @@ type Config struct {
       }
    }
    Video struct {
+      Duration Duration
       Owner struct {
          Name string
       }
@@ -51,6 +53,13 @@ func NewConfig(id string) (*Config, error) {
       return nil, err
    }
    return con, nil
+}
+
+type Duration int64
+
+func (d Duration) String() string {
+   dur := time.Duration(d) * time.Second
+   return dur.String()
 }
 
 type Video struct {

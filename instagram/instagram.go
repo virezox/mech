@@ -6,6 +6,7 @@ import (
    "github.com/89z/mech"
    "io"
    "net/http"
+   "net/url"
 )
 
 const (
@@ -88,11 +89,13 @@ func (l Login) Item(shortcode string) (*Item, error) {
    if err != nil {
       return nil, err
    }
-   val := req.URL.Query()
-   val.Set("clips_media_shortcode", shortcode)
-   req.URL.RawQuery = val.Encode()
-   req.Header.Set("Authorization", l.Get("Ig-Set-Authorization"))
-   req.Header.Set("User-Agent", userAgent)
+   req.Header = http.Header{
+      "Authorization": {l.Get("Ig-Set-Authorization")},
+      "User-Agent": {userAgent},
+   }
+   req.URL.RawQuery = url.Values{
+      "clips_media_shortcode": {shortcode},
+   }.Encode()
    res, err := mech.RoundTrip(req)
    if err != nil {
       return nil, err
@@ -124,15 +127,15 @@ func GraphQL(shortcode string, auth *Login) (*Media, error) {
    if err != nil {
       return nil, err
    }
-   val := req.URL.Query()
-   val.Set("__a", "1")
-   req.URL.RawQuery = val.Encode()
    req.Header = http.Header{
       "User-Agent": {userAgent},
    }
    if auth != nil && auth.Header != nil {
       req.Header.Set("Authorization", auth.Get("Ig-Set-Authorization"))
    }
+   req.URL.RawQuery = url.Values{
+      "__a": {"1"},
+   }.Encode()
    res, err := mech.RoundTrip(req)
    if err != nil {
       return nil, err

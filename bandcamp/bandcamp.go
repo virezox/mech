@@ -5,6 +5,7 @@ import (
    "fmt"
    "github.com/89z/mech"
    "net/http"
+   "net/url"
    "regexp"
    "strconv"
    "time"
@@ -52,9 +53,9 @@ func NewBand(id int) (*Band, error) {
    if err != nil {
       return nil, err
    }
-   val := req.URL.Query()
-   val.Set("band_id", strconv.Itoa(id))
-   req.URL.RawQuery = val.Encode()
+   req.URL.RawQuery = url.Values{
+      "band_id": {strconv.Itoa(id)},
+   }.Encode()
    res, err := mech.RoundTrip(req)
    if err != nil {
       return nil, err
@@ -129,11 +130,11 @@ func NewTralbum(typ byte, id int) (*Tralbum, error) {
    if err != nil {
       return nil, err
    }
-   val := req.URL.Query()
-   val.Set("band_id", "1")
-   val.Set("tralbum_id", strconv.Itoa(id))
-   val.Set("tralbum_type", string(typ))
-   req.URL.RawQuery = val.Encode()
+   req.URL.RawQuery = url.Values{
+      "band_id": {"1"},
+      "tralbum_id": {strconv.Itoa(id)},
+      "tralbum_type": {string(typ)},
+   }.Encode()
    res, err := mech.RoundTrip(req)
    if err != nil {
       return nil, err

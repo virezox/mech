@@ -5,6 +5,7 @@ import (
    "fmt"
    "github.com/89z/mech"
    "net/http"
+   "net/url"
 )
 
 const (
@@ -23,10 +24,10 @@ func Oembed(addr string) (*Alternate, error) {
    if err != nil {
       return nil, err
    }
-   val := req.URL.Query()
-   val.Set("format", "json")
-   val.Set("url", addr)
-   req.URL.RawQuery = val.Encode()
+   req.URL.RawQuery = url.Values{
+      "format": {"json"},
+      "url": {addr},
+   }.Encode()
    res, err := mech.RoundTrip(req)
    if err != nil {
       return nil, err
@@ -68,10 +69,10 @@ func Resolve(addr string) (*Track, error) {
    if err != nil {
       return nil, err
    }
-   val := req.URL.Query()
-   val.Set("client_id", clientID)
-   val.Set("url", addr)
-   req.URL.RawQuery = val.Encode()
+   req.URL.RawQuery = url.Values{
+      "client_id": {clientID},
+      "url": {addr},
+   }.Encode()
    res, err := mech.RoundTrip(req)
    if err != nil {
       return nil, err
@@ -89,10 +90,10 @@ func Tracks(ids string) ([]Track, error) {
    if err != nil {
       return nil, err
    }
-   val := req.URL.Query()
-   val.Set("client_id", clientID)
-   val.Set("ids", ids)
-   req.URL.RawQuery = val.Encode()
+   req.URL.RawQuery = url.Values{
+      "client_id": {clientID},
+      "ids": {ids},
+   }.Encode()
    res, err := mech.RoundTrip(req)
    if err != nil {
       return nil, err
@@ -123,9 +124,9 @@ func (t Track) GetMedia() (*Media, error) {
    if err != nil {
       return nil, err
    }
-   val := req.URL.Query()
-   val.Set("client_id", clientID)
-   req.URL.RawQuery = val.Encode()
+   req.URL.RawQuery = url.Values{
+      "client_id": {clientID},
+   }.Encode()
    res, err := mech.RoundTrip(req)
    if err != nil {
       return nil, err
