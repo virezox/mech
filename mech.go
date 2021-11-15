@@ -1,7 +1,6 @@
 package mech
 
 import (
-   "fmt"
    "mime"
    "strings"
    "net/http"
@@ -44,7 +43,7 @@ func NumberFormat(val float64, metric []string) string {
    if key >= len(metric) {
       return ""
    }
-   return fmt.Sprintf("%.3f ", val) + metric[key]
+   return strconv.FormatFloat(val, 'f', 3, 64) + " " + metric[key]
 }
 
 func Percent(pos, length int64) string {
@@ -67,11 +66,7 @@ func RoundTrip(req *http.Request) (*http.Response, error) {
       return nil, err
    }
    if res.StatusCode != http.StatusOK {
-      buf, err := httputil.DumpResponse(res, true)
-      if err != nil {
-         return nil, err
-      }
-      return nil, fmt.Errorf("%s", buf)
+      return nil, status{res}
    }
    return res, nil
 }
@@ -82,4 +77,16 @@ type NotFound struct {
 
 func (n NotFound) Error() string {
    return strconv.Quote(n.Find) + " not found"
+}
+
+type status struct {
+   *http.Response
+}
+
+func (s status) Error() string {
+   buf, err := httputil.DumpResponse(s.Response, true)
+   if err != nil {
+      return err.Error()
+   }
+   return string(buf)
 }
