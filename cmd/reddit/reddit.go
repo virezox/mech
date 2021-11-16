@@ -63,14 +63,18 @@ func main() {
    for _, ada := range mpd.Period.AdaptationSet {
       ada.Representation.Sort()
       for _, rep := range ada.Representation {
-         if ! info {
-            err := download(link, rep.BaseURL, ada.MimeType + rep.MimeType)
+         if rep.MimeType == "" {
+            rep.MimeType = ada.MimeType
+         }
+         if info {
+            fmt.Printf("%+v\n", rep)
+         } else {
+            err := download(link, rep.BaseURL, rep.MimeType)
             if err != nil {
                panic(err)
             }
             break
          }
-         fmt.Printf("%+v\n", rep)
       }
    }
 }
