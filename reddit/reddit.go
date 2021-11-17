@@ -30,6 +30,7 @@ type Link struct {
    Media struct {
       Reddit_Video struct {
          DASH_URL string
+         HLS_URL string
       }
    }
    Subreddit string
