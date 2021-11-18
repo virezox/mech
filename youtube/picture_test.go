@@ -13,13 +13,13 @@ const id = "UpNXI3_ctAc"
 func TestImage(t *testing.T) {
    for _, p := range youtube.Pictures {
       addr := p.Address(id)
-      println("Head", addr)
-      r, err := http.Head(addr)
+      fmt.Println("Head", addr)
+      res, err := http.Head(addr)
       if err != nil {
          t.Fatal(err)
       }
-      if r.StatusCode != http.StatusOK {
-         t.Fatal(r.Status)
+      if res.StatusCode != http.StatusOK {
+         t.Fatal(res.Status)
       }
       time.Sleep(100 * time.Millisecond)
    }

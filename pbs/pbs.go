@@ -24,7 +24,7 @@ func Slug(addr string) (string, error) {
    }
    ind := strings.Index(par.Path, "/video/")
    if ind == -1 {
-      return "", mech.NotFound{"/video/"}
+      return "", mech.NotFound("/video/")
    }
    slug := path.Base(par.Path)
    if ind == 0 {
@@ -53,7 +53,7 @@ func Slug(addr string) (string, error) {
          }
       }
    }
-   return "", mech.NotFound{slug}
+   return "", mech.NotFound(slug)
 }
 
 type Asset struct {
