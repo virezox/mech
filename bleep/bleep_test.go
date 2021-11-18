@@ -6,13 +6,25 @@ import (
    "testing"
 )
 
-func TestBleep(t *testing.T) {
-   id, err := ReleaseID("https://bleep.com/release/8728-four-tet-pause")
+const addr = "https://bleep.com/release/8728-four-tet-pause"
+
+func TestMeta(t *testing.T) {
+   mech.Verbose = true
+   met, err := NewMeta(addr)
    if err != nil {
       t.Fatal(err)
    }
+   fmt.Printf("%+v\n", met)
+   date, err := met.Release_Date.Parse()
+   if err != nil {
+      t.Fatal(err)
+   }
+   fmt.Println(date)
+}
+
+func TestResolve(t *testing.T) {
    mech.Verbose = true
-   tracks, err := Release(id)
+   tracks, err := Release(addr)
    if err != nil {
       t.Fatal(err)
    }
