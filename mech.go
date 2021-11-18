@@ -71,12 +71,20 @@ func RoundTrip(req *http.Request) (*http.Response, error) {
    return res, nil
 }
 
+type Invalid struct {
+   Input string
+}
+
+func (i Invalid) Error() string {
+   return strconv.Quote(i.Input) + " invalid"
+}
+
 type NotFound struct {
-   Find string
+   Input string
 }
 
 func (n NotFound) Error() string {
-   return strconv.Quote(n.Find) + " not found"
+   return strconv.Quote(n.Input) + " not found"
 }
 
 type status struct {
