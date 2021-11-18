@@ -54,5 +54,5 @@ func NewAudio(addr string) (*Audio, error) {
          return aud, nil
       }
    }
-   return nil, mech.NotFound{podcast}
+   return nil, mech.NotFound(podcast)
 }
