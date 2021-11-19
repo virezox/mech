@@ -7,11 +7,11 @@ import (
    "github.com/89z/mech/reddit"
    "net/http"
    "os"
+   "sort"
    "strings"
 )
 
-func download(link *reddit.Link, base, typ string) error {
-   addr := link.URL + "/" + base
+func download(link *reddit.Link, addr, typ string) error {
    fmt.Println("GET", addr)
    res, err := http.Get(addr)
    if err != nil {
@@ -56,13 +56,16 @@ func main() {
    if err != nil {
       panic(err)
    }
-   mpd, err := link.MPD()
+   dash, err := link.DASH()
    if err != nil {
       panic(err)
    }
-   for _, ada := range mpd.Period.AdaptationSet {
-      ada.Representation.Sort()
-      for _, rep := range ada.Representation {
+   for _, ada := range dash.Period.AdaptationSet {
+      reps := ada.Representation
+      sort.Slice(reps, func(a, b int) bool {
+         return reps[b].Height < reps[a].Height
+      })
+      for _, rep := range reps {
          if rep.MimeType == "" {
             rep.MimeType = ada.MimeType
          }
