@@ -61,8 +61,6 @@ func (p Post) Link() (*Link, error) {
    return nil, fmt.Errorf("children %v", p.Data.Children)
 }
 
-////////////////////////////////////////////////////////////////////////////////
-
 type DASH struct {
    Period struct {
       AdaptationSet []struct {

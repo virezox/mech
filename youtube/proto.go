@@ -51,11 +51,11 @@ type Params struct {
 }
 
 func (p Params) Encode() (string, error) {
-   enc, err := protobuf.NewEncoder(p)
+   smap, err := protobuf.NewStringMap(p)
    if err != nil {
       return "", err
    }
-   buf, err := enc.Encode()
+   buf, err := smap.Bytes()
    if err != nil {
       return "", err
    }

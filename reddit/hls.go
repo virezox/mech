@@ -1,6 +1,10 @@
 package reddit
 
 import (
+   "github.com/89z/mech"
+   "github.com/89z/parse/m3u"
+   "net/http"
+   "path"
 )
 
 type Link struct {
@@ -15,8 +19,17 @@ type Link struct {
    URL string // https://v.redd.it/pjn0j2z4v6o71
 }
 
-type HLS struct{}
-
-func (l Link) HLS() *HLS {
-   return nil
+func (l Link) HLS() (m3u.Playlist, error) {
+   req, err := http.NewRequest("GET", l.Media.Reddit_Video.HLS_URL, nil)
+   if err != nil {
+      return nil, err
+   }
+   req.URL.RawQuery = ""
+   res, err := mech.RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   prefix, _ := path.Split(l.Media.Reddit_Video.HLS_URL)
+   return m3u.NewPlaylist(res.Body, prefix), nil
 }

@@ -15,7 +15,7 @@ func TestMeta(t *testing.T) {
       t.Fatal(err)
    }
    fmt.Printf("%+v\n", meta)
-   date, err := meta.Release_Date.Parse()
+   date, err := meta.ReleaseDate()
    if err != nil {
       t.Fatal(err)
    }

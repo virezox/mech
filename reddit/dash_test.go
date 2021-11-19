@@ -16,9 +16,9 @@ func TestReddit(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   m, err := l.MPD()
+   d, err := l.DASH()
    if err != nil {
       t.Fatal(err)
    }
-   fmt.Printf("%+v\n", m)
+   fmt.Printf("%+v\n", d)
 }

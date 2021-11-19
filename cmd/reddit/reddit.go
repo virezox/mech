@@ -56,6 +56,7 @@ func main() {
    if err != nil {
       panic(err)
    }
+   // DASH
    dash, err := link.DASH()
    if err != nil {
       panic(err)
@@ -78,6 +79,16 @@ func main() {
             }
             break
          }
+      }
+   }
+   // HLS
+   hls, err := link.HLS()
+   if err != nil {
+      panic(err)
+   }
+   if info {
+      for key, val := range hls {
+         fmt.Print(key, "\n", val, "\n")
       }
    }
 }

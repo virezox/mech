@@ -14,26 +14,9 @@ import (
 
 const Origin = "https://bleep.com"
 
-type Date string
+type Meta []html.Node
 
-// can be either one of these:
-//  2001-05-01 00:00:00.0
-//  Tue May 01 00:00:00 UTC 2001
-func (d Date) Parse() (time.Time, error) {
-   value := string(d)
-   date, err := time.Parse(time.UnixDate, value)
-   if err != nil {
-      return time.Parse("2006-01-02 15:04:05.9", value)
-   }
-   return date, nil
-}
-
-type Meta struct {
-   Image string `json:"og:image"`
-   Release_Date Date `json:"music:release_date"`
-}
-
-func NewMeta(releaseID int) (*Meta, error) {
+func NewMeta(releaseID int) (Meta, error) {
    req, err := http.NewRequest(
       "GET", fmt.Sprint(Origin, "/release/", releaseID), nil,
    )
@@ -49,11 +32,33 @@ func NewMeta(releaseID int) (*Meta, error) {
       return nil, err
    }
    defer res.Body.Close()
-   met := new(Meta)
-   if err := html.NewMap(res.Body).Struct(met); err != nil {
-      return nil, err
+   return html.Parse(res.Body, "meta"), nil
+}
+
+func (m Meta) Image() string {
+   for _, node := range m {
+      if node.Attr["property"] == "og:image" {
+         return node.Attr["content"]
+      }
    }
-   return met, nil
+   return ""
+}
+
+// can be either one of these:
+//  2001-05-01 00:00:00.0
+//  Tue May 01 00:00:00 UTC 2001
+func (m Meta) ReleaseDate() (time.Time, error) {
+   for _, node := range m {
+      if node.Attr["property"] == "music:release_date" {
+         value := node.Attr["content"]
+         date, err := time.Parse(time.UnixDate, value)
+         if err != nil {
+            return time.Parse("2006-01-02 15:04:05.9", value)
+         }
+         return date, nil
+      }
+   }
+   return time.Time{}, mech.NotFound{"music:release_date"}
 }
 
 type Track struct {
