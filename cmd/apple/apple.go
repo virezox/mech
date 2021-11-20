@@ -4,9 +4,10 @@ import (
    "flag"
    "fmt"
    "github.com/89z/mech"
-   "github.com/89z/mech/pbs"
+   "github.com/89z/mech/apple"
    "net/http"
    "os"
+   "path"
    "strings"
 )
 
@@ -15,40 +16,37 @@ func main() {
    flag.BoolVar(&info, "i", false, "info only")
    flag.Parse()
    if flag.NArg() == 0 {
-      fmt.Println("pbs [-i] [URL]")
+      fmt.Println("apple [-i] [URL]")
       flag.PrintDefaults()
       return
    }
    addr := flag.Arg(0)
    mech.Verbose = true
-   slug, err := pbs.Slug(addr)
+   audio, err := apple.NewAudio(addr)
    if err != nil {
       panic(err)
    }
-   asset, err := pbs.NewAsset(slug)
-   if err != nil {
-      panic(err)
-   }
-   if info {
-      fmt.Printf("%+v\n", asset)
-      return
-   }
-   for _, video := range asset.Resource.MP4_Videos {
-      err := download(asset.Resource.Title, video)
-      if err != nil {
-         panic(err)
+   for _, asset := range audio.D {
+      if info {
+         fmt.Printf("%+v\n", asset.Attributes)
+      } else {
+         err := download(asset.Attributes)
+         if err != nil {
+            panic(err)
+         }
       }
    }
 }
 
-func download(title string, video pbs.AssetVideo) error {
-   fmt.Println("GET", video.URL)
-   res, err := http.Get(video.URL)
+func download(attr apple.Attributes) error {
+   addr := attr.AssetURL.String()
+   fmt.Println("GET", addr)
+   res, err := http.Get(addr)
    if err != nil {
       return err
    }
    defer res.Body.Close()
-   name := title + "-" + video.Profile + ".mp4"
+   name := attr.ArtistName + "-" + attr.Name + path.Ext(addr)
    file, err := os.Create(strings.Map(mech.Clean, name))
    if err != nil {
       return err
