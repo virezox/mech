@@ -114,6 +114,13 @@ type Media struct {
       Edge_Media_Preview_Like struct {
          Count int
       }
+      Edge_Media_To_Parent_Comment struct {
+         Edges []struct {
+            Node struct {
+               Text string
+            }
+         }
+      }
       Edge_Sidecar_To_Children *struct {
          Edges []Edge
       }
