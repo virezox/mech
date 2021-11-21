@@ -28,9 +28,9 @@ func (l Link) HLS() ([]HLS, error) {
    defer res.Body.Close()
    prefix, _ := path.Split(l.Media.Reddit_Video.HLS_URL)
    var hlss []HLS
-   for key, val := range m3u.NewPlaylist(res.Body, prefix) {
+   for key, val := range m3u.NewPlaylist(res.Body) {
       hlss = append(hlss, HLS{
-         Resolution: val["RESOLUTION"], URI: key,
+         Resolution: val["RESOLUTION"], URI: prefix + key,
       })
    }
    sort.Slice(hlss, func(a, b int) bool {
