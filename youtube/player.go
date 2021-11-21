@@ -38,7 +38,7 @@ type Player struct {
       Status string
    }
    StreamingData struct {
-      AdaptiveFormats FormatSlice
+      AdaptiveFormats []Format
       // just including this so I can bail if video is Dash Manifest
       DashManifestURL string
    }

@@ -5,8 +5,6 @@ import (
    "github.com/89z/mech"
    "io"
    "net/http"
-   "sort"
-   "strings"
    "time"
 )
 
@@ -59,45 +57,4 @@ func (f Format) Write(w io.Writer) error {
       pos += chunk
    }
    return nil
-}
-
-type FormatSlice []Format
-
-func (f FormatSlice) Filter(keep func(Format)bool) FormatSlice {
-   var forms FormatSlice
-   for _, form := range f {
-      if keep(form) {
-         forms = append(forms, form)
-      }
-   }
-   return forms
-}
-
-func (f FormatSlice) Sort(less ...func(a, b Format) bool) {
-   if less == nil {
-      less = []func(a, b Format) bool{
-         func(a, b Format) bool {
-            return b.Height < a.Height
-         },
-         func(a, b Format) bool {
-            f, s := strings.Index, "/mp4;"
-            return f(a.MimeType, s) < f(b.MimeType, s)
-         },
-         func(a, b Format) bool {
-            return b.Bitrate < a.Bitrate
-         },
-      }
-   }
-   sort.Slice(f, func(a, b int) bool {
-      fa, fb := f[a], f[b]
-      for _, fn := range less {
-         if fn(fa, fb) {
-            return true
-         }
-         if fn(fb, fa) {
-            break
-         }
-      }
-      return false
-   })
 }
