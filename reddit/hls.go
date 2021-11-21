@@ -6,9 +6,16 @@ import (
    "net/http"
    "path"
    "sort"
+   "strings"
 )
 
-func (l Link) HLS() (SliceHLS, error) {
+type HLS struct {
+   ID int
+   Resolution string
+   URI string
+}
+
+func (l Link) HLS() ([]HLS, error) {
    req, err := http.NewRequest("GET", l.Media.Reddit_Video.HLS_URL, nil)
    if err != nil {
       return nil, err
@@ -20,46 +27,23 @@ func (l Link) HLS() (SliceHLS, error) {
    }
    defer res.Body.Close()
    prefix, _ := path.Split(l.Media.Reddit_Video.HLS_URL)
-   var hlss SliceHLS
+   var hlss []HLS
    for key, val := range m3u.NewPlaylist(res.Body, prefix) {
       hlss = append(hlss, HLS{
          Resolution: val["RESOLUTION"], URI: key,
       })
    }
-   hlss.Sort()
+   sort.Slice(hlss, func(a, b int) bool {
+      switch strings.Compare(hlss[a].Resolution, hlss[b].Resolution) {
+      case -1:
+         return true
+      case 1:
+         return false
+      }
+      return hlss[a].URI < hlss[b].URI
+   })
    for i := range hlss {
       hlss[i].ID = i
    }
    return hlss, nil
-}
-
-type HLS struct {
-   ID int
-   Resolution string
-   URI string
-}
-
-type SliceHLS []HLS
-
-func (h SliceHLS) Sort() {
-   funs := []func(a, b HLS) bool{
-      func(a, b HLS) bool {
-         return a.Resolution < b.Resolution
-      },
-      func(a, b HLS) bool {
-         return a.URI < b.URI
-      },
-   }
-   sort.Slice(h, func(a, b int) bool {
-      ha, hb := h[a], h[b]
-      for _, fun := range funs {
-         if fun(ha, hb) {
-            return true
-         }
-         if fun(hb, ha) {
-            break
-         }
-      }
-      return false
-   })
 }

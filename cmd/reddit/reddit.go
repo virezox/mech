@@ -7,9 +7,74 @@ import (
    "github.com/89z/mech/reddit"
    "net/http"
    "os"
-   "sort"
    "strings"
 )
+
+
+func main() {
+   var dashFormat, hlsFormat bool
+   flag.BoolVar(&dashFormat, "df", false, "DASH formats")
+   flag.BoolVar(&hlsFormat, "hf", false, "HLS formats")
+   dashIDs := make(map[string]bool)
+   flag.Func("d", "DASH IDs", func(id string) error {
+      dashIDs[id] = true
+      return nil
+   })
+   hlsIDs := make(map[string]bool)
+   flag.Func("h", "HLS IDs", func(id string) error {
+      hlsIDs[id] = true
+      return nil
+   })
+   flag.Parse()
+   if len(os.Args) == 1 {
+      fmt.Println("reddit [flags] [post ID]")
+      flag.PrintDefaults()
+      return
+   }
+   id := flag.Arg(0)
+   if ! reddit.Valid(id) {
+      panic("invalid ID")
+   }
+   mech.Verbose = true
+   post, err := reddit.NewPost(id)
+   if err != nil {
+      panic(err)
+   }
+   link, err := post.Link()
+   if err != nil {
+      panic(err)
+   }
+   if dashFormat || len(dashIDs) >= 1 {
+      dash, err := link.DASH()
+      if err != nil {
+         panic(err)
+      }
+      for _, ada := range dash.Period.AdaptationSet {
+         for _, rep := range ada.Representation {
+            if dashFormat {
+               fmt.Printf("%+v\n", rep)
+            } else if dashIDs[rep.ID] {
+               err := download(link, rep.BaseURL, rep.MimeType)
+               if err != nil {
+                  panic(err)
+               }
+            }
+         }
+      }
+   }
+   if hlsFormat || len(hlsIDs) >= 1 {
+      hlss, err := link.HLS()
+      if err != nil {
+         panic(err)
+      }
+      for _, hls := range hlss {
+         if hlsFormat {
+            fmt.Printf("%+v\n", hls)
+         } else {
+         }
+      }
+   }
+}
 
 func download(link *reddit.Link, addr, typ string) error {
    fmt.Println("GET", addr)
@@ -32,63 +97,4 @@ func download(link *reddit.Link, addr, typ string) error {
       return err
    }
    return nil
-}
-
-func main() {
-   var info bool
-   flag.BoolVar(&info, "i", false, "info only")
-   flag.Parse()
-   if len(os.Args) == 1 {
-      fmt.Println("reddit [-i] [post ID]")
-      flag.PrintDefaults()
-      return
-   }
-   id := flag.Arg(0)
-   if ! reddit.Valid(id) {
-      panic("invalid ID")
-   }
-   mech.Verbose = true
-   post, err := reddit.NewPost(id)
-   if err != nil {
-      panic(err)
-   }
-   link, err := post.Link()
-   if err != nil {
-      panic(err)
-   }
-   // DASH
-   dash, err := link.DASH()
-   if err != nil {
-      panic(err)
-   }
-   for _, ada := range dash.Period.AdaptationSet {
-      reps := ada.Representation
-      sort.Slice(reps, func(a, b int) bool {
-         return reps[a].ID < reps[b].ID
-      })
-      for _, rep := range reps {
-         if rep.MimeType == "" {
-            rep.MimeType = ada.MimeType
-         }
-         if info {
-            fmt.Printf("%+v\n", rep)
-         } else {
-            err := download(link, rep.BaseURL, rep.MimeType)
-            if err != nil {
-               panic(err)
-            }
-            break
-         }
-      }
-   }
-   // HLS
-   hlss, err := link.HLS()
-   if err != nil {
-      panic(err)
-   }
-   if info {
-      for _, hls := range hlss {
-         fmt.Printf("%+v\n", hls)
-      }
-   }
 }

@@ -95,6 +95,9 @@ func (l Link) DASH() (*DASH, error) {
    for aKey, aVal := range dash.Period.AdaptationSet {
       for rKey, rVal := range aVal.Representation {
          rVal.BaseURL = prefix + rVal.BaseURL
+         if rVal.MimeType == "" {
+            rVal.MimeType = aVal.MimeType
+         }
          dash.Period.AdaptationSet[aKey].Representation[rKey] = rVal
       }
    }
