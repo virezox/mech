@@ -1,9 +1,19 @@
 # Reddit
 
-link           | height | mimeType       | audio
----------------|--------|----------------|------
-redd.it/k1ov8f | 480    | AdaptationSet  | yes
-redd.it/fffrnw | 720    | Representation | yes
+We need to support this:
+
+~~~
+iduchl
+~~~
+
+which has no audio. Also need to support this:
+
+~~~
+fffrnw
+~~~
+
+which has audio.
+
 
 - https://github.com/ytdl-org/youtube-dl/issues/26410
 - https://github.com/ytdl-org/youtube-dl/issues/30092

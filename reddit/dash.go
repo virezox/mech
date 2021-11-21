@@ -67,10 +67,10 @@ type DASH struct {
          // sometimes MimeType is here, for example `pqoz44`
          MimeType string `xml:"mimeType,attr"`
          Representation []struct {
-            BaseURL string
-            Height int `xml:"height,attr"`
+            ID string `xml:"id,attr"`
             // sometimes MimeType is here, for example `fffrnw`
             MimeType string `xml:"mimeType,attr"`
+            BaseURL string
          }
       }
    }
@@ -99,4 +99,16 @@ func (l Link) DASH() (*DASH, error) {
       }
    }
    return dash, nil
+}
+
+type Link struct {
+   Media struct {
+      Reddit_Video struct {
+         DASH_URL string // v.redd.it/16cqbkev2ci51/DASHPlaylist.mpd
+         HLS_URL string // v.redd.it/16cqbkev2ci51/HLSPlaylist.m3u8
+      }
+   }
+   Subreddit string
+   Title string
+   URL string // v.redd.it/pjn0j2z4v6o71
 }

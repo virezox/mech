@@ -13,7 +13,8 @@ const (
    OriginI = "https://i.instagram.com"
    OriginWWW = "https://www.instagram.com"
    queryHash = "2efa04f61586458cef44441f474eee7c"
-   userAgent = "Instagram 207.0.0.39.120 Android"
+   // com.instagram.android
+   userAgent = "Instagram 214.1.0.29.120 Android"
 )
 
 // instagram.com/p/CT-cnxGhvvO

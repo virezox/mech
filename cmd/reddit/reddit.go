@@ -64,7 +64,7 @@ func main() {
    for _, ada := range dash.Period.AdaptationSet {
       reps := ada.Representation
       sort.Slice(reps, func(a, b int) bool {
-         return reps[b].Height < reps[a].Height
+         return reps[a].ID < reps[b].ID
       })
       for _, rep := range reps {
          if rep.MimeType == "" {
@@ -82,13 +82,13 @@ func main() {
       }
    }
    // HLS
-   hls, err := link.HLS()
+   hlss, err := link.HLS()
    if err != nil {
       panic(err)
    }
    if info {
-      for key, val := range hls {
-         fmt.Print(key, "\n", val, "\n")
+      for _, hls := range hlss {
+         fmt.Printf("%+v\n", hls)
       }
    }
 }
