@@ -1,8 +1,7 @@
-package youtube_test
+package youtube
 
 import (
    "fmt"
-   "github.com/89z/mech/youtube"
    "net/http"
    "testing"
    "time"
@@ -10,8 +9,8 @@ import (
 
 const id = "UpNXI3_ctAc"
 
-func TestImage(t *testing.T) {
-   for _, p := range youtube.Pictures {
+func TestPicture(t *testing.T) {
+   for _, p := range Pictures {
       addr := p.Address(id)
       fmt.Println("Head", addr)
       res, err := http.Head(addr)
@@ -22,15 +21,5 @@ func TestImage(t *testing.T) {
          t.Fatal(res.Status)
       }
       time.Sleep(100 * time.Millisecond)
-   }
-}
-
-func TestFilter(t *testing.T) {
-   pix := youtube.Pictures.Filter(func(i youtube.Picture) bool {
-      return i.Height < 720
-   })
-   pix.Sort()
-   for _, p := range pix {
-      fmt.Println(p)
    }
 }

@@ -6,7 +6,6 @@ import (
    "net/http"
    "path"
    "sort"
-   "strings"
 )
 
 type HLS struct {
@@ -34,11 +33,9 @@ func (l Link) HLS() ([]HLS, error) {
       })
    }
    sort.Slice(hlss, func(a, b int) bool {
-      switch strings.Compare(hlss[a].Resolution, hlss[b].Resolution) {
-      case -1:
-         return true
-      case 1:
-         return false
+      less, equal := mech.Compare(hlss[a].Resolution, hlss[b].Resolution)
+      if !equal {
+         return less
       }
       return hlss[a].URI < hlss[b].URI
    })
