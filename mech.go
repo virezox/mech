@@ -12,13 +12,6 @@ import (
 
 var Verbose bool
 
-var extensions = map[string][]string{
-   "audio/mp4": {".m4a"},
-   "audio/webm": {".weba"},
-   "video/mp4": {".m4v", ".mp4", ".mp4v"},
-   "video/webm": {".webm"},
-}
-
 func Clean(r rune) rune {
    if strings.ContainsRune(`"*/:<>?\|`, r) {
       return -1
@@ -30,10 +23,10 @@ func Compare(a, b int) int {
    if a < b {
       return -1
    }
-   if b < a {
-      return 1
+   if a == b {
+      return 0
    }
-   return 0
+   return 1
 }
 
 // github.com/golang/go/issues/22318
@@ -42,7 +35,12 @@ func ExtensionsByType(typ string) ([]string, error) {
    if err != nil {
       return nil, err
    }
-   return extensions[justType], nil
+   return map[string][]string{
+      "audio/mp4": {".m4a"},
+      "audio/webm": {".weba"},
+      "video/mp4": {".m4v", ".mp4", ".mp4v"},
+      "video/webm": {".webm"},
+   }[justType], nil
 }
 
 func NumberFormat(val float64, metric []string) string {
@@ -80,14 +78,6 @@ func RoundTrip(req *http.Request) (*http.Response, error) {
       return nil, status{res}
    }
    return res, nil
-}
-
-type Invalid struct {
-   Input string
-}
-
-func (i Invalid) Error() string {
-   return strconv.Quote(i.Input) + " invalid"
 }
 
 type NotFound struct {

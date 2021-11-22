@@ -34,11 +34,9 @@ func (l Link) HLS() ([]HLS, error) {
       })
    }
    sort.Slice(hlss, func(a, b int) bool {
-      switch strings.Compare(hlss[a].Resolution, hlss[b].Resolution) {
-      case -1:
-         return true
-      case 1:
-         return false
+      com := strings.Compare(hlss[a].Resolution, hlss[b].Resolution)
+      if com != 0 {
+         return com == -1
       }
       return hlss[a].URI < hlss[b].URI
    })

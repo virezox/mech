@@ -1,17 +1,11 @@
 package youtube
 
-import (
-   "github.com/89z/mech"
-   "sort"
-   "strings"
-)
-
 var (
    webP = pictureFormat{0, "vi_webp", "webp"}
    jpg = pictureFormat{1, "vi", "jpg"}
 )
 
-var Pictures = PictureSlice{
+var Pictures = []Picture{
    {120, 90, 68, "default", jpg},
    {120, 90, 90, "1", jpg},
    {120, 90, 90, "2", jpg},
@@ -58,7 +52,6 @@ var Pictures = PictureSlice{
    {1280, 720, 720, "maxresdefault", webP},
 }
 
-
 func (p Picture) Address(id string) string {
    add := "http://i.ytimg.com/" + p.Format.Dir
    add += "/" + id
@@ -71,40 +64,10 @@ type pictureFormat struct {
    Ext string
 }
 
-type PictureSlice []Picture
-
-func (p PictureSlice) Filter(keep func(Picture)bool) PictureSlice {
-   var pics PictureSlice
-   for _, pic := range p {
-      if keep(pic) {
-         pics = append(pics, pic)
-      }
-   }
-   return pics
-}
-
 type Picture struct {
    Width int
    Height int
    SubHeight int
    Base string
    Format pictureFormat
-}
-
-func (p PictureSlice) Sort() {
-   sort.SliceStable(p, func(a, b int) bool {
-      switch mech.Compare(p[a].Height, p[b].Height) {
-         case -1: return false
-         case 1: return true
-      }
-      switch mech.Compare(p[a].SubHeight, p[b].SubHeight) {
-         case -1: return true
-         case 1: return false
-      }
-      switch strings.Compare(p[a].Base, p[b].Base) {
-         case -1: return true
-         case 1: return false
-      }
-      return p[a].Format.Size < p[b].Format.Size
-   })
 }
