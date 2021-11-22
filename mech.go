@@ -26,6 +26,16 @@ func Clean(r rune) rune {
    return r
 }
 
+func Compare(a, b int) int {
+   if a < b {
+      return -1
+   }
+   if b < a {
+      return 1
+   }
+   return 0
+}
+
 // github.com/golang/go/issues/22318
 func ExtensionsByType(typ string) ([]string, error) {
    justType, _, err := mime.ParseMediaType(typ)

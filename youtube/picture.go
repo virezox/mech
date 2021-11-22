@@ -1,5 +1,10 @@
 package youtube
-import "sort"
+
+import (
+   "github.com/89z/mech"
+   "sort"
+   "strings"
+)
 
 var (
    webP = pictureFormat{0, "vi_webp", "webp"}
@@ -53,13 +58,6 @@ var Pictures = PictureSlice{
    {1280, 720, 720, "maxresdefault", webP},
 }
 
-type Picture struct {
-   Width int
-   Height int
-   SubHeight int
-   Base string
-   Format pictureFormat
-}
 
 func (p Picture) Address(id string) string {
    add := "http://i.ytimg.com/" + p.Format.Dir
@@ -85,33 +83,28 @@ func (p PictureSlice) Filter(keep func(Picture)bool) PictureSlice {
    return pics
 }
 
-func (p PictureSlice) Sort(less ...func(a, b Picture) bool) {
-   if less == nil {
-      less = []func(a, b Picture) bool{
-         func(a, b Picture) bool {
-            return b.Height < a.Height
-         },
-         func(a, b Picture) bool {
-            return a.SubHeight < b.SubHeight
-         },
-         func(a, b Picture) bool {
-            return a.Base < b.Base
-         },
-         func(a, b Picture) bool {
-            return a.Format.Size < b.Format.Size
-         },
-      }
-   }
+type Picture struct {
+   Width int
+   Height int
+   SubHeight int
+   Base string
+   Format pictureFormat
+}
+
+func (p PictureSlice) Sort() {
    sort.SliceStable(p, func(a, b int) bool {
-      pa, pb := p[a], p[b]
-      for _, fn := range less {
-         if fn(pa, pb) {
-            return true
-         }
-         if fn(pb, pa) {
-            break
-         }
+      switch mech.Compare(p[a].Height, p[b].Height) {
+         case -1: return false
+         case 1: return true
       }
-      return false
+      switch mech.Compare(p[a].SubHeight, p[b].SubHeight) {
+         case -1: return true
+         case 1: return false
+      }
+      switch strings.Compare(p[a].Base, p[b].Base) {
+         case -1: return true
+         case 1: return false
+      }
+      return p[a].Format.Size < p[b].Format.Size
    })
 }

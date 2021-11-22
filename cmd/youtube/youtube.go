@@ -8,20 +8,43 @@ import (
    "os"
 )
 
+func infoPath(id string) error {
+   p, err := youtube.NewPlayer(id, youtube.Key, youtube.Mweb)
+   if err != nil {
+      return err
+   }
+   fmt.Println("author:", p.Author())
+   fmt.Println("title:", p.Title())
+   fmt.Println("countries:", p.Countries())
+   fmt.Println()
+   for _, f := range p.StreamingData.AdaptiveFormats {
+      fmt.Printf(
+         "itag %v, height %v, %v, %v, %v\n",
+         f.Itag, f.Height, f.Bitrate, f.ContentLength, f.MimeType,
+      )
+   }
+   return nil
+}
+
 func main() {
-   var construct, exchange, refresh bool
-   var embed bool
-   flag.BoolVar(&construct, "c", false, "OAuth construct request")
-   flag.BoolVar(&embed, "e", false, "use embedded player")
+   // OAuth
+   var exchange, refresh bool
    flag.BoolVar(&exchange, "x", false, "OAuth token exchange")
    flag.BoolVar(&refresh, "r", false, "OAuth token refresh")
-   var (
-      atag, vtag int
-      info bool
-   )
-   flag.BoolVar(&info, "i", false, "info only")
-   flag.IntVar(&atag, "a", 0, "audio itag (-1 to skip)")
-   flag.IntVar(&vtag, "v", 0, "video itag (-1 to skip)")
+   // info
+   var info bool
+   flag.BoolVar(&info, "i", false, "info")
+   // download
+   down := choice{
+      formats: make(map[string]bool),
+   }
+   flag.BoolVar(&down.embed, "e", false, "use embedded player")
+   flag.BoolVar(&down.construct, "c", false, "OAuth construct request")
+   flag.Func("f", "formats", func(format string) error {
+      down.formats[format] = true
+      return nil
+   })
+   // parse
    flag.Parse()
    if len(os.Args) == 1 {
       fmt.Println("youtube [flags] [video ID]")
@@ -52,7 +75,7 @@ func main() {
             panic(err)
          }
       default:
-         err := downloadPath(construct, embed, atag, vtag, id)
+         err := down.download(id)
          if err != nil {
             panic(err)
          }

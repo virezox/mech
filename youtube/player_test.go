@@ -16,10 +16,8 @@ func TestAndroid(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   f := p.StreamingData.AdaptiveFormats.Filter(func(f Format) bool {
-      return f.Height == 0
-   })
-   if err := f[0].Write(io.Discard); err != nil {
+   f := p.StreamingData.AdaptiveFormats[0]
+   if err := f.Write(io.Discard); err != nil {
       t.Fatal(err)
    }
 }
@@ -29,10 +27,8 @@ func TestEmbed(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   f := p.StreamingData.AdaptiveFormats.Filter(func(f Format) bool {
-      return f.Height == 0
-   })
-   if err := f[0].Write(io.Discard); err != nil {
+   f := p.StreamingData.AdaptiveFormats[0]
+   if err := f.Write(io.Discard); err != nil {
       t.Fatal(err)
    }
 }
