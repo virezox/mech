@@ -30,17 +30,21 @@ func Compare(a, b int) int {
 }
 
 // github.com/golang/go/issues/22318
-func ExtensionsByType(typ string) ([]string, error) {
+func ExtensionByType(typ string) (string, error) {
    justType, _, err := mime.ParseMediaType(typ)
    if err != nil {
-      return nil, err
+      return "", err
    }
-   return map[string][]string{
-      "audio/mp4": {".m4a"},
-      "audio/webm": {".weba"},
-      "video/mp4": {".m4v", ".mp4", ".mp4v"},
-      "video/webm": {".webm"},
-   }[justType], nil
+   ext, ok := map[string]string{
+      "audio/mp4": ".m4a",
+      "audio/webm": ".weba",
+      "video/mp4": ".m4v",
+      "video/webm": ".webm",
+   }[justType]
+   if !ok {
+      return "", NotFound{justType}
+   }
+   return ext, nil
 }
 
 func NumberFormat(val float64, metric []string) string {

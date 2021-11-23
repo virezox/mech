@@ -80,11 +80,11 @@ func (c choice) DASH(link *reddit.Link) error {
                return err
             }
             defer res.Body.Close()
-            exts, err := mech.ExtensionsByType(rep.MimeType)
-            if exts == nil {
-               return fmt.Errorf("exts %v, err %v", exts, err)
+            ext, err := mech.ExtensionByType(rep.MimeType)
+            if err != nil {
+               return err
             }
-            name := link.Subreddit + "-" + link.Title + exts[0]
+            name := link.Subreddit + "-" + link.Title + ext
             file, err := os.Create(strings.Map(mech.Clean, name))
             if err != nil {
                return err

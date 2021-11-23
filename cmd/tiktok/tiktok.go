@@ -6,8 +6,8 @@ import (
    "github.com/89z/mech"
    "github.com/89z/mech/tiktok"
    "net/http"
+   "net/http/httputil"
    "os"
-   "path"
    "strings"
 )
 
@@ -16,44 +16,51 @@ func main() {
    flag.BoolVar(&info, "i", false, "info only")
    flag.Parse()
    if flag.NArg() == 0 {
-      fmt.Println("apple [-i] [URL]")
+      fmt.Println("tiktok [flags] [URL]")
       flag.PrintDefaults()
       return
    }
    addr := flag.Arg(0)
    mech.Verbose = true
-   audio, err := apple.NewAudio(addr)
+   vid, err := tiktok.NewVideo(addr)
    if err != nil {
       panic(err)
    }
-   for _, asset := range audio.D {
-      if info {
-         fmt.Printf("%+v\n", asset.Attributes)
-      } else {
-         err := download(asset.Attributes)
-         if err != nil {
-            panic(err)
-         }
+   req, err := tiktok.Request(vid)
+   if err != nil {
+      panic(err)
+   }
+   if info {
+      buf, err := httputil.DumpRequest(req, false)
+      if err != nil {
+         panic(err)
+      }
+      os.Stdout.Write(buf)
+   } else {
+      err := get(req, vid)
+      if err != nil {
+         panic(err)
       }
    }
 }
 
-func download(attr apple.Attributes) error {
-   addr := attr.AssetURL.String()
-   fmt.Println("GET", addr)
-   res, err := http.Get(addr)
+func get(req *http.Request, vid tiktok.Video) error {
+   res, err := mech.RoundTrip(req)
    if err != nil {
       return err
    }
    defer res.Body.Close()
-   name := attr.ArtistName + "-" + attr.Name + path.Ext(addr)
+   ext, err := mech.ExtensionByType(res.Header.Get("Content-Type"))
+   if err != nil {
+      return err
+   }
+   name := vid.Author() + "-" + vid.ID() + ext
    file, err := os.Create(strings.Map(mech.Clean, name))
    if err != nil {
       return err
    }
    defer file.Close()
-   pro := mech.NewProgress(res)
-   if _, err := file.ReadFrom(pro); err != nil {
+   if _, err := file.ReadFrom(res.Body); err != nil {
       return err
    }
    return nil

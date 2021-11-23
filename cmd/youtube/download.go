@@ -40,11 +40,11 @@ func (c choice) download(id string) error {
    }
    for _, form := range p.StreamingData.AdaptiveFormats {
       if c.formats[fmt.Sprint(form.Itag)] {
-         exts, err := mech.ExtensionsByType(form.MimeType)
-         if exts == nil {
-            return fmt.Errorf("exts %v, err %v", exts, err)
+         ext, err := mech.ExtensionByType(form.MimeType)
+         if err != nil {
+            return err
          }
-         name := p.Author() + "-" + p.Title() + exts[0]
+         name := p.Author() + "-" + p.Title() + ext
          file, err := os.Create(strings.Map(mech.Clean, name))
          if err != nil {
             return err

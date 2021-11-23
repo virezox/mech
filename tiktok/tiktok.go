@@ -9,24 +9,87 @@ import (
 )
 
 const (
-   Referer = "https://www.tiktok.com/"
    agent = "Mozilla/5.0 (Windows)"
+   referer = "https://www.tiktok.com/"
 )
 
-func GetVideo(addr string) (*http.Response, error) {
-   req, err := http.NewRequest("GET", addr, nil)
+func Request(vid Video) (*http.Request, error) {
+   req, err := http.NewRequest("GET", vid.PlayAddr(), nil)
    if err != nil {
       return nil, err
    }
-   req.Header.Set("Referer", Referer)
-   return new(http.Transport).RoundTrip(req)
+   req.Header.Set("Referer", referer)
+   return req, nil
 }
 
-type Data interface {
+type NextData struct {
+   Props struct {
+      PageProps struct {
+         ItemInfo struct {
+            ItemStruct struct {
+               Author struct {
+                  UniqueID string
+               }
+               ID string
+               Video struct {
+                  PlayAddr string
+               }
+            }
+         }
+      }
+   }
+}
+
+func (n NextData) Author() string {
+   return n.Props.PageProps.ItemInfo.ItemStruct.Author.UniqueID
+}
+
+func (n NextData) ID() string {
+   return n.Props.PageProps.ItemInfo.ItemStruct.ID
+}
+
+func (n NextData) PlayAddr() string {
+   return n.Props.PageProps.ItemInfo.ItemStruct.Video.PlayAddr
+}
+
+type SigiData struct {
+   ItemModule map[int]struct {
+      Author string
+      ID string
+      Video struct {
+         PlayAddr string
+      }
+   }
+}
+
+func (s SigiData) Author() string {
+   for key := range s.ItemModule {
+      return s.ItemModule[key].Author
+   }
+   return ""
+}
+
+func (s SigiData) ID() string {
+   for key := range s.ItemModule {
+      return s.ItemModule[key].ID
+   }
+   return ""
+}
+
+func (s SigiData) PlayAddr() string {
+   for key := range s.ItemModule {
+      return s.ItemModule[key].Video.PlayAddr
+   }
+   return ""
+}
+
+type Video interface {
+   Author() string
+   ID() string
    PlayAddr() string
 }
 
-func NewData(addr string) (Data, error) {
+func NewVideo(addr string) (Video, error) {
    req, err := http.NewRequest("GET", addr, nil)
    if err != nil {
       return nil, err
@@ -63,37 +126,4 @@ func NewData(addr string) (Data, error) {
       }
    }
    return nil, mech.NotFound{ids}
-}
-
-type NextData struct {
-   Props struct {
-      PageProps struct {
-         ItemInfo struct {
-            ItemStruct struct {
-               Video struct {
-                  PlayAddr string
-               }
-            }
-         }
-      }
-   }
-}
-
-func (n NextData) PlayAddr() string {
-   return n.Props.PageProps.ItemInfo.ItemStruct.Video.PlayAddr
-}
-
-type SigiData struct {
-   ItemModule map[int]struct {
-      Video struct {
-         PlayAddr string
-      }
-   }
-}
-
-func (s SigiData) PlayAddr() string {
-   for key := range s.ItemModule {
-      return s.ItemModule[key].Video.PlayAddr
-   }
-   return ""
 }

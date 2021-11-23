@@ -5,6 +5,7 @@ import (
    "encoding/xml"
    "fmt"
    "github.com/89z/mech"
+   "html"
    "net/http"
    "path"
 )
@@ -77,11 +78,12 @@ type DASH struct {
 }
 
 func (l Link) DASH() (*DASH, error) {
-   req, err := http.NewRequest("GET", l.Media.Reddit_Video.DASH_URL, nil)
+   req, err := http.NewRequest(
+      "GET", html.UnescapeString(l.Media.Reddit_Video.DASH_URL), nil,
+   )
    if err != nil {
       return nil, err
    }
-   req.URL.RawQuery = ""
    res, err := mech.RoundTrip(req)
    if err != nil {
       return nil, err
