@@ -1,23 +1,5 @@
 # Bandcamp
 
-- <http://bandcamp.com/api/mobile/24/band_details?band_id=846803195>
-- https://github.com/masterT/bandcamp-scraper/issues/59
-
-## Key
-
-~~~
-Date: Fri, 17 Sep 2021 21:31:29 +0000
-From: Bandcamp Support <support@bandcamp.com>
-Subject: Re: (Case 1268890) API Access
-
-Thanks for your interest. Our APIs are currently limited to Label Accounts
-(bandcamp.com/labels) looking to pull physical order and general sales
-information, though that might change down the road. Please keep an eye on
-bandcamp.com/developer for updates.
-~~~
-
-## Resolve
-
 For tracks and albums, you can make a request like this:
 
 ~~~

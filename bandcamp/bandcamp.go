@@ -117,6 +117,8 @@ type Tralbum struct {
    Release_Date int64
    Title string
    Tracks []struct {
+      Track_Num int
+      Title string
       Streaming_URL struct {
          MP3_128 string `json:"mp3-128"`
       }
