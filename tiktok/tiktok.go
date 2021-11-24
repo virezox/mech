@@ -100,7 +100,7 @@ func NewVideo(addr string) (Video, error) {
       return nil, err
    }
    defer res.Body.Close()
-   var ids string
+   var ids []string
    for _, script := range html.Parse(res.Body, "script") {
       id := script.Attr["id"]
       switch id {
@@ -112,16 +112,13 @@ func NewVideo(addr string) (Video, error) {
          return next, nil
       case "sigi-persisted-data":
          sigi := new(SigiData)
-         ok := json.NewDecoder(script.Data).Decode(sigi, '{')
+         ok := json.NewDecoder(script.Data).Object(sigi)
          if ok {
             return sigi, nil
          }
       default:
          if id != "" {
-            if ids != "" {
-               ids += ","
-            }
-            ids += id
+            ids = append(ids, id)
          }
       }
    }

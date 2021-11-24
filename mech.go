@@ -85,11 +85,11 @@ func RoundTrip(req *http.Request) (*http.Response, error) {
 }
 
 type NotFound struct {
-   Input string
+   Input interface{}
 }
 
 func (n NotFound) Error() string {
-   return strconv.Quote(n.Input) + " not found"
+   return fmt.Sprint(n, " not found")
 }
 
 type status struct {

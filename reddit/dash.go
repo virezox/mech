@@ -22,6 +22,61 @@ func Valid(id string) bool {
    return false
 }
 
+type DASH struct {
+   Period struct {
+      AdaptationSet []struct {
+         // sometimes MimeType is here, for example `pqoz44`
+         MimeType string `xml:"mimeType,attr"`
+         Representation []struct {
+            ID string `xml:"id,attr"`
+            // sometimes MimeType is here, for example `fffrnw`
+            MimeType string `xml:"mimeType,attr"`
+            BaseURL string
+         }
+      }
+   }
+}
+
+type Link struct {
+   Media struct {
+      Reddit_Video struct {
+         DASH_URL Text // v.redd.it/16cqbkev2ci51/DASHPlaylist.mpd
+         HLS_URL string // v.redd.it/16cqbkev2ci51/HLSPlaylist.m3u8
+      }
+   }
+   Subreddit string
+   Title string
+   URL string // v.redd.it/pjn0j2z4v6o71
+}
+
+func (l Link) DASH() (*DASH, error) {
+   addr := l.Media.Reddit_Video.DASH_URL.String()
+   req, err := http.NewRequest("GET", addr, nil)
+   if err != nil {
+      return nil, err
+   }
+   res, err := mech.RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   dash := new(DASH)
+   if err := xml.NewDecoder(res.Body).Decode(dash); err != nil {
+      return nil, err
+   }
+   prefix, _ := path.Split(addr)
+   for aKey, aVal := range dash.Period.AdaptationSet {
+      for rKey, rVal := range aVal.Representation {
+         rVal.BaseURL = prefix + rVal.BaseURL
+         if rVal.MimeType == "" {
+            rVal.MimeType = aVal.MimeType
+         }
+         dash.Period.AdaptationSet[aKey].Representation[rKey] = rVal
+      }
+   }
+   return dash, nil
+}
+
 type Post struct {
    Data struct {
       Children []struct {
@@ -62,58 +117,9 @@ func (p Post) Link() (*Link, error) {
    return nil, fmt.Errorf("children %v", p.Data.Children)
 }
 
-type DASH struct {
-   Period struct {
-      AdaptationSet []struct {
-         // sometimes MimeType is here, for example `pqoz44`
-         MimeType string `xml:"mimeType,attr"`
-         Representation []struct {
-            ID string `xml:"id,attr"`
-            // sometimes MimeType is here, for example `fffrnw`
-            MimeType string `xml:"mimeType,attr"`
-            BaseURL string
-         }
-      }
-   }
-}
+type Text string
 
-func (l Link) DASH() (*DASH, error) {
-   req, err := http.NewRequest(
-      "GET", html.UnescapeString(l.Media.Reddit_Video.DASH_URL), nil,
-   )
-   if err != nil {
-      return nil, err
-   }
-   res, err := mech.RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   dash := new(DASH)
-   if err := xml.NewDecoder(res.Body).Decode(dash); err != nil {
-      return nil, err
-   }
-   prefix, _ := path.Split(l.Media.Reddit_Video.DASH_URL)
-   for aKey, aVal := range dash.Period.AdaptationSet {
-      for rKey, rVal := range aVal.Representation {
-         rVal.BaseURL = prefix + rVal.BaseURL
-         if rVal.MimeType == "" {
-            rVal.MimeType = aVal.MimeType
-         }
-         dash.Period.AdaptationSet[aKey].Representation[rKey] = rVal
-      }
-   }
-   return dash, nil
-}
-
-type Link struct {
-   Media struct {
-      Reddit_Video struct {
-         DASH_URL string // v.redd.it/16cqbkev2ci51/DASHPlaylist.mpd
-         HLS_URL string // v.redd.it/16cqbkev2ci51/HLSPlaylist.m3u8
-      }
-   }
-   Subreddit string
-   Title string
-   URL string // v.redd.it/pjn0j2z4v6o71
+func (t Text) String() string {
+   str := string(t)
+   return html.UnescapeString(str)
 }
