@@ -1,0 +1,13 @@
+POST /access/vod/nbcuniversal/9000194209 HTTP/1.1
+user-agent: Mozilla/5.0 (Linux; Android 7.0; Android SDK built for x86 Build/NYC; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/69.0.3497.100 Mobile Safari/537.36
+accept: application/access-v1+json
+cache-control: no-cache
+app-session-id: d6d5ba6a-28a4-4463-8da2-f885ea8b7cc3
+authorization: NBC-Security key=android_nbcuniversal,version=2.4,hash=dc53d9d154b135687ebcdc4b830ab10ffd8be9fa8e15165ef552b1036f90248b,time=1637728833303
+content-type: application/json
+Host: access-cloudpath.media.nbcuni.com
+Connection: Keep-Alive
+Accept-Encoding: gzip
+Content-Length: 815
+
+{"device":"android","auth":false,"adobeMvpdId":"","deviceId":"45b1c9680f77ec48","device_type":"google_advertising_id","nw":"169843","mParticleId":"-7263752075674991209","externalAdvertiserId":"NBC_VOD_9000194209","did":"45b1c9680f77ec48","uuid":"6893e27b-8e48-40a1-9d08-3a988900e57c","appv":"NBC_7.26.1","buildv":"7.26.1","am_appv":"7.26.1","am_buildv":"2000002709","player_height":"1080","player_width":"1920","sdkv":"android_4.10.71.2","playerv":"exoplayer_2.10.5","bundleId":"com.nbcuni.nbc","us_privacy_string":"","mpx":{"accountId":"2304985974"},"tracking":{"deviceGroup":"PHN","platform":"MBL","appId":"PAD3C6E72-ED61-417F-A865-3AB63FDB6197","androidId":"6893e27b-8e48-40a1-9d08-3a988900e57c","comscore_device":"Android_SDK_built_for_x86","googleAdId":"6893e27b-8e48-40a1-9d08-3a988900e57c"},"prefetch":false}
