@@ -2,6 +2,7 @@ package youtube
 
 import (
    "encoding/base64"
+   "encoding/json"
    "github.com/89z/parse/protobuf"
 )
 
@@ -51,13 +52,13 @@ type Params struct {
 }
 
 func (p Params) Encode() (string, error) {
-   field, err := protobuf.Struct(p)
+   buf, err := json.Marshal(p)
    if err != nil {
       return "", err
    }
-   buf, err := field.Bytes()
-   if err != nil {
+   mes := make(protobuf.Message)
+   if err := mes.UnmarshalJSON(buf); err != nil {
       return "", err
    }
-   return base64.StdEncoding.EncodeToString(buf), nil
+   return base64.StdEncoding.EncodeToString(mes.Marshal()), nil
 }

@@ -4,26 +4,24 @@ import (
    "testing"
 )
 
-func TestFilter(t *testing.T) {
-   p := Params{
-      Filter: &Filter{UploadDate: UploadDateLastHour},
-   }
-   s, err := p.Encode()
-   if err != nil {
-      t.Fatal(err)
-   }
-   if s != "EgIIAQ==" {
-      t.Fatal(s)
-   }
+type test struct {
+   in Params
+   out string
 }
 
-func TestSort(t *testing.T) {
-   p := Params{SortBy: SortByRating}
-   s, err := p.Encode()
-   if err != nil {
-      t.Fatal(err)
-   }
-   if s != "CAE=" {
-      t.Fatal(err)
+var tests = []test{
+   {Params{Filter: &Filter{UploadDate: UploadDateLastHour}}, "EgIIAQ=="},
+   {Params{SortBy: SortByRating}, "CAE="},
+}
+
+func TestProto(t *testing.T) {
+   for _, test := range tests {
+      s, err := test.in.Encode()
+      if err != nil {
+         t.Fatal(err)
+      }
+      if s != test.out {
+         t.Fatal(s)
+      }
    }
 }
