@@ -28,15 +28,12 @@ type Search struct {
 func NewSearch(query string) (*Search, error) {
    var body youTubeI
    body.Context.Client = Mweb
-   par := Params{
-      Filter: &Filter{Type: TypeVideo},
-   }
-   enc, err := par.Encode()
-   if err != nil {
-      return nil, err
-   }
-   body.Params = enc
    body.Query = query
+   par := NewParams()
+   fil := NewFilter()
+   fil.Type(TypeVideo)
+   par.Filter(fil)
+   body.Params = par.Encode()
    res, err := post(origin + "/youtubei/v1/search", Key, body)
    if err != nil {
       return nil, err
