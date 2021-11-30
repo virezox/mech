@@ -3,7 +3,6 @@ package bandcamp
 import (
    "encoding/json"
    "fmt"
-   "github.com/89z/mech"
    "net/http"
    "net/url"
    "regexp"
@@ -56,7 +55,7 @@ func NewBand(id int) (*Band, error) {
    req.URL.RawQuery = url.Values{
       "band_id": {strconv.Itoa(id)},
    }.Encode()
-   res, err := mech.RoundTrip(req)
+   res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
    }
@@ -82,7 +81,7 @@ func NewItem(addr string) (*Item, error) {
    if req.URL.Path == "" {
       req.URL.Path = "/music"
    }
-   res, err := mech.RoundTrip(req)
+   res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
    }
@@ -137,7 +136,7 @@ func NewTralbum(typ byte, id int) (*Tralbum, error) {
       "tralbum_id": {strconv.Itoa(id)},
       "tralbum_type": {string(typ)},
    }.Encode()
-   res, err := mech.RoundTrip(req)
+   res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
    }

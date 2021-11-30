@@ -3,7 +3,6 @@ package youtube
 import (
    "bytes"
    "encoding/json"
-   "github.com/89z/mech"
    "net/http"
 )
 
@@ -62,7 +61,7 @@ func post(addr string, head Auth, body youTubeI) (*http.Response, error) {
       return nil, err
    }
    req.Header.Set(head.Key, head.Value)
-   return mech.RoundTrip(req)
+   return new(http.Transport).RoundTrip(req)
 }
 
 type Auth struct {

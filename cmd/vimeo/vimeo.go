@@ -28,7 +28,6 @@ func main() {
    if ! vimeo.Valid(id) {
       panic("invalid ID")
    }
-   mech.Verbose = true
    cfg, err := vimeo.NewConfig(id)
    if err != nil {
       panic(err)

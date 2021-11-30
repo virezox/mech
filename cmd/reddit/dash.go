@@ -37,7 +37,6 @@ func main() {
    if ! reddit.Valid(id) {
       panic("invalid ID")
    }
-   mech.Verbose = true
    post, err := reddit.NewPost(id)
    if err != nil {
       panic(err)

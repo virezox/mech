@@ -3,7 +3,7 @@ package apple
 import (
    "encoding/json"
    "github.com/89z/mech"
-   "github.com/89z/parse/html"
+   "github.com/89z/parse/net"
    "net/http"
    "net/url"
    "strconv"
@@ -44,12 +44,12 @@ func NewAudio(addr string) (*Audio, error) {
    if err != nil {
       return nil, err
    }
-   res, err := mech.RoundTrip(req)
+   res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
-   for _, node := range html.Parse(res.Body, "script") {
+   for _, node := range net.ParseHTML(res.Body, "script") {
       if node.Attr["id"] == "shoebox-media-api-cache-amp-podcasts" {
          var raw map[string]json.RawMessage
          if err := json.Unmarshal(node.Data, &raw); err != nil {

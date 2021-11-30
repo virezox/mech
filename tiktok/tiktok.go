@@ -2,8 +2,8 @@ package tiktok
 
 import (
    "github.com/89z/mech"
-   "github.com/89z/parse/html"
    "github.com/89z/parse/json"
+   "github.com/89z/parse/net"
    "net/http"
    stdjson "encoding/json"
 )
@@ -95,13 +95,13 @@ func NewVideo(addr string) (Video, error) {
       return nil, err
    }
    req.Header.Set("User-Agent", agent)
-   res, err := mech.RoundTrip(req)
+   res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
    var ids []string
-   for _, script := range html.Parse(res.Body, "script") {
+   for _, script := range net.ParseHTML(res.Body, "script") {
       id := script.Attr["id"]
       switch id {
       case "__NEXT_DATA__":

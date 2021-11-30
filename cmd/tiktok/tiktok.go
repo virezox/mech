@@ -21,7 +21,6 @@ func main() {
       return
    }
    addr := flag.Arg(0)
-   mech.Verbose = true
    vid, err := tiktok.NewVideo(addr)
    if err != nil {
       panic(err)
@@ -45,7 +44,7 @@ func main() {
 }
 
 func get(req *http.Request, vid tiktok.Video) error {
-   res, err := mech.RoundTrip(req)
+   res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return err
    }

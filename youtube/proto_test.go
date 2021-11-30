@@ -4,24 +4,22 @@ import (
    "testing"
 )
 
-type test struct {
-   in Params
-   out string
+func TestProtoFilter(t *testing.T) {
+   fil := NewFilter()
+   fil.UploadDate(UploadDateLastHour)
+   par := NewParams()
+   par.Filter(fil)
+   enc := par.Encode()
+   if enc != "EgIIAQ==" {
+      t.Fatal(enc)
+   }
 }
 
-var tests = []test{
-   {Params{Filter: &Filter{UploadDate: UploadDateLastHour}}, "EgIIAQ=="},
-   {Params{SortBy: SortByRating}, "CAE="},
-}
-
-func TestProto(t *testing.T) {
-   for _, test := range tests {
-      s, err := test.in.Encode()
-      if err != nil {
-         t.Fatal(err)
-      }
-      if s != test.out {
-         t.Fatal(s)
-      }
+func TestProtoSort(t *testing.T) {
+   par := NewParams()
+   par.SortBy(SortByRating)
+   enc := par.Encode()
+   if enc != "CAE=" {
+      t.Fatal(enc)
    }
 }

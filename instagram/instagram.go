@@ -3,7 +3,6 @@ package instagram
 import (
    "bytes"
    "encoding/json"
-   "github.com/89z/mech"
    "io"
    "net/http"
    "net/url"
@@ -66,7 +65,7 @@ func NewLogin(username, password string) (*Login, error) {
       "Content-Type": {"application/x-www-form-urlencoded"},
       "User-Agent": {userAgent},
    }
-   res, err := mech.RoundTrip(req)
+   res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
    }
@@ -97,7 +96,7 @@ func (l Login) Item(shortcode string) (*Item, error) {
    req.URL.RawQuery = url.Values{
       "clips_media_shortcode": {shortcode},
    }.Encode()
-   res, err := mech.RoundTrip(req)
+   res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
    }
@@ -144,7 +143,7 @@ func GraphQL(shortcode string, auth *Login) (*Media, error) {
    req.URL.RawQuery = url.Values{
       "__a": {"1"},
    }.Encode()
-   res, err := mech.RoundTrip(req)
+   res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
    }
@@ -197,7 +196,7 @@ func (q Query) Data(auth *Login) (*Media, error) {
    if auth != nil && auth.Header != nil {
       req.Header.Set("Authorization", auth.Get("Ig-Set-Authorization"))
    }
-   res, err := mech.RoundTrip(req)
+   res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
    }

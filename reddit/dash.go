@@ -4,7 +4,6 @@ import (
    "encoding/json"
    "encoding/xml"
    "fmt"
-   "github.com/89z/mech"
    "html"
    "net/http"
    "path"
@@ -55,7 +54,7 @@ func (l Link) DASH() (*DASH, error) {
    if err != nil {
       return nil, err
    }
-   res, err := mech.RoundTrip(req)
+   res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
    }
@@ -92,7 +91,7 @@ func NewPost(id string) (*Post, error) {
       return nil, err
    }
    req.Header.Set("User-Agent", "Mozilla")
-   res, err := mech.RoundTrip(req)
+   res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
    }

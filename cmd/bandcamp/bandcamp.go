@@ -25,7 +25,6 @@ func main() {
       return
    }
    addr := flag.Arg(0)
-   mech.Verbose = true
    item, err := bandcamp.NewItem(addr)
    if err != nil {
       panic(err)

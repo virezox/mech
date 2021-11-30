@@ -21,7 +21,6 @@ func main() {
       return
    }
    addr := flag.Arg(0)
-   mech.Verbose = true
    audio, err := apple.NewAudio(addr)
    if err != nil {
       panic(err)

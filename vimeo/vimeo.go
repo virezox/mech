@@ -2,7 +2,6 @@ package vimeo
 
 import (
    "encoding/json"
-   "github.com/89z/mech"
    "net/http"
    "time"
 )
@@ -43,7 +42,7 @@ func NewConfig(id string) (*Config, error) {
    if err != nil {
       return nil, err
    }
-   res, err := mech.RoundTrip(req)
+   res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
    }
@@ -75,7 +74,7 @@ func NewVideo(id string) (*Video, error) {
    if err != nil {
       return nil, err
    }
-   res, err := mech.RoundTrip(req)
+   res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
    }

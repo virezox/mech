@@ -3,7 +3,6 @@ package main
 import (
    "flag"
    "fmt"
-   "github.com/89z/mech"
    "github.com/89z/mech/youtube"
    "os"
 )
@@ -51,7 +50,6 @@ func main() {
       flag.PrintDefaults()
       return
    }
-   mech.Verbose = true
    switch {
    case exchange:
       err := authExchange()

@@ -1,7 +1,6 @@
 package reddit
 
 import (
-   "github.com/89z/mech"
    "github.com/89z/parse/m3u"
    "net/http"
    "path"
@@ -21,7 +20,7 @@ func (l Link) HLS() ([]HLS, error) {
       return nil, err
    }
    req.URL.RawQuery = ""
-   res, err := mech.RoundTrip(req)
+   res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
    }

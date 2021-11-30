@@ -20,7 +20,6 @@ func main() {
       return
    }
    addr := flag.Arg(0)
-   mech.Verbose = true
    slug, err := pbs.Slug(addr)
    if err != nil {
       panic(err)

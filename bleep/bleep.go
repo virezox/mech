@@ -4,7 +4,7 @@ import (
    "encoding/json"
    "fmt"
    "github.com/89z/mech"
-   "github.com/89z/parse/html"
+   "github.com/89z/parse/net"
    "io"
    "net/http"
    "net/url"
@@ -14,7 +14,7 @@ import (
 
 const Origin = "https://bleep.com"
 
-type Meta []html.Node
+type Meta []net.Node
 
 func NewMeta(releaseID int) (Meta, error) {
    req, err := http.NewRequest(
@@ -23,16 +23,13 @@ func NewMeta(releaseID int) (Meta, error) {
    if err != nil {
       return nil, err
    }
-   if mech.Verbose {
-      fmt.Println(req.Method, req.URL)
-   }
    // this redirects, so we cannot use RoundTrip
    res, err := new(http.Client).Do(req)
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
-   return html.Parse(res.Body, "meta"), nil
+   return net.ParseHTML(res.Body, "meta"), nil
 }
 
 func (m Meta) Image() string {
@@ -90,7 +87,7 @@ func Release(releaseID int) ([]Track, error) {
       return nil, err
    }
    req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-   res, err := mech.RoundTrip(req)
+   res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
    }
@@ -109,7 +106,7 @@ func (t Track) Resolve() (string, error) {
    if err != nil {
       return "", err
    }
-   res, err := mech.RoundTrip(req)
+   res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return "", err
    }
