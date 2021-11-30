@@ -3,20 +3,24 @@ package main
 import (
    "flag"
    "fmt"
+   "github.com/89z/mech"
    "github.com/89z/mech/youtube"
    "os"
 )
 
 func infoPath(id string) error {
-   p, err := youtube.NewPlayer(id, youtube.Key, youtube.Mweb)
+   play, err := youtube.NewPlayer(id, youtube.Key, youtube.Mweb)
    if err != nil {
       return err
    }
-   fmt.Println("author:", p.Author())
-   fmt.Println("title:", p.Title())
-   fmt.Println("countries:", p.Countries())
+   if len(play.StreamingData.AdaptiveFormats) == 0 {
+      return play.PlayabilityStatus
+   }
+   fmt.Println("author:", play.Author())
+   fmt.Println("title:", play.Title())
+   fmt.Println("countries:", play.Countries())
    fmt.Println()
-   for _, f := range p.StreamingData.AdaptiveFormats {
+   for _, f := range play.StreamingData.AdaptiveFormats {
       fmt.Printf(
          "itag %v, height %v, %v, %v, %v\n",
          f.Itag, f.Height, f.Bitrate, f.ContentLength, f.MimeType,
@@ -26,30 +30,27 @@ func infoPath(id string) error {
 }
 
 func main() {
-   // OAuth
-   var exchange, refresh bool
-   flag.BoolVar(&exchange, "x", false, "OAuth token exchange")
-   flag.BoolVar(&refresh, "r", false, "OAuth token refresh")
-   // info
-   var info bool
-   flag.BoolVar(&info, "i", false, "info")
-   // download
+   var exchange, info, refresh, verbose bool
    down := choice{
       formats: make(map[string]bool),
    }
-   flag.BoolVar(&down.embed, "e", false, "use embedded player")
    flag.BoolVar(&down.construct, "c", false, "OAuth construct request")
+   flag.BoolVar(&down.embed, "e", false, "use embedded player")
    flag.Func("f", "formats", func(format string) error {
       down.formats[format] = true
       return nil
    })
-   // parse
+   flag.BoolVar(&info, "i", false, "info")
+   flag.BoolVar(&refresh, "r", false, "OAuth token refresh")
+   flag.BoolVar(&verbose, "v", false, "verbose")
+   flag.BoolVar(&exchange, "x", false, "OAuth token exchange")
    flag.Parse()
    if len(os.Args) == 1 {
       fmt.Println("youtube [flags] [video ID]")
       flag.PrintDefaults()
       return
    }
+   mech.Verbose = verbose
    switch {
    case exchange:
       err := authExchange()
@@ -63,7 +64,7 @@ func main() {
       }
    default:
       id := flag.Arg(0)
-      if ! youtube.Valid(id) {
+      if !youtube.Valid(id) {
          panic("invalid ID")
       }
       switch {

@@ -3,10 +3,9 @@ package bandcamp
 import (
    "encoding/json"
    "fmt"
+   "github.com/89z/mech"
    "net/http"
-   "net/http/httputil"
    "net/url"
-   "os"
    "regexp"
    "strconv"
    "time"
@@ -34,27 +33,9 @@ var Heights = map[int]int{
    1500: 1,
 }
 
-var Verbose bool
-
 func ArtURL(id, height int) string {
    hID := Heights[height]
    return fmt.Sprintf("http://f4.bcbits.com/img/a%v_%v.jpg", id, hID)
-}
-
-func dumpRequest(req *http.Request) error {
-   if Verbose {
-      buf, err := httputil.DumpRequest(req, true)
-      if err != nil {
-         return err
-      }
-      os.Stdout.Write(buf)
-      if buf[len(buf)-1] != '\n' {
-         os.Stdout.WriteString("\n")
-      }
-   } else {
-      fmt.Println(req.Method, req.URL)
-   }
-   return nil
 }
 
 type Band struct {
@@ -75,7 +56,7 @@ func NewBand(id int) (*Band, error) {
    req.URL.RawQuery = url.Values{
       "band_id": {strconv.Itoa(id)},
    }.Encode()
-   dumpRequest(req)
+   mech.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -88,11 +69,6 @@ func NewBand(id int) (*Band, error) {
    return ban, nil
 }
 
-type Item struct {
-   Item_Type string
-   Item_ID int
-}
-
 // URL to Item. Request is anonymous.
 func NewItem(addr string) (*Item, error) {
    req, err := http.NewRequest("HEAD", addr, nil)
@@ -102,34 +78,28 @@ func NewItem(addr string) (*Item, error) {
    if req.URL.Path == "" {
       req.URL.Path = "/music"
    }
-   dumpRequest(req)
+   mech.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
    }
+   // [nilZ0t2809477874x t 2809477874]
    reg := regexp.MustCompile(`nilZ0([ait])(\d+)x`)
    for _, c := range res.Cookies() {
       if c.Name == "session" {
-         // [nilZ0t2809477874x t 2809477874]
          find := reg.FindStringSubmatch(c.Value)
          if find != nil {
             id, err := strconv.Atoi(find[2])
             if err == nil {
-               return &Item{
-                  find[1], id,
-               }, nil
+               var item Item
+               item.Item_Type = find[1]
+               item.Item_ID = id
+               return &item, nil
             }
          }
       }
    }
-   return nil, fmt.Errorf("cookies %v", res.Cookies())
-}
-
-func (i Item) Tralbum() (*Tralbum, error) {
-   if i.Item_Type == "" {
-      return nil, fmt.Errorf("%+v", i)
-   }
-   return NewTralbum(i.Item_Type[0], i.Item_ID)
+   return nil, mech.NotFound{"session"}
 }
 
 // All fields available with Track and Album
@@ -147,18 +117,37 @@ type Tralbum struct {
    Tralbum_Artist string
 }
 
-// ID to Tralbum. Request is anonymous.
-func NewTralbum(typ byte, id int) (*Tralbum, error) {
+func (t Tralbum) Unix() time.Time {
+   return time.Unix(t.Release_Date, 0)
+}
+
+type Item struct {
+   Item_Type string
+   Item_ID int
+}
+
+type invalid struct {
+   input string
+}
+
+func (i invalid) Error() string {
+   return strconv.Quote(i.input) + " invalid"
+}
+
+func (i Item) Tralbum() (*Tralbum, error) {
    req, err := http.NewRequest("GET", MobileTralbum, nil)
    if err != nil {
       return nil, err
    }
-   req.URL.RawQuery = url.Values{
-      "band_id": {"1"},
-      "tralbum_id": {strconv.Itoa(id)},
-      "tralbum_type": {string(typ)},
-   }.Encode()
-   dumpRequest(req)
+   val := make(url.Values)
+   val.Set("band_id", "1")
+   val.Set("tralbum_id", strconv.Itoa(i.Item_ID))
+   if i.Item_Type == "" {
+      return nil, invalid{"tralbum_type"}
+   }
+   val.Set("tralbum_type", i.Item_Type[:1])
+   req.URL.RawQuery = val.Encode()
+   mech.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -169,8 +158,4 @@ func NewTralbum(typ byte, id int) (*Tralbum, error) {
       return nil, err
    }
    return tra, nil
-}
-
-func (t Tralbum) Unix() time.Time {
-   return time.Unix(t.Release_Date, 0)
 }

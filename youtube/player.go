@@ -3,6 +3,7 @@ package youtube
 import (
    "bytes"
    "encoding/json"
+   "github.com/89z/mech"
    "net/http"
 )
 
@@ -25,6 +26,15 @@ type Client struct {
    Version string `json:"clientVersion"`
 }
 
+type PlayabilityStatus struct {
+   Status string // LOGIN_REQUIRED
+   Reason string // Sign in to confirm your age
+}
+
+func (p PlayabilityStatus) Error() string {
+   return p.Status + " " + p.Reason
+}
+
 type Player struct {
    Microformat struct {
       PlayerMicroformatRenderer struct {
@@ -32,10 +42,7 @@ type Player struct {
          PublishDate string
       }
    }
-   PlayabilityStatus struct {
-      Reason string
-      Status string
-   }
+   PlayabilityStatus PlayabilityStatus
    StreamingData struct {
       AdaptiveFormats []Format
       // just including this so I can bail if video is Dash Manifest
@@ -61,6 +68,7 @@ func post(addr string, head Auth, body youTubeI) (*http.Response, error) {
       return nil, err
    }
    req.Header.Set(head.Key, head.Value)
+   mech.Dump(req)
    return new(http.Transport).RoundTrip(req)
 }
 

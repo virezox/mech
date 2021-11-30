@@ -34,7 +34,7 @@ func (f Format) Write(w io.Writer) error {
    if err != nil {
       return err
    }
-   fmt.Println(req.Method, req.URL)
+   mech.Dump(req)
    begin := time.Now()
    var pos int64
    for pos < f.ContentLength {

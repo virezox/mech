@@ -1,5 +1,8 @@
 package youtube
-import "encoding/json"
+
+import (
+   "encoding/json"
+)
 
 type Item struct {
    CompactVideoRenderer *struct {

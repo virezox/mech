@@ -25,7 +25,7 @@ func main() {
       flag.PrintDefaults()
       return
    }
-   bandcamp.Verbose = verbose
+   mech.Verbose = verbose
    addr := flag.Arg(0)
    item, err := bandcamp.NewItem(addr)
    if err != nil {

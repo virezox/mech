@@ -5,8 +5,28 @@ import (
    "mime"
    "strings"
    "net/http"
+   "net/http/httputil"
+   "os"
    "strconv"
 )
+
+var Verbose bool
+
+func Dump(req *http.Request) error {
+   if Verbose {
+      buf, err := httputil.DumpRequest(req, true)
+      if err != nil {
+         return err
+      }
+      os.Stdout.Write(buf)
+      if buf[len(buf)-1] != '\n' {
+         os.Stdout.WriteString("\n")
+      }
+   } else {
+      fmt.Println(req.Method, req.URL)
+   }
+   return nil
+}
 
 func Clean(r rune) rune {
    if strings.ContainsRune(`"*/:<>?\|`, r) {
