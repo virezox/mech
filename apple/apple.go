@@ -49,7 +49,7 @@ func NewAudio(addr string) (*Audio, error) {
       return nil, err
    }
    defer res.Body.Close()
-   for _, node := range net.ParseHTML(res.Body, "script") {
+   for _, node := range net.ReadHTML(res.Body, "script") {
       if node.Attr["id"] == "shoebox-media-api-cache-amp-podcasts" {
          var raw map[string]json.RawMessage
          if err := json.Unmarshal(node.Data, &raw); err != nil {

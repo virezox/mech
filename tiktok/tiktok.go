@@ -101,7 +101,7 @@ func NewVideo(addr string) (Video, error) {
    }
    defer res.Body.Close()
    var ids []string
-   for _, script := range net.ParseHTML(res.Body, "script") {
+   for _, script := range net.ReadHTML(res.Body, "script") {
       id := script.Attr["id"]
       switch id {
       case "__NEXT_DATA__":
