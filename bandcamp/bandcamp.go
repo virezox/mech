@@ -4,7 +4,9 @@ import (
    "encoding/json"
    "fmt"
    "net/http"
+   "net/http/httputil"
    "net/url"
+   "os"
    "regexp"
    "strconv"
    "time"
@@ -32,9 +34,27 @@ var Heights = map[int]int{
    1500: 1,
 }
 
+var Verbose bool
+
 func ArtURL(id, height int) string {
    hID := Heights[height]
    return fmt.Sprintf("http://f4.bcbits.com/img/a%v_%v.jpg", id, hID)
+}
+
+func dumpRequest(req *http.Request) error {
+   if Verbose {
+      buf, err := httputil.DumpRequest(req, true)
+      if err != nil {
+         return err
+      }
+      os.Stdout.Write(buf)
+      if buf[len(buf)-1] != '\n' {
+         os.Stdout.WriteString("\n")
+      }
+   } else {
+      fmt.Println(req.Method, req.URL)
+   }
+   return nil
 }
 
 type Band struct {
@@ -55,6 +75,7 @@ func NewBand(id int) (*Band, error) {
    req.URL.RawQuery = url.Values{
       "band_id": {strconv.Itoa(id)},
    }.Encode()
+   dumpRequest(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -81,6 +102,7 @@ func NewItem(addr string) (*Item, error) {
    if req.URL.Path == "" {
       req.URL.Path = "/music"
    }
+   dumpRequest(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -136,6 +158,7 @@ func NewTralbum(typ byte, id int) (*Tralbum, error) {
       "tralbum_id": {strconv.Itoa(id)},
       "tralbum_type": {string(typ)},
    }.Encode()
+   dumpRequest(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err

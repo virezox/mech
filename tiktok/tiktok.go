@@ -100,13 +100,12 @@ func NewVideo(addr string) (Video, error) {
       return nil, err
    }
    defer res.Body.Close()
-   var ids []string
-   for _, script := range net.ParseHTML(res.Body, "script") {
-      id := script.Attr["id"]
-      switch id {
+   for _, script := range net.ReadHTML(res.Body, "script") {
+      switch script.Attr["id"] {
       case "__NEXT_DATA__":
          next := new(NextData)
-         if err := stdjson.Unmarshal(script.Data, next); err != nil {
+         err := stdjson.Unmarshal(script.Data, next)
+         if err != nil {
             return nil, err
          }
          return next, nil
@@ -116,11 +115,7 @@ func NewVideo(addr string) (Video, error) {
          if ok {
             return sigi, nil
          }
-      default:
-         if id != "" {
-            ids = append(ids, id)
-         }
       }
    }
-   return nil, mech.NotFound{ids}
+   return nil, mech.NotFound{"script"}
 }

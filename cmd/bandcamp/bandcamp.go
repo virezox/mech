@@ -13,17 +13,19 @@ import (
 
 func main() {
    var (
-      info bool
+      info, verbose bool
       sleep time.Duration
    )
    flag.BoolVar(&info, "i", false, "info only")
    flag.DurationVar(&sleep, "s", time.Second, "sleep")
+   flag.BoolVar(&verbose, "v", false, "verbose")
    flag.Parse()
    if flag.NArg() == 0 {
       fmt.Println("bandcamp [flags] [track or album]")
       flag.PrintDefaults()
       return
    }
+   bandcamp.Verbose = verbose
    addr := flag.Arg(0)
    item, err := bandcamp.NewItem(addr)
    if err != nil {

@@ -2,14 +2,12 @@ package bleep
 
 import (
    "fmt"
-   "github.com/89z/mech"
    "testing"
 )
 
 const releaseID = 8728
 
 func TestMeta(t *testing.T) {
-   mech.Verbose = true
    meta, err := NewMeta(releaseID)
    if err != nil {
       t.Fatal(err)
@@ -23,7 +21,6 @@ func TestMeta(t *testing.T) {
 }
 
 func TestResolve(t *testing.T) {
-   mech.Verbose = true
    tracks, err := Release(releaseID)
    if err != nil {
       t.Fatal(err)

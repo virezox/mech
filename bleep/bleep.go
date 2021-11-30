@@ -29,7 +29,7 @@ func NewMeta(releaseID int) (Meta, error) {
       return nil, err
    }
    defer res.Body.Close()
-   return net.ParseHTML(res.Body, "meta"), nil
+   return net.ReadHTML(res.Body, "meta"), nil
 }
 
 func (m Meta) Image() string {

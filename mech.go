@@ -61,11 +61,11 @@ func Percent(pos, length int64) string {
 }
 
 type NotFound struct {
-   Input interface{}
+   Input string
 }
 
 func (n NotFound) Error() string {
-   return fmt.Sprint(n, " not found")
+   return strconv.Quote(n.Input) + " not found"
 }
 
 type Progress struct {
