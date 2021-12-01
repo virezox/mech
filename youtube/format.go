@@ -48,9 +48,6 @@ func (f Format) Write(w io.Writer) error {
          return err
       }
       defer res.Body.Close()
-      if res.StatusCode != http.StatusPartialContent {
-         return fmt.Errorf("status %v", res.Status)
-      }
       if _, err := io.Copy(w, res.Body); err != nil {
          return err
       }

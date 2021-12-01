@@ -3,7 +3,7 @@ package reddit
 import (
    "encoding/json"
    "encoding/xml"
-   "fmt"
+   "github.com/89z/mech"
    "html"
    "net/http"
    "path"
@@ -113,7 +113,7 @@ func (p Post) Link() (*Link, error) {
          return lin, nil
       }
    }
-   return nil, fmt.Errorf("children %v", p.Data.Children)
+   return nil, mech.NotFound{"t3"}
 }
 
 type Text string

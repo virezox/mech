@@ -1,5 +1,9 @@
 package youtube
 
+import (
+   "strings"
+)
+
 var (
    webP = pictureFormat{0, "vi_webp", "webp"}
    jpg = pictureFormat{1, "vi", "jpg"}
@@ -53,9 +57,16 @@ var Pictures = []Picture{
 }
 
 func (p Picture) Address(id string) string {
-   add := "http://i.ytimg.com/" + p.Format.Dir
-   add += "/" + id
-   return add + "/" + p.Base + "." + p.Format.Ext
+   var str strings.Builder
+   str.WriteString("http://i.ytimg.com/")
+   str.WriteString(p.Format.Dir)
+   str.WriteByte('/')
+   str.WriteString(id)
+   str.WriteByte('/')
+   str.WriteString(p.Base)
+   str.WriteByte('.')
+   str.WriteString(p.Format.Ext)
+   return str.String()
 }
 
 type pictureFormat struct {

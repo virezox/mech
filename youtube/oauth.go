@@ -2,7 +2,6 @@ package youtube
 
 import (
    "encoding/json"
-   "fmt"
    "net/http"
    "net/url"
 )
@@ -33,9 +32,6 @@ func (x *Exchange) Refresh() error {
       return err
    }
    defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return fmt.Errorf("status %v", res.Status)
-   }
    return json.NewDecoder(res.Body).Decode(x)
 }
 

@@ -2,7 +2,7 @@ package soundcloud
 
 import (
    "encoding/json"
-   "fmt"
+   "github.com/89z/mech"
    "net/http"
    "net/url"
 )
@@ -105,19 +105,19 @@ func Tracks(ids string) ([]Track, error) {
    return tracks, nil
 }
 
-func (t Track) progressive() string {
+func (t Track) progressive() (string, error) {
    for _, code := range t.Media.Transcodings {
       if code.Format.Protocol == "progressive" {
-         return code.URL
+         return code.URL, nil
       }
    }
-   return ""
+   return "", mech.NotFound{"progressive"}
 }
 
 func (t Track) GetMedia() (*Media, error) {
-   addr := t.progressive()
-   if addr == "" {
-      return nil, fmt.Errorf("%+v", t)
+   addr, err := t.progressive()
+   if err != nil {
+      return nil, err
    }
    req, err := http.NewRequest("GET", addr, nil)
    if err != nil {
