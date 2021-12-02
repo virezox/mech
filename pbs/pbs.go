@@ -34,6 +34,7 @@ func Slug(addr string) (string, error) {
    if err != nil {
       return "", err
    }
+   mech.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return "", err
@@ -72,6 +73,7 @@ func NewAsset(slug string) (*Asset, error) {
    }
    req.Header.Set("X-PBS-PlatformVersion", platformVersion)
    req.SetBasicAuth("android", android)
+   mech.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
