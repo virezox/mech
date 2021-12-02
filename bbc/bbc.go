@@ -16,6 +16,14 @@ const mediaSelector =
    "http://open.live.bbc.co.uk/mediaselector/6/select/version/2.0/format/json" +
    "/mediaset/mobile-phone-main/vpid/"
 
+// bbc.com/news/av/10462520
+func Valid(id string) bool {
+   if len(id) == 8 {
+      return true
+   }
+   return false
+}
+
 type newsItem struct {
    Relations []struct {
       PrimaryType string
@@ -66,9 +74,7 @@ type Selector struct {
 }
 
 func NewSelector(externalID string) (*Selector, error) {
-   req, err := http.NewRequest(
-      "GET", mediaSelector + externalID, nil,
-   )
+   req, err := http.NewRequest("GET", mediaSelector + externalID, nil)
    if err != nil {
       return nil, err
    }

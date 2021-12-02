@@ -20,8 +20,6 @@ is available via HTML on the primary website, usually without being logged in.
 So why can you do that with HTML, but not with the API? Well you can, using this
 module.
 
-https://godocs.io/github.com/89z/mech
-
 ## How to build?
 
 Check here first:
@@ -48,8 +46,23 @@ and extract archive. Then navigate to `mech-master/cmd/youtube`, and enter:
 go build
 ~~~
 
-## Author
+## Apps used
 
-srpen6@gmail.com
+Installs  | ID
+----------|-----------------------------
+10.830 B  | `com.google.android.youtube`
+3.877 B   | `com.instagram.android`
+1.894 B   | `com.zhiliaoapp.musically`
+331.715 M | `com.soundcloud.android`
+83.771 M  | `com.reddit.frontpage`
+30.338 M  | `com.vimeo.android.videoapp`
+29.692 M  | `bbc.mobile.news.ww`
+2.525 M   | `com.bandcamp.android`
+2.086 M   | `com.pbs.video`
+
+## Docs
+
+- https://github.com/89z/mech/tree/master/docs
+- https://godocs.io/github.com/89z/mech
 
 [1]://f002.backblazeb2.com/file/ql8mlh/Paint.It.Black.2016.mp4
