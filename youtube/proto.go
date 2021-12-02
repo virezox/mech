@@ -39,59 +39,59 @@ func NewFilter() Filter {
 }
 
 func (f *Filter) CreativeCommons(v uint64) {
-   f.Message[6] = v
+   f.SetUint64(6, v)
 }
 
 func (f *Filter) Duration(v uint64) {
-   f.Message[3] = v
+   f.SetUint64(3, v)
 }
 
 func (f *Filter) FourK(v uint64) {
-   f.Message[14] = v
+   f.SetUint64(14, v)
 }
 
 func (f *Filter) HD(v uint64) {
-   f.Message[4] = v
+   f.SetUint64(4, v)
 }
 
 func (f *Filter) HDR(v uint64) {
-   f.Message[25] = v
+   f.SetUint64(25, v)
 }
 
 func (f *Filter) Live(v uint64) {
-   f.Message[8] = v
+   f.SetUint64(8, v)
 }
 
 func (f *Filter) Location(v uint64) {
-   f.Message[23] = v
+   f.SetUint64(23, v)
 }
 
 func (f *Filter) Purchased(v uint64) {
-   f.Message[9] = v
+   f.SetUint64(9, v)
 }
 
 func (f *Filter) Subtitles(v uint64) {
-   f.Message[5] = v
+   f.SetUint64(5, v)
 }
 
 func (f *Filter) ThreeD(v uint64) {
-   f.Message[7] = v
+   f.SetUint64(7, v)
 }
 
 func (f *Filter) ThreeSixty(v uint64) {
-   f.Message[15] = v
+   f.SetUint64(15, v)
 }
 
 func (f *Filter) Type(v uint64) {
-   f.Message[2] = v
+   f.SetUint64(2, v)
 }
 
 func (f *Filter) UploadDate(v uint64) {
-   f.Message[1] = v
+   f.SetUint64(1, v)
 }
 
 func (f *Filter) VR180(v uint64) {
-   f.Message[26] = v
+   f.SetUint64(26, v)
 }
 
 type Params struct {
@@ -109,9 +109,9 @@ func (p Params) Encode() string {
 }
 
 func (p *Params) Filter(v Filter) {
-   p.Message[2] = v.Message
+   p.Set(2, v.Message)
 }
 
 func (p *Params) SortBy(v uint64) {
-   p.Message[1] = v
+   p.SetUint64(1, v)
 }
