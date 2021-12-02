@@ -7,15 +7,6 @@ import (
    "strconv"
 )
 
-const (
-   producer = "http://walter-producer-cdn.api.bbci.co.uk/content/cps/news/"
-   VideoType = "bbc.mobile.news.video"
-)
-
-const mediaSelector =
-   "http://open.live.bbc.co.uk/mediaselector/6/select/version/2.0/format/json" +
-   "/mediaset/mobile-phone-main/vpid/"
-
 // bbc.com/news/av/10462520
 func Valid(id string) bool {
    if len(id) == 8 {
@@ -24,6 +15,8 @@ func Valid(id string) bool {
    return false
 }
 
+const producer = "http://walter-producer-cdn.api.bbci.co.uk/content/cps/news/"
+
 type newsItem struct {
    Relations []struct {
       PrimaryType string
@@ -31,9 +24,7 @@ type newsItem struct {
    }
 }
 
-type NewsVideo struct {
-   ExternalID string
-}
+const VideoType = "bbc.mobile.news.video"
 
 func NewNewsVideo(id int) (*NewsVideo, error) {
    req, err := http.NewRequest(
@@ -65,28 +56,25 @@ func NewNewsVideo(id int) (*NewsVideo, error) {
    return nil, mech.NotFound{VideoType}
 }
 
-type Selector struct {
+type selector struct {
    Media []struct {
-      Connection []struct {
-         Href string
-      }
+      Kind string
+      Connection json.RawMessage
    }
 }
 
-func NewSelector(externalID string) (*Selector, error) {
-   req, err := http.NewRequest("GET", mediaSelector + externalID, nil)
-   if err != nil {
-      return nil, err
-   }
-   mech.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   sel := new(Selector)
-   if err := json.NewDecoder(res.Body).Decode(sel); err != nil {
-      return nil, err
-   }
-   return sel, nil
+type Connection struct {
+   Protocol string
+   Supplier string
+   TransferFormat string
+   Href string
 }
+
+type NewsVideo struct {
+   ExternalID string
+}
+
+const mediaSelector =
+   "http://open.live.bbc.co.uk" +
+   "/mediaselector/6/select/version/2.0/mediaset/pc/vpid/"
+

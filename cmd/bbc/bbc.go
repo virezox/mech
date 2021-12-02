@@ -3,12 +3,8 @@ package main
 import (
    "flag"
    "fmt"
-   "github.com/89z/mech"
    "github.com/89z/mech/bbc"
-   "net/http"
-   "os"
-   "path"
-   "strings"
+   "strconv"
 )
 
 func main() {
@@ -16,44 +12,25 @@ func main() {
    flag.BoolVar(&info, "i", false, "info only")
    flag.Parse()
    if flag.NArg() == 0 {
-      fmt.Println("bbc [-i] [URL]")
+      fmt.Println("bbc [flags] [ID]")
       flag.PrintDefaults()
       return
    }
-   addr := flag.Arg(0)
-   audio, err := bbc.NewAudio(addr)
+   sID := flag.Arg(0)
+   if !bbc.Valid(sID) {
+      panic("invalid ID")
+   }
+   id, err := strconv.Atoi(sID)
    if err != nil {
       panic(err)
    }
-   for _, asset := range audio.D {
-      if info {
-         fmt.Printf("%+v\n", asset.Attributes)
-      } else {
-         err := download(asset.Attributes)
-         if err != nil {
-            panic(err)
-         }
-      }
-   }
-}
-
-func download(attr bbc.Attributes) error {
-   addr := attr.AssetURL.String()
-   fmt.Println("GET", addr)
-   res, err := http.Get(addr)
+   video, err := bbc.NewNewsVideo(id)
    if err != nil {
-      return err
+      panic(err)
    }
-   defer res.Body.Close()
-   name := attr.ArtistName + "-" + attr.Name + path.Ext(addr)
-   file, err := os.Create(strings.Map(mech.Clean, name))
+   con, err := video.Connection()
    if err != nil {
-      return err
+      panic(err)
    }
-   defer file.Close()
-   pro := mech.NewProgress(res)
-   if _, err := file.ReadFrom(pro); err != nil {
-      return err
-   }
-   return nil
+   fmt.Printf("%+v\n", con)
 }
