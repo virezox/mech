@@ -5,21 +5,10 @@ import (
    "testing"
 )
 
-const (
-   externalID = "p0b7p8sq"
-   id = 10462520
-)
-
-func TestSelector(t *testing.T) {
-   sel, err := NewSelector(externalID)
-   if err != nil {
-      t.Fatal(err)
-   }
-   fmt.Printf("%+v\n", sel)
-}
+const addr = "https://www.bbc.com/news/av/10462520"
 
 func TestNews(t *testing.T) {
-   item, err := NewNewsVideo(id)
+   item, err := NewNewsVideo(addr)
    if err != nil {
       t.Fatal(err)
    }

@@ -6,31 +6,42 @@ import (
    "github.com/89z/parse/m3u"
    "net/http"
    "path"
-   "strconv"
 )
 
-// bbc.com/news/av/10462520
-func Valid(id string) bool {
-   if len(id) == 8 {
-      return true
-   }
-   return false
+const (
+   producer = "http://walter-producer-cdn.api.bbci.co.uk/content/cps/news/"
+   videoType = "bbc.mobile.news.video"
+)
+
+const mediaSelector =
+   "http://open.live.bbc.co.uk" +
+   "/mediaselector/6/select/version/2.0/mediaset/pc/vpid/"
+
+type Media struct {
+   Kind string
+   Type string
+   Connection []Video
 }
 
-const producer = "http://walter-producer-cdn.api.bbci.co.uk/content/cps/news/"
-
-type newsItem struct {
-   Relations []struct {
-      PrimaryType string
-      Content json.RawMessage
+func (m Media) Video() (*Video, error) {
+   for _, vid := range m.Connection {
+      if vid.Protocol == "http" &&
+      vid.Supplier == "mf_akamai" &&
+      vid.TransferFormat == "hls" {
+         return &vid, nil
+      }
    }
+   return nil, mech.NotFound{"http,hls,mf_akamai"}
 }
 
-const VideoType = "bbc.mobile.news.video"
+type NewsVideo struct {
+   ExternalID string
+   Caption string
+}
 
-func NewNewsVideo(id int) (*NewsVideo, error) {
+func NewNewsVideo(addr string) (*NewsVideo, error) {
    req, err := http.NewRequest(
-      "GET", producer + strconv.Itoa(id), nil,
+      "GET", producer + path.Base(addr), nil,
    )
    if err != nil {
       return nil, err
@@ -46,7 +57,7 @@ func NewNewsVideo(id int) (*NewsVideo, error) {
       return nil, err
    }
    for _, rel := range item.Relations {
-      if rel.PrimaryType == VideoType {
+      if rel.PrimaryType == videoType {
          video := new(NewsVideo)
          err := json.Unmarshal(rel.Content, video)
          if err != nil {
@@ -55,47 +66,10 @@ func NewNewsVideo(id int) (*NewsVideo, error) {
          return video, nil
       }
    }
-   return nil, mech.NotFound{VideoType}
+   return nil, mech.NotFound{videoType}
 }
 
-type selector struct {
-   Media []struct {
-      Kind string
-      Connection json.RawMessage
-   }
-}
-
-type NewsVideo struct {
-   ExternalID string
-}
-
-const mediaSelector =
-   "http://open.live.bbc.co.uk" +
-   "/mediaselector/6/select/version/2.0/mediaset/pc/vpid/"
-
-func (c Connection) HLS() ([]m3u.Format, error) {
-   req, err := http.NewRequest("GET", c.Href, nil)
-   if err != nil {
-      return nil, err
-   }
-   mech.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   dir, _ := path.Split(c.Href)
-   return m3u.Decode(res.Body, dir)
-}
-
-type Connection struct {
-   Protocol string
-   Supplier string
-   TransferFormat string
-   Href string
-}
-
-func (n NewsVideo) Connection() (*Connection, error) {
+func (n NewsVideo) Media() (*Media, error) {
    req, err := http.NewRequest("GET", mediaSelector + n.ExternalID, nil)
    if err != nil {
       return nil, err
@@ -112,20 +86,41 @@ func (n NewsVideo) Connection() (*Connection, error) {
    }
    for _, media := range sel.Media {
       if media.Kind == "video" {
-         var cons []Connection
-         err := json.Unmarshal(media.Connection, &cons)
-         if err != nil {
-            return nil, err
-         }
-         for _, con := range cons {
-            if con.Protocol == "http" && con.Supplier == "mf_akamai" {
-               if con.TransferFormat == "hls" {
-                  return &con, nil
-               }
-            }
-         }
-         return nil, mech.NotFound{"http,hls,mf_akamai"}
+         return &media, nil
       }
    }
    return nil, mech.NotFound{"video"}
+}
+
+type Video struct {
+   Protocol string
+   Supplier string
+   TransferFormat string
+   Href string
+}
+
+func (v Video) HLS() ([]m3u.Format, error) {
+   req, err := http.NewRequest("GET", v.Href, nil)
+   if err != nil {
+      return nil, err
+   }
+   mech.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   dir, _ := path.Split(v.Href)
+   return m3u.Decode(res.Body, dir)
+}
+
+type newsItem struct {
+   Relations []struct {
+      PrimaryType string
+      Content json.RawMessage
+   }
+}
+
+type selector struct {
+   Media []Media
 }

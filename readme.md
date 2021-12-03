@@ -45,6 +45,11 @@ and extract archive. Then navigate to `mech-master/cmd/youtube`, and enter:
 go build
 ~~~
 
+## Goals
+
+- No HTML parsing
+- No Regular Expressions
+
 ## Apps used
 
 Installs  | ID
@@ -61,7 +66,6 @@ Installs  | ID
 
 ## Docs
 
-- https://github.com/89z/mech/tree/master/docs
-- https://godocs.io/github.com/89z/mech
+https://godocs.io/github.com/89z/mech
 
 [1]://f002.backblazeb2.com/file/ql8mlh/Paint.It.Black.2016.mp4
