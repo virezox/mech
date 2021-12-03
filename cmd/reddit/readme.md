@@ -13,5 +13,3 @@ fffrnw
 ~~~
 
 which has audio.
-
-https://github.com/ytdl-org/youtube-dl/issues/26410

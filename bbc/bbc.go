@@ -63,13 +63,6 @@ type selector struct {
    }
 }
 
-type Connection struct {
-   Protocol string
-   Supplier string
-   TransferFormat string
-   Href string
-}
-
 type NewsVideo struct {
    ExternalID string
 }

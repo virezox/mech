@@ -5,7 +5,6 @@ import (
    "net/http"
    "path"
    "sort"
-   "strings"
 )
 
 type HLS struct {
@@ -33,11 +32,7 @@ func (l Link) HLS() ([]HLS, error) {
       })
    }
    sort.Slice(hlss, func(a, b int) bool {
-      com := strings.Compare(hlss[a].Resolution, hlss[b].Resolution)
-      if com != 0 {
-         return com == -1
-      }
-      return hlss[a].URI < hlss[b].URI
+      return hlss[a].Resolution < hlss[b].Resolution
    })
    for i := range hlss {
       hlss[i].ID = i
