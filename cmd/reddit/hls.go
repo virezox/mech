@@ -6,39 +6,43 @@ import (
    "github.com/89z/parse/m3u"
    "net/http"
    "os"
-   "path"
    "strconv"
 )
 
 func (c choice) HLS(link *reddit.Link) error {
-   hlss, err := link.HLS()
+   forms, err := link.HLS()
    if err != nil {
       return err
    }
-   for _, hls := range hlss {
+   for _, form := range forms {
       if c.format {
-         fmt.Printf("%+v\n", hls)
-      } else if c.ids[strconv.Itoa(hls.ID)] {
-         fmt.Println("GET", hls.URI)
-         res, err := http.Get(hls.URI)
+         fmt.Printf("%+v\n", form)
+      } else if c.ids[strconv.Itoa(form.ID)] {
+         fmt.Println("GET", form.URI)
+         res, err := http.Get(form.URI.String())
          if err != nil {
             return err
          }
          defer res.Body.Close()
-         prefix, _ := path.Split(hls.URI)
-         for key := range m3u.NewByteRange(res.Body) {
-            fmt.Println("GET", prefix + key)
-            res, err := http.Get(prefix + key)
+         forms, err := m3u.Decode(res.Body, form.URI.Dir)
+         if err != nil {
+            return err
+         }
+         for _, form := range forms {
+            fmt.Println("GET", form.URI)
+            res, err := http.Get(form.URI.String())
             if err != nil {
                return err
             }
             defer res.Body.Close()
-            file, err := os.Create(key)
+            file, err := os.Create(form.URI.File)
             if err != nil {
                return err
             }
             defer file.Close()
-            file.ReadFrom(res.Body)
+            if _, err := file.ReadFrom(res.Body); err != nil {
+               return err
+            }
          }
       }
    }

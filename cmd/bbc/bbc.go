@@ -4,6 +4,10 @@ import (
    "flag"
    "fmt"
    "github.com/89z/mech/bbc"
+   "github.com/89z/parse/m3u"
+   "net/http"
+   "os"
+   "path"
    "strconv"
 )
 
@@ -25,6 +29,9 @@ func main() {
    if len(os.Args) == 1 {
       fmt.Println("bbc [flags] [ID]")
       flag.PrintDefaults()
+      return
+   }
+   if !cHLS.format && len(cHLS.ids) == 0 {
       return
    }
    sID := flag.Arg(0)
@@ -57,7 +64,6 @@ func (c choice) HLS(con *bbc.Connection) error {
       if c.format {
          fmt.Printf("%+v\n", hls)
       } else {
-         // FIXME
          fmt.Println("GET", hls.URI)
          res, err := http.Get(hls.URI)
          if err != nil {
@@ -65,6 +71,7 @@ func (c choice) HLS(con *bbc.Connection) error {
          }
          defer res.Body.Close()
          prefix, _ := path.Split(hls.URI)
+         // FIXME
          for key := range m3u.NewByteRange(res.Body) {
             fmt.Println("GET", prefix + key)
             res, err := http.Get(prefix + key)
