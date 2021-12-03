@@ -7,9 +7,51 @@ import (
    "github.com/89z/parse/m3u"
    "net/http"
    "os"
-   "path"
    "strconv"
+   "strings"
 )
+
+func (c choice) HLS(con *bbc.Connection) error {
+   forms, err := con.HLS()
+   if err != nil {
+      return err
+   }
+   for _, form := range forms {
+      if c.format {
+         if !strings.HasPrefix(form.URI.File, "keyframes/") {
+            fmt.Printf("%+v\n", form)
+         }
+      } else {
+         fmt.Println("GET", form.URI)
+         res, err := http.Get(form.URI.String())
+         if err != nil {
+            return err
+         }
+         defer res.Body.Close()
+         forms, err := m3u.Decode(res.Body, form.URI.Dir)
+         if err != nil {
+            return err
+         }
+         for _, form := range forms {
+            fmt.Println("GET", form.URI)
+            res, err := http.Get(form.URI.String())
+            if err != nil {
+               return err
+            }
+            defer res.Body.Close()
+            file, err := os.Create(form.URI.File)
+            if err != nil {
+               return err
+            }
+            defer file.Close()
+            if _, err := file.ReadFrom(res.Body); err != nil {
+               return err
+            }
+         }
+      }
+   }
+   return nil
+}
 
 type choice struct {
    format bool
@@ -55,38 +97,4 @@ func main() {
    }
 }
 
-func (c choice) HLS(con *bbc.Connection) error {
-   hlss, err := con.HLS()
-   if err != nil {
-      return err
-   }
-   for _, hls := range hlss {
-      if c.format {
-         fmt.Printf("%+v\n", hls)
-      } else {
-         fmt.Println("GET", hls.URI)
-         res, err := http.Get(hls.URI)
-         if err != nil {
-            return err
-         }
-         defer res.Body.Close()
-         prefix, _ := path.Split(hls.URI)
-         // FIXME
-         for key := range m3u.NewByteRange(res.Body) {
-            fmt.Println("GET", prefix + key)
-            res, err := http.Get(prefix + key)
-            if err != nil {
-               return err
-            }
-            defer res.Body.Close()
-            file, err := os.Create(key)
-            if err != nil {
-               return err
-            }
-            defer file.Close()
-            file.ReadFrom(res.Body)
-         }
-      }
-   }
-   return nil
-}
+
