@@ -18,8 +18,13 @@ const (
 )
 
 // instagram.com/p/CT-cnxGhvvO
+// instagram.com/p/yza2PAPSx2
 func Valid(shortcode string) bool {
-   return len(shortcode) == 11
+   switch len(shortcode) {
+   case 10, 11:
+      return true
+   }
+   return false
 }
 
 type Edge struct {

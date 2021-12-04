@@ -52,6 +52,27 @@ Response:
 }
 ~~~
 
+`accountId` can also be found in the response:
+
+~~~json
+"channelsConfig": [
+   {
+      "id": "nbc",
+      "Title": "NBC",
+      "resourceID": "nbcentertainment",
+      "contentSecurityLevel": "full",
+      "live": {
+         "playerModule": "LocalPlayer",
+         "bionicModule": "LinearBionicNBC"
+      },
+      "vod": {
+         "playerModule": "VODPlayer",
+         "mpxAccountId": "2304985974",
+         "metadataUrl": "https://feed.theplatform.com/f/HNK2IC/%sd_app_adstitch_v3_prod?byGUID=%s",
+         "brightlineID": "1022"
+      }
+~~~
+
 Androguard reveals this:
 
 ~~~java
