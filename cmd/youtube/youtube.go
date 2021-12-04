@@ -8,36 +8,13 @@ import (
    "os"
 )
 
-func infoPath(id string) error {
-   play, err := youtube.NewPlayer(id, youtube.Key, youtube.Mweb)
-   if err != nil {
-      return err
-   }
-   if len(play.StreamingData.AdaptiveFormats) == 0 {
-      return play.PlayabilityStatus
-   }
-   fmt.Println("author:", play.Author())
-   fmt.Println("title:", play.Title())
-   fmt.Println("countries:", play.Countries())
-   fmt.Println()
-   for _, f := range play.StreamingData.AdaptiveFormats {
-      fmt.Printf(
-         "itag %v, height %v, %v, %v, %v\n",
-         f.Itag, f.Height, f.Bitrate, f.ContentLength, f.MimeType,
-      )
-   }
-   return nil
-}
-
 func main() {
-   var exchange, info, refresh, verbose bool
-   down := choice{
-      formats: make(map[string]bool),
-   }
-   flag.BoolVar(&down.construct, "c", false, "OAuth construct request")
-   flag.BoolVar(&down.embed, "e", false, "use embedded player")
+   var construct, embed, exchange, info, refresh, verbose bool
+   down := make(choice)
+   flag.BoolVar(&construct, "c", false, "OAuth construct request")
+   flag.BoolVar(&embed, "e", false, "use embedded player")
    flag.Func("f", "formats", func(format string) error {
-      down.formats[format] = true
+      down[format] = true
       return nil
    })
    flag.BoolVar(&info, "i", false, "info")
@@ -67,14 +44,33 @@ func main() {
       if !youtube.Valid(id) {
          panic("invalid ID")
       }
-      switch {
-      case info:
-         err := infoPath(id)
+      auth := youtube.Key
+      if construct {
+         var exc youtube.Exchange
+         err := authConstruct(&exc)
          if err != nil {
             panic(err)
          }
-      default:
-         err := down.download(id)
+         auth = youtube.Auth{"Authorization", "Bearer " + exc.Access_Token}
+      }
+      client := youtube.Android
+      if embed {
+         client = youtube.Embed
+      }
+      play, err := youtube.NewPlayer(id, auth, client)
+      if err != nil {
+         panic(err)
+      }
+      if len(play.StreamingData.AdaptiveFormats) == 0 {
+         panic(play.PlayabilityStatus)
+      }
+      if info {
+         err := infoPath(play, id)
+         if err != nil {
+            panic(err)
+         }
+      } else {
+         err := down.download(play, id)
          if err != nil {
             panic(err)
          }
