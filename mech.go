@@ -10,10 +10,13 @@ import (
    "strconv"
 )
 
-var Verbose bool
+var LogLevel = 1
 
 func Dump(req *http.Request) error {
-   if Verbose {
+   switch LogLevel {
+   case 1:
+      fmt.Println(req.Method, req.URL)
+   case 2:
       buf, err := httputil.DumpRequest(req, true)
       if err != nil {
          return err
@@ -22,8 +25,12 @@ func Dump(req *http.Request) error {
       if buf[len(buf)-1] != '\n' {
          os.Stdout.WriteString("\n")
       }
-   } else {
-      fmt.Println(req.Method, req.URL)
+   case 3:
+      buf, err := httputil.DumpRequestOut(req, true)
+      if err != nil {
+         return err
+      }
+      os.Stdout.Write(buf)
    }
    return nil
 }

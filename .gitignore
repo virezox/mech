@@ -2,4 +2,5 @@
 *.html
 *.json
 *.mp4
+*.ts
 password.go

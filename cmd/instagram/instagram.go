@@ -3,6 +3,7 @@ package main
 import (
    "flag"
    "fmt"
+   "github.com/89z/mech"
    "github.com/89z/mech/instagram"
    "net/http"
    "net/url"
@@ -13,19 +14,21 @@ import (
 
 func main() {
    var (
-      auth, info bool
+      auth, info, verbose bool
       username, password string
    )
    flag.BoolVar(&auth, "a", false, "use authentication")
    flag.BoolVar(&info, "i", false, "info only")
-   flag.StringVar(&username, "u", "", "username")
    flag.StringVar(&password, "p", "", "password")
+   flag.StringVar(&username, "u", "", "username")
+   flag.BoolVar(&verbose, "v", false, "verbose")
    flag.Parse()
    if len(os.Args) == 1 {
       fmt.Println("instagram [flags] [shortcode]")
       flag.PrintDefaults()
       return
    }
+   mech.Verbose = verbose
    if username != "" {
       log, err := instagram.NewLogin(username, password)
       if err != nil {
