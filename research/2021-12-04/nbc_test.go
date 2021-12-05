@@ -8,8 +8,6 @@ import (
    "testing"
 )
 
-// POST /access/vod/nbcuniversal/9000194212 HTTP/1.1
-
 const (
    // nbc.com/la-brea/video/pilot/9000194212
    res540 = 9000194212
@@ -17,18 +15,9 @@ const (
    res1080 = 9000210182
 )
 
-func TestVOD(t *testing.T) {
-   mech.Verbose = true
-   vod, err := newAccessVOD(res540)
-   if err != nil {
-      t.Fatal(err)
-   }
-   fmt.Printf("%+v\n", vod)
-}
-
 func TestMedia(t *testing.T) {
    mech.Verbose = true
-   res, err := media()
+   res, err := media(res540)
    if err != nil {
       t.Fatal(err)
    }
@@ -39,3 +28,13 @@ func TestMedia(t *testing.T) {
    }
    os.Stdout.Write(buf)
 }
+
+func TestVOD(t *testing.T) {
+   mech.Verbose = true
+   vod, err := newAccessVOD(res540)
+   if err != nil {
+      t.Fatal(err)
+   }
+   fmt.Printf("%+v\n", vod)
+}
+

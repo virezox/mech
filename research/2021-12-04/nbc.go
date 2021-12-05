@@ -16,46 +16,25 @@ import (
 
 const platform = "http://link.theplatform.com"
 
-func media() (*http.Response, error) {
+func media(guid int) (*http.Response, error) {
    req, err := http.NewRequest(
-      "GET", platform + "/s/NnzsPC/media/guid/2410887629/9000194212", nil,
+      "GET",
+      platform + "/s/NnzsPC/media/guid/2410887629/" + strconv.Itoa(guid),
+      nil,
    )
    if err != nil {
       return nil, err
    }
    req.URL.RawQuery = url.Values{
-      "format": {"SMIL"}, // can kill
-      "mbr": {"true"}, // can kill
+      //"format": {"SMIL"}, // can kill
       //"manifest": {"m3u"}, // maybe can kill?
+      "mbr": {"true"}, // can kill
    }.Encode()
+   mech.Dump(req)
    return new(http.Transport).RoundTrip(req)
 }
 
-const (
-   mpxAccountID = 2304985974
-   origin = "http://access-cloudpath.media.nbcuni.com"
-)
-
-var secretKey = []byte("2b84a073ede61c766e4c0b3f1e656f7f")
-
-func generateHash(text, key []byte) string {
-   mac := hmac.New(sha256.New, key)
-   mac.Write(text)
-   sum := mac.Sum(nil)
-   return hex.EncodeToString(sum)
-}
-
-func unixMilli() []byte {
-   unix := time.Now().UnixMilli()
-   return strconv.AppendInt(nil, unix, 10)
-}
-
-type accessVOD struct {
-   // this is only valid for one minute
-   ManifestPath string
-}
-
-func newAccessVOD(id int) (*accessVOD, error) {
+func newAccessVOD(guid int) (*accessVOD, error) {
    var body vodRequest
    body.Device = "android"
    body.DeviceID = "android"
@@ -67,7 +46,7 @@ func newAccessVOD(id int) (*accessVOD, error) {
       return nil, err
    }
    req, err := http.NewRequest(
-      "POST", origin + "/access/vod/nbcuniversal/" + strconv.Itoa(id), buf,
+      "POST", origin + "/access/vod/nbcuniversal/" + strconv.Itoa(guid), buf,
    )
    if err != nil {
       return nil, err
@@ -105,3 +84,28 @@ type vodRequest struct {
       AccountID int `json:"accountId"`
    } `json:"mpx"`
 }
+const (
+   mpxAccountID = 2304985974
+   origin = "http://access-cloudpath.media.nbcuni.com"
+)
+
+var secretKey = []byte("2b84a073ede61c766e4c0b3f1e656f7f")
+
+func generateHash(text, key []byte) string {
+   mac := hmac.New(sha256.New, key)
+   mac.Write(text)
+   sum := mac.Sum(nil)
+   return hex.EncodeToString(sum)
+}
+
+func unixMilli() []byte {
+   unix := time.Now().UnixMilli()
+   return strconv.AppendInt(nil, unix, 10)
+}
+
+type accessVOD struct {
+   // this is only valid for one minute
+   ManifestPath string
+}
+
+
