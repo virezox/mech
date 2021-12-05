@@ -1,9 +1,8 @@
 package nbc
 
 import (
+   "fmt"
    "github.com/89z/mech"
-   "net/http/httputil"
-   "os"
    "testing"
 )
 
@@ -16,14 +15,11 @@ const (
 
 func TestWeb(t *testing.T) {
    mech.Verbose = true
-   res, err := media(res540)
+   forms, err := Media(res540)
    if err != nil {
       t.Fatal(err)
    }
-   defer res.Body.Close()
-   buf, err := httputil.DumpResponse(res, true)
-   if err != nil {
-      t.Fatal(err)
+   for _, form := range forms {
+      fmt.Printf("%+v\n", form)
    }
-   os.Stdout.Write(buf)
 }
