@@ -1,9 +1,5 @@
 # December 5 2021
 
-~~~
-rg -e SCTE35 -e DISCONTINUITY -e ^https:// 1.m3u8 > filter.m3u
-~~~
-
 - <https://github.com/yt-dlp/yt-dlp/blob/818faa3a/yt_dlp/downloader/fragment.py#L357-L369>
 - <https://nowtilus.gitbook.io/serverside-ai/getting-started/onboarding-document/prepare_content_source/ad-marker-specification/ssai-live-scte35>
 - <https://scte-cms-resource-storage.s3.amazonaws.com/ANSI_SCTE-35-2019a-1582645390859.pdf>

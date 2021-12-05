@@ -19,3 +19,8 @@ content-type: application/json
 "mpx":{"accountId":2410887629}}
 ~~~
 
+Then filter:
+
+~~~
+rg -e SCTE35 -e DISCONTINUITY -e ^https:// 2.m3u8 > filter.m3u8
+~~~
