@@ -1,7 +1,6 @@
 package nbc
 
 import (
-   "fmt"
    "github.com/89z/mech"
    "net/http/httputil"
    "os"
@@ -15,7 +14,7 @@ const (
    res1080 = 9000210182
 )
 
-func TestMedia(t *testing.T) {
+func TestWeb(t *testing.T) {
    mech.Verbose = true
    res, err := media(res540)
    if err != nil {
@@ -28,13 +27,3 @@ func TestMedia(t *testing.T) {
    }
    os.Stdout.Write(buf)
 }
-
-func TestVOD(t *testing.T) {
-   mech.Verbose = true
-   vod, err := newAccessVOD(res540)
-   if err != nil {
-      t.Fatal(err)
-   }
-   fmt.Printf("%+v\n", vod)
-}
-
