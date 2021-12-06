@@ -16,7 +16,7 @@ import (
 )
 
 const (
-   accountID = 2410887629
+   mpxAccountID = 2410887629
    queryVideo = "73014253e5761c29fc76b950e7d4d181c942fa401b3378af4bac366f6611601e"
 )
 
@@ -44,7 +44,7 @@ func NewAccessVOD(guid int64) (*AccessVOD, error) {
    body.Device = "android"
    body.DeviceID = "android"
    body.ExternalAdvertiserID = "NBC"
-   body.Mpx.AccountID = accountID
+   body.Mpx.AccountID = mpxAccountID
    buf := new(bytes.Buffer)
    err := json.NewEncoder(buf).Encode(body)
    if err != nil {
