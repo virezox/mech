@@ -59,8 +59,11 @@ func (c choice) HLS(guid int) error {
    for id, form := range forms {
       switch {
       case c.format:
-         delete(form, "URI")
-         fmt.Println(id, form)
+         fmt.Print("ID:", id)
+         fmt.Print(" BANDWIDTH:", form["BANDWIDTH"])
+         fmt.Print(" CODECS:", form["CODECS"])
+         fmt.Print(" RESOLUTION:", form["RESOLUTION"])
+         fmt.Println()
       case c.ids[strconv.Itoa(id)]:
          addr := form["URI"]
          fmt.Println("GET", addr)
