@@ -13,7 +13,7 @@ type media struct {
    location string
 }
 
-func (m media) video() (m3u.Formats, error) {
+func (m media) video() ([]m3u.Format, error) {
    req, err := http.NewRequest("GET", m.location, nil)
    if err != nil {
       return nil, err

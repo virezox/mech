@@ -13,6 +13,66 @@ import (
    "strings"
 )
 
+func (c choice) HLS(addr string) error {
+   news, err := bbc.NewNewsVideo(addr)
+   if err != nil {
+      return err
+   }
+   media, err := news.Media()
+   if err != nil {
+      return err
+   }
+   ext, err := mech.ExtensionByType(media.Type)
+   if err != nil {
+      return err
+   }
+   video, err := media.Video()
+   if err != nil {
+      return err
+   }
+   forms, err := video.HLS()
+   if err != nil {
+      return err
+   }
+   base := path.Base(addr)
+   for id, form := range forms {
+      switch {
+      case c.format && !strings.Contains(form["URI"], "/keyframes/"):
+         delete(form, "URI")
+         fmt.Println(id, form)
+      case c.ids[strconv.Itoa(id)]:
+         addr := form["URI"]
+         fmt.Println("GET", addr)
+         res, err := http.Get(addr)
+         if err != nil {
+            return err
+         }
+         defer res.Body.Close()
+         dir, _ := path.Split(addr)
+         forms, err := m3u.Decode(res.Body, dir)
+         if err != nil {
+            return err
+         }
+         file, err := os.Create(news.Caption + "-" + base + ext)
+         if err != nil {
+            return err
+         }
+         defer file.Close()
+         for _, form := range forms {
+            fmt.Println("GET", form["URI"])
+            res, err := http.Get(form["URI"])
+            if err != nil {
+               return err
+            }
+            defer res.Body.Close()
+            if _, err := file.ReadFrom(res.Body); err != nil {
+               return err
+            }
+         }
+      }
+   }
+   return nil
+}
 
 type choice struct {
    format bool
@@ -43,61 +103,4 @@ func main() {
    }
 }
 
-func (c choice) HLS(addr string) error {
-   news, err := bbc.NewNewsVideo(addr)
-   if err != nil {
-      return err
-   }
-   media, err := news.Media()
-   if err != nil {
-      return err
-   }
-   ext, err := mech.ExtensionByType(media.Type)
-   if err != nil {
-      return err
-   }
-   video, err := media.Video()
-   if err != nil {
-      return err
-   }
-   forms, err := video.HLS()
-   if err != nil {
-      return err
-   }
-   base := path.Base(addr)
-   for _, form := range forms {
-      if c.format {
-         if !strings.HasPrefix(form.URI.File, "keyframes/") {
-            fmt.Printf("%+v\n", form)
-         }
-      } else if c.ids[strconv.Itoa(form.ID)] {
-         fmt.Println("GET", form.URI)
-         res, err := http.Get(form.URI.String())
-         if err != nil {
-            return err
-         }
-         defer res.Body.Close()
-         forms, err := m3u.Decode(res.Body, form.URI.Dir)
-         if err != nil {
-            return err
-         }
-         file, err := os.Create(news.Caption + "-" + base + ext)
-         if err != nil {
-            return err
-         }
-         defer file.Close()
-         for _, form := range forms {
-            fmt.Println("GET", form.URI)
-            res, err := http.Get(form.URI.String())
-            if err != nil {
-               return err
-            }
-            defer res.Body.Close()
-            if _, err := file.ReadFrom(res.Body); err != nil {
-               return err
-            }
-         }
-      }
-   }
-   return nil
-}
+
