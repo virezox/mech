@@ -14,7 +14,6 @@ import (
    "time"
 )
 
-
 const (
    Origin = "http://access-cloudpath.media.nbcuni.com"
    queryVideo = "73014253e5761c29fc76b950e7d4d181c942fa401b3378af4bac366f6611601e"
