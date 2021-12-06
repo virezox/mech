@@ -27,7 +27,9 @@ func main() {
       flag.PrintDefaults()
       return
    }
-   mech.Verbose = verbose
+   if verbose {
+      mech.LogLevel = 2
+   }
    switch {
    case exchange:
       err := authExchange()

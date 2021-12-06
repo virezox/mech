@@ -28,7 +28,9 @@ func main() {
       flag.PrintDefaults()
       return
    }
-   mech.Verbose = verbose
+   if verbose {
+      mech.LogLevel = 2
+   }
    if username != "" {
       log, err := instagram.NewLogin(username, password)
       if err != nil {

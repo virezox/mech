@@ -21,6 +21,11 @@ const (
 
 var secretKey = []byte("2b84a073ede61c766e4c0b3f1e656f7f")
 
+// nbc.com/la-brea/video/pilot/9000194212
+func Valid(guid string) bool {
+   return len(guid) == 10
+}
+
 func generateHash(text, key []byte) string {
    mac := hmac.New(sha256.New, key)
    mac.Write(text)
@@ -62,10 +67,9 @@ func NewAccessVOD(guid int) (*AccessVOD, error) {
    auth.WriteString(generateHash(unix, secretKey))
    auth.WriteString(",time=")
    auth.Write(unix)
-   // add "User-Agent: Mozilla/5" for larger response
    req.Header = http.Header{
-      "authorization": {auth.String()},
-      "content-type": {"application/json"},
+      "Authorization": {auth.String()},
+      "Content-Type": {"application/json"},
    }
    mech.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
