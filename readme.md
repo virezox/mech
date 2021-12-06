@@ -19,7 +19,7 @@ that in many cases, the same information is available via HTML on the primary
 website, usually without being logged in. So why can you do that with HTML, but
 not with the API? Well you can, using this module.
 
-## How to build?
+## How to install?
 
 Check here first:
 
@@ -45,11 +45,6 @@ and extract archive. Then navigate to `mech-master/cmd/youtube`, and enter:
 go build
 ~~~
 
-## Goals
-
-- No HTML parsing
-- No Regular Expressions
-
 ## Apps used
 
 Installs  | ID
@@ -61,6 +56,7 @@ Installs  | ID
 83.771 M  | `com.reddit.frontpage`
 30.338 M  | `com.vimeo.android.videoapp`
 29.692 M  | `bbc.mobile.news.ww`
+13.356 M  | `com.nbcuni.nbc`
 2.525 M   | `com.bandcamp.android`
 2.086 M   | `com.pbs.video`
 

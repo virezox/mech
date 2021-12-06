@@ -8,6 +8,7 @@ import (
    "encoding/json"
    "github.com/89z/mech"
    "github.com/89z/parse/m3u"
+   "io"
    "net/http"
    "strconv"
    "strings"
@@ -16,7 +17,7 @@ import (
 
 func generateHash(text string, key []byte) string {
    mac := hmac.New(sha256.New, key)
-   mac.Write([]byte(text))
+   io.WriteString(mac, text)
    sum := mac.Sum(nil)
    return hex.EncodeToString(sum)
 }
