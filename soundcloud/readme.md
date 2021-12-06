@@ -40,6 +40,24 @@ The `client_id` seems to last at least a year:
 
 https://github.com/rrosajp/soundcloud-archive/commit/c02809dc
 
-More info:
+## Other `client_id`s
 
-https://archive.ph/IOglb
+~~~
+mobi_browser
+https://m.soundcloud.com/
+
+pc_browser
+https://soundcloud.com/
+
+widget & widget2
+https://w.soundcloud.com/player/
+
+win10_app
+https://soundcouch.soundcloud.com/#/
+
+win10_app_beta
+https://soundcouch-beta.soundcloud.com/#/
+~~~
+
+- https://archive.ph/IOglb
+- https://github.com/inkuringu-ika/inkuringu-ika.github.io/issues/1

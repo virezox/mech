@@ -34,7 +34,7 @@ func main() {
    if !nbc.Valid(guid) {
       panic("invalid GUID")
    }
-   nGUID, err := strconv.Atoi(guid)
+   nGUID, err := strconv.ParseInt(guid, 10, 64)
    if err != nil {
       panic(err)
    }
@@ -43,7 +43,7 @@ func main() {
    }
 }
 
-func (c choice) HLS(guid int) error {
+func (c choice) HLS(guid int64) error {
    vod, err := nbc.NewAccessVOD(guid)
    if err != nil {
       return err
