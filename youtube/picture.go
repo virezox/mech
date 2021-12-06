@@ -57,16 +57,16 @@ var Pictures = []Picture{
 }
 
 func (p Picture) Address(id string) string {
-   var str strings.Builder
-   str.WriteString("http://i.ytimg.com/")
-   str.WriteString(p.Format.Dir)
-   str.WriteByte('/')
-   str.WriteString(id)
-   str.WriteByte('/')
-   str.WriteString(p.Base)
-   str.WriteByte('.')
-   str.WriteString(p.Format.Ext)
-   return str.String()
+   var addr strings.Builder
+   addr.WriteString("http://i.ytimg.com/")
+   addr.WriteString(p.Format.Dir)
+   addr.WriteByte('/')
+   addr.WriteString(id)
+   addr.WriteByte('/')
+   addr.WriteString(p.Base)
+   addr.WriteByte('.')
+   addr.WriteString(p.Format.Ext)
+   return addr.String()
 }
 
 type pictureFormat struct {

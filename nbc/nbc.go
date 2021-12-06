@@ -14,35 +14,11 @@ import (
    "time"
 )
 
-const (
-   Origin = "http://access-cloudpath.media.nbcuni.com"
-   queryVideo = "73014253e5761c29fc76b950e7d4d181c942fa401b3378af4bac366f6611601e"
-)
-
-const accountID = 2410887629
-
-var secretKey = []byte("2b84a073ede61c766e4c0b3f1e656f7f")
-
-// nbc.com/la-brea/video/pilot/9000194212
-func Valid(guid string) bool {
-   return len(guid) == 10
-}
-
-func generateHash(text, key []byte) string {
+func generateHash(text string, key []byte) string {
    mac := hmac.New(sha256.New, key)
-   mac.Write(text)
+   mac.Write([]byte(text))
    sum := mac.Sum(nil)
    return hex.EncodeToString(sum)
-}
-
-func unixMilli() []byte {
-   unix := time.Now().UnixMilli()
-   return strconv.AppendInt(nil, unix, 10)
-}
-
-type AccessVOD struct {
-   // this is only valid for one minute
-   ManifestPath string
 }
 
 func NewAccessVOD(guid int) (*AccessVOD, error) {
@@ -62,13 +38,13 @@ func NewAccessVOD(guid int) (*AccessVOD, error) {
    if err != nil {
       return nil, err
    }
-   unix := unixMilli()
+   unix := strconv.FormatInt(time.Now().UnixMilli(), 10)
    var auth strings.Builder
    auth.WriteString("NBC-Security key=android_nbcuniversal,version=2.4")
    auth.WriteString(",hash=")
    auth.WriteString(generateHash(unix, secretKey))
    auth.WriteString(",time=")
-   auth.Write(unix)
+   auth.WriteString(unix)
    req.Header = http.Header{
       "Authorization": {auth.String()},
       "Content-Type": {"application/json"},
@@ -85,6 +61,26 @@ func NewAccessVOD(guid int) (*AccessVOD, error) {
    }
    return vod, nil
 }
+
+const (
+   Origin = "http://access-cloudpath.media.nbcuni.com"
+   queryVideo = "73014253e5761c29fc76b950e7d4d181c942fa401b3378af4bac366f6611601e"
+)
+
+const accountID = 2410887629
+
+var secretKey = []byte("2b84a073ede61c766e4c0b3f1e656f7f")
+
+// nbc.com/la-brea/video/pilot/9000194212
+func Valid(guid string) bool {
+   return len(guid) == 10
+}
+
+type AccessVOD struct {
+   // this is only valid for one minute
+   ManifestPath string
+}
+
 
 func (a AccessVOD) Manifest() ([]m3u.Format, error) {
    req, err := http.NewRequest("GET", a.ManifestPath, nil)
