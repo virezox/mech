@@ -3,7 +3,6 @@ package main
 import (
    "flag"
    "fmt"
-   "github.com/89z/mech"
    "github.com/89z/mech/nbc"
    "github.com/89z/parse/m3u"
    "net/http"
@@ -45,7 +44,6 @@ func main() {
 }
 
 func (c choice) HLS(guid int) error {
-   mech.LogLevel = 2
    vod, err := nbc.NewAccessVOD(guid)
    if err != nil {
       return err
@@ -75,21 +73,23 @@ func (c choice) HLS(guid int) error {
          if err != nil {
             return err
          }
-         name := vid.Name() + "-" + form["RESOLUTION"]
+         name := vid.Name() + "-" + form["RESOLUTION"] + ".mp4"
          dst, err := os.Create(name)
          if err != nil {
             return err
          }
          defer dst.Close()
-         for _, src := range srcs {
+         for key, src := range srcs {
             addr := src["URI"]
-            fmt.Println("GET", addr)
+            fmt.Println(len(srcs)-key, "GET", addr)
             res, err := http.Get(addr)
             if err != nil {
                return err
             }
             defer res.Body.Close()
-            dst.ReadFrom(res.Body)
+            if _, err := dst.ReadFrom(res.Body); err != nil {
+               return err
+            }
          }
       }
    }
