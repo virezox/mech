@@ -6,9 +6,20 @@ import (
    "testing"
 )
 
-func TestAndroid(t *testing.T) {
+// nbc.com/la-brea/video/pilot/9000194212
+const guid = 9000194212
+
+func TestAndroidVideo(t *testing.T) {
+   vid, err := NewVideo(guid)
+   if err != nil {
+      t.Fatal(err)
+   }
+   fmt.Printf("%+v\n", vid)
+}
+
+func TestAndroidVOD(t *testing.T) {
    mech.LogLevel = 2
-   vod, err := NewAccessVOD(9000194212)
+   vod, err := NewAccessVOD(guid)
    if err != nil {
       t.Fatal(err)
    }

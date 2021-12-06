@@ -8,9 +8,6 @@ import (
    "testing"
 )
 
-// nbc.com/la-brea/video/pilot/9000194212
-const guid = 9000194212
-
 func TestWeb(t *testing.T) {
    mech.LogLevel = 3
    med, err := newMedia(guid)

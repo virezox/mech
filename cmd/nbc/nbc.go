@@ -3,9 +3,11 @@ package main
 import (
    "flag"
    "fmt"
+   "github.com/89z/mech"
    "github.com/89z/mech/nbc"
    "github.com/89z/parse/m3u"
    "net/http"
+   "os"
    "strconv"
 )
 
@@ -43,11 +45,16 @@ func main() {
 }
 
 func (c choice) HLS(guid int) error {
+   mech.LogLevel = 2
    vod, err := nbc.NewAccessVOD(guid)
    if err != nil {
       return err
    }
    forms, err := vod.Manifest()
+   if err != nil {
+      return err
+   }
+   vid, err := nbc.NewVideo(guid)
    if err != nil {
       return err
    }
@@ -64,12 +71,25 @@ func (c choice) HLS(guid int) error {
             return err
          }
          defer res.Body.Close()
-         files, err := m3u.Decode(res.Body, "")
+         srcs, err := m3u.Decode(res.Body, "")
          if err != nil {
             return err
          }
-         for _, file := range files {
-            fmt.Println(file)
+         name := vid.Name() + "-" + form["RESOLUTION"]
+         dst, err := os.Create(name)
+         if err != nil {
+            return err
+         }
+         defer dst.Close()
+         for _, src := range srcs {
+            addr := src["URI"]
+            fmt.Println("GET", addr)
+            res, err := http.Get(addr)
+            if err != nil {
+               return err
+            }
+            defer res.Body.Close()
+            dst.ReadFrom(res.Body)
          }
       }
    }

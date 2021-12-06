@@ -14,6 +14,67 @@ import (
    "time"
 )
 
+
+type videoRequest struct {
+   Extensions struct {
+      PersistedQuery struct {
+         Sha256Hash string `json:"sha256Hash"`
+      } `json:"persistedQuery"`
+   } `json:"extensions"`
+   Variables struct {
+      App string `json:"app"`
+      Name string `json:"name"`
+      Platform string `json:"platform"`
+      Type string `json:"type"`
+      UserID string `json:"userId"` // can be empty
+   } `json:"variables"`
+}
+
+const queryVideo = "73014253e5761c29fc76b950e7d4d181c942fa401b3378af4bac366f6611601e"
+
+type Video struct {
+   Data struct {
+      BonanzaPage struct {
+         Analytics struct {
+            ConvivaAssetName string
+         }
+      }
+   }
+}
+
+func (v Video) Name() string {
+   return v.Data.BonanzaPage.Analytics.ConvivaAssetName
+}
+
+func NewVideo(guid int) (*Video, error) {
+   var rVid videoRequest
+   rVid.Extensions.PersistedQuery.Sha256Hash = queryVideo
+   rVid.Variables.App = "nbc"
+   rVid.Variables.Name = strconv.Itoa(guid)
+   rVid.Variables.Platform = "android"
+   rVid.Variables.Type = "VIDEO"
+   buf := new(bytes.Buffer)
+   err := json.NewEncoder(buf).Encode(rVid)
+   req, err := http.NewRequest(
+      "POST", "https://friendship.nbc.co/v2/graphql", buf,
+   )
+   if err != nil {
+      return nil, err
+   }
+   req.Header.Set("Content-Type", "application/json")
+   mech.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   vid := new(Video)
+   if err := json.NewDecoder(res.Body).Decode(vid); err != nil {
+      return nil, err
+   }
+   return vid, nil
+}
+
 const (
    Origin = "http://access-cloudpath.media.nbcuni.com"
    mpxAccountID = 2410887629
