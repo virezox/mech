@@ -17,7 +17,7 @@ import (
 
 const (
    mpxAccountID = 2410887629
-   queryVideo = "73014253e5761c29fc76b950e7d4d181c942fa401b3378af4bac366f6611601e"
+   queryVideo = "31b459298c0bf48c3b6300ee4922eaf2c9bea4be1cb15a7ab1fe210cd210f779"
 )
 
 var secretKey = []byte("2b84a073ede61c766e4c0b3f1e656f7f")

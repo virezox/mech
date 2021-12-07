@@ -27,3 +27,11 @@ For bands, you can make a request like this:
 HEAD /music HTTP/1.1
 Host: schnaussandmunk.bandcamp.com
 ~~~
+
+## APK
+
+~~~
+com.bandcamp.android
+~~~
+
+https://github.com/httptoolkit/frida-android-unpinning

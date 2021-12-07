@@ -1,7 +1,30 @@
 # December 6 2021
 
+<https://play.google.com/store/apps/category/MUSIC_AND_AUDIO>
+
 ~~~
-soundcloud stars:>=80
+Julia Holter - Maria
+Pizzicato Five - Chicken Curry
 ~~~
 
-<https://play.google.com/store/apps/category/MUSIC_AND_AUDIO>
+Amazon Music?
+
+Apple Music? 
+
+Bandcamp? 
+
+Deezer? 
+
+iHeart? 
+
+Pandora? 
+
+Qobuz? 
+
+SoundCloud? 
+
+Spotify? 
+
+Tidal? 
+
+YouTube? 
