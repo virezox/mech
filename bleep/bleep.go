@@ -1,24 +1,73 @@
 package bleep
 
 import (
+   "bytes"
    "encoding/json"
-   "fmt"
    "github.com/89z/mech"
    "github.com/89z/parse/net"
    "io"
    "net/http"
-   "net/url"
+   "strconv"
    "strings"
    "time"
 )
+
+func (t Track) String() string {
+   track := strconv.AppendInt(nil, t.ReleaseID, 10)
+   track = append(track, '-')
+   track = strconv.AppendInt(track, t.Disc, 10)
+   track = append(track, '-')
+   track = strconv.AppendInt(track, t.Number, 10)
+   return string(track)
+}
+
+type Track struct {
+   Artist string
+   Title string
+   ReleaseID int64
+   Disc int64
+   Number int64
+}
+
+// 8728-1-1
+func Parse(track string) (*Track, error) {
+   split := strings.SplitN(track, "-", 3)
+   if len(split) != 3 {
+      return nil, invalid{track}
+   }
+   rel, err := strconv.ParseInt(split[0], 10, 64)
+   if err != nil {
+      return nil, err
+   }
+   disc, err := strconv.ParseInt(split[1], 10, 64)
+   if err != nil {
+      return nil, err
+   }
+   num, err := strconv.ParseInt(split[2], 10, 64)
+   if err != nil {
+      return nil, err
+   }
+   return &Track{ReleaseID: rel, Disc: disc, Number: num}, nil
+}
+
+type invalid struct {
+   input string
+}
+
+func (i invalid) Error() string {
+   return strconv.Quote(i.input) + " invalid"
+}
 
 const Origin = "https://bleep.com"
 
 type Meta []net.Node
 
-func NewMeta(releaseID int) (Meta, error) {
+func NewMeta(releaseID int64) (Meta, error) {
+   addr := []byte(Origin)
+   addr = append(addr, "/release/"...)
+   addr = strconv.AppendInt(addr, releaseID, 10)
    req, err := http.NewRequest(
-      "GET", fmt.Sprint(Origin, "/release/", releaseID), nil,
+      "GET", string(addr), nil,
    )
    if err != nil {
       return nil, err
@@ -58,30 +107,11 @@ func (m Meta) ReleaseDate() (time.Time, error) {
    return time.Time{}, mech.NotFound{"music:release_date"}
 }
 
-type Track struct {
-   Artist string
-   Disc int
-   Number int
-   ReleaseID int
-   Title string
-}
-
-// 8728-1-1
-func Parse(track string) (*Track, error) {
-   var t Track
-   _, err := fmt.Sscanf(track, "%v-%v-%v", &t.ReleaseID, &t.Disc, &t.Number)
-   if err != nil {
-      return nil, err
-   }
-   return &t, nil
-}
-
-func Release(releaseID int) ([]Track, error) {
-   val := url.Values{
-      "id": {fmt.Sprint(releaseID)}, "type": {"ReleaseProduct"},
-   }
+func Release(releaseID int64) ([]Track, error) {
+   body := []byte("type=ReleaseProduct&id=")
+   body = strconv.AppendInt(body, releaseID, 10)
    req, err := http.NewRequest(
-      "POST", Origin + "/player/addToPlaylist", strings.NewReader(val.Encode()),
+      "POST", Origin + "/player/addToPlaylist", bytes.NewReader(body),
    )
    if err != nil {
       return nil, err
@@ -118,6 +148,3 @@ func (t Track) Resolve() (string, error) {
    return string(dst), nil
 }
 
-func (t Track) String() string {
-   return fmt.Sprint(t.ReleaseID, "-", t.Disc, "-", t.Number)
-}

@@ -27,6 +27,7 @@ func Oembed(addr string) (*Alternate, error) {
       "format": {"json"},
       "url": {addr},
    }.Encode()
+   mech.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -72,6 +73,7 @@ func Resolve(addr string) (*Track, error) {
       "client_id": {clientID},
       "url": {addr},
    }.Encode()
+   mech.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -93,6 +95,7 @@ func Tracks(ids string) ([]Track, error) {
       "client_id": {clientID},
       "ids": {ids},
    }.Encode()
+   mech.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -126,6 +129,7 @@ func (t Track) GetMedia() (*Media, error) {
    req.URL.RawQuery = url.Values{
       "client_id": {clientID},
    }.Encode()
+   mech.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err

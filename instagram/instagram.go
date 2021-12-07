@@ -100,9 +100,7 @@ func (l Login) Item(shortcode string) (*Item, error) {
       "Authorization": {l.Get("Ig-Set-Authorization")},
       "User-Agent": {userAgent},
    }
-   req.URL.RawQuery = url.Values{
-      "clips_media_shortcode": {shortcode},
-   }.Encode()
+   req.URL.RawQuery = "clips_media_shortcode=" + url.QueryEscape(shortcode)
    mech.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
@@ -138,19 +136,16 @@ type Media struct {
 
 // If `auth` is `nil`, then anonymous request will be used.
 func GraphQL(shortcode string, auth *Login) (*Media, error) {
-   req, err := http.NewRequest("GET", OriginWWW + "/p/" + shortcode + "/", nil)
+   req, err := http.NewRequest(
+      "GET", OriginWWW + "/p/" + shortcode + "/?__a=1", nil,
+   )
    if err != nil {
       return nil, err
    }
-   req.Header = http.Header{
-      "User-Agent": {userAgent},
-   }
+   req.Header.Set("User-Agent", userAgent)
    if auth != nil && auth.Header != nil {
       req.Header.Set("Authorization", auth.Get("Ig-Set-Authorization"))
    }
-   req.URL.RawQuery = url.Values{
-      "__a": {"1"},
-   }.Encode()
    mech.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
@@ -181,10 +176,10 @@ type Query struct {
 }
 
 func NewQuery(shortcode string) Query {
-   var q Query
-   q.Query_Hash = queryHash
-   q.Variables.Shortcode = shortcode
-   return q
+   var val Query
+   val.Query_Hash = queryHash
+   val.Variables.Shortcode = shortcode
+   return val
 }
 
 // If `auth` is `nil`, then anonymous request will be used.

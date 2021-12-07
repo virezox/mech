@@ -49,13 +49,12 @@ type Band struct {
 
 // ID to Band. Request is anonymous.
 func NewBand(id int) (*Band, error) {
-   req, err := http.NewRequest("GET", MobileBand, nil)
+   req, err := http.NewRequest(
+      "GET", MobileBand + "?band_id=" + strconv.Itoa(id), nil,
+   )
    if err != nil {
       return nil, err
    }
-   req.URL.RawQuery = url.Values{
-      "band_id": {strconv.Itoa(id)},
-   }.Encode()
    mech.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
@@ -135,18 +134,18 @@ func (i invalid) Error() string {
 }
 
 func (i Item) Tralbum() (*Tralbum, error) {
+   if i.Item_Type == "" {
+      return nil, invalid{"tralbum_type"}
+   }
    req, err := http.NewRequest("GET", MobileTralbum, nil)
    if err != nil {
       return nil, err
    }
-   val := make(url.Values)
-   val.Set("band_id", "1")
-   val.Set("tralbum_id", strconv.Itoa(i.Item_ID))
-   if i.Item_Type == "" {
-      return nil, invalid{"tralbum_type"}
-   }
-   val.Set("tralbum_type", i.Item_Type[:1])
-   req.URL.RawQuery = val.Encode()
+   req.URL.RawQuery = url.Values{
+      "band_id": {"1"},
+      "tralbum_id": {strconv.Itoa(i.Item_ID)},
+      "tralbum_type": {i.Item_Type[:1]},
+   }.Encode()
    mech.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
