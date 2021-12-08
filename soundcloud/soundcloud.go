@@ -73,11 +73,11 @@ func Resolve(addr string) (*Track, error) {
       return nil, err
    }
    defer res.Body.Close()
-   trk := new(Track)
-   if err := json.NewDecoder(res.Body).Decode(trk); err != nil {
+   tra := new(Track)
+   if err := json.NewDecoder(res.Body).Decode(tra); err != nil {
       return nil, err
    }
-   return trk, nil
+   return tra, nil
 }
 
 func Tracks(ids string) ([]Track, error) {

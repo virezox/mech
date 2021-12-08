@@ -3,6 +3,7 @@ package vimeo
 import (
    "encoding/json"
    "net/http"
+   "strconv"
    "time"
 )
 
@@ -67,13 +68,12 @@ type Video struct {
    Thumbnail_URL string
 }
 
-func NewVideo(id string) (*Video, error) {
-   req, err := http.NewRequest(
-      "GET", "https://vimeo.com/api/oembed.json?url=//vimeo.com/" + id, nil,
-   )
+func NewVideo(id int) (*Video, error) {
+   req, err := http.NewRequest("GET", "https://vimeo.com/api/oembed.json", nil)
    if err != nil {
       return nil, err
    }
+   req.URL.RawQuery = "url=//vimeo.com/" + strconv.Itoa(id)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err

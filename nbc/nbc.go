@@ -22,9 +22,10 @@ const (
 
 var secretKey = []byte("2b84a073ede61c766e4c0b3f1e656f7f")
 
+// nbc.com/botched/video/seeing-double/3049418
 // nbc.com/la-brea/video/pilot/9000194212
 func Valid(guid string) bool {
-   return len(guid) == 10
+   return len(guid) >= 7 && len(guid) <= 10
 }
 
 func generateHash(text string, key []byte) string {

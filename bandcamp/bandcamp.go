@@ -49,12 +49,11 @@ type Band struct {
 
 // ID to Band. Request is anonymous.
 func NewBand(id int) (*Band, error) {
-   req, err := http.NewRequest(
-      "GET", MobileBand + "?band_id=" + strconv.Itoa(id), nil,
-   )
+   req, err := http.NewRequest("GET", MobileBand, nil)
    if err != nil {
       return nil, err
    }
+   req.URL.RawQuery = "band_id=" + strconv.Itoa(id)
    mech.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {

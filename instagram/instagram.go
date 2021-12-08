@@ -136,9 +136,7 @@ type Media struct {
 
 // If `auth` is `nil`, then anonymous request will be used.
 func GraphQL(shortcode string, auth *Login) (*Media, error) {
-   req, err := http.NewRequest(
-      "GET", OriginWWW + "/p/" + shortcode + "/?__a=1", nil,
-   )
+   req, err := http.NewRequest("GET", OriginWWW + "/p/" + shortcode + "/", nil)
    if err != nil {
       return nil, err
    }
@@ -146,6 +144,7 @@ func GraphQL(shortcode string, auth *Login) (*Media, error) {
    if auth != nil && auth.Header != nil {
       req.Header.Set("Authorization", auth.Get("Ig-Set-Authorization"))
    }
+   req.URL.RawQuery = "__a=1"
    mech.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {

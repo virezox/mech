@@ -3,11 +3,13 @@ package main
 import (
    "flag"
    "fmt"
+   "github.com/89z/mech"
    "github.com/89z/mech/nbc"
    "github.com/89z/parse/m3u"
    "net/http"
    "os"
    "strconv"
+   "strings"
 )
 
 type choice struct {
@@ -24,6 +26,8 @@ func main() {
       cHLS.ids[id] = true
       return nil
    })
+   var verbose bool
+   flag.BoolVar(&verbose, "v", false, "verbose")
    flag.Parse()
    if flag.NArg() != 1 {
       fmt.Println("nbc [flags] [GUID]")
@@ -38,9 +42,19 @@ func main() {
    if err != nil {
       panic(err)
    }
+   if verbose {
+      mech.LogLevel = 2
+   }
    if err := cHLS.HLS(nGUID); err != nil {
       panic(err)
    }
+}
+
+func video(guid int64, format bool) (*nbc.Video, error) {
+   if format {
+      return nil, nil
+   }
+   return nbc.NewVideo(guid)
 }
 
 func (c choice) HLS(guid int64) error {
@@ -52,7 +66,7 @@ func (c choice) HLS(guid int64) error {
    if err != nil {
       return err
    }
-   vid, err := nbc.NewVideo(guid)
+   vid, err := video(guid, c.format)
    if err != nil {
       return err
    }
@@ -77,7 +91,7 @@ func (c choice) HLS(guid int64) error {
             return err
          }
          name := vid.Name() + "-" + form["RESOLUTION"] + ".mp4"
-         dst, err := os.Create(name)
+         dst, err := os.Create(strings.Map(mech.Clean, name))
          if err != nil {
             return err
          }
