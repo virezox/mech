@@ -44,6 +44,7 @@ func NewAudio(addr string) (*Audio, error) {
    if err != nil {
       return nil, err
    }
+   mech.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err

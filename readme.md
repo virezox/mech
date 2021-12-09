@@ -60,8 +60,8 @@ Installs  | ID
 2.525 M   | `com.bandcamp.android`
 2.086 M   | `com.pbs.video`
 
-## Docs
+## Repo
 
-https://godocs.io/github.com/89z/mech
+https://github.com/89z/mech
 
 [1]://f002.backblazeb2.com/file/ql8mlh/Paint.It.Black.2016.mp4
