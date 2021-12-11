@@ -28,12 +28,12 @@ func main() {
       fmt.Printf("%+v\n", track)
       return
    }
-   med, err := track.GetMedia()
+   pro, err := track.Progressive()
    if err != nil {
       panic(err)
    }
-   fmt.Println("GET", med.URL)
-   res, err := http.Get(med.URL)
+   fmt.Println("GET", pro.URL)
+   res, err := http.Get(pro.URL)
    if err != nil {
       panic(err)
    }

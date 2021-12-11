@@ -45,6 +45,7 @@ type Media struct {
 type Track struct {
    ID int
    Title string
+   // 2021-04-12T07:00:01Z
    Display_Date string
    Media struct {
       Transcodings []struct {
@@ -99,19 +100,15 @@ func Tracks(ids string) ([]Track, error) {
    return tracks, nil
 }
 
-func (t Track) progressive() (string, error) {
+func (t Track) Progressive() (*Media, error) {
+   var addr string
    for _, code := range t.Media.Transcodings {
       if code.Format.Protocol == "progressive" {
-         return code.URL, nil
+         addr = code.URL
       }
    }
-   return "", mech.NotFound{"progressive"}
-}
-
-func (t Track) GetMedia() (*Media, error) {
-   addr, err := t.progressive()
-   if err != nil {
-      return nil, err
+   if addr == "" {
+      return nil, mech.NotFound{"progressive"}
    }
    req, err := http.NewRequest("GET", addr + "?client_id=" + clientID, nil)
    if err != nil {
