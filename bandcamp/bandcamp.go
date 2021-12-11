@@ -16,26 +16,32 @@ const (
    MobileTralbum = "http://bandcamp.com/api/mobile/24/tralbum_details"
 )
 
+// Key is image height.
 var Heights = map[int]int{
+   25: 22,
+   50: 42,
    100: 3,
+   120: 21,
    124: 8,
    135: 15,
    138: 12,
    150: 7,
    172: 11,
+   200: 44,
    210: 9,
    300: 4,
    350: 2,
    368: 14,
    380: 13,
    700: 5,
+   1024: 20,
    1200: 10,
    1500: 1,
 }
 
-func ArtURL(id, height int) string {
-   hID := Heights[height]
-   return fmt.Sprintf("http://f4.bcbits.com/img/a%v_%v.jpg", id, hID)
+func ArtURL(artID, height int) string {
+   id := Heights[height]
+   return fmt.Sprintf("http://f4.bcbits.com/img/a%v_%v.jpg", artID, id)
 }
 
 type Band struct {

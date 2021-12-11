@@ -5,7 +5,18 @@ import (
    "testing"
 )
 
-const label = "https://multiculti.bandcamp.com"
+const (
+   artID = 3809045440
+   label = "https://multiculti.bandcamp.com"
+)
+
+
+func TestArt(t *testing.T) {
+   
+   
+   addr := ArtURL(artID, 100)
+   fmt.Println(addr)
+}
 
 func TestBand(t *testing.T) {
    i, err := NewItem(label)
