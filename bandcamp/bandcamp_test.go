@@ -10,10 +10,7 @@ const (
    label = "https://multiculti.bandcamp.com"
 )
 
-
 func TestArt(t *testing.T) {
-   
-   
    addr := ArtURL(artID, 100)
    fmt.Println(addr)
 }
