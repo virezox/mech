@@ -11,25 +11,32 @@ import (
 )
 
 const (
-   Origin = "http://content.services.pbs.org"
    android = "baXE7humuVat"
    platformVersion = "5.4.2"
 )
+
+func cut(s, sep string) (string, string, bool) {
+   ind := strings.Index(s, sep)
+   if ind == -1 {
+      return s, "", false
+   }
+   return s[:ind], s[ind+len(sep):], true
+}
 
 func Slug(addr string) (string, error) {
    par, err := url.Parse(addr)
    if err != nil {
       return "", err
    }
-   ind := strings.Index(par.Path, "/video/")
-   if ind == -1 {
+   left, right, ok := cut(par.Path, "/video/")
+   if !ok {
       return "", mech.NotFound{"/video/"}
    }
    slug := path.Base(par.Path)
-   if ind == 0 {
+   if left == "" {
       return slug, nil
    }
-   par.Path = par.Path[:ind] + "/api" + par.Path[ind:]
+   par.Path = left + "/api" + right
    req, err := http.NewRequest("GET", par.String(), nil)
    if err != nil {
       return "", err
@@ -65,9 +72,12 @@ type Asset struct {
 }
 
 func NewAsset(slug string) (*Asset, error) {
-   req, err := http.NewRequest(
-      "GET", Origin + "/v3/android/screens/video-assets/" + slug + "/", nil,
-   )
+   var str strings.Builder
+   str.WriteString("http://content.services.pbs.org")
+   str.WriteString("/v3/android/screens/video-assets/")
+   str.WriteString(slug)
+   str.WriteByte('/')
+   req, err := http.NewRequest("GET", str.String(), nil)
    if err != nil {
       return nil, err
    }

@@ -12,6 +12,27 @@ import (
    "time"
 )
 
+// 8728-1-1
+func Parse(track string) (*Track, error) {
+   split := strings.SplitN(track, "-", 3)
+   if sLen := len(split); sLen <= 2 {
+      return nil, mech.Range{2, 0, sLen}
+   }
+   rel, err := strconv.ParseInt(split[0], 10, 64)
+   if err != nil {
+      return nil, err
+   }
+   dis, err := strconv.ParseInt(split[1], 10, 64)
+   if err != nil {
+      return nil, err
+   }
+   num, err := strconv.ParseInt(split[2], 10, 64)
+   if err != nil {
+      return nil, err
+   }
+   return &Track{ReleaseID: rel, Disc: dis, Number: num}, nil
+}
+
 const origin = "https://bleep.com"
 
 type Meta []net.Node
@@ -67,25 +88,6 @@ type Track struct {
    ReleaseID int64
    Disc int64
    Number int64
-}
-
-// 8728-1-1
-func Parse(track string) (*Track, error) {
-   split := strings.SplitN(track, "-", 3)
-   str := mech.Strings(split)
-   rel, err := str.AtInt(0)
-   if err != nil {
-      return nil, err
-   }
-   dis, err := str.AtInt(1)
-   if err != nil {
-      return nil, err
-   }
-   num, err := str.AtInt(2)
-   if err != nil {
-      return nil, err
-   }
-   return &Track{ReleaseID: rel, Disc: dis, Number: num}, nil
 }
 
 func Release(releaseID int64) ([]Track, error) {
