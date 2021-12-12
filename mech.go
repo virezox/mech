@@ -87,6 +87,14 @@ func Percent(pos, length int64) string {
    return strconv.FormatInt(100*pos/length, 10) + "%"
 }
 
+type Invalid struct {
+   Input string
+}
+
+func (i Invalid) Error() string {
+   return strconv.Quote(i.Input) + " invalid"
+}
+
 type NotFound struct {
    Input string
 }
