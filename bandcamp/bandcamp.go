@@ -5,7 +5,6 @@ import (
    "github.com/89z/mech"
    "net/http"
    "net/url"
-   "regexp"
    "strconv"
    "time"
 )
@@ -107,11 +106,11 @@ func NewBand(id int) (*Band, error) {
    return ban, nil
 }
 
-type Streaming_URL map[string]string
+type Streams map[string]string
 
 // some tracks cannot be streamed:
 // schnaussandmunk.bandcamp.com/album/passage-2
-func (s Streaming_URL) MP3_128() (string, bool) {
+func (s Streams) MP3_128() (string, bool) {
    mp3, ok := s["mp3-128"]
    if !ok {
       return "", false
@@ -127,7 +126,7 @@ type Tralbum struct {
    Tracks []struct {
       Track_Num int
       Title string
-      Streaming_URL Streaming_URL
+      Streaming_URL Streams
    }
    Tralbum_Artist string
 }
@@ -165,39 +164,4 @@ func (i Item) Tralbum() (*Tralbum, error) {
       return nil, err
    }
    return tra, nil
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-// URL to Item. Request is anonymous.
-func NewItem(addr string) (*Item, error) {
-   req, err := http.NewRequest("HEAD", addr, nil)
-   if err != nil {
-      return nil, err
-   }
-   if req.URL.Path == "" {
-      req.URL.Path = "/music"
-   }
-   mech.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   // [nilZ0t2809477874x t 2809477874]
-   reg := regexp.MustCompile(`nilZ0([ait])(\d+)x`)
-   for _, c := range res.Cookies() {
-      if c.Name == "session" {
-         find := reg.FindStringSubmatch(c.Value)
-         if find != nil {
-            id, err := strconv.Atoi(find[2])
-            if err == nil {
-               var item Item
-               item.Item_Type = find[1]
-               item.Item_ID = id
-               return &item, nil
-            }
-         }
-      }
-   }
-   return nil, mech.NotFound{"session"}
 }
