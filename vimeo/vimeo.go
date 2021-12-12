@@ -2,22 +2,15 @@ package vimeo
 
 import (
    "encoding/json"
+   "github.com/89z/mech"
    "net/http"
    "strconv"
    "time"
 )
 
-const origin = "https://player.vimeo.com"
-
-// vimeo.com/7350260
-// vimeo.com/66531465
-// vimeo.com/196937578
-func Valid(id string) bool {
-   switch len(id) {
-   case 7, 8, 9:
-      return true
-   }
-   return false
+// This should succeed if ID is passed, and fail is URL is passed.
+func Parse(id string) (int64, error) {
+   return strconv.ParseInt(id, 10, 64)
 }
 
 type Config struct {
@@ -38,11 +31,15 @@ type Config struct {
    }
 }
 
-func NewConfig(id string) (*Config, error) {
-   req, err := http.NewRequest("GET", origin + "/video/" + id + "/config", nil)
+func NewConfig(id int64) (*Config, error) {
+   addr := []byte("https://player.vimeo.com/video/")
+   addr = strconv.AppendInt(addr, id, 10)
+   addr = append(addr, "/config"...)
+   req, err := http.NewRequest("GET", string(addr), nil)
    if err != nil {
       return nil, err
    }
+   mech.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -74,6 +71,7 @@ func NewVideo(id int) (*Video, error) {
       return nil, err
    }
    req.URL.RawQuery = "url=//vimeo.com/" + strconv.Itoa(id)
+   mech.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err

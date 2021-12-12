@@ -5,20 +5,20 @@ import (
    "testing"
 )
 
-const id = "66531465"
+const id = 66531465
 
 func TestConfig(t *testing.T) {
-   c, err := NewConfig(id)
+   con, err := NewConfig(id)
    if err != nil {
       t.Fatal(err)
    }
-   fmt.Printf("%+v\n", c)
+   fmt.Printf("%+v\n", con)
 }
 
 func TestVideo(t *testing.T) {
-   v, err := NewVideo(id)
+   vid, err := NewVideo(id)
    if err != nil {
       t.Fatal(err)
    }
-   fmt.Printf("%+v\n", v)
+   fmt.Printf("%+v\n", vid)
 }

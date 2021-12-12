@@ -31,9 +31,9 @@ func TestTracks(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   m, err := tracks[0].GetMedia()
+   pro, err := tracks[0].Progressive()
    if err != nil {
       t.Fatal(err)
    }
-   fmt.Printf("%+v\n", m)
+   fmt.Printf("%+v\n", pro)
 }

@@ -29,19 +29,15 @@ func main() {
       mech.LogLevel = 2
    }
    addr := flag.Arg(0)
-   item, err := bandcamp.NewItem(addr)
+   data, err := bandcamp.NewDataTralbum(addr)
    if err != nil {
       panic(err)
    }
-   ta, err := item.Tralbum()
-   if err != nil {
-      panic(err)
-   }
-   for _, track := range ta.Tracks {
+   for _, track := range data.TrackInfo {
       if info {
          fmt.Printf("%+v\n", track)
       } else {
-         addr, ok := track.Streaming_URL.MP3_128()
+         addr, ok := track.File.MP3_128()
          if ok {
             fmt.Println("GET", addr)
             res, err := http.Get(addr)
@@ -49,7 +45,7 @@ func main() {
                panic(err)
             }
             defer res.Body.Close()
-            name := ta.Tralbum_Artist + "-" + track.Title + ".mp3"
+            name := data.Artist + "-" + track.Title + ".mp3"
             file, err := os.Create(strings.Map(mech.Clean, name))
             if err != nil {
                panic(err)

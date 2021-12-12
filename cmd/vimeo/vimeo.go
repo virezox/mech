@@ -25,22 +25,23 @@ func main() {
       return
    }
    id := flag.Arg(0)
-   if ! vimeo.Valid(id) {
-      panic("invalid ID")
+   videoID, err := vimeo.Parse(id)
+   if err != nil {
+      panic(err)
    }
-   cfg, err := vimeo.NewConfig(id)
+   con, err := vimeo.NewConfig(videoID)
    if err != nil {
       panic(err)
    }
    // info
    if info {
-      fmt.Printf("%+v\n", cfg)
+      fmt.Printf("%+v\n", con)
       return
    }
    // download
-   for _, f := range cfg.Request.Files.Progressive {
+   for _, f := range con.Request.Files.Progressive {
       if f.Height == height {
-         err := download(cfg, f.URL)
+         err := download(con, f.URL)
          if err != nil {
             panic(err)
          }
@@ -48,14 +49,14 @@ func main() {
    }
 }
 
-func download(cfg *vimeo.Config, addr string) error {
+func download(con *vimeo.Config, addr string) error {
    fmt.Println("GET", addr)
    res, err := http.Get(addr)
    if err != nil {
       return err
    }
    defer res.Body.Close()
-   name := cfg.Video.Owner.Name + "-" + cfg.Video.Title + path.Ext(addr)
+   name := con.Video.Owner.Name + "-" + con.Video.Title + path.Ext(addr)
    file, err := os.Create(strings.Map(mech.Clean, name))
    if err != nil {
       return err

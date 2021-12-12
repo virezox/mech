@@ -3,24 +3,16 @@ package bandcamp
 import (
    "encoding/json"
    "github.com/89z/mech"
+   "github.com/89z/parse/net"
+   "html"
    "net/http"
    "net/url"
    "strconv"
+   "strings"
    "time"
 )
 
-const (
-   MobileBand = "http://bandcamp.com/api/mobile/24/band_details"
-   MobileTralbum = "http://bandcamp.com/api/mobile/24/tralbum_details"
-)
-
-type Image struct {
-   ID int64
-   Width int
-   Height int
-   Ext string
-   Crop bool
-}
+const mobileTralbum = "http://bandcamp.com/api/mobile/24/tralbum_details"
 
 var Images = []Image{
    {ID:0, Width:1500, Height:1500, Ext:".jpg"},
@@ -68,6 +60,54 @@ var Images = []Image{
    {ID:69, Width:700, Height:700, Ext:".jpg"},
 }
 
+type DataTralbum struct {
+   Artist string
+   TrackInfo []struct {
+      Title string
+      File Streams
+   }
+}
+
+func NewDataTralbum(addr string) (*DataTralbum, error) {
+   contains := func(s string) bool {
+      return strings.Contains(addr, s)
+   }
+   if !contains("/album/") && !contains("/track/") {
+      return nil, mech.NotFound{"/album/,/track/"}
+   }
+   req, err := http.NewRequest("GET", addr, nil)
+   if err != nil {
+      return nil, err
+   }
+   mech.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   for _, node := range net.ReadHTML(res.Body, "script") {
+      data, ok := node.Attr["data-tralbum"]
+      if ok {
+         data = html.UnescapeString(data)
+         tra := new(DataTralbum)
+         err := json.Unmarshal([]byte(data), tra)
+         if err != nil {
+            return nil, err
+         }
+         return tra, nil
+      }
+   }
+   return nil, mech.NotFound{"data-tralbum"}
+}
+
+type Image struct {
+   ID int64
+   Width int
+   Height int
+   Ext string
+   Crop bool
+}
+
 // Extension is optional.
 func (i Image) Format(artID int64) string {
    buf := []byte("http://f4.bcbits.com/img/a")
@@ -75,35 +115,6 @@ func (i Image) Format(artID int64) string {
    buf = append(buf, '_')
    buf = strconv.AppendInt(buf, i.ID, 10)
    return string(buf)
-}
-
-type Band struct {
-   Artists []struct {
-      ID int
-      Name string
-   }
-   Bandcamp_URL string
-   Discography []Item
-}
-
-// ID to Band. Request is anonymous.
-func NewBand(id int) (*Band, error) {
-   req, err := http.NewRequest("GET", MobileBand, nil)
-   if err != nil {
-      return nil, err
-   }
-   req.URL.RawQuery = "band_id=" + strconv.Itoa(id)
-   mech.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   ban := new(Band)
-   if err := json.NewDecoder(res.Body).Decode(ban); err != nil {
-      return nil, err
-   }
-   return ban, nil
 }
 
 type Streams map[string]string
@@ -131,27 +142,15 @@ type Tralbum struct {
    Tralbum_Artist string
 }
 
-func (t Tralbum) Unix() time.Time {
-   return time.Unix(t.Release_Date, 0)
-}
-
-type Item struct {
-   Item_Type string
-   Item_ID int
-}
-
-func (i Item) Tralbum() (*Tralbum, error) {
-   if i.Item_Type == "" {
-      return nil, mech.Invalid{"tralbum_type"}
-   }
-   req, err := http.NewRequest("GET", MobileTralbum, nil)
+func NewTralbum(typ byte, id int) (*Tralbum, error) {
+   req, err := http.NewRequest("GET", mobileTralbum, nil)
    if err != nil {
       return nil, err
    }
    req.URL.RawQuery = url.Values{
       "band_id": {"1"},
-      "tralbum_id": {strconv.Itoa(i.Item_ID)},
-      "tralbum_type": {i.Item_Type[:1]},
+      "tralbum_id": {strconv.Itoa(id)},
+      "tralbum_type": {string(typ)},
    }.Encode()
    mech.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
@@ -164,4 +163,8 @@ func (i Item) Tralbum() (*Tralbum, error) {
       return nil, err
    }
    return tra, nil
+}
+
+func (t Tralbum) Unix() time.Time {
+   return time.Unix(t.Release_Date, 0)
 }
