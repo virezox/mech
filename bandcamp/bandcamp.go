@@ -12,8 +12,6 @@ import (
    "time"
 )
 
-const mobileTralbum = "http://bandcamp.com/api/mobile/24/tralbum_details"
-
 var Images = []Image{
    {ID:0, Width:1500, Height:1500, Ext:".jpg"},
    {ID:1, Width:1500, Height:1500, Ext:".png"},
@@ -61,11 +59,22 @@ var Images = []Image{
 }
 
 type DataTralbum struct {
+   Album_Release_Date string // 20 Jan 2017 00:00:00 GMT
+   Art_ID int
    Artist string
+   Current struct {
+      Title string
+   }
+   ID int
    TrackInfo []struct {
       Title string
       File Streams
    }
+}
+
+// jonasmunk.bandcamp.com/track/altered-light
+func (d DataTralbum) Date() (time.Time, error) {
+   return time.Parse("02 Jan 2006 15:04:05 MST", d.Album_Release_Date)
 }
 
 func NewDataTralbum(addr string) (*DataTralbum, error) {
@@ -143,7 +152,9 @@ type Tralbum struct {
 }
 
 func NewTralbum(typ byte, id int) (*Tralbum, error) {
-   req, err := http.NewRequest("GET", mobileTralbum, nil)
+   req, err := http.NewRequest(
+      "GET", "http://bandcamp.com/api/mobile/24/tralbum_details", nil,
+   )
    if err != nil {
       return nil, err
    }
@@ -163,8 +174,4 @@ func NewTralbum(typ byte, id int) (*Tralbum, error) {
       return nil, err
    }
    return tra, nil
-}
-
-func (t Tralbum) Unix() time.Time {
-   return time.Unix(t.Release_Date, 0)
 }
