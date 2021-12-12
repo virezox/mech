@@ -79,6 +79,20 @@ func Percent(pos, length int64) string {
    return strconv.FormatInt(100*pos/length, 10) + "%"
 }
 
+type InvalidSlice struct {
+   Index, Length int
+}
+
+func (i InvalidSlice) Error() string {
+   index, length := int64(i.Index), int64(i.Length)
+   var buf []byte
+   buf = append(buf, "index out of range ["...)
+   buf = strconv.AppendInt(buf, index, 10)
+   buf = append(buf, "] with length "...)
+   buf = strconv.AppendInt(buf, length, 10)
+   return string(buf)
+}
+
 type NotFound struct {
    Input string
 }
@@ -95,11 +109,11 @@ type Progress struct {
 }
 
 func NewProgress(res *http.Response) *Progress {
-   return &Progress{
-      Response: res,
-      metric: []string{" B", " kB", " MB", " GB"},
-      xMax: 10_000_000,
-   }
+   var pro Progress
+   pro.Response = res
+   pro.metric = []string{" B", " kB", " MB", " GB"}
+   pro.xMax = 10_000_000
+   return &pro
 }
 
 func (p *Progress) Read(buf []byte) (int, error) {
@@ -117,36 +131,4 @@ func (p *Progress) Read(buf []byte) (int, error) {
       p.x = 0
    }
    return num, nil
-}
-
-type Slice struct {
-   Index, Length int64
-}
-
-func (s Slice) Error() string {
-   var buf []byte
-   if s.Index <= -1 {
-      buf = append(buf, "invalid slice index "...)
-      buf = strconv.AppendInt(buf, s.Index, 10)
-      buf = append(buf, " (index must be non-negative"...)
-   } else {
-      buf = append(buf, "index out of range ["...)
-      buf = strconv.AppendInt(buf, s.Index, 10)
-      buf = append(buf, "] with length "...)
-      buf = strconv.AppendInt(buf, s.Length, 10)
-   }
-   return string(buf)
-}
-
-type Strings []string
-
-func (s Strings) Has(i int) error {
-   sLen := len(s)
-   if i >= 0 && i < sLen {
-      return nil
-   }
-   var err Slice
-   err.Index = int64(i)
-   err.Length = int64(sLen)
-   return err
 }

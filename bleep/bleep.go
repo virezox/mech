@@ -15,9 +15,8 @@ import (
 // 8728-1-1
 func Parse(track string) (*Track, error) {
    split := strings.SplitN(track, "-", 3)
-   err := mech.Strings(split).Has(2)
-   if err != nil {
-      return nil, err
+   if sLen := len(split); sLen <= 2 {
+      return nil, mech.InvalidSlice{2, sLen}
    }
    rel, err := strconv.ParseInt(split[0], 10, 64)
    if err != nil {
