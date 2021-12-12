@@ -42,32 +42,23 @@ func Clean(r rune) rune {
    return r
 }
 
-func Compare(a, b int) int {
-   if a < b {
-      return -1
-   }
-   if a == b {
-      return 0
-   }
-   return 1
-}
-
 // github.com/golang/go/issues/22318
 func ExtensionByType(typ string) (string, error) {
    justType, _, err := mime.ParseMediaType(typ)
    if err != nil {
       return "", err
    }
-   ext, ok := map[string]string{
-      "audio/mp4": ".m4a",
-      "audio/webm": ".weba",
-      "video/mp4": ".m4v",
-      "video/webm": ".webm",
-   }[justType]
-   if !ok {
-      return "", NotFound{justType}
+   switch justType {
+   case "audio/mp4":
+      return ".m4a", nil
+   case "audio/webm":
+      return ".weba", nil
+   case "video/mp4":
+      return ".m4v", nil
+   case "video/webm":
+      return ".webm", nil
    }
-   return ext, nil
+   return "", NotFound{justType}
 }
 
 func NumberFormat(val float64, metric []string) string {
@@ -133,4 +124,71 @@ func (p *Progress) Read(buf []byte) (int, error) {
       p.x = 0
    }
    return num, nil
+}
+
+type String string
+
+func (s String) At(i int) (byte, error) {
+   high := len(s) - 1
+   if i < 0 || i > high {
+      return 0, outOfRange{i, 0, high}
+   }
+   return s[i], nil
+}
+
+func (s String) Slice(i, j int) (String, error) {
+   if i < 0 || i > j {
+      return "", outOfRange{i, 0, j}
+   }
+   high := len(s) - 1
+   if j < i || j > high {
+      return "", outOfRange{j, i, high}
+   }
+   return s[i:j], nil
+}
+
+type Strings []string
+
+func (s Strings) At(i int) (string, error) {
+   high := len(s) - 1
+   if i < 0 || i > high {
+      return "", outOfRange{i, 0, high}
+   }
+   return s[i], nil
+}
+
+func (s Strings) AtInt(i int) (int64, error) {
+   str, err := s.At(i)
+   if err != nil {
+      return 0, err
+   }
+   return strconv.ParseInt(str, 10, 64)
+}
+
+func (s Strings) Slice(i, j int) ([]string, error) {
+   if i < 0 || i > j {
+      return nil, outOfRange{i, 0, j}
+   }
+   high := len(s) - 1
+   if j < i || j > high {
+      return nil, outOfRange{j, i, high}
+   }
+   return s[i:j], nil
+}
+
+type outOfRange struct {
+   index, low, high int
+}
+
+func (o outOfRange) Error() string {
+   index := int64(o.index)
+   low := int64(o.low)
+   high := int64(o.high)
+   buf := []byte("index ")
+   buf = strconv.AppendInt(buf, index, 10)
+   buf = append(buf, " out of range "...)
+   buf = strconv.AppendInt(buf, low, 10)
+   buf = append(buf, ':')
+   buf = strconv.AppendInt(buf, high, 10)
+   return string(buf)
 }

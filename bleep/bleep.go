@@ -12,58 +12,12 @@ import (
    "time"
 )
 
-func (t Track) String() string {
-   track := strconv.AppendInt(nil, t.ReleaseID, 10)
-   track = append(track, '-')
-   track = strconv.AppendInt(track, t.Disc, 10)
-   track = append(track, '-')
-   track = strconv.AppendInt(track, t.Number, 10)
-   return string(track)
-}
-
-type Track struct {
-   Artist string
-   Title string
-   ReleaseID int64
-   Disc int64
-   Number int64
-}
-
-// 8728-1-1
-func Parse(track string) (*Track, error) {
-   split := strings.SplitN(track, "-", 3)
-   if len(split) != 3 {
-      return nil, invalid{track}
-   }
-   rel, err := strconv.ParseInt(split[0], 10, 64)
-   if err != nil {
-      return nil, err
-   }
-   disc, err := strconv.ParseInt(split[1], 10, 64)
-   if err != nil {
-      return nil, err
-   }
-   num, err := strconv.ParseInt(split[2], 10, 64)
-   if err != nil {
-      return nil, err
-   }
-   return &Track{ReleaseID: rel, Disc: disc, Number: num}, nil
-}
-
-type invalid struct {
-   input string
-}
-
-func (i invalid) Error() string {
-   return strconv.Quote(i.input) + " invalid"
-}
-
-const Origin = "https://bleep.com"
+const origin = "https://bleep.com"
 
 type Meta []net.Node
 
 func NewMeta(releaseID int64) (Meta, error) {
-   addr := []byte(Origin)
+   addr := []byte(origin)
    addr = append(addr, "/release/"...)
    addr = strconv.AppendInt(addr, releaseID, 10)
    req, err := http.NewRequest(
@@ -107,11 +61,38 @@ func (m Meta) ReleaseDate() (time.Time, error) {
    return time.Time{}, mech.NotFound{"music:release_date"}
 }
 
+type Track struct {
+   Artist string
+   Title string
+   ReleaseID int64
+   Disc int64
+   Number int64
+}
+
+// 8728-1-1
+func Parse(track string) (*Track, error) {
+   split := strings.SplitN(track, "-", 3)
+   str := mech.Strings(split)
+   rel, err := str.AtInt(0)
+   if err != nil {
+      return nil, err
+   }
+   dis, err := str.AtInt(1)
+   if err != nil {
+      return nil, err
+   }
+   num, err := str.AtInt(2)
+   if err != nil {
+      return nil, err
+   }
+   return &Track{ReleaseID: rel, Disc: dis, Number: num}, nil
+}
+
 func Release(releaseID int64) ([]Track, error) {
    body := []byte("type=ReleaseProduct&id=")
    body = strconv.AppendInt(body, releaseID, 10)
    req, err := http.NewRequest(
-      "POST", Origin + "/player/addToPlaylist", bytes.NewReader(body),
+      "POST", origin + "/player/addToPlaylist", bytes.NewReader(body),
    )
    if err != nil {
       return nil, err
@@ -131,7 +112,7 @@ func Release(releaseID int64) ([]Track, error) {
 
 func (t Track) Resolve() (string, error) {
    req, err := http.NewRequest(
-      "GET", Origin + "/player/resolve/" + t.String(), nil,
+      "GET", origin + "/player/resolve/" + t.String(), nil,
    )
    if err != nil {
       return "", err
@@ -148,3 +129,11 @@ func (t Track) Resolve() (string, error) {
    return string(dst), nil
 }
 
+func (t Track) String() string {
+   track := strconv.AppendInt(nil, t.ReleaseID, 10)
+   track = append(track, '-')
+   track = strconv.AppendInt(track, t.Disc, 10)
+   track = append(track, '-')
+   track = strconv.AppendInt(track, t.Number, 10)
+   return string(track)
+}
