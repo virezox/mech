@@ -43,8 +43,9 @@ func main() {
       }
    default:
       id := flag.Arg(0)
-      if !youtube.Valid(id) {
-         panic("invalid ID")
+      err := youtube.Valid(id)
+      if err != nil {
+         panic(err)
       }
       auth := youtube.Key
       if construct {

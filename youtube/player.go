@@ -5,7 +5,23 @@ import (
    "encoding/json"
    "github.com/89z/mech"
    "net/http"
+   "strconv"
 )
+
+type videoID string
+
+func (v videoID) Error() string {
+   str := string(v)
+   return "invalid video ID " + strconv.Quote(str)
+}
+
+// youtube.com/watch?v=hi8ryzFqrAE
+func Valid(id string) error {
+   if len(id) == 11 {
+      return nil
+   }
+   return videoID(id)
+}
 
 const origin = "https://www.youtube.com"
 
@@ -14,11 +30,6 @@ var (
    Embed = Client{Name: "ANDROID", Screen: "EMBED", Version: "16.43.34"}
    Mweb = Client{Name: "MWEB", Version: "2.20211109.01.00"}
 )
-
-// youtube.com/watch?v=hi8ryzFqrAE
-func Valid(id string) bool {
-   return len(id) == 11
-}
 
 type Client struct {
    Name string `json:"clientName"`
