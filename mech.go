@@ -1,6 +1,7 @@
 package mech
 
 import (
+   "bytes"
    "fmt"
    "mime"
    "strings"
@@ -22,7 +23,7 @@ func Dump(req *http.Request) error {
          return err
       }
       os.Stdout.Write(buf)
-      if buf[len(buf)-1] != '\n' {
+      if !bytes.HasSuffix(buf, []byte{'\n'}) {
          os.Stdout.WriteString("\n")
       }
    case 3:
@@ -126,69 +127,34 @@ func (p *Progress) Read(buf []byte) (int, error) {
    return num, nil
 }
 
-type String string
-
-func (s String) At(i int) (byte, error) {
-   high := len(s) - 1
-   if i < 0 || i > high {
-      return 0, outOfRange{i, 0, high}
-   }
-   return s[i], nil
+type Slice struct {
+   Index, Length int64
 }
 
-func (s String) Slice(i, j int) (String, error) {
-   if i < 0 || i > j {
-      return "", outOfRange{i, 0, j}
+func (s Slice) Error() string {
+   var buf []byte
+   if s.Index <= -1 {
+      buf = append(buf, "invalid slice index "...)
+      buf = strconv.AppendInt(buf, s.Index, 10)
+      buf = append(buf, " (index must be non-negative"...)
+   } else {
+      buf = append(buf, "index out of range ["...)
+      buf = strconv.AppendInt(buf, s.Index, 10)
+      buf = append(buf, "] with length "...)
+      buf = strconv.AppendInt(buf, s.Length, 10)
    }
-   high := len(s) - 1
-   if j < i || j > high {
-      return "", outOfRange{j, i, high}
-   }
-   return s[i:j], nil
+   return string(buf)
 }
 
 type Strings []string
 
-func (s Strings) At(i int) (string, error) {
-   high := len(s) - 1
-   if i < 0 || i > high {
-      return "", outOfRange{i, 0, high}
+func (s Strings) Has(i int) error {
+   sLen := len(s)
+   if i >= 0 && i < sLen {
+      return nil
    }
-   return s[i], nil
-}
-
-func (s Strings) AtInt(i int) (int64, error) {
-   str, err := s.At(i)
-   if err != nil {
-      return 0, err
-   }
-   return strconv.ParseInt(str, 10, 64)
-}
-
-func (s Strings) Slice(i, j int) ([]string, error) {
-   if i < 0 || i > j {
-      return nil, outOfRange{i, 0, j}
-   }
-   high := len(s) - 1
-   if j < i || j > high {
-      return nil, outOfRange{j, i, high}
-   }
-   return s[i:j], nil
-}
-
-type outOfRange struct {
-   index, low, high int
-}
-
-func (o outOfRange) Error() string {
-   index := int64(o.index)
-   low := int64(o.low)
-   high := int64(o.high)
-   buf := []byte("index ")
-   buf = strconv.AppendInt(buf, index, 10)
-   buf = append(buf, " out of range "...)
-   buf = strconv.AppendInt(buf, low, 10)
-   buf = append(buf, ':')
-   buf = strconv.AppendInt(buf, high, 10)
-   return string(buf)
+   var err Slice
+   err.Index = int64(i)
+   err.Length = int64(sLen)
+   return err
 }
