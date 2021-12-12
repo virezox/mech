@@ -107,6 +107,18 @@ func NewBand(id int) (*Band, error) {
    return ban, nil
 }
 
+type Streaming_URL map[string]string
+
+// some tracks cannot be streamed:
+// schnaussandmunk.bandcamp.com/album/passage-2
+func (s Streaming_URL) MP3_128() (string, bool) {
+   mp3, ok := s["mp3-128"]
+   if !ok {
+      return "", false
+   }
+   return mp3, true
+}
+
 // All fields available with Track and Album
 type Tralbum struct {
    Art_ID int
@@ -115,9 +127,7 @@ type Tralbum struct {
    Tracks []struct {
       Track_Num int
       Title string
-      Streaming_URL struct {
-         MP3_128 string `json:"mp3-128"`
-      }
+      Streaming_URL Streaming_URL
    }
    Tralbum_Artist string
 }
@@ -158,17 +168,6 @@ func (i Item) Tralbum() (*Tralbum, error) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-
-/*
-schnaussandmunk.bandcamp.com/track/amaris-2
-2809477874
-
-schnaussandmunk.bandcamp.com/album/passage-2
-1670971920
-
-schnaussandmunk.bandcamp.com/music
-3454424886
-*/
 
 // URL to Item. Request is anonymous.
 func NewItem(addr string) (*Item, error) {

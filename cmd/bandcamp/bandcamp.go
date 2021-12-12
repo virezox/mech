@@ -41,22 +41,25 @@ func main() {
       if info {
          fmt.Printf("%+v\n", track)
       } else {
-         fmt.Println("GET", track.Streaming_URL.MP3_128)
-         res, err := http.Get(track.Streaming_URL.MP3_128)
-         if err != nil {
-            panic(err)
+         addr, ok := track.Streaming_URL.MP3_128()
+         if ok {
+            fmt.Println("GET", addr)
+            res, err := http.Get(addr)
+            if err != nil {
+               panic(err)
+            }
+            defer res.Body.Close()
+            name := ta.Tralbum_Artist + "-" + track.Title + ".mp3"
+            file, err := os.Create(strings.Map(mech.Clean, name))
+            if err != nil {
+               panic(err)
+            }
+            defer file.Close()
+            if _, err := file.ReadFrom(res.Body); err != nil {
+               panic(err)
+            }
+            time.Sleep(sleep)
          }
-         defer res.Body.Close()
-         name := ta.Tralbum_Artist + "-" + track.Title + ".mp3"
-         file, err := os.Create(strings.Map(mech.Clean, name))
-         if err != nil {
-            panic(err)
-         }
-         defer file.Close()
-         if _, err := file.ReadFrom(res.Body); err != nil {
-            panic(err)
-         }
-         time.Sleep(sleep)
       }
    }
 }
