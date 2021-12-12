@@ -9,8 +9,8 @@ import (
 const artID = 3809045440
 
 var tralbums = []tralbum{
-   {1670971920, 'a', "https://schnaussandmunk.bandcamp.com/album/passage-2"},
    {2809477874, 't', "https://schnaussandmunk.bandcamp.com/track/amaris-2"},
+   {1670971920, 'a', "https://schnaussandmunk.bandcamp.com/album/passage-2"},
 }
 
 type tralbum struct {
