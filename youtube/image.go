@@ -5,11 +5,11 @@ import (
 )
 
 var (
-   webP = pictureFormat{0, "vi_webp", "webp"}
-   jpg = pictureFormat{1, "vi", "jpg"}
+   webP = imageFormat{0, "vi_webp", "webp"}
+   jpg = imageFormat{1, "vi", "jpg"}
 )
 
-var Pictures = []Picture{
+var Images = []Image{
    {120, 90, 68, "default", jpg},
    {120, 90, 90, "1", jpg},
    {120, 90, 90, "2", jpg},
@@ -56,29 +56,29 @@ var Pictures = []Picture{
    {1280, 720, 720, "maxresdefault", webP},
 }
 
-func (p Picture) Address(id string) string {
-   var addr strings.Builder
-   addr.WriteString("http://i.ytimg.com/")
-   addr.WriteString(p.Format.Dir)
-   addr.WriteByte('/')
-   addr.WriteString(id)
-   addr.WriteByte('/')
-   addr.WriteString(p.Base)
-   addr.WriteByte('.')
-   addr.WriteString(p.Format.Ext)
-   return addr.String()
-}
-
-type pictureFormat struct {
+type imageFormat struct {
    Size int
    Dir string
    Ext string
 }
 
-type Picture struct {
+type Image struct {
    Width int
    Height int
    SubHeight int
    Base string
-   Format pictureFormat
+   Format imageFormat
+}
+
+func (i Image) Address(id string) string {
+   var addr strings.Builder
+   addr.WriteString("http://i.ytimg.com/")
+   addr.WriteString(i.Format.Dir)
+   addr.WriteByte('/')
+   addr.WriteString(id)
+   addr.WriteByte('/')
+   addr.WriteString(i.Base)
+   addr.WriteByte('.')
+   addr.WriteString(i.Format.Ext)
+   return addr.String()
 }
