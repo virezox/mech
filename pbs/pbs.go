@@ -11,7 +11,6 @@ import (
 )
 
 const (
-   Origin = "http://content.services.pbs.org"
    android = "baXE7humuVat"
    platformVersion = "5.4.2"
 )
@@ -21,12 +20,12 @@ func Slug(addr string) (string, error) {
    if err != nil {
       return "", err
    }
-   ind := strings.Index(par.Path, "/video/")
-   if ind == -1 {
-      return "", mech.NotFound{"/video/"}
-   }
    slug := path.Base(par.Path)
-   if ind == 0 {
+   ind := strings.Index(par.Path, "/video/")
+   switch ind {
+   case -1:
+      return "", mech.NotFound{"/video/"}
+   case 0:
       return slug, nil
    }
    par.Path = par.Path[:ind] + "/api" + par.Path[ind:]
@@ -65,9 +64,12 @@ type Asset struct {
 }
 
 func NewAsset(slug string) (*Asset, error) {
-   req, err := http.NewRequest(
-      "GET", Origin + "/v3/android/screens/video-assets/" + slug + "/", nil,
-   )
+   var str strings.Builder
+   str.WriteString("http://content.services.pbs.org")
+   str.WriteString("/v3/android/screens/video-assets/")
+   str.WriteString(slug)
+   str.WriteByte('/')
+   req, err := http.NewRequest("GET", str.String(), nil)
    if err != nil {
       return nil, err
    }

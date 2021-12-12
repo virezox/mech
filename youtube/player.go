@@ -5,6 +5,7 @@ import (
    "encoding/json"
    "github.com/89z/mech"
    "net/http"
+   "strconv"
 )
 
 const origin = "https://www.youtube.com"
@@ -14,11 +15,6 @@ var (
    Embed = Client{Name: "ANDROID", Screen: "EMBED", Version: "16.43.34"}
    Mweb = Client{Name: "MWEB", Version: "2.20211109.01.00"}
 )
-
-// youtube.com/watch?v=hi8ryzFqrAE
-func Valid(id string) bool {
-   return len(id) == 11
-}
 
 type Client struct {
    Name string `json:"clientName"`
@@ -77,28 +73,6 @@ type Auth struct {
    Value string
 }
 
-func NewPlayer(id string, head Auth, body Client) (*Player, error) {
-   var i youTubeI
-   i.Context.Client = body
-   i.VideoID = id
-   if head != Key {
-      i.RacyCheckOK = true
-   }
-   if body.Screen != "" {
-      i.Context.ThirdParty = &thirdParty{origin}
-   }
-   res, err := post(origin + "/youtubei/v1/player", head, i)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   p := new(Player)
-   if err := json.NewDecoder(res.Body).Decode(p); err != nil {
-      return nil, err
-   }
-   return p, nil
-}
-
 func (p Player) Author() string {
    return p.VideoDetails.Author
 }
@@ -133,4 +107,37 @@ type youTubeI struct {
    Query string `json:"query,omitempty"`
    RacyCheckOK bool `json:"racyCheckOk,omitempty"`
    VideoID string `json:"videoId,omitempty"`
+}
+
+type videoID string
+
+func (v videoID) Error() string {
+   str := string(v)
+   return "invalid video ID " + strconv.Quote(str)
+}
+
+// youtube.com/watch?v=hi8ryzFqrAE
+func NewPlayer(id string, head Auth, body Client) (*Player, error) {
+   if len(id) != 11 {
+      return nil, videoID(id)
+   }
+   var i youTubeI
+   i.Context.Client = body
+   i.VideoID = id
+   if head != Key {
+      i.RacyCheckOK = true
+   }
+   if body.Screen != "" {
+      i.Context.ThirdParty = &thirdParty{origin}
+   }
+   res, err := post(origin + "/youtubei/v1/player", head, i)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   p := new(Player)
+   if err := json.NewDecoder(res.Body).Decode(p); err != nil {
+      return nil, err
+   }
+   return p, nil
 }
