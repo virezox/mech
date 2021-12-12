@@ -119,23 +119,17 @@ func (p *Progress) Read(buf []byte) (int, error) {
    return num, nil
 }
 
-type Slice struct {
-   Index, Length int64
-}
+type String string
 
-func (s Slice) Error() string {
-   var buf []byte
-   if s.Index <= -1 {
-      buf = append(buf, "invalid slice index "...)
-      buf = strconv.AppendInt(buf, s.Index, 10)
-      buf = append(buf, " (index must be non-negative"...)
-   } else {
-      buf = append(buf, "index out of range ["...)
-      buf = strconv.AppendInt(buf, s.Index, 10)
-      buf = append(buf, "] with length "...)
-      buf = strconv.AppendInt(buf, s.Length, 10)
+func (s String) Has(i int) error {
+   sLen := len(s)
+   if i >= 0 && i < sLen {
+      return nil
    }
-   return string(buf)
+   var err invalidSlice
+   err.index = int64(i)
+   err.length = int64(sLen)
+   return err
 }
 
 type Strings []string
@@ -145,8 +139,27 @@ func (s Strings) Has(i int) error {
    if i >= 0 && i < sLen {
       return nil
    }
-   var err Slice
-   err.Index = int64(i)
-   err.Length = int64(sLen)
+   var err invalidSlice
+   err.index = int64(i)
+   err.length = int64(sLen)
    return err
+}
+
+type invalidSlice struct {
+   index, length int64
+}
+
+func (i invalidSlice) Error() string {
+   var buf []byte
+   if i.index <= -1 {
+      buf = append(buf, "invalid slice index "...)
+      buf = strconv.AppendInt(buf, i.index, 10)
+      buf = append(buf, " (index must be non-negative"...)
+   } else {
+      buf = append(buf, "index out of range ["...)
+      buf = strconv.AppendInt(buf, i.index, 10)
+      buf = append(buf, "] with length "...)
+      buf = strconv.AppendInt(buf, i.length, 10)
+   }
+   return string(buf)
 }
