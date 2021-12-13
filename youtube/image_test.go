@@ -3,13 +3,15 @@ package youtube
 import (
    "fmt"
    "net/http"
+   "sort"
+   "strings"
    "testing"
    "time"
 )
 
 const id = "UpNXI3_ctAc"
 
-func TestImage(t *testing.T) {
+func TestImageFormat(t *testing.T) {
    for _, img := range Images {
       addr := img.Format(id)
       fmt.Println("HEAD", addr)

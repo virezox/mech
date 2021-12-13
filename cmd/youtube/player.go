@@ -12,8 +12,9 @@ type choice map[string]bool
 
 func (c choice) download(play *youtube.Player, id string) error {
    if len(c) == 0 {
-      c["247"] = true
+      c["247"] = true // youtube.com/watch?v=Leq8J0E2TQ0
       c["251"] = true
+      c["302"] = true // youtube.com/watch?v=kVNl1P9StSU
    }
    // Videos can support both AdaptiveFormats and DASH:
    // zgJT91LA9gA
