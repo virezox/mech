@@ -12,31 +12,6 @@ import (
    "strconv"
 )
 
-var LogLevel = 1
-
-func Dump(req *http.Request) error {
-   switch LogLevel {
-   case 1:
-      fmt.Println(req.Method, req.URL)
-   case 2:
-      buf, err := httputil.DumpRequest(req, true)
-      if err != nil {
-         return err
-      }
-      os.Stdout.Write(buf)
-      if !bytes.HasSuffix(buf, []byte{'\n'}) {
-         os.Stdout.WriteString("\n")
-      }
-   case 3:
-      buf, err := httputil.DumpRequestOut(req, true)
-      if err != nil {
-         return err
-      }
-      os.Stdout.Write(buf)
-   }
-   return nil
-}
-
 func Clean(r rune) rune {
    if strings.ContainsRune(`"*/:<>?\|`, r) {
       return -1
@@ -81,6 +56,31 @@ func Percent(pos, length int64) string {
 }
 
 type InvalidSlice = parse.InvalidSlice
+
+type LogLevel int
+
+func (l LogLevel) Dump(req *http.Request) error {
+   switch l {
+   case 0:
+      fmt.Println(req.Method, req.URL)
+   case 1:
+      buf, err := httputil.DumpRequest(req, true)
+      if err != nil {
+         return err
+      }
+      os.Stdout.Write(buf)
+      if !bytes.HasSuffix(buf, []byte{'\n'}) {
+         os.Stdout.WriteString("\n")
+      }
+   case 2:
+      buf, err := httputil.DumpRequestOut(req, true)
+      if err != nil {
+         return err
+      }
+      os.Stdout.Write(buf)
+   }
+   return nil
+}
 
 type NotFound struct {
    Input string

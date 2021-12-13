@@ -17,7 +17,10 @@ const mediaSelector =
    "http://open.live.bbc.co.uk" +
    "/mediaselector/6/select/version/2.0/mediaset/pc/vpid/"
 
-var Decode = m3u.Decode
+var (
+   Decode = m3u.Decode
+   LogLevel mech.LogLevel
+)
 
 type Media struct {
    Kind string
@@ -48,7 +51,7 @@ func NewNewsVideo(addr string) (*NewsVideo, error) {
    if err != nil {
       return nil, err
    }
-   mech.Dump(req)
+   LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -76,7 +79,7 @@ func (n NewsVideo) Media() (*Media, error) {
    if err != nil {
       return nil, err
    }
-   mech.Dump(req)
+   LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -106,7 +109,7 @@ func (v Video) HLS() ([]m3u.Format, error) {
    if err != nil {
       return nil, err
    }
-   mech.Dump(req)
+   LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err

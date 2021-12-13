@@ -3,7 +3,6 @@ package main
 import (
    "flag"
    "fmt"
-   "github.com/89z/mech"
    "github.com/89z/mech/youtube"
    "os"
 )
@@ -28,7 +27,7 @@ func main() {
       return
    }
    if verbose {
-      mech.LogLevel = 2
+      youtube.LogLevel = 2
    }
    switch {
    case exchange:

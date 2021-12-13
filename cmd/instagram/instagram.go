@@ -3,7 +3,6 @@ package main
 import (
    "flag"
    "fmt"
-   "github.com/89z/mech"
    "github.com/89z/mech/instagram"
    "net/http"
    "net/url"
@@ -29,7 +28,7 @@ func main() {
       return
    }
    if verbose {
-      mech.LogLevel = 2
+      instagram.LogLevel = 2
    }
    if username != "" {
       log, err := instagram.NewLogin(username, password)

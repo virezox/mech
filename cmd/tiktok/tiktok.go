@@ -29,8 +29,7 @@ func main() {
       panic(err)
    }
    if info {
-      mech.LogLevel = 2
-      mech.Dump(req)
+      mech.LogLevel.Dump(2, req)
    } else {
       err := get(req, item)
       if err != nil {

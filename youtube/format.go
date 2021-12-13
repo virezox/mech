@@ -34,7 +34,7 @@ func (f Format) Write(w io.Writer) error {
    if err != nil {
       return err
    }
-   mech.Dump(req)
+   LogLevel.Dump(req)
    begin := time.Now()
    var pos int64
    for pos < f.ContentLength {

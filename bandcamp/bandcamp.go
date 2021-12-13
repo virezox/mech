@@ -58,6 +58,8 @@ var Images = []Image{
    {ID:69, Width:700, Height:700, Ext:".jpg"},
 }
 
+var LogLevel mech.LogLevel
+
 type DataTralbum struct {
    Album_Release_Date string // 20 Jan 2017 00:00:00 GMT
    Art_ID int
@@ -88,7 +90,7 @@ func NewDataTralbum(addr string) (*DataTralbum, error) {
    if err != nil {
       return nil, err
    }
-   mech.Dump(req)
+   LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -163,7 +165,7 @@ func NewTralbum(typ byte, id int) (*Tralbum, error) {
       "tralbum_id": {strconv.Itoa(id)},
       "tralbum_type": {string(typ)},
    }.Encode()
-   mech.Dump(req)
+   LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err

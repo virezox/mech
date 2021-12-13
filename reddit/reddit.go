@@ -4,12 +4,13 @@ import (
    "encoding/json"
    "encoding/xml"
    "github.com/89z/mech"
+   "github.com/89z/parse/m3u"
    "html"
    "net/http"
    "path"
 )
 
-const Origin = "https://api.reddit.com"
+var LogLevel mech.LogLevel
 
 // redd.it/ppbsh
 // redd.it/pql06n
@@ -54,7 +55,7 @@ func (l Link) DASH() (*DASH, error) {
    if err != nil {
       return nil, err
    }
-   mech.Dump(req)
+   LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -87,12 +88,14 @@ type Post struct {
 }
 
 func NewPost(id string) (*Post, error) {
-   req, err := http.NewRequest("GET", Origin + "/by_id/t3_" + id, nil)
+   req, err := http.NewRequest(
+      "GET", "https://api.reddit.com/by_id/t3_" + id, nil,
+   )
    if err != nil {
       return nil, err
    }
    req.Header.Set("User-Agent", "Mozilla")
-   mech.Dump(req)
+   LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -123,4 +126,21 @@ type Text string
 func (t Text) String() string {
    str := string(t)
    return html.UnescapeString(str)
+}
+
+
+func (l Link) HLS() ([]m3u.Format, error) {
+   req, err := http.NewRequest("GET", l.Media.Reddit_Video.HLS_URL, nil)
+   if err != nil {
+      return nil, err
+   }
+   req.URL.RawQuery = ""
+   LogLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   dir, _ := path.Split(l.Media.Reddit_Video.HLS_URL)
+   return m3u.Decode(res.Body, dir)
 }

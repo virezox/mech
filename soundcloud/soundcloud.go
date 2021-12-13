@@ -13,6 +13,8 @@ const (
    clientID = "iZIs9mchVcX5lhVRyQGGAYlNPVldzAoX"
 )
 
+var LogLevel mech.LogLevel
+
 type Alternate struct {
    Thumbnail_URL string
    Author_URL string
@@ -24,7 +26,7 @@ func Oembed(addr string) (*Alternate, error) {
       return nil, err
    }
    req.URL.RawQuery = "format=json&url=" + url.QueryEscape(addr)
-   mech.Dump(req)
+   LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -68,7 +70,7 @@ func Resolve(addr string) (*Track, error) {
       return nil, err
    }
    req.URL.RawQuery = "client_id=" + clientID + "&url=" + url.QueryEscape(addr)
-   mech.Dump(req)
+   LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -87,7 +89,7 @@ func Tracks(ids string) ([]Track, error) {
       return nil, err
    }
    req.URL.RawQuery = "client_id=" + clientID + "&ids=" + url.QueryEscape(ids)
-   mech.Dump(req)
+   LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -114,7 +116,7 @@ func (t Track) Progressive() (*Media, error) {
    if err != nil {
       return nil, err
    }
-   mech.Dump(req)
+   LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err

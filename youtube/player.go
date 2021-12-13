@@ -16,6 +16,30 @@ var (
    Mweb = Client{Name: "MWEB", Version: "2.20211109.01.00"}
 )
 
+var (
+   Key = Auth{"X-Goog-Api-Key", "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8"}
+   LogLevel mech.LogLevel
+)
+
+func post(addr string, head Auth, body youTubeI) (*http.Response, error) {
+   buf := new(bytes.Buffer)
+   if err := json.NewEncoder(buf).Encode(body); err != nil {
+      return nil, err
+   }
+   req, err := http.NewRequest("POST", addr, buf)
+   if err != nil {
+      return nil, err
+   }
+   req.Header.Set(head.Key, head.Value)
+   LogLevel.Dump(req)
+   return new(http.Transport).RoundTrip(req)
+}
+
+type Auth struct {
+   Key string
+   Value string
+}
+
 type Client struct {
    Name string `json:"clientName"`
    Screen string `json:"clientScreen,omitempty"`
@@ -52,71 +76,6 @@ type Player struct {
    }
 }
 
-var Key = Auth{"X-Goog-Api-Key", "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8"}
-
-func post(addr string, head Auth, body youTubeI) (*http.Response, error) {
-   buf := new(bytes.Buffer)
-   if err := json.NewEncoder(buf).Encode(body); err != nil {
-      return nil, err
-   }
-   req, err := http.NewRequest("POST", addr, buf)
-   if err != nil {
-      return nil, err
-   }
-   req.Header.Set(head.Key, head.Value)
-   mech.Dump(req)
-   return new(http.Transport).RoundTrip(req)
-}
-
-type Auth struct {
-   Key string
-   Value string
-}
-
-func (p Player) Author() string {
-   return p.VideoDetails.Author
-}
-
-func (p Player) Countries() []string {
-   return p.Microformat.PlayerMicroformatRenderer.AvailableCountries
-}
-
-func (p Player) Date() string {
-   return p.Microformat.PlayerMicroformatRenderer.PublishDate
-}
-
-func (p Player) Description() string {
-   return p.VideoDetails.ShortDescription
-}
-
-func (p Player) Title() string {
-   return p.VideoDetails.Title
-}
-
-type thirdParty struct {
-   EmbedURL string `json:"embedUrl"`
-}
-
-type youTubeI struct {
-   Context struct {
-      Client Client `json:"client"`
-      ThirdParty *thirdParty `json:"thirdParty,omitempty"`
-   } `json:"context"`
-   Continuation string `json:"continuation,omitempty"`
-   Params string `json:"params,omitempty"`
-   Query string `json:"query,omitempty"`
-   RacyCheckOK bool `json:"racyCheckOk,omitempty"`
-   VideoID string `json:"videoId,omitempty"`
-}
-
-type invalidVideo struct {
-   id string
-}
-
-func (i invalidVideo) Error() string {
-   return "invalid video ID " + strconv.Quote(i.id)
-}
-
 // youtube.com/watch?v=hi8ryzFqrAE
 func NewPlayer(id string, head Auth, body Client) (*Player, error) {
    if len(id) != 11 {
@@ -141,4 +100,48 @@ func NewPlayer(id string, head Auth, body Client) (*Player, error) {
       return nil, err
    }
    return p, nil
+}
+
+func (p Player) Author() string {
+   return p.VideoDetails.Author
+}
+
+func (p Player) Countries() []string {
+   return p.Microformat.PlayerMicroformatRenderer.AvailableCountries
+}
+
+func (p Player) Date() string {
+   return p.Microformat.PlayerMicroformatRenderer.PublishDate
+}
+
+func (p Player) Description() string {
+   return p.VideoDetails.ShortDescription
+}
+
+func (p Player) Title() string {
+   return p.VideoDetails.Title
+}
+
+type invalidVideo struct {
+   id string
+}
+
+func (i invalidVideo) Error() string {
+   return "invalid video ID " + strconv.Quote(i.id)
+}
+
+type thirdParty struct {
+   EmbedURL string `json:"embedUrl"`
+}
+
+type youTubeI struct {
+   Context struct {
+      Client Client `json:"client"`
+      ThirdParty *thirdParty `json:"thirdParty,omitempty"`
+   } `json:"context"`
+   Continuation string `json:"continuation,omitempty"`
+   Params string `json:"params,omitempty"`
+   Query string `json:"query,omitempty"`
+   RacyCheckOK bool `json:"racyCheckOk,omitempty"`
+   VideoID string `json:"videoId,omitempty"`
 }

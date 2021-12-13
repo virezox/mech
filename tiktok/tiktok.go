@@ -12,6 +12,8 @@ const (
    referer = "https://www.tiktok.com/"
 )
 
+var LogLevel mech.LogLevel
+
 type nextData struct {
    Props struct {
       PageProps struct {
@@ -28,6 +30,7 @@ func NewItemStruct(addr string) (*ItemStruct, error) {
       return nil, err
    }
    req.Header.Set("User-Agent", agent)
+   LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err

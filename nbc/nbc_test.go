@@ -2,7 +2,6 @@ package nbc
 
 import (
    "fmt"
-   "github.com/89z/mech"
    "testing"
 )
 
@@ -24,7 +23,7 @@ func TestAndroidVOD(t *testing.T) {
 }
 
 func TestAndroidVideo(t *testing.T) {
-   mech.LogLevel = 2
+   LogLevel = 2
    vid, err := NewVideo(guid)
    if err != nil {
       t.Fatal(err)

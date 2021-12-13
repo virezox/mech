@@ -17,6 +17,8 @@ const (
    userAgent = "Instagram 214.1.0.29.120 Android"
 )
 
+var LogLevel mech.LogLevel
+
 // instagram.com/p/CT-cnxGhvvO
 // instagram.com/p/yza2PAPSx2
 func Valid(shortcode string) bool {
@@ -71,7 +73,7 @@ func NewLogin(username, password string) (*Login, error) {
       "Content-Type": {"application/x-www-form-urlencoded"},
       "User-Agent": {userAgent},
    }
-   mech.Dump(req)
+   LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -101,7 +103,7 @@ func (l Login) Item(shortcode string) (*Item, error) {
       "User-Agent": {userAgent},
    }
    req.URL.RawQuery = "clips_media_shortcode=" + url.QueryEscape(shortcode)
-   mech.Dump(req)
+   LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -145,7 +147,7 @@ func GraphQL(shortcode string, auth *Login) (*Media, error) {
       req.Header.Set("Authorization", auth.Get("Ig-Set-Authorization"))
    }
    req.URL.RawQuery = "__a=1"
-   mech.Dump(req)
+   LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -199,7 +201,7 @@ func (q Query) Data(auth *Login) (*Media, error) {
    if auth != nil && auth.Header != nil {
       req.Header.Set("Authorization", auth.Get("Ig-Set-Authorization"))
    }
-   mech.Dump(req)
+   LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err

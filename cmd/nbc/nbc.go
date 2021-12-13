@@ -42,7 +42,7 @@ func main() {
       panic(err)
    }
    if verbose {
-      mech.LogLevel = 2
+      nbc.LogLevel = 2
    }
    if err := cHLS.HLS(nGUID); err != nil {
       panic(err)
