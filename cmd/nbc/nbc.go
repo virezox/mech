@@ -5,7 +5,6 @@ import (
    "fmt"
    "github.com/89z/mech"
    "github.com/89z/mech/nbc"
-   "github.com/89z/parse/m3u"
    "net/http"
    "os"
    "strconv"
@@ -86,7 +85,7 @@ func (c choice) HLS(guid int64) error {
             return err
          }
          defer res.Body.Close()
-         srcs, err := m3u.Decode(res.Body, "")
+         srcs, err := nbc.Decode(res.Body, "")
          if err != nil {
             return err
          }

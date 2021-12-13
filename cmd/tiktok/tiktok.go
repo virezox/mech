@@ -6,7 +6,6 @@ import (
    "github.com/89z/mech"
    "github.com/89z/mech/tiktok"
    "net/http"
-   "net/http/httputil"
    "os"
    "strings"
 )
@@ -21,29 +20,26 @@ func main() {
       return
    }
    addr := flag.Arg(0)
-   vid, err := tiktok.NewVideo(addr)
+   item, err := tiktok.NewItemStruct(addr)
    if err != nil {
       panic(err)
    }
-   req, err := tiktok.Request(vid)
+   req, err := item.Request()
    if err != nil {
       panic(err)
    }
    if info {
-      buf, err := httputil.DumpRequest(req, false)
-      if err != nil {
-         panic(err)
-      }
-      os.Stdout.Write(buf)
+      mech.LogLevel = 2
+      mech.Dump(req)
    } else {
-      err := get(req, vid)
+      err := get(req, item)
       if err != nil {
          panic(err)
       }
    }
 }
 
-func get(req *http.Request, vid tiktok.Video) error {
+func get(req *http.Request, item *tiktok.ItemStruct) error {
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return err
@@ -53,7 +49,7 @@ func get(req *http.Request, vid tiktok.Video) error {
    if err != nil {
       return err
    }
-   name := vid.Author() + "-" + vid.ID() + ext
+   name := item.Author.UniqueID + "-" + item.ID + ext
    file, err := os.Create(strings.Map(mech.Clean, name))
    if err != nil {
       return err

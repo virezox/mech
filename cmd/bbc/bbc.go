@@ -5,7 +5,6 @@ import (
    "fmt"
    "github.com/89z/mech"
    "github.com/89z/mech/bbc"
-   "github.com/89z/parse/m3u"
    "net/http"
    "os"
    "path"
@@ -49,7 +48,7 @@ func (c choice) HLS(addr string) error {
          }
          defer res.Body.Close()
          dir, _ := path.Split(addr)
-         forms, err := m3u.Decode(res.Body, dir)
+         forms, err := bbc.Decode(res.Body, dir)
          if err != nil {
             return err
          }

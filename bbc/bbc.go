@@ -17,6 +17,8 @@ const mediaSelector =
    "http://open.live.bbc.co.uk" +
    "/mediaselector/6/select/version/2.0/mediaset/pc/vpid/"
 
+var Decode = m3u.Decode
+
 type Media struct {
    Kind string
    Type string
@@ -111,7 +113,7 @@ func (v Video) HLS() ([]m3u.Format, error) {
    }
    defer res.Body.Close()
    dir, _ := path.Split(v.Href)
-   return m3u.Decode(res.Body, dir)
+   return Decode(res.Body, dir)
 }
 
 type newsItem struct {

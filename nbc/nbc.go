@@ -20,7 +20,10 @@ const (
    queryVideo = "31b459298c0bf48c3b6300ee4922eaf2c9bea4be1cb15a7ab1fe210cd210f779"
 )
 
-var secretKey = []byte("2b84a073ede61c766e4c0b3f1e656f7f")
+var (
+   Decode = m3u.Decode
+   secretKey = []byte("2b84a073ede61c766e4c0b3f1e656f7f")
+)
 
 // nbc.com/botched/video/seeing-double/3049418
 // nbc.com/la-brea/video/pilot/9000194212
@@ -95,7 +98,7 @@ func (a AccessVOD) Manifest() ([]m3u.Format, error) {
       return nil, err
    }
    defer res.Body.Close()
-   return m3u.Decode(res.Body, "")
+   return Decode(res.Body, "")
 }
 
 type Video struct {
