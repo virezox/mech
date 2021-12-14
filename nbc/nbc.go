@@ -26,12 +26,6 @@ var (
    secretKey = []byte("2b84a073ede61c766e4c0b3f1e656f7f")
 )
 
-// nbc.com/botched/video/seeing-double/3049418
-// nbc.com/la-brea/video/pilot/9000194212
-func Valid(guid string) bool {
-   return len(guid) >= 7 && len(guid) <= 10
-}
-
 func generateHash(text string, key []byte) string {
    mac := hmac.New(sha256.New, key)
    io.WriteString(mac, text)
@@ -44,7 +38,7 @@ type AccessVOD struct {
    ManifestPath string
 }
 
-func NewAccessVOD(guid int64) (*AccessVOD, error) {
+func NewAccessVOD(guid uint64) (*AccessVOD, error) {
    var body vodRequest
    body.Device = "android"
    body.DeviceID = "android"
@@ -57,7 +51,7 @@ func NewAccessVOD(guid int64) (*AccessVOD, error) {
    }
    addr := []byte("http://access-cloudpath.media.nbcuni.com")
    addr = append(addr, "/access/vod/nbcuniversal/"...)
-   addr = strconv.AppendInt(addr, guid, 10)
+   addr = strconv.AppendUint(addr, guid, 10)
    req, err := http.NewRequest(
       "POST", string(addr), buf,
    )
@@ -112,11 +106,11 @@ type Video struct {
    }
 }
 
-func NewVideo(guid int64) (*Video, error) {
+func NewVideo(guid uint64) (*Video, error) {
    var body videoRequest
    body.Extensions.PersistedQuery.Sha256Hash = queryVideo
    body.Variables.App = "nbc"
-   body.Variables.Name = strconv.FormatInt(guid, 10)
+   body.Variables.Name = strconv.FormatUint(guid, 10)
    body.Variables.Platform = "android"
    body.Variables.Type = "VIDEO"
    buf := new(bytes.Buffer)

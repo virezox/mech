@@ -76,6 +76,7 @@ type Status struct {
       Media []struct {
          Video_Info struct {
             Variants []struct {
+               Content_Type string
                URL string
             }
          }

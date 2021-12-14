@@ -7,53 +7,104 @@ import (
    "github.com/89z/mech/twitter"
    "net/http"
    "os"
-   "path"
+   "strconv"
    "strings"
 )
 
+type choice struct {
+   format bool
+   ids map[string]bool
+}
+
 func main() {
-   var info bool
-   flag.BoolVar(&info, "i", false, "info only")
+   cHLS := choice{
+      ids: make(map[string]bool),
+   }
+   flag.BoolVar(&cHLS.format, "hf", false, "HLS formats")
+   flag.Func("h", "HLS IDs", func(id string) error {
+      cHLS.ids[id] = true
+      return nil
+   })
+   var verbose bool
+   flag.BoolVar(&verbose, "v", false, "verbose")
    flag.Parse()
-   if flag.NArg() == 0 {
-      fmt.Println("twitter [-i] [URL]")
+   if flag.NArg() != 1 {
+      fmt.Println("twitter [flags] [GUID]")
       flag.PrintDefaults()
       return
    }
-   addr := flag.Arg(0)
-   audio, err := twitter.NewAudio(addr)
+   guid := flag.Arg(0)
+   nGUID, err := mech.Parse(guid)
    if err != nil {
       panic(err)
    }
-   for _, asset := range audio.D {
-      if info {
-         fmt.Printf("%+v\n", asset.Attributes)
-      } else {
-         err := download(asset.Attributes)
-         if err != nil {
-            panic(err)
-         }
-      }
+   if verbose {
+      twitter.LogLevel = 2
+   }
+   if err := cHLS.HLS(nGUID); err != nil {
+      panic(err)
    }
 }
 
-func download(attr twitter.Attributes) error {
-   addr := attr.AssetURL.String()
-   fmt.Println("GET", addr)
-   res, err := http.Get(addr)
+func video(guid uint64, format bool) (*twitter.Video, error) {
+   if format {
+      return nil, nil
+   }
+   return twitter.NewVideo(guid)
+}
+
+func (c choice) HLS(guid uint64) error {
+   vod, err := twitter.NewAccessVOD(guid)
    if err != nil {
       return err
    }
-   defer res.Body.Close()
-   name := attr.ArtistName + "-" + attr.Name + path.Ext(addr)
-   file, err := os.Create(strings.Map(mech.Clean, name))
+   forms, err := vod.Manifest()
    if err != nil {
       return err
    }
-   defer file.Close()
-   pro := mech.NewProgress(res)
-   if _, err := file.ReadFrom(pro); err != nil {
+   vid, err := video(guid, c.format)
+   if err != nil {
       return err
+   }
+   for id, form := range forms {
+      switch {
+      case c.format:
+         fmt.Print("ID:", id)
+         fmt.Print(" BANDWIDTH:", form["BANDWIDTH"])
+         fmt.Print(" CODECS:", form["CODECS"])
+         fmt.Print(" RESOLUTION:", form["RESOLUTION"])
+         fmt.Println()
+      case c.ids[strconv.Itoa(id)]:
+         addr := form["URI"]
+         fmt.Println("GET", addr)
+         res, err := http.Get(addr)
+         if err != nil {
+            return err
+         }
+         defer res.Body.Close()
+         srcs, err := twitter.Decode(res.Body, "")
+         if err != nil {
+            return err
+         }
+         name := vid.Name() + "-" + form["RESOLUTION"] + ".mp4"
+         dst, err := os.Create(strings.Map(mech.Clean, name))
+         if err != nil {
+            return err
+         }
+         defer dst.Close()
+         for key, src := range srcs {
+            addr := src["URI"]
+            fmt.Println(len(srcs)-key, "GET", addr)
+            res, err := http.Get(addr)
+            if err != nil {
+               return err
+            }
+            defer res.Body.Close()
+            if _, err := dst.ReadFrom(res.Body); err != nil {
+               return err
+            }
+         }
+      }
    }
    return nil
 }

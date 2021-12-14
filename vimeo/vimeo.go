@@ -10,11 +10,6 @@ import (
 
 var LogLevel mech.LogLevel
 
-// This should succeed if ID is passed, and fail is URL is passed.
-func Parse(id string) (int64, error) {
-   return strconv.ParseInt(id, 10, 64)
-}
-
 type Config struct {
    Request struct {
       Files struct {
@@ -33,9 +28,9 @@ type Config struct {
    }
 }
 
-func NewConfig(id int64) (*Config, error) {
+func NewConfig(id uint64) (*Config, error) {
    addr := []byte("https://player.vimeo.com/video/")
-   addr = strconv.AppendInt(addr, id, 10)
+   addr = strconv.AppendUint(addr, id, 10)
    addr = append(addr, "/config"...)
    req, err := http.NewRequest("GET", string(addr), nil)
    if err != nil {
@@ -67,12 +62,12 @@ type Video struct {
    Thumbnail_URL string
 }
 
-func NewVideo(id int64) (*Video, error) {
+func NewVideo(id uint64) (*Video, error) {
    req, err := http.NewRequest("GET", "https://vimeo.com/api/oembed.json", nil)
    if err != nil {
       return nil, err
    }
-   req.URL.RawQuery = "url=//vimeo.com/" + strconv.FormatInt(id, 10)
+   req.URL.RawQuery = "url=//vimeo.com/" + strconv.FormatUint(id, 10)
    LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {

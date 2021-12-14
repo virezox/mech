@@ -34,10 +34,7 @@ func main() {
       return
    }
    guid := flag.Arg(0)
-   if !nbc.Valid(guid) {
-      panic("invalid GUID")
-   }
-   nGUID, err := strconv.ParseInt(guid, 10, 64)
+   nGUID, err := mech.Parse(guid)
    if err != nil {
       panic(err)
    }
@@ -49,14 +46,14 @@ func main() {
    }
 }
 
-func video(guid int64, format bool) (*nbc.Video, error) {
+func video(guid uint64, format bool) (*nbc.Video, error) {
    if format {
       return nil, nil
    }
    return nbc.NewVideo(guid)
 }
 
-func (c choice) HLS(guid int64) error {
+func (c choice) HLS(guid uint64) error {
    vod, err := nbc.NewAccessVOD(guid)
    if err != nil {
       return err

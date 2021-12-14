@@ -25,7 +25,7 @@ func main() {
       return
    }
    id := flag.Arg(0)
-   videoID, err := vimeo.Parse(id)
+   videoID, err := mech.Parse(id)
    if err != nil {
       panic(err)
    }

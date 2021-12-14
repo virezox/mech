@@ -51,6 +51,11 @@ func NumberFormat(val float64, metric []string) string {
    return strconv.FormatFloat(val, 'f', 3, 64) + metric[key]
 }
 
+// This should succeed if ID is passed, and fail is URL is passed.
+func Parse(id string) (uint64, error) {
+   return strconv.ParseUint(id, 10, 64)
+}
+
 func Percent(pos, length int64) string {
    return strconv.FormatInt(100*pos/length, 10) + "%"
 }
