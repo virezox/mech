@@ -1,40 +1,50 @@
 # Bleep
 
-https://bleep.com/release/8728-four-tet-pause
+## Amazon Music
 
-Do any other services provide these:
+<https://amazon.com/Four-Tet/e/B000APRM6K/digital/ref=ep_artist_tab_digi>
 
-~~~
-Pause:
-Four Tet - You Could Ruin My Day
-Four Tet - Parks
-Four Tet - Glue of the World
+## Apple Music
 
-Rounds:
-Four Tet - And They All Look Broken Hearted
-Four Tet - Unspoken
-Four Tet - She Moves She
-Four Tet - Hands
-~~~
+No
 
-Amazon Music? No.
+## Bandcamp
 
-Apple Music? No.
+No
 
-Bandcamp? No.
+## Bleep
 
-Deezer? No.
+- https://bleep.com/release/8728-four-tet-pause
+- https://bleep.com/release/9772-four-tet-rounds-special-anniversary-edition
 
-iHeart? No.
+## Deezer
 
-Pandora? No.
+No
 
-Qobuz? No.
+## iHeart
 
-SoundCloud? No.
+No
 
-Spotify? No.
+## Pandora
 
-Tidal? No.
+No
 
-YouTube? No.
+## Qobuz
+
+No
+
+## SoundCloud
+
+No
+
+## Spotify
+
+No
+
+## Tidal
+
+No
+
+## YouTube
+
+No

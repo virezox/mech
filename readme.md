@@ -52,13 +52,14 @@ Installs  | ID
 10.830 B  | `com.google.android.youtube`
 3.877 B   | `com.instagram.android`
 1.894 B   | `com.zhiliaoapp.musically`
+1.225 B   | `com.twitter.android`
 331.715 M | `com.soundcloud.android`
 83.771 M  | `com.reddit.frontpage`
 30.338 M  | `com.vimeo.android.videoapp`
 29.692 M  | `bbc.mobile.news.ww`
 13.356 M  | `com.nbcuni.nbc`
 2.525 M   | `com.bandcamp.android`
-2.086 M   | `com.pbs.video`
+2.100 M   | `com.pbs.video`
 
 ## Repo
 

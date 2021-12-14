@@ -4,7 +4,9 @@ import (
    "fmt"
    "github.com/89z/mech"
    "io"
+   "mime"
    "net/http"
+   "strconv"
    "time"
 )
 
@@ -23,10 +25,29 @@ func bitrate(pos int64, begin time.Time) string {
 type Format struct {
    Bitrate int64
    ContentLength int64 `json:"contentLength,string"`
-   Height int
-   Itag int
+   Height int64
+   Itag int64
    MimeType string
    URL string
+}
+
+func (f Format) String() string {
+   buf := []byte("Itag:")
+   buf = strconv.AppendInt(buf, f.Itag, 10)
+   if f.Height >= 1 {
+      buf = append(buf, " Height:"...)
+      buf = strconv.AppendInt(buf, f.Height, 10)
+   }
+   buf = append(buf, " Bitrate:"...)
+   buf = strconv.AppendInt(buf, f.Bitrate, 10)
+   buf = append(buf, " ContentLength:"...)
+   buf = strconv.AppendInt(buf, f.ContentLength, 10)
+   justType, _, err := mime.ParseMediaType(f.MimeType)
+   if err == nil {
+      buf = append(buf, " MimeType:"...)
+      buf = append(buf, justType...)
+   }
+   return string(buf)
 }
 
 func (f Format) Write(w io.Writer) error {
