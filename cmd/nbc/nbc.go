@@ -12,17 +12,17 @@ import (
 )
 
 type choice struct {
-   format bool
-   ids map[string]bool
+   info bool
+   itags map[string]bool
 }
 
 func main() {
    cHLS := choice{
-      ids: make(map[string]bool),
+      itags: make(map[string]bool),
    }
-   flag.BoolVar(&cHLS.format, "hf", false, "HLS formats")
+   flag.BoolVar(&cHLS.info, "hi", false, "HLS info")
    flag.Func("h", "HLS IDs", func(id string) error {
-      cHLS.ids[id] = true
+      cHLS.itags[id] = true
       return nil
    })
    var verbose bool
@@ -46,8 +46,8 @@ func main() {
    }
 }
 
-func video(guid uint64, format bool) (*nbc.Video, error) {
-   if format {
+func video(guid uint64, info bool) (*nbc.Video, error) {
+   if info {
       return nil, nil
    }
    return nbc.NewVideo(guid)
@@ -62,19 +62,19 @@ func (c choice) HLS(guid uint64) error {
    if err != nil {
       return err
    }
-   vid, err := video(guid, c.format)
+   vid, err := video(guid, c.info)
    if err != nil {
       return err
    }
    for id, form := range forms {
       switch {
-      case c.format:
+      case c.info:
          fmt.Print("ID:", id)
          fmt.Print(" BANDWIDTH:", form["BANDWIDTH"])
          fmt.Print(" CODECS:", form["CODECS"])
          fmt.Print(" RESOLUTION:", form["RESOLUTION"])
          fmt.Println()
-      case c.ids[strconv.Itoa(id)]:
+      case c.itags[strconv.Itoa(id)]:
          addr := form["URI"]
          fmt.Println("GET", addr)
          res, err := http.Get(addr)

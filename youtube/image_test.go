@@ -3,8 +3,6 @@ package youtube
 import (
    "fmt"
    "net/http"
-   "sort"
-   "strings"
    "testing"
    "time"
 )

@@ -7,99 +7,66 @@ import (
    "github.com/89z/mech/twitter"
    "net/http"
    "os"
-   "strconv"
-   "strings"
+   "path"
 )
 
 type choice struct {
-   format bool
-   ids map[string]bool
+   info bool
+   itag int
 }
 
 func main() {
-   cHLS := choice{
-      ids: make(map[string]bool),
-   }
-   flag.BoolVar(&cHLS.format, "hf", false, "HLS formats")
-   flag.Func("h", "HLS IDs", func(id string) error {
-      cHLS.ids[id] = true
-      return nil
-   })
-   var verbose bool
-   flag.BoolVar(&verbose, "v", false, "verbose")
+   var tweet choice
+   flag.IntVar(&tweet.itag, "f", 0, "format")
+   flag.BoolVar(&tweet.info, "i", false, "info")
    flag.Parse()
    if flag.NArg() != 1 {
-      fmt.Println("twitter [flags] [GUID]")
+      fmt.Println("twitter [flags] [ID]")
       flag.PrintDefaults()
       return
    }
-   guid := flag.Arg(0)
-   nGUID, err := mech.Parse(guid)
-   if err != nil {
-      panic(err)
-   }
-   if verbose {
-      twitter.LogLevel = 2
-   }
-   if err := cHLS.HLS(nGUID); err != nil {
+   id := flag.Arg(0)
+   if err := tweet.choose(id); err != nil {
       panic(err)
    }
 }
 
-func video(guid uint64, format bool) (*twitter.Video, error) {
-   if format {
-      return nil, nil
-   }
-   return twitter.NewVideo(guid)
-}
-
-func (c choice) HLS(guid uint64) error {
-   vod, err := twitter.NewAccessVOD(guid)
+func (c choice) choose(id string) error {
+   nID, err := mech.Parse(id)
    if err != nil {
       return err
    }
-   forms, err := vod.Manifest()
+   act, err := twitter.NewActivate()
    if err != nil {
       return err
    }
-   vid, err := video(guid, c.format)
+   stat, err := act.Status(nID)
    if err != nil {
       return err
    }
-   for id, form := range forms {
-      switch {
-      case c.format:
-         fmt.Print("ID:", id)
-         fmt.Print(" BANDWIDTH:", form["BANDWIDTH"])
-         fmt.Print(" CODECS:", form["CODECS"])
-         fmt.Print(" RESOLUTION:", form["RESOLUTION"])
-         fmt.Println()
-      case c.ids[strconv.Itoa(id)]:
-         addr := form["URI"]
-         fmt.Println("GET", addr)
-         res, err := http.Get(addr)
-         if err != nil {
-            return err
-         }
-         defer res.Body.Close()
-         srcs, err := twitter.Decode(res.Body, "")
-         if err != nil {
-            return err
-         }
-         name := vid.Name() + "-" + form["RESOLUTION"] + ".mp4"
-         dst, err := os.Create(strings.Map(mech.Clean, name))
-         if err != nil {
-            return err
-         }
-         defer dst.Close()
-         for key, src := range srcs {
-            addr := src["URI"]
-            fmt.Println(len(srcs)-key, "GET", addr)
+   for _, med := range stat.Extended_Entities.Media {
+      for itag, variant := range med.Video_Info.Variants {
+         addr := variant.URL.String()
+         switch {
+         case c.info:
+            if variant.Content_Type == "video/mp4" {
+               fmt.Print("ID:", itag)
+               fmt.Print(" URL:", addr)
+               fmt.Println()
+            }
+         case c.itag == itag:
+            fmt.Println("GET", addr)
             res, err := http.Get(addr)
             if err != nil {
                return err
             }
             defer res.Body.Close()
+            name := stat.User.Name + "-" + id + path.Ext(addr)
+            dst, err := os.Create(name)
+            if err != nil {
+               return err
+            }
+            defer dst.Close()
             if _, err := dst.ReadFrom(res.Body); err != nil {
                return err
             }

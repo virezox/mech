@@ -2,8 +2,9 @@ package twitter
 
 import (
    "encoding/json"
+   "github.com/89z/mech"
    "net/http"
-   "net/http/httputil"
+   "net/url"
    "strconv"
 )
 
@@ -13,16 +14,7 @@ const bearer =
    "AAAAAAAAAAAAAAAAAAAAAPYXBAAAAAAACLXUNDekMxqa8h/" +
    "40K4moUkGsoc=TYfbDKbT3jJPCEVnMYqilB28NHfOPqkca3qaAxGfsyKCs0wRbw"
 
-func roundTrip(req *http.Request) (*http.Response, error) {
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   if res.StatusCode != http.StatusOK {
-      return nil, response{res}
-   }
-   return res, nil
-}
+var LogLevel mech.LogLevel
 
 type Activate struct {
    Guest_Token string
@@ -34,6 +26,7 @@ func NewActivate() (*Activate, error) {
       return nil, err
    }
    req.Header.Set("Authorization", "Bearer " + bearer)
+   LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -59,7 +52,8 @@ func (a Activate) Status(id uint64) (*Status, error) {
       "Authorization": {"Bearer " + bearer},
       "X-Guest-Token": {a.Guest_Token},
    }
-   res, err := roundTrip(req)
+   LogLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
    }
@@ -71,27 +65,30 @@ func (a Activate) Status(id uint64) (*Status, error) {
    return stat, nil
 }
 
+type URL string
+
+func (u URL) String() string {
+   str := string(u)
+   addr, err := url.Parse(str)
+   if err != nil {
+      return str
+   }
+   addr.RawQuery = ""
+   return addr.String()
+}
+
 type Status struct {
    Extended_Entities struct {
       Media []struct {
          Video_Info struct {
             Variants []struct {
                Content_Type string
-               URL string
+               URL URL
             }
          }
       }
    }
-}
-
-type response struct {
-   *http.Response
-}
-
-func (r response) Error() string {
-   buf, err := httputil.DumpResponse(r.Response, true)
-   if err != nil {
-      return err.Error()
+   User struct {
+      Name string
    }
-   return string(buf)
 }
