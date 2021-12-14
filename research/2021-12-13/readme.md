@@ -6,7 +6,6 @@
 ## X-Gorgon
 
 ~~~
-initialize
 xGorgon
 genXGorgon
 signUrl
