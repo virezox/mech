@@ -29,7 +29,7 @@ func main() {
       return
    }
    if verbose {
-      youtube.LogLevel = 2
+      youtube.LogLevel = 1
    }
    switch {
    case exchange:
