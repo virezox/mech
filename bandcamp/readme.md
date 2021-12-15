@@ -10,26 +10,12 @@ https://github.com/httptoolkit/frida-android-unpinning
 
 ## Harold Budd - By the Dawn's Early Light
 
-YouTube (10.830 B):
+https://pandora.com/artist/harold-budd/by-the-dawns-early-light/ALtbd6VPbwKt5J4
 
-<https://youtube.com/channel/UCD_irSJt5hBidim8LYmC3EQ>
+## Jessy Lanza - Pull My Hair Back
 
-Spotify (1.196 B):
+https://pandora.com/artist/jessy-lanza/pull-my-hair-back/ALlfwpXzvcrVK59
 
-https://open.spotify.com/album/2koLWogmlGsQKefgooyRXa
+## The Black Dog - Silenced
 
-SoundCloud (331.715 M):
-
-https://soundcloud.com/harold-budd-1/albums
-
-Deezer (311.488 M):
-
-https://deezer.com/us/album/7232629
-
-Amazon Music (245.503 M):
-
-https://amazon.com/Harold-Budd/e/B000APVTC8/digital
-
-Bandcamp (2.532 M):
-
-https://haroldbudd.bandcamp.com/album/by-the-dawns-early-light
+https://pandora.com/artist/the-black-dog/silenced/ALq3jx6PZtmnmpX
