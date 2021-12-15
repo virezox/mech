@@ -1,5 +1,0 @@
-# Twitter
-
-~~~
-com.twitter.android
-~~~

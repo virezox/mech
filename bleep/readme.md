@@ -1,50 +1,52 @@
 # Bleep
 
-## Amazon Music
+## Four tet
+
+Checked December 14 2021. Amazon Music:
 
 <https://amazon.com/Four-Tet/e/B000APRM6K/digital/ref=ep_artist_tab_digi>
 
-## Apple Music
+Apple Music:
 
-No
+https://music.apple.com/us/artist/four-tet/35888604/see-all?section=full-albums
 
-## Bandcamp
+Bandcamp:
 
-No
+https://fourtet.bandcamp.com
 
-## Bleep
+Bleep:
 
 - https://bleep.com/release/8728-four-tet-pause
 - https://bleep.com/release/9772-four-tet-rounds-special-anniversary-edition
 
-## Deezer
+Deezer:
 
-No
+https://deezer.com/us/artist/1744
 
-## iHeart
+iHeart:
 
-No
+https://iheart.com/artist/four-tet-12058/albums
 
-## Pandora
+Pandora:
 
-No
+https://pandora.com/artist/4-tet/rounds/ALmwmkdxX4x6xgg
 
-## Qobuz
+Qobuz:
 
-No
+https://qobuz.com/us-en/interpreter/four-tet/download-streaming-albums
 
-## SoundCloud
+SoundCloud:
 
-No
+https://soundcloud.com/four-tet/albums
 
-## Spotify
+Spotify:
 
-No
+https://open.spotify.com/artist/7Eu1txygG6nJttLHbZdQOh/discography/album
 
-## Tidal
+Tidal:
 
-No
+https://tidal.com/browse/artist/3520717
 
-## YouTube
+YouTube:
 
-No
+<https://youtube.com/channel/UC3sZYInu3YYkyIXBif83ZCg/playlists?view=71&shelf_id=1744>

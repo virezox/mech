@@ -21,23 +21,3 @@ click `Network Settings`, `Save All As HAR`. Rename file to JSON.
 7. MITM Proxy APK for JSON requests
 8. APK tool
 9. AndroGuard
-
-## How to set topics?
-
-~~~
-PUT /repos/89z/mech/topics HTTP/2
-Host: api.github.com
-Authorization: Basic ODl6OmE1NzYxMjZlNzVlZjZiY2Y5ZDljNzEyZWIyN2RmZjFmOGFhZmQ1...
-
-{"names":[
-   "youtube",
-   "instagram",
-   "tiktok",
-   "soundcloud",
-   "reddit",
-   "vimeo",
-   "bbc",
-   "bandcamp",
-   "pbs"
-]}
-~~~
