@@ -1,5 +1,10 @@
 # December 16 2021
 
+## How to get request body?
+
+- https://github.com/mcrute/pydora/blob/master/pandora/transport.py
+- https://github.com/nlowe/mousiki/blob/master/pandora/api/legacy.go
+
 ## How to get `auth_token`?
 
 ~~~
@@ -8,11 +13,6 @@ Host: android-tuner.pandora.com
 
 {"username":"android","password":"AC7IBG09A3DTSYM4R41UJWL07VLN8JI7"}
 ~~~
-
-## How to get request body?
-
-- https://github.com/mcrute/pydora/blob/master/pandora/transport.py
-- https://github.com/nlowe/mousiki/blob/master/pandora/api/legacy.go
 
 ## How to get `user_id`?
 
