@@ -1,5 +1,25 @@
 # December 17 2021
 
+Query (empty should be fine too):
+
+~~~
+-auth_token=VI0Tk15AKynvzdoz1wH2LDR3Cmzsf71QoE%2BrWJR985EHd4OnlGq8Qp%2BA%3D%3D&
++auth_token=VIb16GmzFqjg57n3N7WoXf5eJ7AdW%2BNVAjVwwpB8sRU10euXCIUKARww%3D%3D&
+~~~
+
+Body (userAuthToken length should be 58):
+
+~~~
+- "userAuthToken": "VI0Tk15AKynvzdoz1wH2LDR3Cmzsf71QoE+rWJR985EHd4OnlGq8Qp+A==",
++ "userAuthToken": "VIb16GmzFqjg57n3N7WoXf5eJ7AdW+NVAjVwwpB8sRU10euXCIUKARww==",
+
+- "deviceCode": "72d81533-15bf-4c1c-b9b6-04c39e980db0",
++ "deviceCode": "769f8283-2e02-41e5-b375-8ef9e7760f34",
+
+- "syncTime": 1639776850
++ "syncTime": 1639778757
+~~~
+
 ## How to get request body?
 
 - https://github.com/mcrute/pydora/blob/master/pandora/transport.py
