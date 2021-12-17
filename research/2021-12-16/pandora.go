@@ -8,14 +8,61 @@ import (
    "net/http"
    "net/url"
    "strings"
+   "time"
 )
+
+const origin = "http://android-tuner.pandora.com"
+
+type userLogin struct {
+   Result struct {
+      UserID string
+      UserAuthToken string
+   }
+}
+
+func (u userLogin) getAudioPlaybackInfo() (*http.Response, error) {
+   req, err := http.NewRequest(
+      "POST", origin + "/services/json/", strings.NewReader(audioEnc),
+   )
+   if err != nil {
+      return nil, err
+   }
+   req.URL.RawQuery =
+      "partner_id=42&method=onDemand.getAudioPlaybackInfo&user_id=" +
+      u.Result.UserID + "&auth_token=" + url.QueryEscape(u.Result.UserAuthToken)
+   return new(http.Transport).RoundTrip(req)
+}
+
+type partnerLogin struct {
+   Result struct {
+      PartnerAuthToken string
+   }
+}
+
+var (
+   LogLevel mech.LogLevel
+   key = []byte("6#26FRL$ZWD")
+)
+
+func decrypt(src []byte) ([]byte, error) {
+   dst := make([]byte, len(src))
+   blow, err := blowfish.NewCipher(key)
+   if err != nil {
+      return nil, err
+   }
+   for low := 0; low < len(src); low += blowfish.BlockSize {
+      blow.Decrypt(dst[low:], src[low:])
+   }
+   pad := dst[len(dst)-1]
+   return dst[:len(dst)-int(pad)], nil
+}
 
 func encrypt(src []byte) ([]byte, error) {
    for len(src) % blowfish.BlockSize >= 1 {
       src = append(src, 0)
    }
    dst := make([]byte, len(src))
-   blow, err := blowfish.NewCipher(keyEncrypt)
+   blow, err := blowfish.NewCipher(key)
    if err != nil {
       return nil, err
    }
@@ -25,59 +72,10 @@ func encrypt(src []byte) ([]byte, error) {
    return dst, nil
 }
 
-func (p partnerLogin) userLogin() (*userLogin, error) {
-   buf, err := encrypt(userLoginDec)
-   if err != nil {
-      return nil, err
-   }
-   req, err := http.NewRequest(
-      "POST", "http://android-tuner.pandora.com/services/json/",
-      //strings.NewReader(userLoginEnc),
-      strings.NewReader(hex.EncodeToString(buf)),
-   )
-   if err != nil {
-      return nil, err
-   }
-   req.URL.RawQuery =
-      "partner_id=42&method=auth.userLogin&auth_token=" +
-      url.QueryEscape(p.Result.PartnerAuthToken)
-   LogLevel.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   user := new(userLogin)
-   if err := json.NewDecoder(res.Body).Decode(user); err != nil {
-      return nil, err
-   }
-   return user, nil
-}
-
-var LogLevel mech.LogLevel
-
-type partnerLogin struct {
-   Result struct {
-      PartnerAuthToken string
-   }
-}
-
-type userLogin struct {
-   Result struct {
-      UserID string
-   }
-}
-
-var (
-   keyDecrypt = []byte("6#26FRL$ZWD")
-   keyEncrypt = []byte("R=U!LH$O2B#")
-)
-
 func newPartnerLogin() (*partnerLogin, error) {
    body := `{"username":"android","password":"AC7IBG09A3DTSYM4R41UJWL07VLN8JI7"}`
    req, err := http.NewRequest(
-      "POST", "http://android-tuner.pandora.com/services/json/",
-      strings.NewReader(body),
+      "POST", origin + "/services/json/", strings.NewReader(body),
    )
    if err != nil {
       return nil, err
@@ -96,15 +94,50 @@ func newPartnerLogin() (*partnerLogin, error) {
    return login, nil
 }
 
-func decrypt(src []byte) ([]byte, error) {
-   dst := make([]byte, len(src))
-   blow, err := blowfish.NewCipher(keyDecrypt)
+func (p partnerLogin) userLogin(username, password string) (*userLogin, error) {
+   rUser := userLoginRequest{
+      LoginType: "user",
+      PartnerAuthToken: p.Result.PartnerAuthToken,
+      Password: password,
+      SyncTime: time.Now().Unix(),
+      Username: username,
+   }
+   dec, err := json.Marshal(rUser)
    if err != nil {
       return nil, err
    }
-   for low := 0; low < len(src); low += blowfish.BlockSize {
-      blow.Decrypt(dst[low:], src[low:])
+   enc, err := encrypt(dec)
+   if err != nil {
+      return nil, err
    }
-   pad := dst[len(dst)-1]
-   return dst[:len(dst)-int(pad)], nil
+   req, err := http.NewRequest(
+      "POST", origin + "/services/json/",
+      strings.NewReader(hex.EncodeToString(enc)),
+   )
+   if err != nil {
+      return nil, err
+   }
+   req.Header.Set("User-Agent", "Pandora/2110.1 Android/7.0 generic_x86")
+   req.URL.RawQuery =
+      "partner_id=42&method=auth.userLogin&auth_token=" +
+      url.QueryEscape(p.Result.PartnerAuthToken)
+   LogLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   user := new(userLogin)
+   if err := json.NewDecoder(res.Body).Decode(user); err != nil {
+      return nil, err
+   }
+   return user, nil
+}
+
+type userLoginRequest struct {
+   LoginType string `json:"loginType"`
+   PartnerAuthToken string `json:"partnerAuthToken"`
+   Password string `json:"password"`
+   SyncTime int64 `json:"syncTime"`
+   Username string `json:"username"`
 }

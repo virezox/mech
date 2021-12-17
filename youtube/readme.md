@@ -20,6 +20,12 @@ MWEB is needed to get `publishDate`:
 aN76CmldknI
 ~~~
 
+OAuth is required:
+
+~~~
+Cr381pDsSsA
+~~~
+
 Get ANDROID client:
 
 ~~~
