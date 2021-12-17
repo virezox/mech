@@ -11,8 +11,6 @@ import (
    "time"
 )
 
-const origin = "http://android-tuner.pandora.com"
-
 type userLogin struct {
    Result struct {
       UserID string
@@ -20,17 +18,44 @@ type userLogin struct {
    }
 }
 
-func (u userLogin) getAudioPlaybackInfo() (*http.Response, error) {
+func (p partnerLogin) userLogin(username, password string) (*userLogin, error) {
+   rUser := userLoginRequest{
+      LoginType: "user",
+      PartnerAuthToken: p.Result.PartnerAuthToken,
+      Password: password,
+      SyncTime: time.Now().Unix(),
+      Username: username,
+   }
+   dec, err := json.Marshal(rUser)
+   if err != nil {
+      return nil, err
+   }
+   enc, err := encrypt(dec)
+   if err != nil {
+      return nil, err
+   }
    req, err := http.NewRequest(
-      "POST", origin + "/services/json/", strings.NewReader(audioEnc),
+      "POST", origin + "/services/json/",
+      strings.NewReader(hex.EncodeToString(enc)),
    )
    if err != nil {
       return nil, err
    }
+   req.Header.Set("User-Agent", "Pandora/2110.1 Android/7.0 generic_x86")
    req.URL.RawQuery =
-      "partner_id=42&method=onDemand.getAudioPlaybackInfo&user_id=" +
-      u.Result.UserID + "&auth_token=" + url.QueryEscape(u.Result.UserAuthToken)
-   return new(http.Transport).RoundTrip(req)
+      "partner_id=42&method=auth.userLogin&auth_token=" +
+      url.QueryEscape(p.Result.PartnerAuthToken)
+   LogLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   user := new(userLogin)
+   if err := json.NewDecoder(res.Body).Decode(user); err != nil {
+      return nil, err
+   }
+   return user, nil
 }
 
 type partnerLogin struct {
@@ -38,6 +63,8 @@ type partnerLogin struct {
       PartnerAuthToken string
    }
 }
+
+const origin = "http://android-tuner.pandora.com"
 
 var (
    LogLevel mech.LogLevel
@@ -92,46 +119,6 @@ func newPartnerLogin() (*partnerLogin, error) {
       return nil, err
    }
    return login, nil
-}
-
-func (p partnerLogin) userLogin(username, password string) (*userLogin, error) {
-   rUser := userLoginRequest{
-      LoginType: "user",
-      PartnerAuthToken: p.Result.PartnerAuthToken,
-      Password: password,
-      SyncTime: time.Now().Unix(),
-      Username: username,
-   }
-   dec, err := json.Marshal(rUser)
-   if err != nil {
-      return nil, err
-   }
-   enc, err := encrypt(dec)
-   if err != nil {
-      return nil, err
-   }
-   req, err := http.NewRequest(
-      "POST", origin + "/services/json/",
-      strings.NewReader(hex.EncodeToString(enc)),
-   )
-   if err != nil {
-      return nil, err
-   }
-   req.Header.Set("User-Agent", "Pandora/2110.1 Android/7.0 generic_x86")
-   req.URL.RawQuery =
-      "partner_id=42&method=auth.userLogin&auth_token=" +
-      url.QueryEscape(p.Result.PartnerAuthToken)
-   LogLevel.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   user := new(userLogin)
-   if err := json.NewDecoder(res.Body).Decode(user); err != nil {
-      return nil, err
-   }
-   return user, nil
 }
 
 type userLoginRequest struct {
