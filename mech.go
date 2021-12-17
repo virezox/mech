@@ -3,20 +3,21 @@ package mech
 import (
    "bytes"
    "fmt"
-   "github.com/89z/parse"
+   "io"
    "mime"
    "net/http"
    "net/http/httputil"
-   "strings"
+   "net/url"
    "os"
    "strconv"
+   "strings"
 )
 
-func Clean(r rune) rune {
-   if strings.ContainsRune(`"*/:<>?\|`, r) {
+func Clean(char rune) rune {
+   if strings.ContainsRune(`"*/:<>?\|`, char) {
       return -1
    }
-   return r
+   return char
 }
 
 // github.com/golang/go/issues/22318
@@ -60,7 +61,19 @@ func Percent(pos, length int64) string {
    return strconv.FormatInt(100*pos/length, 10) + "%"
 }
 
-type InvalidSlice = parse.InvalidSlice
+type InvalidSlice struct {
+   Index, Length int
+}
+
+func (i InvalidSlice) Error() string {
+   index, length := int64(i.Index), int64(i.Length)
+   var buf []byte
+   buf = append(buf, "index out of range ["...)
+   buf = strconv.AppendInt(buf, index, 10)
+   buf = append(buf, "] with length "...)
+   buf = strconv.AppendInt(buf, length, 10)
+   return string(buf)
+}
 
 type LogLevel int
 
@@ -125,4 +138,27 @@ func (p *Progress) Read(buf []byte) (int, error) {
       p.x = 0
    }
    return num, nil
+}
+
+type Values map[string]string
+
+func (v Values) Encode() string {
+   vals := make(url.Values)
+   for key, val := range v {
+      vals.Set(key, val)
+   }
+   return vals.Encode()
+}
+
+func (v Values) Header() http.Header {
+   vals := make(http.Header)
+   for key, val := range v {
+      vals.Set(key, val)
+   }
+   return vals
+}
+
+func (v Values) Reader() io.Reader {
+   enc := v.Encode()
+   return strings.NewReader(enc)
 }

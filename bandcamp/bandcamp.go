@@ -6,11 +6,12 @@ import (
    "github.com/89z/parse/net"
    "html"
    "net/http"
-   "net/url"
    "strconv"
    "strings"
    "time"
 )
+
+const root = "http://bandcamp.com/api/mobile/24"
 
 var Images = []Image{
    {ID:0, Width:1500, Height:1500, Ext:".jpg"},
@@ -154,17 +155,15 @@ type Tralbum struct {
 }
 
 func NewTralbum(typ byte, id int) (*Tralbum, error) {
-   req, err := http.NewRequest(
-      "GET", "http://bandcamp.com/api/mobile/24/tralbum_details", nil,
-   )
+   req, err := http.NewRequest("GET", root + "/tralbum_details", nil)
    if err != nil {
       return nil, err
    }
-   req.URL.RawQuery = url.Values{
-      "band_id": {"1"},
-      "tralbum_id": {strconv.Itoa(id)},
-      "tralbum_type": {string(typ)},
-   }.Encode()
+   val := make(mech.Values)
+   val["band_id"] = "1"
+   val["tralbum_id"] = strconv.Itoa(id)
+   val["tralbum_type"] = string(typ)
+   req.URL.RawQuery = val.Encode()
    LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {

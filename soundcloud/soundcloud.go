@@ -4,13 +4,12 @@ import (
    "encoding/json"
    "github.com/89z/mech"
    "net/http"
-   "net/url"
 )
 
 const (
-   Origin = "https://api-v2.soundcloud.com"
    Placeholder = "https://soundcloud.com/images/fb_placeholder.png"
    clientID = "iZIs9mchVcX5lhVRyQGGAYlNPVldzAoX"
+   origin = "https://api-v2.soundcloud.com"
 )
 
 var LogLevel mech.LogLevel
@@ -25,7 +24,7 @@ func Oembed(addr string) (*Alternate, error) {
    if err != nil {
       return nil, err
    }
-   req.URL.RawQuery = "format=json&url=" + url.QueryEscape(addr)
+   req.URL.RawQuery = mech.Values{"format": "json", "url": addr}.Encode()
    LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
@@ -65,11 +64,11 @@ type Track struct {
 }
 
 func Resolve(addr string) (*Track, error) {
-   req, err := http.NewRequest("GET", Origin + "/resolve", nil)
+   req, err := http.NewRequest("GET", origin + "/resolve", nil)
    if err != nil {
       return nil, err
    }
-   req.URL.RawQuery = "client_id=" + clientID + "&url=" + url.QueryEscape(addr)
+   req.URL.RawQuery = mech.Values{"client_id": clientID, "url": addr}.Encode()
    LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
@@ -84,11 +83,11 @@ func Resolve(addr string) (*Track, error) {
 }
 
 func Tracks(ids string) ([]Track, error) {
-   req, err := http.NewRequest("GET", Origin + "/tracks", nil)
+   req, err := http.NewRequest("GET", origin + "/tracks", nil)
    if err != nil {
       return nil, err
    }
-   req.URL.RawQuery = "client_id=" + clientID + "&ids=" + url.QueryEscape(ids)
+   req.URL.RawQuery = mech.Values{"client_id": clientID, "ids": ids}.Encode()
    LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
