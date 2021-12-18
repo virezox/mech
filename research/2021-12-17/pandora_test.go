@@ -6,7 +6,7 @@ import (
    "testing"
 )
 
-const partnerAuthToken = "VAYtSKYgOYRR8iN5/htFU6+g=="
+const partnerAuthToken = "VAr6MH7yWoDPh0qkHj682aHQ=="
 
 func TestLogin(t *testing.T) {
    buf, err := os.ReadFile("fail.txt")
