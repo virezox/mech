@@ -25,7 +25,6 @@ func main() {
    if err != nil {
       panic(err)
    }
-   req.Header.Set("User-Agent", "Pandora/2110.1 Android/7.0 generic_x86")
    req.URL.RawQuery = "method=auth.partnerLogin"
    LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
