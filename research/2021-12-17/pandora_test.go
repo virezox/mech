@@ -7,7 +7,7 @@ import (
 
 func TestLogin(t *testing.T) {
    LogLevel = 1
-   user, err := newUserLogin()
+   user, err := newUser()
    if err != nil {
       t.Fatal(err)
    }
@@ -30,5 +30,3 @@ func TestPartner(t *testing.T) {
       t.Fatal("partnerAuthToken", tLen)
    }
 }
-
-
