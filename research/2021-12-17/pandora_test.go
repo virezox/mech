@@ -5,18 +5,6 @@ import (
    "testing"
 )
 
-func TestPartner(t *testing.T) {
-   LogLevel = 1
-   part, err := newPartnerLogin()
-   if err != nil {
-      t.Fatal(err)
-   }
-   tLen := len(part.Result.PartnerAuthToken)
-   if tLen != 34 {
-      t.Fatal("partnerAuthToken", tLen)
-   }
-}
-
 func TestLogin(t *testing.T) {
    LogLevel = 1
    user, err := newUserLogin()
@@ -29,3 +17,18 @@ func TestLogin(t *testing.T) {
       t.Fatal("userAuthToken", tLen)
    }
 }
+
+func TestPartner(t *testing.T) {
+   LogLevel = 1
+   part, err := newPartnerLogin()
+   if err != nil {
+      t.Fatal(err)
+   }
+   fmt.Printf("%+v\n", part)
+   tLen := len(part.Result.PartnerAuthToken)
+   if tLen != 34 {
+      t.Fatal("partnerAuthToken", tLen)
+   }
+}
+
+

@@ -24,7 +24,8 @@ type playbackInfo struct {
 }
 
 func newPlaybackInfo() (*playbackInfo, error) {
-   userAuthToken := "VIB/H5cN0QRf34p6atwS0N7uCtcUp4wRL00iVw4aG6kOUYU9RCy3vegA=="
+   //userAuthToken := "VIrZgBq/0+lu/SgzLs11B71KCrcpmsvrErzZd7ogKiBVESQLImfMrnLg=="
+   userAuthToken := "VIMYs1UU4DosFzw8x8CYCPY7yfYJ5UPJtVbBaWCPEQkGjmEmVN9dFBaw=="
    dec := fmt.Sprintf(`
   {
    "userAuthToken": "%v",
@@ -260,3 +261,47 @@ type userLoginRequest struct {
    SyncTime int64 `json:"syncTime"`
    Username string `json:"username"`
 }
+
+func deviceID() (*userLogin, error) {
+   // how to get deviceId?
+   deviceID := "7db1bef0-1ea2-4ba5-8c0a-079274c81b75"
+   partnerAuthToken := "VAue2IpSC8HwJuTW3NK4TkdT3Irv9FrXZF"
+   body := fmt.Sprintf(`
+   {
+      "deviceId": "%v",
+      "loginType": "deviceId",
+      "partnerAuthToken": "%v",
+      "syncTime": 2222222222
+   }
+   `, deviceID, partnerAuthToken)
+   enc, err := encrypt([]byte(body))
+   if err != nil {
+      return nil, err
+   }
+   req, err := http.NewRequest(
+      "POST",
+      "http://android-tuner.pandora.com/services/json/",
+      strings.NewReader(hex.EncodeToString(enc)),
+   )
+   if err != nil {
+      return nil, err
+   }
+   req.Header.Set("User-Agent", "Pandora/2110.1 Android/7.0 generic_x86")
+   val := make(mech.Values)
+   val["auth_token"] = ""
+   val["method"] = "auth.userLogin"
+   val["partner_id"] = "42"
+   req.URL.RawQuery = val.Encode()
+   LogLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   user := new(userLogin)
+   if err := json.NewDecoder(res.Body).Decode(user); err != nil {
+      return nil, err
+   }
+   return user, nil
+}
+
