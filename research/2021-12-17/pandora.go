@@ -58,28 +58,6 @@ func encrypt(src []byte) ([]byte, error) {
    return dst, nil
 }
 
-func newPartnerLogin() (*partnerLogin, error) {
-   body := `{"username":"android","password":"AC7IBG09A3DTSYM4R41UJWL07VLN8JI7"}`
-   req, err := http.NewRequest(
-      "POST", origin + "/services/json/", strings.NewReader(body),
-   )
-   if err != nil {
-      return nil, err
-   }
-   req.URL.RawQuery = "method=auth.partnerLogin"
-   LogLevel.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   login := new(partnerLogin)
-   if err := json.NewDecoder(res.Body).Decode(login); err != nil {
-      return nil, err
-   }
-   return login, nil
-}
-
 type playbackInfoRequest struct {
    // this can be empty, but must be included:
    DeviceCode string `json:"deviceCode"`
