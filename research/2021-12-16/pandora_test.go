@@ -9,17 +9,8 @@ import (
    "testing"
 )
 
-func TestLogin(t *testing.T) {
-   LogLevel = 1
-   info, err := new(userLogin).playbackInfo()
-   if err != nil {
-      t.Fatal(err)
-   }
-   fmt.Printf("%+v\n", info)
-}
-
 func TestDecrypt(t *testing.T) {
-   enc, err := hex.DecodeString(audio)
+   enc, err := hex.DecodeString(login)
    if err != nil {
       t.Fatal(err)
    }

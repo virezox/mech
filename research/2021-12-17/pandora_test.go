@@ -2,19 +2,24 @@ package pandora
 
 import (
    "fmt"
-   "os"
    "testing"
 )
 
-const partnerAuthToken = "VAr6MH7yWoDPh0qkHj682aHQ=="
-
-func TestLogin(t *testing.T) {
-   buf, err := os.ReadFile("fail.txt")
+func TestPartner(t *testing.T) {
+   LogLevel = 1
+   part, err := newPartnerLogin()
    if err != nil {
       t.Fatal(err)
    }
+   tLen := len(part.Result.PartnerAuthToken)
+   if tLen != 34 {
+      t.Fatal("partnerAuthToken", tLen)
+   }
+}
+
+func TestLogin(t *testing.T) {
    LogLevel = 1
-   user, err := newUserLogin(partnerAuthToken, buf)
+   user, err := newUserLogin()
    if err != nil {
       t.Fatal(err)
    }
