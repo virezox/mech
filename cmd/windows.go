@@ -1,20 +1,19 @@
 package main
 
 import (
+   "fmt"
    "os"
    "os/exec"
 )
 
 func main() {
-   arg := []string{"build", "-ldflags", "-s", "-o", "."}
-   dirs, err := os.ReadDir(".")
-   if err != nil {
-      panic(err)
+   if len(os.Args) == 1 {
+      fmt.Println("cmd [folder]...")
+      return
    }
-   for _, dir := range dirs {
-      if dir.IsDir() {
-         arg = append(arg, "./" + dir.Name())
-      }
+   arg := []string{"build", "-ldflags", "-s", "-o", "."}
+   for _, dir := range os.Args[1:] {
+      arg = append(arg, dir)
    }
    if err := exec.Command("go", arg...).Run(); err != nil {
       panic(err)
