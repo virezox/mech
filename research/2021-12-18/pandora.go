@@ -1,7 +1,9 @@
 package pandora
 
 import (
+   "encoding/hex"
    "encoding/json"
+   "fmt"
    "github.com/89z/mech"
    "golang.org/x/crypto/blowfish"
    "net/http"
@@ -74,4 +76,52 @@ func newPartnerLogin() (*partnerLogin, error) {
       return nil, err
    }
    return part, nil
+}
+
+type userLogin struct {
+   Result struct {
+      UserID string
+      UserAuthToken string
+   }
+}
+
+func (p partnerLogin) userLogin(username, password string) (*userLogin, error) {
+   body := fmt.Sprintf(`
+   {
+      "loginType": "user",
+      "partnerAuthToken": "%v",
+      "password": "%v",
+      "syncTime": 2222222222,
+      "username": "srpen6@gmail.com"
+   }
+   `, p.Result.PartnerAuthToken, password)
+   enc, err := encrypt([]byte(body))
+   if err != nil {
+      return nil, err
+   }
+   req, err := http.NewRequest(
+      "POST",
+      "http://android-tuner.pandora.com/services/json/",
+      strings.NewReader(hex.EncodeToString(enc)),
+   )
+   if err != nil {
+      return nil, err
+   }
+   val := make(mech.Values)
+   // this can be empty, but must be included:
+   val["auth_token"] = ""
+   val["method"] = "auth.userLogin"
+   val["partner_id"] = "42"
+   req.URL.RawQuery = val.Encode()
+   logLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   user := new(userLogin)
+   if err := json.NewDecoder(res.Body).Decode(user); err != nil {
+      return nil, err
+   }
+   return user, nil
 }
