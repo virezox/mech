@@ -13,7 +13,7 @@ import (
 const (
    origin = "http://android-tuner.pandora.com"
    partnerPassword = "AC7IBG09A3DTSYM4R41UJWL07VLN8JI7"
-   syncTime = 2222222222
+   syncTime = 0x7FFF_FFFF
 )
 
 var (
