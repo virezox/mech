@@ -10,52 +10,16 @@ import (
    "strings"
 )
 
-func (p PartnerLogin) UserLogin(username, password string) (*UserLogin, error) {
-   rUser := userLoginRequest{
-      LoginType: "user",
-      PartnerAuthToken: p.Result.PartnerAuthToken,
-      Password: password,
-      SyncTime: 2222222222,
-      Username: username,
-   }
-   body, err := rUser.encrypt()
-   if err != nil {
-      return nil, err
-   }
-   req, err := http.NewRequest(
-      "POST", origin + "/services/json/", strings.NewReader(body),
-   )
-   val := make(mech.Values)
-   // this can be empty, but must be included:
-   val["auth_token"] = ""
-   val["method"] = "auth.userLogin"
-   val["partner_id"] = "42"
-   req.URL.RawQuery = val.Encode()
-   LogLevel.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   user := new(UserLogin)
-   if err := json.NewDecoder(res.Body).Decode(user); err != nil {
-      return nil, err
-   }
-   return user, nil
-}
+const (
+   origin = "http://android-tuner.pandora.com"
+   partnerPassword = "AC7IBG09A3DTSYM4R41UJWL07VLN8JI7"
+   syncTime = 2222222222
+)
 
-func Encrypt(src []byte) ([]byte, error) {
-   src = pad(src)
-   dst := make([]byte, len(src))
-   blow, err := blowfish.NewCipher(key)
-   if err != nil {
-      return nil, err
-   }
-   for low := 0; low < len(src); low += blow.BlockSize() {
-      blow.Encrypt(dst[low:], src[low:])
-   }
-   return dst, nil
-}
+var (
+   LogLevel mech.LogLevel
+   key = []byte("6#26FRL$ZWD")
+)
 
 func Decrypt(src []byte) ([]byte, error) {
    sLen := len(src)
@@ -73,15 +37,30 @@ func Decrypt(src []byte) ([]byte, error) {
    return unpad(dst)
 }
 
-const (
-   origin = "http://android-tuner.pandora.com"
-   partnerPassword = "AC7IBG09A3DTSYM4R41UJWL07VLN8JI7"
-)
+func Encrypt(src []byte) ([]byte, error) {
+   src = pad(src)
+   dst := make([]byte, len(src))
+   blow, err := blowfish.NewCipher(key)
+   if err != nil {
+      return nil, err
+   }
+   for low := 0; low < len(src); low += blow.BlockSize() {
+      blow.Encrypt(dst[low:], src[low:])
+   }
+   return dst, nil
+}
 
-var (
-   LogLevel mech.LogLevel
-   key = []byte("6#26FRL$ZWD")
-)
+func hexEncode(val interface{}) (string, error) {
+   body, err := json.Marshal(val)
+   if err != nil {
+      return "", err
+   }
+   buf, err := Encrypt(body)
+   if err != nil {
+      return "", err
+   }
+   return hex.EncodeToString(buf), nil
+}
 
 func pad(src []byte) []byte {
    sLen := blowfish.BlockSize - len(src) % blowfish.BlockSize
@@ -143,22 +122,44 @@ func NewPartnerLogin() (*PartnerLogin, error) {
    return part, nil
 }
 
+func (p PartnerLogin) UserLogin(username, password string) (*UserLogin, error) {
+   rUser := userLoginRequest{
+      LoginType: "user",
+      PartnerAuthToken: p.Result.PartnerAuthToken,
+      Password: password,
+      SyncTime: syncTime,
+      Username: username,
+   }
+   body, err := hexEncode(rUser)
+   if err != nil {
+      return nil, err
+   }
+   req, err := http.NewRequest(
+      "POST", origin + "/services/json/", strings.NewReader(body),
+   )
+   val := make(mech.Values)
+   // this can be empty, but must be included:
+   val["auth_token"] = ""
+   val["method"] = "auth.userLogin"
+   val["partner_id"] = "42"
+   req.URL.RawQuery = val.Encode()
+   LogLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   user := new(UserLogin)
+   if err := json.NewDecoder(res.Body).Decode(user); err != nil {
+      return nil, err
+   }
+   return user, nil
+}
+
 type userLoginRequest struct {
    LoginType string `json:"loginType"`
    PartnerAuthToken string `json:"partnerAuthToken"`
    Password string `json:"password"`
    SyncTime int `json:"syncTime"`
    Username string `json:"username"`
-}
-
-func (u userLoginRequest) encrypt() (string, error) {
-   body, err := json.Marshal(u)
-   if err != nil {
-      return "", err
-   }
-   buf, err := Encrypt(body)
-   if err != nil {
-      return "", err
-   }
-   return hex.EncodeToString(buf), nil
 }

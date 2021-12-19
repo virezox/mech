@@ -1,9 +1,7 @@
 package pandora
 
 import (
-   "encoding/hex"
    "encoding/json"
-   "fmt"
    "github.com/89z/mech"
    "io"
    "net/http"
@@ -11,7 +9,8 @@ import (
 )
 
 type PlaybackInfo struct {
-   Result struct {
+   Stat string
+   Result *struct {
       AudioUrlMap struct {
          HighQuality struct {
             AudioURL string
@@ -39,22 +38,18 @@ func (u UserLogin) Encode(dst io.Writer) error {
 }
 
 func (u UserLogin) PlaybackInfo(id string) (*PlaybackInfo, error) {
-   dec := fmt.Sprintf(`
-   {
-      "deviceCode": "",
-      "includeAudioToken": true,
-      "pandoraId": "%v",
-      "syncTime": 2222222222,
-      "userAuthToken": "%v"
+   rInfo := playbackInfoRequest{
+      IncludeAudioToken: true,
+      PandoraID: id,
+      SyncTime: syncTime,
+      UserAuthToken: u.Result.UserAuthToken,
    }
-   `, id, u.Result.UserAuthToken)
-   enc, err := Encrypt([]byte(dec))
+   body, err := hexEncode(rInfo)
    if err != nil {
       return nil, err
    }
    req, err := http.NewRequest(
-      "POST", origin + "/services/json/",
-      strings.NewReader(hex.EncodeToString(enc)),
+      "POST", origin + "/services/json/", strings.NewReader(body),
    )
    if err != nil {
       return nil, err
@@ -81,20 +76,17 @@ func (u UserLogin) PlaybackInfo(id string) (*PlaybackInfo, error) {
 }
 
 func (u UserLogin) ValueExchange() error {
-   body := fmt.Sprintf(`
-   {
-      "offerName": "premium_access",
-      "syncTime": 2222222222,
-      "userAuthToken": "%v"
+   rValue := valueExchangeRequest{
+      OfferName: "premium_access",
+      SyncTime: syncTime,
+      UserAuthToken: u.Result.UserAuthToken,
    }
-   `, u.Result.UserAuthToken)
-   enc, err := Encrypt([]byte(body))
+   body, err := hexEncode(rValue)
    if err != nil {
       return err
    }
    req, err := http.NewRequest(
-      "POST", origin + "/services/json/",
-      strings.NewReader(hex.EncodeToString(enc)),
+      "POST", origin + "/services/json/", strings.NewReader(body),
    )
    if err != nil {
       return err
@@ -113,4 +105,19 @@ func (u UserLogin) ValueExchange() error {
       return err
    }
    return res.Body.Close()
+}
+
+type playbackInfoRequest struct {
+   // this can be empty, but must be included:
+   DeviceCode string `json:"deviceCode"`
+   IncludeAudioToken bool `json:"includeAudioToken"`
+   PandoraID string `json:"pandoraId"`
+   SyncTime int `json:"syncTime"`
+   UserAuthToken string `json:"userAuthToken"`
+}
+
+type valueExchangeRequest struct {
+   OfferName string `json:"offerName"`
+   SyncTime int `json:"syncTime"`
+   UserAuthToken string `json:"userAuthToken"`
 }
