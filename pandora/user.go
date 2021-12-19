@@ -5,6 +5,7 @@ import (
    "encoding/json"
    "fmt"
    "github.com/89z/mech"
+   "io"
    "net/http"
    "strings"
 )
@@ -19,16 +20,34 @@ type PlaybackInfo struct {
    }
 }
 
-func (u UserLogin) PlaybackInfo() (*PlaybackInfo, error) {
+type UserLogin struct {
+   Result struct {
+      UserID string
+      UserAuthToken string
+   }
+}
+
+// This can be used to decode an existing login response.
+func (u *UserLogin) Decode(src io.Reader) error {
+   return json.NewDecoder(src).Decode(u)
+}
+
+func (u UserLogin) Encode(dst io.Writer) error {
+   enc := json.NewEncoder(dst)
+   enc.SetIndent("", " ")
+   return enc.Encode(u)
+}
+
+func (u UserLogin) PlaybackInfo(id string) (*PlaybackInfo, error) {
    dec := fmt.Sprintf(`
    {
       "deviceCode": "",
       "includeAudioToken": true,
-      "pandoraId": "TR:1168891",
+      "pandoraId": "%v",
       "syncTime": 2222222222,
       "userAuthToken": "%v"
    }
-   `, u.Result.UserAuthToken)
+   `, id, u.Result.UserAuthToken)
    enc, err := encrypt([]byte(dec))
    if err != nil {
       return nil, err
