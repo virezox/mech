@@ -1,109 +1,30 @@
 package pandora
 
 import (
+   "bytes"
    "encoding/hex"
    "encoding/json"
-   "fmt"
    "github.com/89z/mech"
    "golang.org/x/crypto/blowfish"
    "net/http"
    "strings"
 )
 
-var (
-   LogLevel mech.LogLevel
-   key = []byte("6#26FRL$ZWD")
-)
-
-func Decrypt(src []byte) ([]byte, error) {
-   sLen := len(src)
-   if sLen < blowfish.BlockSize {
-      return nil, mech.InvalidSlice{blowfish.BlockSize-1, sLen}
-   }
-   dst := make([]byte, sLen)
-   blow, err := blowfish.NewCipher(key)
-   if err != nil {
-      return nil, err
-   }
-   for low := 0; low < sLen; low += blowfish.BlockSize {
-      blow.Decrypt(dst[low:], src[low:])
-   }
-   pad := dst[sLen-1]
-   return dst[:sLen-int(pad)], nil
-}
-
-func encrypt(src []byte) ([]byte, error) {
-   for len(src) % blowfish.BlockSize >= 1 {
-      src = append(src, 0)
-   }
-   dst := make([]byte, len(src))
-   blow, err := blowfish.NewCipher(key)
-   if err != nil {
-      return nil, err
-   }
-   for low := 0; low < len(src); low += blow.BlockSize() {
-      blow.Encrypt(dst[low:], src[low:])
-   }
-   return dst, nil
-}
-
-type PartnerLogin struct {
-   Result struct {
-      PartnerAuthToken string
-   }
-}
-
-func NewPartnerLogin() (*PartnerLogin, error) {
-   body := strings.NewReader(`
-   {
-      "deviceModel": "android-generic_x86",
-      "password": "AC7IBG09A3DTSYM4R41UJWL07VLN8JI7",
-      "username": "android",
-      "version": "5"
-   }
-   `)
-   req, err := http.NewRequest(
-      "POST", "http://android-tuner.pandora.com/services/json/", body,
-   )
-   if err != nil {
-      return nil, err
-   }
-   req.URL.RawQuery = "method=auth.partnerLogin"
-   LogLevel.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   part := new(PartnerLogin)
-   if err := json.NewDecoder(res.Body).Decode(part); err != nil {
-      return nil, err
-   }
-   return part, nil
-}
-
 func (p PartnerLogin) UserLogin(username, password string) (*UserLogin, error) {
-   body := fmt.Sprintf(`
-   {
-      "loginType": "user",
-      "partnerAuthToken": "%v",
-      "password": "%v",
-      "syncTime": 2222222222,
-      "username": "srpen6@gmail.com"
+   rUser := userLoginRequest{
+      LoginType: "user",
+      PartnerAuthToken: p.Result.PartnerAuthToken,
+      Password: password,
+      SyncTime: 2222222222,
+      Username: username,
    }
-   `, p.Result.PartnerAuthToken, password)
-   enc, err := encrypt([]byte(body))
+   body, err := rUser.encrypt()
    if err != nil {
       return nil, err
    }
    req, err := http.NewRequest(
-      "POST",
-      "http://android-tuner.pandora.com/services/json/",
-      strings.NewReader(hex.EncodeToString(enc)),
+      "POST", origin + "/services/json/", strings.NewReader(body),
    )
-   if err != nil {
-      return nil, err
-   }
    val := make(mech.Values)
    // this can be empty, but must be included:
    val["auth_token"] = ""
@@ -123,3 +44,121 @@ func (p PartnerLogin) UserLogin(username, password string) (*UserLogin, error) {
    return user, nil
 }
 
+func Encrypt(src []byte) ([]byte, error) {
+   src = pad(src)
+   dst := make([]byte, len(src))
+   blow, err := blowfish.NewCipher(key)
+   if err != nil {
+      return nil, err
+   }
+   for low := 0; low < len(src); low += blow.BlockSize() {
+      blow.Encrypt(dst[low:], src[low:])
+   }
+   return dst, nil
+}
+
+func Decrypt(src []byte) ([]byte, error) {
+   sLen := len(src)
+   if sLen < blowfish.BlockSize {
+      return nil, mech.InvalidSlice{blowfish.BlockSize-1, sLen}
+   }
+   dst := make([]byte, sLen)
+   blow, err := blowfish.NewCipher(key)
+   if err != nil {
+      return nil, err
+   }
+   for low := 0; low < sLen; low += blowfish.BlockSize {
+      blow.Decrypt(dst[low:], src[low:])
+   }
+   return unpad(dst)
+}
+
+const (
+   origin = "http://android-tuner.pandora.com"
+   partnerPassword = "AC7IBG09A3DTSYM4R41UJWL07VLN8JI7"
+)
+
+var (
+   LogLevel mech.LogLevel
+   key = []byte("6#26FRL$ZWD")
+)
+
+func pad(src []byte) []byte {
+   sLen := blowfish.BlockSize - len(src) % blowfish.BlockSize
+   for high := byte(sLen); sLen >= 1; sLen-- {
+      src = append(src, high)
+   }
+   return src
+}
+
+func unpad(src []byte) ([]byte, error) {
+   sLen := len(src)
+   if sLen == 0 {
+      return nil, mech.InvalidSlice{}
+   }
+   tLen := src[sLen-1]
+   high := sLen - int(tLen)
+   if high <= -1 {
+      return nil, mech.InvalidSlice{high, sLen}
+   }
+   return src[:high], nil
+}
+
+type PartnerLogin struct {
+   Result struct {
+      PartnerAuthToken string
+   }
+}
+
+func NewPartnerLogin() (*PartnerLogin, error) {
+   body := map[string]string{
+      "deviceModel": "android-generic",
+      "password": partnerPassword,
+      "username": "android",
+      "version": "5",
+   }
+   buf := new(bytes.Buffer)
+   err := json.NewEncoder(buf).Encode(body)
+   if err != nil {
+      return nil, err
+   }
+   req, err := http.NewRequest("POST", origin + "/services/json/", buf)
+   if err != nil {
+      return nil, err
+   }
+   req.URL.RawQuery = "method=auth.partnerLogin"
+   LogLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return nil, mech.Response{res}
+   }
+   part := new(PartnerLogin)
+   if err := json.NewDecoder(res.Body).Decode(part); err != nil {
+      return nil, err
+   }
+   return part, nil
+}
+
+type userLoginRequest struct {
+   LoginType string `json:"loginType"`
+   PartnerAuthToken string `json:"partnerAuthToken"`
+   Password string `json:"password"`
+   SyncTime int `json:"syncTime"`
+   Username string `json:"username"`
+}
+
+func (u userLoginRequest) encrypt() (string, error) {
+   body, err := json.Marshal(u)
+   if err != nil {
+      return "", err
+   }
+   buf, err := Encrypt(body)
+   if err != nil {
+      return "", err
+   }
+   return hex.EncodeToString(buf), nil
+}

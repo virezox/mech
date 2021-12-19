@@ -48,13 +48,12 @@ func (u UserLogin) PlaybackInfo(id string) (*PlaybackInfo, error) {
       "userAuthToken": "%v"
    }
    `, id, u.Result.UserAuthToken)
-   enc, err := encrypt([]byte(dec))
+   enc, err := Encrypt([]byte(dec))
    if err != nil {
       return nil, err
    }
    req, err := http.NewRequest(
-      "POST",
-      "http://android-tuner.pandora.com/services/json/",
+      "POST", origin + "/services/json/",
       strings.NewReader(hex.EncodeToString(enc)),
    )
    if err != nil {
@@ -89,12 +88,12 @@ func (u UserLogin) ValueExchange() error {
       "userAuthToken": "%v"
    }
    `, u.Result.UserAuthToken)
-   enc, err := encrypt([]byte(body))
+   enc, err := Encrypt([]byte(body))
    if err != nil {
       return err
    }
    req, err := http.NewRequest(
-      "POST", "http://android-tuner.pandora.com/services/json/",
+      "POST", origin + "/services/json/",
       strings.NewReader(hex.EncodeToString(enc)),
    )
    if err != nil {
