@@ -9,6 +9,6 @@ com\pandora\constants\PandoraConstants.java
 
 https://github.com/skylot/jadx
 
-## How to get `password` for `parnerLogin`?
+## How to get `password` for `partnerLogin`?
 
 https://github.com/89z/googleplay/tree/master/cmd/mitmproxy-cert
