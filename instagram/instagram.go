@@ -41,14 +41,6 @@ func (e Edge) URL() string {
    return e.Node.Display_URL
 }
 
-type Item struct {
-   Media struct {
-      Video_Versions []struct {
-         URL string
-      }
-   }
-}
-
 type Login struct {
    Authorization string
 }
@@ -67,19 +59,21 @@ func NewLogin(username, password string) (*Login, error) {
    if err != nil {
       return nil, err
    }
-   req.Header = http.Header{
-      "Content-Type": {"application/x-www-form-urlencoded"},
-      "User-Agent": {userAgent},
-   }
+   val := make(mech.Values)
+   val["Content-Type"] = "application/x-www-form-urlencoded"
+   val["User-Agent"] = userAgent
+   req.Header = val.Header()
    LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
-   var login Login
-   login.Authorization = res.Header.Get("Ig-Set-Authorization")
-   return &login, nil
+   auth := res.Header.Get("Ig-Set-Authorization")
+   if auth == "" {
+      return nil, mech.NotFound{"Ig-Set-Authorization"}
+   }
+   return &Login{auth}, nil
 }
 
 // This can be used to decode an existing login response.
@@ -112,6 +106,9 @@ func (l Login) GraphQL(shortcode string) (*Media, error) {
       return nil, err
    }
    defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return nil, response{res}
+   }
    var car struct {
       GraphQL Media
    }
@@ -146,4 +143,12 @@ func (m Media) Edges() []Edge {
       return nil
    }
    return m.Shortcode_Media.Edge_Sidecar_To_Children.Edges
+}
+
+type response struct {
+   *http.Response
+}
+
+func (r response) Error() string {
+   return r.Status
 }

@@ -1,7 +1,6 @@
 package bleep
 
 import (
-   "bytes"
    "encoding/json"
    "github.com/89z/mech"
    "github.com/89z/parse/net"
@@ -11,6 +10,10 @@ import (
    "strings"
    "time"
 )
+
+const origin = "https://bleep.com"
+
+var LogLevel mech.LogLevel
 
 // 8728-1-1
 func Parse(track string) (*Track, error) {
@@ -33,20 +36,17 @@ func Parse(track string) (*Track, error) {
    return &Track{ReleaseID: rel, Disc: dis, Number: num}, nil
 }
 
-const origin = "https://bleep.com"
-
 type Meta []net.Node
 
 func NewMeta(releaseID int64) (Meta, error) {
    addr := []byte(origin)
    addr = append(addr, "/release/"...)
    addr = strconv.AppendInt(addr, releaseID, 10)
-   req, err := http.NewRequest(
-      "GET", string(addr), nil,
-   )
+   req, err := http.NewRequest("GET", string(addr), nil)
    if err != nil {
       return nil, err
    }
+   LogLevel.Dump(req)
    // this redirects, so we cannot use RoundTrip
    res, err := new(http.Client).Do(req)
    if err != nil {
@@ -91,15 +91,17 @@ type Track struct {
 }
 
 func Release(releaseID int64) ([]Track, error) {
-   body := []byte("type=ReleaseProduct&id=")
-   body = strconv.AppendInt(body, releaseID, 10)
+   val := make(mech.Values)
+   val["id"] = strconv.FormatInt(releaseID, 10)
+   val["type"] = "ReleaseProduct"
    req, err := http.NewRequest(
-      "POST", origin + "/player/addToPlaylist", bytes.NewReader(body),
+      "POST", origin + "/player/addToPlaylist", val.Reader(),
    )
    if err != nil {
       return nil, err
    }
    req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+   LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -119,6 +121,7 @@ func (t Track) Resolve() (string, error) {
    if err != nil {
       return "", err
    }
+   LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return "", err

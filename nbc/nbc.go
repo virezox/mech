@@ -52,9 +52,7 @@ func NewAccessVOD(guid uint64) (*AccessVOD, error) {
    addr := []byte("http://access-cloudpath.media.nbcuni.com")
    addr = append(addr, "/access/vod/nbcuniversal/"...)
    addr = strconv.AppendUint(addr, guid, 10)
-   req, err := http.NewRequest(
-      "POST", string(addr), buf,
-   )
+   req, err := http.NewRequest("POST", string(addr), buf)
    if err != nil {
       return nil, err
    }
@@ -65,10 +63,8 @@ func NewAccessVOD(guid uint64) (*AccessVOD, error) {
    auth.WriteString(unix)
    auth.WriteString(",hash=")
    auth.WriteString(generateHash(unix, secretKey))
-   req.Header = http.Header{
-      "Authorization": {auth.String()},
-      "Content-Type": {"application/json"},
-   }
+   req.Header.Set("Authorization", auth.String())
+   req.Header.Set("Content-Type", "application/json")
    LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {

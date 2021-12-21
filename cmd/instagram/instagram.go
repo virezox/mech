@@ -28,10 +28,10 @@ func main() {
       return
    }
    if verbose {
-      instagram.LogLevel = 2
+      instagram.LogLevel = 1
    }
    if username != "" {
-      log, err := instagram.NewLogin(username, password)
+      login, err := instagram.NewLogin(username, password)
       if err != nil {
          panic(err)
       }
@@ -46,16 +46,16 @@ func main() {
          panic(err)
       }
       defer file.Close()
-      if err := log.Encode(file); err != nil {
+      if err := login.Encode(file); err != nil {
          panic(err)
       }
       return
    }
    shortcode := flag.Arg(0)
-   if ! instagram.Valid(shortcode) {
+   if !instagram.Valid(shortcode) {
       panic("invalid shortcode")
    }
-   var log instagram.Login
+   var login instagram.Login
    if auth {
       cache, err := os.UserCacheDir()
       if err != nil {
@@ -66,11 +66,11 @@ func main() {
          panic(err)
       }
       defer file.Close()
-      if err := log.Decode(file); err != nil {
+      if err := login.Decode(file); err != nil {
          panic(err)
       }
    }
-   med, err := instagram.GraphQL(shortcode, &log)
+   med, err := login.GraphQL(shortcode)
    if err != nil {
       panic(err)
    }
