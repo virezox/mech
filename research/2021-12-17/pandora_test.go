@@ -1,7 +1,9 @@
 package pandora
 
 import (
+   "bytes"
    "encoding/hex"
+   "encoding/json"
    "fmt"
    "os"
    "testing"
@@ -19,7 +21,12 @@ func TestLogin(t *testing.T) {
       t.Fatal(err)
    }
    fmt.Printf("%+v\n", user)
-   info, err := user.playbackInfo()
+   tLen := len(user.Result.UserAuthToken)
+   if tLen != 58 {
+      t.Fatal("userAuthToken", tLen)
+   }
+   return
+   info, err := new(userLogin).playbackInfo()
    if err != nil {
       t.Fatal(err)
    }
@@ -27,7 +34,7 @@ func TestLogin(t *testing.T) {
 }
 
 func TestDecrypt(t *testing.T) {
-   enc, err := hex.DecodeString(audioEnc)
+   enc, err := hex.DecodeString(audio)
    if err != nil {
       t.Fatal(err)
    }
@@ -35,7 +42,9 @@ func TestDecrypt(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   os.Stdout.Write(dec)
+   buf := new(bytes.Buffer)
+   json.Indent(buf, dec, "", " ")
+   os.Stdout.ReadFrom(buf)
 }
 
 func TestEncrypt(t *testing.T) {

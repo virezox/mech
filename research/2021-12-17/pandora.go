@@ -1,26 +1,24 @@
 package pandora
 
 import (
-   "encoding/hex"
    "encoding/json"
    "github.com/89z/mech"
    "golang.org/x/crypto/blowfish"
    "net/http"
-   "net/http/httputil"
-   "net/url"
-   "os"
    "strings"
-   "time"
 )
 
-type values map[string]string
-
-func (v values) encode() string {
-   vals := make(url.Values)
-   for key, val := range v {
-      vals.Set(key, val)
+type userLogin struct {
+   Result struct {
+      UserID string
+      UserAuthToken string
    }
-   return vals.Encode()
+}
+
+type partnerLogin struct {
+   Result struct {
+      PartnerAuthToken string
+   }
 }
 
 const origin = "http://android-tuner.pandora.com"
@@ -56,12 +54,6 @@ func encrypt(src []byte) ([]byte, error) {
       blow.Encrypt(dst[low:], src[low:])
    }
    return dst, nil
-}
-
-type partnerLogin struct {
-   Result struct {
-      PartnerAuthToken string
-   }
 }
 
 func newPartnerLogin() (*partnerLogin, error) {
@@ -105,112 +97,10 @@ type playbackInfoRequest struct {
    UserAuthToken string `json:"userAuthToken"`
 }
 
-func (u userLogin) playbackInfo() (*playbackInfo, error) {
-   rInfo := playbackInfoRequest{
-      IncludeAudioToken: true,
-      SyncTime: 2222222222,
-      PandoraID: "TR:1168891",
-      // this is failing:
-      UserAuthToken: u.Result.UserAuthToken,
-   }
-   dec, err := json.Marshal(rInfo)
-   if err != nil {
-      return nil, err
-   }
-   os.Stdout.Write(dec)
-   enc, err := encrypt(dec)
-   if err != nil {
-      return nil, err
-   }
-   req, err := http.NewRequest(
-      "POST", origin + "/services/json/",
-      strings.NewReader(hex.EncodeToString(enc)),
-   )
-   if err != nil {
-      return nil, err
-   }
-   // method=auth.partnerLogin
-   req.URL.RawQuery = values{
-      // this can be empty, but it must be included:
-      "auth_token": "",
-      "method": "onDemand.getAudioPlaybackInfo",
-      "partner_id": "42",
-      // this can be empty, but it must be included:
-      "user_id": "",
-   }.encode()
-   LogLevel.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   buf, err := httputil.DumpResponse(res, true)
-   if err != nil {
-      return nil, err
-   }
-   os.Stdout.Write(buf)
-   info := new(playbackInfo)
-   if err := json.NewDecoder(res.Body).Decode(info); err != nil {
-      return nil, err
-   }
-   return info, nil
-}
-
 type userLoginRequest struct {
    LoginType string `json:"loginType"`
    PartnerAuthToken string `json:"partnerAuthToken"`
    Password string `json:"password"`
    SyncTime int64 `json:"syncTime"`
    Username string `json:"username"`
-}
-
-type userLogin struct {
-   Result struct {
-      UserID string
-      UserAuthToken string
-   }
-}
-
-// For some reason the UserAuthToken being returned by this doesnt actually
-// work.
-func (p partnerLogin) userLogin(username, password string) (*userLogin, error) {
-   rUser := userLoginRequest{
-      LoginType: "user",
-      PartnerAuthToken: p.Result.PartnerAuthToken,
-      Password: password,
-      SyncTime: time.Now().Unix(),
-      Username: username,
-   }
-   dec, err := json.Marshal(rUser)
-   if err != nil {
-      return nil, err
-   }
-   enc, err := encrypt(dec)
-   if err != nil {
-      return nil, err
-   }
-   req, err := http.NewRequest(
-      "POST", origin + "/services/json/",
-      strings.NewReader(hex.EncodeToString(enc)),
-   )
-   if err != nil {
-      return nil, err
-   }
-   req.Header.Set("User-Agent", "Pandora/2110.1 Android/7.0 generic_x86")
-   req.URL.RawQuery = values{
-      "auth_token": p.Result.PartnerAuthToken,
-      "method": "auth.userLogin",
-      "partner_id": "42",
-   }.encode()
-   LogLevel.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   user := new(userLogin)
-   if err := json.NewDecoder(res.Body).Decode(user); err != nil {
-      return nil, err
-   }
-   return user, nil
 }
