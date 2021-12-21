@@ -11,21 +11,25 @@ import (
 )
 
 var (
-   key = []byte("6#26FRL$ZWD")
    LogLevel mech.LogLevel
+   key = []byte("6#26FRL$ZWD")
 )
 
 func Decrypt(src []byte) ([]byte, error) {
-   dst := make([]byte, len(src))
+   sLen := len(src)
+   if sLen < blowfish.BlockSize {
+      return nil, mech.InvalidSlice{blowfish.BlockSize-1, sLen}
+   }
+   dst := make([]byte, sLen)
    blow, err := blowfish.NewCipher(key)
    if err != nil {
       return nil, err
    }
-   for low := 0; low < len(src); low += blowfish.BlockSize {
+   for low := 0; low < sLen; low += blowfish.BlockSize {
       blow.Decrypt(dst[low:], src[low:])
    }
-   pad := dst[len(dst)-1]
-   return dst[:len(dst)-int(pad)], nil
+   pad := dst[sLen-1]
+   return dst[:sLen-int(pad)], nil
 }
 
 func encrypt(src []byte) ([]byte, error) {
@@ -78,13 +82,6 @@ func NewPartnerLogin() (*PartnerLogin, error) {
    return part, nil
 }
 
-type UserLogin struct {
-   Result struct {
-      UserID string
-      UserAuthToken string
-   }
-}
-
 func (p PartnerLogin) UserLogin(username, password string) (*UserLogin, error) {
    body := fmt.Sprintf(`
    {
@@ -125,3 +122,4 @@ func (p PartnerLogin) UserLogin(username, password string) (*UserLogin, error) {
    }
    return user, nil
 }
+
