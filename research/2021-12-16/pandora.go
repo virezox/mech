@@ -7,84 +7,8 @@ import (
    "github.com/89z/mech"
    "golang.org/x/crypto/blowfish"
    "net/http"
-   "net/http/httputil"
-   "os"
    "strings"
 )
-
-func newPlaybackInfo() (*playbackInfo, error) {
-   userAuthToken := "VIQhRKtn78rZpdESQfyxw+r4Qu/9YqFhtnv2NTxn2csdEOVQIGjYhwxA=="
-   dec := fmt.Sprintf(`
-{
- "userAuthToken": "%v",
- "deviceProperties": {
-  "deviceCategory": "android",
-  "w": "1080",
-  "model": "android-generic_x86",
-  "applicationVersionCode": "21101001",
-  "carrierName": "Android",
-  "isFromAmazon": "false",
-  "h": "1794",
-  "code": "android-generic_x86",
-  "applicationVersion": "2110.1",
-  "systemVersion": "7.0",
-  "fordInfo": "{HMIStatus=NONE}"
- },
- "includeAudioToken": true,
- "pandoraId": "TR:1168891",
- "deviceCode": "7db1bef0-1ea2-4ba5-8c0a-079274c81b75",
- "sourcePandoraId": "TR:1168891",
- "syncTime": 2222222222
-}
-   `, userAuthToken)
-   enc, err := encrypt([]byte(dec))
-   if err != nil {
-      return nil, err
-   }
-   req, err := http.NewRequest(
-      "POST",
-      "http://android-tuner.pandora.com/services/json/",
-      strings.NewReader(hex.EncodeToString(enc)),
-   )
-   if err != nil {
-      return nil, err
-   }
-   val := make(mech.Values)
-   // this can be empty, but it must be included:
-   val["auth_token"] = ""
-   val["method"] = "onDemand.getAudioPlaybackInfo"
-   val["partner_id"] = "42"
-   // this can be empty, but it must be included:
-   val["user_id"] = ""
-   req.URL.RawQuery = val.Encode()
-   LogLevel.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   buf, err := httputil.DumpResponse(res, true)
-   if err != nil {
-      return nil, err
-   }
-   os.Stdout.Write(buf)
-   info := new(playbackInfo)
-   if err := json.NewDecoder(res.Body).Decode(info); err != nil {
-      return nil, err
-   }
-   return info, nil
-}
-
-type playbackInfo struct {
-   Result struct {
-      AudioUrlMap struct {
-         HighQuality struct {
-            AudioURL string
-         }
-      }
-   }
-}
-
 
 type userLogin struct {
    Result struct {
