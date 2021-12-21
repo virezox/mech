@@ -4,4 +4,4 @@
 *.mp4
 *.ts
 __pycache__
-password.go
+secret.go
