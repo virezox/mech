@@ -63,8 +63,10 @@ func NewAccessVOD(guid uint64) (*AccessVOD, error) {
    auth.WriteString(unix)
    auth.WriteString(",hash=")
    auth.WriteString(generateHash(unix, secretKey))
-   req.Header.Set("Authorization", auth.String())
-   req.Header.Set("Content-Type", "application/json")
+   val := make(mech.Values)
+   val["Authorization"] = auth.String()
+   val["Content-Type"] = "application/json"
+   req.Header = val.Header()
    LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
