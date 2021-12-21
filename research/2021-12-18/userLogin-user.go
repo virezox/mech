@@ -40,17 +40,17 @@ func encrypt(src []byte) ([]byte, error) {
 
 func main() {
    if len(os.Args) != 3 {
-      fmt.Println("userLogin-user [partnerAuthToken] [password]")
+      fmt.Println("userLogin-user [password] [partnerAuthToken]")
       return
    }
-   partnerAuthToken, password := os.Args[1], os.Args[2]
+   password, partnerAuthToken := os.Args[1], os.Args[2]
    body := fmt.Sprintf(`
    {
-   "loginType": "user",
-   "partnerAuthToken": "%v",
-   "password": "%v",
-   "syncTime": 2222222222,
-   "username": "srpen6@gmail.com"
+      "loginType": "user",
+      "partnerAuthToken": "%v",
+      "password": "%v",
+      "syncTime": 2222222222,
+      "username": "srpen6@gmail.com"
    }
    `, partnerAuthToken, password)
    enc, err := encrypt([]byte(body))
@@ -65,8 +65,8 @@ func main() {
    if err != nil {
       panic(err)
    }
-   req.Header.Set("User-Agent", "Pandora/2110.1 Android/7.0 generic_x86")
    val := make(mech.Values)
+   // this can be empty, but must be included:
    val["auth_token"] = ""
    val["method"] = "auth.userLogin"
    val["partner_id"] = "42"
@@ -78,7 +78,7 @@ func main() {
    }
    defer res.Body.Close()
    var user userLogin
-   if err := json.NewDecoder(res.Body).Decode(user); err != nil {
+   if err := json.NewDecoder(res.Body).Decode(&user); err != nil {
       panic(err)
    }
    fmt.Printf("%+v\n", user)

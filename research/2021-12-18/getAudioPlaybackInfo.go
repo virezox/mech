@@ -7,6 +7,7 @@ import (
    "github.com/89z/mech"
    "golang.org/x/crypto/blowfish"
    "net/http"
+   "net/http/httputil"
    "os"
    "strings"
 )
@@ -31,6 +32,16 @@ func encrypt(src []byte) ([]byte, error) {
    return dst, nil
 }
 
+type playbackInfo struct {
+   Result struct {
+      AudioUrlMap struct {
+         HighQuality struct {
+            AudioURL string
+         }
+      }
+   }
+}
+
 func main() {
    if len(os.Args) != 2 {
       fmt.Println("getAudioPlaybackInfo [userAuthToken]")
@@ -39,25 +50,11 @@ func main() {
    userAuthToken := os.Args[1]
    dec := fmt.Sprintf(`
    {
-   "userAuthToken": "%v",
-   "deviceProperties": {
-   "deviceCategory": "android",
-   "w": "1080",
-   "model": "android-generic_x86",
-   "applicationVersionCode": "21101001",
-   "carrierName": "Android",
-   "isFromAmazon": "false",
-   "h": "1794",
-   "code": "android-generic_x86",
-   "applicationVersion": "2110.1",
-   "systemVersion": "7.0",
-   "fordInfo": "{HMIStatus=NONE}"
-   },
-   "includeAudioToken": true,
-   "pandoraId": "TR:1168891",
-   "deviceCode": "7db1bef0-1ea2-4ba5-8c0a-079274c81b75",
-   "sourcePandoraId": "TR:1168891",
-   "syncTime": 2222222222
+      "deviceCode": "",
+      "includeAudioToken": true,
+      "pandoraId": "TR:1168891",
+      "syncTime": 2222222222,
+      "userAuthToken": "%v"
    }
    `, userAuthToken)
    enc, err := encrypt([]byte(dec))
@@ -86,20 +83,14 @@ func main() {
       panic(err)
    }
    defer res.Body.Close()
+   buf, err := httputil.DumpResponse(res, true)
+   if err != nil {
+      panic(err)
+   }
+   os.Stdout.Write(append(buf, '\n'))
    var info playbackInfo
    if err := json.NewDecoder(res.Body).Decode(&info); err != nil {
       panic(err)
    }
    fmt.Printf("%+v\n", info)
 }
-
-type playbackInfo struct {
-   Result struct {
-      AudioUrlMap struct {
-         HighQuality struct {
-            AudioURL string
-         }
-      }
-   }
-}
-

@@ -78,7 +78,7 @@ func main() {
    }
    defer res.Body.Close()
    var user userLogin
-   if err := json.NewDecoder(res.Body).Decode(user); err != nil {
+   if err := json.NewDecoder(res.Body).Decode(&user); err != nil {
       panic(err)
    }
    fmt.Printf("%+v\n", user)
