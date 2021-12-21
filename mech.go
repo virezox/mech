@@ -140,6 +140,14 @@ func (p *Progress) Read(buf []byte) (int, error) {
    return num, nil
 }
 
+type Response struct {
+   *http.Response
+}
+
+func (r Response) Error() string {
+   return r.Status
+}
+
 type Values map[string]string
 
 func (v Values) Encode() string {
