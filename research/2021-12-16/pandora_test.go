@@ -19,7 +19,7 @@ func TestInfo(t *testing.T) {
 }
 
 func TestDecrypt(t *testing.T) {
-   enc, err := hex.DecodeString(assoc)
+   enc, err := hex.DecodeString(audio)
    if err != nil {
       t.Fatal(err)
    }
