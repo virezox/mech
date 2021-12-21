@@ -3,7 +3,6 @@ package pandora
 import (
    "encoding/hex"
    "fmt"
-   "net/http/httputil"
    "os"
    "testing"
 )
@@ -20,20 +19,15 @@ func TestLogin(t *testing.T) {
       t.Fatal(err)
    }
    fmt.Printf("%+v\n", user)
-   res, err := user.getAudioPlaybackInfo()
+   info, err := user.playbackInfo()
    if err != nil {
       t.Fatal(err)
    }
-   defer res.Body.Close()
-   buf, err := httputil.DumpResponse(res, true)
-   if err != nil {
-      t.Fatal(err)
-   }
-   os.Stdout.Write(buf)
+   fmt.Printf("%+v\n", info)
 }
 
 func TestDecrypt(t *testing.T) {
-   enc, err := hex.DecodeString("FF")
+   enc, err := hex.DecodeString(audioEnc)
    if err != nil {
       t.Fatal(err)
    }
