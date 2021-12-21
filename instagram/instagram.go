@@ -10,9 +10,8 @@ import (
 
 const (
    originI = "https://i.instagram.com"
-   queryHash = "2efa04f61586458cef44441f474eee7c"
    // com.instagram.android
-   userAgent = "Instagram 214.1.0.29.120 Android"
+   userAgent = "Instagram 216.1.0.21.137 Android"
 )
 
 var LogLevel mech.LogLevel
