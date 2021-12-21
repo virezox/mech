@@ -18,7 +18,7 @@ const (
 
 var (
    LogLevel mech.LogLevel
-   key = []byte("6#26FRL$ZWD")
+   blowfishKey = []byte("6#26FRL$ZWD")
 )
 
 func Decrypt(src []byte) ([]byte, error) {
@@ -27,7 +27,7 @@ func Decrypt(src []byte) ([]byte, error) {
       return nil, mech.InvalidSlice{blowfish.BlockSize-1, sLen}
    }
    dst := make([]byte, sLen)
-   blow, err := blowfish.NewCipher(key)
+   blow, err := blowfish.NewCipher(blowfishKey)
    if err != nil {
       return nil, err
    }
@@ -40,7 +40,7 @@ func Decrypt(src []byte) ([]byte, error) {
 func Encrypt(src []byte) ([]byte, error) {
    src = pad(src)
    dst := make([]byte, len(src))
-   blow, err := blowfish.NewCipher(key)
+   blow, err := blowfish.NewCipher(blowfishKey)
    if err != nil {
       return nil, err
    }

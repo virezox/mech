@@ -75,6 +75,7 @@ func (u UserLogin) PlaybackInfo(id string) (*PlaybackInfo, error) {
    return info, nil
 }
 
+// Token is good for 30 minutes.
 func (u UserLogin) ValueExchange() error {
    rValue := valueExchangeRequest{
       OfferName: "premium_access",
