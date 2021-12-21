@@ -4,9 +4,16 @@ import (
    "fmt"
    "os"
    "testing"
+   "time"
 )
 
-const pandoraID = "TR:1168891"
+// Note that you cannot get RADIO tracks with this method.
+var pandoraIDs = []string{
+   // pandora.com/artist/the-black-dog/radio-scarecrow/train-by-the-autobahn-part-1/TRddpp5JJ2hqnVV
+   "TR:1168891",
+   // pandora.com/artist/the-black-dog/music-for-real-airports/m-1/TRnJq99pmqt72Zc
+   "TR:1616369",
+}
 
 func TestDecode(t *testing.T) {
    cache, err := os.UserCacheDir()
@@ -25,11 +32,14 @@ func TestDecode(t *testing.T) {
    if err := user.ValueExchange(); err != nil {
       t.Fatal(err)
    }
-   info, err := user.PlaybackInfo(pandoraID)
-   if err != nil {
-      t.Fatal(err)
+   for _, id := range pandoraIDs {
+      info, err := user.PlaybackInfo(id)
+      if err != nil {
+         t.Fatal(err)
+      }
+      fmt.Printf("%+v\n", info)
+      time.Sleep(time.Second)
    }
-   fmt.Printf("%+v\n", info)
 }
 
 func TestEncode(t *testing.T) {
