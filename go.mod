@@ -2,7 +2,10 @@ module github.com/89z/mech
 
 go 1.17
 
-require github.com/89z/parse v1.14.5
+require (
+	github.com/89z/parse v1.14.5
+	golang.org/x/crypto v0.0.0-20210817164053-32db794688a5
+)
 
 require (
 	github.com/tdewolff/parse/v2 v2.5.22 // indirect

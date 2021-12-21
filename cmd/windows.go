@@ -12,9 +12,8 @@ func main() {
       return
    }
    arg := []string{"build", "-ldflags", "-s", "-o", "."}
-   for _, dir := range os.Args[1:] {
-      arg = append(arg, dir)
-   }
+   dirs := os.Args[1:]
+   arg = append(arg, dirs...)
    if err := exec.Command("go", arg...).Run(); err != nil {
       panic(err)
    }

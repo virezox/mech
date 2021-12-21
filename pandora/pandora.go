@@ -12,10 +12,10 @@ import (
 
 var (
    key = []byte("6#26FRL$ZWD")
-   logLevel mech.LogLevel
+   LogLevel mech.LogLevel
 )
 
-func decrypt(src []byte) ([]byte, error) {
+func Decrypt(src []byte) ([]byte, error) {
    dst := make([]byte, len(src))
    blow, err := blowfish.NewCipher(key)
    if err != nil {
@@ -43,13 +43,13 @@ func encrypt(src []byte) ([]byte, error) {
    return dst, nil
 }
 
-type partnerLogin struct {
+type PartnerLogin struct {
    Result struct {
       PartnerAuthToken string
    }
 }
 
-func newPartnerLogin() (*partnerLogin, error) {
+func NewPartnerLogin() (*PartnerLogin, error) {
    body := strings.NewReader(`
    {
       "deviceModel": "android-generic_x86",
@@ -65,27 +65,27 @@ func newPartnerLogin() (*partnerLogin, error) {
       return nil, err
    }
    req.URL.RawQuery = "method=auth.partnerLogin"
-   logLevel.Dump(req)
+   LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
-   part := new(partnerLogin)
+   part := new(PartnerLogin)
    if err := json.NewDecoder(res.Body).Decode(part); err != nil {
       return nil, err
    }
    return part, nil
 }
 
-type userLogin struct {
+type UserLogin struct {
    Result struct {
       UserID string
       UserAuthToken string
    }
 }
 
-func (p partnerLogin) userLogin(username, password string) (*userLogin, error) {
+func (p PartnerLogin) UserLogin(username, password string) (*UserLogin, error) {
    body := fmt.Sprintf(`
    {
       "loginType": "user",
@@ -113,13 +113,13 @@ func (p partnerLogin) userLogin(username, password string) (*userLogin, error) {
    val["method"] = "auth.userLogin"
    val["partner_id"] = "42"
    req.URL.RawQuery = val.Encode()
-   logLevel.Dump(req)
+   LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
-   user := new(userLogin)
+   user := new(UserLogin)
    if err := json.NewDecoder(res.Body).Decode(user); err != nil {
       return nil, err
    }
