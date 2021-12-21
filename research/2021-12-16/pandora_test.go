@@ -9,8 +9,17 @@ import (
    "testing"
 )
 
+func TestLogin(t *testing.T) {
+   LogLevel = 1
+   info, err := new(userLogin).playbackInfo()
+   if err != nil {
+      t.Fatal(err)
+   }
+   fmt.Printf("%+v\n", info)
+}
+
 func TestDecrypt(t *testing.T) {
-   enc, err := hex.DecodeString(login2)
+   enc, err := hex.DecodeString(audio)
    if err != nil {
       t.Fatal(err)
    }
@@ -21,29 +30,6 @@ func TestDecrypt(t *testing.T) {
    buf := new(bytes.Buffer)
    json.Indent(buf, dec, "", " ")
    os.Stdout.ReadFrom(buf)
-}
-
-func TestLogin(t *testing.T) {
-   LogLevel = 1
-   part, err := newPartnerLogin()
-   if err != nil {
-      t.Fatal(err)
-   }
-   fmt.Printf("%+v\n", part)
-   user, err := part.userLogin("srpen6@gmail.com", password)
-   if err != nil {
-      t.Fatal(err)
-   }
-   fmt.Printf("%+v\n", user)
-   tLen := len(user.Result.UserAuthToken)
-   if tLen != 58 {
-      t.Fatal("userAuthToken", tLen)
-   }
-   info, err := new(userLogin).playbackInfo()
-   if err != nil {
-      t.Fatal(err)
-   }
-   fmt.Printf("%+v\n", info)
 }
 
 func TestEncrypt(t *testing.T) {

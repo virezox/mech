@@ -7,75 +7,9 @@ import (
    "github.com/89z/mech"
    "golang.org/x/crypto/blowfish"
    "net/http"
-   "net/http/httputil"
-   "os"
    "strings"
    "time"
 )
-
-func (u userLogin) playbackInfo() (*playbackInfo, error) {
-   deviceCode := ""
-   syncTime := time.Now().Unix()
-   userAuthToken := "VI0Tk15AKynvzdoz1wH2LDR3Cmzsf71QoE+rWJR985EHd4OnlGq8Qp+A=="
-   dec := fmt.Sprintf(`
-{
- "deviceProperties": {
-  "deviceCategory": "android",
-  "w": "1080",
-  "model": "android-generic_x86",
-  "applicationVersionCode": "21101001",
-  "carrierName": "Android",
-  "isFromAmazon": "false",
-  "h": "1794",
-  "code": "android-generic_x86",
-  "applicationVersion": "2110.1",
-  "systemVersion": "7.0",
-  "fordInfo": "{HMIStatus=NONE}"
- },
- "includeAudioToken": true,
- "pandoraId": "TR:1168891",
- "sourcePandoraId": "TR:1168891",
- "deviceCode": %q,
- "syncTime": %v,
- "userAuthToken": %q
-}
-   `, deviceCode, syncTime, userAuthToken)
-   enc, err := encrypt([]byte(dec))
-   if err != nil {
-      return nil, err
-   }
-   req, err := http.NewRequest(
-      "POST", origin + "/services/json/",
-      strings.NewReader(hex.EncodeToString(enc)),
-   )
-   if err != nil {
-      return nil, err
-   }
-   val := make(mech.Values)
-   // this can be empty, but it must be included:
-   val["auth_token"] = ""
-   val["method"] = "onDemand.getAudioPlaybackInfo"
-   val["partner_id"] = "42"
-   // this can be empty, but it must be included:
-   val["user_id"] = ""
-   req.URL.RawQuery = val.Encode()
-   LogLevel.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   buf, err := httputil.DumpResponse(res, true)
-   if err != nil {
-      return nil, err
-   }
-   os.Stdout.Write(buf)
-   info := new(playbackInfo)
-   if err := json.NewDecoder(res.Body).Decode(info); err != nil {
-      return nil, err
-   }
-   return info, nil
-}
 
 // For some reason the UserAuthToken being returned by this doesnt actually
 // work.
@@ -178,6 +112,7 @@ func (p partnerLogin) userLogin(username, password string) (*userLogin, error) {
    }
    return user, nil
 }
+
 type userLogin struct {
    Result struct {
       UserID string
@@ -246,16 +181,6 @@ func newPartnerLogin() (*partnerLogin, error) {
       return nil, err
    }
    return login, nil
-}
-
-type playbackInfo struct {
-   Result struct {
-      AudioUrlMap struct {
-         HighQuality struct {
-            AudioURL string
-         }
-      }
-   }
 }
 
 type playbackInfoRequest struct {
