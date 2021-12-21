@@ -82,4 +82,8 @@ func main() {
       panic(err)
    }
    fmt.Printf("%+v\n", user)
+   tLen := len(user.Result.UserAuthToken)
+   if tLen != 58 {
+      panic(tLen)
+   }
 }

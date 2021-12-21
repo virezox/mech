@@ -38,6 +38,10 @@ func main() {
       panic(err)
    }
    fmt.Printf("%+v\n", part.Result)
+   tLen := len(part.Result.PartnerAuthToken)
+   if tLen != 34 {
+      panic(tLen)
+   }
 }
 
 type partnerLogin struct {
