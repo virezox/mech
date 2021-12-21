@@ -7,74 +7,79 @@ import (
    "github.com/89z/mech"
    "golang.org/x/crypto/blowfish"
    "net/http"
-   "net/http/httputil"
-   "os"
    "strings"
 )
 
-type playbackInfo struct {
+type partnerLogin struct {
    Result struct {
-      AudioUrlMap struct {
-         HighQuality struct {
-            AudioURL string
-         }
-      }
+      PartnerAuthToken string
    }
 }
 
-func (u userLogin) playbackInfo() (*playbackInfo, error) {
-   // this is one i created that works:
-   userAuthToken := "VIfvY3SVp7VlmLbuzm+S6er6mEYuah54TTkfGLOnrRpK0ay+vEpcXvcQ=="
-   deviceCode := ""
-   dec := fmt.Sprintf(`
-  {
-   "userAuthToken": "%v",
-   "includeAudioToken": true,
-   "pandoraId": "TR:1168891",
-   "deviceCode": "%v",
-   "syncTime": 2222222222
+func newPartnerLogin() (*partnerLogin, error) {
+   body := strings.NewReader(`
+   {
+  "returnUpdatePromptVersions": true,
+  "deviceModel": "android-generic_x86",
+  "version": "5",
+  "advertisingTrackingEnabled": "YES",
+  "deviceProperties": {
+    "deviceCategory": "android",
+    "w": "1080",
+    "model": "android-generic_x86",
+    "applicationVersionCode": "21101001",
+    "carrierName": "Android",
+    "isFromAmazon": "false",
+    "h": "1794",
+    "code": "android-generic_x86",
+    "applicationVersion": "2110.1",
+    "systemVersion": "7.0",
+    "fordInfo": "{HMIStatus=NONE}"
+  },
+  "password": "AC7IBG09A3DTSYM4R41UJWL07VLN8JI7",
+  "returnDeviceType": true,
+  "deviceTrackingIds": [
+    "471b41d1-25f4-4a2f-881a-80c8b693da2c",
+    "c4e64ee06038bfca",
+    "fa1fa21f-1458-4b49-bfca-87ac84005f15"
+  ],
+  "includeExtraParams": true,
+  "includeUrls": true,
+  "username": "android"
 }
-   `, userAuthToken, deviceCode)
-   enc, err := encrypt([]byte(dec))
-   if err != nil {
-      return nil, err
-   }
+   `)
    req, err := http.NewRequest(
-      "POST",
-      "http://android-tuner.pandora.com/services/json/",
-      strings.NewReader(hex.EncodeToString(enc)),
+      "POST", "http://android-tuner.pandora.com/services/json/", body,
    )
    if err != nil {
       return nil, err
    }
-   val := make(mech.Values)
-   // this can be empty, but it must be included:
-   val["auth_token"] = ""
-   val["method"] = "onDemand.getAudioPlaybackInfo"
-   val["partner_id"] = "42"
-   // this can be empty, but it must be included:
-   val["user_id"] = ""
-   req.URL.RawQuery = val.Encode()
+   req.Header.Set("User-Agent", "Pandora/2110.1 Android/7.0 generic_x86")
+   req.URL.RawQuery = "method=auth.partnerLogin"
    LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
-   buf, err := httputil.DumpResponse(res, true)
-   if err != nil {
+   part := new(partnerLogin)
+   if err := json.NewDecoder(res.Body).Decode(part); err != nil {
       return nil, err
    }
-   os.Stdout.Write(buf)
-   info := new(playbackInfo)
-   if err := json.NewDecoder(res.Body).Decode(info); err != nil {
-      return nil, err
-   }
-   return info, nil
+   return part, nil
 }
 
-func newUserLogin(partnerAuthToken string, body []byte) (*userLogin, error) {
-   enc, err := encrypt(body)
+func newUserLogin() (*userLogin, error) {
+   partnerAuthToken := "VAVKoVBC3zhbKAD/zvE1daYyALJB7VXt3C"
+   body := fmt.Sprintf(`
+   {
+      "deviceId": "7db1bef0-1ea2-4ba5-8c0a-079274c81b75",
+      "loginType": "deviceId",
+      "partnerAuthToken": "%v",
+      "syncTime": 2222222222
+   }
+   `, partnerAuthToken)
+   enc, err := encrypt([]byte(body))
    if err != nil {
       return nil, err
    }
@@ -88,7 +93,7 @@ func newUserLogin(partnerAuthToken string, body []byte) (*userLogin, error) {
    }
    req.Header.Set("User-Agent", "Pandora/2110.1 Android/7.0 generic_x86")
    val := make(mech.Values)
-   val["auth_token"] = partnerAuthToken
+   val["auth_token"] = ""
    val["method"] = "auth.userLogin"
    val["partner_id"] = "42"
    req.URL.RawQuery = val.Encode()

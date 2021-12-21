@@ -7,9 +7,77 @@ import (
    "github.com/89z/mech"
    "golang.org/x/crypto/blowfish"
    "net/http"
+   "net/http/httputil"
+   "os"
    "strings"
    "time"
 )
+
+type playbackInfo struct {
+   Result struct {
+      AudioUrlMap struct {
+         HighQuality struct {
+            AudioURL string
+         }
+      }
+   }
+}
+
+func newPlaybackInfo() (*playbackInfo, error) {
+   userAuthToken := "VIB/H5cN0QRf34p6atwS0N7uCtcUp4wRL00iVw4aG6kOUYU9RCy3vegA=="
+   dec := fmt.Sprintf(`
+  {
+   "userAuthToken": "%v",
+   "includeAudioToken": true,
+   "pandoraId": "TR:1168891",
+   "deviceCode": "",
+   "syncTime": 2222222222
+}
+   `, userAuthToken)
+   enc, err := encrypt([]byte(dec))
+   if err != nil {
+      return nil, err
+   }
+   req, err := http.NewRequest(
+      "POST",
+      "http://android-tuner.pandora.com/services/json/",
+      strings.NewReader(hex.EncodeToString(enc)),
+   )
+   if err != nil {
+      return nil, err
+   }
+   val := make(mech.Values)
+   // this can be empty, but it must be included:
+   val["auth_token"] = ""
+   val["method"] = "onDemand.getAudioPlaybackInfo"
+   val["partner_id"] = "42"
+   // this can be empty, but it must be included:
+   val["user_id"] = ""
+   req.URL.RawQuery = val.Encode()
+   LogLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   buf, err := httputil.DumpResponse(res, true)
+   if err != nil {
+      return nil, err
+   }
+   os.Stdout.Write(buf)
+   info := new(playbackInfo)
+   if err := json.NewDecoder(res.Body).Decode(info); err != nil {
+      return nil, err
+   }
+   return info, nil
+}
+
+type userLogin struct {
+   Result struct {
+      UserID string
+      UserAuthToken string
+   }
+}
 
 // For some reason the UserAuthToken being returned by this doesnt actually
 // work.
@@ -111,13 +179,6 @@ func (p partnerLogin) userLogin(username, password string) (*userLogin, error) {
       return nil, err
    }
    return user, nil
-}
-
-type userLogin struct {
-   Result struct {
-      UserID string
-      UserAuthToken string
-   }
 }
 
 type partnerLogin struct {
