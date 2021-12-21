@@ -2,11 +2,11 @@ package main
 
 import (
    "encoding/hex"
-   "encoding/json"
    "fmt"
    "github.com/89z/mech"
    "golang.org/x/crypto/blowfish"
    "net/http"
+   "net/http/httputil"
    "os"
    "strings"
 )
@@ -15,13 +15,6 @@ var (
    LogLevel mech.LogLevel
    key = []byte("6#26FRL$ZWD")
 )
-
-type userLogin struct {
-   Result struct {
-      UserID string
-      UserAuthToken string
-   }
-}
 
 func encrypt(src []byte) ([]byte, error) {
    for len(src) % blowfish.BlockSize >= 1 {
@@ -40,36 +33,35 @@ func encrypt(src []byte) ([]byte, error) {
 
 func main() {
    if len(os.Args) != 2 {
-      fmt.Println("userLogin-deviceId [partnerAuthToken]")
-      return
+      fmt.Println("startValueExchange [userAuthToken]")
+      return 
    }
-   partnerAuthToken := os.Args[1]
-   deviceID := "7db1bef0-1ea2-4ba5-8c0a-079274c81b75"
+   userAuthToken := os.Args[1]
    body := fmt.Sprintf(`
    {
-      "deviceId": "%v",
-      "loginType": "deviceId",
-      "partnerAuthToken": "%v",
-      "syncTime": 2222222222
+      "offerName": "premium_access",
+      "syncTime": 2222222222,
+      "userAuthToken": "%v"
    }
-   `, deviceID, partnerAuthToken)
+   `, userAuthToken)
    enc, err := encrypt([]byte(body))
    if err != nil {
       panic(err)
    }
    req, err := http.NewRequest(
-      "POST",
-      "http://android-tuner.pandora.com/services/json/",
+      "POST", "http://android-tuner.pandora.com/services/json/",
       strings.NewReader(hex.EncodeToString(enc)),
    )
    if err != nil {
       panic(err)
    }
-   req.Header.Set("User-Agent", "Pandora/2110.1 Android/7.0 generic_x86")
    val := make(mech.Values)
+   // this can be empty, but must be included:
    val["auth_token"] = ""
-   val["method"] = "auth.userLogin"
+   val["method"] = "user.startValueExchange"
    val["partner_id"] = "42"
+   // this can be empty, but it must be included:
+   val["user_id"] = ""
    req.URL.RawQuery = val.Encode()
    LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
@@ -77,13 +69,9 @@ func main() {
       panic(err)
    }
    defer res.Body.Close()
-   var user userLogin
-   if err := json.NewDecoder(res.Body).Decode(&user); err != nil {
+   buf, err := httputil.DumpResponse(res, true)
+   if err != nil {
       panic(err)
    }
-   fmt.Printf("%+v\n", user)
-   tLen := len(user.Result.UserAuthToken)
-   if tLen != 58 {
-      panic(tLen)
-   }
+   os.Stdout.Write(buf)
 }
