@@ -11,6 +11,7 @@ import (
    "time"
 )
 
+const podcast = "\uF8FF.v1.catalog."
 
 var LogLevel mech.LogLevel
 
@@ -28,10 +29,10 @@ func (a AssetURL) String() string {
 
 type Attributes struct {
    ArtistName string
-   AssetURL AssetURL
-   Duration Duration `json:"durationInMilliseconds"`
    Name string
    ReleaseDateTime string
+   Duration Duration `json:"durationInMilliseconds"`
+   AssetURL AssetURL
 }
 
 type Audio struct {
@@ -39,8 +40,6 @@ type Audio struct {
       Attributes Attributes
    }
 }
-
-const podcast = "\uf8ff.v1.catalog."
 
 func NewAudio(addr string) (*Audio, error) {
    req, err := http.NewRequest("GET", addr, nil)

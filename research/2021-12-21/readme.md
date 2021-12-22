@@ -6,9 +6,6 @@
 ## X-Gorgon
 
 ~~~
-xGorgon
-genXGorgon
-signUrl
 TTAPIRequest
 getPost
 ~~~

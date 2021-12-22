@@ -6,6 +6,9 @@ import (
    "encoding/hex"
    "io"
    "math/bits"
+   "net/url"
+   "strconv"
+   "time"
 )
 
 const byteTable1 =
@@ -18,34 +21,25 @@ const byteTable1 =
    "CEFF19D6E5D6CCF1F46CE9E789B2B7AE2889BE5EDC876CF751F26778AEB34BA2" +
    "B3213B55F8B376B2CFB3B3FFB35E717DFAFCFFA87DFED89C1BC46AF988B5E5"
 
-func getXGon(url string) []byte {
-   null_md5 := make([]byte, 16)
-   obj := md5.New()
-   io.WriteString(obj, url)
-   sb := obj.Sum(nil)
-   sb = append(sb, null_md5...)
-   sb = append(sb, null_md5...)
-   return append(sb, null_md5...)
-}
-
-func handle(data []byte) []byte {
-   for i := range data {
-      byte1 := data[i]
-      byte1 = bits.RotateLeft8(byte1, 4)
-      if i == len(data)-1 {
-         byte1 ^= data[0]
-      } else {
-         byte1 ^= data[i+1]
-      }
-      byte2 := ((byte1 & 0x55) * 2) | ((byte1 & 0xAA) / 2)
-      byte2 = ((byte2 & 0x33) * 4) | ((byte2 & 0xCC) / 4)
-      byte3 := bits.RotateLeft8(byte2, 4)
-      byte3 ^= 0xFF
-      data[i] = byte3 ^ 0x14
+// THIS IS CORRECT
+func input(unix int64, inputBytes []byte) []byte {
+   var result []byte
+   for i := range [4]struct{}{} {
+      temp := inputBytes[i]
+      result = append(result, temp)
    }
-   return data
+   result = append(result, 0, 0, 0, 0)
+   for i := range [4]struct{}{} {
+      temp := inputBytes[i+32]
+      result = append(result, temp)
+   }
+   result = append(result, 0, 0, 0, 0)
+   var tempByte [4]byte
+   binary.BigEndian.PutUint32(tempByte[:], uint32(unix))
+   return append(result, tempByte[:]...)
 }
 
+// THIS IS CORRECT
 func initialize(data []byte) ([]byte, error) {
    byteTable2, err := hex.DecodeString(byteTable1)
    if err != nil {
@@ -74,30 +68,69 @@ func initialize(data []byte) ([]byte, error) {
    return data, nil
 }
 
-func input(timeMillis uint32, inputBytes []byte) []byte {
-   var result []byte
-   for i := range [4]struct{}{} {
-      temp := inputBytes[i]
-      result = append(result, temp)
-   }
-   result = append(result, 0, 0, 0, 0)
-   for i := range [4]struct{}{} {
-      temp := inputBytes[i+32]
-      result = append(result, temp)
-   }
-   result = append(result, 0, 0, 0, 0)
-   var tempByte [4]byte
-   binary.BigEndian.PutUint32(tempByte[:], timeMillis)
-   return append(result, tempByte[:]...)
-}
-
-func xGorgon(timeMillis uint32, inputBytes []byte) ([]byte, error) {
-   data1 := []byte{0x36, 0x14, 0x11, 0x08, 0x00}
-   data2 := input(timeMillis, inputBytes)
-   xGorgonStr, err := initialize(data2)
+func xGorgon(unix int64, inputBytes []byte) ([]byte, error) {
+   data1 := []byte{0x3, 0x61, 0x41, 0x10, 0x80, 0x0}
+   data2 := input(unix, inputBytes)
+   data3, err := initialize(data2)
    if err != nil {
       return nil, err
    }
-   xGorgonStr = handle(xGorgonStr)
-   return append(data1, xGorgonStr...), nil
+   for i := range data3 {
+      byte1 := data3[i]
+      byte1 = bits.RotateLeft8(byte1, 4)
+      if i == len(data3)-1 {
+         byte1 ^= data3[0]
+      } else {
+         byte1 ^= data3[i+1]
+      }
+      byte2 := ((byte1 & 0x55) * 2) | ((byte1 & 0xAA) / 2)
+      byte2 = ((byte2 & 0x33) * 4) | ((byte2 & 0xCC) / 4)
+      byte3 := bits.RotateLeft8(byte2, 4)
+      byte3 ^= 0xFF
+      data3[i] = byte3 ^ 0x14
+   }
+   return append(data1, data3...), nil
+}
+
+func genXGorgon(addr string) ([]byte, error) {
+   par, err := url.Parse(addr)
+   if err != nil {
+      return nil, err
+   }
+   null_md5 := make([]byte, 16)
+   obj := md5.New()
+   io.WriteString(obj, par.RawQuery)
+   sb := obj.Sum(nil)
+   sb = append(sb, null_md5...)
+   sb = append(sb, null_md5...)
+   sb = append(sb, null_md5...)
+   //ts := time.Now().Unix()
+   var ts int64 = 1640201141
+   return xGorgon(ts, sb)
+}
+
+func signURL(addr string, deviceParams url.Values) (string, map[string]string, error) {
+   parsedURL, err := url.Parse(addr)
+   if err != nil {
+      return "", nil, err
+   }
+   for key, val := range parsedURL.Query() {
+      deviceParams[key] = val
+   }
+   parsedURL.RawQuery = deviceParams.Encode()
+   xKhronos := time.Now().Unix()
+   fullURL := parsedURL.String()
+   fullURL = "https://api-h2.tiktokv.com/aweme/v1/aweme/detail/?aweme_id=7038818332270808325&os_api=25&device_type=ONEPLUS+A3010&app_name=trill&version_name=17.8.4&channel=apkpure&device_platform=android&iid=7032045377013942018&version_code=170804&device_id=7031670777339250182&os_version=7.1.1&aid=1180"
+   gorgon, err := genXGorgon(fullURL)
+   if err != nil {
+      return "", nil, err
+   }
+   headers := map[string]string{
+      "accept-encoding": "gzip",
+      "method": "GET",
+      "user-agent": "okhttp/3.10.0.1",
+      "x-gorgon": hex.EncodeToString(gorgon),
+      "x-khronos": strconv.FormatInt(xKhronos, 10),
+   }
+   return fullURL, headers, nil
 }
