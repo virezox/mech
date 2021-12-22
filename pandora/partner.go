@@ -137,6 +137,9 @@ func (p PartnerLogin) UserLogin(username, password string) (*UserLogin, error) {
    req, err := http.NewRequest(
       "POST", origin + "/services/json/", strings.NewReader(body),
    )
+   if err != nil {
+      return nil, err
+   }
    val := make(mech.Values)
    // this can be empty, but must be included:
    val["auth_token"] = ""

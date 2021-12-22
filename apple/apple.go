@@ -11,7 +11,36 @@ import (
    "time"
 )
 
+
 var LogLevel mech.LogLevel
+
+type AssetURL string
+
+func (a AssetURL) String() string {
+   str := string(a)
+   addr, err := url.Parse(str)
+   if err != nil {
+      return str
+   }
+   addr.RawQuery = ""
+   return addr.String()
+}
+
+type Attributes struct {
+   ArtistName string
+   AssetURL AssetURL
+   Duration Duration `json:"durationInMilliseconds"`
+   Name string
+   ReleaseDateTime string
+}
+
+type Audio struct {
+   D []struct {
+      Attributes Attributes
+   }
+}
+
+const podcast = "\uf8ff.v1.catalog."
 
 func NewAudio(addr string) (*Audio, error) {
    req, err := http.NewRequest("GET", addr, nil)
@@ -46,34 +75,6 @@ func NewAudio(addr string) (*Audio, error) {
       }
    }
    return nil, mech.NotFound{podcast}
-}
-
-const podcast = "\uf8ff.v1.catalog.us.podcast-episodes."
-
-type AssetURL string
-
-func (a AssetURL) String() string {
-   str := string(a)
-   addr, err := url.Parse(str)
-   if err != nil {
-      return str
-   }
-   addr.RawQuery = ""
-   return addr.String()
-}
-
-type Attributes struct {
-   ArtistName string
-   AssetURL AssetURL
-   Duration Duration `json:"durationInMilliseconds"`
-   Name string
-   ReleaseDateTime string
-}
-
-type Audio struct {
-   D []struct {
-      Attributes Attributes
-   }
 }
 
 type Duration int64
