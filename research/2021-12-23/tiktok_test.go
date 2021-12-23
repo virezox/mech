@@ -5,9 +5,7 @@ import (
    "net/http"
    "net/http/httputil"
    "os"
-   "strconv"
    "testing"
-   "time"
 )
 
 func TestRegister(t *testing.T) {
@@ -23,7 +21,7 @@ func TestRegister(t *testing.T) {
    os.Stdout.Write(append(buf, '\n'))
 }
 
-func TestTikTok(t *testing.T) {
+func TestDetail(t *testing.T) {
    req, err := http.NewRequest(
       "GET", "https://api-h2.tiktokv.com/aweme/v1/aweme/detail/", nil,
    )
@@ -39,7 +37,7 @@ func TestTikTok(t *testing.T) {
    req.Header = http.Header{
       "user-agent": {"okhttp/3.10.0.1"},
       "x-gorgon": {hex.EncodeToString(gorgon)},
-      "x-khronos": {strconv.FormatInt(time.Now().Unix(), 10)},
+      "x-khronos": {"0"},
    }
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
