@@ -129,65 +129,7 @@ TikTok.prototype.registerDevice = async function() {
 			json: true
 		};
          console.log(options);
-         /*
-		const response = await sendRequest(options);
-		if (response.body["new_user"] && response.body["new_user"] === 1) {
-			this.device.install_id = response.body.install_id_str
-			this.device.device_id = response.body.device_id_str
-		} else {
-			console.log("Not a new device")
-		}
-	}
-         */
-}
-
-TikTok.prototype.registerAccount = async function(email, password) {
-	this.session = {
-		email: email,
-		password: password
-	}
-	const protocol = "https"
-	const hostname = "api2.musical.ly"
-	const path = "passport/email/register/v2/"
-	const query = this.device.default
-	query.iid = this.device.install_id
-	query.device_id = this.device.device_id
-	query.account_sdk_version = "371"
-	const requestUrl = buildUrl(protocol, hostname, path, query)
-	const body = formurlencoded({
-		email: Buffer.from(xorCrypt(this.session.email, 5), "utf8").toString("hex"),
-		mix_mode: "1",
-		password: Buffer.from(xorCrypt(this.session.password, 5), "utf8").toString("hex"),
-		account_sdk_source: "app"
-	})
-	const headers = {
-		"user-agent": this.device["user-agent"],
-		Cookie: "install_id=" + this.device.install_id,
-		"content-type": "application/x-www-form-urlencoded; charset=UTF-8"
-	}
-	const signature = await signRequest(requestUrl.protocol + requestUrl.host + requestUrl.pathname, requestUrl.search, body, headers)
-	headers["X-Gorgon"] = signature["X-Gorgon"]
-	headers["X-Khronos"] = signature["X-Khronos"]
-
-	const options = {
-		method: "POST",
-		url: requestUrl.href,
-		headers: headers,
-		body: body,
-		json: true
-	}
-	const response = await sendRequest(options)
-	if (response.body.data.error_code === 1105) {
-		await this.solveCaptcha()
-		return await this.registerAccount(arguments[0], arguments[1])
-	}
-	if (response.body.message === "success") {
-		this.session.uid = response.body.data.user_id_str
-		this.session.cookies = response.response.headers["set-cookie"]
-		return response.body
-	} else {
-		return response.body
-	}
+         console.log(JSON.stringify(body));
 }
 
 async function signRequest(requestUrl, query, body, headers) {
@@ -202,18 +144,6 @@ async function signRequest(requestUrl, query, body, headers) {
 		request(options, function(error, response, body) {
 			if (error) throw new Error(error)
 			resolve(body)
-		})
-	})
-}
-
-async function sendRequest(options) {
-	return new Promise(resolve => {
-		request(options, function(error, response, body) {
-			if (error) throw new Error(error)
-			resolve({
-				response: response,
-				body: body
-			})
 		})
 	})
 }

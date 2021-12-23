@@ -3,11 +3,25 @@ package tiktok
 import (
    "encoding/hex"
    "net/http"
+   "net/http/httputil"
    "os"
    "strconv"
    "testing"
    "time"
 )
+
+func TestRegister(t *testing.T) {
+   res, err := register()
+   if err != nil {
+      t.Fatal(err)
+   }
+   defer res.Body.Close()
+   buf, err := httputil.DumpResponse(res, true)
+   if err != nil {
+      t.Fatal(err)
+   }
+   os.Stdout.Write(append(buf, '\n'))
+}
 
 func TestTikTok(t *testing.T) {
    req, err := http.NewRequest(
