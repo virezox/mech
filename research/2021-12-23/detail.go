@@ -1,11 +1,14 @@
-package tiktok
+package main
 
 import (
    "crypto/md5"
    "encoding/hex"
+   "flag"
    "io"
    "math/bits"
+   "net/http"
    "net/url"
+   "os"
 )
 
 const byteTable1 =
@@ -17,18 +20,6 @@ const byteTable1 =
    "74FA37E97DC4A237FBFAF1CFAA897D55AE87BCF5E96AC468C7FA768514D0D0E5" +
    "CEFF19D6E5D6CCF1F46CE9E789B2B7AE2889BE5EDC876CF751F26778AEB34BA2" +
    "B3213B55F8B376B2CFB3B3FFB35E717DFAFCFFA87DFED89C1BC46AF988B5E5"
-
-var deviceParams = url.Values{
-   "aid": {"1180"}, // input
-   "app_name": {"trill"},
-   "channel": {"channel"}, // input
-   "device_id": {"7031670777339250182"}, // output
-   "device_platform": {"android"},
-   "device_type": {"ONEPLUS A3010"},
-   "iid": {"7032045377013942018"},
-   "os_version": {"7.1"},
-   "version_code": {"170804"},
-}
 
 func genXGorgon(query string) ([]byte, error) {
    null_md5 := make([]byte, 16)
@@ -80,4 +71,56 @@ func genXGorgon(query string) ([]byte, error) {
       data2[i] = byte3 ^ 0x14
    }
    return append([]byte{0x3, 0x61, 0x41, 0x10, 0x80, 0x0}, data2...), nil
+}
+
+func main() {
+   var (
+      channel string
+      device_id string
+      device_model string
+      install_id string
+      os_version string
+      version_code string
+   )
+   flag.StringVar(&channel, "c", "googleplay", "channel")
+   flag.StringVar(&device_id, "d", "7044933115287176709", "device_id")
+   flag.StringVar(&install_id, "i", "7044933274012026629", "install_id")
+   flag.StringVar(&device_model, "m", "ONEPLUS A3010", "device_model")
+   flag.StringVar(&os_version, "o", "12", "os_version")
+   flag.StringVar(&version_code, "v", "220405", "version_code")
+   flag.Parse()
+   req, err := http.NewRequest(
+      "GET", "https://api-h2.tiktokv.com/aweme/v1/aweme/detail/", nil,
+   )
+   if err != nil {
+      panic(err)
+   }
+   deviceParams := url.Values{
+      "aid": {"1233"},
+      "app_name": {"musical_ly"},
+      "aweme_id": {"7038818332270808325"},
+      "channel": {channel},
+      "device_id": {device_id},
+      "device_platform": {"android"},
+      "device_type": {device_model},
+      "iid": {install_id},
+      "os_version": {os_version},
+      "version_code": {version_code},
+   }
+   req.URL.RawQuery = deviceParams.Encode()
+   gorgon, err := genXGorgon(req.URL.RawQuery)
+   if err != nil {
+      panic(err)
+   }
+   req.Header = http.Header{
+      "user-agent": {"okhttp/3.10.0.1"},
+      "x-gorgon": {hex.EncodeToString(gorgon)},
+      "x-khronos": {"0"},
+   }
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      panic(err)
+   }
+   defer res.Body.Close()
+   os.Stdout.ReadFrom(res.Body)
 }
