@@ -75,19 +75,13 @@ func genXGorgon(query string) ([]byte, error) {
 
 func main() {
    var (
-      channel string
       device_id string
-      device_model string
       install_id string
-      os_version string
-      version_code string
+      device_model string
    )
-   flag.StringVar(&channel, "c", "googleplay", "channel")
    flag.StringVar(&device_id, "d", "7044933115287176709", "device_id")
    flag.StringVar(&install_id, "i", "7044933274012026629", "install_id")
    flag.StringVar(&device_model, "m", "ONEPLUS A3010", "device_model")
-   flag.StringVar(&os_version, "o", "12", "os_version")
-   flag.StringVar(&version_code, "v", "220405", "version_code")
    flag.Parse()
    req, err := http.NewRequest(
       "GET", "https://api-h2.tiktokv.com/aweme/v1/aweme/detail/", nil,
@@ -99,13 +93,13 @@ func main() {
       "aid": {"1233"},
       "app_name": {"musical_ly"},
       "aweme_id": {"7038818332270808325"},
-      "channel": {channel},
+      "channel": {"googleplay"},
       "device_id": {device_id},
       "device_platform": {"android"},
       "device_type": {device_model},
       "iid": {install_id},
-      "os_version": {os_version},
-      "version_code": {version_code},
+      "os_version": {"12"},
+      "version_code": {"220405"},
    }
    req.URL.RawQuery = deviceParams.Encode()
    gorgon, err := genXGorgon(req.URL.RawQuery)
