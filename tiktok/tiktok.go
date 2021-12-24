@@ -7,30 +7,28 @@ import (
    "strconv"
 )
 
-const Origin = "https://api2.musical.ly"
+const Origin = "http://api2.musical.ly"
 
 var LogLevel mech.LogLevel
 
-type Detail struct {
-   Aweme_Detail struct {
-      Author struct {
-         Unique_ID string
-      }
-      Aweme_ID string
-      Create_Time int
-      // height field here is invalid
-      Video struct {
-         Duration int
-         Play_Addr struct {
-            Width int
-            Height int
-            URL_List []string
-         }
+type AwemeDetail struct {
+   Author struct {
+      Unique_ID string
+   }
+   Aweme_ID string
+   Create_Time int
+   // height field here is invalid
+   Video struct {
+      Duration int
+      Play_Addr struct {
+         Width int
+         Height int
+         URL_List []string
       }
    }
 }
 
-func NewDetail(id uint64) (*Detail, error) {
+func NewAwemeDetail(id uint64) (*AwemeDetail, error) {
    req, err := http.NewRequest("GET", Origin + "/aweme/v1/aweme/detail/", nil)
    if err != nil {
       return nil, err
@@ -42,9 +40,22 @@ func NewDetail(id uint64) (*Detail, error) {
       return nil, err
    }
    defer res.Body.Close()
-   det := new(Detail)
-   if err := json.NewDecoder(res.Body).Decode(det); err != nil {
+   if res.StatusCode != http.StatusOK {
+      return nil, mech.Response{res}
+   }
+   var detail struct {
+      Aweme_Detail AwemeDetail
+   }
+   if err := json.NewDecoder(res.Body).Decode(&detail); err != nil {
       return nil, err
    }
-   return det, nil
+   return &detail.Aweme_Detail, nil
+}
+
+func (a AwemeDetail) URL() (string, error) {
+   sLen := len(a.Video.Play_Addr.URL_List)
+   if sLen == 0 {
+      return "", mech.InvalidSlice{}
+   }
+   return a.Video.Play_Addr.URL_List[0], nil
 }

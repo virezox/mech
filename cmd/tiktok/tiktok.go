@@ -14,32 +14,37 @@ func main() {
    var info bool
    flag.BoolVar(&info, "i", false, "info only")
    flag.Parse()
-   if flag.NArg() == 0 {
-      fmt.Println("tiktok [flags] [URL]")
+   if flag.NArg() != 1 {
+      fmt.Println("tiktok [flags] [aweme ID]")
       flag.PrintDefaults()
       return
    }
-   addr := flag.Arg(0)
-   item, err := tiktok.NewItemStruct(addr)
+   id := flag.Arg(0)
+   awemeID, err := mech.Parse(id)
    if err != nil {
       panic(err)
    }
-   req, err := item.Request()
+   det, err := tiktok.NewAwemeDetail(awemeID)
    if err != nil {
       panic(err)
    }
    if info {
-      mech.LogLevel.Dump(2, req)
+      fmt.Printf("%+v\n", det)
    } else {
-      err := get(req, item)
+      err := get(det)
       if err != nil {
          panic(err)
       }
    }
 }
 
-func get(req *http.Request, item *tiktok.ItemStruct) error {
-   res, err := new(http.Transport).RoundTrip(req)
+func get(det *tiktok.AwemeDetail) error {
+   addr, err := det.URL()
+   if err != nil {
+      return err
+   }
+   fmt.Println("GET", addr)
+   res, err := http.Get(addr)
    if err != nil {
       return err
    }
@@ -48,7 +53,7 @@ func get(req *http.Request, item *tiktok.ItemStruct) error {
    if err != nil {
       return err
    }
-   name := item.Author.UniqueID + "-" + item.ID + ext
+   name := det.Author.Unique_ID + "-" + det.Aweme_ID + ext
    file, err := os.Create(strings.Map(mech.Clean, name))
    if err != nil {
       return err

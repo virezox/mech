@@ -15,7 +15,7 @@ var ids = []uint64{
 
 func TestDetail(t *testing.T) {
    for _, id := range ids {
-      det, err := NewDetail(id)
+      det, err := NewAwemeDetail(id)
       if err != nil {
          t.Fatal(err)
       }
