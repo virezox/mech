@@ -1,5 +1,6 @@
 *.exe
 *.html
+*.json
 *.mp4
 *.ts
 __pycache__

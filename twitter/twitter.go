@@ -65,6 +65,31 @@ func (a Activate) Status(id uint64) (*Status, error) {
    return stat, nil
 }
 
+type Status struct {
+   Extended_Entities struct {
+      Media []struct {
+         Video_Info struct {
+            Variants []Variant
+         }
+      }
+   }
+   User struct {
+      Name string
+   }
+}
+
+func (s Status) Variants() []Variant {
+   var varis []Variant
+   for _, med := range s.Extended_Entities.Media {
+      for _, vari := range med.Video_Info.Variants {
+         if vari.Content_Type != "application/x-mpegURL"{
+            varis = append(varis, vari)
+         }
+      }
+   }
+   return varis
+}
+
 type URL string
 
 func (u URL) String() string {
@@ -77,18 +102,7 @@ func (u URL) String() string {
    return addr.String()
 }
 
-type Status struct {
-   Extended_Entities struct {
-      Media []struct {
-         Video_Info struct {
-            Variants []struct {
-               Content_Type string
-               URL URL
-            }
-         }
-      }
-   }
-   User struct {
-      Name string
-   }
+type Variant struct {
+   Content_Type string
+   URL URL
 }

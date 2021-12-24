@@ -19,10 +19,6 @@ Bleep:
 - https://bleep.com/release/8728-four-tet-pause
 - https://bleep.com/release/9772-four-tet-rounds-special-anniversary-edition
 
-Deezer:
-
-https://deezer.com/us/artist/1744
-
 iHeart:
 
 https://iheart.com/artist/four-tet-12058/albums

@@ -16,14 +16,21 @@ type choice struct {
 }
 
 func main() {
-   var tweet choice
+   var (
+      tweet choice
+      verbose bool
+   )
    flag.IntVar(&tweet.itag, "f", 0, "format")
    flag.BoolVar(&tweet.info, "i", false, "info")
+   flag.BoolVar(&verbose, "v", false, "verbose")
    flag.Parse()
    if flag.NArg() != 1 {
       fmt.Println("twitter [flags] [ID]")
       flag.PrintDefaults()
       return
+   }
+   if verbose {
+      twitter.LogLevel = 1
    }
    id := flag.Arg(0)
    if err := tweet.choose(id); err != nil {
@@ -44,32 +51,28 @@ func (c choice) choose(id string) error {
    if err != nil {
       return err
    }
-   for _, med := range stat.Extended_Entities.Media {
-      for itag, variant := range med.Video_Info.Variants {
-         addr := variant.URL.String()
-         switch {
-         case c.info:
-            if variant.Content_Type == "video/mp4" {
-               fmt.Print("ID:", itag)
-               fmt.Print(" URL:", addr)
-               fmt.Println()
-            }
-         case c.itag == itag:
-            fmt.Println("GET", addr)
-            res, err := http.Get(addr)
-            if err != nil {
-               return err
-            }
-            defer res.Body.Close()
-            name := stat.User.Name + "-" + id + path.Ext(addr)
-            dst, err := os.Create(name)
-            if err != nil {
-               return err
-            }
-            defer dst.Close()
-            if _, err := dst.ReadFrom(res.Body); err != nil {
-               return err
-            }
+   for itag, vari := range stat.Variants() {
+      addr := vari.URL.String()
+      switch {
+      case c.info:
+         fmt.Print("ID:", itag)
+         fmt.Print(" URL:", addr)
+         fmt.Println()
+      case c.itag == itag:
+         fmt.Println("GET", addr)
+         res, err := http.Get(addr)
+         if err != nil {
+            return err
+         }
+         defer res.Body.Close()
+         name := stat.User.Name + "-" + id + path.Ext(addr)
+         dst, err := os.Create(name)
+         if err != nil {
+            return err
+         }
+         defer dst.Close()
+         if _, err := dst.ReadFrom(res.Body); err != nil {
+            return err
          }
       }
    }

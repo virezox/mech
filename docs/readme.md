@@ -14,8 +14,6 @@ Updated December 15 2021.
    - com.twitter.android
 - SoundCloud (332.603 M)
    - com.soundcloud.android
-- Deezer (311.529 M)
-   - deezer.android.app
 - Pandora (276.415 M)
    - com.pandora.android
 - Amazon Music (245.537 M)
@@ -30,6 +28,8 @@ Updated December 15 2021.
    - bbc.mobile.news.ww
 - TIDAL Music (23.447 M)
    - com.aspiro.tidal
+- Napster Music (21.278 M)
+   - com.rhapsody
 - The NBC App (13.396 M)
    - com.nbcuni.nbc
 - Bandcamp (2.539 M)

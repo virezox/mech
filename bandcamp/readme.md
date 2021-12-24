@@ -10,10 +10,6 @@ https://github.com/httptoolkit/frida-android-unpinning
 
 ## Harold Budd - By the Dawn's Early Light
 
-Pass:
-
-https://deezer.com/us/album/7232629
-
 Fail (RADIO):
 
 https://pandora.com/artist/harold-budd/by-the-dawns-early-light/ALtbd6VPbwKt5J4
@@ -28,10 +24,6 @@ https://haroldbudd.bandcamp.com/album/by-the-dawns-early-light
 
 ## Jessy Lanza - Pull My Hair Back
 
-Fail:
-
-https://deezer.com/us/artist/4837067
-
 Pass:
 
 https://pandora.com/artist/jessy-lanza/pull-my-hair-back/ALlfwpXzvcrVK59
@@ -45,10 +37,6 @@ Pass:
 https://jessylanza.bandcamp.com/album/pull-my-hair-back
 
 ## The Black Dog - Silenced
-
-Fail:
-
-https://deezer.com/us/artist/17197
 
 Fail (RADIO):
 
