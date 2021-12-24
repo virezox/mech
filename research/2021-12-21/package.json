@@ -1,9 +1,0 @@
-{
-  "dependencies": {
-    "form-urlencoded": "^6.0.5",
-    "random-mac": "^0.0.5",
-    "request": "^2.88.2",
-    "uuid-random": "^1.3.2",
-    "xor-crypt": "^1.1.1"
-  }
-}
