@@ -128,7 +128,8 @@ TikTok.prototype.registerDevice = async function() {
 			body: body,
 			json: true
 		};
-         console.log(options);
+         console.log(requestUrl.href);
+         console.log(headers);
          console.log(JSON.stringify(body));
 }
 
