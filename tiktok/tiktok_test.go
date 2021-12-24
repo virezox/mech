@@ -3,14 +3,23 @@ package tiktok
 import (
    "fmt"
    "testing"
+   "time"
 )
 
-const addr = "https://www.tiktok.com/@aamora_3mk/video/7028702876205632773"
+var ids = []uint64{
+   // tiktok.com/@aamora_3mk/video/7028702876205632773
+   7028702876205632773,
+   // tiktok.com/@elpanaarabe/video/7038818332270808325
+   7038818332270808325,
+}
 
-func TestData(t *testing.T) {
-   item, err := NewItemStruct(addr)
-   if err != nil {
-      t.Fatal(err)
+func TestDetail(t *testing.T) {
+   for _, id := range ids {
+      det, err := NewDetail(id)
+      if err != nil {
+         t.Fatal(err)
+      }
+      fmt.Printf("%+v\n", det)
+      time.Sleep(time.Second)
    }
-   fmt.Printf("%+v\n", item)
 }

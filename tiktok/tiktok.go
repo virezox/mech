@@ -3,67 +3,48 @@ package tiktok
 import (
    "encoding/json"
    "github.com/89z/mech"
-   "github.com/89z/parse/net"
    "net/http"
+   "strconv"
 )
 
-const (
-   agent = "Mozilla/5.0 (Windows)"
-   referer = "https://www.tiktok.com/"
-)
+const Origin = "https://api2.musical.ly"
 
 var LogLevel mech.LogLevel
 
-type nextData struct {
-   Props struct {
-      PageProps struct {
-         ItemInfo struct {
-            ItemStruct ItemStruct
+type Detail struct {
+   Aweme_Detail struct {
+      Author struct {
+         Unique_ID string
+      }
+      Aweme_ID string
+      Create_Time int
+      // height field here is invalid
+      Video struct {
+         Duration int
+         Play_Addr struct {
+            Width int
+            Height int
+            URL_List []string
          }
       }
    }
 }
 
-func NewItemStruct(addr string) (*ItemStruct, error) {
-   req, err := http.NewRequest("GET", addr, nil)
+func NewDetail(id uint64) (*Detail, error) {
+   req, err := http.NewRequest("GET", Origin + "/aweme/v1/aweme/detail/", nil)
    if err != nil {
       return nil, err
    }
-   req.Header.Set("User-Agent", agent)
+   req.URL.RawQuery = "aweme_id=" + strconv.FormatUint(id, 10)
    LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
-   for _, script := range net.ReadHTML(res.Body, "script") {
-      if script.Attr["id"] == "__NEXT_DATA__" {
-         var next nextData
-         err := json.Unmarshal(script.Data, &next)
-         if err != nil {
-            return nil, err
-         }
-         return &next.Props.PageProps.ItemInfo.ItemStruct, nil
-      }
-   }
-   return nil, mech.NotFound{"__NEXT_DATA__"}
-}
-
-type ItemStruct struct {
-   Author struct {
-      UniqueID string
-   }
-   ID string
-   Video struct {
-      PlayAddr string
-   }
-}
-
-func (i ItemStruct) Request() (*http.Request, error) {
-   req, err := http.NewRequest("GET", i.Video.PlayAddr, nil)
-   if err != nil {
+   det := new(Detail)
+   if err := json.NewDecoder(res.Body).Decode(det); err != nil {
       return nil, err
    }
-   req.Header.Set("Referer", referer)
-   return req, nil
+   return det, nil
 }

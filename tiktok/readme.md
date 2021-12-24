@@ -4,7 +4,10 @@
 com.zhiliaoapp.musically
 ~~~
 
-https://github.com/ytdl-org/youtube-dl/issues/30251
+- https://android.stackexchange.com/questions/194629/is-it-possible-to-install
+- https://github.com/TufayelLUS/TikTok-Video-Downloader-PHP/issues/28
+- https://github.com/mehmetbeyHZ/tiktokapi/blob/master/src/Constants.php
+- https://github.com/ytdl-org/youtube-dl/issues/30251
 
 ## Download
 
