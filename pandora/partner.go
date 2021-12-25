@@ -27,12 +27,12 @@ func Decrypt(src []byte) ([]byte, error) {
       return nil, mech.InvalidSlice{blowfish.BlockSize-1, sLen}
    }
    dst := make([]byte, sLen)
-   blow, err := blowfish.NewCipher(blowfishKey)
+   block, err := blowfish.NewCipher(blowfishKey)
    if err != nil {
       return nil, err
    }
    for low := 0; low < sLen; low += blowfish.BlockSize {
-      blow.Decrypt(dst[low:], src[low:])
+      block.Decrypt(dst[low:], src[low:])
    }
    return unpad(dst)
 }
@@ -40,12 +40,12 @@ func Decrypt(src []byte) ([]byte, error) {
 func Encrypt(src []byte) ([]byte, error) {
    src = pad(src)
    dst := make([]byte, len(src))
-   blow, err := blowfish.NewCipher(blowfishKey)
+   block, err := blowfish.NewCipher(blowfishKey)
    if err != nil {
       return nil, err
    }
-   for low := 0; low < len(src); low += blow.BlockSize() {
-      blow.Encrypt(dst[low:], src[low:])
+   for low := 0; low < len(src); low += blowfish.BlockSize {
+      block.Encrypt(dst[low:], src[low:])
    }
    return dst, nil
 }
