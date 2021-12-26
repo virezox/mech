@@ -1,7 +1,6 @@
 package main
 
 import (
-   "flag"
    "fmt"
    "github.com/89z/mech"
    "github.com/89z/mech/twitter"
@@ -10,55 +9,71 @@ import (
    "path"
 )
 
-type choice struct {
-   info bool
-   format int
+func spacePath(id string, info bool) error {
+   guest, err := twitter.NewGuest()
+   if err != nil {
+      return err
+   }
+   space, err := twitter.NewSpace(guest, id)
+   if err != nil {
+      return err
+   }
+   stream, err := space.Stream(guest)
+   if err != nil {
+      return err
+   }
+   if info {
+      fmt.Println("Admins:", space.Admins())
+      fmt.Println("Title:", space.Title())
+      fmt.Println("Duration:", space.Duration())
+      fmt.Println("Location:", stream.Source.Location)
+   } else {
+      srcs, err := stream.Chunks()
+      if err != nil {
+         return err
+      }
+      dst, err := os.Create(space.Admins() + "-" + space.Title() + ".aac")
+      if err != nil {
+         return err
+      }
+      defer dst.Close()
+      for key, src := range srcs {
+         addr := src["URI"]
+         fmt.Println(len(srcs)-key, "GET", addr)
+         res, err := http.Get(addr)
+         if err != nil {
+            return err
+         }
+         defer res.Body.Close()
+         if _, err := dst.ReadFrom(res.Body); err != nil {
+            return err
+         }
+      }
+   }
+   return nil
 }
 
-func main() {
-   var (
-      tweet choice
-      verbose bool
-   )
-   flag.IntVar(&tweet.format, "f", 0, "format")
-   flag.BoolVar(&tweet.info, "i", false, "info")
-   flag.BoolVar(&verbose, "v", false, "verbose")
-   flag.Parse()
-   if flag.NArg() != 1 {
-      fmt.Println("twitter [flags] [ID]")
-      flag.PrintDefaults()
-      return
-   }
-   if verbose {
-      twitter.LogLevel = 1
-   }
-   id := flag.Arg(0)
-   if err := tweet.choose(id); err != nil {
-      panic(err)
-   }
-}
-
-func (c choice) choose(id string) error {
+func statusPath(id string, info bool, format int) error {
    nID, err := mech.Parse(id)
    if err != nil {
       return err
    }
-   act, err := twitter.NewActivate()
+   guest, err := twitter.NewGuest()
    if err != nil {
       return err
    }
-   stat, err := act.Status(nID)
+   stat, err := twitter.NewStatus(guest, nID)
    if err != nil {
       return err
    }
-   for format, vari := range stat.Variants() {
-      addr := vari.URL.String()
+   for index, variant := range stat.Variants() {
+      addr := variant.URL.String()
       switch {
-      case c.info:
-         fmt.Print("ID:", format)
+      case info:
+         fmt.Print("ID:", index)
          fmt.Print(" URL:", addr)
          fmt.Println()
-      case c.format == format:
+      case format == index:
          fmt.Println("GET", addr)
          res, err := http.Get(addr)
          if err != nil {

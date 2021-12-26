@@ -4,6 +4,7 @@ import (
    "encoding/json"
    "github.com/89z/mech"
    "net/http"
+   "net/url"
    "strconv"
 )
 
@@ -89,7 +90,19 @@ func (s Status) Variants() []Variant {
    return varis
 }
 
+type URL string
+
+func (u URL) String() string {
+   str := string(u)
+   addr, err := url.Parse(str)
+   if err != nil {
+      return str
+   }
+   addr.RawQuery = ""
+   return addr.String()
+}
+
 type Variant struct {
    Content_Type string
-   URL string
+   URL URL
 }

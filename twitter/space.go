@@ -7,6 +7,7 @@ import (
    "net/url"
    "path"
    "strings"
+   "time"
 )
 
 const (
@@ -19,6 +20,14 @@ type Space struct {
       AudioSpace struct {
          Metadata struct {
             Media_Key string
+            Started_At int64
+            Ended_At int64 `json:"ended_at,string"`
+            Title string
+         }
+         Participants struct {
+            Admins []struct {
+               Display_Name string
+            }
          }
       }
    }
@@ -53,6 +62,22 @@ func NewSpace(guest *Guest, id string) (*Space, error) {
    return space, nil
 }
 
+func (s Space) Admins() string {
+   var admins strings.Builder
+   for i, admin := range s.Data.AudioSpace.Participants.Admins {
+      if i >= 1 {
+         admins.WriteByte(',')
+      }
+      admins.WriteString(admin.Display_Name)
+   }
+   return admins.String()
+}
+
+func (s Space) Duration() time.Duration {
+   meta := s.Data.AudioSpace.Metadata
+   return time.Duration(meta.Ended_At - meta.Started_At) * time.Millisecond
+}
+
 func (s Space) Stream(guest *Guest) (*Stream, error) {
    var addr strings.Builder
    addr.WriteString(iAPI)
@@ -77,6 +102,10 @@ func (s Space) Stream(guest *Guest) (*Stream, error) {
       return nil, err
    }
    return stream, nil
+}
+
+func (s Space) Title() string {
+   return s.Data.AudioSpace.Metadata.Title
 }
 
 type Stream struct {
