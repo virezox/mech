@@ -59,7 +59,7 @@ click `Network Settings`, `Save All As HAR`. Rename file to JSON.
 6. check JavaScript
 7. MITM Proxy APK for JSON requests
 8. APK tool
-9. AndroGuard
+9. JADX
 
 ## How to update topics?
 
