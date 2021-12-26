@@ -7,7 +7,7 @@ import (
    "strconv"
 )
 
-const root = "https://api.twitter.com/1.1"
+const API_1_1 = "https://api.twitter.com/1.1"
 
 const bearer =
    "AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs=" +
@@ -15,12 +15,12 @@ const bearer =
 
 var LogLevel mech.LogLevel
 
-type Activate struct {
+type Guest struct {
    Guest_Token string
 }
 
-func NewActivate() (*Activate, error) {
-   req, err := http.NewRequest("POST", root + "/guest/activate.json", nil)
+func NewGuest() (*Guest, error) {
+   req, err := http.NewRequest("POST", API_1_1 + "/guest/activate.json", nil)
    if err != nil {
       return nil, err
    }
@@ -31,15 +31,15 @@ func NewActivate() (*Activate, error) {
       return nil, err
    }
    defer res.Body.Close()
-   act := new(Activate)
-   if err := json.NewDecoder(res.Body).Decode(act); err != nil {
+   guest := new(Guest)
+   if err := json.NewDecoder(res.Body).Decode(guest); err != nil {
       return nil, err
    }
-   return act, nil
+   return guest, nil
 }
 
-func (a Activate) Status(id uint64) (*Status, error) {
-   buf := []byte(root)
+func (g Guest) Status(id uint64) (*Status, error) {
+   buf := []byte(API_1_1)
    buf = append(buf, "/statuses/show/"...)
    buf = strconv.AppendUint(buf, id, 10)
    buf = append(buf, ".json?tweet_mode=extended"...)
@@ -49,7 +49,7 @@ func (a Activate) Status(id uint64) (*Status, error) {
    }
    req.Header = http.Header{
       "Authorization": {"Bearer " + bearer},
-      "X-Guest-Token": {a.Guest_Token},
+      "X-Guest-Token": {g.Guest_Token},
    }
    LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
@@ -65,13 +65,7 @@ func (a Activate) Status(id uint64) (*Status, error) {
 }
 
 type Status struct {
-   Entities struct {
-      URLs []struct {
-         // https://twitter.com/i/spaces/1OdKrBnaEPXKX?s=20
-         Expanded_URL string
-      }
-   }
-   Extended_Entities *struct {
+   Extended_Entities struct {
       Media []struct {
          Video_Info struct {
             Variants []struct {
