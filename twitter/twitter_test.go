@@ -5,20 +5,35 @@ import (
    "testing"
 )
 
-const id = 1470124083547418624
+const (
+   spaceID = "1OdKrBnaEPXKX"
+   statusID = 1470124083547418624
+)
 
-func TestTwitter(t *testing.T) {
-   act, err := NewActivate()
+var guest = &Guest{"1475108770955022337"}
+
+func TestSpace(t *testing.T) {
+   space, err := NewSpace(guest, spaceID)
    if err != nil {
       t.Fatal(err)
    }
-   stat, err := act.Status(id)
+   stream, err := space.Stream(guest)
    if err != nil {
       t.Fatal(err)
    }
-   for _, med := range stat.Extended_Entities.Media {
-      for _, variant := range med.Video_Info.Variants {
-         fmt.Printf("%+v\n", variant)
-      }
+   chunks, err := stream.Chunks()
+   if err != nil {
+      t.Fatal(err)
    }
+   for _, chunk := range chunks {
+      fmt.Println(chunk)
+   }
+}
+
+func TestStatus(t *testing.T) {
+   stat, err := NewStatus(guest, statusID)
+   if err != nil {
+      t.Fatal(err)
+   }
+   fmt.Printf("%+v\n", stat)
 }
