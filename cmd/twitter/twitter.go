@@ -12,7 +12,7 @@ import (
 
 type choice struct {
    info bool
-   itag int
+   format int
 }
 
 func main() {
@@ -20,7 +20,7 @@ func main() {
       tweet choice
       verbose bool
    )
-   flag.IntVar(&tweet.itag, "f", 0, "format")
+   flag.IntVar(&tweet.format, "f", 0, "format")
    flag.BoolVar(&tweet.info, "i", false, "info")
    flag.BoolVar(&verbose, "v", false, "verbose")
    flag.Parse()
@@ -51,14 +51,14 @@ func (c choice) choose(id string) error {
    if err != nil {
       return err
    }
-   for itag, vari := range stat.Variants() {
+   for format, vari := range stat.Variants() {
       addr := vari.URL.String()
       switch {
       case c.info:
-         fmt.Print("ID:", itag)
+         fmt.Print("ID:", format)
          fmt.Print(" URL:", addr)
          fmt.Println()
-      case c.itag == itag:
+      case c.format == format:
          fmt.Println("GET", addr)
          res, err := http.Get(addr)
          if err != nil {

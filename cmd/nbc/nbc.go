@@ -13,16 +13,16 @@ import (
 
 type choice struct {
    info bool
-   itags map[string]bool
+   formats map[string]bool
 }
 
 func main() {
    cHLS := choice{
-      itags: make(map[string]bool),
+      formats: make(map[string]bool),
    }
    flag.BoolVar(&cHLS.info, "hi", false, "HLS info")
    flag.Func("h", "HLS IDs", func(id string) error {
-      cHLS.itags[id] = true
+      cHLS.formats[id] = true
       return nil
    })
    var verbose bool
@@ -74,7 +74,7 @@ func (c choice) HLS(guid uint64) error {
          fmt.Print(" CODECS:", form["CODECS"])
          fmt.Print(" RESOLUTION:", form["RESOLUTION"])
          fmt.Println()
-      case c.itags[strconv.Itoa(id)]:
+      case c.formats[strconv.Itoa(id)]:
          addr := form["URI"]
          fmt.Println("GET", addr)
          res, err := http.Get(addr)
