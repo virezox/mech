@@ -41,8 +41,7 @@ func (g Guest) Space(id string) (*Space, error) {
       "Authorization": {"Bearer " + bearer},
       "X-Guest-Token": {g.Guest_Token},
    }
-   sReq := spaceRequest{ID: id}
-   buf, err := json.Marshal(sReq)
+   buf, err := json.Marshal(spaceRequest{ID: id})
    if err != nil {
       return nil, err
    }
