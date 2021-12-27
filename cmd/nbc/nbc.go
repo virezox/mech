@@ -6,6 +6,7 @@ import (
    "github.com/89z/mech"
    "github.com/89z/mech/nbc"
    "net/http"
+   "net/url"
    "os"
    "strconv"
    "strings"
@@ -75,9 +76,9 @@ func (c choice) HLS(guid uint64) error {
          fmt.Print(" RESOLUTION:", form["RESOLUTION"])
          fmt.Println()
       case c.formats[strconv.Itoa(id)]:
-         addr := form["URI"]
-         fmt.Println("GET", addr)
-         res, err := http.Get(addr)
+         loc := form["URI"]
+         fmt.Println("GET", loc)
+         res, err := http.Get(loc)
          if err != nil {
             return err
          }
@@ -93,9 +94,12 @@ func (c choice) HLS(guid uint64) error {
          }
          defer dst.Close()
          for key, src := range srcs {
-            addr := src["URI"]
-            fmt.Println(len(srcs)-key, "GET", addr)
-            res, err := http.Get(addr)
+            loc, err := url.Parse(src["URI"])
+            if err != nil {
+               return err
+            }
+            fmt.Printf("%v/%v %v\n", key, len(srcs), loc.Path)
+            res, err := http.Get(loc.String())
             if err != nil {
                return err
             }

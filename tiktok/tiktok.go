@@ -4,6 +4,7 @@ import (
    "encoding/json"
    "github.com/89z/mech"
    "net/http"
+   "net/url"
    "strconv"
 )
 
@@ -53,9 +54,15 @@ func NewAwemeDetail(id uint64) (*AwemeDetail, error) {
 }
 
 func (a AwemeDetail) URL() (string, error) {
-   sLen := len(a.Video.Play_Addr.URL_List)
-   if sLen == 0 {
+   if len(a.Video.Play_Addr.URL_List) == 0 {
       return "", mech.InvalidSlice{}
    }
-   return a.Video.Play_Addr.URL_List[0], nil
+   first := a.Video.Play_Addr.URL_List[0]
+   loc, err := url.Parse(first)
+   if err != nil {
+      return "", err
+   }
+   loc.RawQuery = ""
+   loc.Scheme = "http"
+   return loc.String(), nil
 }

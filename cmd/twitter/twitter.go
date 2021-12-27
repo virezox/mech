@@ -5,6 +5,7 @@ import (
    "github.com/89z/mech"
    "github.com/89z/mech/twitter"
    "net/http"
+   "net/url"
    "os"
    "path"
 )
@@ -38,9 +39,12 @@ func spacePath(id string, info bool) error {
       }
       defer dst.Close()
       for key, src := range srcs {
-         addr := src["URI"]
-         fmt.Println(len(srcs)-key, "GET", addr)
-         res, err := http.Get(addr)
+         loc, err := url.Parse(src["URI"])
+         if err != nil {
+            return err
+         }
+         fmt.Printf("%v/%v %v\n", key, len(srcs), loc.Path)
+         res, err := http.Get(loc.String())
          if err != nil {
             return err
          }
@@ -67,20 +71,20 @@ func statusPath(id string, info bool, format int) error {
       return err
    }
    for index, variant := range stat.Variants() {
-      addr := variant.URL.String()
+      loc := variant.URL.String()
       switch {
       case info:
          fmt.Print("ID:", index)
-         fmt.Print(" URL:", addr)
+         fmt.Print(" URL:", loc)
          fmt.Println()
       case format == index:
-         fmt.Println("GET", addr)
-         res, err := http.Get(addr)
+         fmt.Println("GET", loc)
+         res, err := http.Get(loc)
          if err != nil {
             return err
          }
          defer res.Body.Close()
-         name := stat.User.Name + "-" + id + path.Ext(addr)
+         name := stat.User.Name + "-" + id + path.Ext(loc)
          dst, err := os.Create(name)
          if err != nil {
             return err

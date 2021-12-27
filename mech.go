@@ -39,19 +39,6 @@ func ExtensionByType(typ string) (string, error) {
    return "", NotFound{justType}
 }
 
-func NumberFormat(val float64, metric []string) string {
-   var key int
-   for val >= 1000 {
-      val /= 1000
-      key++
-   }
-   if key >= len(metric) {
-      return ""
-   }
-   // no space here, as some number are unitless
-   return strconv.FormatFloat(val, 'f', 3, 64) + metric[key]
-}
-
 // This should succeed if ID is passed, and fail is URL is passed.
 func Parse(id string) (uint64, error) {
    return strconv.ParseUint(id, 10, 64)
@@ -59,6 +46,14 @@ func Parse(id string) (uint64, error) {
 
 func Percent(pos, length int64) string {
    return strconv.FormatInt(100*pos/length, 10) + "%"
+}
+
+func Truncate(str string, length int) string {
+   sLen := len(str)
+   if sLen <= 99 {
+      return str
+   }
+   return "..." + str[sLen-99:]
 }
 
 type InvalidSlice struct {
@@ -108,36 +103,30 @@ func (n NotFound) Error() string {
    return strconv.Quote(n.Input) + " not found"
 }
 
-type Progress struct {
-   *http.Response
-   metric []string
-   x, xMax int
-   y int64
+type Notation []string
+
+func Compact() Notation {
+   return Notation{"", " K", " M", " B", " T"}
 }
 
-func NewProgress(res *http.Response) *Progress {
-   var pro Progress
-   pro.Response = res
-   pro.metric = []string{" B", " kB", " MB", " GB"}
-   pro.xMax = 10_000_000
-   return &pro
+func CompactSize() Notation {
+   return Notation{" B", " kB", " MB", " GB", " TB"}
 }
 
-func (p *Progress) Read(buf []byte) (int, error) {
-   if p.x == 0 {
-      bytes := NumberFormat(float64(p.y), p.metric)
-      fmt.Println(Percent(p.y, p.ContentLength), bytes)
+func CompactRate() Notation {
+   return Notation{" B/s", " kB/s", " MB/s", " GB/s", " TB/s"}
+}
+
+func (n Notation) Format(number float64) string {
+   var exp string
+   for _, exp = range n {
+      if number < 1000 {
+         break
+      }
+      number /= 1000
    }
-   num, err := p.Body.Read(buf)
-   if err != nil {
-      return 0, err
-   }
-   p.y += int64(num)
-   p.x += num
-   if p.x >= p.xMax {
-      p.x = 0
-   }
-   return num, nil
+   // no space here, as some number are unitless
+   return strconv.FormatFloat(number, 'f', 3, 64) + exp
 }
 
 type Response struct {
