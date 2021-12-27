@@ -20,7 +20,7 @@ func main() {
       return
    }
    id := flag.Arg(0)
-   awemeID, err := mech.Parse(id)
+   awemeID, err := tiktok.Parse(id)
    if err != nil {
       panic(err)
    }

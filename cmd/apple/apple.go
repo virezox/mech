@@ -51,7 +51,7 @@ func download(attr apple.Attributes) error {
       return err
    }
    defer file.Close()
-   pro := mech.NewProgress(res)
+   pro := apple.NewProgress(res)
    if _, err := file.ReadFrom(pro); err != nil {
       return err
    }

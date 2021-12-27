@@ -2,7 +2,6 @@ package main
 
 import (
    "fmt"
-   "github.com/89z/mech"
    "github.com/89z/mech/twitter"
    "net/http"
    "net/url"
@@ -58,7 +57,7 @@ func spacePath(id string, info bool) error {
 }
 
 func statusPath(id string, info bool, format int) error {
-   nID, err := mech.Parse(id)
+   nID, err := twitter.Parse(id)
    if err != nil {
       return err
    }

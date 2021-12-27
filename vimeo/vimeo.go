@@ -10,6 +10,10 @@ import (
 
 var LogLevel mech.LogLevel
 
+func Parse(id string) (uint64, error) {
+   return strconv.ParseUint(id, 10, 64)
+}
+
 type Config struct {
    Request struct {
       Files struct {

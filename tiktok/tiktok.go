@@ -12,6 +12,10 @@ const Origin = "http://api2.musical.ly"
 
 var LogLevel mech.LogLevel
 
+func Parse(id string) (uint64, error) {
+   return strconv.ParseUint(id, 10, 64)
+}
+
 type AwemeDetail struct {
    Author struct {
       Unique_ID string
@@ -42,7 +46,7 @@ func NewAwemeDetail(id uint64) (*AwemeDetail, error) {
    }
    defer res.Body.Close()
    if res.StatusCode != http.StatusOK {
-      return nil, mech.Response{res}
+      return nil, response{res}
    }
    var detail struct {
       Aweme_Detail AwemeDetail
@@ -65,4 +69,12 @@ func (a AwemeDetail) URL() (string, error) {
    loc.RawQuery = ""
    loc.Scheme = "http"
    return loc.String(), nil
+}
+
+type response struct {
+   *http.Response
+}
+
+func (r response) Error() string {
+   return r.Status
 }

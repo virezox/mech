@@ -113,7 +113,7 @@ func NewPartnerLogin() (*PartnerLogin, error) {
    }
    defer res.Body.Close()
    if res.StatusCode != http.StatusOK {
-      return nil, mech.Response{res}
+      return nil, response{res}
    }
    part := new(PartnerLogin)
    if err := json.NewDecoder(res.Body).Decode(part); err != nil {
@@ -157,6 +157,14 @@ func (p PartnerLogin) UserLogin(username, password string) (*UserLogin, error) {
       return nil, err
    }
    return user, nil
+}
+
+type response struct {
+   *http.Response
+}
+
+func (r response) Error() string {
+   return r.Status
 }
 
 type userLoginRequest struct {

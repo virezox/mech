@@ -39,15 +39,6 @@ func ExtensionByType(typ string) (string, error) {
    return "", NotFound{justType}
 }
 
-// This should succeed if ID is passed, and fail is URL is passed.
-func Parse(id string) (uint64, error) {
-   return strconv.ParseUint(id, 10, 64)
-}
-
-func Percent(pos, length int64) string {
-   return strconv.FormatInt(100*pos/length, 10) + "%"
-}
-
 func Truncate(str string, length int) string {
    sLen := len(str)
    if sLen <= 99 {
@@ -103,40 +94,6 @@ func (n NotFound) Error() string {
    return strconv.Quote(n.Input) + " not found"
 }
 
-type Notation []string
-
-func Compact() Notation {
-   return Notation{"", " K", " M", " B", " T"}
-}
-
-func CompactSize() Notation {
-   return Notation{" B", " kB", " MB", " GB", " TB"}
-}
-
-func CompactRate() Notation {
-   return Notation{" B/s", " kB/s", " MB/s", " GB/s", " TB/s"}
-}
-
-func (n Notation) Format(number float64) string {
-   var exp string
-   for _, exp = range n {
-      if number < 1000 {
-         break
-      }
-      number /= 1000
-   }
-   // no space here, as some number are unitless
-   return strconv.FormatFloat(number, 'f', 3, 64) + exp
-}
-
-type Response struct {
-   *http.Response
-}
-
-func (r Response) Error() string {
-   return r.Status
-}
-
 type Values map[string]string
 
 func (v Values) Encode() string {
@@ -158,4 +115,31 @@ func (v Values) Header() http.Header {
 func (v Values) Reader() io.Reader {
    enc := v.Encode()
    return strings.NewReader(enc)
+}
+
+func formatFloat(number float64, notation []string) string {
+   var exp string
+   for _, exp = range notation {
+      if number < 1000 {
+         break
+      }
+      number /= 1000
+   }
+   // no space here, as some number are unitless
+   return strconv.FormatFloat(number, 'f', 3, 64) + exp
+}
+
+func Format(number float64) string {
+   notation := []string{"", " K", " M", " B", " T"}
+   return formatFloat(number, notation)
+}
+
+func FormatSize(number float64) string {
+   notation := []string{" B", " kB", " MB", " GB", " TB"}
+   return formatFloat(number, notation)
+}
+
+func FormatRate(number float64) string {
+   notation := []string{" B/s", " kB/s", " MB/s", " GB/s", " TB/s"}
+   return formatFloat(number, notation)
 }

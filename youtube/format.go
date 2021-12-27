@@ -12,16 +12,6 @@ import (
 
 const chunk = 10_000_000
 
-func bitrate(pos int64, begin time.Time) string {
-   end := time.Since(begin).Seconds()
-   if end < 1 {
-      return ""
-   }
-   rate := float64(pos) / end
-   metric := []string{" B/s", " kB/s", " MB/s", " GB/s"}
-   return mech.NumberFormat(rate, metric)
-}
-
 type Format struct {
    Bitrate int64
    ContentLength int64 `json:"contentLength,string"`
@@ -61,8 +51,13 @@ func (f Format) Write(w io.Writer) error {
    for pos < f.ContentLength {
       bytes := fmt.Sprintf("bytes=%d-%d", pos, pos+chunk-1)
       req.Header.Set("Range", bytes)
-      percent := mech.Percent(pos, f.ContentLength)
-      fmt.Println(percent, bytes, bitrate(pos, begin))
+      percent := strconv.FormatInt(100*pos/f.ContentLength, 10) + "%"
+      var bitrate string
+      end := time.Since(begin).Seconds()
+      if end > 0 {
+         bitrate = mech.FormatRate(float64(pos)/end)
+      }
+      fmt.Println(percent, bytes, bitrate)
       // this sometimes redirects, so cannot use http.Transport
       res, err := new(http.Client).Do(req)
       if err != nil {

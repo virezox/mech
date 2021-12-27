@@ -26,6 +26,11 @@ var (
    secretKey = []byte("2b84a073ede61c766e4c0b3f1e656f7f")
 )
 
+// nbc.com/saturday-night-live/video/october-2-owen-wilson/9000199358
+func Parse(id string) (uint64, error) {
+   return strconv.ParseUint(id, 10, 64)
+}
+
 func generateHash(text string, key []byte) string {
    mac := hmac.New(sha256.New, key)
    io.WriteString(mac, text)

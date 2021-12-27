@@ -35,7 +35,7 @@ func main() {
       return
    }
    guid := flag.Arg(0)
-   nGUID, err := mech.Parse(guid)
+   nGUID, err := nbc.Parse(guid)
    if err != nil {
       panic(err)
    }

@@ -106,7 +106,7 @@ func (l Login) GraphQL(shortcode string) (*Media, error) {
    }
    defer res.Body.Close()
    if res.StatusCode != http.StatusOK {
-      return nil, mech.Response{res}
+      return nil, response{res}
    }
    var car struct {
       GraphQL Media
@@ -142,4 +142,12 @@ func (m Media) Edges() []Edge {
       return nil
    }
    return m.Shortcode_Media.Edge_Sidecar_To_Children.Edges
+}
+
+type response struct {
+   *http.Response
+}
+
+func (r response) Error() string {
+   return r.Status
 }
