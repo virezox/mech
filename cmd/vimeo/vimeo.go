@@ -13,16 +13,20 @@ import (
 
 func main() {
    var (
-      height int
-      info bool
+      format int
+      info, verbose bool
    )
+   flag.IntVar(&format, "f", 720, "format")
    flag.BoolVar(&info, "i", false, "info only")
-   flag.IntVar(&height, "h", 720, "height")
+   flag.BoolVar(&verbose, "v", false, "verbose")
    flag.Parse()
-   if len(os.Args) == 1 {
+   if flag.NArg() != 1 {
       fmt.Println("vimeo [flags] [video ID]")
       flag.PrintDefaults()
       return
+   }
+   if verbose {
+      vimeo.LogLevel = 1
    }
    id := flag.Arg(0)
    videoID, err := vimeo.Parse(id)
@@ -33,15 +37,16 @@ func main() {
    if err != nil {
       panic(err)
    }
-   // info
    if info {
-      fmt.Printf("%+v\n", con)
-      return
+      fmt.Println("Owner:", con.Video.Owner.Name)
+      fmt.Println("Title:", con.Video.Title)
+      fmt.Println("Duration:", con.Video.Duration)
    }
-   // download
-   for _, f := range con.Request.Files.Progressive {
-      if f.Height == height {
-         err := download(con, f.URL)
+   for _, file := range con.Request.Files.Progressive {
+      if info {
+         fmt.Printf("%+v\n", file)
+      } else if file.Height == format {
+         err := download(con, file.URL)
          if err != nil {
             panic(err)
          }
