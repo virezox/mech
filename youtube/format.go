@@ -49,15 +49,15 @@ func (f Format) Write(w io.Writer) error {
    begin := time.Now()
    var pos int64
    for pos < f.ContentLength {
+      percent := strconv.FormatInt(100*pos/f.ContentLength, 10) + "% "
       bytes := fmt.Sprintf("bytes=%d-%d", pos, pos+chunk-1)
       req.Header.Set("Range", bytes)
-      percent := strconv.FormatInt(100*pos/f.ContentLength, 10) + "%"
-      var bitrate string
-      end := time.Since(begin).Seconds()
-      if end > 0 {
-         bitrate = mech.FormatRate(float64(pos)/end)
+      fmt.Print(percent, bytes)
+      if end := time.Since(begin).Milliseconds(); end > 0 {
+         f, symbol := mech.FormatRate(1000 * pos / end)
+         fmt.Printf(" %.3f%v", f, symbol)
       }
-      fmt.Println(percent, bytes, bitrate)
+      fmt.Println()
       // this sometimes redirects, so cannot use http.Transport
       res, err := new(http.Client).Do(req)
       if err != nil {

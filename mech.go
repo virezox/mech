@@ -117,29 +117,29 @@ func (v Values) Reader() io.Reader {
    return strings.NewReader(enc)
 }
 
-func formatFloat(number float64, notation []string) string {
-   var exp string
-   for _, exp = range notation {
-      if number < 1000 {
+func formatInt(i int64, symbols []string) (float64, string) {
+   f := float64(i)
+   var symbol string
+   for _, symbol = range symbols {
+      if f < 1000 {
          break
       }
-      number /= 1000
+      f /= 1000
    }
-   // no space here, as some number are unitless
-   return strconv.FormatFloat(number, 'f', 3, 64) + exp
+   return f, symbol
 }
 
-func Format(number float64) string {
-   notation := []string{"", " K", " M", " B", " T"}
-   return formatFloat(number, notation)
+func Format(i int64) (float64, string) {
+   symbols := []string{"", " K", " M", " B", " T"}
+   return formatInt(i, symbols)
 }
 
-func FormatSize(number float64) string {
-   notation := []string{" B", " kB", " MB", " GB", " TB"}
-   return formatFloat(number, notation)
+func FormatSize(i int64) (float64, string) {
+   symbols := []string{" B", " kB", " MB", " GB", " TB"}
+   return formatInt(i, symbols)
 }
 
-func FormatRate(number float64) string {
-   notation := []string{" B/s", " kB/s", " MB/s", " GB/s", " TB/s"}
-   return formatFloat(number, notation)
+func FormatRate(i int64) (float64, string) {
+   symbols := []string{" B/s", " kB/s", " MB/s", " GB/s", " TB/s"}
+   return formatInt(i, symbols)
 }
