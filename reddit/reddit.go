@@ -4,7 +4,7 @@ import (
    "encoding/json"
    "encoding/xml"
    "github.com/89z/mech"
-   "github.com/89z/parse/m3u"
+   "github.com/89z/std/m3u"
    "html"
    "net/http"
    "path"

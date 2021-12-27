@@ -36,8 +36,8 @@ func NewProgress(res *http.Response) *Progress {
    pro.Response = res
    pro.callback = func(num, den int64) {
       percent := strconv.FormatInt(100*num/den, 10) + "%"
-      f, symbol := mech.FormatSize(num)
-      fmt.Printf("%v %.3f%v\n", percent, f, symbol)
+      size := mech.FormatSize().FormatInt(num)
+      fmt.Println(percent, size)
    }
    return &pro
 }

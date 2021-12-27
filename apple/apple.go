@@ -3,7 +3,7 @@ package apple
 import (
    "encoding/json"
    "github.com/89z/mech"
-   "github.com/89z/parse/net"
+   "github.com/89z/std/net"
    "net/http"
    "net/url"
    "strconv"

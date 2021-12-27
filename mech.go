@@ -116,30 +116,3 @@ func (v Values) Reader() io.Reader {
    enc := v.Encode()
    return strings.NewReader(enc)
 }
-
-func formatInt(i int64, symbols []string) (float64, string) {
-   f := float64(i)
-   var symbol string
-   for _, symbol = range symbols {
-      if f < 1000 {
-         break
-      }
-      f /= 1000
-   }
-   return f, symbol
-}
-
-func Format(i int64) (float64, string) {
-   symbols := []string{"", " K", " M", " B", " T"}
-   return formatInt(i, symbols)
-}
-
-func FormatSize(i int64) (float64, string) {
-   symbols := []string{" B", " kB", " MB", " GB", " TB"}
-   return formatInt(i, symbols)
-}
-
-func FormatRate(i int64) (float64, string) {
-   symbols := []string{" B/s", " kB/s", " MB/s", " GB/s", " TB/s"}
-   return formatInt(i, symbols)
-}

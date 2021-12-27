@@ -54,8 +54,8 @@ func (f Format) Write(w io.Writer) error {
       req.Header.Set("Range", bytes)
       fmt.Print(percent, bytes)
       if end := time.Since(begin).Milliseconds(); end > 0 {
-         f, symbol := mech.FormatRate(1000 * pos / end)
-         fmt.Printf(" %.3f%v", f, symbol)
+         rate := mech.FormatRate().FormatInt(1000 * pos / end)
+         fmt.Print(" ", rate)
       }
       fmt.Println()
       // this sometimes redirects, so cannot use http.Transport

@@ -3,7 +3,7 @@ package bandcamp
 import (
    "encoding/json"
    "github.com/89z/mech"
-   "github.com/89z/parse/net"
+   "github.com/89z/std/net"
    "html"
    "net/http"
    "strconv"

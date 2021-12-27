@@ -7,7 +7,7 @@ import (
    "encoding/hex"
    "encoding/json"
    "github.com/89z/mech"
-   "github.com/89z/parse/m3u"
+   "github.com/89z/std/m3u"
    "io"
    "net/http"
    "strconv"
