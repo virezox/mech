@@ -2,7 +2,7 @@ package youtube
 
 import (
    "encoding/base64"
-   "github.com/89z/parse/protobuf"
+   "github.com/89z/std/protobuf"
 )
 
 const (

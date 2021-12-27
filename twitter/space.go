@@ -2,7 +2,7 @@ package twitter
 
 import (
    "encoding/json"
-   "github.com/89z/parse/m3u"
+   "github.com/89z/std/m3u"
    "net/http"
    "net/url"
    "path"
