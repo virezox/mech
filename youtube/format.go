@@ -49,9 +49,9 @@ func (f Format) Write(w io.Writer) error {
    begin := time.Now()
    var pos int64
    for pos < f.ContentLength {
-      percent := strconv.FormatInt(100*pos/f.ContentLength, 10) + "%"
       bytes := fmt.Sprintf("bytes=%d-%d", pos, pos+chunk-1)
       req.Header.Set("Range", bytes)
+      percent := measure.Percent(pos, f.ContentLength)
       fmt.Print(" ", percent, bytes)
       if end := time.Since(begin).Milliseconds(); end > 0 {
          rate := measure.Rate.FormatInt(1000 * pos / end)
