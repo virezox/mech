@@ -2,7 +2,7 @@ package apple
 
 import (
    "fmt"
-   "github.com/89z/format/measure"
+   "github.com/89z/format"
    "net/http"
 )
 
@@ -34,8 +34,8 @@ func NewProgress(res *http.Response) *Progress {
    var pro Progress
    pro.Response = res
    pro.callback = func(num, den int64) {
-      percent := measure.Percent(num, den)
-      size := measure.Size.FormatInt(num)
+      percent := format.Percent(num, den)
+      size := format.Size.LabelInt(num)
       fmt.Println(percent, size)
    }
    return &pro

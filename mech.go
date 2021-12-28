@@ -39,14 +39,6 @@ func ExtensionByType(typ string) (string, error) {
    return "", NotFound{justType}
 }
 
-func Truncate(str string, length int) string {
-   sLen := len(str)
-   if sLen <= 99 {
-      return str
-   }
-   return "..." + str[sLen-99:]
-}
-
 type InvalidSlice struct {
    Index, Length int
 }

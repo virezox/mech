@@ -11,13 +11,17 @@ import (
 )
 
 func main() {
-   var info bool
+   var info, verbose bool
    flag.BoolVar(&info, "i", false, "info only")
+   flag.BoolVar(&verbose, "v", false, "verbose")
    flag.Parse()
    if flag.NArg() != 1 {
       fmt.Println("tiktok [flags] [aweme ID]")
       flag.PrintDefaults()
       return
+   }
+   if verbose {
+      tiktok.LogLevel = 1
    }
    id := flag.Arg(0)
    awemeID, err := tiktok.Parse(id)
@@ -29,7 +33,15 @@ func main() {
       panic(err)
    }
    if info {
-      fmt.Printf("%+v\n", det)
+      fmt.Println("Author:", det.Author.Unique_ID)
+      fmt.Println("Create_Time:", det.Time())
+      fmt.Println("Duration:", det.Duration())
+      fmt.Println("Width:", det.Video.Play_Addr.Width)
+      fmt.Println("Height:", det.Video.Play_Addr.Height)
+      fmt.Println("URL_List:")
+      for _, loc := range det.Video.Play_Addr.URL_List {
+         fmt.Println("-", loc)
+      }
    } else {
       err := get(det)
       if err != nil {

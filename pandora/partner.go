@@ -5,7 +5,7 @@ import (
    "encoding/hex"
    "encoding/json"
    "github.com/89z/mech"
-   "golang.org/x/crypto/blowfish"
+   "golang.org/x/crypto/blowfish" //lint:ignore SA1019 reason
    "net/http"
    "strings"
 )

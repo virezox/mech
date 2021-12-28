@@ -6,6 +6,7 @@ import (
    "net/http"
    "net/url"
    "strconv"
+   "time"
 )
 
 const Origin = "http://api2.musical.ly"
@@ -21,10 +22,10 @@ type AwemeDetail struct {
       Unique_ID string
    }
    Aweme_ID string
-   Create_Time int
+   Create_Time int64
    // height field here is invalid
    Video struct {
-      Duration int
+      Duration int64
       Play_Addr struct {
          Width int
          Height int
@@ -55,6 +56,14 @@ func NewAwemeDetail(id uint64) (*AwemeDetail, error) {
       return nil, err
    }
    return &detail.Aweme_Detail, nil
+}
+
+func (a AwemeDetail) Duration() time.Duration {
+   return time.Duration(a.Video.Duration) * time.Millisecond
+}
+
+func (a AwemeDetail) Time() time.Time {
+   return time.Unix(a.Create_Time, 0)
 }
 
 func (a AwemeDetail) URL() (string, error) {
