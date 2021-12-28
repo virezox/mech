@@ -12,11 +12,11 @@ func TestConfig(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   dash, err := con.DASH()
+   vids, err := con.Videos()
    if err != nil {
       t.Fatal(err)
    }
-   for _, vid := range dash.Video {
-      fmt.Printf("%+v\n", vid)
+   for _, vid := range vids {
+      fmt.Println(vid.URL())
    }
 }

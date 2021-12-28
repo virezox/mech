@@ -6,13 +6,13 @@ import (
    "strconv"
 )
 
-type Video struct {
+type Embed struct {
    Title string
    Upload_Date string
    Thumbnail_URL string
 }
 
-func NewVideo(id uint64) (*Video, error) {
+func NewEmbed(id uint64) (*Embed, error) {
    req, err := http.NewRequest("GET", "https://vimeo.com/api/oembed.json", nil)
    if err != nil {
       return nil, err
@@ -24,7 +24,7 @@ func NewVideo(id uint64) (*Video, error) {
       return nil, err
    }
    defer res.Body.Close()
-   vid := new(Video)
+   vid := new(Embed)
    if err := json.NewDecoder(res.Body).Decode(vid); err != nil {
       return nil, err
    }

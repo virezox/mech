@@ -6,9 +6,9 @@ import (
 )
 
 func TestVideo(t *testing.T) {
-   vid, err := NewVideo(id)
+   emb, err := NewEmbed(id)
    if err != nil {
       t.Fatal(err)
    }
-   fmt.Printf("%+v\n", vid)
+   fmt.Printf("%+v\n", emb)
 }

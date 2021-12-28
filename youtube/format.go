@@ -2,7 +2,7 @@ package youtube
 
 import (
    "fmt"
-   "github.com/89z/mech"
+   "github.com/89z/format/measure"
    "io"
    "mime"
    "net/http"
@@ -49,12 +49,12 @@ func (f Format) Write(w io.Writer) error {
    begin := time.Now()
    var pos int64
    for pos < f.ContentLength {
-      percent := strconv.FormatInt(100*pos/f.ContentLength, 10) + "% "
+      percent := strconv.FormatInt(100*pos/f.ContentLength, 10) + "%"
       bytes := fmt.Sprintf("bytes=%d-%d", pos, pos+chunk-1)
       req.Header.Set("Range", bytes)
-      fmt.Print(percent, bytes)
+      fmt.Print(" ", percent, bytes)
       if end := time.Since(begin).Milliseconds(); end > 0 {
-         rate := mech.FormatRate().FormatInt(1000 * pos / end)
+         rate := measure.Rate.FormatInt(1000 * pos / end)
          fmt.Print(" ", rate)
       }
       fmt.Println()

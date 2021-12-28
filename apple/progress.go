@@ -2,9 +2,8 @@ package apple
 
 import (
    "fmt"
-   "github.com/89z/mech"
+   "github.com/89z/format/measure"
    "net/http"
-   "strconv"
 )
 
 type Progress struct {
@@ -35,8 +34,8 @@ func NewProgress(res *http.Response) *Progress {
    var pro Progress
    pro.Response = res
    pro.callback = func(num, den int64) {
-      percent := strconv.FormatInt(100*num/den, 10) + "%"
-      size := mech.FormatSize().FormatInt(num)
+      percent := measure.Percent(num, den)
+      size := measure.Size.FormatInt(num)
       fmt.Println(percent, size)
    }
    return &pro

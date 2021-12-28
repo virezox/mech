@@ -13,10 +13,10 @@ import (
 
 func main() {
    var (
-      format int
+      format string
       info, verbose bool
    )
-   flag.IntVar(&format, "f", 720, "format")
+   flag.StringVar(&format, "f", "", "format")
    flag.BoolVar(&info, "i", false, "info only")
    flag.BoolVar(&verbose, "v", false, "verbose")
    flag.Parse()
@@ -37,16 +37,23 @@ func main() {
    if err != nil {
       panic(err)
    }
+   vids, err := con.Videos()
+   if err != nil {
+      panic(err)
+   }
    if info {
       fmt.Println("Owner:", con.Video.Owner.Name)
       fmt.Println("Title:", con.Video.Title)
       fmt.Println("Duration:", con.Video.Duration)
    }
-   for _, file := range con.Request.Files.Progressive {
+   for _, vid := range vids {
       if info {
-         fmt.Printf("%+v\n", file)
-      } else if file.Height == format {
-         err := download(con, file.URL)
+         fmt.Print("ID:", vid.ID)
+         fmt.Print(" Width:", vid.Width)
+         fmt.Print(" Height:", vid.Height)
+         fmt.Println()
+      } else if vid.ID == format {
+         err := download(con, vid.URL())
          if err != nil {
             panic(err)
          }
@@ -54,14 +61,14 @@ func main() {
    }
 }
 
-func download(con *vimeo.Config, addr string) error {
-   fmt.Println("GET", addr)
-   res, err := http.Get(addr)
+func download(con *vimeo.Config, loc string) error {
+   fmt.Println("GET", loc)
+   res, err := http.Get(loc)
    if err != nil {
       return err
    }
    defer res.Body.Close()
-   name := con.Video.Owner.Name + "-" + con.Video.Title + path.Ext(addr)
+   name := con.Video.Owner.Name + "-" + con.Video.Title + path.Ext(loc)
    file, err := os.Create(strings.Map(mech.Clean, name))
    if err != nil {
       return err
