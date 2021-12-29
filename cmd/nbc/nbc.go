@@ -3,10 +3,10 @@ package main
 import (
    "flag"
    "fmt"
+   "github.com/89z/format"
    "github.com/89z/mech"
    "github.com/89z/mech/nbc"
    "net/http"
-   "net/url"
    "os"
    "strconv"
    "strings"
@@ -21,8 +21,8 @@ func main() {
    cHLS := choice{
       formats: make(map[string]bool),
    }
-   flag.BoolVar(&cHLS.info, "hi", false, "HLS info")
-   flag.Func("h", "HLS IDs", func(id string) error {
+   flag.BoolVar(&cHLS.info, "i", false, "info")
+   flag.Func("f", "formats", func(id string) error {
       cHLS.formats[id] = true
       return nil
    })
@@ -93,13 +93,11 @@ func (c choice) HLS(guid uint64) error {
             return err
          }
          defer dst.Close()
-         for key, src := range srcs {
-            loc, err := url.Parse(src["URI"])
-            if err != nil {
-               return err
-            }
-            fmt.Printf("%v/%v %v\n", key, len(srcs), loc.Path)
-            res, err := http.Get(loc.String())
+         total := len(srcs)
+         for value, src := range srcs {
+            loc := src["URI"]
+            fmt.Println(format.PercentInt(value, total), format.Trim(loc))
+            res, err := http.Get(loc)
             if err != nil {
                return err
             }

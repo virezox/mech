@@ -34,7 +34,7 @@ func NewProgress(res *http.Response) *Progress {
    var pro Progress
    pro.Response = res
    pro.callback = func(num, den int64) {
-      percent := format.Percent(num, den)
+      percent := format.PercentInt64(num, den)
       size := format.Size.LabelInt(num)
       fmt.Println(percent, size)
    }
