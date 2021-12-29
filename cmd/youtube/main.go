@@ -4,43 +4,49 @@ import (
    "flag"
    "fmt"
    "github.com/89z/mech/youtube"
-   "os"
 )
 
 func main() {
-   var construct, embed, exchange, info, refresh, verbose bool
-   down := make(choice)
+   var construct bool
    flag.BoolVar(&construct, "c", false, "OAuth construct request")
+   var embed bool
    flag.BoolVar(&embed, "e", false, "use embedded player")
-   flag.Func("f", "formats", func(format string) error {
-      down[format] = true
+   var refresh bool
+   flag.BoolVar(&refresh, "r", false, "OAuth token refresh")
+   var verbose bool
+   flag.BoolVar(&verbose, "v", false, "verbose")
+   var exchange bool
+   flag.BoolVar(&exchange, "x", false, "OAuth token exchange")
+   // choice
+   var choose choice
+   flag.BoolVar(&choose.info, "i", false, "video information")
+   flag.BoolVar(
+      &choose.useFormats,
+      "formats",
+      false,
+      "use formats instead of adaptiveFormats",
+   )
+   choose.itags = make(map[string]bool)
+   flag.Func("f", "formats", func(itag string) error {
+      choose.itags[itag] = true
       return nil
    })
-   flag.BoolVar(&info, "i", false, "info")
-   flag.BoolVar(&refresh, "r", false, "OAuth token refresh")
-   flag.BoolVar(&verbose, "v", false, "verbose")
-   flag.BoolVar(&exchange, "x", false, "OAuth token exchange")
+   // Parse
    flag.Parse()
-   if len(os.Args) == 1 {
-      fmt.Println("youtube [flags] [video ID]")
-      flag.PrintDefaults()
-      return
-   }
    if verbose {
       youtube.LogLevel = 1
    }
-   switch {
-   case exchange:
+   if exchange {
       err := authExchange()
       if err != nil {
          panic(err)
       }
-   case refresh:
+   } else if refresh {
       err := authRefresh()
       if err != nil {
          panic(err)
       }
-   default:
+   } else if flag.NArg() == 1 {
       id := flag.Arg(0)
       auth := youtube.Key
       if construct {
@@ -59,19 +65,19 @@ func main() {
       if err != nil {
          panic(err)
       }
-      if len(play.StreamingData.AdaptiveFormats) == 0 {
-         panic(play.PlayabilityStatus)
-      }
-      if info {
-         err := infoPath(play, id)
+      if choose.useFormats {
+         err := choose.formats(play, id)
          if err != nil {
             panic(err)
          }
       } else {
-         err := down.download(play, id)
+         err := choose.adaptiveFormats(play, id)
          if err != nil {
             panic(err)
          }
       }
+   } else {
+      fmt.Println("youtube [flags] [video ID]")
+      flag.PrintDefaults()
    }
 }

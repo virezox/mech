@@ -3,6 +3,7 @@ package mech
 import (
    "bytes"
    "fmt"
+   "github.com/89z/format"
    "io"
    "mime"
    "net/http"
@@ -11,6 +12,7 @@ import (
    "os"
    "strconv"
    "strings"
+   "time"
 )
 
 func Clean(char rune) rune {
@@ -107,4 +109,44 @@ func (v Values) Header() http.Header {
 func (v Values) Reader() io.Reader {
    enc := v.Encode()
    return strings.NewReader(enc)
+}
+
+type Progress struct {
+   *http.Response
+   begin time.Time
+   document int64
+   part int
+}
+
+// Read method has pointer receiver
+func NewProgress(res *http.Response) *Progress {
+   pro := Progress{Response: res}
+   pro.begin = time.Now()
+   return &pro
+}
+
+func (p *Progress) Read(buf []byte) (int, error) {
+   if p.part == 0 {
+      p.meter()
+   }
+   read, err := p.Body.Read(buf)
+   if err != nil {
+      return 0, err
+   }
+   p.document += int64(read)
+   p.part += read
+   if p.part >= 10_000_000 {
+      p.part = 0
+   }
+   return read, nil
+}
+
+func (p Progress) meter() {
+   end := time.Since(p.begin).Milliseconds()
+   if end > 0 {
+      meter := format.PercentInt64(p.document, p.ContentLength)
+      meter += "\t" + format.Size.LabelInt(p.document)
+      meter += "\t" + format.Rate.LabelInt(1000 * p.document / end)
+      fmt.Println(meter)
+   }
 }

@@ -7,7 +7,6 @@ import (
    "mime"
    "net/http"
    "strconv"
-   "strings"
    "time"
 )
 
@@ -46,10 +45,11 @@ func (f Format) Write(dst io.Writer) error {
       return err
    }
    LogLevel.Dump(req)
-   par := newPartial(f.ContentLength)
-   for par.value < par.total {
-      fmt.Println(par.progress())
-      req.Header.Set("Range", par.bytes)
+   pro := newProgress(f.ContentLength)
+   for pro.value < pro.total {
+      pro.setBytes()
+      pro.meter()
+      req.Header.Set("Range", pro.bytes)
       // this sometimes redirects, so cannot use http.Transport
       res, err := new(http.Client).Do(req)
       if err != nil {
@@ -59,39 +59,37 @@ func (f Format) Write(dst io.Writer) error {
       if _, err := io.Copy(dst, res.Body); err != nil {
          return err
       }
-      par.value += par.chunk
+      pro.value += pro.chunk
    }
    return nil
 }
 
-type partial struct {
+type progress struct {
    begin time.Time
    bytes string
    value, chunk, total int64
 }
 
-func newPartial(total int64) partial {
-   par := partial{chunk: 10_000_000, total: total}
-   par.begin = time.Now()
-   return par
+func newProgress(total int64) progress {
+   pro := progress{chunk: 10_000_000, total: total}
+   pro.begin = time.Now()
+   return pro
 }
 
-func (p *partial) progress() string {
-   var str strings.Builder
-   percent := format.PercentInt64(p.value, p.total)
-   str.WriteString(percent)
-   str.WriteByte(' ')
+func (p progress) meter() {
+   end := time.Since(p.begin).Milliseconds()
+   if end > 0 {
+      meter := format.PercentInt64(p.value, p.total)
+      meter += "\t" + p.bytes
+      meter += "\t" + format.Rate.LabelInt(1000 * p.value / end)
+      fmt.Println(meter)
+   }
+}
+
+func (p *progress) setBytes() {
    buf := []byte("bytes=")
    buf = strconv.AppendInt(buf, p.value, 10)
    buf = append(buf, '-')
    buf = strconv.AppendInt(buf, p.value+p.chunk-1, 10)
    p.bytes = string(buf)
-   str.Write(buf)
-   end := time.Since(p.begin).Milliseconds()
-   if end > 0 {
-      rate := format.Rate.LabelInt(1000 * p.value / end)
-      str.WriteByte(' ')
-      str.WriteString(rate)
-   }
-   return str.String()
 }

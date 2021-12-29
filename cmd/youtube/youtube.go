@@ -3,11 +3,80 @@ package main
 import (
    "encoding/json"
    "fmt"
+   "github.com/89z/format"
    "github.com/89z/mech"
    "github.com/89z/mech/youtube"
+   "net/http"
    "os"
    "strings"
 )
+
+type choice struct {
+   itags map[string]bool
+   info bool
+   useFormats bool
+}
+
+// Videos can support both AdaptiveFormats and DASH: zgJT91LA9gA
+func (c choice) adaptiveFormats(play *youtube.Player, id string) error {
+   if len(c.itags) == 0 {
+      c.itags = map[string]bool{
+         "247": true, // youtube.com/watch?v=Leq8J0E2TQ0
+         "251": true,
+         "302": true, // youtube.com/watch?v=kVNl1P9StSU
+      }
+   }
+   for _, form := range play.StreamingData.AdaptiveFormats {
+      if c.info {
+         fmt.Println(form)
+      } else if c.itags[fmt.Sprint(form.Itag)] {
+         ext, err := mech.ExtensionByType(form.MimeType)
+         if err != nil {
+            return err
+         }
+         name := play.Author() + "-" + play.Title() + ext
+         file, err := os.Create(strings.Map(mech.Clean, name))
+         if err != nil {
+            return err
+         }
+         defer file.Close()
+         if err := form.Write(file); err != nil {
+            return err
+         }
+      }
+   }
+   return nil
+}
+
+func (c choice) formats(play *youtube.Player, id string) error {
+   for _, form := range play.StreamingData.Formats {
+      if c.info {
+         fmt.Println(form)
+      } else if c.itags[fmt.Sprint(form.Itag)] {
+         fmt.Println("GET", format.Trim(form.URL))
+         res, err := http.Get(form.URL)
+         if err != nil {
+            return err
+         }
+         defer res.Body.Close()
+         ext, err := mech.ExtensionByType(form.MimeType)
+         if err != nil {
+            return err
+         }
+         name := play.Author() + "-" + play.Title() + ext
+         file, err := os.Create(strings.Map(mech.Clean, name))
+         if err != nil {
+            return err
+         }
+         defer file.Close()
+         pro := mech.NewProgress(res)
+         if _, err := file.ReadFrom(pro); err != nil {
+            return err
+         }
+      }
+   }
+   return nil
+}
 
 func authConstruct(exc *youtube.Exchange) error {
    cac, err := os.UserCacheDir()
@@ -78,42 +147,3 @@ func authRefresh() error {
    return enc.Encode(exc)
 }
 
-func infoPath(play *youtube.Player, id string) error {
-   fmt.Println("author:", play.Author())
-   fmt.Println("title:", play.Title())
-   fmt.Println()
-   for _, form := range play.StreamingData.AdaptiveFormats {
-      fmt.Println(form)
-   }
-   return nil
-}
-
-type choice map[string]bool
-
-func (c choice) download(play *youtube.Player, id string) error {
-   if len(c) == 0 {
-      c["247"] = true // youtube.com/watch?v=Leq8J0E2TQ0
-      c["251"] = true
-      c["302"] = true // youtube.com/watch?v=kVNl1P9StSU
-   }
-   // Videos can support both AdaptiveFormats and DASH:
-   // zgJT91LA9gA
-   for _, form := range play.StreamingData.AdaptiveFormats {
-      if c[fmt.Sprint(form.Itag)] {
-         ext, err := mech.ExtensionByType(form.MimeType)
-         if err != nil {
-            return err
-         }
-         name := play.Author() + "-" + play.Title() + ext
-         file, err := os.Create(strings.Map(mech.Clean, name))
-         if err != nil {
-            return err
-         }
-         defer file.Close()
-         if err := form.Write(file); err != nil {
-            return err
-         }
-      }
-   }
-   return nil
-}
