@@ -12,12 +12,13 @@ import (
 )
 
 type Format struct {
-   Bitrate int64
-   ContentLength int64 `json:"contentLength,string"`
-   Height int64
    Itag int64
-   MimeType string
    URL string
+   MimeType string
+   Bitrate int64
+   Width int64
+   Height int64
+   ContentLength int64 `json:"contentLength,string"`
 }
 
 func (f Format) String() string {

@@ -67,6 +67,7 @@ type Player struct {
       AdaptiveFormats []Format
       // just including this so I can bail if video is Dash Manifest
       DashManifestURL string
+      Formats []Format
    }
    VideoDetails struct {
       Author string

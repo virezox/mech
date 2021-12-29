@@ -1,7 +1,7 @@
 package main
 
 import (
-   "flag"
+   "encoding/json"
    "fmt"
    "github.com/89z/mech"
    "github.com/89z/mech/youtube"
@@ -9,73 +9,83 @@ import (
    "strings"
 )
 
-func main() {
-   var construct, embed, exchange, info, refresh, verbose bool
-   down := make(choice)
-   flag.BoolVar(&construct, "c", false, "OAuth construct request")
-   flag.BoolVar(&embed, "e", false, "use embedded player")
-   flag.Func("f", "formats", func(format string) error {
-      down[format] = true
-      return nil
-   })
-   flag.BoolVar(&info, "i", false, "info")
-   flag.BoolVar(&refresh, "r", false, "OAuth token refresh")
-   flag.BoolVar(&verbose, "v", false, "verbose")
-   flag.BoolVar(&exchange, "x", false, "OAuth token exchange")
-   flag.Parse()
-   if len(os.Args) == 1 {
-      fmt.Println("youtube [flags] [video ID]")
-      flag.PrintDefaults()
-      return
+func authConstruct(exc *youtube.Exchange) error {
+   cac, err := os.UserCacheDir()
+   if err != nil {
+      return err
    }
-   if verbose {
-      youtube.LogLevel = 1
+   fil, err := os.Open(cac + "/mech/youtube.json")
+   if err != nil {
+      return err
    }
-   switch {
-   case exchange:
-      err := authExchange()
-      if err != nil {
-         panic(err)
-      }
-   case refresh:
-      err := authRefresh()
-      if err != nil {
-         panic(err)
-      }
-   default:
-      id := flag.Arg(0)
-      auth := youtube.Key
-      if construct {
-         var exc youtube.Exchange
-         err := authConstruct(&exc)
-         if err != nil {
-            panic(err)
-         }
-         auth = youtube.Auth{"Authorization", "Bearer " + exc.Access_Token}
-      }
-      client := youtube.Android
-      if embed {
-         client = youtube.Embed
-      }
-      play, err := youtube.NewPlayer(id, auth, client)
-      if err != nil {
-         panic(err)
-      }
-      if len(play.StreamingData.AdaptiveFormats) == 0 {
-         panic(play.PlayabilityStatus)
-      }
-      if info {
-         err := infoPath(play, id)
-         if err != nil {
-            panic(err)
-         }
-      } else {
-         err := down.download(play, id)
-         if err != nil {
-            panic(err)
-         }
-      }
+   defer fil.Close()
+   return json.NewDecoder(fil).Decode(exc)
+}
+
+func authExchange() error {
+   oau, err := youtube.NewOAuth()
+   if err != nil {
+      return err
    }
+   fmt.Printf(`1. Go to
+%v
+
+2. Enter this code
+%v
+
+3. Press Enter to continue`, oau.Verification_URL, oau.User_Code)
+   fmt.Scanln()
+   exc, err := oau.Exchange()
+   if err != nil {
+      return err
+   }
+   cac, err := os.UserCacheDir()
+   if err != nil {
+      return err
+   }
+   cac += "/mech"
+   os.Mkdir(cac, os.ModeDir)
+   fil, err := os.Create(cac + "/youtube.json")
+   if err != nil {
+      return err
+   }
+   defer fil.Close()
+   enc := json.NewEncoder(fil)
+   enc.SetIndent("", " ")
+   return enc.Encode(exc)
+}
+
+func authRefresh() error {
+   var exc youtube.Exchange
+   err := authConstruct(&exc)
+   if err != nil {
+      return err
+   }
+   if err := exc.Refresh(); err != nil {
+      return err
+   }
+   cac, err := os.UserCacheDir()
+   if err != nil {
+      return err
+   }
+   fil, err := os.Create(cac + "/mech/youtube.json")
+   if err != nil {
+      return err
+   }
+   defer fil.Close()
+   enc := json.NewEncoder(fil)
+   enc.SetIndent("", " ")
+   return enc.Encode(exc)
+}
+
+func infoPath(play *youtube.Player, id string) error {
+   fmt.Println("author:", play.Author())
+   fmt.Println("title:", play.Title())
+   fmt.Println()
+   for _, form := range play.StreamingData.AdaptiveFormats {
+      fmt.Println(form)
+   }
+   return nil
 }
 
 type choice map[string]bool
@@ -104,16 +114,6 @@ func (c choice) download(play *youtube.Player, id string) error {
             return err
          }
       }
-   }
-   return nil
-}
-
-func infoPath(play *youtube.Player, id string) error {
-   fmt.Println("author:", play.Author())
-   fmt.Println("title:", play.Title())
-   fmt.Println()
-   for _, form := range play.StreamingData.AdaptiveFormats {
-      fmt.Println(form)
    }
    return nil
 }
