@@ -2,8 +2,9 @@ package bleep
 
 import (
    "encoding/json"
-   "github.com/89z/mech"
+   "github.com/89z/format"
    "github.com/89z/format/net"
+   "github.com/89z/mech"
    "io"
    "net/http"
    "strconv"
@@ -13,7 +14,7 @@ import (
 
 const origin = "https://bleep.com"
 
-var LogLevel mech.LogLevel
+var LogLevel format.LogLevel
 
 // 8728-1-1
 func Parse(track string) (*Track, error) {
@@ -91,11 +92,9 @@ type Track struct {
 }
 
 func Release(releaseID int64) ([]Track, error) {
-   val := make(mech.Values)
-   val["id"] = strconv.FormatInt(releaseID, 10)
-   val["type"] = "ReleaseProduct"
+   body := "type=ReleaseProduct&id=" + strconv.FormatInt(releaseID, 10)
    req, err := http.NewRequest(
-      "POST", origin + "/player/addToPlaylist", val.Reader(),
+      "POST", origin + "/player/addToPlaylist", strings.NewReader(body),
    )
    if err != nil {
       return nil, err

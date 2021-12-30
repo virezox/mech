@@ -2,6 +2,7 @@ package vimeo
 
 import (
    "encoding/json"
+   "github.com/89z/format"
    "github.com/89z/mech"
    "net/http"
    "net/url"
@@ -11,7 +12,7 @@ import (
    "time"
 )
 
-var LogLevel mech.LogLevel
+var LogLevel format.LogLevel
 
 func Parse(id string) (uint64, error) {
    return strconv.ParseUint(id, 10, 64)

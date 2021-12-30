@@ -2,10 +2,12 @@ package bandcamp
 
 import (
    "encoding/json"
-   "github.com/89z/mech"
+   "github.com/89z/format"
    "github.com/89z/format/net"
+   "github.com/89z/mech"
    "html"
    "net/http"
+   "net/url"
    "strconv"
    "strings"
    "time"
@@ -59,7 +61,7 @@ var Images = []Image{
    {ID:69, Width:700, Height:700, Ext:".jpg"},
 }
 
-var LogLevel mech.LogLevel
+var LogLevel format.LogLevel
 
 type DataTralbum struct {
    Album_Release_Date string // 20 Jan 2017 00:00:00 GMT
@@ -159,11 +161,11 @@ func NewTralbum(typ byte, id int) (*Tralbum, error) {
    if err != nil {
       return nil, err
    }
-   val := make(mech.Values)
-   val["band_id"] = "1"
-   val["tralbum_id"] = strconv.Itoa(id)
-   val["tralbum_type"] = string(typ)
-   req.URL.RawQuery = val.Encode()
+   req.URL.RawQuery = url.Values{
+      "band_id": {"1"},
+      "tralbum_id": {strconv.Itoa(id)},
+      "tralbum_type": {string(typ)},
+   }.Encode()
    LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {

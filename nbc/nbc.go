@@ -6,7 +6,7 @@ import (
    "crypto/sha256"
    "encoding/hex"
    "encoding/json"
-   "github.com/89z/mech"
+   "github.com/89z/format"
    "github.com/89z/format/m3u"
    "io"
    "net/http"
@@ -22,7 +22,8 @@ const (
 
 var (
    Decode = m3u.Decode
-   LogLevel mech.LogLevel
+   LogLevel format.LogLevel
+   PercentInt = format.PercentInt
    secretKey = []byte("2b84a073ede61c766e4c0b3f1e656f7f")
 )
 
@@ -68,10 +69,10 @@ func NewAccessVOD(guid uint64) (*AccessVOD, error) {
    auth.WriteString(unix)
    auth.WriteString(",hash=")
    auth.WriteString(generateHash(unix, secretKey))
-   val := make(mech.Values)
-   val["Authorization"] = auth.String()
-   val["Content-Type"] = "application/json"
-   req.Header = val.Header()
+   req.Header = http.Header{
+      "Authorization": {auth.String()},
+      "Content-Type": {"application/json"},
+   }
    LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {

@@ -2,9 +2,9 @@ package pandora
 
 import (
    "encoding/json"
-   "github.com/89z/mech"
    "io"
    "net/http"
+   "net/url"
    "strings"
 )
 
@@ -54,14 +54,13 @@ func (u UserLogin) PlaybackInfo(id string) (*PlaybackInfo, error) {
    if err != nil {
       return nil, err
    }
-   val := make(mech.Values)
-   // this can be empty, but it must be included:
-   val["auth_token"] = ""
-   val["method"] = "onDemand.getAudioPlaybackInfo"
-   val["partner_id"] = "42"
-   // this can be empty, but it must be included:
-   val["user_id"] = ""
-   req.URL.RawQuery = val.Encode()
+   // auth_token and user_Id can be empty, but they must be included
+   req.URL.RawQuery = url.Values{
+      "auth_token": {""},
+      "method": {"onDemand.getAudioPlaybackInfo"},
+      "partner_id": {"42"},
+      "user_id": {""},
+   }.Encode()
    LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
@@ -92,14 +91,13 @@ func (u UserLogin) ValueExchange() error {
    if err != nil {
       return err
    }
-   val := make(mech.Values)
-   // this can be empty, but must be included:
-   val["auth_token"] = ""
-   val["method"] = "user.startValueExchange"
-   val["partner_id"] = "42"
-   // this can be empty, but it must be included:
-   val["user_id"] = ""
-   req.URL.RawQuery = val.Encode()
+   // auth_token and user_Id can be empty, but they must be included
+   req.URL.RawQuery = url.Values{
+      "auth_token": {""},
+      "method": {"user.startValueExchange"},
+      "partner_id": {"42"},
+      "user_id": {""},
+   }.Encode()
    LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
