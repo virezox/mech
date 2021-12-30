@@ -25,13 +25,8 @@ Check here first:
 
 https://github.com/89z/mech/releases
 
-I dont do a build for every tag, but some tags will have builds available. If
-you need a newer build, and cant build yourself for some reason, comment on this
-thread:
-
-https://github.com/89z/mech/issues/7
-
-To build yourself, download Go from here:
+I dont do a build for every tag, but some tags will have builds available. To
+build yourself, download Go from here:
 
 https://golang.org/dl
 

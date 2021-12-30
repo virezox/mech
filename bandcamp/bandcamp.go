@@ -7,7 +7,6 @@ import (
    "github.com/89z/mech"
    "html"
    "net/http"
-   "net/url"
    "strconv"
    "strings"
    "time"
@@ -161,11 +160,10 @@ func NewTralbum(typ byte, id int) (*Tralbum, error) {
    if err != nil {
       return nil, err
    }
-   req.URL.RawQuery = url.Values{
-      "band_id": {"1"},
-      "tralbum_id": {strconv.Itoa(id)},
-      "tralbum_type": {string(typ)},
-   }.Encode()
+   req.URL.RawQuery =
+      "band_id=1" +
+      "&tralbum_id=" + strconv.Itoa(id) +
+      "&tralbum_type=" + string(typ)
    LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
