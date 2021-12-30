@@ -3,6 +3,7 @@ package instagram
 import (
    "bytes"
    "encoding/json"
+   "github.com/89z/format"
    "github.com/89z/mech"
    "io"
    "net/http"
@@ -14,7 +15,7 @@ const (
    userAgent = "Instagram 216.1.0.21.137 Android"
 )
 
-var LogLevel mech.LogLevel
+var LogLevel format.LogLevel
 
 // instagram.com/p/CT-cnxGhvvO
 // instagram.com/p/yza2PAPSx2
@@ -58,10 +59,10 @@ func NewLogin(username, password string) (*Login, error) {
    if err != nil {
       return nil, err
    }
-   val := make(mech.Values)
-   val["Content-Type"] = "application/x-www-form-urlencoded"
-   val["User-Agent"] = userAgent
-   req.Header = val.Header()
+   req.Header = http.Header{
+      "Content-Type": {"application/x-www-form-urlencoded"},
+      "User-Agent": {userAgent},
+   }
    LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {

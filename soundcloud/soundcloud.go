@@ -2,8 +2,10 @@ package soundcloud
 
 import (
    "encoding/json"
+   "github.com/89z/format"
    "github.com/89z/mech"
    "net/http"
+   "net/url"
 )
 
 const (
@@ -12,7 +14,7 @@ const (
    origin = "https://api-v2.soundcloud.com"
 )
 
-var LogLevel mech.LogLevel
+var LogLevel format.LogLevel
 
 type Alternate struct {
    Thumbnail_URL string
@@ -24,7 +26,7 @@ func Oembed(addr string) (*Alternate, error) {
    if err != nil {
       return nil, err
    }
-   req.URL.RawQuery = mech.Values{"format": "json", "url": addr}.Encode()
+   req.URL.RawQuery = "format=json&url=" + url.QueryEscape(addr)
    LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
@@ -68,7 +70,7 @@ func Resolve(addr string) (*Track, error) {
    if err != nil {
       return nil, err
    }
-   req.URL.RawQuery = mech.Values{"client_id": clientID, "url": addr}.Encode()
+   req.URL.RawQuery = "client_id=" + clientID + "&url=" + url.QueryEscape(addr)
    LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
@@ -87,7 +89,7 @@ func Tracks(ids string) ([]Track, error) {
    if err != nil {
       return nil, err
    }
-   req.URL.RawQuery = mech.Values{"client_id": clientID, "ids": ids}.Encode()
+   req.URL.RawQuery = "client_id=" + clientID + "&ids=" + url.QueryEscape(ids)
    LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {

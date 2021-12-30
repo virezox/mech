@@ -4,6 +4,7 @@ import (
    "bytes"
    "encoding/hex"
    "encoding/json"
+   "github.com/89z/format"
    "github.com/89z/mech"
    "golang.org/x/crypto/blowfish" //lint:ignore SA1019 reason
    "net/http"
@@ -17,7 +18,7 @@ const (
 )
 
 var (
-   LogLevel mech.LogLevel
+   LogLevel format.LogLevel
    blowfishKey = []byte("6#26FRL$ZWD")
 )
 
@@ -140,12 +141,8 @@ func (p PartnerLogin) UserLogin(username, password string) (*UserLogin, error) {
    if err != nil {
       return nil, err
    }
-   val := make(mech.Values)
-   // this can be empty, but must be included:
-   val["auth_token"] = ""
-   val["method"] = "auth.userLogin"
-   val["partner_id"] = "42"
-   req.URL.RawQuery = val.Encode()
+   // auth_token can be empty, but must be included:
+   req.URL.RawQuery = "auth_token=&method=auth.userLogin&partner_id=42"
    LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {

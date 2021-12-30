@@ -2,8 +2,9 @@ package bbc
 
 import (
    "encoding/json"
-   "github.com/89z/mech"
+   "github.com/89z/format"
    "github.com/89z/format/m3u"
+   "github.com/89z/mech"
    "net/http"
    "path"
 )
@@ -19,7 +20,7 @@ const mediaSelector =
 
 var (
    Decode = m3u.Decode
-   LogLevel mech.LogLevel
+   LogLevel format.LogLevel
 )
 
 type Media struct {

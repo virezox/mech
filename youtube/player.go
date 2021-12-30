@@ -3,7 +3,7 @@ package youtube
 import (
    "bytes"
    "encoding/json"
-   "github.com/89z/mech"
+   "github.com/89z/format"
    "net/http"
    "strconv"
 )
@@ -18,7 +18,7 @@ var (
 
 var (
    Key = Auth{"X-Goog-Api-Key", "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8"}
-   LogLevel mech.LogLevel
+   LogLevel format.LogLevel
 )
 
 func post(addr string, head Auth, body youTubeI) (*http.Response, error) {
