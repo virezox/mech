@@ -4,9 +4,9 @@ import (
    "encoding/json"
    "github.com/89z/format"
    "github.com/89z/format/net"
-   "github.com/89z/mech"
    "io"
    "net/http"
+   "net/url"
    "strconv"
    "strings"
    "time"
@@ -20,7 +20,7 @@ var LogLevel format.LogLevel
 func Parse(track string) (*Track, error) {
    split := strings.SplitN(track, "-", 3)
    if sLen := len(split); sLen <= 2 {
-      return nil, mech.InvalidSlice{2, sLen}
+      return nil, format.InvalidSlice{2, sLen}
    }
    rel, err := strconv.ParseInt(split[0], 10, 64)
    if err != nil {
@@ -80,7 +80,7 @@ func (m Meta) ReleaseDate() (time.Time, error) {
          return date, nil
       }
    }
-   return time.Time{}, mech.NotFound{"music:release_date"}
+   return time.Time{}, notFound{"music:release_date"}
 }
 
 type Track struct {
@@ -92,9 +92,12 @@ type Track struct {
 }
 
 func Release(releaseID int64) ([]Track, error) {
-   body := "type=ReleaseProduct&id=" + strconv.FormatInt(releaseID, 10)
+   val := url.Values{
+      "id": {strconv.FormatInt(releaseID, 10)},
+      "type": {"ReleaseProduct"},
+   }.Encode()
    req, err := http.NewRequest(
-      "POST", origin + "/player/addToPlaylist", strings.NewReader(body),
+      "POST", origin + "/player/addToPlaylist", strings.NewReader(val),
    )
    if err != nil {
       return nil, err
@@ -140,4 +143,12 @@ func (t Track) String() string {
    track = append(track, '-')
    track = strconv.AppendInt(track, t.Number, 10)
    return string(track)
+}
+
+type notFound struct {
+   input string
+}
+
+func (n notFound) Error() string {
+   return strconv.Quote(n.input) + " not found"
 }

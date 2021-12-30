@@ -3,7 +3,7 @@ package main
 import (
    "flag"
    "fmt"
-   "github.com/89z/mech"
+   "github.com/89z/format"
    "github.com/89z/mech/apple"
    "net/http"
    "os"
@@ -46,12 +46,12 @@ func download(attr apple.Attributes) error {
    }
    defer res.Body.Close()
    name := attr.ArtistName + "-" + attr.Name + path.Ext(addr)
-   file, err := os.Create(strings.Map(mech.Clean, name))
+   file, err := os.Create(strings.Map(format.Clean, name))
    if err != nil {
       return err
    }
    defer file.Close()
-   pro := mech.Response(res)
+   pro := format.Response(res)
    if _, err := file.ReadFrom(pro); err != nil {
       return err
    }

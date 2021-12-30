@@ -3,9 +3,9 @@ package soundcloud
 import (
    "encoding/json"
    "github.com/89z/format"
-   "github.com/89z/mech"
    "net/http"
    "net/url"
+   "strconv"
 )
 
 const (
@@ -26,7 +26,9 @@ func Oembed(addr string) (*Alternate, error) {
    if err != nil {
       return nil, err
    }
-   req.URL.RawQuery = "format=json&url=" + url.QueryEscape(addr)
+   req.URL.RawQuery = url.Values{
+      "format": {"json"}, "url": {addr},
+   }.Encode()
    LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
@@ -70,7 +72,9 @@ func Resolve(addr string) (*Track, error) {
    if err != nil {
       return nil, err
    }
-   req.URL.RawQuery = "client_id=" + clientID + "&url=" + url.QueryEscape(addr)
+   req.URL.RawQuery = url.Values{
+      "client_id": {clientID}, "url": {addr},
+   }.Encode()
    LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
@@ -89,7 +93,9 @@ func Tracks(ids string) ([]Track, error) {
    if err != nil {
       return nil, err
    }
-   req.URL.RawQuery = "client_id=" + clientID + "&ids=" + url.QueryEscape(ids)
+   req.URL.RawQuery = url.Values{
+      "client_id": {clientID}, "ids": {ids},
+   }.Encode()
    LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
@@ -111,7 +117,7 @@ func (t Track) Progressive() (*Media, error) {
       }
    }
    if addr == "" {
-      return nil, mech.NotFound{"progressive"}
+      return nil, notFound{"progressive"}
    }
    req, err := http.NewRequest("GET", addr + "?client_id=" + clientID, nil)
    if err != nil {
@@ -128,4 +134,12 @@ func (t Track) Progressive() (*Media, error) {
       return nil, err
    }
    return med, nil
+}
+
+type notFound struct {
+   input string
+}
+
+func (n notFound) Error() string {
+   return strconv.Quote(n.input) + " not found"
 }

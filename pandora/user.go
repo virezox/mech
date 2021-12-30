@@ -4,6 +4,7 @@ import (
    "encoding/json"
    "io"
    "net/http"
+   "net/url"
    "strings"
 )
 
@@ -54,11 +55,12 @@ func (u UserLogin) PlaybackInfo(id string) (*PlaybackInfo, error) {
       return nil, err
    }
    // auth_token and user_Id can be empty, but they must be included
-   req.URL.RawQuery =
-      "auth_token=" +
-      "&method=onDemand.getAudioPlaybackInfo" +
-      "&partner_id=42" +
-      "&user_id="
+   req.URL.RawQuery = url.Values{
+      "auth_token": {""},
+      "method": {"onDemand.getAudioPlaybackInfo"},
+      "partner_id": {"42"},
+      "user_id": {""},
+   }.Encode()
    LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
@@ -90,11 +92,12 @@ func (u UserLogin) ValueExchange() error {
       return err
    }
    // auth_token and user_Id can be empty, but they must be included
-   req.URL.RawQuery =
-      "auth_token=" +
-      "&method=user.startValueExchange" +
-      "&partner_id=42" +
-      "&user_id="
+   req.URL.RawQuery = url.Values{
+      "auth_token": {""},
+      "method": {"user.startValueExchange"},
+      "partner_id": {"42"},
+      "user_id": {""},
+   }.Encode()
    LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {

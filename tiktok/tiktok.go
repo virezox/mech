@@ -3,7 +3,6 @@ package tiktok
 import (
    "encoding/json"
    "github.com/89z/format"
-   "github.com/89z/mech"
    "net/http"
    "net/url"
    "strconv"
@@ -69,7 +68,7 @@ func (a AwemeDetail) Time() time.Time {
 
 func (a AwemeDetail) URL() (string, error) {
    if len(a.Video.Play_Addr.URL_List) == 0 {
-      return "", mech.InvalidSlice{}
+      return "", format.InvalidSlice{}
    }
    first := a.Video.Play_Addr.URL_List[0]
    loc, err := url.Parse(first)

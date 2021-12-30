@@ -3,7 +3,6 @@ package vimeo
 import (
    "encoding/json"
    "github.com/89z/format"
-   "github.com/89z/mech"
    "net/http"
    "net/url"
    "path"
@@ -88,7 +87,7 @@ func (c Config) Videos() ([]Video, error) {
    }
    ind := strings.Index(loc, "/sep/")
    if ind == -1 {
-      return nil, mech.NotFound{"/sep/"}
+      return nil, notFound{"/sep/"}
    }
    req, err := http.NewRequest("GET", loc, nil)
    if err != nil {
@@ -133,4 +132,12 @@ type Video struct {
 
 func (v Video) URL() string {
    return v.Base_URL + "/" + v.ID + path.Ext(v.Init_Segment)
+}
+
+type notFound struct {
+   input string
+}
+
+func (n notFound) Error() string {
+   return strconv.Quote(n.input) + " not found"
 }

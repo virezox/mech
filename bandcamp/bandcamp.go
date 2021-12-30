@@ -4,9 +4,9 @@ import (
    "encoding/json"
    "github.com/89z/format"
    "github.com/89z/format/net"
-   "github.com/89z/mech"
    "html"
    "net/http"
+   "net/url"
    "strconv"
    "strings"
    "time"
@@ -86,7 +86,7 @@ func NewDataTralbum(addr string) (*DataTralbum, error) {
       return strings.Contains(addr, s)
    }
    if !contains("/album/") && !contains("/track/") {
-      return nil, mech.NotFound{"/album/,/track/"}
+      return nil, notFound{"/album/,/track/"}
    }
    req, err := http.NewRequest("GET", addr, nil)
    if err != nil {
@@ -110,7 +110,7 @@ func NewDataTralbum(addr string) (*DataTralbum, error) {
          return tra, nil
       }
    }
-   return nil, mech.NotFound{"data-tralbum"}
+   return nil, notFound{"data-tralbum"}
 }
 
 type Image struct {
@@ -160,10 +160,11 @@ func NewTralbum(typ byte, id int) (*Tralbum, error) {
    if err != nil {
       return nil, err
    }
-   req.URL.RawQuery =
-      "band_id=1" +
-      "&tralbum_id=" + strconv.Itoa(id) +
-      "&tralbum_type=" + string(typ)
+   req.URL.RawQuery = url.Values{
+      "band_id": {"1"},
+      "tralbum_id": {strconv.Itoa(id)},
+      "tralbum_type": {string(typ)},
+   }.Encode()
    LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
@@ -175,4 +176,12 @@ func NewTralbum(typ byte, id int) (*Tralbum, error) {
       return nil, err
    }
    return tra, nil
+}
+
+type notFound struct {
+   input string
+}
+
+func (n notFound) Error() string {
+   return strconv.Quote(n.input) + " not found"
 }

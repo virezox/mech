@@ -4,7 +4,6 @@ import (
    "encoding/json"
    "github.com/89z/format"
    "github.com/89z/format/net"
-   "github.com/89z/mech"
    "net/http"
    "net/url"
    "strconv"
@@ -74,7 +73,7 @@ func NewAudio(addr string) (*Audio, error) {
          }
       }
    }
-   return nil, mech.NotFound{podcast}
+   return nil, notFound{podcast}
 }
 
 type Duration int64
@@ -82,4 +81,12 @@ type Duration int64
 func (d Duration) String() string {
    dur := time.Duration(d) * time.Millisecond
    return dur.String()
+}
+
+type notFound struct {
+   input string
+}
+
+func (n notFound) Error() string {
+   return strconv.Quote(n.input) + " not found"
 }

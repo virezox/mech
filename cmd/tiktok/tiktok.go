@@ -3,7 +3,7 @@ package main
 import (
    "flag"
    "fmt"
-   "github.com/89z/mech"
+   "github.com/89z/format"
    "github.com/89z/mech/tiktok"
    "net/http"
    "os"
@@ -61,12 +61,12 @@ func get(det *tiktok.AwemeDetail) error {
       return err
    }
    defer res.Body.Close()
-   ext, err := mech.ExtensionByType(res.Header.Get("Content-Type"))
+   ext, err := format.ExtensionByType(res.Header.Get("Content-Type"))
    if err != nil {
       return err
    }
    name := det.Author.Unique_ID + "-" + det.Aweme_ID + ext
-   file, err := os.Create(strings.Map(mech.Clean, name))
+   file, err := os.Create(strings.Map(format.Clean, name))
    if err != nil {
       return err
    }

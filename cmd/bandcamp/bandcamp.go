@@ -3,7 +3,7 @@ package main
 import (
    "flag"
    "fmt"
-   "github.com/89z/mech"
+   "github.com/89z/format"
    "github.com/89z/mech/bandcamp"
    "net/http"
    "os"
@@ -46,7 +46,7 @@ func main() {
             }
             defer res.Body.Close()
             name := data.Artist + "-" + track.Title + ".mp3"
-            file, err := os.Create(strings.Map(mech.Clean, name))
+            file, err := os.Create(strings.Map(format.Clean, name))
             if err != nil {
                panic(err)
             }

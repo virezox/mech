@@ -4,9 +4,9 @@ import (
    "encoding/json"
    "github.com/89z/format"
    "github.com/89z/format/m3u"
-   "github.com/89z/mech"
    "net/http"
    "path"
+   "strconv"
 )
 
 const (
@@ -37,7 +37,7 @@ func (m Media) Video() (*Video, error) {
          return &vid, nil
       }
    }
-   return nil, mech.NotFound{"http,hls,mf_akamai"}
+   return nil, notFound{"http,hls,mf_akamai"}
 }
 
 type NewsVideo struct {
@@ -72,7 +72,7 @@ func NewNewsVideo(addr string) (*NewsVideo, error) {
          return video, nil
       }
    }
-   return nil, mech.NotFound{videoType}
+   return nil, notFound{videoType}
 }
 
 func (n NewsVideo) Media() (*Media, error) {
@@ -86,16 +86,18 @@ func (n NewsVideo) Media() (*Media, error) {
       return nil, err
    }
    defer res.Body.Close()
-   var sel selector
-   if err := json.NewDecoder(res.Body).Decode(&sel); err != nil {
+   var selector struct {
+      Media []Media
+   }
+   if err := json.NewDecoder(res.Body).Decode(&selector); err != nil {
       return nil, err
    }
-   for _, media := range sel.Media {
+   for _, media := range selector.Media {
       if media.Kind == "video" {
          return &media, nil
       }
    }
-   return nil, mech.NotFound{"video"}
+   return nil, notFound{"video"}
 }
 
 type Video struct {
@@ -127,6 +129,11 @@ type newsItem struct {
    }
 }
 
-type selector struct {
-   Media []Media
+type notFound struct {
+   input string
 }
+
+func (n notFound) Error() string {
+   return strconv.Quote(n.input) + " not found"
+}
+

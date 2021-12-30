@@ -5,9 +5,9 @@ import (
    "encoding/hex"
    "encoding/json"
    "github.com/89z/format"
-   "github.com/89z/mech"
    "golang.org/x/crypto/blowfish" //lint:ignore SA1019 reason
    "net/http"
+   "net/url"
    "strings"
 )
 
@@ -25,7 +25,7 @@ var (
 func Decrypt(src []byte) ([]byte, error) {
    sLen := len(src)
    if sLen < blowfish.BlockSize {
-      return nil, mech.InvalidSlice{blowfish.BlockSize-1, sLen}
+      return nil, format.InvalidSlice{blowfish.BlockSize-1, sLen}
    }
    dst := make([]byte, sLen)
    block, err := blowfish.NewCipher(blowfishKey)
@@ -74,12 +74,12 @@ func pad(src []byte) []byte {
 func unpad(src []byte) ([]byte, error) {
    sLen := len(src)
    if sLen == 0 {
-      return nil, mech.InvalidSlice{}
+      return nil, format.InvalidSlice{}
    }
    tLen := src[sLen-1]
    high := sLen - int(tLen)
    if high <= -1 {
-      return nil, mech.InvalidSlice{high, sLen}
+      return nil, format.InvalidSlice{high, sLen}
    }
    return src[:high], nil
 }
@@ -142,7 +142,11 @@ func (p PartnerLogin) UserLogin(username, password string) (*UserLogin, error) {
       return nil, err
    }
    // auth_token can be empty, but must be included:
-   req.URL.RawQuery = "auth_token=&method=auth.userLogin&partner_id=42"
+   req.URL.RawQuery = url.Values{
+      "auth_token": {""},
+      "method": {"auth.userLogin"},
+      "partner_id": {"42"},
+   }.Encode()
    LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {

@@ -4,7 +4,6 @@ import (
    "encoding/json"
    "fmt"
    "github.com/89z/format"
-   "github.com/89z/mech"
    "github.com/89z/mech/youtube"
    "net/http"
    "os"
@@ -30,12 +29,12 @@ func (c choice) adaptiveFormats(play *youtube.Player, id string) error {
       if c.info {
          fmt.Println(form)
       } else if c.itags[fmt.Sprint(form.Itag)] {
-         ext, err := mech.ExtensionByType(form.MimeType)
+         ext, err := format.ExtensionByType(form.MimeType)
          if err != nil {
             return err
          }
          name := play.Author() + "-" + play.Title() + ext
-         file, err := os.Create(strings.Map(mech.Clean, name))
+         file, err := os.Create(strings.Map(format.Clean, name))
          if err != nil {
             return err
          }
@@ -59,17 +58,17 @@ func (c choice) formats(play *youtube.Player, id string) error {
             return err
          }
          defer res.Body.Close()
-         ext, err := mech.ExtensionByType(form.MimeType)
+         ext, err := format.ExtensionByType(form.MimeType)
          if err != nil {
             return err
          }
          name := play.Author() + "-" + play.Title() + ext
-         file, err := os.Create(strings.Map(mech.Clean, name))
+         file, err := os.Create(strings.Map(format.Clean, name))
          if err != nil {
             return err
          }
          defer file.Close()
-         pro := mech.Response(res)
+         pro := format.Response(res)
          if _, err := file.ReadFrom(pro); err != nil {
             return err
          }
