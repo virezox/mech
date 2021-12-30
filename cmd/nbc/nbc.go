@@ -4,7 +4,6 @@ import (
    "flag"
    "fmt"
    "github.com/89z/format"
-   "github.com/89z/mech"
    "github.com/89z/mech/nbc"
    "net/http"
    "os"
@@ -88,7 +87,7 @@ func (c choice) HLS(guid uint64) error {
             return err
          }
          name := vid.Name() + "-" + form["RESOLUTION"] + ".mp4"
-         dst, err := os.Create(strings.Map(mech.Clean, name))
+         dst, err := os.Create(strings.Map(format.Clean, name))
          if err != nil {
             return err
          }

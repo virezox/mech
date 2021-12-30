@@ -8,6 +8,7 @@ import (
    "github.com/89z/mech"
    "golang.org/x/crypto/blowfish" //lint:ignore SA1019 reason
    "net/http"
+   "net/url"
    "strings"
 )
 
@@ -142,7 +143,11 @@ func (p PartnerLogin) UserLogin(username, password string) (*UserLogin, error) {
       return nil, err
    }
    // auth_token can be empty, but must be included:
-   req.URL.RawQuery = "auth_token=&method=auth.userLogin&partner_id=42"
+   req.URL.RawQuery = url.Values{
+      "auth_token": {""},
+      "method": {"auth.userLogin"},
+      "partner_id": {"42"},
+   }.Encode()
    LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {

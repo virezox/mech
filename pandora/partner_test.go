@@ -3,12 +3,22 @@ package pandora
 import (
    "bytes"
    "encoding/hex"
+   "fmt"
+   "net/url"
    "testing"
 )
 
 const helloEnc = "7be654d97cc31582815d713a9d0c64ab"
 
 var helloDec = []byte("hello world")
+
+func TestValues(t *testing.T) {
+   val := url.Values{
+      "one": {},
+      "two": {"three"},
+   }.Encode()
+   fmt.Println(val)
+}
 
 func TestLogin(t *testing.T) {
    part, err := NewPartnerLogin()

@@ -2,11 +2,11 @@ package bleep
 
 import (
    "encoding/json"
-   "github.com/89z/format"
    "github.com/89z/format/net"
    "github.com/89z/mech"
    "io"
    "net/http"
+   "net/url"
    "strconv"
    "strings"
    "time"
@@ -14,7 +14,7 @@ import (
 
 const origin = "https://bleep.com"
 
-var LogLevel format.LogLevel
+var LogLevel mech.LogLevel
 
 // 8728-1-1
 func Parse(track string) (*Track, error) {
@@ -80,7 +80,7 @@ func (m Meta) ReleaseDate() (time.Time, error) {
          return date, nil
       }
    }
-   return time.Time{}, mech.NotFound{"music:release_date"}
+   return time.Time{}, notFound{"music:release_date"}
 }
 
 type Track struct {
@@ -92,9 +92,12 @@ type Track struct {
 }
 
 func Release(releaseID int64) ([]Track, error) {
-   body := "type=ReleaseProduct&id=" + strconv.FormatInt(releaseID, 10)
+   val := url.Values{
+      "id": {strconv.FormatInt(releaseID, 10)},
+      "type": {"ReleaseProduct"},
+   }.Encode()
    req, err := http.NewRequest(
-      "POST", origin + "/player/addToPlaylist", strings.NewReader(body),
+      "POST", origin + "/player/addToPlaylist", strings.NewReader(val),
    )
    if err != nil {
       return nil, err
@@ -140,4 +143,12 @@ func (t Track) String() string {
    track = append(track, '-')
    track = strconv.AppendInt(track, t.Number, 10)
    return string(track)
+}
+
+type notFound struct {
+   input string
+}
+
+func (n notFound) Error() string {
+   return strconv.Quote(n.input) + " not found"
 }

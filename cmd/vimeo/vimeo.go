@@ -3,7 +3,7 @@ package main
 import (
    "flag"
    "fmt"
-   "github.com/89z/mech"
+   "github.com/89z/format"
    "github.com/89z/mech/vimeo"
    "net/http"
    "os"
@@ -69,7 +69,7 @@ func download(con *vimeo.Config, loc string) error {
    }
    defer res.Body.Close()
    name := con.Video.Owner.Name + "-" + con.Video.Title + path.Ext(loc)
-   file, err := os.Create(strings.Map(mech.Clean, name))
+   file, err := os.Create(strings.Map(format.Clean, name))
    if err != nil {
       return err
    }

@@ -3,7 +3,7 @@ package main
 import (
    "flag"
    "fmt"
-   "github.com/89z/mech"
+   "github.com/89z/format"
    "github.com/89z/mech/bbc"
    "net/http"
    "os"
@@ -21,7 +21,7 @@ func (c choice) HLS(addr string) error {
    if err != nil {
       return err
    }
-   ext, err := mech.ExtensionByType(media.Type)
+   ext, err := format.ExtensionByType(media.Type)
    if err != nil {
       return err
    }

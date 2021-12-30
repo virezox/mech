@@ -4,9 +4,9 @@ import (
    "bytes"
    "encoding/json"
    "github.com/89z/format"
-   "github.com/89z/mech"
    "io"
    "net/http"
+   "strconv"
 )
 
 const (
@@ -71,7 +71,7 @@ func NewLogin(username, password string) (*Login, error) {
    defer res.Body.Close()
    auth := res.Header.Get("Ig-Set-Authorization")
    if auth == "" {
-      return nil, mech.NotFound{"Ig-Set-Authorization"}
+      return nil, notFound{"Ig-Set-Authorization"}
    }
    return &Login{auth}, nil
 }
@@ -143,6 +143,14 @@ func (m Media) Edges() []Edge {
       return nil
    }
    return m.Shortcode_Media.Edge_Sidecar_To_Children.Edges
+}
+
+type notFound struct {
+   input string
+}
+
+func (n notFound) Error() string {
+   return strconv.Quote(n.input) + " not found"
 }
 
 type response struct {
