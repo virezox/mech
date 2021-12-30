@@ -69,7 +69,7 @@ func (c choice) formats(play *youtube.Player, id string) error {
             return err
          }
          defer file.Close()
-         pro := mech.NewProgress(res)
+         pro := mech.Response(res)
          if _, err := file.ReadFrom(pro); err != nil {
             return err
          }

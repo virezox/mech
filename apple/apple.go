@@ -2,8 +2,9 @@ package apple
 
 import (
    "encoding/json"
-   "github.com/89z/mech"
+   "github.com/89z/format"
    "github.com/89z/format/net"
+   "github.com/89z/mech"
    "net/http"
    "net/url"
    "strconv"
@@ -13,7 +14,7 @@ import (
 
 const podcast = "\uF8FF.v1.catalog."
 
-var LogLevel mech.LogLevel
+var LogLevel format.LogLevel
 
 type AssetURL string
 
