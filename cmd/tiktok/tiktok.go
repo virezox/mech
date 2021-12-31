@@ -11,8 +11,12 @@ import (
 )
 
 func main() {
-   var info, verbose bool
+   var (
+      info, verbose bool
+      output string
+   )
    flag.BoolVar(&info, "i", false, "info only")
+   flag.StringVar(&output, "o", "", "output")
    flag.BoolVar(&verbose, "v", false, "verbose")
    flag.Parse()
    if flag.NArg() != 1 {
@@ -43,14 +47,14 @@ func main() {
          fmt.Println("-", loc)
       }
    } else {
-      err := get(det)
+      err := get(det, output)
       if err != nil {
          panic(err)
       }
    }
 }
 
-func get(det *tiktok.AwemeDetail) error {
+func get(det *tiktok.AwemeDetail, output string) error {
    addr, err := det.URL()
    if err != nil {
       return err
@@ -61,12 +65,15 @@ func get(det *tiktok.AwemeDetail) error {
       return err
    }
    defer res.Body.Close()
-   ext, err := format.ExtensionByType(res.Header.Get("Content-Type"))
-   if err != nil {
-      return err
+   if output == "" {
+      ext, err := format.ExtensionByType(res.Header.Get("Content-Type"))
+      if err != nil {
+         return err
+      }
+      name := det.Author.Unique_ID + "-" + det.Aweme_ID + ext
+      output = strings.Map(format.Clean, name)
    }
-   name := det.Author.Unique_ID + "-" + det.Aweme_ID + ext
-   file, err := os.Create(strings.Map(format.Clean, name))
+   file, err := os.Create(output)
    if err != nil {
       return err
    }

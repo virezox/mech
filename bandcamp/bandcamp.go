@@ -63,6 +63,9 @@ var Images = []Image{
 var LogLevel format.LogLevel
 
 type DataTralbum struct {
+   AlbumRelease []struct {
+      MusicReleaseFormat string
+   }
    Album_Release_Date string // 20 Jan 2017 00:00:00 GMT
    Art_ID int
    Artist string
@@ -74,11 +77,6 @@ type DataTralbum struct {
       Title string
       File Streams
    }
-}
-
-// jonasmunk.bandcamp.com/track/altered-light
-func (d DataTralbum) Date() (time.Time, error) {
-   return time.Parse("02 Jan 2006 15:04:05 MST", d.Album_Release_Date)
 }
 
 func NewDataTralbum(addr string) (*DataTralbum, error) {
@@ -111,6 +109,11 @@ func NewDataTralbum(addr string) (*DataTralbum, error) {
       }
    }
    return nil, notFound{"data-tralbum"}
+}
+
+// jonasmunk.bandcamp.com/track/altered-light
+func (d DataTralbum) Date() (time.Time, error) {
+   return time.Parse("02 Jan 2006 15:04:05 MST", d.Album_Release_Date)
 }
 
 type Image struct {
