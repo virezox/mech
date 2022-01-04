@@ -5,13 +5,14 @@ import (
    "github.com/89z/format"
    "net/http"
    "net/url"
+   "os"
    "strconv"
    "time"
 )
 
 const Origin = "http://api2.musical.ly"
 
-var LogLevel format.LogLevel
+var Log = format.Log{Writer: os.Stdout}
 
 func Parse(id string) (uint64, error) {
    return strconv.ParseUint(id, 10, 64)
@@ -40,7 +41,7 @@ func NewAwemeDetail(id uint64) (*AwemeDetail, error) {
       return nil, err
    }
    req.URL.RawQuery = "aweme_id=" + strconv.FormatUint(id, 10)
-   LogLevel.Dump(req)
+   Log.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err

@@ -7,6 +7,7 @@ import (
    "html"
    "net/http"
    "net/url"
+   "os"
    "strconv"
    "strings"
    "time"
@@ -60,7 +61,7 @@ var Images = []Image{
    {ID:69, Width:700, Height:700, Ext:".jpg"},
 }
 
-var LogLevel format.LogLevel
+var Log = format.Log{Writer: os.Stdout}
 
 type DataTralbum struct {
    AlbumRelease []struct {

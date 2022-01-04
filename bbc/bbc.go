@@ -5,6 +5,7 @@ import (
    "github.com/89z/format"
    "github.com/89z/format/m3u"
    "net/http"
+   "os"
    "path"
    "strconv"
 )
@@ -20,7 +21,7 @@ const mediaSelector =
 
 var (
    Decode = m3u.Decode
-   LogLevel format.LogLevel
+   Log = format.Log{Writer: os.Stdout}
 )
 
 type Media struct {

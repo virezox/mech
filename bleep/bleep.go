@@ -7,6 +7,7 @@ import (
    "io"
    "net/http"
    "net/url"
+   "os"
    "strconv"
    "strings"
    "time"
@@ -14,7 +15,7 @@ import (
 
 const origin = "https://bleep.com"
 
-var LogLevel format.LogLevel
+var Log = format.Log{Writer: os.Stdout}
 
 // 8728-1-1
 func Parse(track string) (*Track, error) {

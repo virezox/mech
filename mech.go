@@ -6,5 +6,5 @@ import (
 
 type (
    InvalidSlice = format.InvalidSlice
-   LogLevel = format.LogLevel
+   Log = format.Log
 )

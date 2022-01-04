@@ -61,7 +61,7 @@ func (u UserLogin) PlaybackInfo(id string) (*PlaybackInfo, error) {
       "partner_id": {"42"},
       "user_id": {""},
    }.Encode()
-   LogLevel.Dump(req)
+   Log.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -98,7 +98,7 @@ func (u UserLogin) ValueExchange() error {
       "partner_id": {"42"},
       "user_id": {""},
    }.Encode()
-   LogLevel.Dump(req)
+   Log.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return err

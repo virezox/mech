@@ -6,6 +6,7 @@ import (
    "github.com/89z/format/net"
    "net/http"
    "net/url"
+   "os"
    "strconv"
    "strings"
    "time"
@@ -13,7 +14,7 @@ import (
 
 const podcast = "\uF8FF.v1.catalog."
 
-var LogLevel format.LogLevel
+var Log = format.Log{Writer: os.Stdout}
 
 type AssetURL string
 
@@ -46,7 +47,7 @@ func NewAudio(addr string) (*Audio, error) {
    if err != nil {
       return nil, err
    }
-   LogLevel.Dump(req)
+   Log.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err

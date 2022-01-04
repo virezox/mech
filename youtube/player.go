@@ -5,6 +5,7 @@ import (
    "encoding/json"
    "github.com/89z/format"
    "net/http"
+   "os"
    "strconv"
 )
 
@@ -18,7 +19,7 @@ var (
 
 var (
    Key = Auth{"X-Goog-Api-Key", "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8"}
-   LogLevel format.LogLevel
+   Log = format.Log{Writer: os.Stdout}
 )
 
 func post(addr string, head Auth, body youTubeI) (*http.Response, error) {
@@ -31,7 +32,7 @@ func post(addr string, head Auth, body youTubeI) (*http.Response, error) {
       return nil, err
    }
    req.Header.Set(head.Key, head.Value)
-   LogLevel.Dump(req)
+   Log.Dump(req)
    return new(http.Transport).RoundTrip(req)
 }
 

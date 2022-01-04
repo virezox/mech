@@ -5,13 +5,14 @@ import (
    "github.com/89z/format"
    "net/http"
    "net/url"
+   "os"
    "path"
    "strconv"
    "strings"
    "time"
 )
 
-var LogLevel format.LogLevel
+var Log = format.Log{Writer: os.Stdout}
 
 func Parse(id string) (uint64, error) {
    return strconv.ParseUint(id, 10, 64)

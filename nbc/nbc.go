@@ -10,6 +10,7 @@ import (
    "github.com/89z/format/m3u"
    "io"
    "net/http"
+   "os"
    "strconv"
    "strings"
    "time"
@@ -22,7 +23,7 @@ const (
 
 var (
    Decode = m3u.Decode
-   LogLevel format.LogLevel
+   Log = format.Log{Writer: os.Stdout}
    PercentInt = format.PercentInt
    secretKey = []byte("2b84a073ede61c766e4c0b3f1e656f7f")
 )

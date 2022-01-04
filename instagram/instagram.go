@@ -6,6 +6,7 @@ import (
    "github.com/89z/format"
    "io"
    "net/http"
+   "os"
    "strconv"
 )
 
@@ -15,7 +16,7 @@ const (
    userAgent = "Instagram 216.1.0.21.137 Android"
 )
 
-var LogLevel format.LogLevel
+var Log = format.Log{Writer: os.Stdout}
 
 // instagram.com/p/CT-cnxGhvvO
 // instagram.com/p/yza2PAPSx2

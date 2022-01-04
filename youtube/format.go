@@ -8,6 +8,14 @@ import (
    "strconv"
 )
 
+func (p progress) Range() string {
+   buf := []byte("bytes=")
+   buf = strconv.AppendInt(buf, p.content, 10)
+   buf = append(buf, '-')
+   buf = strconv.AppendInt(buf, p.content+p.partLength-1, 10)
+   return string(buf)
+}
+
 type Format struct {
    Itag int64
    URL string

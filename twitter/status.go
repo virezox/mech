@@ -5,6 +5,7 @@ import (
    "github.com/89z/format"
    "net/http"
    "net/url"
+   "os"
    "strconv"
 )
 
@@ -14,7 +15,7 @@ const bearer =
    "AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs=" +
    "1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA"
 
-var LogLevel format.LogLevel
+var Log = format.Log{Writer: os.Stdout}
 
 func Parse(id string) (uint64, error) {
    return strconv.ParseUint(id, 10, 64)
