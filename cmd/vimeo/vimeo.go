@@ -26,7 +26,7 @@ func main() {
       return
    }
    if verbose {
-      vimeo.LogLevel = 1
+      vimeo.Log.Level = 1
    }
    id := flag.Arg(0)
    videoID, err := vimeo.Parse(id)

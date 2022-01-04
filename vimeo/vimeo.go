@@ -53,7 +53,7 @@ func NewConfig(id uint64) (*Config, error) {
    if err != nil {
       return nil, err
    }
-   LogLevel.Dump(req)
+   Log.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -94,7 +94,7 @@ func (c Config) Videos() ([]Video, error) {
    if err != nil {
       return nil, err
    }
-   LogLevel.Dump(req)
+   Log.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -141,4 +141,29 @@ type notFound struct {
 
 func (n notFound) Error() string {
    return strconv.Quote(n.input) + " not found"
+}
+
+type Embed struct {
+   Title string
+   Upload_Date string
+   Thumbnail_URL string
+}
+
+func NewEmbed(id uint64) (*Embed, error) {
+   req, err := http.NewRequest("GET", "https://vimeo.com/api/oembed.json", nil)
+   if err != nil {
+      return nil, err
+   }
+   req.URL.RawQuery = "url=//vimeo.com/" + strconv.FormatUint(id, 10)
+   Log.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   vid := new(Embed)
+   if err := json.NewDecoder(res.Body).Decode(vid); err != nil {
+      return nil, err
+   }
+   return vid, nil
 }

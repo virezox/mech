@@ -31,7 +31,7 @@ func NewGuest() (*Guest, error) {
       return nil, err
    }
    req.Header.Set("Authorization", "Bearer " + bearer)
-   LogLevel.Dump(req)
+   Log.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -70,7 +70,7 @@ func NewStatus(guest *Guest, id uint64) (*Status, error) {
       "Authorization": {"Bearer " + bearer},
       "X-Guest-Token": {guest.Guest_Token},
    }
-   LogLevel.Dump(req)
+   Log.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err

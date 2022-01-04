@@ -48,7 +48,7 @@ func NewMeta(releaseID int64) (Meta, error) {
    if err != nil {
       return nil, err
    }
-   LogLevel.Dump(req)
+   Log.Dump(req)
    // this redirects, so we cannot use RoundTrip
    res, err := new(http.Client).Do(req)
    if err != nil {
@@ -104,7 +104,7 @@ func Release(releaseID int64) ([]Track, error) {
       return nil, err
    }
    req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-   LogLevel.Dump(req)
+   Log.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -124,7 +124,7 @@ func (t Track) Resolve() (string, error) {
    if err != nil {
       return "", err
    }
-   LogLevel.Dump(req)
+   Log.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return "", err

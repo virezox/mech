@@ -16,24 +16,24 @@ func main() {
    flag.BoolVar(&space, "s", false, "space")
    flag.BoolVar(&verbose, "v", false, "verbose")
    flag.Parse()
-   if flag.NArg() != 1 {
-      fmt.Println("twitter [flags] [ID]")
-      flag.PrintDefaults()
-      return
-   }
    if verbose {
-      twitter.LogLevel = 1
+      twitter.Log.Level = 1
    }
-   id := flag.Arg(0)
-   if space {
-      err := spacePath(id, info)
-      if err != nil {
-         panic(err)
+   if flag.NArg() == 1 {
+      id := flag.Arg(0)
+      if space {
+         err := spacePath(id, info)
+         if err != nil {
+            panic(err)
+         }
+      } else {
+         err := statusPath(id, info, format)
+         if err != nil {
+            panic(err)
+         }
       }
    } else {
-      err := statusPath(id, info, format)
-      if err != nil {
-         panic(err)
-      }
+      fmt.Println("twitter [flags] [ID]")
+      flag.PrintDefaults()
    }
 }

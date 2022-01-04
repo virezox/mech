@@ -39,7 +39,7 @@ func main() {
       panic(err)
    }
    if verbose {
-      nbc.LogLevel = 1
+      nbc.Log.Level = 1
    }
    if err := cHLS.HLS(nGUID); err != nil {
       panic(err)
@@ -95,7 +95,10 @@ func (c choice) HLS(guid uint64) error {
          total := len(srcs)
          for value, src := range srcs {
             loc := src["URI"]
-            fmt.Println(format.PercentInt(value, total), format.Trim(loc))
+            format.PercentInt(os.Stdout, value, total)
+            os.Stdout.WriteString(" ")
+            format.Trim(os.Stdout, loc)
+            os.Stdout.WriteString("\n")
             res, err := http.Get(loc)
             if err != nil {
                return err

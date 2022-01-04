@@ -22,8 +22,6 @@ Updated December 15 2021.
    - com.clearchannel.iheartradio.controller
 - Vimeo (30.496 M)
    - com.vimeo.android.videoapp
-- BBC News (29.738 M)
-   - bbc.mobile.news.ww
 - TIDAL Music (23.447 M)
    - com.aspiro.tidal
 - Napster Music (21.278 M)

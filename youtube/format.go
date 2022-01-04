@@ -50,7 +50,7 @@ func (f Format) Write(dst io.Writer) error {
    if err != nil {
       return err
    }
-   LogLevel.Dump(req)
+   Log.Dump(req)
    pro := format.Content(f.ContentLength)
    for pro.Content < pro.ContentLength {
       req.Header.Set("Range", pro.Range())

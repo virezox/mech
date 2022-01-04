@@ -20,3 +20,11 @@ func TestConfig(t *testing.T) {
       fmt.Println(vid.URL())
    }
 }
+
+func TestEmbed(t *testing.T) {
+   emb, err := NewEmbed(id)
+   if err != nil {
+      t.Fatal(err)
+   }
+   fmt.Printf("%+v\n", emb)
+}

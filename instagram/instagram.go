@@ -64,7 +64,7 @@ func NewLogin(username, password string) (*Login, error) {
       "Content-Type": {"application/x-www-form-urlencoded"},
       "User-Agent": {userAgent},
    }
-   LogLevel.Dump(req)
+   Log.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -101,7 +101,7 @@ func (l Login) GraphQL(shortcode string) (*Media, error) {
       req.Header.Set("Authorization", l.Authorization)
    }
    req.URL.RawQuery = "__a=1"
-   LogLevel.Dump(req)
+   Log.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err

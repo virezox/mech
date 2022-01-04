@@ -49,7 +49,7 @@ func NewSpace(guest *Guest, id string) (*Space, error) {
       return nil, err
    }
    req.URL.RawQuery = "variables=" + url.QueryEscape(string(buf))
-   LogLevel.Dump(req)
+   Log.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -91,7 +91,7 @@ func (s Space) Stream(guest *Guest) (*Stream, error) {
       "Authorization": {"Bearer " + bearer},
       "X-Guest-Token": {guest.Guest_Token},
    }
-   LogLevel.Dump(req)
+   Log.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -119,7 +119,7 @@ func (s Stream) Chunks() ([]m3u.Format, error) {
    if err != nil {
       return nil, err
    }
-   LogLevel.Dump(req)
+   Log.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err

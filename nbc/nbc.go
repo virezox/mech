@@ -74,7 +74,7 @@ func NewAccessVOD(guid uint64) (*AccessVOD, error) {
       "Authorization": {auth.String()},
       "Content-Type": {"application/json"},
    }
-   LogLevel.Dump(req)
+   Log.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -92,7 +92,7 @@ func (a AccessVOD) Manifest() ([]m3u.Format, error) {
    if err != nil {
       return nil, err
    }
-   LogLevel.Dump(req)
+   Log.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -130,7 +130,7 @@ func NewVideo(guid uint64) (*Video, error) {
       return nil, err
    }
    req.Header.Set("Content-Type", "application/json")
-   LogLevel.Dump(req)
+   Log.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err

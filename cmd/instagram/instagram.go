@@ -28,7 +28,7 @@ func main() {
       return
    }
    if verbose {
-      instagram.LogLevel = 1
+      instagram.Log.Level = 1
    }
    if username != "" {
       login, err := instagram.NewLogin(username, password)
