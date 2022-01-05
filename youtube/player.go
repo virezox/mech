@@ -5,7 +5,6 @@ import (
    "encoding/json"
    "github.com/89z/format"
    "net/http"
-   "os"
    "strconv"
 )
 
@@ -17,10 +16,7 @@ var (
    Mweb = Client{Name: "MWEB", Version: "2.20211109.01.00"}
 )
 
-var (
-   Key = Auth{"X-Goog-Api-Key", "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8"}
-   Log = format.Log{Writer: os.Stdout}
-)
+var Key = Auth{"X-Goog-Api-Key", "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8"}
 
 func post(addr string, head Auth, body youTubeI) (*http.Response, error) {
    buf := new(bytes.Buffer)
@@ -32,7 +28,7 @@ func post(addr string, head Auth, body youTubeI) (*http.Response, error) {
       return nil, err
    }
    req.Header.Set(head.Key, head.Value)
-   Log.Dump(req)
+   format.Log.Dump(req)
    return new(http.Transport).RoundTrip(req)
 }
 

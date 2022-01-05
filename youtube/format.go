@@ -15,7 +15,7 @@ func (f Format) Write(dst io.Writer) error {
    if err != nil {
       return err
    }
-   Log.Dump(req)
+   format.Log.Dump(req)
    var (
       begin = time.Now()
       content int64

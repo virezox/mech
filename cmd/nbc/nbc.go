@@ -39,7 +39,7 @@ func main() {
       panic(err)
    }
    if verbose {
-      nbc.Log.Level = 1
+      format.Log.Level = 1
    }
    if err := cHLS.HLS(nGUID); err != nil {
       panic(err)

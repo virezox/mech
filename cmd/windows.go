@@ -11,7 +11,7 @@ func main() {
       fmt.Println("cmd [folder]...")
       return
    }
-   arg := []string{"build", "-ldflags", "-s", "-o", "."}
+   arg := []string{"build", "-ldflags", "-s", "-gcflags", "all=-l", "-o", "."}
    dirs := os.Args[1:]
    arg = append(arg, dirs...)
    if err := exec.Command("go", arg...).Run(); err != nil {

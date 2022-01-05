@@ -4,7 +4,6 @@ import (
    "github.com/89z/format"
 )
 
-type (
-   InvalidSlice = format.InvalidSlice
-   Log = format.Log
-)
+var Log = format.Log
+
+type InvalidSlice = format.InvalidSlice

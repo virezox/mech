@@ -25,7 +25,7 @@ func main() {
       return
    }
    if verbose {
-      tiktok.Log.Level = 1
+      format.Log.Level = 1
    }
    id := flag.Arg(0)
    awemeID, err := tiktok.Parse(id)

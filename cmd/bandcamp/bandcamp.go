@@ -26,7 +26,7 @@ func main() {
       return
    }
    if verbose {
-      bandcamp.Log.Level = 1
+      format.Log.Level = 1
    }
    addr := flag.Arg(0)
    data, err := bandcamp.NewDataTralbum(addr)

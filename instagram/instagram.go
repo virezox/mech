@@ -6,7 +6,6 @@ import (
    "github.com/89z/format"
    "io"
    "net/http"
-   "os"
    "strconv"
 )
 
@@ -15,8 +14,6 @@ const (
    // com.instagram.android
    userAgent = "Instagram 216.1.0.21.137 Android"
 )
-
-var Log = format.Log{Writer: os.Stdout}
 
 // instagram.com/p/CT-cnxGhvvO
 // instagram.com/p/yza2PAPSx2
@@ -64,7 +61,7 @@ func NewLogin(username, password string) (*Login, error) {
       "Content-Type": {"application/x-www-form-urlencoded"},
       "User-Agent": {userAgent},
    }
-   Log.Dump(req)
+   format.Log.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -101,7 +98,7 @@ func (l Login) GraphQL(shortcode string) (*Media, error) {
       req.Header.Set("Authorization", l.Authorization)
    }
    req.URL.RawQuery = "__a=1"
-   Log.Dump(req)
+   format.Log.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err

@@ -3,6 +3,7 @@ package main
 import (
    "flag"
    "fmt"
+   "github.com/89z/format"
    "github.com/89z/mech/youtube"
 )
 
@@ -34,7 +35,7 @@ func main() {
    // Parse
    flag.Parse()
    if verbose {
-      youtube.Log.Level = 1
+      format.Log.Level = 1
    }
    if exchange {
       err := authExchange()
