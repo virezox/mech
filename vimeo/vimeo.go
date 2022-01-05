@@ -5,14 +5,11 @@ import (
    "github.com/89z/format"
    "net/http"
    "net/url"
-   "os"
    "path"
    "strconv"
    "strings"
    "time"
 )
-
-var Log = format.Log{Writer: os.Stdout}
 
 func Parse(id string) (uint64, error) {
    return strconv.ParseUint(id, 10, 64)
@@ -53,7 +50,7 @@ func NewConfig(id uint64) (*Config, error) {
    if err != nil {
       return nil, err
    }
-   Log.Dump(req)
+   format.Log.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -94,7 +91,7 @@ func (c Config) Videos() ([]Video, error) {
    if err != nil {
       return nil, err
    }
-   Log.Dump(req)
+   format.Log.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -155,7 +152,7 @@ func NewEmbed(id uint64) (*Embed, error) {
       return nil, err
    }
    req.URL.RawQuery = "url=//vimeo.com/" + strconv.FormatUint(id, 10)
-   Log.Dump(req)
+   format.Log.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err

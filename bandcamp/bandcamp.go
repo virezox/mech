@@ -7,7 +7,6 @@ import (
    "html"
    "net/http"
    "net/url"
-   "os"
    "strconv"
    "strings"
    "time"
@@ -61,8 +60,6 @@ var Images = []Image{
    {ID:69, Width:700, Height:700, Ext:".jpg"},
 }
 
-var Log = format.Log{Writer: os.Stdout}
-
 type DataTralbum struct {
    AlbumRelease []struct {
       MusicReleaseFormat string
@@ -91,7 +88,7 @@ func NewDataTralbum(addr string) (*DataTralbum, error) {
    if err != nil {
       return nil, err
    }
-   Log.Dump(req)
+   format.Log.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -169,7 +166,7 @@ func NewTralbum(typ byte, id int) (*Tralbum, error) {
       "tralbum_id": {strconv.Itoa(id)},
       "tralbum_type": {string(typ)},
    }.Encode()
-   Log.Dump(req)
+   format.Log.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
