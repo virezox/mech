@@ -5,15 +5,48 @@ import (
    "io"
    "mime"
    "net/http"
+   "os"
    "strconv"
+   "time"
 )
 
-func (p progress) Range() string {
-   buf := []byte("bytes=")
-   buf = strconv.AppendInt(buf, p.content, 10)
-   buf = append(buf, '-')
-   buf = strconv.AppendInt(buf, p.content+p.partLength-1, 10)
-   return string(buf)
+func (f Format) Write(dst io.Writer) error {
+   req, err := http.NewRequest("GET", f.URL, nil)
+   if err != nil {
+      return err
+   }
+   Log.Dump(req)
+   var (
+      begin = time.Now()
+      content int64
+   )
+   for content < f.ContentLength {
+      buf := []byte("bytes=")
+      buf = strconv.AppendInt(buf, content, 10)
+      buf = append(buf, '-')
+      buf = strconv.AppendInt(buf, content+partLength-1, 10)
+      req.Header.Set("Range", string(buf))
+      end := time.Since(begin).Milliseconds()
+      if end >= 1 {
+         format.PercentInt64(os.Stdout, content, f.ContentLength)
+         os.Stdout.WriteString("\t")
+         format.Size.LabelInt64(os.Stdout, content)
+         os.Stdout.WriteString("\t")
+         format.Rate.LabelInt64(os.Stdout, 1000*content/end)
+         os.Stdout.WriteString("\n")
+      }
+      // this sometimes redirects, so cannot use http.Transport
+      res, err := new(http.Client).Do(req)
+      if err != nil {
+         return err
+      }
+      defer res.Body.Close()
+      if _, err := io.Copy(dst, res.Body); err != nil {
+         return err
+      }
+      content += partLength
+   }
+   return nil
 }
 
 type Format struct {
@@ -45,26 +78,6 @@ func (f Format) String() string {
    return string(buf)
 }
 
-func (f Format) Write(dst io.Writer) error {
-   req, err := http.NewRequest("GET", f.URL, nil)
-   if err != nil {
-      return err
-   }
-   Log.Dump(req)
-   pro := format.Content(f.ContentLength)
-   for pro.Content < pro.ContentLength {
-      req.Header.Set("Range", pro.Range())
-      pro.Print()
-      // this sometimes redirects, so cannot use http.Transport
-      res, err := new(http.Client).Do(req)
-      if err != nil {
-         return err
-      }
-      defer res.Body.Close()
-      if _, err := io.Copy(dst, res.Body); err != nil {
-         return err
-      }
-      pro.Content += pro.PartLength
-   }
-   return nil
-}
+const partLength = 10_000_000
+
+

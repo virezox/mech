@@ -23,7 +23,6 @@ func TestAndroidVOD(t *testing.T) {
 }
 
 func TestAndroidVideo(t *testing.T) {
-   LogLevel = 1
    vid, err := NewVideo(guid)
    if err != nil {
       t.Fatal(err)

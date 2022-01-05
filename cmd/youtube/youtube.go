@@ -52,7 +52,9 @@ func (c choice) formats(play *youtube.Player, id string) error {
       if c.info {
          fmt.Println(form)
       } else if c.itags[fmt.Sprint(form.Itag)] {
-         fmt.Println("GET", format.Trim(form.URL))
+         os.Stdout.WriteString("GET ")
+         format.Trim(os.Stdout, form.URL)
+         os.Stdout.WriteString("\n")
          res, err := http.Get(form.URL)
          if err != nil {
             return err
@@ -68,7 +70,7 @@ func (c choice) formats(play *youtube.Player, id string) error {
             return err
          }
          defer file.Close()
-         pro := format.Response(res)
+         pro := format.NewProgress(res, os.Stdout)
          if _, err := file.ReadFrom(pro); err != nil {
             return err
          }

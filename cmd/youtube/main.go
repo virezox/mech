@@ -34,7 +34,7 @@ func main() {
    // Parse
    flag.Parse()
    if verbose {
-      youtube.LogLevel = 1
+      youtube.Log.Level = 1
    }
    if exchange {
       err := authExchange()

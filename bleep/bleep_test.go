@@ -21,7 +21,6 @@ func TestMeta(t *testing.T) {
 }
 
 func TestResolve(t *testing.T) {
-   LogLevel = 1
    tracks, err := Release(releaseID)
    if err != nil {
       t.Fatal(err)
