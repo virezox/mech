@@ -16,6 +16,15 @@ type choice struct {
    useFormats bool
 }
 
+func filename(play *youtube.Player, form youtube.Format) (string, error) {
+   name, err := format.ExtensionByType(form.MimeType)
+   if err != nil {
+      return "", err
+   }
+   name = play.VideoDetails.Author + "-" + play.VideoDetails.Title + name
+   return strings.Map(format.Clean, name), nil
+}
+
 // Videos can support both AdaptiveFormats and DASH: zgJT91LA9gA
 func (c choice) adaptiveFormats(play *youtube.Player, id string) error {
    if len(c.itags) == 0 {
@@ -29,12 +38,11 @@ func (c choice) adaptiveFormats(play *youtube.Player, id string) error {
       if c.info {
          fmt.Println(form)
       } else if c.itags[fmt.Sprint(form.Itag)] {
-         ext, err := format.ExtensionByType(form.MimeType)
+         name, err := filename(play, form)
          if err != nil {
             return err
          }
-         name := play.Author() + "-" + play.Title() + ext
-         file, err := os.Create(strings.Map(format.Clean, name))
+         file, err := os.Create(name)
          if err != nil {
             return err
          }
@@ -60,12 +68,11 @@ func (c choice) formats(play *youtube.Player, id string) error {
             return err
          }
          defer res.Body.Close()
-         ext, err := format.ExtensionByType(form.MimeType)
+         name, err := filename(play, form)
          if err != nil {
             return err
          }
-         name := play.Author() + "-" + play.Title() + ext
-         file, err := os.Create(strings.Map(format.Clean, name))
+         file, err := os.Create(name)
          if err != nil {
             return err
          }

@@ -2,6 +2,7 @@ package pandora
 
 import (
    "encoding/json"
+   "github.com/89z/format"
    "io"
    "net/http"
    "net/url"
@@ -61,7 +62,7 @@ func (u UserLogin) PlaybackInfo(id string) (*PlaybackInfo, error) {
       "partner_id": {"42"},
       "user_id": {""},
    }.Encode()
-   Log.Dump(req)
+   format.Log.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -98,7 +99,7 @@ func (u UserLogin) ValueExchange() error {
       "partner_id": {"42"},
       "user_id": {""},
    }.Encode()
-   Log.Dump(req)
+   format.Log.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return err

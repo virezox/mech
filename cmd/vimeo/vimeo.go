@@ -13,10 +13,10 @@ import (
 
 func main() {
    var (
-      format string
       info, verbose bool
+      vFormat string
    )
-   flag.StringVar(&format, "f", "", "format")
+   flag.StringVar(&vFormat, "f", "", "format")
    flag.BoolVar(&info, "i", false, "info only")
    flag.BoolVar(&verbose, "v", false, "verbose")
    flag.Parse()
@@ -26,7 +26,7 @@ func main() {
       return
    }
    if verbose {
-      vimeo.Log.Level = 1
+      format.Log.Level = 1
    }
    id := flag.Arg(0)
    videoID, err := vimeo.Parse(id)
@@ -52,7 +52,7 @@ func main() {
          fmt.Print(" Width:", vid.Width)
          fmt.Print(" Height:", vid.Height)
          fmt.Println()
-      } else if vid.ID == format {
+      } else if vid.ID == vFormat {
          err := download(con, vid.URL())
          if err != nil {
             panic(err)

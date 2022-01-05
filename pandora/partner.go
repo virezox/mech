@@ -8,7 +8,6 @@ import (
    "golang.org/x/crypto/blowfish" //lint:ignore SA1019 reason
    "net/http"
    "net/url"
-   "os"
    "strings"
 )
 
@@ -18,10 +17,7 @@ const (
    syncTime = 0x7FFF_FFFF
 )
 
-var (
-   Log = format.Log{Writer: os.Stdout}
-   blowfishKey = []byte("6#26FRL$ZWD")
-)
+var blowfishKey = []byte("6#26FRL$ZWD")
 
 func Decrypt(src []byte) ([]byte, error) {
    sLen := len(src)
@@ -108,7 +104,7 @@ func NewPartnerLogin() (*PartnerLogin, error) {
       return nil, err
    }
    req.URL.RawQuery = "method=auth.partnerLogin"
-   Log.Dump(req)
+   format.Log.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -148,7 +144,7 @@ func (p PartnerLogin) UserLogin(username, password string) (*UserLogin, error) {
       "method": {"auth.userLogin"},
       "partner_id": {"42"},
    }.Encode()
-   Log.Dump(req)
+   format.Log.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err

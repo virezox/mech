@@ -5,7 +5,6 @@ import (
    "github.com/89z/format"
    "net/http"
    "net/url"
-   "os"
    "strconv"
 )
 
@@ -14,8 +13,6 @@ const API = "https://api.twitter.com/1.1"
 const bearer =
    "AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs=" +
    "1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA"
-
-var Log = format.Log{Writer: os.Stdout}
 
 func Parse(id string) (uint64, error) {
    return strconv.ParseUint(id, 10, 64)
@@ -31,7 +28,7 @@ func NewGuest() (*Guest, error) {
       return nil, err
    }
    req.Header.Set("Authorization", "Bearer " + bearer)
-   Log.Dump(req)
+   format.Log.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -70,7 +67,7 @@ func NewStatus(guest *Guest, id uint64) (*Status, error) {
       "Authorization": {"Bearer " + bearer},
       "X-Guest-Token": {guest.Guest_Token},
    }
-   Log.Dump(req)
+   format.Log.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
