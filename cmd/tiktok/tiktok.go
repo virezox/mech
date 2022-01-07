@@ -43,8 +43,8 @@ func main() {
       fmt.Println("Width:", det.Video.Play_Addr.Width)
       fmt.Println("Height:", det.Video.Play_Addr.Height)
       fmt.Println("URL_List:")
-      for _, loc := range det.Video.Play_Addr.URL_List {
-         fmt.Println("-", loc)
+      for _, addr := range det.Video.Play_Addr.URL_List {
+         fmt.Println("-", addr)
       }
    } else {
       err := get(det, output)

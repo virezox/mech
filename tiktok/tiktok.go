@@ -69,13 +69,13 @@ func (a AwemeDetail) URL() (string, error) {
       return "", format.InvalidSlice{}
    }
    first := a.Video.Play_Addr.URL_List[0]
-   loc, err := url.Parse(first)
+   addr, err := url.Parse(first)
    if err != nil {
       return "", err
    }
-   loc.RawQuery = ""
-   loc.Scheme = "http"
-   return loc.String(), nil
+   addr.RawQuery = ""
+   addr.Scheme = "http"
+   return addr.String(), nil
 }
 
 type response struct {

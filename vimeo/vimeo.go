@@ -64,12 +64,12 @@ func NewConfig(id uint64) (*Config, error) {
 }
 
 func (c Config) DASH() (string, error) {
-   loc, err := url.Parse(c.Request.Files.DASH.CDNs.Fastly_Skyfire.URL)
+   addr, err := url.Parse(c.Request.Files.DASH.CDNs.Fastly_Skyfire.URL)
    if err != nil {
       return "", err
    }
-   loc.RawQuery = ""
-   return loc.String(), nil
+   addr.RawQuery = ""
+   return addr.String(), nil
 }
 
 // These are segmented, but you can actually get the full videos like this:
@@ -79,15 +79,15 @@ func (c Config) DASH() (string, error) {
 // Careful, URLs like above are timestamped, so they only work for a short time.
 // Also, even though it says Video, audio is included too.
 func (c Config) Videos() ([]Video, error) {
-   loc, err := c.DASH()
+   addr, err := c.DASH()
    if err != nil {
       return nil, err
    }
-   ind := strings.Index(loc, "/sep/")
+   ind := strings.Index(addr, "/sep/")
    if ind == -1 {
       return nil, notFound{"/sep/"}
    }
-   req, err := http.NewRequest("GET", loc, nil)
+   req, err := http.NewRequest("GET", addr, nil)
    if err != nil {
       return nil, err
    }
@@ -106,7 +106,7 @@ func (c Config) Videos() ([]Video, error) {
    var vids []Video
    for _, vid := range dash.Video {
       if vid.Init_Segment != "" {
-         vid.Base_URL = loc[:ind] + "/parcel/video"
+         vid.Base_URL = addr[:ind] + "/parcel/video"
          vids = append(vids, vid)
       }
    }

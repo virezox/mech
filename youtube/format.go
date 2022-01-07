@@ -30,9 +30,9 @@ func (f Format) Write(dst io.Writer) error {
       if end >= 1 {
          format.PercentInt64(os.Stdout, content, f.ContentLength)
          os.Stdout.WriteString("\t")
-         format.Size.LabelInt64(os.Stdout, content)
+         format.Size.Int64(os.Stdout, content)
          os.Stdout.WriteString("\t")
-         format.Rate.LabelInt64(os.Stdout, 1000*content/end)
+         format.Rate.Int64(os.Stdout, 1000*content/end)
          os.Stdout.WriteString("\n")
       }
       // this sometimes redirects, so cannot use http.Transport

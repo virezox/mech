@@ -61,14 +61,14 @@ func main() {
    }
 }
 
-func download(con *vimeo.Config, loc string) error {
-   fmt.Println("GET", loc)
-   res, err := http.Get(loc)
+func download(con *vimeo.Config, addr string) error {
+   fmt.Println("GET", addr)
+   res, err := http.Get(addr)
    if err != nil {
       return err
    }
    defer res.Body.Close()
-   name := con.Video.Owner.Name + "-" + con.Video.Title + path.Ext(loc)
+   name := con.Video.Owner.Name + "-" + con.Video.Title + path.Ext(addr)
    file, err := os.Create(strings.Map(format.Clean, name))
    if err != nil {
       return err

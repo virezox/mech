@@ -75,9 +75,9 @@ func (c choice) HLS(guid uint64) error {
          fmt.Print(" RESOLUTION:", form["RESOLUTION"])
          fmt.Println()
       case c.formats[strconv.Itoa(id)]:
-         loc := form["URI"]
-         fmt.Println("GET", loc)
-         res, err := http.Get(loc)
+         addr := form["URI"]
+         fmt.Println("GET", addr)
+         res, err := http.Get(addr)
          if err != nil {
             return err
          }
@@ -94,12 +94,12 @@ func (c choice) HLS(guid uint64) error {
          defer dst.Close()
          total := len(srcs)
          for value, src := range srcs {
-            loc := src["URI"]
+            addr := src["URI"]
             format.PercentInt(os.Stdout, value, total)
             os.Stdout.WriteString(" ")
-            format.Trim(os.Stdout, loc)
+            format.Trim(os.Stdout, addr)
             os.Stdout.WriteString("\n")
-            res, err := http.Get(loc)
+            res, err := http.Get(addr)
             if err != nil {
                return err
             }

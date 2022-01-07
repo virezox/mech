@@ -24,20 +24,20 @@ func statusPath(id, output string, info bool, format int) error {
       return err
    }
    for index, variant := range stat.Variants() {
-      loc := variant.URL.String()
+      addr := variant.URL.String()
       switch {
       case info:
          fmt.Print("ID:", index)
-         fmt.Print(" URL:", loc)
+         fmt.Print(" URL:", addr)
          fmt.Println()
       case format == index:
-         fmt.Println("GET", loc)
-         res, err := http.Get(loc)
+         fmt.Println("GET", addr)
+         res, err := http.Get(addr)
          if err != nil {
             return err
          }
          defer res.Body.Close()
-         name := filename(output, stat.User.Name, id, loc)
+         name := filename(output, stat.User.Name, id, addr)
          dst, err := os.Create(name)
          if err != nil {
             return err
@@ -51,7 +51,7 @@ func statusPath(id, output string, info bool, format int) error {
    return nil
 }
 
-func filename(output, name, id, loc string) string {
+func filename(output, name, id, addr string) string {
    var str strings.Builder
    if output != "" {
       str.WriteString(output)
@@ -60,7 +60,7 @@ func filename(output, name, id, loc string) string {
    str.WriteString(name)
    str.WriteByte('-')
    str.WriteString(id)
-   str.WriteString(path.Ext(loc))
+   str.WriteString(path.Ext(addr))
    return str.String()
 }
 
@@ -93,12 +93,12 @@ func spacePath(id string, info bool) error {
       }
       defer dst.Close()
       for key, src := range srcs {
-         loc, err := url.Parse(src["URI"])
+         addr, err := url.Parse(src["URI"])
          if err != nil {
             return err
          }
-         fmt.Printf("%v/%v %v\n", key, len(srcs), loc.Path)
-         res, err := http.Get(loc.String())
+         fmt.Printf("%v/%v %v\n", key, len(srcs), addr.Path)
+         res, err := http.Get(addr.String())
          if err != nil {
             return err
          }
