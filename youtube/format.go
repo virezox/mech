@@ -10,6 +10,37 @@ import (
    "time"
 )
 
+const partLength = 10_000_000
+
+type Format struct {
+   Itag int64
+   URL string
+   MimeType string
+   Bitrate int64
+   Width int64
+   Height int64
+   ContentLength int64 `json:"contentLength,string"`
+}
+
+func (f Format) String() string {
+   buf := []byte("Itag:")
+   buf = strconv.AppendInt(buf, f.Itag, 10)
+   if f.Height >= 1 {
+      buf = append(buf, " Height:"...)
+      buf = strconv.AppendInt(buf, f.Height, 10)
+   }
+   buf = append(buf, " Bitrate:"...)
+   buf = strconv.AppendInt(buf, f.Bitrate, 10)
+   buf = append(buf, " ContentLength:"...)
+   buf = strconv.AppendInt(buf, f.ContentLength, 10)
+   justType, _, err := mime.ParseMediaType(f.MimeType)
+   if err == nil {
+      buf = append(buf, " MimeType:"...)
+      buf = append(buf, justType...)
+   }
+   return string(buf)
+}
+
 func (f Format) Write(dst io.Writer) error {
    req, err := http.NewRequest("GET", f.URL, nil)
    if err != nil {
@@ -48,36 +79,3 @@ func (f Format) Write(dst io.Writer) error {
    }
    return nil
 }
-
-type Format struct {
-   Itag int64
-   URL string
-   MimeType string
-   Bitrate int64
-   Width int64
-   Height int64
-   ContentLength int64 `json:"contentLength,string"`
-}
-
-func (f Format) String() string {
-   buf := []byte("Itag:")
-   buf = strconv.AppendInt(buf, f.Itag, 10)
-   if f.Height >= 1 {
-      buf = append(buf, " Height:"...)
-      buf = strconv.AppendInt(buf, f.Height, 10)
-   }
-   buf = append(buf, " Bitrate:"...)
-   buf = strconv.AppendInt(buf, f.Bitrate, 10)
-   buf = append(buf, " ContentLength:"...)
-   buf = strconv.AppendInt(buf, f.ContentLength, 10)
-   justType, _, err := mime.ParseMediaType(f.MimeType)
-   if err == nil {
-      buf = append(buf, " MimeType:"...)
-      buf = append(buf, justType...)
-   }
-   return string(buf)
-}
-
-const partLength = 10_000_000
-
-

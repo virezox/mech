@@ -1,36 +1,5 @@
 # Docs
 
-## Apps
-
-Updated December 15 2021.
-
-- YouTube (10.906 B)
-   - com.google.android.youtube
-- Instagram (3.902 B)
-   - com.instagram.android
-- TikTok (1.910 B)
-   - com.zhiliaoapp.musically
-- Twitter (1.226 B)
-   - com.twitter.android
-- SoundCloud (332.603 M)
-   - com.soundcloud.android
-- Pandora (276.415 M)
-   - com.pandora.android
-- iHeart (83.974 M)
-   - com.clearchannel.iheartradio.controller
-- Vimeo (30.496 M)
-   - com.vimeo.android.videoapp
-- TIDAL Music (23.447 M)
-   - com.aspiro.tidal
-- Napster Music (21.278 M)
-   - com.rhapsody
-- The NBC App (13.396 M)
-   - com.nbcuni.nbc
-- Bandcamp (2.539 M)
-   - com.bandcamp.android
-- Qobuz (656.191 k)
-   - com.qobuz.music
-
 ## How to save HAR?
 
 Open browser and open a new tab. Click `Open menu`, `Web Developer`, `Network`.
@@ -64,24 +33,3 @@ Authorization: Basic ODl6OmE1NzYxMjZlNzVlZjZiY2Y5ZDljNzEyZWIyN2RmZjFmOGFhZmQ...
    "youtube", "instagram"
 ]}
 ~~~
-
-## Other implementations
-
-I have support for these other sites, which I removed for now, as I am busy
-with other stuff.
-
-BBC:
-
-https://github.com/89z/mech/tree/ae41cbd605d887b03876861ca2109d00be967ca3
-
-PBS:
-
-https://github.com/89z/mech/tree/c825743ab7594025b9c70632d934820e2c68d20a
-
-Reddit:
-
-https://github.com/89z/mech/tree/b901af458f09e04b662dbeabc8f5880527f9adfa
-
-## Amazon Music
-
-First 30 seconds is normal, rest of track is encrypted.
