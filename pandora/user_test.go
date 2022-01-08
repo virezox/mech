@@ -13,6 +13,8 @@ var pandoraIDs = []string{
    "TR:1168891",
    // pandora.com/artist/the-black-dog/music-for-real-airports/m-1/TRnJq99pmqt72Zc
    "TR:1616369",
+   // pandora.com/artist/jessy-lanza/pull-my-hair-back/strange-emotion/TRkbfrm9rfpZZbq
+   "TR:2314875",
 }
 
 func TestDecode(t *testing.T) {
@@ -37,7 +39,7 @@ func TestDecode(t *testing.T) {
       if err != nil {
          t.Fatal(err)
       }
-      fmt.Printf("%+v\n", info)
+      fmt.Printf("Stat:%v Result:%+v\n", info.Stat, info.Result)
       time.Sleep(time.Second)
    }
 }

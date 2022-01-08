@@ -2,11 +2,7 @@
 
 ## Four tet
 
-Checked December 14 2021. Amazon Music:
-
-<https://amazon.com/Four-Tet/e/B000APRM6K/digital/ref=ep_artist_tab_digi>
-
-Apple Music:
+Checked December 14 2021. Apple Music:
 
 https://music.apple.com/us/artist/four-tet/35888604/see-all?section=full-albums
 

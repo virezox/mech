@@ -16,8 +16,6 @@ Updated December 15 2021.
    - com.soundcloud.android
 - Pandora (276.415 M)
    - com.pandora.android
-- Amazon Music (245.537 M)
-   - com.amazon.mp3
 - iHeart (83.974 M)
    - com.clearchannel.iheartradio.controller
 - Vimeo (30.496 M)
@@ -67,10 +65,10 @@ Authorization: Basic ODl6OmE1NzYxMjZlNzVlZjZiY2Y5ZDljNzEyZWIyN2RmZjFmOGFhZmQ...
 ]}
 ~~~
 
-## Other sites
+## Other implementations
 
-I have implementations for these other sites, which I removed for now, as I am
-busy with other stuff.
+I have support for these other sites, which I removed for now, as I am busy
+with other stuff.
 
 BBC:
 
@@ -83,3 +81,7 @@ https://github.com/89z/mech/tree/c825743ab7594025b9c70632d934820e2c68d20a
 Reddit:
 
 https://github.com/89z/mech/tree/b901af458f09e04b662dbeabc8f5880527f9adfa
+
+## Amazon Music
+
+First 30 seconds is normal, rest of track is encrypted.
