@@ -30,8 +30,6 @@ Updated December 15 2021.
    - com.nbcuni.nbc
 - Bandcamp (2.539 M)
    - com.bandcamp.android
-- PBS Video (2.101 M)
-   - com.pbs.video
 - Qobuz (656.191 k)
    - com.qobuz.music
 

@@ -11,30 +11,14 @@ import (
    "time"
 )
 
-func main() {
-   var (
-      info, verbose bool
-      sleep time.Duration
-   )
-   flag.BoolVar(&info, "i", false, "info only")
-   flag.DurationVar(&sleep, "s", time.Second, "sleep")
-   flag.BoolVar(&verbose, "v", false, "verbose")
-   flag.Parse()
-   if flag.NArg() == 0 {
-      fmt.Println("bandcamp [flags] [track or album]")
-      flag.PrintDefaults()
-      return
-   }
-   if verbose {
-      format.Log.Level = 1
-   }
-   addr := flag.Arg(0)
-   data, err := bandcamp.NewDataTralbum(addr)
-   if err != nil {
-      panic(err)
-   }
+type flags struct {
+   info bool
+   sleep time.Duration
+}
+
+func (f flags) process(data *bandcamp.DataTralbum) error {
    for _, track := range data.TrackInfo {
-      if info {
+      if f.info {
          fmt.Printf("%+v\n", track)
       } else {
          addr, ok := track.File.MP3_128()
@@ -42,20 +26,48 @@ func main() {
             fmt.Println("GET", addr)
             res, err := http.Get(addr)
             if err != nil {
-               panic(err)
+               return err
             }
             defer res.Body.Close()
             name := data.Artist + "-" + track.Title + ".mp3"
             file, err := os.Create(strings.Map(format.Clean, name))
             if err != nil {
-               panic(err)
+               return err
             }
             defer file.Close()
             if _, err := file.ReadFrom(res.Body); err != nil {
-               panic(err)
+               return err
             }
-            time.Sleep(sleep)
+            time.Sleep(f.sleep)
          }
       }
+   }
+   return nil
+}
+
+func main() {
+   var (
+      choice flags
+      verbose bool
+   )
+   flag.BoolVar(&choice.info, "i", false, "info only")
+   flag.DurationVar(&choice.sleep, "s", time.Second, "sleep")
+   flag.BoolVar(&verbose, "v", false, "verbose")
+   flag.Parse()
+   if verbose {
+      format.Log.Level = 1
+   }
+   if flag.NArg() == 1 {
+      addr := flag.Arg(0)
+      data, err := bandcamp.NewDataTralbum(addr)
+      if err != nil {
+         panic(err)
+      }
+      if err := choice.process(data); err != nil {
+         panic(err)
+      }
+   } else {
+      fmt.Println("bandcamp [flags] [track or album]")
+      flag.PrintDefaults()
    }
 }

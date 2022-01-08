@@ -1,3 +1,4 @@
-# December 25 2021
+# Napster
 
-https://napster.com/artist/solar-fields/album/green-147102770
+- https://github.com/Sorrow446/Napster-downloader
+- https://napster.com/artist/solar-fields/album/green-147102770

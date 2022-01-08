@@ -7,7 +7,7 @@ import (
 )
 
 func TestOAuth(t *testing.T) {
-   o, err := NewOAuth()
+   oau, err := NewOAuth()
    if err != nil {
       t.Fatal(err)
    }
@@ -16,15 +16,15 @@ func TestOAuth(t *testing.T) {
 
 2. Enter this code
 %v
-`, o.Verification_URL, o.User_Code)
+`, oau.Verification_URL, oau.User_Code)
    for range [9]struct{}{} {
       time.Sleep(9 * time.Second)
-      x, err := o.Exchange()
+      exc, err := oau.Exchange()
       if err != nil {
          t.Fatal(err)
       }
-      fmt.Printf("%+v\n", x)
-      if x.Access_Token != "" {
+      fmt.Printf("%+v\n", exc)
+      if exc.Access_Token != "" {
          break
       }
    }

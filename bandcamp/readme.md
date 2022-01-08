@@ -8,21 +8,15 @@ com.bandcamp.android
 
 https://github.com/httptoolkit/frida-android-unpinning
 
-## Harold Budd - By the Dawn's Early Light
-
-Fail (RADIO):
-
-https://pandora.com/artist/harold-budd/by-the-dawns-early-light/ALtbd6VPbwKt5J4
+## Jessy Lanza - Pull My Hair Back
 
 Fail:
 
-https://amazon.com/Harold-Budd/e/B000APVTC8/digital
+https://youtube.com/channel/UCmvq13TH5UQbkhZGpuNw-cQ/playlists
 
-Pass:
+Fail:
 
-https://haroldbudd.bandcamp.com/album/by-the-dawns-early-light
-
-## Jessy Lanza - Pull My Hair Back
+https://soundcloud.com/jessylanza/albums
 
 Pass:
 
