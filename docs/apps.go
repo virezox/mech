@@ -13,6 +13,7 @@ var apps = []string{
    "com.amazon.mp3",
    "com.aspiro.tidal",
    "com.bandcamp.android",
+   "com.cbs.app",
    "com.clearchannel.iheartradio.controller",
    "com.google.android.youtube",
    "com.instagram.android",
