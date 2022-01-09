@@ -3,9 +3,10 @@ package pandora
 import (
    "encoding/json"
    "github.com/89z/format"
-   "io"
    "net/http"
    "net/url"
+   "os"
+   "path/filepath"
    "strings"
 )
 
@@ -27,13 +28,30 @@ type UserLogin struct {
    }
 }
 
-// This can be used to decode an existing login response.
-func (u *UserLogin) Decode(src io.Reader) error {
-   return json.NewDecoder(src).Decode(u)
+func OpenUserLogin(name string) (*UserLogin, error) {
+   file, err := os.Open(name)
+   if err != nil {
+      return nil, err
+   }
+   defer file.Close()
+   user := new(UserLogin)
+   if err := json.NewDecoder(file).Decode(user); err != nil {
+      return nil, err
+   }
+   return user, nil
 }
 
-func (u UserLogin) Encode(dst io.Writer) error {
-   enc := json.NewEncoder(dst)
+func (u UserLogin) Create(name string) error {
+   err := os.MkdirAll(filepath.Dir(name), os.ModeDir)
+   if err != nil {
+      return err
+   }
+   file, err := os.Create(name)
+   if err != nil {
+      return err
+   }
+   defer file.Close()
+   enc := json.NewEncoder(file)
    enc.SetIndent("", " ")
    return enc.Encode(u)
 }

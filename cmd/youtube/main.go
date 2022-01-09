@@ -5,6 +5,7 @@ import (
    "fmt"
    "github.com/89z/format"
    "github.com/89z/mech/youtube"
+   "os"
 )
 
 func main() {
@@ -37,26 +38,53 @@ func main() {
    if verbose {
       format.Log.Level = 1
    }
-   if exchange {
-      err := authExchange()
+   switch {
+   case exchange:
+      oauth, err := youtube.NewOAuth()
       if err != nil {
          panic(err)
       }
-   } else if refresh {
-      err := authRefresh()
+      fmt.Println(oauth)
+      fmt.Scanln()
+      exc, err := oauth.Exchange()
       if err != nil {
          panic(err)
       }
-   } else if flag.NArg() == 1 {
+      cache, err := os.UserCacheDir()
+      if err != nil {
+         panic(err)
+      }
+      if err := exc.Create(cache + "/mech/youtube.json"); err != nil {
+         panic(err)
+      }
+   case refresh:
+      cache, err := os.UserCacheDir()
+      if err != nil {
+         panic(err)
+      }
+      exc, err := youtube.OpenExchange(cache + "/mech/youtube.json")
+      if err != nil {
+         panic(err)
+      }
+      if err := exc.Refresh(); err != nil {
+         panic(err)
+      }
+      if err := exc.Create(cache + "/mech/youtube.json"); err != nil {
+         panic(err)
+      }
+   case flag.NArg() == 1:
       id := flag.Arg(0)
       auth := youtube.Key
       if construct {
-         var exc youtube.Exchange
-         err := authConstruct(&exc)
+         cache, err := os.UserCacheDir()
          if err != nil {
             panic(err)
          }
-         auth = youtube.Auth{"Authorization", "Bearer " + exc.Access_Token}
+         exc, err := youtube.OpenExchange(cache + "/mech/youtube.json")
+         if err != nil {
+            panic(err)
+         }
+         auth = exc.Auth()
       }
       client := youtube.Android
       if embed {
@@ -77,7 +105,7 @@ func main() {
             panic(err)
          }
       }
-   } else {
+   default:
       fmt.Println("youtube [flags] [video ID]")
       flag.PrintDefaults()
    }

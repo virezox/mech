@@ -17,34 +17,7 @@ var pandoraIDs = []string{
    "TR:2314875",
 }
 
-func TestDecode(t *testing.T) {
-   cache, err := os.UserCacheDir()
-   if err != nil {
-      t.Fatal(err)
-   }
-   file, err := os.Open(cache + "/mech/pandora.json")
-   if err != nil {
-      t.Fatal(err)
-   }
-   defer file.Close()
-   user := new(UserLogin)
-   if err := user.Decode(file); err != nil {
-      t.Fatal(err)
-   }
-   if err := user.ValueExchange(); err != nil {
-      t.Fatal(err)
-   }
-   for _, id := range pandoraIDs {
-      info, err := user.PlaybackInfo(id)
-      if err != nil {
-         t.Fatal(err)
-      }
-      fmt.Printf("Stat:%v Result:%+v\n", info.Stat, info.Result)
-      time.Sleep(time.Second)
-   }
-}
-
-func TestEncode(t *testing.T) {
+func TestCreate(t *testing.T) {
    part, err := NewPartnerLogin()
    if err != nil {
       t.Fatal(err)
@@ -61,14 +34,29 @@ func TestEncode(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   cache += "/mech"
-   os.Mkdir(cache, os.ModeDir)
-   file, err := os.Create(cache + "/pandora.json")
+   if err := user.Create(cache + "/mech/pandora.json"); err != nil {
+      t.Fatal(err)
+   }
+}
+
+func TestOpen(t *testing.T) {
+   cache, err := os.UserCacheDir()
    if err != nil {
       t.Fatal(err)
    }
-   defer file.Close()
-   if err := user.Encode(file); err != nil {
+   user, err := OpenUserLogin(cache + "/mech/pandora.json")
+   if err != nil {
       t.Fatal(err)
+   }
+   if err := user.ValueExchange(); err != nil {
+      t.Fatal(err)
+   }
+   for _, id := range pandoraIDs {
+      info, err := user.PlaybackInfo(id)
+      if err != nil {
+         t.Fatal(err)
+      }
+      fmt.Printf("Stat:%v Result:%+v\n", info.Stat, info.Result)
+      time.Sleep(time.Second)
    }
 }

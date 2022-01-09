@@ -4,6 +4,9 @@ import (
    "encoding/json"
    "net/http"
    "net/url"
+   "os"
+   "path/filepath"
+   "strings"
 )
 
 const (
@@ -18,6 +21,38 @@ type Exchange struct {
    Access_Token string
    Error string
    Refresh_Token string
+}
+
+func OpenExchange(name string) (*Exchange, error) {
+   file, err := os.Open(name)
+   if err != nil {
+      return nil, err
+   }
+   defer file.Close()
+   exc := new(Exchange)
+   if err := json.NewDecoder(file).Decode(exc); err != nil {
+      return nil, err
+   }
+   return exc, nil
+}
+
+func (x Exchange) Auth() Auth {
+   return Auth{"Authorization", "Bearer " + x.Access_Token}
+}
+
+func (x Exchange) Create(name string) error {
+   err := os.MkdirAll(filepath.Dir(name), os.ModeDir)
+   if err != nil {
+      return err
+   }
+   file, err := os.Create(name)
+   if err != nil {
+      return err
+   }
+   defer file.Close()
+   enc := json.NewEncoder(file)
+   enc.SetIndent("", " ")
+   return enc.Encode(x)
 }
 
 func (x *Exchange) Refresh() error {
@@ -75,4 +110,14 @@ func (o OAuth) Exchange() (*Exchange, error) {
       return nil, err
    }
    return exc, nil
+}
+
+func (o OAuth) String() string {
+   var str strings.Builder
+   str.WriteString("1. Go to\n")
+   str.WriteString(o.Verification_URL)
+   str.WriteString("\n\n2. Enter this code\n")
+   str.WriteString(o.User_Code)
+   str.WriteString("\n\n3. Press Enter to continue")
+   return str.String()
 }
