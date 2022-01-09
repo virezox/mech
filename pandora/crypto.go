@@ -2,71 +2,70 @@ package pandora
 
 import (
    "encoding/hex"
-   "encoding/json"
-   "github.com/89z/format"
    "golang.org/x/crypto/blowfish" //lint:ignore SA1019 reason
 )
 
 var blowfishKey = []byte("6#26FRL$ZWD")
 
-func Decrypt(src []byte) ([]byte, error) {
-   sLen := len(src)
-   if sLen < blowfish.BlockSize {
-      return nil, format.InvalidSlice{blowfish.BlockSize-1, sLen}
+type Cipher struct {
+   Bytes []byte
+}
+
+func NewCipher(s string) *Cipher {
+   buf, err := hex.DecodeString(s)
+   if err != nil {
+      return nil
    }
-   dst := make([]byte, sLen)
+   return &Cipher{buf}
+}
+
+func (c Cipher) Decrypt() *Cipher {
+   sLen := len(c.Bytes)
+   if sLen < blowfish.BlockSize {
+      return nil
+   }
    block, err := blowfish.NewCipher(blowfishKey)
    if err != nil {
-      return nil, err
+      return nil
    }
    for low := 0; low < sLen; low += blowfish.BlockSize {
-      block.Decrypt(dst[low:], src[low:])
+      block.Decrypt(c.Bytes[low:], c.Bytes[low:])
    }
-   return unpad(dst)
+   return &c
 }
 
-func Encrypt(src []byte) ([]byte, error) {
-   src = pad(src)
-   dst := make([]byte, len(src))
+func (c Cipher) String() string {
+   return hex.EncodeToString(c.Bytes)
+}
+
+func (c Cipher) Unpad() *Cipher {
+   bLen := len(c.Bytes)
+   if bLen == 0 {
+      return nil
+   }
+   high := bLen - int(c.Bytes[bLen-1])
+   if high <= -1 {
+      return nil
+   }
+   c.Bytes = c.Bytes[:high]
+   return &c
+}
+
+func (c Cipher) encrypt() *Cipher {
    block, err := blowfish.NewCipher(blowfishKey)
    if err != nil {
-      return nil, err
+      return nil
    }
-   for low := 0; low < len(src); low += blowfish.BlockSize {
-      block.Encrypt(dst[low:], src[low:])
+   for low := 0; low < len(c.Bytes); low += blowfish.BlockSize {
+      block.Encrypt(c.Bytes[low:], c.Bytes[low:])
    }
-   return dst, nil
+   return &c
 }
 
-func hexEncode(val interface{}) (string, error) {
-   body, err := json.Marshal(val)
-   if err != nil {
-      return "", err
+func (c Cipher) pad() Cipher {
+   bLen := blowfish.BlockSize - len(c.Bytes) % blowfish.BlockSize
+   for high := byte(bLen); bLen >= 1; bLen-- {
+      c.Bytes = append(c.Bytes, high)
    }
-   buf, err := Encrypt(body)
-   if err != nil {
-      return "", err
-   }
-   return hex.EncodeToString(buf), nil
-}
-
-func pad(src []byte) []byte {
-   sLen := blowfish.BlockSize - len(src) % blowfish.BlockSize
-   for high := byte(sLen); sLen >= 1; sLen-- {
-      src = append(src, high)
-   }
-   return src
-}
-
-func unpad(src []byte) ([]byte, error) {
-   sLen := len(src)
-   if sLen == 0 {
-      return nil, format.InvalidSlice{}
-   }
-   tLen := src[sLen-1]
-   high := sLen - int(tLen)
-   if high <= -1 {
-      return nil, format.InvalidSlice{high, sLen}
-   }
-   return src[:high], nil
+   return c
 }
