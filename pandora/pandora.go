@@ -64,10 +64,11 @@ func (p PartnerLogin) UserLogin(username, password string) (*UserLogin, error) {
       SyncTime: syncTime,
       Username: username,
    }
-   body, err := hexEncode(rUser)
+   buf, err := json.Marshal(rUser)
    if err != nil {
       return nil, err
    }
+   body := Cipher{buf}.Pad().Encrypt().Encode()
    req, err := http.NewRequest(
       "POST", origin + "/services/json/", strings.NewReader(body),
    )
@@ -162,10 +163,11 @@ func (u UserLogin) PlaybackInfo(id string) (*PlaybackInfo, error) {
       SyncTime: syncTime,
       UserAuthToken: u.Result.UserAuthToken,
    }
-   body, err := hexEncode(rInfo)
+   buf, err := json.Marshal(rInfo)
    if err != nil {
       return nil, err
    }
+   body := Cipher{buf}.Pad().Encrypt().Encode()
    req, err := http.NewRequest(
       "POST", origin + "/services/json/", strings.NewReader(body),
    )
@@ -199,10 +201,11 @@ func (u UserLogin) ValueExchange() error {
       SyncTime: syncTime,
       UserAuthToken: u.Result.UserAuthToken,
    }
-   body, err := hexEncode(rValue)
+   buf, err := json.Marshal(rValue)
    if err != nil {
       return err
    }
+   body := Cipher{buf}.Pad().Encrypt().Encode()
    req, err := http.NewRequest(
       "POST", origin + "/services/json/", strings.NewReader(body),
    )

@@ -2,18 +2,17 @@ package instagram
 
 import (
    "fmt"
-   "os"
    "testing"
 )
 
 const like = "CUrAS88Pr1G"
 
 func TestLike(t *testing.T) {
-   graph, err := Login{}.GraphQL(like)
+   med, err := NewMedia(like)
    if err != nil {
       t.Fatal(err)
    }
-   fmt.Printf("%+v\n", graph)
+   fmt.Printf("%+v\n", med)
 }
 
 func TestWrite(t *testing.T) {
@@ -21,7 +20,7 @@ func TestWrite(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   if err := login.Encode(os.Stdout); err != nil {
+   if err := login.Create("instagram.json"); err != nil {
       t.Fatal(err)
    }
 }
