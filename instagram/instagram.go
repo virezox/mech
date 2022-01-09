@@ -4,8 +4,9 @@ import (
    "bytes"
    "encoding/json"
    "github.com/89z/format"
-   "io"
    "net/http"
+   "os"
+   "path/filepath"
    "strconv"
 )
 
@@ -74,19 +75,36 @@ func NewLogin(username, password string) (*Login, error) {
    return &Login{auth}, nil
 }
 
-// This can be used to decode an existing login response.
-func (l *Login) Decode(src io.Reader) error {
-   return json.NewDecoder(src).Decode(l)
+func OpenLogin(name string) (*Login, error) {
+   file, err := os.Open(name)
+   if err != nil {
+      return nil, err
+   }
+   defer file.Close()
+   log := new(Login)
+   if err := json.NewDecoder(file).Decode(log); err != nil {
+      return nil, err
+   }
+   return log, nil
 }
 
-func (l Login) Encode(dst io.Writer) error {
-   enc := json.NewEncoder(dst)
+func (l Login) Create(name string) error {
+   err := os.MkdirAll(filepath.Dir(name), os.ModeDir)
+   if err != nil {
+      return err
+   }
+   file, err := os.Create(name)
+   if err != nil {
+      return err
+   }
+   defer file.Close()
+   enc := json.NewEncoder(file)
    enc.SetIndent("", " ")
    return enc.Encode(l)
 }
 
-// If `Authorization` field is empty, then anonymous request will be used.
-func (l Login) GraphQL(shortcode string) (*Media, error) {
+// Request with Authorization
+func (l Login) Media(shortcode string) (*Media, error) {
    req, err := http.NewRequest(
       "GET", "https://www.instagram.com/p/" + shortcode + "/", nil,
    )
@@ -134,6 +152,11 @@ type Media struct {
       }
       Video_URL string
    }
+}
+
+// Anonymous request
+func NewMedia(shortcode string) (*Media, error) {
+   return Login{}.Media(shortcode)
 }
 
 func (m Media) Edges() []Edge {

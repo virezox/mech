@@ -1,6 +1,28 @@
 # Sites
 
-Updated December 15 2021.
+Updated January 8 2022.
+
+~~~
+11050132401 YouTube
+3950306264 Instagram
+1945073562 TikTok
+1235322171 Twitter
+1222564252 Spotify: Music and Podcasts
+334409274 SoundCloud: Play Music & Songs
+312869815 Deezer: Music & Podcast Player
+277068774 Pandora - Music & Podcasts
+247837878 Amazon Music: Discover Songs
+87579692 Reddit
+84223405 iHeart: Radio, Music, Podcasts
+30797490 Vimeo
+29822435 BBC News
+23812189 TIDAL Music - Hifi Songs, Playlists, & Videos
+21283052 Napster Music
+13526900 The NBC App - Stream TV Shows
+2564646 Bandcamp
+2148559 PBS Video: Live TV & On Demand
+665323 Qobuz
+~~~
 
 ## Amazon Music
 

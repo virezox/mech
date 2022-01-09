@@ -2,7 +2,7 @@ module docs
 
 go 1.17
 
-require github.com/89z/googleplay v1.5.5
+require github.com/89z/googleplay v1.5.6
 
 require (
 	github.com/89z/format v1.19.2 // indirect

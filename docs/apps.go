@@ -3,6 +3,7 @@ package main
 import (
    "fmt"
    "os"
+   "sort"
    "time"
    gp "github.com/89z/googleplay"
 )
@@ -30,51 +31,35 @@ var apps = []string{
 }
 
 func main() {
-   auth, err := newAuth()
+   cache, err := os.UserCacheDir()
    if err != nil {
       panic(err)
    }
-   dev, err := newDevice()
+   tok, err := gp.OpenToken(cache + "/googleplay/token.json")
    if err != nil {
       panic(err)
    }
+   auth, err := tok.Auth()
+   if err != nil {
+      panic(err)
+   }
+   dev, err := gp.OpenDevice(cache + "/googleplay/device.json")
+   if err != nil {
+      panic(err)
+   }
+   var dets []*gp.Details
    for _, app := range apps {
       det, err := auth.Details(dev, app)
       if err != nil {
          panic(err)
       }
-      fmt.Println(det)
-      time.Sleep(time.Second)
+      dets = append(dets, det)
+      time.Sleep(99 * time.Millisecond)
+   }
+   sort.Slice(dets, func(a, b int) bool {
+      return dets[b].NumDownloads < dets[a].NumDownloads
+   })
+   for _, det := range dets {
+      fmt.Println(det.NumDownloads, det.Title)
    }
 }
-
-func newDevice() (*gp.Device, error) {
-   cache, err := os.UserCacheDir()
-   if err != nil {
-      return nil, err
-   }
-   file, err := os.Open(cache + "/googleplay/device.json")
-   if err != nil {
-      return nil, err
-   }
-   defer file.Close()
-   return gp.ReadDevice(file)
-}
-
-func newAuth() (*gp.Auth, error) {
-   cache, err := os.UserCacheDir()
-   if err != nil {
-      return nil, err
-   }
-   file, err := os.Open(cache + "/googleplay/token.json")
-   if err != nil {
-      return nil, err
-   }
-   defer file.Close()
-   tok, err := gp.ReadToken(file)
-   if err != nil {
-      return nil, err
-   }
-   return tok.Auth()
-}
-
