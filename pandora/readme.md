@@ -1,5 +1,9 @@
 # Pandora
 
+~~~
+com.pandora.android
+~~~
+
 ## How to get Blowfish key?
 
 ~~~
@@ -10,7 +14,7 @@ Result:
 
 ~~~java
 com\pandora\constants\PandoraConstants.java
-8:    public static final byte[] b = "6#26FRL$ZWD".getBytes(Charset.defaultCharset());
+public static final byte[] b = "6#26FRL$ZWD".getBytes(Charset.defaultCharset());
 ~~~
 
 https://github.com/skylot/jadx
