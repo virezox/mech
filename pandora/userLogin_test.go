@@ -21,6 +21,14 @@ var pandoraIDs = []string{
    "TR:2314875",
 }
 
+func TestMusic(t *testing.T) {
+   rec, err := NewMusicRecording(addr)
+   if err != nil {
+      t.Fatal(err)
+   }
+   fmt.Printf("%+v\n", rec)
+}
+
 func TestCreate(t *testing.T) {
    part, err := NewPartnerLogin()
    if err != nil {
@@ -63,12 +71,4 @@ func TestOpen(t *testing.T) {
       fmt.Printf("Stat:%v Result:%+v\n", info.Stat, info.Result)
       time.Sleep(time.Second)
    }
-}
-
-func TestID(t *testing.T) {
-   id, err := ID(addr)
-   if err != nil {
-      t.Fatal(err)
-   }
-   fmt.Println(id)
 }

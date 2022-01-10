@@ -72,7 +72,7 @@ type Player struct {
       ShortDescription string
       Title string
       VideoID string
-      ViewCount float64 `json:"viewCount,string"`
+      ViewCount int `json:"viewCount,string"`
    }
 }
 

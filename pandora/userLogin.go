@@ -12,28 +12,36 @@ import (
    "strings"
 )
 
-func ID(addr string) (string, error) {
+type MusicRecording struct {
+   ID string `json:"@id"`
+   Name string
+   ByArtist struct {
+      Name string
+   }
+}
+
+func NewMusicRecording(addr string) (*MusicRecording, error) {
    req, err := http.NewRequest("GET", addr, nil)
    if err != nil {
-      return "", err
+      return nil, err
    }
    format.Log.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
-      return "", err
+      return nil, err
    }
    defer res.Body.Close()
-   for _, node := range net.ReadHTML(res.Body, "meta") {
-      if node.Attr["property"] == "al:android:url" {
-         con := node.Attr["content"]
-         addr, err := url.Parse(con)
+   for _, node := range net.ReadHTML(res.Body, "script") {
+      if node.Attr["type"] == "application/ld+json" {
+         rec := new(MusicRecording)
+         err := json.Unmarshal(node.Data, rec)
          if err != nil {
-            return "", err
+            return nil, err
          }
-         return addr.Query().Get("pandoraId"), nil
+         return rec, nil
       }
    }
-   return "", notFound{"al:android:url"}
+   return nil, notFound{"application/ld+json"}
 }
 
 type PlaybackInfo struct {
@@ -48,7 +56,7 @@ type PlaybackInfo struct {
 }
 
 // audio-dc6-t3-1-v4v6.pandora.com/access/3648302390726192234.mp3?version=5
-func (p PlaybackInfo) Base() string {
+func (p PlaybackInfo) Ext() string {
    if p.Result == nil {
       return ""
    }
@@ -56,7 +64,7 @@ func (p PlaybackInfo) Base() string {
    if err != nil {
       return ""
    }
-   return filepath.Base(addr.Path)
+   return filepath.Ext(addr.Path)
 }
 
 type UserLogin struct {
@@ -105,7 +113,7 @@ func (u UserLogin) PlaybackInfo(id string) (*PlaybackInfo, error) {
    if err != nil {
       return nil, err
    }
-   body := Cipher(buf).Pad().Encrypt().Encode()
+   body := Cipher.Pad(buf).Encrypt().Encode()
    req, err := http.NewRequest(
       "POST", origin + "/services/json/", strings.NewReader(body),
    )
@@ -143,7 +151,7 @@ func (u UserLogin) ValueExchange() error {
    if err != nil {
       return err
    }
-   body := Cipher(buf).Pad().Encrypt().Encode()
+   body := Cipher.Pad(buf).Encrypt().Encode()
    req, err := http.NewRequest(
       "POST", origin + "/services/json/", strings.NewReader(body),
    )
