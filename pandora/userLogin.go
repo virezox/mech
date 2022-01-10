@@ -40,19 +40,18 @@ type PlaybackInfo struct {
    Result *struct {
       AudioUrlMap struct {
          HighQuality struct {
-            // audio-dc6-t3-1-v4v6.pandora.com/access/3648302390726192234.mp3?
-            // version=5&lid=1901383005&token=5NiR2liH7zRzs4X%2FfGMmA4w3wHYcl1...
-            AudioURL string
+            AudioUrl string
          }
       }
    }
 }
 
+// audio-dc6-t3-1-v4v6.pandora.com/access/3648302390726192234.mp3?version=5
 func (p PlaybackInfo) Base() string {
    if p.Result == nil {
       return ""
    }
-   addr, err := url.Parse(p.Result.AudioUrlMap.HighQuality.AudioURL)
+   addr, err := url.Parse(p.Result.AudioUrlMap.HighQuality.AudioUrl)
    if err != nil {
       return ""
    }

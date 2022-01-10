@@ -3,6 +3,8 @@ package main
 import (
    "fmt"
    "github.com/89z/mech/pandora"
+   "net/http"
+   "os"
 )
 
 func playback(cache, addr string, info bool) error {
@@ -22,7 +24,21 @@ func playback(cache, addr string, info bool) error {
       if info {
          fmt.Printf("%+v\n", play.Result.AudioUrlMap)
       } else {
-         fmt.Println("download")
+         addr := play.Result.AudioUrlMap.HighQuality.AudioUrl
+         fmt.Println("GET", addr)
+         res, err := http.Get(addr)
+         if err != nil {
+            return err
+         }
+         defer res.Body.Close()
+         file, err := os.Create(play.Base())
+         if err != nil {
+            return err
+         }
+         defer file.Close()
+         if _, err := file.ReadFrom(res.Body); err != nil {
+            return err
+         }
       }
    } else {
       fmt.Printf("%+v\n", play)
