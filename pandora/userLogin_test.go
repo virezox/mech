@@ -66,7 +66,7 @@ func TestOpen(t *testing.T) {
 }
 
 func TestID(t *testing.T) {
-   id, err := PandoraID(addr)
+   id, err := ID(addr)
    if err != nil {
       t.Fatal(err)
    }

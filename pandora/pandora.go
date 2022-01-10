@@ -8,7 +8,6 @@ import (
    "golang.org/x/crypto/blowfish" //lint:ignore SA1019 reason
    "net/http"
    "net/url"
-   "strconv"
    "strings"
 )
 
@@ -20,67 +19,63 @@ const (
 
 var blowfishKey = []byte("6#26FRL$ZWD")
 
-type Cipher struct {
-   Bytes []byte
-}
+type Cipher []byte
 
-func Decode(s string) *Cipher {
+func Decode(s string) Cipher {
    buf, err := hex.DecodeString(s)
    if err != nil {
       return nil
    }
-   return &Cipher{buf}
+   return buf
 }
 
-func (c Cipher) Decrypt() *Cipher {
-   sLen := len(c.Bytes)
-   if sLen < blowfish.BlockSize {
+func (c Cipher) Decrypt() Cipher {
+   if len(c) < blowfish.BlockSize {
       return nil
    }
    block, err := blowfish.NewCipher(blowfishKey)
    if err != nil {
       return nil
    }
-   for low := 0; low < sLen; low += blowfish.BlockSize {
-      block.Decrypt(c.Bytes[low:], c.Bytes[low:])
-   }
-   return &c
-}
-
-func (c Cipher) Encode() string {
-   return hex.EncodeToString(c.Bytes)
-}
-
-func (c Cipher) Encrypt() *Cipher {
-   block, err := blowfish.NewCipher(blowfishKey)
-   if err != nil {
-      return nil
-   }
-   for low := 0; low < len(c.Bytes); low += blowfish.BlockSize {
-      block.Encrypt(c.Bytes[low:], c.Bytes[low:])
-   }
-   return &c
-}
-
-func (c Cipher) Pad() Cipher {
-   bLen := blowfish.BlockSize - len(c.Bytes) % blowfish.BlockSize
-   for high := byte(bLen); bLen >= 1; bLen-- {
-      c.Bytes = append(c.Bytes, high)
+   for low := 0; low < len(c); low += blowfish.BlockSize {
+      block.Decrypt(c[low:], c[low:])
    }
    return c
 }
 
-func (c Cipher) Unpad() *Cipher {
-   bLen := len(c.Bytes)
-   if bLen == 0 {
+func (c Cipher) Encode() string {
+   return hex.EncodeToString(c)
+}
+
+func (c Cipher) Encrypt() Cipher {
+   block, err := blowfish.NewCipher(blowfishKey)
+   if err != nil {
       return nil
    }
-   high := bLen - int(c.Bytes[bLen-1])
+   for low := 0; low < len(c); low += blowfish.BlockSize {
+      block.Encrypt(c[low:], c[low:])
+   }
+   return c
+}
+
+func (c Cipher) Pad() Cipher {
+   cLen := blowfish.BlockSize - len(c) % blowfish.BlockSize
+   for high := byte(cLen); cLen >= 1; cLen-- {
+      c = append(c, high)
+   }
+   return c
+}
+
+func (c Cipher) Unpad() Cipher {
+   cLen := len(c)
+   if cLen == 0 {
+      return nil
+   }
+   high := cLen - int(c[cLen-1])
    if high <= -1 {
       return nil
    }
-   c.Bytes = c.Bytes[:high]
-   return &c
+   return c[:high]
 }
 
 type PartnerLogin struct {
@@ -134,7 +129,7 @@ func (p PartnerLogin) UserLogin(username, password string) (*UserLogin, error) {
    if err != nil {
       return nil, err
    }
-   body := Cipher{buf}.Pad().Encrypt().Encode()
+   body := Cipher(buf).Pad().Encrypt().Encode()
    req, err := http.NewRequest(
       "POST", origin + "/services/json/", strings.NewReader(body),
    )
@@ -158,14 +153,6 @@ func (p PartnerLogin) UserLogin(username, password string) (*UserLogin, error) {
       return nil, err
    }
    return user, nil
-}
-
-type notFound struct {
-   input string
-}
-
-func (n notFound) Error() string {
-   return strconv.Quote(n.input) + " not found"
 }
 
 type playbackInfoRequest struct {

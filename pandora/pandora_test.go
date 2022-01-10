@@ -15,8 +15,8 @@ func TestDecrypt(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   dec := Cipher{enc}.Decrypt().Unpad()
-   if !bytes.Equal(dec.Bytes, helloDec) {
+   dec := Cipher(enc).Decrypt().Unpad()
+   if !bytes.Equal(dec, helloDec) {
       t.Fatal(dec)
    }
 }

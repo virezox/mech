@@ -3,19 +3,24 @@ package main
 import (
    "flag"
    "fmt"
+   "github.com/89z/format"
    "os"
    "path/filepath"
 )
 
 func main() {
    var (
-      info bool
+      info, verbose bool
       username, password string
    )
    flag.BoolVar(&info, "i", false, "information")
    flag.StringVar(&password, "p", "", "password")
    flag.StringVar(&username, "u", "", "username")
+   flag.BoolVar(&verbose, "v", false, "verbose")
    flag.Parse()
+   if verbose {
+      format.Log.Level = 1
+   }
    cache, err := os.UserCacheDir()
    if err != nil {
       panic(err)

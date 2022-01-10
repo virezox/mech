@@ -46,7 +46,7 @@ func playback(cache, addr string, info bool) error {
    return nil
 }
 
-func login(username, password, cache string) error {
+func login(cache, username, password string) error {
    part, err := pandora.NewPartnerLogin()
    if err != nil {
       return err

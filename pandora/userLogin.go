@@ -8,6 +8,7 @@ import (
    "net/url"
    "os"
    "path/filepath"
+   "strconv"
    "strings"
 )
 
@@ -104,7 +105,7 @@ func (u UserLogin) PlaybackInfo(id string) (*PlaybackInfo, error) {
    if err != nil {
       return nil, err
    }
-   body := Cipher{buf}.Pad().Encrypt().Encode()
+   body := Cipher(buf).Pad().Encrypt().Encode()
    req, err := http.NewRequest(
       "POST", origin + "/services/json/", strings.NewReader(body),
    )
@@ -142,7 +143,7 @@ func (u UserLogin) ValueExchange() error {
    if err != nil {
       return err
    }
-   body := Cipher{buf}.Pad().Encrypt().Encode()
+   body := Cipher(buf).Pad().Encrypt().Encode()
    req, err := http.NewRequest(
       "POST", origin + "/services/json/", strings.NewReader(body),
    )
@@ -162,4 +163,12 @@ func (u UserLogin) ValueExchange() error {
       return err
    }
    return res.Body.Close()
+}
+
+type notFound struct {
+   input string
+}
+
+func (n notFound) Error() string {
+   return strconv.Quote(n.input) + " not found"
 }
