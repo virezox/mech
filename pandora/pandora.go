@@ -160,17 +160,6 @@ func (p PartnerLogin) UserLogin(username, password string) (*UserLogin, error) {
    return user, nil
 }
 
-type PlaybackInfo struct {
-   Stat string
-   Result *struct {
-      AudioUrlMap struct {
-         HighQuality struct {
-            AudioURL string
-         }
-      }
-   }
-}
-
 type notFound struct {
    input string
 }

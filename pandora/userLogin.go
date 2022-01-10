@@ -11,7 +11,7 @@ import (
    "strings"
 )
 
-func PandoraID(addr string) (string, error) {
+func ID(addr string) (string, error) {
    req, err := http.NewRequest("GET", addr, nil)
    if err != nil {
       return "", err
@@ -33,6 +33,30 @@ func PandoraID(addr string) (string, error) {
       }
    }
    return "", notFound{"al:android:url"}
+}
+
+type PlaybackInfo struct {
+   Stat string
+   Result *struct {
+      AudioUrlMap struct {
+         HighQuality struct {
+            // audio-dc6-t3-1-v4v6.pandora.com/access/3648302390726192234.mp3?
+            // version=5&lid=1901383005&token=5NiR2liH7zRzs4X%2FfGMmA4w3wHYcl1...
+            AudioURL string
+         }
+      }
+   }
+}
+
+func (p PlaybackInfo) Base() string {
+   if p.Result == nil {
+      return ""
+   }
+   addr, err := url.Parse(p.Result.AudioUrlMap.HighQuality.AudioURL)
+   if err != nil {
+      return ""
+   }
+   return filepath.Base(addr.Path)
 }
 
 type UserLogin struct {
@@ -140,4 +164,3 @@ func (u UserLogin) ValueExchange() error {
    }
    return res.Body.Close()
 }
-
