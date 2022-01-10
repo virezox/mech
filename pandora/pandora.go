@@ -2,12 +2,13 @@ package pandora
 
 import (
    "bytes"
+   "encoding/hex"
    "encoding/json"
    "github.com/89z/format"
+   "golang.org/x/crypto/blowfish" //lint:ignore SA1019 reason
    "net/http"
    "net/url"
-   "os"
-   "path/filepath"
+   "strconv"
    "strings"
 )
 
@@ -16,6 +17,71 @@ const (
    partnerPassword = "AC7IBG09A3DTSYM4R41UJWL07VLN8JI7"
    syncTime = 0x7FFF_FFFF
 )
+
+var blowfishKey = []byte("6#26FRL$ZWD")
+
+type Cipher struct {
+   Bytes []byte
+}
+
+func Decode(s string) *Cipher {
+   buf, err := hex.DecodeString(s)
+   if err != nil {
+      return nil
+   }
+   return &Cipher{buf}
+}
+
+func (c Cipher) Decrypt() *Cipher {
+   sLen := len(c.Bytes)
+   if sLen < blowfish.BlockSize {
+      return nil
+   }
+   block, err := blowfish.NewCipher(blowfishKey)
+   if err != nil {
+      return nil
+   }
+   for low := 0; low < sLen; low += blowfish.BlockSize {
+      block.Decrypt(c.Bytes[low:], c.Bytes[low:])
+   }
+   return &c
+}
+
+func (c Cipher) Encode() string {
+   return hex.EncodeToString(c.Bytes)
+}
+
+func (c Cipher) Encrypt() *Cipher {
+   block, err := blowfish.NewCipher(blowfishKey)
+   if err != nil {
+      return nil
+   }
+   for low := 0; low < len(c.Bytes); low += blowfish.BlockSize {
+      block.Encrypt(c.Bytes[low:], c.Bytes[low:])
+   }
+   return &c
+}
+
+func (c Cipher) Pad() Cipher {
+   bLen := blowfish.BlockSize - len(c.Bytes) % blowfish.BlockSize
+   for high := byte(bLen); bLen >= 1; bLen-- {
+      c.Bytes = append(c.Bytes, high)
+   }
+   return c
+}
+
+func (c Cipher) Unpad() *Cipher {
+   bLen := len(c.Bytes)
+   if bLen == 0 {
+      return nil
+   }
+   high := bLen - int(c.Bytes[bLen-1])
+   if high <= -1 {
+      return nil
+   }
+   c.Bytes = c.Bytes[:high]
+   return &c
+}
 
 type PartnerLogin struct {
    Result struct {
@@ -94,6 +160,34 @@ func (p PartnerLogin) UserLogin(username, password string) (*UserLogin, error) {
    return user, nil
 }
 
+type PlaybackInfo struct {
+   Stat string
+   Result *struct {
+      AudioUrlMap struct {
+         HighQuality struct {
+            AudioURL string
+         }
+      }
+   }
+}
+
+type notFound struct {
+   input string
+}
+
+func (n notFound) Error() string {
+   return strconv.Quote(n.input) + " not found"
+}
+
+type playbackInfoRequest struct {
+   // this can be empty, but must be included:
+   DeviceCode string `json:"deviceCode"`
+   IncludeAudioToken bool `json:"includeAudioToken"`
+   PandoraID string `json:"pandoraId"`
+   SyncTime int `json:"syncTime"`
+   UserAuthToken string `json:"userAuthToken"`
+}
+
 type response struct {
    *http.Response
 }
@@ -108,132 +202,6 @@ type userLoginRequest struct {
    Password string `json:"password"`
    SyncTime int `json:"syncTime"`
    Username string `json:"username"`
-}
-
-type PlaybackInfo struct {
-   Stat string
-   Result *struct {
-      AudioUrlMap struct {
-         HighQuality struct {
-            AudioURL string
-         }
-      }
-   }
-}
-
-type UserLogin struct {
-   Result struct {
-      UserID string
-      UserAuthToken string
-   }
-}
-
-func OpenUserLogin(name string) (*UserLogin, error) {
-   file, err := os.Open(name)
-   if err != nil {
-      return nil, err
-   }
-   defer file.Close()
-   user := new(UserLogin)
-   if err := json.NewDecoder(file).Decode(user); err != nil {
-      return nil, err
-   }
-   return user, nil
-}
-
-func (u UserLogin) Create(name string) error {
-   err := os.MkdirAll(filepath.Dir(name), os.ModeDir)
-   if err != nil {
-      return err
-   }
-   file, err := os.Create(name)
-   if err != nil {
-      return err
-   }
-   defer file.Close()
-   enc := json.NewEncoder(file)
-   enc.SetIndent("", " ")
-   return enc.Encode(u)
-}
-
-func (u UserLogin) PlaybackInfo(id string) (*PlaybackInfo, error) {
-   rInfo := playbackInfoRequest{
-      IncludeAudioToken: true,
-      PandoraID: id,
-      SyncTime: syncTime,
-      UserAuthToken: u.Result.UserAuthToken,
-   }
-   buf, err := json.Marshal(rInfo)
-   if err != nil {
-      return nil, err
-   }
-   body := Cipher{buf}.Pad().Encrypt().Encode()
-   req, err := http.NewRequest(
-      "POST", origin + "/services/json/", strings.NewReader(body),
-   )
-   if err != nil {
-      return nil, err
-   }
-   // auth_token and user_Id can be empty, but they must be included
-   req.URL.RawQuery = url.Values{
-      "auth_token": {""},
-      "method": {"onDemand.getAudioPlaybackInfo"},
-      "partner_id": {"42"},
-      "user_id": {""},
-   }.Encode()
-   format.Log.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   info := new(PlaybackInfo)
-   if err := json.NewDecoder(res.Body).Decode(info); err != nil {
-      return nil, err
-   }
-   return info, nil
-}
-
-// Token is good for 30 minutes.
-func (u UserLogin) ValueExchange() error {
-   rValue := valueExchangeRequest{
-      OfferName: "premium_access",
-      SyncTime: syncTime,
-      UserAuthToken: u.Result.UserAuthToken,
-   }
-   buf, err := json.Marshal(rValue)
-   if err != nil {
-      return err
-   }
-   body := Cipher{buf}.Pad().Encrypt().Encode()
-   req, err := http.NewRequest(
-      "POST", origin + "/services/json/", strings.NewReader(body),
-   )
-   if err != nil {
-      return err
-   }
-   // auth_token and user_Id can be empty, but they must be included
-   req.URL.RawQuery = url.Values{
-      "auth_token": {""},
-      "method": {"user.startValueExchange"},
-      "partner_id": {"42"},
-      "user_id": {""},
-   }.Encode()
-   format.Log.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return err
-   }
-   return res.Body.Close()
-}
-
-type playbackInfoRequest struct {
-   // this can be empty, but must be included:
-   DeviceCode string `json:"deviceCode"`
-   IncludeAudioToken bool `json:"includeAudioToken"`
-   PandoraID string `json:"pandoraId"`
-   SyncTime int `json:"syncTime"`
-   UserAuthToken string `json:"userAuthToken"`
 }
 
 type valueExchangeRequest struct {
