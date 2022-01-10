@@ -12,28 +12,36 @@ import (
    "strings"
 )
 
-func ID(addr string) (string, error) {
+type MusicRecording struct {
+   ID string `json:"@id"`
+   Name string
+   ByArtist struct {
+      Name string
+   }
+}
+
+func NewMusicRecording(addr string) (*MusicRecording, error) {
    req, err := http.NewRequest("GET", addr, nil)
    if err != nil {
-      return "", err
+      return nil, err
    }
    format.Log.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
-      return "", err
+      return nil, err
    }
    defer res.Body.Close()
-   for _, node := range net.ReadHTML(res.Body, "meta") {
-      if node.Attr["property"] == "al:android:url" {
-         con := node.Attr["content"]
-         addr, err := url.Parse(con)
+   for _, node := range net.ReadHTML(res.Body, "script") {
+      if node.Attr["type"] == "application/ld+json" {
+         rec := new(MusicRecording)
+         err := json.Unmarshal(node.Data, rec)
          if err != nil {
-            return "", err
+            return nil, err
          }
-         return addr.Query().Get("pandoraId"), nil
+         return rec, nil
       }
    }
-   return "", notFound{"al:android:url"}
+   return nil, notFound{"application/ld+json"}
 }
 
 type PlaybackInfo struct {

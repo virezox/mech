@@ -21,12 +21,8 @@ var blowfishKey = []byte("6#26FRL$ZWD")
 
 type Cipher []byte
 
-func Decode(s string) Cipher {
-   buf, err := hex.DecodeString(s)
-   if err != nil {
-      return nil
-   }
-   return buf
+func Decode(s string) (Cipher, error) {
+   return hex.DecodeString(s)
 }
 
 func (c Cipher) Decrypt() Cipher {
