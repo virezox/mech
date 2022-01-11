@@ -13,7 +13,11 @@ func main() {
       if err != nil {
          fmt.Fprint(w, err)
       } else {
-         fmt.Fprintf(w, "%+v", play)
+         for _, form := range play.StreamingData.AdaptiveFormats {
+            if form.Itag == 251 {
+               fmt.Fprint(w, form.URL)
+            }
+         }
       }
    })
    addr := ":8080"
