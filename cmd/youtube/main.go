@@ -73,34 +73,17 @@ func main() {
          panic(err)
       }
    case flag.NArg() == 1:
-      id := flag.Arg(0)
-      auth := youtube.Key
-      if construct {
-         cache, err := os.UserCacheDir()
-         if err != nil {
-            panic(err)
-         }
-         exc, err := youtube.OpenExchange(cache + "/mech/youtube.json")
-         if err != nil {
-            panic(err)
-         }
-         auth = exc.Auth()
-      }
-      client := youtube.Android
-      if embed {
-         client = youtube.Embed
-      }
-      play, err := youtube.NewPlayer(id, auth, client)
+      play, err := player(construct, embed, flag.Arg(0))
       if err != nil {
          panic(err)
       }
       if choose.useFormats {
-         err := choose.formats(play, id)
+         err := choose.formats(play)
          if err != nil {
             panic(err)
          }
       } else {
-         err := choose.adaptiveFormats(play, id)
+         err := choose.adaptiveFormats(play)
          if err != nil {
             panic(err)
          }

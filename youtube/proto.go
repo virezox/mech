@@ -28,90 +28,107 @@ const (
    SortByViewCount = 3
 )
 
+type Params struct {
+   protobuf.Message
+}
+
+func (p Params) Encode() string {
+   buf := p.Marshal()
+   return base64.StdEncoding.EncodeToString(buf)
+}
+
 type Filter struct {
    protobuf.Message
 }
 
 func NewFilter() Filter {
-   return Filter{
-      make(protobuf.Message),
-   }
-}
-
-type Params struct {
-   protobuf.Message
+   var filter Filter
+   filter.Message = make(protobuf.Message)
+   return filter
 }
 
 func NewParams() Params {
-   return Params{
-      make(protobuf.Message),
-   }
+   var par Params
+   par.Message = make(protobuf.Message)
+   return par
 }
 
-func (p Params) Encode() string {
-   return base64.StdEncoding.EncodeToString(p.Marshal())
-}
-
-func (f *Filter) CreativeCommons(val uint64) {
+func (f Filter) CreativeCommons(val uint64) Filter {
    f.Message[protobuf.Tag{Number: 6}] = val
+   return f
 }
 
-func (f *Filter) Duration(val uint64) {
+func (f Filter) Duration(val uint64) Filter {
    f.Message[protobuf.Tag{Number: 3}] = val
+   return f
 }
 
-func (f *Filter) FourK(val uint64) {
+func (f Filter) FourK(val uint64) Filter {
    f.Message[protobuf.Tag{Number: 14}] = val
+   return f
 }
 
-func (f *Filter) HD(val uint64) {
+func (f Filter) HD(val uint64) Filter {
    f.Message[protobuf.Tag{Number: 4}] = val
+   return f
 }
 
-func (f *Filter) HDR(val uint64) {
+func (f Filter) HDR(val uint64) Filter {
    f.Message[protobuf.Tag{Number: 25}] = val
+   return f
 }
 
-func (f *Filter) Live(val uint64) {
+func (f Filter) Live(val uint64) Filter {
    f.Message[protobuf.Tag{Number: 8}] = val
+   return f
 }
 
-func (f *Filter) Location(val uint64) {
+func (f Filter) Location(val uint64) Filter {
    f.Message[protobuf.Tag{Number: 23}] = val
+   return f
 }
 
-func (f *Filter) Purchased(val uint64) {
+func (f Filter) Purchased(val uint64) Filter {
    f.Message[protobuf.Tag{Number: 9}] = val
+   return f
 }
 
-func (f *Filter) Subtitles(val uint64) {
+func (f Filter) Subtitles(val uint64) Filter {
    f.Message[protobuf.Tag{Number: 5}] = val
+   return f
 }
 
-func (f *Filter) ThreeD(val uint64) {
+func (f Filter) ThreeD(val uint64) Filter {
    f.Message[protobuf.Tag{Number: 7}] = val
+   return f
 }
 
-func (f *Filter) ThreeSixty(val uint64) {
+func (f Filter) ThreeSixty(val uint64) Filter {
    f.Message[protobuf.Tag{Number: 15}] = val
+   return f
 }
 
-func (f *Filter) Type(val uint64) {
+func (f Filter) Type(val uint64) Filter {
    f.Message[protobuf.Tag{Number: 2}] = val
+   return f
 }
 
-func (f *Filter) UploadDate(val uint64) {
+func (f Filter) UploadDate(val uint64) Filter {
    f.Message[protobuf.Tag{Number: 1}] = val
+   return f
 }
 
-func (f *Filter) VR180(val uint64) {
+func (f Filter) VR180(val uint64) Filter {
    f.Message[protobuf.Tag{Number: 26}] = val
+   return f
 }
 
-func (p *Params) SortBy(val uint64) {
+func (p Params) SortBy(val uint64) Params {
    p.Message[protobuf.Tag{Number: 1}] = val
+   return p
 }
 
-func (p *Params) Filter(val Filter) {
+func (p Params) Filter(val Filter) Params {
    p.Message[protobuf.Tag{Number: 2}] = val.Message
+   return p
 }

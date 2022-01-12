@@ -36,10 +36,6 @@ func OpenExchange(name string) (*Exchange, error) {
    return exc, nil
 }
 
-func (x Exchange) Auth() Auth {
-   return Auth{"Authorization", "Bearer " + x.Access_Token}
-}
-
 func (x Exchange) Create(name string) error {
    err := os.MkdirAll(filepath.Dir(name), os.ModeDir)
    if err != nil {
