@@ -106,6 +106,23 @@ type playerRequest struct {
    VideoID string `json:"videoId,omitempty"`
 }
 
+type searchRequest struct {
+   Context struct {
+      Client Client `json:"client"`
+   } `json:"context"`
+   Params string `json:"params,omitempty"`
+   Query string `json:"query,omitempty"`
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+var Key = Auth{"X-Goog-Api-Key", "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8"}
+
+type Auth struct {
+   Key string
+   Value string
+}
+
 func NewPlayer(id string, auth Auth, client Client) (*Player, error) {
    var body playerRequest
    body.VideoID = id
@@ -136,21 +153,6 @@ func NewPlayer(id string, auth Auth, client Client) (*Player, error) {
       return nil, err
    }
    return play, nil
-}
-
-type searchRequest struct {
-   Context struct {
-      Client Client `json:"client"`
-   } `json:"context"`
-   Params string `json:"params,omitempty"`
-   Query string `json:"query,omitempty"`
-}
-
-var Key = Auth{"X-Goog-Api-Key", "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8"}
-
-type Auth struct {
-   Key string
-   Value string
 }
 
 func NewSearch(query string) (*Search, error) {
