@@ -7,6 +7,10 @@ import (
    "net/http"
 )
 
+var googAPI = http.Header{
+   "X-Goog-Api-Key": {"AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8"},
+}
+
 const origin = "https://www.youtube.com"
 
 var (
@@ -93,6 +97,42 @@ type Search struct {
    }
 }
 
+type searchRequest struct {
+   Context struct {
+      Client Client `json:"client"`
+   } `json:"context"`
+   Params string `json:"params,omitempty"`
+   Query string `json:"query,omitempty"`
+}
+
+func NewSearch(query string) (*Search, error) {
+   var body searchRequest
+   body.Context.Client = Mweb
+   body.Query = query
+   filter := NewFilter().Type(TypeVideo)
+   body.Params = NewParams().Filter(filter).Encode()
+   buf := new(bytes.Buffer)
+   if err := json.NewEncoder(buf).Encode(body); err != nil {
+      return nil, err
+   }
+   req, err := http.NewRequest("POST", origin + "/youtubei/v1/search", buf)
+   if err != nil {
+      return nil, err
+   }
+   req.Header = googAPI
+   format.Log.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   search := new(Search)
+   if err := json.NewDecoder(res.Body).Decode(search); err != nil {
+      return nil, err
+   }
+   return search, nil
+}
+
 type thirdParty struct {
    EmbedURL string `json:"embedUrl"`
 }
@@ -106,30 +146,11 @@ type playerRequest struct {
    VideoID string `json:"videoId,omitempty"`
 }
 
-type searchRequest struct {
-   Context struct {
-      Client Client `json:"client"`
-   } `json:"context"`
-   Params string `json:"params,omitempty"`
-   Query string `json:"query,omitempty"`
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-var Key = Auth{"X-Goog-Api-Key", "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8"}
-
-type Auth struct {
-   Key string
-   Value string
-}
-
-func NewPlayer(id string, auth Auth, client Client) (*Player, error) {
+func (x Exchange) Player(client Client, id string) (*Player, error) {
    var body playerRequest
    body.VideoID = id
    body.Context.Client = client
-   if auth != Key {
-      body.RacyCheckOK = true
-   }
+   body.RacyCheckOK = true
    if client.Screen != "" {
       body.Context.ThirdParty = &thirdParty{origin}
    }
@@ -141,7 +162,7 @@ func NewPlayer(id string, auth Auth, client Client) (*Player, error) {
    if err != nil {
       return nil, err
    }
-   req.Header.Set(auth.Key, auth.Value)
+   req.Header.Set("Authorization", "Bearer " + x.Access_Token)
    format.Log.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
@@ -155,33 +176,41 @@ func NewPlayer(id string, auth Auth, client Client) (*Player, error) {
    return play, nil
 }
 
-func NewSearch(query string) (*Search, error) {
-   var body searchRequest
-   body.Context.Client = Mweb
-   body.Query = query
-   param := NewParams()
-   filter := NewFilter()
-   filter.Type(TypeVideo)
-   param.Filter(filter)
-   body.Params = param.Encode()
+type PlayerResponse struct {
+   *http.Response
+}
+
+func NewPlayerResponse(client Client, id string) (*PlayerResponse, error) {
+   var body playerRequest
+   body.VideoID = id
+   body.Context.Client = client
+   body.RacyCheckOK = true
+   if client.Screen != "" {
+      body.Context.ThirdParty = &thirdParty{origin}
+   }
    buf := new(bytes.Buffer)
    if err := json.NewEncoder(buf).Encode(body); err != nil {
       return nil, err
    }
-   req, err := http.NewRequest("POST", origin + "/youtubei/v1/search", buf)
+   req, err := http.NewRequest("POST", origin + "/youtubei/v1/player", buf)
    if err != nil {
       return nil, err
    }
-   req.Header.Set(Key.Key, Key.Value)
+   req.Header = googAPI
    format.Log.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
    }
-   defer res.Body.Close()
-   search := new(Search)
-   if err := json.NewDecoder(res.Body).Decode(search); err != nil {
+   return &PlayerResponse{res}, nil
+}
+
+func (p PlayerResponse) Player() (*Player, error) {
+   defer p.Body.Close()
+   play := new(Player)
+   err := json.NewDecoder(p.Body).Decode(play)
+   if err != nil {
       return nil, err
    }
-   return search, nil
+   return play, nil
 }

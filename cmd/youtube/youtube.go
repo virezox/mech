@@ -9,6 +9,29 @@ import (
    "strings"
 )
 
+func player(construct, embed bool, id string) (*youtube.Player, error) {
+   client := youtube.Android
+   if embed {
+      client = youtube.Embed
+   }
+   if construct {
+      cache, err := os.UserCacheDir()
+      if err != nil {
+         return nil, err
+      }
+      ex, err := youtube.OpenExchange(cache + "/mech/youtube.json")
+      if err != nil {
+         return nil, err
+      }
+      return ex.Player(client, id)
+   }
+   res, err := youtube.NewPlayerResponse(client, id)
+   if err != nil {
+      return nil, err
+   }
+   return res.Player()
+}
+
 type choice struct {
    itags map[string]bool
    info bool
@@ -25,7 +48,7 @@ func filename(play *youtube.Player, form youtube.Format) (string, error) {
 }
 
 // Videos can support both AdaptiveFormats and DASH: zgJT91LA9gA
-func (c choice) adaptiveFormats(play *youtube.Player, id string) error {
+func (c choice) adaptiveFormats(play *youtube.Player) error {
    if len(c.itags) == 0 {
       c.itags = map[string]bool{
          "247": true, // youtube.com/watch?v=Leq8J0E2TQ0
@@ -54,7 +77,7 @@ func (c choice) adaptiveFormats(play *youtube.Player, id string) error {
    return nil
 }
 
-func (c choice) formats(play *youtube.Player, id string) error {
+func (c choice) formats(play *youtube.Player) error {
    for _, form := range play.StreamingData.Formats {
       if c.info {
          fmt.Println(form)
