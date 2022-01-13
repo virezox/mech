@@ -45,7 +45,8 @@ https://play.google.com/store/apps/details?id=deezer.android.app
 
 ## iHeart
 
-https://play.google.com/store/apps/details?id=com.clearchannel.iheartradio.controller
+- https://iheart.com/artist/the-black-dog-171111/albums/peel-session-48124450
+- https://play.google.com/store/apps/details?id=com.clearchannel.iheartradio.controller
 
 ## Instagram
 
@@ -73,7 +74,8 @@ https://github.com/89z/mech/tree/c825743ab7594025b9c70632d934820e2c68d20a
 
 ## Qobuz
 
-https://play.google.com/store/apps/details?id=com.qobuz.music
+- https://play.google.com/store/apps/details?id=com.qobuz.music
+- https://qobuz.com/us-en/album/peel-session-the-black-dog/0801061911539
 
 ## Reddit
 

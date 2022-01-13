@@ -5,6 +5,7 @@ import (
    "encoding/json"
    "github.com/89z/format"
    "net/http"
+   "strconv"
 )
 
 const origin = "https://www.youtube.com"
@@ -75,6 +76,10 @@ func (c Client) Search(query string) (*Search, error) {
 }
 
 func (c Client) player(head http.Header, id string) (*http.Response, error) {
+   // youtube.com/watch?v=hi8ryzFqrAE
+   if len(id) != 11 {
+      return nil, invalidVideo{id}
+   }
    var body playerRequest
    body.VideoID = id
    body.Context.Client = c
@@ -159,6 +164,14 @@ func (s Search) Items() []Item {
       }
    }
    return items
+}
+
+type invalidVideo struct {
+   id string
+}
+
+func (i invalidVideo) Error() string {
+   return "invalid video ID " + strconv.Quote(i.id)
 }
 
 type playerRequest struct {
