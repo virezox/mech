@@ -23,6 +23,12 @@ type Exchange struct {
    Refresh_Token string
 }
 
+func (x Exchange) Header() http.Header {
+   head := make(http.Header)
+   head.Set("Authorization", "Bearer " + x.Access_Token)
+   return head
+}
+
 func OpenExchange(name string) (*Exchange, error) {
    file, err := os.Open(name)
    if err != nil {

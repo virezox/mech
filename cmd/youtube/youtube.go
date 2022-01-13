@@ -23,13 +23,9 @@ func player(construct, embed bool, id string) (*youtube.Player, error) {
       if err != nil {
          return nil, err
       }
-      return client.Player(ex, id)
+      return client.PlayerHeader(ex.Header(), id)
    }
-   res, err := client.PlayerResponse(id)
-   if err != nil {
-      return nil, err
-   }
-   return res.Player()
+   return client.Player(id)
 }
 
 type choice struct {
