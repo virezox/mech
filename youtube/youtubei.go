@@ -6,6 +6,7 @@ import (
    "github.com/89z/format"
    "net/http"
    "strconv"
+   "time"
 )
 
 const origin = "https://www.youtube.com"
@@ -138,6 +139,11 @@ type Player struct {
       VideoID string
       ViewCount int `json:"viewCount,string"`
    }
+}
+
+func (p Player) Date() (time.Time, error) {
+   date := p.Microformat.PlayerMicroformatRenderer.PublishDate
+   return time.Parse("2006-01-02", date)
 }
 
 type Search struct {
