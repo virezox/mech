@@ -22,12 +22,6 @@ func main() {
    // choice
    var choose choice
    flag.BoolVar(&choose.info, "i", false, "video information")
-   flag.BoolVar(
-      &choose.useFormats,
-      "formats",
-      false,
-      "use formats instead of adaptiveFormats",
-   )
    choose.itags = make(map[string]bool)
    flag.Func("f", "formats", func(itag string) error {
       choose.itags[itag] = true
@@ -77,16 +71,8 @@ func main() {
       if err != nil {
          panic(err)
       }
-      if choose.useFormats {
-         err := choose.formats(play)
-         if err != nil {
-            panic(err)
-         }
-      } else {
-         err := choose.adaptiveFormats(play)
-         if err != nil {
-            panic(err)
-         }
+      if err := choose.adaptiveFormats(play); err != nil {
+         panic(err)
       }
    default:
       fmt.Println("youtube [flags] [video ID]")

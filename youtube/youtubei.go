@@ -6,14 +6,60 @@ import (
    "github.com/89z/format"
    "net/http"
    "strconv"
+   "strings"
    "time"
 )
+
+type PlayabilityStatus struct {
+   Status string // LOGIN_REQUIRED
+   Reason string // Sign in to confirm your age
+}
+
+func (p PlayabilityStatus) String() string {
+   var str strings.Builder
+   str.WriteString("Status: ")
+   str.WriteString(p.Status)
+   if p.Reason != "" {
+      str.WriteString("\nReason: ")
+      str.WriteString(p.Reason)
+   }
+   return str.String()
+}
+
+type VideoDetails struct {
+   VideoID string
+   LengthSeconds int64 `json:"lengthSeconds,string"`
+   ViewCount int64 `json:"viewCount,string"`
+   Author string
+   Title string
+   ShortDescription string
+}
+
+func (v VideoDetails) Duration() time.Duration {
+   return time.Duration(v.LengthSeconds) * time.Second
+}
+
+func (v VideoDetails) String() string {
+   buf := []byte("VideoID: ")
+   buf = append(buf, v.VideoID...)
+   buf = append(buf, "\nLength: "...)
+   buf = append(buf, v.Duration().String()...)
+   buf = append(buf, "\nViewCount: "...)
+   buf = strconv.AppendInt(buf, v.ViewCount, 10)
+   buf = append(buf, "\nAuthor: "...)
+   buf = append(buf, v.Author...)
+   buf = append(buf, "\nTitle: "...)
+   buf = append(buf, v.Title...)
+   buf = append(buf, "\nShortDescription: "...)
+   buf = append(buf, v.ShortDescription...)
+   return string(buf)
+}
 
 const origin = "https://www.youtube.com"
 
 var (
-   Android = Client{Name: "ANDROID", Version: "16.43.34"}
-   Embed = Client{Name: "ANDROID", Screen: "EMBED", Version: "16.43.34"}
+   Android = Client{Name: "ANDROID", Version: "17.01.35"}
+   Embed = Client{Name: "ANDROID", Screen: "EMBED", Version: "17.01.35"}
    Mweb = Client{Name: "MWEB", Version: "2.20211109.01.00"}
 )
 
@@ -40,9 +86,6 @@ func (c Client) PlayerHeader(head http.Header, id string) (*Player, error) {
    play := new(Player)
    if err := json.NewDecoder(res.Body).Decode(play); err != nil {
       return nil, err
-   }
-   if play.PlayabilityStatus.Status != "OK" {
-      return nil, play.PlayabilityStatus
    }
    return play, nil
 }
@@ -112,15 +155,6 @@ type Item struct {
    }
 }
 
-type PlayabilityStatus struct {
-   Status string // LOGIN_REQUIRED
-   Reason string // Sign in to confirm your age
-}
-
-func (p PlayabilityStatus) Error() string {
-   return p.Status + " " + p.Reason
-}
-
 type Player struct {
    Microformat struct {
       PlayerMicroformatRenderer struct {
@@ -135,13 +169,7 @@ type Player struct {
       DashManifestURL string
       Formats []Format
    }
-   VideoDetails struct {
-      Author string
-      ShortDescription string
-      Title string
-      VideoID string
-      ViewCount int `json:"viewCount,string"`
-   }
+   VideoDetails VideoDetails
 }
 
 func (p Player) Date() (time.Time, error) {
