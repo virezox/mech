@@ -50,19 +50,19 @@ func main() {
       }
       switch {
       case info:
-         fmt.Printf("%+v", med.Shortcode_Media)
-      case med.Shortcode_Media.Video_URL != "":
-         err := download(med.Shortcode_Media.Video_URL)
+         fmt.Println(med)
+      case med.Video_URL != "":
+         err := download(med.Video_URL)
          if err != nil {
             panic(err)
          }
-      case med.Edges() == nil:
-         err := download(med.Shortcode_Media.Display_URL)
+      case med.Sidecar() == nil:
+         err := download(med.Display_URL)
          if err != nil {
             panic(err)
          }
       default:
-         for _, edge := range med.Edges() {
+         for _, edge := range med.Sidecar() {
             err := download(edge.URL())
             if err != nil {
                panic(err)

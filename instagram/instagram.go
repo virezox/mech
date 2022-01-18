@@ -10,6 +10,49 @@ import (
    "strconv"
 )
 
+func (m Media) String() string {
+   buf := []byte("Likes: ")
+   buf = strconv.AppendInt(buf, m.Edge_Media_Preview_Like.Count, 10)
+   buf = append(buf, "\nVideo_URL: "...)
+   buf = append(buf, m.Video_URL...)
+   buf = append(buf, "\nDisplay_URL: "...)
+   buf = append(buf, m.Display_URL...)
+   for i, car := range m.Sidecar() {
+      if i == 0 {
+         buf = append(buf, "\nSidecar: "...)
+      }
+      buf = append(buf, "\n- "...)
+      buf = append(buf, car.URL()...)
+   }
+   buf = append(buf, "\nComments: "...)
+   for _, edge := range m.Edge_Media_To_Parent_Comment.Edges {
+      buf = append(buf, "\n- "...)
+      buf = append(buf, edge.Node.Text...)
+   }
+   return string(buf)
+}
+
+// Anonymous request
+func NewMedia(shortcode string) (*Media, error) {
+   return Login{}.Media(shortcode)
+}
+
+type notFound struct {
+   input string
+}
+
+func (n notFound) Error() string {
+   return strconv.Quote(n.input) + " not found"
+}
+
+type response struct {
+   *http.Response
+}
+
+func (r response) Error() string {
+   return r.Status
+}
+
 const (
    originI = "https://i.instagram.com"
    // com.instagram.android
@@ -24,20 +67,6 @@ func Valid(shortcode string) bool {
       return true
    }
    return false
-}
-
-type Edge struct {
-   Node struct {
-      Display_URL string
-      Video_URL string
-   }
-}
-
-func (e Edge) URL() string {
-   if e.Node.Video_URL != "" {
-      return e.Node.Video_URL
-   }
-   return e.Node.Display_URL
 }
 
 type Login struct {
@@ -126,58 +155,52 @@ func (l Login) Media(shortcode string) (*Media, error) {
       return nil, response{res}
    }
    var car struct {
-      GraphQL Media
+      GraphQL struct {
+         Shortcode_Media Media
+      }
    }
    if err := json.NewDecoder(res.Body).Decode(&car); err != nil {
       return nil, err
    }
-   return &car.GraphQL, nil
+   return &car.GraphQL.Shortcode_Media,nil
+}
+
+func (m Media) Sidecar() []Sidecar {
+   if m.Edge_Sidecar_To_Children == nil {
+      return nil
+   }
+   return m.Edge_Sidecar_To_Children.Edges
+}
+
+func (s Sidecar) URL() string {
+   if s.Node.Video_URL != "" {
+      return s.Node.Video_URL
+   }
+   return s.Node.Display_URL
 }
 
 type Media struct {
-   Shortcode_Media struct {
-      Display_URL string
-      Edge_Media_Preview_Like struct {
-         Count int
-      }
-      Edge_Media_To_Parent_Comment struct {
-         Edges []struct {
-            Node struct {
-               Text string
-            }
+   Video_URL string
+   Display_URL string
+   Edge_Media_Preview_Like struct { // Likes
+      Count int64
+   }
+   Edge_Sidecar_To_Children *struct { // Sidecar
+      Edges []Sidecar
+   }
+   Edge_Media_To_Parent_Comment struct { // Comments
+      Edges []struct {
+         Node struct {
+            Text string
          }
       }
-      Edge_Sidecar_To_Children *struct {
-         Edges []Edge
-      }
+   }
+}
+
+type Sidecar struct {
+   Node struct {
+      Display_URL string
       Video_URL string
    }
 }
 
-// Anonymous request
-func NewMedia(shortcode string) (*Media, error) {
-   return Login{}.Media(shortcode)
-}
-
-func (m Media) Edges() []Edge {
-   if m.Shortcode_Media.Edge_Sidecar_To_Children == nil {
-      return nil
-   }
-   return m.Shortcode_Media.Edge_Sidecar_To_Children.Edges
-}
-
-type notFound struct {
-   input string
-}
-
-func (n notFound) Error() string {
-   return strconv.Quote(n.input) + " not found"
-}
-
-type response struct {
-   *http.Response
-}
-
-func (r response) Error() string {
-   return r.Status
-}
