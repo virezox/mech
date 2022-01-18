@@ -41,6 +41,9 @@ func (c Client) PlayerHeader(head http.Header, id string) (*Player, error) {
    if err := json.NewDecoder(res.Body).Decode(play); err != nil {
       return nil, err
    }
+   if play.PlayabilityStatus.Status != "OK" {
+      return nil, play.PlayabilityStatus
+   }
    return play, nil
 }
 
