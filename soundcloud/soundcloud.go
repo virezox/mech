@@ -33,11 +33,11 @@ func Oembed(addr string) (*Alternate, error) {
       return nil, err
    }
    defer res.Body.Close()
-   emb := new(Alternate)
-   if err := json.NewDecoder(res.Body).Decode(emb); err != nil {
+   alt := new(Alternate)
+   if err := json.NewDecoder(res.Body).Decode(alt); err != nil {
       return nil, err
    }
-   return emb, nil
+   return alt, nil
 }
 
 type Media struct {

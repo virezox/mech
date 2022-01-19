@@ -20,10 +20,7 @@ const (
    queryVideo = "31b459298c0bf48c3b6300ee4922eaf2c9bea4be1cb15a7ab1fe210cd210f779"
 )
 
-var (
-   Decode = m3u.Decode
-   secretKey = []byte("2b84a073ede61c766e4c0b3f1e656f7f")
-)
+var secretKey = []byte("2b84a073ede61c766e4c0b3f1e656f7f")
 
 // nbc.com/saturday-night-live/video/october-2-owen-wilson/9000199358
 func Parse(id string) (uint64, error) {
@@ -38,8 +35,7 @@ func generateHash(text string, key []byte) string {
 }
 
 type AccessVOD struct {
-   // this is only valid for one minute
-   ManifestPath string
+   ManifestPath string // this is only valid for one minute
 }
 
 func NewAccessVOD(guid uint64) (*AccessVOD, error) {
@@ -82,20 +78,6 @@ func NewAccessVOD(guid uint64) (*AccessVOD, error) {
       return nil, err
    }
    return vod, nil
-}
-
-func (a AccessVOD) Manifest() ([]m3u.Format, error) {
-   req, err := http.NewRequest("GET", a.ManifestPath, nil)
-   if err != nil {
-      return nil, err
-   }
-   format.Log.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   return Decode(res.Body, "")
 }
 
 type Video struct {
@@ -166,4 +148,57 @@ type vodRequest struct {
    Mpx struct {
       AccountID int `json:"accountId"`
    } `json:"mpx"`
+}
+
+func (a AccessVOD) Formats() ([]Format, error) {
+   req, err := http.NewRequest("GET", a.ManifestPath, nil)
+   if err != nil {
+      return nil, err
+   }
+   format.Log.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   iFmts, err := m3u.Decode(res.Body, "")
+   if err != nil {
+      return nil, err
+   }
+   var oFmts []Format
+   for i, iFmt := range iFmts {
+      var oFmt Format
+      oFmt.Bandwidth, err = strconv.ParseInt(iFmt["BANDWIDTH"], 10, 64)
+      if err != nil {
+         return nil, err
+      }
+      oFmt.Codecs = iFmt["CODECS"]
+      oFmt.ID = int64(i)
+      oFmt.Resolution = iFmt["RESOLUTION"]
+      oFmt.URI = iFmt["URI"]
+      oFmts = append(oFmts, oFmt)
+   }
+   return oFmts, nil
+}
+
+type Format struct {
+   ID int64
+   Resolution string
+   Bandwidth int64
+   Codecs string
+   URI string
+}
+
+func (f Format) String() string {
+   buf := []byte("ID: ")
+   buf = strconv.AppendInt(buf, f.ID, 10)
+   buf = append(buf, "\nResolution: "...)
+   buf = append(buf, f.Resolution...)
+   buf = append(buf, "\nBandwidth: "...)
+   buf = strconv.AppendInt(buf, f.Bandwidth, 10)
+   buf = append(buf, "\nCodecs: "...)
+   buf = append(buf, f.Codecs...)
+   buf = append(buf, "\nURI: "...)
+   buf = append(buf, f.URI...)
+   return string(buf)
 }

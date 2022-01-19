@@ -102,13 +102,14 @@ type ConfigVideo struct {
 }
 
 func (c ConfigVideo) String() string {
-   buf := []byte("Owner: ")
-   buf = append(buf, c.Owner.Name...)
-   buf = append(buf, "\nTitle: "...)
-   buf = append(buf, c.Title...)
-   buf = append(buf, "\nDuration: "...)
-   buf = append(buf, c.Time().String()...)
-   return string(buf)
+   var str strings.Builder
+   str.WriteString("Owner: ")
+   str.WriteString(c.Owner.Name)
+   str.WriteString("\nTitle: ")
+   str.WriteString(c.Title)
+   str.WriteString("\nDuration: ")
+   str.WriteString(c.Time().String())
+   return str.String()
 }
 
 func (c ConfigVideo) Time() time.Duration {
