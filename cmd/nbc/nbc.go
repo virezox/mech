@@ -28,21 +28,21 @@ func main() {
    var verbose bool
    flag.BoolVar(&verbose, "v", false, "verbose")
    flag.Parse()
-   if flag.NArg() != 1 {
+   if flag.NArg() == 1 {
+      guid := flag.Arg(0)
+      nGUID, err := nbc.Parse(guid)
+      if err != nil {
+         panic(err)
+      }
+      if verbose {
+         format.Log.Level = 1
+      }
+      if err := cHLS.HLS(nGUID); err != nil {
+         panic(err)
+      }
+   } else {
       fmt.Println("nbc [flags] [GUID]")
       flag.PrintDefaults()
-      return
-   }
-   guid := flag.Arg(0)
-   nGUID, err := nbc.Parse(guid)
-   if err != nil {
-      panic(err)
-   }
-   if verbose {
-      format.Log.Level = 1
-   }
-   if err := cHLS.HLS(nGUID); err != nil {
-      panic(err)
    }
 }
 

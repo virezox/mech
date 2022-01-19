@@ -22,7 +22,6 @@ const (
 
 var (
    Decode = m3u.Decode
-   PercentInt = format.PercentInt
    secretKey = []byte("2b84a073ede61c766e4c0b3f1e656f7f")
 )
 
