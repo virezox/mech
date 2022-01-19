@@ -45,12 +45,10 @@ func (n notFound) Error() string {
    return strconv.Quote(n.input) + " not found"
 }
 
-type response struct {
-   *http.Response
-}
+type errorString string
 
-func (r response) Error() string {
-   return r.Status
+func (e errorString) Error() string {
+   return string(e)
 }
 
 const (
@@ -152,7 +150,7 @@ func (l Login) Media(shortcode string) (*Media, error) {
    }
    defer res.Body.Close()
    if res.StatusCode != http.StatusOK {
-      return nil, response{res}
+      return nil, errorString(res.Status)
    }
    var car struct {
       GraphQL struct {

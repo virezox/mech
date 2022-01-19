@@ -104,7 +104,7 @@ func NewPartnerLogin() (*PartnerLogin, error) {
    }
    defer res.Body.Close()
    if res.StatusCode != http.StatusOK {
-      return nil, response{res}
+      return nil, errorString(res.Status)
    }
    part := new(PartnerLogin)
    if err := json.NewDecoder(res.Body).Decode(part); err != nil {
@@ -160,12 +160,10 @@ type playbackInfoRequest struct {
    UserAuthToken string `json:"userAuthToken"`
 }
 
-type response struct {
-   *http.Response
-}
+type errorString string
 
-func (r response) Error() string {
-   return r.Status
+func (e errorString) Error() string {
+   return string(e)
 }
 
 type userLoginRequest struct {

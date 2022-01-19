@@ -45,7 +45,7 @@ func NewAwemeDetail(id uint64) (*AwemeDetail, error) {
    }
    defer res.Body.Close()
    if res.StatusCode != http.StatusOK {
-      return nil, response{res}
+      return nil, errorString(res.Status)
    }
    var detail struct {
       Aweme_Detail AwemeDetail
@@ -78,10 +78,8 @@ func (a AwemeDetail) URL() (string, error) {
    return addr.String(), nil
 }
 
-type response struct {
-   *http.Response
-}
+type errorString string
 
-func (r response) Error() string {
-   return r.Status
+func (e errorString) Error() string {
+   return string(e)
 }
