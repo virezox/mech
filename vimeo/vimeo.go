@@ -7,6 +7,7 @@ import (
    "net/url"
    "strconv"
    "strings"
+   "time"
 )
 
 func Parse(id string) (uint64, error) {
@@ -93,11 +94,25 @@ func (c Config) URL() (string, error) {
 }
 
 type ConfigVideo struct {
-   Duration int64
    Owner struct {
       Name string
    }
    Title string
+   Duration int64
+}
+
+func (c ConfigVideo) String() string {
+   buf := []byte("Owner: ")
+   buf = append(buf, c.Owner.Name...)
+   buf = append(buf, "\nTitle: "...)
+   buf = append(buf, c.Title...)
+   buf = append(buf, "\nDuration: "...)
+   buf = append(buf, c.Time().String()...)
+   return string(buf)
+}
+
+func (c ConfigVideo) Time() time.Duration {
+   return time.Duration(c.Duration) * time.Second
 }
 
 type Master struct {
