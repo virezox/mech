@@ -37,7 +37,7 @@ func main() {
    if err != nil {
       panic(err)
    }
-   vids, err := con.Videos()
+   mas, err := con.Master()
    if err != nil {
       panic(err)
    }
@@ -46,14 +46,14 @@ func main() {
       fmt.Println("Title:", con.Video.Title)
       fmt.Println("Duration:", con.Video.Duration)
    }
-   for _, vid := range vids {
+   for _, vid := range mas.Video {
       if info {
          fmt.Print("ID:", vid.ID)
          fmt.Print(" Width:", vid.Width)
          fmt.Print(" Height:", vid.Height)
          fmt.Println()
       } else if vid.ID == formatID {
-         err := download(con, vid.URL())
+         err := download(vid, con)
          if err != nil {
             panic(err)
          }
@@ -61,7 +61,11 @@ func main() {
    }
 }
 
-func download(con *vimeo.Config, addr string) error {
+func download(vid vimeo.MasterVideo, con *vimeo.Config) error {
+   addr, err := vid.URL(con)
+   if err != nil {
+      return err
+   }
    fmt.Println("GET", addr)
    res, err := http.Get(addr)
    if err != nil {
