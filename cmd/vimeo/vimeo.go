@@ -14,9 +14,9 @@ import (
 func main() {
    var (
       info, verbose bool
-      vFormat string
+      formatID string
    )
-   flag.StringVar(&vFormat, "f", "", "format")
+   flag.StringVar(&formatID, "f", "", "format")
    flag.BoolVar(&info, "i", false, "info only")
    flag.BoolVar(&verbose, "v", false, "verbose")
    flag.Parse()
@@ -52,7 +52,7 @@ func main() {
          fmt.Print(" Width:", vid.Width)
          fmt.Print(" Height:", vid.Height)
          fmt.Println()
-      } else if vid.ID == vFormat {
+      } else if vid.ID == formatID {
          err := download(con, vid.URL())
          if err != nil {
             panic(err)

@@ -31,6 +31,10 @@ First 30 seconds is normal, rest of track is encrypted.
 
 https://play.google.com/store/apps/details?id=com.amazon.mp3
 
+## Apple Podcasts
+
+https://github.com/89z/mech/tree/12876427d9a0629de6131734c3e778daf1a62b7a
+
 ## Bandcamp
 
 https://play.google.com/store/apps/details?id=com.bandcamp.android

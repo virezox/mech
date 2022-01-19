@@ -8,38 +8,43 @@ import (
    "path"
    "strconv"
    "strings"
-   "time"
 )
+
+type notFound struct {
+   input string
+}
+
+func (n notFound) Error() string {
+   return strconv.Quote(n.input) + " not found"
+}
+
+type Embed struct {
+   Title string
+   Upload_Date string
+   Thumbnail_URL string
+}
+
+func NewEmbed(id uint64) (*Embed, error) {
+   req, err := http.NewRequest("GET", "https://vimeo.com/api/oembed.json", nil)
+   if err != nil {
+      return nil, err
+   }
+   req.URL.RawQuery = "url=//vimeo.com/" + strconv.FormatUint(id, 10)
+   format.Log.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   vid := new(Embed)
+   if err := json.NewDecoder(res.Body).Decode(vid); err != nil {
+      return nil, err
+   }
+   return vid, nil
+}
 
 func Parse(id string) (uint64, error) {
    return strconv.ParseUint(id, 10, 64)
-}
-
-type Config struct {
-   Request struct {
-      Files struct {
-         DASH struct {
-            CDNs struct {
-               Fastly_Skyfire struct {
-                  URL string
-               }
-            }
-         }
-         Progressive []struct {
-            Width int
-            Height int
-            URL string
-         }
-      }
-      Timestamp int64 // this is just the current time
-   }
-   Video struct {
-      Duration Duration
-      Owner struct {
-         Name string
-      }
-      Title string
-   }
 }
 
 func NewConfig(id uint64) (*Config, error) {
@@ -70,6 +75,35 @@ func (c Config) DASH() (string, error) {
    }
    addr.RawQuery = ""
    return addr.String(), nil
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+type Config struct {
+   Request struct {
+      Files struct {
+         DASH struct {
+            CDNs struct {
+               Fastly_Skyfire struct {
+                  URL string
+               }
+            }
+         }
+         Progressive []struct {
+            Width int
+            Height int
+            URL string
+         }
+      }
+      Timestamp int64 // this is just the current time
+   }
+   Video struct {
+      Duration int64
+      Owner struct {
+         Name string
+      }
+      Title string
+   }
 }
 
 // These are segmented, but you can actually get the full videos like this:
@@ -113,13 +147,6 @@ func (c Config) Videos() ([]Video, error) {
    return vids, nil
 }
 
-type Duration int64
-
-func (d Duration) String() string {
-   dur := time.Duration(d) * time.Second
-   return dur.String()
-}
-
 type Video struct {
    ID string
    Width int
@@ -130,37 +157,4 @@ type Video struct {
 
 func (v Video) URL() string {
    return v.Base_URL + "/" + v.ID + path.Ext(v.Init_Segment)
-}
-
-type notFound struct {
-   input string
-}
-
-func (n notFound) Error() string {
-   return strconv.Quote(n.input) + " not found"
-}
-
-type Embed struct {
-   Title string
-   Upload_Date string
-   Thumbnail_URL string
-}
-
-func NewEmbed(id uint64) (*Embed, error) {
-   req, err := http.NewRequest("GET", "https://vimeo.com/api/oembed.json", nil)
-   if err != nil {
-      return nil, err
-   }
-   req.URL.RawQuery = "url=//vimeo.com/" + strconv.FormatUint(id, 10)
-   format.Log.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   vid := new(Embed)
-   if err := json.NewDecoder(res.Body).Decode(vid); err != nil {
-      return nil, err
-   }
-   return vid, nil
 }
