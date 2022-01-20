@@ -162,8 +162,6 @@ func (s Stream) String() string {
    return string(buf)
 }
 
-////////////////////////////////////////////////////////////////////////////////
-
 // #EXT-X-STREAM-INF
 type Stream struct {
    ID int64
@@ -237,4 +235,3 @@ func (a AccessVOD) Streams() ([]Stream, error) {
    }
    return streams, nil
 }
-
