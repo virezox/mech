@@ -150,7 +150,64 @@ type vodRequest struct {
    } `json:"mpx"`
 }
 
-func (a AccessVOD) Formats() ([]Format, error) {
+func (s Stream) String() string {
+   buf := []byte("ID:")
+   buf = strconv.AppendInt(buf, s.ID, 10)
+   buf = append(buf, " Resolution:"...)
+   buf = append(buf, s.Resolution...)
+   buf = append(buf, " Bandwidth:"...)
+   buf = strconv.AppendInt(buf, s.Bandwidth, 10)
+   buf = append(buf, " Codecs:"...)
+   buf = append(buf, s.Codecs...)
+   return string(buf)
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+// #EXT-X-STREAM-INF
+type Stream struct {
+   ID int64
+   Resolution string
+   Bandwidth int64
+   Codecs string
+   URI string
+}
+
+// #EXTINF
+type Information struct {
+   FrameRate float64
+   URI string
+}
+
+func (s Stream) Information() ([]Information, error) {
+   req, err := http.NewRequest("GET", s.URI, nil)
+   if err != nil {
+      return nil, err
+   }
+   format.Log.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   forms, err := m3u.Decode(res.Body, "")
+   if err != nil {
+      return nil, err
+   }
+   var infos []Information
+   for _, form := range forms {
+      var info Information
+      info.FrameRate, err = strconv.ParseFloat(form["frame-rate"], 64)
+      if err != nil {
+         return nil, err
+      }
+      info.URI = form["URI"]
+      infos = append(infos, info)
+   }
+   return infos, nil
+}
+
+func (a AccessVOD) Streams() ([]Stream, error) {
    req, err := http.NewRequest("GET", a.ManifestPath, nil)
    if err != nil {
       return nil, err
@@ -161,44 +218,23 @@ func (a AccessVOD) Formats() ([]Format, error) {
       return nil, err
    }
    defer res.Body.Close()
-   iFmts, err := m3u.Decode(res.Body, "")
+   forms, err := m3u.Decode(res.Body, "")
    if err != nil {
       return nil, err
    }
-   var oFmts []Format
-   for i, iFmt := range iFmts {
-      var oFmt Format
-      oFmt.Bandwidth, err = strconv.ParseInt(iFmt["BANDWIDTH"], 10, 64)
+   var streams []Stream
+   for i, form := range forms {
+      var stream Stream
+      stream.Bandwidth, err = strconv.ParseInt(form["BANDWIDTH"], 10, 64)
       if err != nil {
          return nil, err
       }
-      oFmt.Codecs = iFmt["CODECS"]
-      oFmt.ID = int64(i)
-      oFmt.Resolution = iFmt["RESOLUTION"]
-      oFmt.URI = iFmt["URI"]
-      oFmts = append(oFmts, oFmt)
+      stream.Codecs = form["CODECS"]
+      stream.ID = int64(i)
+      stream.Resolution = form["RESOLUTION"]
+      stream.URI = form["URI"]
+      streams = append(streams, stream)
    }
-   return oFmts, nil
+   return streams, nil
 }
 
-type Format struct {
-   ID int64
-   Resolution string
-   Bandwidth int64
-   Codecs string
-   URI string
-}
-
-func (f Format) String() string {
-   buf := []byte("ID: ")
-   buf = strconv.AppendInt(buf, f.ID, 10)
-   buf = append(buf, "\nResolution: "...)
-   buf = append(buf, f.Resolution...)
-   buf = append(buf, "\nBandwidth: "...)
-   buf = strconv.AppendInt(buf, f.Bandwidth, 10)
-   buf = append(buf, "\nCodecs: "...)
-   buf = append(buf, f.Codecs...)
-   buf = append(buf, "\nURI: "...)
-   buf = append(buf, f.URI...)
-   return string(buf)
-}
