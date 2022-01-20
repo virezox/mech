@@ -11,6 +11,8 @@ import (
 
 const Origin = "http://api2.musical.ly"
 
+var LogLevel format.LogLevel
+
 func Parse(id string) (uint64, error) {
    return strconv.ParseUint(id, 10, 64)
 }
@@ -38,7 +40,7 @@ func NewAwemeDetail(id uint64) (*AwemeDetail, error) {
       return nil, err
    }
    req.URL.RawQuery = "aweme_id=" + strconv.FormatUint(id, 10)
-   format.Log.Dump(req)
+   LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err

@@ -10,6 +10,8 @@ import (
    "time"
 )
 
+var LogLevel format.LogLevel
+
 func Parse(id string) (uint64, error) {
    return strconv.ParseUint(id, 10, 64)
 }
@@ -43,7 +45,7 @@ func NewConfig(id uint64) (*Config, error) {
    if err != nil {
       return nil, err
    }
-   format.Log.Dump(req)
+   LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -71,7 +73,7 @@ func (c Config) Master() (*Master, error) {
    if err != nil {
       return nil, err
    }
-   format.Log.Dump(req)
+   LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -156,7 +158,7 @@ func NewOembed(id uint64) (*Oembed, error) {
       return nil, err
    }
    req.URL.RawQuery = "url=//vimeo.com/" + strconv.FormatUint(id, 10)
-   format.Log.Dump(req)
+   LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err

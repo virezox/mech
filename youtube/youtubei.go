@@ -3,7 +3,6 @@ package youtube
 import (
    "bytes"
    "encoding/json"
-   "github.com/89z/format"
    "net/http"
    "strconv"
    "strings"
@@ -109,7 +108,7 @@ func (c Client) Search(query string) (*Search, error) {
       return nil, err
    }
    req.Header = googAPI
-   format.Log.Dump(req)
+   LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -143,7 +142,7 @@ func (c Client) player(head http.Header, id string) (*http.Response, error) {
       return nil, err
    }
    req.Header = head
-   format.Log.Dump(req)
+   LogLevel.Dump(req)
    return new(http.Transport).RoundTrip(req)
 }
 

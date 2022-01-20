@@ -44,7 +44,7 @@ func main() {
    flag.BoolVar(&verbose, "v", false, "verbose")
    flag.Parse()
    if verbose {
-      format.Log.Level = 1
+      vimeo.LogLevel = 1
    }
    if flag.NArg() == 1 {
       id := flag.Arg(0)

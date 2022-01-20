@@ -14,6 +14,8 @@ const (
    origin = "https://api-v2.soundcloud.com"
 )
 
+var LogLevel format.LogLevel
+
 type Alternate struct {
    Thumbnail_URL string
    Author_URL string
@@ -27,7 +29,7 @@ func Oembed(addr string) (*Alternate, error) {
    req.URL.RawQuery = url.Values{
       "format": {"json"}, "url": {addr},
    }.Encode()
-   format.Log.Dump(req)
+   LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -73,7 +75,7 @@ func Resolve(addr string) (*Track, error) {
    req.URL.RawQuery = url.Values{
       "client_id": {clientID}, "url": {addr},
    }.Encode()
-   format.Log.Dump(req)
+   LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -94,7 +96,7 @@ func Tracks(ids string) ([]Track, error) {
    req.URL.RawQuery = url.Values{
       "client_id": {clientID}, "ids": {ids},
    }.Encode()
-   format.Log.Dump(req)
+   LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -121,7 +123,7 @@ func (t Track) Progressive() (*Media, error) {
    if err != nil {
       return nil, err
    }
-   format.Log.Dump(req)
+   LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err

@@ -3,7 +3,7 @@ package main
 import (
    "flag"
    "fmt"
-   "github.com/89z/format"
+   "github.com/89z/mech/twitter"
 )
 
 func main() {
@@ -19,7 +19,7 @@ func main() {
    flag.BoolVar(&verbose, "v", false, "verbose")
    flag.Parse()
    if verbose {
-      format.Log.Level = 1
+      twitter.LogLevel = 1
    }
    if flag.NArg() == 1 {
       id := flag.Arg(0)

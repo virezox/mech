@@ -12,6 +12,8 @@ import (
 
 const partLength = 10_000_000
 
+var LogLevel format.LogLevel
+
 type Format struct {
    AudioQuality string
    Bitrate int64

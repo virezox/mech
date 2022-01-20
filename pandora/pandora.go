@@ -97,7 +97,7 @@ func NewPartnerLogin() (*PartnerLogin, error) {
       return nil, err
    }
    req.URL.RawQuery = "method=auth.partnerLogin"
-   format.Log.Dump(req)
+   LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -138,7 +138,7 @@ func (p PartnerLogin) UserLogin(username, password string) (*UserLogin, error) {
       "method": {"auth.userLogin"},
       "partner_id": {"42"},
    }.Encode()
-   format.Log.Dump(req)
+   LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err

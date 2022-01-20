@@ -20,7 +20,10 @@ const (
    queryVideo = "31b459298c0bf48c3b6300ee4922eaf2c9bea4be1cb15a7ab1fe210cd210f779"
 )
 
-var secretKey = []byte("2b84a073ede61c766e4c0b3f1e656f7f")
+var (
+   LogLevel format.LogLevel
+   secretKey = []byte("2b84a073ede61c766e4c0b3f1e656f7f")
+)
 
 // nbc.com/saturday-night-live/video/october-2-owen-wilson/9000199358
 func Parse(id string) (uint64, error) {
@@ -67,7 +70,7 @@ func NewAccessVOD(guid uint64) (*AccessVOD, error) {
       "Authorization": {auth.String()},
       "Content-Type": {"application/json"},
    }
-   format.Log.Dump(req)
+   LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -109,7 +112,7 @@ func NewVideo(guid uint64) (*Video, error) {
       return nil, err
    }
    req.Header.Set("Content-Type", "application/json")
-   format.Log.Dump(req)
+   LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -182,7 +185,7 @@ func (s Stream) Information() ([]Information, error) {
    if err != nil {
       return nil, err
    }
-   format.Log.Dump(req)
+   LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -210,7 +213,7 @@ func (a AccessVOD) Streams() ([]Stream, error) {
    if err != nil {
       return nil, err
    }
-   format.Log.Dump(req)
+   LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err

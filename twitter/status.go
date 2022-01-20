@@ -14,6 +14,8 @@ const bearer =
    "AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs=" +
    "1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA"
 
+var LogLevel format.LogLevel
+
 func Parse(id string) (uint64, error) {
    return strconv.ParseUint(id, 10, 64)
 }
@@ -28,7 +30,7 @@ func NewGuest() (*Guest, error) {
       return nil, err
    }
    req.Header.Set("Authorization", "Bearer " + bearer)
-   format.Log.Dump(req)
+   LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -67,7 +69,7 @@ func NewStatus(guest *Guest, id uint64) (*Status, error) {
       "Authorization": {"Bearer " + bearer},
       "X-Guest-Token": {guest.Guest_Token},
    }
-   format.Log.Dump(req)
+   LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err

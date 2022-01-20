@@ -2,7 +2,6 @@ package main
 
 import (
    "flag"
-   "github.com/89z/format"
    "github.com/89z/mech/nbc"
    "os"
    "strconv"
@@ -19,7 +18,7 @@ func main() {
    flag.BoolVar(&verbose, "v", false, "verbose")
    flag.Parse()
    if verbose {
-      format.Log.Level = 1
+      nbc.LogLevel = 1
    }
    if flag.NArg() == 1 {
       guid := flag.Arg(0)

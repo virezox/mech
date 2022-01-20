@@ -2,7 +2,6 @@ package twitter
 
 import (
    "encoding/json"
-   "github.com/89z/format"
    "github.com/89z/format/m3u"
    "net/http"
    "net/url"
@@ -50,7 +49,7 @@ func NewSpace(guest *Guest, id string) (*Space, error) {
       return nil, err
    }
    req.URL.RawQuery = "variables=" + url.QueryEscape(string(buf))
-   format.Log.Dump(req)
+   LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -92,7 +91,7 @@ func (s Space) Stream(guest *Guest) (*Stream, error) {
       "Authorization": {"Bearer " + bearer},
       "X-Guest-Token": {guest.Guest_Token},
    }
-   format.Log.Dump(req)
+   LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -120,7 +119,7 @@ func (s Stream) Chunks() ([]m3u.Format, error) {
    if err != nil {
       return nil, err
    }
-   format.Log.Dump(req)
+   LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err

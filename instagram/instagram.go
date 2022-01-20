@@ -10,47 +10,6 @@ import (
    "strconv"
 )
 
-func (m Media) String() string {
-   buf := []byte("Likes: ")
-   buf = strconv.AppendInt(buf, m.Edge_Media_Preview_Like.Count, 10)
-   buf = append(buf, "\nVideo_URL: "...)
-   buf = append(buf, m.Video_URL...)
-   buf = append(buf, "\nDisplay_URL: "...)
-   buf = append(buf, m.Display_URL...)
-   for i, car := range m.Sidecar() {
-      if i == 0 {
-         buf = append(buf, "\nSidecar: "...)
-      }
-      buf = append(buf, "\n- "...)
-      buf = append(buf, car.URL()...)
-   }
-   buf = append(buf, "\nComments: "...)
-   for _, edge := range m.Edge_Media_To_Parent_Comment.Edges {
-      buf = append(buf, "\n- "...)
-      buf = append(buf, edge.Node.Text...)
-   }
-   return string(buf)
-}
-
-// Anonymous request
-func NewMedia(shortcode string) (*Media, error) {
-   return Login{}.Media(shortcode)
-}
-
-type notFound struct {
-   input string
-}
-
-func (n notFound) Error() string {
-   return strconv.Quote(n.input) + " not found"
-}
-
-type errorString string
-
-func (e errorString) Error() string {
-   return string(e)
-}
-
 const (
    originI = "https://i.instagram.com"
    // com.instagram.android
@@ -163,20 +122,6 @@ func (l Login) Media(shortcode string) (*Media, error) {
    return &car.GraphQL.Shortcode_Media,nil
 }
 
-func (m Media) Sidecar() []Sidecar {
-   if m.Edge_Sidecar_To_Children == nil {
-      return nil
-   }
-   return m.Edge_Sidecar_To_Children.Edges
-}
-
-func (s Sidecar) URL() string {
-   if s.Node.Video_URL != "" {
-      return s.Node.Video_URL
-   }
-   return s.Node.Display_URL
-}
-
 type Media struct {
    Video_URL string
    Display_URL string
@@ -195,6 +140,40 @@ type Media struct {
    }
 }
 
+// Anonymous request
+func NewMedia(shortcode string) (*Media, error) {
+   return Login{}.Media(shortcode)
+}
+
+func (m Media) Sidecar() []Sidecar {
+   if m.Edge_Sidecar_To_Children == nil {
+      return nil
+   }
+   return m.Edge_Sidecar_To_Children.Edges
+}
+
+func (m Media) String() string {
+   buf := []byte("Likes: ")
+   buf = strconv.AppendInt(buf, m.Edge_Media_Preview_Like.Count, 10)
+   buf = append(buf, "\nVideo_URL: "...)
+   buf = append(buf, m.Video_URL...)
+   buf = append(buf, "\nDisplay_URL: "...)
+   buf = append(buf, m.Display_URL...)
+   for i, car := range m.Sidecar() {
+      if i == 0 {
+         buf = append(buf, "\nSidecar: "...)
+      }
+      buf = append(buf, "\n- "...)
+      buf = append(buf, car.URL()...)
+   }
+   buf = append(buf, "\nComments: "...)
+   for _, edge := range m.Edge_Media_To_Parent_Comment.Edges {
+      buf = append(buf, "\n- "...)
+      buf = append(buf, edge.Node.Text...)
+   }
+   return string(buf)
+}
+
 type Sidecar struct {
    Node struct {
       Display_URL string
@@ -202,3 +181,23 @@ type Sidecar struct {
    }
 }
 
+func (s Sidecar) URL() string {
+   if s.Node.Video_URL != "" {
+      return s.Node.Video_URL
+   }
+   return s.Node.Display_URL
+}
+
+type errorString string
+
+func (e errorString) Error() string {
+   return string(e)
+}
+
+type notFound struct {
+   input string
+}
+
+func (n notFound) Error() string {
+   return strconv.Quote(n.input) + " not found"
+}

@@ -12,6 +12,8 @@ import (
    "strings"
 )
 
+var LogLevel format.LogLevel
+
 type MusicRecording struct {
    ID string `json:"@id"`
    Name string
@@ -25,7 +27,7 @@ func NewMusicRecording(addr string) (*MusicRecording, error) {
    if err != nil {
       return nil, err
    }
-   format.Log.Dump(req)
+   LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -127,7 +129,7 @@ func (u UserLogin) PlaybackInfo(id string) (*PlaybackInfo, error) {
       "partner_id": {"42"},
       "user_id": {""},
    }.Encode()
-   format.Log.Dump(req)
+   LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -165,7 +167,7 @@ func (u UserLogin) ValueExchange() error {
       "partner_id": {"42"},
       "user_id": {""},
    }.Encode()
-   format.Log.Dump(req)
+   LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return err
