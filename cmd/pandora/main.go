@@ -3,7 +3,7 @@ package main
 import (
    "flag"
    "fmt"
-   "github.com/89z/format"
+   "github.com/89z/mech/pandora"
    "os"
    "path/filepath"
 )
@@ -19,7 +19,7 @@ func main() {
    flag.BoolVar(&verbose, "v", false, "verbose")
    flag.Parse()
    if verbose {
-      format.Log.Level = 1
+      pandora.LogLevel = 1
    }
    cache, err := os.UserCacheDir()
    if err != nil {

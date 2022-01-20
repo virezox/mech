@@ -3,7 +3,6 @@ package main
 import (
    "flag"
    "fmt"
-   "github.com/89z/format"
    "github.com/89z/mech/instagram"
    "os"
    "time"
@@ -21,7 +20,7 @@ func main() {
    flag.BoolVar(&verbose, "v", false, "verbose")
    flag.Parse()
    if verbose {
-      format.Log.Level = 1
+      instagram.LogLevel = 1
    }
    switch {
    case len(os.Args) == 1:

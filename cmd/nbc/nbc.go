@@ -28,23 +28,23 @@ func download(vid *nbc.Video, stream nbc.Stream) error {
       return err
    }
    begin := time.Now()
-   var size int64
+   var size float64
    for i, info := range infos {
       res, err := http.Get(info.URI)
       if err != nil {
          return err
       }
       defer res.Body.Close()
-      format.PercentInt(os.Stdout, i, len(infos))
+      os.Stdout.WriteString(format.PercentInt(i, len(infos)))
       os.Stdout.WriteString("\t")
-      format.Size.Int64(os.Stdout, size)
+      os.Stdout.WriteString(format.Size.Get(size))
       os.Stdout.WriteString("\t")
-      format.Rate.Int64(os.Stdout, size/time.Since(begin).Milliseconds()*1000)
+      os.Stdout.WriteString(format.Rate.Get(size/time.Since(begin).Seconds()))
       os.Stdout.WriteString("\n")
       if _, err := file.ReadFrom(res.Body); err != nil {
          return err
       }
-      size += res.ContentLength
+      size += float64(res.ContentLength)
    }
    return nil
 }

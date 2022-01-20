@@ -4,7 +4,6 @@ import (
    "bytes"
    "encoding/hex"
    "encoding/json"
-   "github.com/89z/format"
    "golang.org/x/crypto/blowfish" //lint:ignore SA1019 reason
    "net/http"
    "net/url"

@@ -50,7 +50,7 @@ func (f Format) Write(dst io.Writer) error {
    if err != nil {
       return err
    }
-   format.Log.Dump(req)
+   LogLevel.Dump(req)
    var (
       begin = time.Now()
       content int64
@@ -61,13 +61,13 @@ func (f Format) Write(dst io.Writer) error {
       buf = append(buf, '-')
       buf = strconv.AppendInt(buf, content+partLength-1, 10)
       req.Header.Set("Range", string(buf))
-      end := time.Since(begin).Milliseconds()
+      end := time.Since(begin).Seconds()
       if end >= 1 {
-         format.PercentInt64(os.Stdout, content, f.ContentLength)
+         os.Stdout.WriteString(format.PercentInt64(content, f.ContentLength))
          os.Stdout.WriteString("\t")
-         format.Size.Int64(os.Stdout, content)
+         os.Stdout.WriteString(format.Size.GetInt64(content))
          os.Stdout.WriteString("\t")
-         format.Rate.Int64(os.Stdout, 1000*content/end)
+         os.Stdout.WriteString(format.Rate.Get(float64(content)/end))
          os.Stdout.WriteString("\n")
       }
       // this sometimes redirects, so cannot use http.Transport
