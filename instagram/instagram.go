@@ -157,8 +157,10 @@ func (m Media) Sidecar() []Sidecar {
 func (m Media) String() string {
    buf := []byte("Likes: ")
    buf = strconv.AppendInt(buf, m.Edge_Media_Preview_Like.Count, 10)
-   buf = append(buf, "\nVideo_URL: "...)
-   buf = append(buf, m.Video_URL...)
+   if m.Video_URL != "" {
+      buf = append(buf, "\nVideo_URL: "...)
+      buf = append(buf, m.Video_URL...)
+   }
    buf = append(buf, "\nDisplay_URL: "...)
    buf = append(buf, m.Display_URL...)
    for i, car := range m.Sidecar() {
