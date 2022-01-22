@@ -91,6 +91,74 @@ func (l Login) Create(name string) error {
    return enc.Encode(l)
 }
 
+type errorString string
+
+func (e errorString) Error() string {
+   return string(e)
+}
+
+type notFound struct {
+   input string
+}
+
+func (n notFound) Error() string {
+   return strconv.Quote(n.input) + " not found"
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+var old struct {
+   GraphQL struct {
+      Shortcode_Media struct {
+         Video_URL string
+         Display_URL string
+         Edge_Media_Preview_Like struct { // Likes
+            Count int64
+         }
+         Edge_Sidecar_To_Children *struct { // Sidecar
+            Edges []struct {
+               Node struct {
+                  Display_URL string
+                  Video_URL string
+               }
+            }
+         }
+         Edge_Media_To_Parent_Comment struct { // Comments
+            Edges []struct {
+               Node struct {
+                  Text string
+               }
+            }
+         }
+      }
+   }
+}
+
+type Media struct {
+   Video_URL string
+   Display_URL string
+   Edge_Media_Preview_Like struct { // Likes
+      Count int64
+   }
+   Edge_Sidecar_To_Children *struct { // Sidecar
+      Edges []Sidecar
+   }
+   Edge_Media_To_Parent_Comment struct { // Comments
+      Edges []struct {
+         Node struct {
+            Text string
+         }
+      }
+   }
+}
+
+type Sidecar struct {
+   Node struct {
+      Display_URL string
+      Video_URL string
+   }
+}
+
 // Request with Authorization
 func (l Login) Media(shortcode string) (*Media, error) {
    req, err := http.NewRequest(
@@ -122,24 +190,6 @@ func (l Login) Media(shortcode string) (*Media, error) {
       return nil, err
    }
    return &car.GraphQL.Shortcode_Media,nil
-}
-
-type Media struct {
-   Video_URL string
-   Display_URL string
-   Edge_Media_Preview_Like struct { // Likes
-      Count int64
-   }
-   Edge_Sidecar_To_Children *struct { // Sidecar
-      Edges []Sidecar
-   }
-   Edge_Media_To_Parent_Comment struct { // Comments
-      Edges []struct {
-         Node struct {
-            Text string
-         }
-      }
-   }
 }
 
 // Anonymous request
@@ -178,30 +228,9 @@ func (m Media) String() string {
    return string(buf)
 }
 
-type Sidecar struct {
-   Node struct {
-      Display_URL string
-      Video_URL string
-   }
-}
-
 func (s Sidecar) URL() string {
    if s.Node.Video_URL != "" {
       return s.Node.Video_URL
    }
    return s.Node.Display_URL
-}
-
-type errorString string
-
-func (e errorString) Error() string {
-   return string(e)
-}
-
-type notFound struct {
-   input string
-}
-
-func (n notFound) Error() string {
-   return strconv.Quote(n.input) + " not found"
 }
