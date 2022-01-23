@@ -105,35 +105,6 @@ func (n notFound) Error() string {
    return strconv.Quote(n.input) + " not found"
 }
 
-////////////////////////////////////////////////////////////////////////////////
-
-var old struct {
-   GraphQL struct {
-      Shortcode_Media struct {
-         Video_URL string
-         Display_URL string
-         Edge_Media_Preview_Like struct { // Likes
-            Count int64
-         }
-         Edge_Sidecar_To_Children *struct { // Sidecar
-            Edges []struct {
-               Node struct {
-                  Display_URL string
-                  Video_URL string
-               }
-            }
-         }
-         Edge_Media_To_Parent_Comment struct { // Comments
-            Edges []struct {
-               Node struct {
-                  Text string
-               }
-            }
-         }
-      }
-   }
-}
-
 type Media struct {
    Video_URL string
    Display_URL string
