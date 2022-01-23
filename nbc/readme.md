@@ -22,3 +22,8 @@ https://nbc.com
 ## How to get `secretKey`?
 
 https://nbcapp.nbc.co/config/android/player/v10/prod/mobile.json
+
+## Why am I not getting 720p?
+
+It seems new locked episodes dont offer HD anymore. Once they are unlocked
+(usually after one week), HD is available.

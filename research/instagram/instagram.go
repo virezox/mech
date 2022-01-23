@@ -1,62 +1,84 @@
 package instagram
 
 import (
-   "io"
+   "bytes"
+   "encoding/json"
+   "github.com/89z/format"
    "net/http"
-   "net/url"
-   "strings"
 )
 
-func post() (*http.Response, error) {
-   var req http.Request
-   req.Header = make(http.Header)
-   req.Header["Content-Type"] = []string{"application/json"}
-   req.Header["User-Agent"] = []string{"Instagram 214.1.0.29.120 Android"}
-   req.Method = "POST"
-   req.URL = new(url.URL)
-   req.URL.Host = "i.instagram.com"
-   req.URL.Path = "/graphql/query/"
-   req.URL.Scheme = "https"
-   req.Header["Authorization"] = []string{auth}
-   req.Body = io.NopCloser(strings.NewReader(`
-   {
-      "query_hash": "7d4d42b121a214d23bd43206e5142c8c",
-      "variables": {
-         "shortcode": "CY7zg-ulZEZ",
-         "fetch_comment_count": 9
-      }
-   }
-   `))
-   return new(http.Transport).RoundTrip(&req)
-}
+const (
+   agent = "Instagram 214.1.0.29.120 Android"
+   queryHash = "7d4d42b121a214d23bd43206e5142c8c"
+)
 
-type info struct {
+var logLevel format.LogLevel
+
+type media struct {
    Data struct {
       Shortcode_Media struct {
          Display_URL string
+         Edge_Media_Preview_Like struct {
+            Count int64
+         }
+         Edge_Media_To_Comment struct {
+            Edges []struct {
+               Node struct {
+                  Text string
+               }
+            }
+         }
+         Edge_Sidecar_To_Children *struct {
+            Edges []struct {
+               Node struct {
+                  Display_URL string
+                  Video_URL string
+               }
+            }
+         }
+         Video_URL string
       }
    }
 }
 
-type old struct {
-   Display_URL string
-   Edge_Media_Preview_Like struct { // Likes
-      Count int64
+type mediaRequest struct {
+   Query_Hash string `json:"query_hash"`
+   Variables struct {
+      Shortcode string `json:"shortcode"`
+      Fetch_Comment_Count int `json:"fetch_comment_count"`
+   } `json:"variables"`
+}
+
+func newMedia(shortcode string) (*media, error) {
+   var body mediaRequest
+   body.Query_Hash = queryHash
+   body.Variables.Fetch_Comment_Count = 9
+   body.Variables.Shortcode = shortcode
+   buf := new(bytes.Buffer)
+   err := json.NewEncoder(buf).Encode(body)
+   if err != nil {
+      return nil, err
    }
-   Edge_Media_To_Parent_Comment struct { // Comments
-      Edges []struct {
-         Node struct {
-            Text string
-         }
-      }
+   req, err := http.NewRequest(
+      "POST", "https://i.instagram.com/graphql/query/", buf,
+   )
+   if err != nil {
+      return nil, err
    }
-   Edge_Sidecar_To_Children *struct { // Sidecar
-      Edges []struct {
-         Node struct {
-            Display_URL string
-            Video_URL string
-         }
-      }
+   req.Header = http.Header{
+      "Authorization": {auth},
+      "Content-Type": {"application/json"},
+      "User-Agent": {agent},
    }
-   Video_URL string
+   logLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   med := new(media)
+   if err := json.NewDecoder(res.Body).Decode(med); err != nil {
+      return nil, err
+   }
+   return med, nil
 }
