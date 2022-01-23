@@ -11,9 +11,10 @@ import (
 )
 
 const (
-   originI = "https://i.instagram.com"
+   origin = "https://i.instagram.com"
+   queryHash = "7d4d42b121a214d23bd43206e5142c8c"
    // com.instagram.android
-   userAgent = "Instagram 216.1.0.21.137 Android"
+   userAgent = "Instagram 214.1.0.29.120 Android"
 )
 
 var LogLevel format.LogLevel
@@ -26,6 +27,16 @@ func Valid(shortcode string) bool {
       return true
    }
    return false
+}
+
+var logLevel format.LogLevel
+
+type mediaRequest struct {
+   Query_Hash string `json:"query_hash"`
+   Variables struct {
+      Shortcode string `json:"shortcode"`
+      Fetch_Comment_Count int `json:"fetch_comment_count"`
+   } `json:"variables"`
 }
 
 type Login struct {
@@ -42,7 +53,7 @@ func NewLogin(username, password string) (*Login, error) {
    if err := json.NewEncoder(buf).Encode(sig); err != nil {
       return nil, err
    }
-   req, err := http.NewRequest("POST", originI + "/api/v1/accounts/login/", buf)
+   req, err := http.NewRequest("POST", origin + "/api/v1/accounts/login/", buf)
    if err != nil {
       return nil, err
    }
@@ -105,62 +116,43 @@ func (n notFound) Error() string {
    return strconv.Quote(n.input) + " not found"
 }
 
-type Media struct {
-   Video_URL string
-   Display_URL string
-   Edge_Media_Preview_Like struct { // Likes
-      Count int64
-   }
-   Edge_Sidecar_To_Children *struct { // Sidecar
-      Edges []Sidecar
-   }
-   Edge_Media_To_Parent_Comment struct { // Comments
-      Edges []struct {
-         Node struct {
-            Text string
-         }
-      }
-   }
-}
-
-type Sidecar struct {
-   Node struct {
-      Display_URL string
-      Video_URL string
-   }
-}
-
 // Request with Authorization
 func (l Login) Media(shortcode string) (*Media, error) {
-   req, err := http.NewRequest(
-      "GET", "https://www.instagram.com/p/" + shortcode + "/", nil,
-   )
+   var body mediaRequest
+   body.Query_Hash = queryHash
+   body.Variables.Fetch_Comment_Count = 9
+   body.Variables.Shortcode = shortcode
+   buf := new(bytes.Buffer)
+   err := json.NewEncoder(buf).Encode(body)
    if err != nil {
       return nil, err
    }
-   req.Header.Set("User-Agent", userAgent)
+   req, err := http.NewRequest("POST", origin + "/graphql/query/", buf)
+   if err != nil {
+      return nil, err
+   }
+   req.Header = http.Header{
+      "Content-Type": {"application/json"},
+      "User-Agent": {userAgent},
+   }
    if l.Authorization != "" {
       req.Header.Set("Authorization", l.Authorization)
    }
-   req.URL.RawQuery = "__a=1"
    LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return nil, errorString(res.Status)
-   }
-   var car struct {
-      GraphQL struct {
+   var med struct {
+      Data struct {
          Shortcode_Media Media
       }
    }
-   if err := json.NewDecoder(res.Body).Decode(&car); err != nil {
+   if err := json.NewDecoder(res.Body).Decode(&med); err != nil {
       return nil, err
    }
-   return &car.GraphQL.Shortcode_Media,nil
+   return &med.Data.Shortcode_Media, nil
 }
 
 // Anonymous request
@@ -175,6 +167,32 @@ func (m Media) Sidecar() []Sidecar {
    return m.Edge_Sidecar_To_Children.Edges
 }
 
+type Media struct {
+   Display_URL string
+   Edge_Media_Preview_Like struct {
+      Count int64
+   }
+   Edge_Media_To_Comment struct {
+      Edges []struct {
+         Node struct {
+            Text string
+         }
+      }
+   }
+   Edge_Sidecar_To_Children *struct {
+      Edges []Sidecar
+   }
+   Video_URL string
+}
+
+type Sidecar struct {
+   Node struct {
+      // what do we do if node has both?
+      Display_URL string
+      Video_URL string
+   }
+}
+
 func (m Media) String() string {
    buf := []byte("Likes: ")
    buf = strconv.AppendInt(buf, m.Edge_Media_Preview_Like.Count, 10)
@@ -184,6 +202,7 @@ func (m Media) String() string {
    }
    buf = append(buf, "\nDisplay_URL: "...)
    buf = append(buf, m.Display_URL...)
+   /*
    for i, car := range m.Sidecar() {
       if i == 0 {
          buf = append(buf, "\nSidecar: "...)
@@ -191,17 +210,11 @@ func (m Media) String() string {
       buf = append(buf, "\n- "...)
       buf = append(buf, car.URL()...)
    }
+   */
    buf = append(buf, "\nComments: "...)
-   for _, edge := range m.Edge_Media_To_Parent_Comment.Edges {
+   for _, edge := range m.Edge_Media_To_Comment.Edges {
       buf = append(buf, "\n- "...)
       buf = append(buf, edge.Node.Text...)
    }
    return string(buf)
-}
-
-func (s Sidecar) URL() string {
-   if s.Node.Video_URL != "" {
-      return s.Node.Video_URL
-   }
-   return s.Node.Display_URL
 }
