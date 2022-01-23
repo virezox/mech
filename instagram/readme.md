@@ -43,3 +43,21 @@ const E = "7d4d42b121a214d23bd43206e5142c8c",
    v = 24,
    f = 3;
 ~~~
+
+## Why not use other APIs?
+
+Regarding the `__a=1` API, it is known to send a different response depending
+on the country. For example, the `dfw5` location produces this result:
+
+~~~
+graphql.shortcode_media.display_resources
+~~~
+
+while the `hel3` location produces this result:
+
+~~~
+items[0].carousel_media[0].image_versions2.candidates
+~~~
+
+Regarding the `/api/v1/media` API, it required separate calls for media and
+comments.

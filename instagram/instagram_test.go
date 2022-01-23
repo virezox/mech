@@ -2,14 +2,15 @@ package instagram
 
 import (
    "fmt"
+   "os"
    "testing"
    "time"
 )
 
 var shortcodes = []string{
-   "CU9ett-rP7I", // "https://s" "" nil
-   "CUDJ4YhpF0Z", // "https://s" "https://s" nil
-   "CUK-1wjqqsP", // "https://s" "" "https://s" "https://s"
+   "CU9ett-rP7I",
+   "CUDJ4YhpF0Z",
+   "CUK-1wjqqsP",
 }
 
 func TestWrite(t *testing.T) {
@@ -23,18 +24,22 @@ func TestWrite(t *testing.T) {
 }
 
 func TestMedia(t *testing.T) {
+   cache, err := os.UserCacheDir()
+   if err != nil {
+      t.Fatal(err)
+   }
+   login, err := OpenLogin(cache + "/mech/instagram.json")
+   if err != nil {
+      t.Fatal(err)
+   }
    for _, shortcode := range shortcodes {
-      med, err := newMedia(shortcode)
+      med, err := login.Media(shortcode)
       if err != nil {
          t.Fatal(err)
       }
-      short := med.Data.Shortcode_Media
-      fmt.Printf("%v %.9q %.9q", shortcode, short.Display_URL, short.Video_URL)
-      if short.Edge_Sidecar_To_Children != nil {
-         node := short.Edge_Sidecar_To_Children.Edges[1].Node
-         fmt.Printf(" %.9q %.9q\n", node.Display_URL, node.Video_URL)
-      } else {
-         fmt.Println(" nil")
+      fmt.Println(shortcode)
+      for _, addr := range med.URLs() {
+         fmt.Println("-", addr)
       }
       time.Sleep(time.Second)
    }
