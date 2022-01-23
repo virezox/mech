@@ -29,16 +29,6 @@ func Valid(shortcode string) bool {
    return false
 }
 
-var logLevel format.LogLevel
-
-type mediaRequest struct {
-   Query_Hash string `json:"query_hash"`
-   Variables struct {
-      Shortcode string `json:"shortcode"`
-      Fetch_Comment_Count int `json:"fetch_comment_count"`
-   } `json:"variables"`
-}
-
 type Login struct {
    Authorization string
 }
@@ -102,20 +92,6 @@ func (l Login) Create(name string) error {
    return enc.Encode(l)
 }
 
-type errorString string
-
-func (e errorString) Error() string {
-   return string(e)
-}
-
-type notFound struct {
-   input string
-}
-
-func (n notFound) Error() string {
-   return strconv.Quote(n.input) + " not found"
-}
-
 // Request with Authorization
 func (l Login) Media(shortcode string) (*Media, error) {
    var body mediaRequest
@@ -144,6 +120,9 @@ func (l Login) Media(shortcode string) (*Media, error) {
       return nil, err
    }
    defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return nil, errorString(res.Status)
+   }
    var med struct {
       Data struct {
          Shortcode_Media Media
@@ -155,20 +134,7 @@ func (l Login) Media(shortcode string) (*Media, error) {
    return &med.Data.Shortcode_Media, nil
 }
 
-// Anonymous request
-func NewMedia(shortcode string) (*Media, error) {
-   return Login{}.Media(shortcode)
-}
-
-func (m Media) Sidecar() []Sidecar {
-   if m.Edge_Sidecar_To_Children == nil {
-      return nil
-   }
-   return m.Edge_Sidecar_To_Children.Edges
-}
-
 type Media struct {
-   Display_URL string
    Edge_Media_Preview_Like struct {
       Count int64
    }
@@ -179,42 +145,76 @@ type Media struct {
          }
       }
    }
-   Edge_Sidecar_To_Children *struct {
-      Edges []Sidecar
-   }
+   Display_URL string
    Video_URL string
+   Edge_Sidecar_To_Children *struct {
+      Edges []struct {
+         Node struct {
+            Display_URL string
+            Video_URL string
+         }
+      }
+   }
 }
 
-type Sidecar struct {
-   Node struct {
-      // what do we do if node has both?
-      Display_URL string
-      Video_URL string
-   }
+// Anonymous request
+func NewMedia(shortcode string) (*Media, error) {
+   return Login{}.Media(shortcode)
 }
 
 func (m Media) String() string {
    buf := []byte("Likes: ")
    buf = strconv.AppendInt(buf, m.Edge_Media_Preview_Like.Count, 10)
-   if m.Video_URL != "" {
-      buf = append(buf, "\nVideo_URL: "...)
-      buf = append(buf, m.Video_URL...)
-   }
-   buf = append(buf, "\nDisplay_URL: "...)
-   buf = append(buf, m.Display_URL...)
-   /*
-   for i, car := range m.Sidecar() {
-      if i == 0 {
-         buf = append(buf, "\nSidecar: "...)
-      }
+   buf = append(buf, "\nURLs: "...)
+   for _, addr := range m.URLs() {
       buf = append(buf, "\n- "...)
-      buf = append(buf, car.URL()...)
+      buf = append(buf, addr...)
    }
-   */
    buf = append(buf, "\nComments: "...)
    for _, edge := range m.Edge_Media_To_Comment.Edges {
       buf = append(buf, "\n- "...)
       buf = append(buf, edge.Node.Text...)
    }
    return string(buf)
+}
+
+func (m Media) URLs() []string {
+   src := make(map[string]bool)
+   src[m.Display_URL] = true
+   src[m.Video_URL] = true
+   if m.Edge_Sidecar_To_Children != nil {
+      for _, edge := range m.Edge_Sidecar_To_Children.Edges {
+         src[edge.Node.Display_URL] = true
+         src[edge.Node.Video_URL] = true
+      }
+   }
+   var dst []string
+   for key := range src {
+      if key != "" {
+         dst = append(dst, key)
+      }
+   }
+   return dst
+}
+
+type errorString string
+
+func (e errorString) Error() string {
+   return string(e)
+}
+
+type mediaRequest struct {
+   Query_Hash string `json:"query_hash"`
+   Variables struct {
+      Shortcode string `json:"shortcode"`
+      Fetch_Comment_Count int `json:"fetch_comment_count"`
+   } `json:"variables"`
+}
+
+type notFound struct {
+   input string
+}
+
+func (n notFound) Error() string {
+   return strconv.Quote(n.input) + " not found"
 }
