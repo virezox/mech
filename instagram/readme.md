@@ -20,11 +20,11 @@ Host: www.instagram.com
 User-Agent: Mozilla
 ~~~
 
-in the response body, you should see something like this:
+in the response body, you should see something like one of these:
 
 ~~~html
+<link rel="preload" href="/static/bundles/es6/Consumer.js/341626c79aac.js"
 <link rel="preload" href="/static/bundles/metro/Consumer.js/c705f96d9483.js"
-as="script" type="text/javascript" crossorigin="anonymous" />
 ~~~
 
 If you request that link:

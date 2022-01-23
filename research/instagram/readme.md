@@ -1,70 +1,35 @@
 # Instagram
 
-Old API returns different results in different countries:
+## How to get `query_hash`?
 
-https://github.com/89z/mech/issues/13#issuecomment-1019303135
+Visit this page:
 
-New API does not return comments:
+https://instagram.com
 
-https://github.com/89z/mech/issues/13#issuecomment-1019300734
+Then View Page Source, you should see a link like this:
 
-Not sure how this one works:
+https://instagram.com/static/bundles/es6/Consumer.js/341626c79aac.js
 
-https://github.com/honkkki/goins/issues/1
+In the JavaScript source, you should see something like this:
 
-Looks like comments has a different request:
-
-- https://github.com/codeuniversity/smag-mvp/blob/master/insta/scraper/comments/comments-scraper.go#L191
-- https://github.com/codeuniversity/smag-mvp/blob/master/insta/scraper/comments/comments-scraper.go#L234
-
-What does Android client do?
-
-~~~
-com.instagram.android
-~~~
-
-Info endpoint:
-
-~~~
-GET /api/v1/media/2755022163816059161/info/ HTTP/2.0
-Host: i.instagram.com
-user-agent: Instagram 206.1.0.34.121 Android
-Authorization: Bearer IGT:2:eyJkc191c2VyX2lkIjoiNDkzNzgxNzEzMzQiLCJzZXNzaW9ua...
+~~~js
+const {data: o} = await r(d[7]).query(E, {
+   shortcode: n,
+   child_comment_count: f,
+   fetch_comment_count: p,
+   parent_comment_count: v,
+   has_threaded_comments: !0
+});
 ~~~
 
-Comment endpoint:
+Then find the variable that corresponds to the first argument to the `query`
+method (`E` in the example above):
 
-~~~
-GET /api/v1/media/2755652849306967814/comments/ HTTP/2.0
-Host: i.instagram.com
-user-agent: Instagram 215.0.0.27.359 Android
-Authorization: Bearer IGT:2:eyJkc191c2VyX2lkIjoiNDkzNzgxNzEzMzQiLCJzZXNzaW9ua...
-~~~
-
-With the Android client, this would be the struct:
-
-~~~go
-type info struct {
-   Items []struct {
-      Carousel_Media []struct {
-         Image_Versions2 struct {
-            Candidates []struct {
-               URL string
-            }
-         }
-      }
-   }
-}
-~~~
-
-With the Web client, this would be the struct:
-
-~~~go
-type info struct {
-   Data struct {
-      Shortcode_Media struct {
-         Display_URL string
-      }
-   }
-}
+~~~js
+const E = "7d4d42b121a214d23bd43206e5142c8c",
+   _ = "6ff3f5c474a240353993056428fb851e",
+   u = "ba5c3def9f75f43213da3d428f4c783a",
+   p = 40,
+   v = 24,
+   f = 3;
 ~~~
