@@ -18,6 +18,27 @@ const (
 
 var blowfishKey = []byte("6#26FRL$ZWD")
 
+type Cipher []byte
+
+func (c Cipher) Encrypt() (Cipher, error) {
+   block, err := blowfish.NewCipher(blowfishKey)
+   if err != nil {
+      return nil, err
+   }
+   for low := 0; low < len(c); low += blowfish.BlockSize {
+      block.Encrypt(c[low:], c[low:])
+   }
+   return c, nil
+}
+
+func (c Cipher) Pad() Cipher {
+   cLen := blowfish.BlockSize - len(c) % blowfish.BlockSize
+   for high := byte(cLen); cLen >= 1; cLen-- {
+      c = append(c, high)
+   }
+   return c
+}
+
 type PartnerLogin struct {
    Result struct {
       PartnerAuthToken string
@@ -57,58 +78,8 @@ func NewPartnerLogin() (*PartnerLogin, error) {
    return part, nil
 }
 
-type playbackInfoRequest struct {
-   // this can be empty, but must be included:
-   DeviceCode string `json:"deviceCode"`
-   IncludeAudioToken bool `json:"includeAudioToken"`
-   PandoraID string `json:"pandoraId"`
-   SyncTime int `json:"syncTime"`
-   UserAuthToken string `json:"userAuthToken"`
-}
-
-type errorString string
-
-func (e errorString) Error() string {
-   return string(e)
-}
-
-type userLoginRequest struct {
-   LoginType string `json:"loginType"`
-   PartnerAuthToken string `json:"partnerAuthToken"`
-   Password string `json:"password"`
-   SyncTime int `json:"syncTime"`
-   Username string `json:"username"`
-}
-
-type valueExchangeRequest struct {
-   OfferName string `json:"offerName"`
-   SyncTime int `json:"syncTime"`
-   UserAuthToken string `json:"userAuthToken"`
-}
-
-type Cipher []byte
-
-func (c Cipher) Encrypt() (Cipher, error) {
-   block, err := blowfish.NewCipher(blowfishKey)
-   if err != nil {
-      return nil, err
-   }
-   for low := 0; low < len(c); low += blowfish.BlockSize {
-      block.Encrypt(c[low:], c[low:])
-   }
-   return c, nil
-}
-
-func (c Cipher) Pad() Cipher {
-   cLen := blowfish.BlockSize - len(c) % blowfish.BlockSize
-   for high := byte(cLen); cLen >= 1; cLen-- {
-      c = append(c, high)
-   }
-   return c
-}
-
 func (p PartnerLogin) UserLogin(username, password string) (*UserLogin, error) {
-   buf, err := json.Marshal(userLoginRequest{
+   src, err := json.Marshal(userLoginRequest{
       LoginType: "user",
       PartnerAuthToken: p.Result.PartnerAuthToken,
       Password: password,
@@ -118,13 +89,13 @@ func (p PartnerLogin) UserLogin(username, password string) (*UserLogin, error) {
    if err != nil {
       return nil, err
    }
-   buf, err = Cipher.Pad(buf).Encrypt()
+   dst, err := Cipher.Pad(src).Encrypt()
    if err != nil {
       return nil, err
    }
    req, err := http.NewRequest(
       "POST", origin + "/services/json/",
-      strings.NewReader(hex.EncodeToString(buf)),
+      strings.NewReader(hex.EncodeToString(dst)),
    )
    if err != nil {
       return nil, err
@@ -148,3 +119,31 @@ func (p PartnerLogin) UserLogin(username, password string) (*UserLogin, error) {
    return user, nil
 }
 
+type errorString string
+
+func (e errorString) Error() string {
+   return string(e)
+}
+
+type playbackInfoRequest struct {
+   // this can be empty, but must be included:
+   DeviceCode string `json:"deviceCode"`
+   IncludeAudioToken bool `json:"includeAudioToken"`
+   PandoraID string `json:"pandoraId"`
+   SyncTime int `json:"syncTime"`
+   UserAuthToken string `json:"userAuthToken"`
+}
+
+type userLoginRequest struct {
+   LoginType string `json:"loginType"`
+   PartnerAuthToken string `json:"partnerAuthToken"`
+   Password string `json:"password"`
+   SyncTime int `json:"syncTime"`
+   Username string `json:"username"`
+}
+
+type valueExchangeRequest struct {
+   OfferName string `json:"offerName"`
+   SyncTime int `json:"syncTime"`
+   UserAuthToken string `json:"userAuthToken"`
+}

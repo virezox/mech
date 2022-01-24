@@ -59,14 +59,15 @@ type PlaybackInfo struct {
 }
 
 // audio-dc6-t3-1-v4v6.pandora.com/access/3648302390726192234.mp3?version=5
-func (p PlaybackInfo) Ext() string {
-   if p.Result != nil {
-      addr, err := url.Parse(p.Result.AudioUrlMap.HighQuality.AudioUrl)
-      if err == nil {
-         return filepath.Ext(addr.Path)
-      }
+func (p PlaybackInfo) Ext() (string, error) {
+   if p.Result == nil {
+      return "", nilPointer{".Result"}
    }
-   return ""
+   addr, err := url.Parse(p.Result.AudioUrlMap.HighQuality.AudioUrl)
+   if err != nil {
+      return "", err
+   }
+   return filepath.Ext(addr.Path), nil
 }
 
 type UserLogin struct {
@@ -105,7 +106,7 @@ func (u UserLogin) Create(name string) error {
 }
 
 func (u UserLogin) PlaybackInfo(id string) (*PlaybackInfo, error) {
-   buf, err := json.Marshal(playbackInfoRequest{
+   src, err := json.Marshal(playbackInfoRequest{
       IncludeAudioToken: true,
       PandoraID: id,
       SyncTime: syncTime,
@@ -114,13 +115,13 @@ func (u UserLogin) PlaybackInfo(id string) (*PlaybackInfo, error) {
    if err != nil {
       return nil, err
    }
-   buf, err = Cipher.Pad(buf).Encrypt()
+   dst, err := Cipher.Pad(src).Encrypt()
    if err != nil {
       return nil, err
    }
    req, err := http.NewRequest(
       "POST", origin + "/services/json/",
-      strings.NewReader(hex.EncodeToString(buf)),
+      strings.NewReader(hex.EncodeToString(dst)),
    )
    if err != nil {
       return nil, err
@@ -147,7 +148,7 @@ func (u UserLogin) PlaybackInfo(id string) (*PlaybackInfo, error) {
 
 // Token is good for 30 minutes.
 func (u UserLogin) ValueExchange() error {
-   buf, err := json.Marshal(valueExchangeRequest{
+   src, err := json.Marshal(valueExchangeRequest{
       OfferName: "premium_access",
       SyncTime: syncTime,
       UserAuthToken: u.Result.UserAuthToken,
@@ -155,13 +156,13 @@ func (u UserLogin) ValueExchange() error {
    if err != nil {
       return err
    }
-   buf, err = Cipher.Pad(buf).Encrypt()
+   dst, err := Cipher.Pad(src).Encrypt()
    if err != nil {
       return err
    }
    req, err := http.NewRequest(
       "POST", origin + "/services/json/",
-      strings.NewReader(hex.EncodeToString(buf)),
+      strings.NewReader(hex.EncodeToString(dst)),
    )
    if err != nil {
       return err
@@ -179,6 +180,14 @@ func (u UserLogin) ValueExchange() error {
       return err
    }
    return res.Body.Close()
+}
+
+type nilPointer struct {
+   value string
+}
+
+func (n nilPointer) Error() string {
+   return strconv.Quote(n.value) + " nil pointer dereference"
 }
 
 type notFound struct {

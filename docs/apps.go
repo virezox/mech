@@ -2,10 +2,11 @@ package main
 
 import (
    "fmt"
+   "github.com/89z/format"
+   "github.com/89z/googleplay"
    "os"
    "sort"
    "time"
-   gp "github.com/89z/googleplay"
 )
 
 var apps = []string{
@@ -36,7 +37,7 @@ func main() {
    if err != nil {
       panic(err)
    }
-   tok, err := gp.OpenToken(cache + "/googleplay/token.json")
+   tok, err := googleplay.OpenToken(cache + "/googleplay/token.json")
    if err != nil {
       panic(err)
    }
@@ -44,11 +45,11 @@ func main() {
    if err != nil {
       panic(err)
    }
-   dev, err := gp.OpenDevice(cache + "/googleplay/device.json")
+   dev, err := googleplay.OpenDevice(cache + "/googleplay/device.json")
    if err != nil {
       panic(err)
    }
-   var dets []*gp.Details
+   var dets []*googleplay.Details
    for _, app := range apps {
       det, err := auth.Details(dev, app)
       if err != nil {
@@ -61,6 +62,6 @@ func main() {
       return dets[b].NumDownloads < dets[a].NumDownloads
    })
    for _, det := range dets {
-      fmt.Println(det.NumDownloads, det.Title)
+      fmt.Println(format.Number.GetUint64(det.NumDownloads), det.Title)
    }
 }
