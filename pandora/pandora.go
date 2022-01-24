@@ -18,61 +18,6 @@ const (
 
 var blowfishKey = []byte("6#26FRL$ZWD")
 
-type Cipher []byte
-
-func Decode(s string) (Cipher, error) {
-   return hex.DecodeString(s)
-}
-
-func (c Cipher) Decrypt() Cipher {
-   if len(c) < blowfish.BlockSize {
-      return nil
-   }
-   block, err := blowfish.NewCipher(blowfishKey)
-   if err != nil {
-      return nil
-   }
-   for low := 0; low < len(c); low += blowfish.BlockSize {
-      block.Decrypt(c[low:], c[low:])
-   }
-   return c
-}
-
-func (c Cipher) Encode() string {
-   return hex.EncodeToString(c)
-}
-
-func (c Cipher) Encrypt() Cipher {
-   block, err := blowfish.NewCipher(blowfishKey)
-   if err != nil {
-      return nil
-   }
-   for low := 0; low < len(c); low += blowfish.BlockSize {
-      block.Encrypt(c[low:], c[low:])
-   }
-   return c
-}
-
-func (c Cipher) Pad() Cipher {
-   cLen := blowfish.BlockSize - len(c) % blowfish.BlockSize
-   for high := byte(cLen); cLen >= 1; cLen-- {
-      c = append(c, high)
-   }
-   return c
-}
-
-func (c Cipher) Unpad() Cipher {
-   cLen := len(c)
-   if cLen == 0 {
-      return nil
-   }
-   high := cLen - int(c[cLen-1])
-   if high <= -1 {
-      return nil
-   }
-   return c[:high]
-}
-
 type PartnerLogin struct {
    Result struct {
       PartnerAuthToken string
@@ -112,44 +57,6 @@ func NewPartnerLogin() (*PartnerLogin, error) {
    return part, nil
 }
 
-func (p PartnerLogin) UserLogin(username, password string) (*UserLogin, error) {
-   rUser := userLoginRequest{
-      LoginType: "user",
-      PartnerAuthToken: p.Result.PartnerAuthToken,
-      Password: password,
-      SyncTime: syncTime,
-      Username: username,
-   }
-   buf, err := json.Marshal(rUser)
-   if err != nil {
-      return nil, err
-   }
-   body := Cipher.Pad(buf).Encrypt().Encode()
-   req, err := http.NewRequest(
-      "POST", origin + "/services/json/", strings.NewReader(body),
-   )
-   if err != nil {
-      return nil, err
-   }
-   // auth_token can be empty, but must be included:
-   req.URL.RawQuery = url.Values{
-      "auth_token": {""},
-      "method": {"auth.userLogin"},
-      "partner_id": {"42"},
-   }.Encode()
-   LogLevel.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   user := new(UserLogin)
-   if err := json.NewDecoder(res.Body).Decode(user); err != nil {
-      return nil, err
-   }
-   return user, nil
-}
-
 type playbackInfoRequest struct {
    // this can be empty, but must be included:
    DeviceCode string `json:"deviceCode"`
@@ -178,3 +85,66 @@ type valueExchangeRequest struct {
    SyncTime int `json:"syncTime"`
    UserAuthToken string `json:"userAuthToken"`
 }
+
+type Cipher []byte
+
+func (c Cipher) Encrypt() (Cipher, error) {
+   block, err := blowfish.NewCipher(blowfishKey)
+   if err != nil {
+      return nil, err
+   }
+   for low := 0; low < len(c); low += blowfish.BlockSize {
+      block.Encrypt(c[low:], c[low:])
+   }
+   return c, nil
+}
+
+func (c Cipher) Pad() Cipher {
+   cLen := blowfish.BlockSize - len(c) % blowfish.BlockSize
+   for high := byte(cLen); cLen >= 1; cLen-- {
+      c = append(c, high)
+   }
+   return c
+}
+
+func (p PartnerLogin) UserLogin(username, password string) (*UserLogin, error) {
+   buf, err := json.Marshal(userLoginRequest{
+      LoginType: "user",
+      PartnerAuthToken: p.Result.PartnerAuthToken,
+      Password: password,
+      SyncTime: syncTime,
+      Username: username,
+   })
+   if err != nil {
+      return nil, err
+   }
+   buf, err = Cipher.Pad(buf).Encrypt()
+   if err != nil {
+      return nil, err
+   }
+   req, err := http.NewRequest(
+      "POST", origin + "/services/json/",
+      strings.NewReader(hex.EncodeToString(buf)),
+   )
+   if err != nil {
+      return nil, err
+   }
+   // auth_token can be empty, but must be included:
+   req.URL.RawQuery = url.Values{
+      "auth_token": {""},
+      "method": {"auth.userLogin"},
+      "partner_id": {"42"},
+   }.Encode()
+   LogLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   user := new(UserLogin)
+   if err := json.NewDecoder(res.Body).Decode(user); err != nil {
+      return nil, err
+   }
+   return user, nil
+}
+

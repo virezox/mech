@@ -1,6 +1,7 @@
 package pandora
 
 import (
+   "encoding/hex"
    "encoding/json"
    "github.com/89z/format"
    "github.com/89z/format/net"
@@ -59,14 +60,13 @@ type PlaybackInfo struct {
 
 // audio-dc6-t3-1-v4v6.pandora.com/access/3648302390726192234.mp3?version=5
 func (p PlaybackInfo) Ext() string {
-   if p.Result == nil {
-      return ""
+   if p.Result != nil {
+      addr, err := url.Parse(p.Result.AudioUrlMap.HighQuality.AudioUrl)
+      if err == nil {
+         return filepath.Ext(addr.Path)
+      }
    }
-   addr, err := url.Parse(p.Result.AudioUrlMap.HighQuality.AudioUrl)
-   if err != nil {
-      return ""
-   }
-   return filepath.Ext(addr.Path)
+   return ""
 }
 
 type UserLogin struct {
@@ -105,19 +105,22 @@ func (u UserLogin) Create(name string) error {
 }
 
 func (u UserLogin) PlaybackInfo(id string) (*PlaybackInfo, error) {
-   rInfo := playbackInfoRequest{
+   buf, err := json.Marshal(playbackInfoRequest{
       IncludeAudioToken: true,
       PandoraID: id,
       SyncTime: syncTime,
       UserAuthToken: u.Result.UserAuthToken,
-   }
-   buf, err := json.Marshal(rInfo)
+   })
    if err != nil {
       return nil, err
    }
-   body := Cipher.Pad(buf).Encrypt().Encode()
+   buf, err = Cipher.Pad(buf).Encrypt()
+   if err != nil {
+      return nil, err
+   }
    req, err := http.NewRequest(
-      "POST", origin + "/services/json/", strings.NewReader(body),
+      "POST", origin + "/services/json/",
+      strings.NewReader(hex.EncodeToString(buf)),
    )
    if err != nil {
       return nil, err
@@ -144,18 +147,21 @@ func (u UserLogin) PlaybackInfo(id string) (*PlaybackInfo, error) {
 
 // Token is good for 30 minutes.
 func (u UserLogin) ValueExchange() error {
-   rValue := valueExchangeRequest{
+   buf, err := json.Marshal(valueExchangeRequest{
       OfferName: "premium_access",
       SyncTime: syncTime,
       UserAuthToken: u.Result.UserAuthToken,
-   }
-   buf, err := json.Marshal(rValue)
+   })
    if err != nil {
       return err
    }
-   body := Cipher.Pad(buf).Encrypt().Encode()
+   buf, err = Cipher.Pad(buf).Encrypt()
+   if err != nil {
+      return err
+   }
    req, err := http.NewRequest(
-      "POST", origin + "/services/json/", strings.NewReader(body),
+      "POST", origin + "/services/json/",
+      strings.NewReader(hex.EncodeToString(buf)),
    )
    if err != nil {
       return err
