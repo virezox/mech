@@ -17,11 +17,13 @@ func (c choice) adaptiveFormats(play *youtube.Player) error {
          "302": true, // youtube.com/watch?v=kVNl1P9StSU
       }
    }
-   fmt.Println(play.PlayabilityStatus)
-   fmt.Println(play.VideoDetails)
-   for _, form := range play.StreamingData.AdaptiveFormats {
+   for i, form := range play.StreamingData.AdaptiveFormats {
       switch {
       case c.info:
+         if i == 0 {
+            fmt.Println(play.PlayabilityStatus)
+            fmt.Println(play.VideoDetails)
+         }
          fmt.Println(form)
       case c.itags[fmt.Sprint(form.Itag)]:
          name, err := filename(play, form)

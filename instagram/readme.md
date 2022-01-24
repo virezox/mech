@@ -46,8 +46,26 @@ const E = "7d4d42b121a214d23bd43206e5142c8c",
 
 ## Why not use other APIs?
 
-Regarding the `__a=1` API, it is known to send a different response depending
-on the country. For example, the `dfw5` location produces this result:
+`/api/v1/media` API requires separate calls for media and comments:
+
+~~~
+GET /api/v1/media/2755022163816059161/info/ HTTP/2.0
+Host: i.instagram.com
+user-agent: Instagram 206.1.0.34.121 Android
+Authorization: Bearer IGT:2:eyJkc191c2VyX2lkIjoiNDkzNzgxNzEzMzQiLCJzZXNzaW9ua...
+
+GET /api/v1/media/2755652849306967814/comments/ HTTP/2.0
+Host: i.instagram.com
+user-agent: Instagram 215.0.0.27.359 Android
+Authorization: Bearer IGT:2:eyJkc191c2VyX2lkIjoiNDkzNzgxNzEzMzQiLCJzZXNzaW9ua...
+~~~
+
+`/embed` API does not return URLs in all cases:
+
+<https://instagram.com/p/CY-Wwq_O6S0/embed>
+
+`__a=1` API is known to send a different response depending on the country. For
+example, the `dfw5` location produces this result:
 
 ~~~
 graphql.shortcode_media.display_resources
@@ -58,6 +76,3 @@ while the `hel3` location produces this result:
 ~~~
 items[0].carousel_media[0].image_versions2.candidates
 ~~~
-
-Regarding the `/api/v1/media` API, it required separate calls for media and
-comments.

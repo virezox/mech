@@ -49,8 +49,6 @@ func (v VideoDetails) String() string {
    buf = append(buf, v.Author...)
    buf = append(buf, "\nTitle: "...)
    buf = append(buf, v.Title...)
-   buf = append(buf, "\nShortDescription: "...)
-   buf = append(buf, v.ShortDescription...)
    return string(buf)
 }
 
