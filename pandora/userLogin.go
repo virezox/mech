@@ -60,14 +60,14 @@ type PlaybackInfo struct {
 
 // audio-dc6-t3-1-v4v6.pandora.com/access/3648302390726192234.mp3?version=5
 func (p PlaybackInfo) Ext() (string, error) {
-   if p.Result == nil {
-      return "", nilPointer{".Result"}
+   if p.Result != nil {
+      addr, err := url.Parse(p.Result.AudioUrlMap.HighQuality.AudioUrl)
+      if err != nil {
+         return "", err
+      }
+      return filepath.Ext(addr.Path), nil
    }
-   addr, err := url.Parse(p.Result.AudioUrlMap.HighQuality.AudioUrl)
-   if err != nil {
-      return "", err
-   }
-   return filepath.Ext(addr.Path), nil
+   return "", nilPointer{".Result"}
 }
 
 type UserLogin struct {

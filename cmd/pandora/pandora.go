@@ -31,8 +31,11 @@ func playback(cache, addr string, info bool) error {
             return err
          }
          defer res.Body.Close()
-         name := music.ByArtist.Name + "-" + music.Name + play.Ext()
-         file, err := os.Create(name)
+         ext, err := play.Ext()
+         if err != nil {
+            return err
+         }
+         file, err := os.Create(music.ByArtist.Name + "-" + music.Name + ext)
          if err != nil {
             return err
          }
