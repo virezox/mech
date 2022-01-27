@@ -1,17 +1,12 @@
 # TED
 
-~~~
-yt-dlp --proxy 127.0.0.1:8080 --no-check-certificate `
-ted.com/talks/rha_goddess_and_deepa_purushothaman_4_ways_to_redefine_power_at_work_to_include_women_of_color
-~~~
-
 https://github.com/ytdl-org/youtube-dl/issues/30561
 
 ~~~
 com.ted.android
 ~~~
 
-User cert? Fail. System cert? Pass. Go here with Android Chrome:
+Install system certificate. Then go here with Android Chrome:
 
 https://ted.com
 

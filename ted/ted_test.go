@@ -1,17 +1,18 @@
 package ted
 
 import (
-   "os"
+   "fmt"
    "testing"
 )
 
 const slug = "rha_goddess_and_deepa_purushothaman_4_ways_to_redefine_power_at_work_to_include_women_of_color"
 
 func TestSlug(t *testing.T) {
-   res, err := get(slug)
+   talk, err := NewTalkResponse(slug)
    if err != nil {
       t.Fatal(err)
    }
-   defer res.Body.Close()
-   os.Stdout.ReadFrom(res.Body)
+   for _, vid := range talk.Downloads.Video {
+      fmt.Println(vid)
+   }
 }

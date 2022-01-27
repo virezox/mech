@@ -1,8 +1,6 @@
 package pandora
 
 import (
-   "bytes"
-   "encoding/hex"
    "testing"
 )
 
