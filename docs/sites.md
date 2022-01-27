@@ -1,29 +1,27 @@
 # Sites
 
-Updated January 26 2022.
-
 ~~~
-11.159 B YouTube
-3.983 B Instagram
-1.970 B TikTok
-1.243 B Twitter
-1.241 B Spotify: Music and Podcasts
-335.665 M SoundCloud: Play Music & Songs
-313.875 M Deezer: Music & Podcast Player
-277.462 M Pandora - Music & Podcasts
-249.473 M Amazon Music: Discover Songs
-89.313 M Reddit
-84.402 M iHeart: Radio, Music, Podcasts
-30.971 M Vimeo
-29.889 M BBC News
-29.538 M TED
-24.080 M TIDAL Music - Hifi Songs, Playlists, & Videos
-21.473 M Paramount+ | Peak Streaming
-21.287 M Napster Music
-13.593 M The NBC App - Stream TV Shows
-2.578 M Bandcamp
-2.171 M PBS Video: Live TV & On Demand
-671.518 K Qobuz
+11.160 B true YouTube
+3.984 B true Instagram
+1.970 B true TikTok
+1.243 B true Twitter
+1.241 B false Spotify: Music and Podcasts
+335.697 M true SoundCloud: Play Music & Songs
+313.893 M false Deezer: Music & Podcast Player
+277.520 M true Pandora - Music & Podcasts
+249.507 M false Amazon Music: Discover Songs
+89.313 M false Reddit
+84.413 M false iHeart: Radio, Music, Podcasts
+30.971 M true Vimeo
+29.889 M false BBC News
+29.538 M true TED
+24.087 M false TIDAL Music - Hifi Songs, Playlists, & Videos
+21.492 M false Paramount+ | Peak Streaming
+21.287 M false Napster Music
+13.593 M true The NBC App - Stream TV Shows
+2.578 M true Bandcamp
+2.178 M false PBS Video: Live TV & On Demand
+671.946 K false Qobuz
 ~~~
 
 ## Amazon Music

@@ -28,6 +28,16 @@ Host: api.github.com
 Authorization: Basic ODl6OmE1NzYxMjZlNzVlZjZiY2Y5ZDljNzEyZWIyN2RmZjFmOGFhZmQ...
 
 {"names":[
-   "youtube", "instagram"
+   "youtube",
+   "instagram",
+   "tiktok",
+   "twitter",
+   "soundcloud",
+   "pandora",
+   "vimeo",
+   
+   "ted",
+   "nbc",
+   "bandcamp"
 ]}
 ~~~

@@ -9,30 +9,6 @@ import (
    "time"
 )
 
-var apps = []string{
-   "bbc.mobile.news.ww",
-   "com.amazon.mp3",
-   "com.aspiro.tidal",
-   "com.bandcamp.android",
-   "com.cbs.app",
-   "com.clearchannel.iheartradio.controller",
-   "com.google.android.youtube",
-   "com.instagram.android",
-   "com.nbcuni.nbc",
-   "com.pandora.android",
-   "com.pbs.video",
-   "com.qobuz.music",
-   "com.reddit.frontpage",
-   "com.rhapsody",
-   "com.soundcloud.android",
-   "com.spotify.music",
-   "com.ted.android",
-   "com.twitter.android",
-   "com.vimeo.android.videoapp",
-   "com.zhiliaoapp.musically",
-   "deezer.android.app",
-}
-
 func main() {
    cache, err := os.UserCacheDir()
    if err != nil {
@@ -50,19 +26,49 @@ func main() {
    if err != nil {
       panic(err)
    }
-   var dets []*googleplay.Details
-   for _, app := range apps {
-      det, err := auth.Details(dev, app)
+   for i, app := range apps {
+      det, err := auth.Details(dev, app.id)
       if err != nil {
          panic(err)
       }
-      dets = append(dets, det)
+      apps[i].installs = det.NumDownloads
+      apps[i].name = det.Title
       time.Sleep(99 * time.Millisecond)
    }
-   sort.Slice(dets, func(a, b int) bool {
-      return dets[b].NumDownloads < dets[a].NumDownloads
+   sort.Slice(apps, func(a, b int) bool {
+      return apps[b].installs < apps[a].installs
    })
-   for _, det := range dets {
-      fmt.Println(format.Number.GetUint64(det.NumDownloads), det.Title)
+   for _, app := range apps {
+      fmt.Println(format.Number.GetUint64(app.installs), app.done, app.name)
    }
+}
+
+type application struct {
+   id, name string
+   done bool
+   installs uint64
+}
+
+var apps = []application{
+   {id: "bbc.mobile.news.ww"},
+   {id: "com.amazon.mp3"},
+   {id: "com.aspiro.tidal"},
+   {id: "com.bandcamp.android", done: true},
+   {id: "com.cbs.app"},
+   {id: "com.clearchannel.iheartradio.controller"},
+   {id: "com.google.android.youtube", done: true},
+   {id: "com.instagram.android", done: true},
+   {id: "com.nbcuni.nbc", done: true},
+   {id: "com.pandora.android", done: true},
+   {id: "com.pbs.video"},
+   {id: "com.qobuz.music"},
+   {id: "com.reddit.frontpage"},
+   {id: "com.rhapsody"},
+   {id: "com.soundcloud.android", done: true},
+   {id: "com.spotify.music"},
+   {id: "com.ted.android", done: true},
+   {id: "com.twitter.android", done: true},
+   {id: "com.vimeo.android.videoapp", done: true},
+   {id: "com.zhiliaoapp.musically", done: true},
+   {id: "deezer.android.app"},
 }

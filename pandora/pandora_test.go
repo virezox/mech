@@ -1,10 +1,11 @@
 package pandora
 
 import (
+   "os"
    "testing"
 )
 
-func TestLogin(t *testing.T) {
+func TestCreate(t *testing.T) {
    part, err := NewPartnerLogin()
    if err != nil {
       t.Fatal(err)
@@ -20,4 +21,12 @@ func TestLogin(t *testing.T) {
    if tLen := len(user.Result.UserAuthToken); tLen != 58 {
       t.Fatal(tLen)
    }
+   cache, err := os.UserCacheDir()
+   if err != nil {
+      t.Fatal(err)
+   }
+   if err := user.Create(cache + "/mech/pandora.json"); err != nil {
+      t.Fatal(err)
+   }
 }
+

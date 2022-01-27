@@ -16,6 +16,7 @@ func main() {
    val["$desktop_url"] = []string{"https://www.pandora.com/artist/the-black-dog/radio-scarecrow/train-by-the-autobahn-part-1/TRddpp5JJ2hqnVV"}
    req.Header["User-Agent"] = []string{"Android Chrome"}
    req.URL.RawQuery = val.Encode()
+   req.Method = "HEAD"
    res, err := new(http.Transport).RoundTrip(&req)
    if err != nil {
       panic(err)

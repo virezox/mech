@@ -29,28 +29,6 @@ func TestMusic(t *testing.T) {
    fmt.Printf("%+v\n", rec)
 }
 
-func TestCreate(t *testing.T) {
-   part, err := NewPartnerLogin()
-   if err != nil {
-      t.Fatal(err)
-   }
-   user, err := part.UserLogin("srpen6@gmail.com", password)
-   if err != nil {
-      t.Fatal(err)
-   }
-   tLen := len(user.Result.UserAuthToken)
-   if tLen != 58 {
-      t.Fatal(tLen)
-   }
-   cache, err := os.UserCacheDir()
-   if err != nil {
-      t.Fatal(err)
-   }
-   if err := user.Create(cache + "/mech/pandora.json"); err != nil {
-      t.Fatal(err)
-   }
-}
-
 func TestOpen(t *testing.T) {
    cache, err := os.UserCacheDir()
    if err != nil {
