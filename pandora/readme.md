@@ -1,9 +1,5 @@
 # Pandora
 
-~~~
-com.pandora.android
-~~~
-
 ## How to get Blowfish key?
 
 ~~~
@@ -20,5 +16,9 @@ public static final byte[] b = "6#26FRL$ZWD".getBytes(Charset.defaultCharset());
 https://github.com/skylot/jadx
 
 ## How to get `password` for `partnerLogin`?
+
+~~~
+com.pandora.android
+~~~
 
 https://github.com/89z/googleplay/tree/master/cmd/mitmproxy-cert
