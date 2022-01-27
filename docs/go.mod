@@ -3,8 +3,8 @@ module docs
 go 1.17
 
 require (
-	github.com/89z/format v1.20.1
-	github.com/89z/googleplay v1.6.3
+	github.com/89z/format v1.20.7
+	github.com/89z/googleplay v1.6.4
 )
 
 require (

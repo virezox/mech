@@ -26,6 +26,7 @@ var apps = []string{
    "com.rhapsody",
    "com.soundcloud.android",
    "com.spotify.music",
+   "com.ted.android",
    "com.twitter.android",
    "com.vimeo.android.videoapp",
    "com.zhiliaoapp.musically",
