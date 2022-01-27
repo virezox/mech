@@ -12,11 +12,16 @@ func playback(cache, addr string, info bool) error {
    if err != nil {
       return err
    }
-   music, err := pandora.NewMusicRecording(addr)
+   id, err := pandora.AppLink(addr)
    if err != nil {
       return err
    }
-   play, err := user.PlaybackInfo(music.ID)
+   det, err := pandora.NewDetails(id)
+   if err != nil {
+      return err
+   }
+   anno := det.Result.Annotations[id]
+   play, err := user.PlaybackInfo(id)
    if err != nil {
       return err
    }
@@ -35,7 +40,7 @@ func playback(cache, addr string, info bool) error {
          if err != nil {
             return err
          }
-         file, err := os.Create(music.ByArtist.Name + "-" + music.Name + ext)
+         file, err := os.Create(anno.ArtistName + "-" + anno.Name + ext)
          if err != nil {
             return err
          }

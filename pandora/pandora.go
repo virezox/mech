@@ -18,6 +18,26 @@ const (
 
 var blowfishKey = []byte("6#26FRL$ZWD")
 
+func AppLink(addr string) (string, error) {
+   req, err := http.NewRequest("HEAD","https://pandora.app.link", nil)
+   if err != nil {
+      return "", err
+   }
+   req.Header.Set("User-Agent", "Android Chrome")
+   req.URL.RawQuery = "$desktop_url=" + url.QueryEscape(addr)
+   LogLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return "", err
+   }
+   defer res.Body.Close()
+   loc, err := res.Location()
+   if err != nil {
+      return "", err
+   }
+   return loc.Query().Get("pandoraId"), nil
+}
+
 type Cipher []byte
 
 func (c Cipher) Encrypt() (Cipher, error) {

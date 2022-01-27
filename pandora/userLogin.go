@@ -1,10 +1,10 @@
 package pandora
 
 import (
+   "bytes"
    "encoding/hex"
    "encoding/json"
    "github.com/89z/format"
-   "github.com/89z/format/net"
    "net/http"
    "net/url"
    "os"
@@ -15,36 +15,37 @@ import (
 
 var LogLevel format.LogLevel
 
-type MusicRecording struct {
-   ID string `json:"@id"`
-   Name string
-   ByArtist struct {
-      Name string
+type Details struct {
+   Result struct {
+      Annotations map[string]struct {
+         ArtistName string
+         Name string
+      }
    }
 }
 
-func NewMusicRecording(addr string) (*MusicRecording, error) {
-   req, err := http.NewRequest("GET", addr, nil)
+func NewDetails(id string) (*Details, error) {
+   buf := new(bytes.Buffer)
+   err := json.NewEncoder(buf).Encode(map[string]string{"pandoraId": id})
    if err != nil {
       return nil, err
    }
+   req, err := http.NewRequest("POST", origin + "/services/json/", buf)
+   if err != nil {
+      return nil, err
+   }
+   req.URL.RawQuery = "method=catalog.v4.getDetails"
    LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
-   for _, node := range net.ReadHTML(res.Body, "script") {
-      if node.Attr["type"] == "application/ld+json" {
-         rec := new(MusicRecording)
-         err := json.Unmarshal(node.Data, rec)
-         if err != nil {
-            return nil, err
-         }
-         return rec, nil
-      }
+   det := new(Details)
+   if err := json.NewDecoder(res.Body).Decode(det); err != nil {
+      return nil, err
    }
-   return nil, notFound{"application/ld+json"}
+   return det, nil
 }
 
 type PlaybackInfo struct {
@@ -188,12 +189,4 @@ type nilPointer struct {
 
 func (n nilPointer) Error() string {
    return strconv.Quote(n.value) + " nil pointer dereference"
-}
-
-type notFound struct {
-   input string
-}
-
-func (n notFound) Error() string {
-   return strconv.Quote(n.input) + " not found"
 }

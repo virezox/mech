@@ -7,10 +7,6 @@ import (
    "time"
 )
 
-const addr =
-   "https://pandora.com/artist/the-black-dog/radio-scarecrow" +
-   "/train-by-the-autobahn-part-1/TRddpp5JJ2hqnVV"
-
 // Note that you cannot get RADIO tracks with this method.
 var pandoraIDs = []string{
    // pandora.com/artist/the-black-dog/radio-scarecrow/train-by-the-autobahn-part-1/TRddpp5JJ2hqnVV
@@ -21,12 +17,14 @@ var pandoraIDs = []string{
    "TR:2314875",
 }
 
-func TestMusic(t *testing.T) {
-   rec, err := NewMusicRecording(addr)
+func TestDetail(t *testing.T) {
+   det, err := NewDetails("TR:1168891")
    if err != nil {
       t.Fatal(err)
    }
-   fmt.Printf("%+v\n", rec)
+   for key, val := range det.Result.Annotations {
+      fmt.Printf("%q %+v\n", key, val)
+   }
 }
 
 func TestOpen(t *testing.T) {

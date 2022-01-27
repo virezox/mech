@@ -1,9 +1,22 @@
 package pandora
 
 import (
+   "fmt"
    "os"
    "testing"
 )
+
+const addr =
+   "https://www.pandora.com/artist/the-black-dog/radio-scarecrow" +
+   "/train-by-the-autobahn-part-1/TRddpp5JJ2hqnVV"
+
+func TestAppLink(t *testing.T) {
+   id, err := AppLink(addr)
+   if err != nil {
+      t.Fatal(err)
+   }
+   fmt.Printf("%q\n", id)
+}
 
 func TestCreate(t *testing.T) {
    part, err := NewPartnerLogin()
