@@ -19,7 +19,7 @@ const (
 var blowfishKey = []byte("6#26FRL$ZWD")
 
 func AppLink(addr string) (string, error) {
-   req, err := http.NewRequest("HEAD","https://pandora.app.link", nil)
+   req, err := http.NewRequest("HEAD", "https://pandora.app.link", nil)
    if err != nil {
       return "", err
    }
@@ -30,7 +30,6 @@ func AppLink(addr string) (string, error) {
    if err != nil {
       return "", err
    }
-   defer res.Body.Close()
    loc, err := res.Location()
    if err != nil {
       return "", err
