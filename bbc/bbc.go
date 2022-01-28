@@ -18,10 +18,7 @@ const mediaSelector =
    "http://open.live.bbc.co.uk" +
    "/mediaselector/6/select/version/2.0/mediaset/pc/vpid/"
 
-var (
-   Decode = m3u.Decode
-   LogLevel format.LogLevel
-)
+var LogLevel format.LogLevel
 
 type Media struct {
    Kind string
@@ -58,7 +55,12 @@ func NewNewsVideo(addr string) (*NewsVideo, error) {
       return nil, err
    }
    defer res.Body.Close()
-   var item newsItem
+   var item struct {
+      Relations []struct {
+         PrimaryType string
+         Content json.RawMessage
+      }
+   }
    if err := json.NewDecoder(res.Body).Decode(&item); err != nil {
       return nil, err
    }
@@ -107,6 +109,16 @@ type Video struct {
    Href string
 }
 
+type notFound struct {
+   input string
+}
+
+func (n notFound) Error() string {
+   return strconv.Quote(n.input) + " not found"
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 func (v Video) HLS() ([]m3u.Format, error) {
    req, err := http.NewRequest("GET", v.Href, nil)
    if err != nil {
@@ -119,21 +131,5 @@ func (v Video) HLS() ([]m3u.Format, error) {
    }
    defer res.Body.Close()
    dir, _ := path.Split(v.Href)
-   return Decode(res.Body, dir)
+   return m3u.Decode(res.Body, dir)
 }
-
-type newsItem struct {
-   Relations []struct {
-      PrimaryType string
-      Content json.RawMessage
-   }
-}
-
-type notFound struct {
-   input string
-}
-
-func (n notFound) Error() string {
-   return strconv.Quote(n.input) + " not found"
-}
-
