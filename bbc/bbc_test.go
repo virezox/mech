@@ -8,7 +8,7 @@ import (
 const addr = "https://www.bbc.com/news/av/10462520"
 
 func TestNews(t *testing.T) {
-   item, err := NewNewsVideo(addr)
+   item, err := NewNewsItem(addr)
    if err != nil {
       t.Fatal(err)
    }

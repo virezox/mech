@@ -1,6 +1,7 @@
 package main
 
 import (
+   "fmt"
    "github.com/89z/format"
    "github.com/89z/mech/nbc"
    "net/http"
@@ -35,12 +36,11 @@ func download(vid *nbc.Video, stream nbc.Stream) error {
          return err
       }
       defer res.Body.Close()
-      os.Stdout.WriteString(format.PercentInt(i, len(infos)))
-      os.Stdout.WriteString("\t")
-      os.Stdout.WriteString(format.Size.Get(size))
-      os.Stdout.WriteString("\t")
-      os.Stdout.WriteString(format.Rate.Get(size/time.Since(begin).Seconds()))
-      os.Stdout.WriteString("\n")
+      fmt.Print(format.PercentInt(i, len(infos)))
+      fmt.Print("\t")
+      fmt.Print(format.Size.Get(size))
+      fmt.Print("\t")
+      fmt.Println(format.Rate.Get(size/time.Since(begin).Seconds()))
       if _, err := file.ReadFrom(res.Body); err != nil {
          return err
       }

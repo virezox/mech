@@ -7,8 +7,19 @@ import (
    "strconv"
 )
 
-func (v Video) HLS() ([]Stream, error) {
-   req, err := http.NewRequest("GET", v.Href, nil)
+func (m Media) Streams() ([]Stream, error) {
+   var href string
+   for _, video := range m.Connection {
+      if video.Protocol == "http" &&
+      video.Supplier == "mf_akamai" &&
+      video.TransferFormat == "hls" {
+         href = video.Href
+      }
+   }
+   if href == "" {
+      return nil, notFound{"http,hls,mf_akamai"}
+   }
+   req, err := http.NewRequest("GET", href, nil)
    if err != nil {
       return nil, err
    }
@@ -18,7 +29,7 @@ func (v Video) HLS() ([]Stream, error) {
       return nil, err
    }
    defer res.Body.Close()
-   dir, _ := path.Split(v.Href)
+   dir, _ := path.Split(href)
    forms, err := m3u.Decode(res.Body, dir)
    if err != nil {
       return nil, err

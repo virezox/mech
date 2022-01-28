@@ -2,8 +2,8 @@ package main
 
 import (
    "flag"
+   "fmt"
    "github.com/89z/mech/nbc"
-   "os"
    "strconv"
 )
 
@@ -41,7 +41,7 @@ func main() {
       for _, stream := range streams {
          switch {
          case info:
-            os.Stdout.WriteString(stream.String() + "\n")
+            fmt.Println(stream)
          case formats[strconv.FormatInt(stream.ID, 10)]:
             err := download(vid, stream)
             if err != nil {
@@ -50,7 +50,7 @@ func main() {
          }
       }
    } else {
-      os.Stdout.WriteString("nbc [flags] [GUID]\n")
+      fmt.Println("nbc [flags] [GUID]")
       flag.PrintDefaults()
    }
 }

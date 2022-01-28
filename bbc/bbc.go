@@ -22,29 +22,37 @@ var LogLevel format.LogLevel
 type Media struct {
    Kind string
    Type string
-   Connection []Video
+   Connection []struct {
+      Protocol string
+      Supplier string
+      TransferFormat string
+      Href string
+   }
 }
 
-func (m Media) Video() (*Video, error) {
-   for _, vid := range m.Connection {
-      if vid.Protocol == "http" &&
-      vid.Supplier == "mf_akamai" &&
-      vid.TransferFormat == "hls" {
-         return &vid, nil
+func (m Media) Name(item *NewsItem) (string, error) {
+   ext, err := format.ExtensionByType(m.Type)
+   if err != nil {
+      return "", err
+   }
+   return item.ShortName + "-" + item.IstatsLabels.CPS_Asset_ID + ext, nil
+}
+
+type NewsItem struct {
+   ShortName string
+   IstatsLabels struct {
+      CPS_Asset_ID string
+   }
+   Relations []struct {
+      PrimaryType string
+      Content struct {
+         ExternalID string
       }
    }
-   return nil, notFound{"http,hls,mf_akamai"}
 }
 
-type NewsVideo struct {
-   ExternalID string
-   Caption string
-}
-
-func NewNewsVideo(addr string) (*NewsVideo, error) {
-   req, err := http.NewRequest(
-      "GET", producer + path.Base(addr), nil,
-   )
+func NewNewsItem(addr string) (*NewsItem, error) {
+   req, err := http.NewRequest("GET", producer + path.Base(addr), nil)
    if err != nil {
       return nil, err
    }
@@ -54,30 +62,24 @@ func NewNewsVideo(addr string) (*NewsVideo, error) {
       return nil, err
    }
    defer res.Body.Close()
-   var item struct {
-      Relations []struct {
-         PrimaryType string
-         Content json.RawMessage
-      }
-   }
-   if err := json.NewDecoder(res.Body).Decode(&item); err != nil {
+   item := new(NewsItem)
+   if err := json.NewDecoder(res.Body).Decode(item); err != nil {
       return nil, err
    }
-   for _, rel := range item.Relations {
+   return item, nil
+}
+
+func (n NewsItem) Media() (*Media, error) {
+   var id string
+   for _, rel := range n.Relations {
       if rel.PrimaryType == videoType {
-         video := new(NewsVideo)
-         err := json.Unmarshal(rel.Content, video)
-         if err != nil {
-            return nil, err
-         }
-         return video, nil
+         id = rel.Content.ExternalID
       }
    }
-   return nil, notFound{videoType}
-}
-
-func (n NewsVideo) Media() (*Media, error) {
-   req, err := http.NewRequest("GET", mediaSelector + n.ExternalID, nil)
+   if id == "" {
+      return nil, notFound{videoType}
+   }
+   req, err := http.NewRequest("GET", mediaSelector + id, nil)
    if err != nil {
       return nil, err
    }
@@ -87,25 +89,18 @@ func (n NewsVideo) Media() (*Media, error) {
       return nil, err
    }
    defer res.Body.Close()
-   var selector struct {
+   var mediaset struct {
       Media []Media
    }
-   if err := json.NewDecoder(res.Body).Decode(&selector); err != nil {
+   if err := json.NewDecoder(res.Body).Decode(&mediaset); err != nil {
       return nil, err
    }
-   for _, media := range selector.Media {
+   for _, media := range mediaset.Media {
       if media.Kind == "video" {
          return &media, nil
       }
    }
    return nil, notFound{"video"}
-}
-
-type Video struct {
-   Protocol string
-   Supplier string
-   TransferFormat string
-   Href string
 }
 
 type notFound struct {
