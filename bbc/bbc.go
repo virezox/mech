@@ -3,7 +3,6 @@ package bbc
 import (
    "encoding/json"
    "github.com/89z/format"
-   "github.com/89z/format/m3u"
    "net/http"
    "path"
    "strconv"
@@ -115,21 +114,4 @@ type notFound struct {
 
 func (n notFound) Error() string {
    return strconv.Quote(n.input) + " not found"
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-func (v Video) HLS() ([]m3u.Format, error) {
-   req, err := http.NewRequest("GET", v.Href, nil)
-   if err != nil {
-      return nil, err
-   }
-   LogLevel.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   dir, _ := path.Split(v.Href)
-   return m3u.Decode(res.Body, dir)
 }

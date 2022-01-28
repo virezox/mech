@@ -12,6 +12,35 @@ import (
    "strings"
 )
 
+type choice struct {
+   format bool
+   ids map[string]bool
+}
+
+func main() {
+   cHLS := choice{
+      ids: make(map[string]bool),
+   }
+   flag.BoolVar(&cHLS.format, "hf", false, "HLS formats")
+   flag.Func("h", "HLS IDs", func(id string) error {
+      cHLS.ids[id] = true
+      return nil
+   })
+   flag.Parse()
+   if len(os.Args) == 1 {
+      fmt.Println("bbc [flags] [URL]")
+      flag.PrintDefaults()
+      return
+   }
+   if !cHLS.format && len(cHLS.ids) == 0 {
+      return
+   }
+   addr := flag.Arg(0)
+   if err := cHLS.HLS(addr); err != nil {
+      panic(err)
+   }
+}
+
 func (c choice) HLS(addr string) error {
    news, err := bbc.NewNewsVideo(addr)
    if err != nil {
@@ -73,31 +102,3 @@ func (c choice) HLS(addr string) error {
    return nil
 }
 
-type choice struct {
-   format bool
-   ids map[string]bool
-}
-
-func main() {
-   cHLS := choice{
-      ids: make(map[string]bool),
-   }
-   flag.BoolVar(&cHLS.format, "hf", false, "HLS formats")
-   flag.Func("h", "HLS IDs", func(id string) error {
-      cHLS.ids[id] = true
-      return nil
-   })
-   flag.Parse()
-   if len(os.Args) == 1 {
-      fmt.Println("bbc [flags] [URL]")
-      flag.PrintDefaults()
-      return
-   }
-   if !cHLS.format && len(cHLS.ids) == 0 {
-      return
-   }
-   addr := flag.Arg(0)
-   if err := cHLS.HLS(addr); err != nil {
-      panic(err)
-   }
-}
