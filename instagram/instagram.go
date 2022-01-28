@@ -11,7 +11,6 @@ import (
 )
 
 const (
-   greenCircle rune = '\U0001F7E2'
    origin = "https://i.instagram.com"
    queryHash = "7d4d42b121a214d23bd43206e5142c8c"
    // com.instagram.android
@@ -168,16 +167,12 @@ func (m Media) String() string {
    buf = strconv.AppendInt(buf, m.Edge_Media_Preview_Like.Count, 10)
    buf = append(buf, "\nURLs: "...)
    for _, addr := range m.URLs() {
-      buf = append(buf, '\n')
-      buf = append(buf, string(greenCircle)...)
-      buf = append(buf, ' ')
+      buf = append(buf, "\n- "...)
       buf = append(buf, addr...)
    }
    buf = append(buf, "\nComments: "...)
    for _, edge := range m.Edge_Media_To_Comment.Edges {
-      buf = append(buf, '\n')
-      buf = append(buf, string(greenCircle)...)
-      buf = append(buf, ' ')
+      buf = append(buf, "\n- "...)
       buf = append(buf, edge.Node.Text...)
    }
    return string(buf)

@@ -13,7 +13,7 @@
 89.313 M false Reddit
 84.413 M false iHeart: Radio, Music, Podcasts
 30.971 M true Vimeo
-29.889 M false BBC News
+29.889 M true BBC News
 29.538 M true TED
 24.087 M false TIDAL Music - Hifi Songs, Playlists, & Videos
 21.492 M false Paramount+ | Peak Streaming

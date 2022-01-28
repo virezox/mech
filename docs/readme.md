@@ -35,7 +35,8 @@ Authorization: Basic ODl6OmE1NzYxMjZlNzVlZjZiY2Y5ZDljNzEyZWIyN2RmZjFmOGFhZmQ...
    "soundcloud",
    "pandora",
    "vimeo",
-   
+
+   "bbc",
    "ted",
    "nbc",
    "bandcamp"

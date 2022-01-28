@@ -44,23 +44,27 @@ func download(name string, stream bbc.Stream) error {
    if err != nil {
       return err
    }
-   begin := time.Now()
-   var size float64
-   for i, info := range infos {
+   var (
+      begin = time.Now()
+      size float64
+      value int
+   )
+   for _, info := range infos {
       res, err := http.Get(info)
       if err != nil {
          return err
       }
       defer res.Body.Close()
-      fmt.Print(format.PercentInt(i, len(infos)))
-      fmt.Print("\t")
-      fmt.Print(format.Size.Get(size))
-      fmt.Print("\t")
-      fmt.Println(format.Rate.Get(size/time.Since(begin).Seconds()))
       if _, err := file.ReadFrom(res.Body); err != nil {
          return err
       }
       size += float64(res.ContentLength)
+      value += 1
+      fmt.Print(format.PercentInt(value, len(infos)))
+      fmt.Print("\t")
+      fmt.Print(format.Size.Get(size))
+      fmt.Print("\t")
+      fmt.Println(format.Rate.Get(size/time.Since(begin).Seconds()))
    }
    return nil
 }
