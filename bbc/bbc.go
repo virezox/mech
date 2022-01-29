@@ -3,27 +3,13 @@ package bbc
 import (
    "encoding/json"
    "github.com/89z/format"
-   "github.com/89z/format/m3u"
    "net/http"
    "path"
    "strconv"
    "strings"
 )
 
-const videoType = "bbc.mobile.news.video"
-
 var LogLevel format.LogLevel
-
-type Media struct {
-   Kind string
-   Type string
-   Connection []struct {
-      Protocol string
-      Supplier string
-      TransferFormat string
-      Href string
-   }
-}
 
 func (m Media) Name(item *NewsItem) (string, error) {
    ext, err := format.ExtensionByType(m.Type)
@@ -31,19 +17,6 @@ func (m Media) Name(item *NewsItem) (string, error) {
       return "", err
    }
    return item.ShortName + "-" + item.IstatsLabels.CPS_Asset_ID + ext, nil
-}
-
-type NewsItem struct {
-   ShortName string
-   IstatsLabels struct {
-      CPS_Asset_ID string
-   }
-   Relations []struct {
-      PrimaryType string
-      Content struct {
-         ExternalID string
-      }
-   }
 }
 
 func NewNewsItem(addr string) (*NewsItem, error) {
@@ -85,29 +58,6 @@ type Stream struct {
    URI string
 }
 
-func (s Stream) Information() ([]string, error) {
-   req, err := http.NewRequest("GET", s.URI, nil)
-   if err != nil {
-      return nil, err
-   }
-   LogLevel.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   dir, _ := path.Split(s.URI)
-   forms, err := m3u.Decode(res.Body, dir)
-   if err != nil {
-      return nil, err
-   }
-   var infos []string
-   for _, form := range forms {
-      infos = append(infos, form["URI"])
-   }
-   return infos, nil
-}
-
 func (s Stream) String() string {
    buf := []byte("ID:")
    buf = strconv.AppendInt(buf, s.ID, 10)
@@ -120,25 +70,25 @@ func (s Stream) String() string {
    return string(buf)
 }
 
-////////////////////////////////////////////////////////////////////////////////
-
-func (n NewsItem) Media() (*Media, error) {
-   var (
-      addr strings.Builder
-      found bool
-   )
-   addr.WriteString("http://open.live.bbc.co.uk")
-   addr.WriteString("/mediaselector/6/select/version/2.0/mediaset/pc/vpid/")
-   for _, rel := range n.Relations {
-      if rel.PrimaryType == videoType {
-         addr.WriteString(rel.Content.ExternalID)
-         found = true
+type NewsItem struct {
+   ShortName string
+   IstatsLabels struct {
+      CPS_Asset_ID string
+   }
+   Relations []struct {
+      PrimaryType string
+      Content struct {
+         ExternalID string
       }
    }
-   if !found {
-      return nil, notFound{videoType}
+}
+
+func (n NewsItem) Media() (*Media, error) {
+   addr, err := n.address()
+   if err != nil {
+      return nil, err
    }
-   req, err := http.NewRequest("GET", addr.String(), nil)
+   req, err := http.NewRequest("GET", addr, nil)
    if err != nil {
       return nil, err
    }
@@ -162,45 +112,39 @@ func (n NewsItem) Media() (*Media, error) {
    return nil, notFound{"video"}
 }
 
-func (m Media) Streams() ([]Stream, error) {
-   var href string
+func (n NewsItem) address() (string, error) {
+   var addr strings.Builder
+   addr.WriteString("http://open.live.bbc.co.uk")
+   addr.WriteString("/mediaselector/6/select/version/2.0/mediaset/pc/vpid/")
+   for _, rel := range n.Relations {
+      if rel.PrimaryType == "bbc.mobile.news.video" {
+         addr.WriteString(rel.Content.ExternalID)
+         return addr.String(), nil
+      }
+   }
+   return "", notFound{"bbc.mobile.news.video"}
+}
+
+type Media struct {
+   Kind string
+   Type string
+   Connection []struct {
+      Protocol string
+      Supplier string
+      TransferFormat string
+      Href string
+   }
+}
+
+func (m Media) address() (string, error) {
    for _, video := range m.Connection {
-      if video.Protocol == "http" &&
-      video.Supplier == "mf_akamai" &&
-      video.TransferFormat == "hls" {
-         href = video.Href
+      if video.Protocol == "http" {
+         if video.TransferFormat == "hls" {
+            if video.Supplier == "mf_akamai" {
+               return video.Href, nil
+            }
+         }
       }
    }
-   if href == "" {
-      return nil, notFound{"http,hls,mf_akamai"}
-   }
-   req, err := http.NewRequest("GET", href, nil)
-   if err != nil {
-      return nil, err
-   }
-   LogLevel.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   dir, _ := path.Split(href)
-   forms, err := m3u.Decode(res.Body, dir)
-   if err != nil {
-      return nil, err
-   }
-   var streams []Stream
-   for i, form := range forms {
-      var stream Stream
-      stream.Bandwidth, err = strconv.ParseInt(form["BANDWIDTH"], 10, 64)
-      if err != nil {
-         return nil, err
-      }
-      stream.Codecs = form["CODECS"]
-      stream.ID = int64(i)
-      stream.Resolution = form["RESOLUTION"]
-      stream.URI = form["URI"]
-      streams = append(streams, stream)
-   }
-   return streams, nil
+   return "", notFound{"http,hls,mf_akamai"}
 }
