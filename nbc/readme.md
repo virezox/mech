@@ -1,9 +1,6 @@
 # NBC
 
-- https://github.com/ytdl-org/youtube-dl/issues/29191
-- https://www.nbc.com/saturday-night-live/video/october-2-owen-wilson/9000199358
-
-## APK
+## Android client
 
 ~~~
 com.nbcuni.nbc
@@ -27,3 +24,9 @@ https://nbcapp.nbc.co/config/android/player/v10/prod/mobile.json
 
 It seems new locked episodes dont offer HD anymore. Once they are unlocked
 (usually after one week), HD is available.
+
+## Why does this exist?
+
+I use the site myself. Also this:
+
+https://github.com/ytdl-org/youtube-dl/issues/29191

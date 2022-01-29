@@ -1,5 +1,7 @@
 # SoundCloud
 
+## Android client
+
 ~~~
 com.soundcloud.android
 ~~~
@@ -73,3 +75,7 @@ avatars:
 https://soundcloud.com/oembed?format=json&url=https://soundcloud.com/pdis_inpartmaint
 https://i1.sndcdn.com/avatars-000274827119-0dxutu-t500x500.jpg
 ~~~
+
+## Why does this exist?
+
+I use the site myself.

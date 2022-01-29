@@ -1,6 +1,6 @@
 # TED
 
-https://github.com/ytdl-org/youtube-dl/issues/30561
+## Android client
 
 ~~~
 com.ted.android
@@ -22,3 +22,9 @@ accept-encoding: gzip
 user-agent: okhttp/4.9.1
 content-length: 0
 ~~~
+
+## Why does this exist?
+
+January 26 2022:
+
+https://github.com/ytdl-org/youtube-dl/issues/30561

@@ -22,3 +22,7 @@ com.pandora.android
 ~~~
 
 https://github.com/89z/googleplay/tree/master/cmd/mitmproxy-cert
+
+## Why does this exist?
+
+I use the site myself.
