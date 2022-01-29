@@ -18,3 +18,9 @@ arm64-v8a
 - https://github.com/TufayelLUS/TikTok-Video-Downloader-PHP/issues/28
 - https://github.com/mehmetbeyHZ/tiktokapi/blob/master/src/Constants.php
 - https://github.com/ytdl-org/youtube-dl/issues/30251
+
+## Why does this exist?
+
+January 25 2022:
+
+https://github.com/ytdl-org/youtube-dl/issues/30546

@@ -2,10 +2,12 @@
 
 ## Why does this exist?
 
+January 28 2022.
+
 - https://bleep.com/release/8728-four-tet-pause
 - https://bleep.com/release/9772-four-tet-rounds-special-anniversary-edition
 
-Checked January 28 2022. YouTube:
+YouTube:
 
 https://youtube.com/channel/UC3sZYInu3YYkyIXBif83ZCg/playlists
 

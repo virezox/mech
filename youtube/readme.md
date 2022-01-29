@@ -156,3 +156,11 @@ Is `sd1` always available? No:
 If `hq1` always available? Yes:
 
 http://i.ytimg.com/vi/hq2KgzKETBw/hq1.jpg
+
+## Why does this exist?
+
+January 28 2022.
+
+I use it myself.
+
+https://www.youtube.com/watch?v=Ts1Tcgj6nbc

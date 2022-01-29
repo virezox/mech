@@ -27,6 +27,8 @@ It seems new locked episodes dont offer HD anymore. Once they are unlocked
 
 ## Why does this exist?
 
-I use the site myself. Also this:
+January 28 2022.
 
-https://github.com/ytdl-org/youtube-dl/issues/29191
+I use the site myself.
+
+https://nbc.com/saturday-night-live/video/december-18-paul-rudd/9000199366

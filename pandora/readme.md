@@ -25,4 +25,8 @@ https://github.com/89z/googleplay/tree/master/cmd/mitmproxy-cert
 
 ## Why does this exist?
 
+January 28 2022.
+
 I use the site myself.
+
+https://pandora.com/artist/jessy-lanza/pull-my-hair-back/ALlfwpXzvcrVK59
