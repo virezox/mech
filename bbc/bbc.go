@@ -11,12 +11,49 @@ import (
 
 var LogLevel format.LogLevel
 
+type Media struct {
+   Kind string
+   Type string
+   Connection []struct {
+      Protocol string
+      Supplier string
+      TransferFormat string
+      Href string
+   }
+}
+
 func (m Media) Name(item *NewsItem) (string, error) {
    ext, err := format.ExtensionByType(m.Type)
    if err != nil {
       return "", err
    }
    return item.ShortName + "-" + item.IstatsLabels.CPS_Asset_ID + ext, nil
+}
+
+func (m Media) address() (string, error) {
+   for _, video := range m.Connection {
+      if video.Protocol == "http" {
+         if video.TransferFormat == "hls" {
+            if video.Supplier == "mf_akamai" {
+               return video.Href, nil
+            }
+         }
+      }
+   }
+   return "", notFound{"http,hls,mf_akamai"}
+}
+
+type NewsItem struct {
+   ShortName string
+   IstatsLabels struct {
+      CPS_Asset_ID string
+   }
+   Relations []struct {
+      PrimaryType string
+      Content struct {
+         ExternalID string
+      }
+   }
 }
 
 func NewNewsItem(addr string) (*NewsItem, error) {
@@ -39,48 +76,6 @@ func NewNewsItem(addr string) (*NewsItem, error) {
       return nil, err
    }
    return item, nil
-}
-
-type notFound struct {
-   input string
-}
-
-func (n notFound) Error() string {
-   return strconv.Quote(n.input) + " not found"
-}
-
-// #EXT-X-STREAM-INF
-type Stream struct {
-   ID int64
-   Resolution string
-   Bandwidth int64
-   Codecs string
-   URI string
-}
-
-func (s Stream) String() string {
-   buf := []byte("ID:")
-   buf = strconv.AppendInt(buf, s.ID, 10)
-   buf = append(buf, " Resolution:"...)
-   buf = append(buf, s.Resolution...)
-   buf = append(buf, " Bandwidth:"...)
-   buf = strconv.AppendInt(buf, s.Bandwidth, 10)
-   buf = append(buf, " Codecs:"...)
-   buf = append(buf, s.Codecs...)
-   return string(buf)
-}
-
-type NewsItem struct {
-   ShortName string
-   IstatsLabels struct {
-      CPS_Asset_ID string
-   }
-   Relations []struct {
-      PrimaryType string
-      Content struct {
-         ExternalID string
-      }
-   }
 }
 
 func (n NewsItem) Media() (*Media, error) {
@@ -125,26 +120,10 @@ func (n NewsItem) address() (string, error) {
    return "", notFound{"bbc.mobile.news.video"}
 }
 
-type Media struct {
-   Kind string
-   Type string
-   Connection []struct {
-      Protocol string
-      Supplier string
-      TransferFormat string
-      Href string
-   }
+type notFound struct {
+   input string
 }
 
-func (m Media) address() (string, error) {
-   for _, video := range m.Connection {
-      if video.Protocol == "http" {
-         if video.TransferFormat == "hls" {
-            if video.Supplier == "mf_akamai" {
-               return video.Href, nil
-            }
-         }
-      }
-   }
-   return "", notFound{"http,hls,mf_akamai"}
+func (n notFound) Error() string {
+   return strconv.Quote(n.input) + " not found"
 }
