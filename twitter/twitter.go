@@ -2,17 +2,12 @@ package twitter
 
 import (
    "encoding/json"
-   "github.com/89z/format/m3u"
+   "github.com/89z/format"
    "net/http"
    "net/url"
-   "path"
+   "strconv"
    "strings"
    "time"
-)
-
-const (
-   graphQL = "https://twitter.com/i/api/graphql"
-   iAPI = "https://twitter.com/i/api/1.1"
 )
 
 type Space struct {
@@ -34,9 +29,10 @@ type Space struct {
 }
 
 func NewSpace(guest *Guest, id string) (*Space, error) {
-   req, err := http.NewRequest(
-      "GET", graphQL + "/Uv5R_-Chxbn1FEkyUkSW2w/AudioSpaceById", nil,
-   )
+   var addr strings.Builder
+   addr.WriteString("https://twitter.com")
+   addr.WriteString("/i/api/graphql/Uv5R_-Chxbn1FEkyUkSW2w/AudioSpaceById")
+   req, err := http.NewRequest("GET", addr.String(), nil)
    if err != nil {
       return nil, err
    }
@@ -78,10 +74,18 @@ func (s Space) Duration() time.Duration {
    return time.Duration(meta.Ended_At - meta.Started_At) * time.Millisecond
 }
 
+func (s Space) Name() string {
+   var name strings.Builder
+   name.WriteString(s.Admins())
+   name.WriteByte('-')
+   name.WriteString(s.Data.AudioSpace.Metadata.Title)
+   name.WriteString(".aac")
+   return strings.Map(format.Clean, name.String())
+}
+
 func (s Space) Stream(guest *Guest) (*Stream, error) {
    var addr strings.Builder
-   addr.WriteString(iAPI)
-   addr.WriteString("/live_video_stream/status/")
+   addr.WriteString("https://twitter.com/i/api/1.1/live_video_stream/status/")
    addr.WriteString(s.Data.AudioSpace.Metadata.Media_Key)
    req, err := http.NewRequest("GET", addr.String(), nil)
    if err != nil {
@@ -104,29 +108,10 @@ func (s Space) Stream(guest *Guest) (*Stream, error) {
    return stream, nil
 }
 
-func (s Space) Title() string {
-   return s.Data.AudioSpace.Metadata.Title
-}
-
 type Stream struct {
    Source struct {
       Location string
    }
-}
-
-func (s Stream) Chunks() ([]m3u.Format, error) {
-   req, err := http.NewRequest("GET", s.Source.Location, nil)
-   if err != nil {
-      return nil, err
-   }
-   LogLevel.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   dir, _ := path.Split(s.Source.Location)
-   return m3u.Decode(res.Body, dir)
 }
 
 type spaceRequest struct {
@@ -140,4 +125,107 @@ type spaceRequest struct {
    WithScheduledSpaces bool `json:"withScheduledSpaces"`
    WithSuperFollowsTweetFields bool `json:"withSuperFollowsTweetFields"`
    WithSuperFollowsUserFields bool `json:"withSuperFollowsUserFields"`
+}
+
+const API = "https://api.twitter.com/1.1"
+
+const bearer =
+   "AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs=" +
+   "1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA"
+
+var LogLevel format.LogLevel
+
+func Parse(id string) (uint64, error) {
+   return strconv.ParseUint(id, 10, 64)
+}
+
+type Guest struct {
+   Guest_Token string
+}
+
+func NewGuest() (*Guest, error) {
+   req, err := http.NewRequest("POST", API + "/guest/activate.json", nil)
+   if err != nil {
+      return nil, err
+   }
+   req.Header.Set("Authorization", "Bearer " + bearer)
+   LogLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   guest := new(Guest)
+   if err := json.NewDecoder(res.Body).Decode(guest); err != nil {
+      return nil, err
+   }
+   return guest, nil
+}
+
+type Status struct {
+   Extended_Entities struct {
+      Media []struct {
+         Video_Info struct {
+            Variants []Variant
+         }
+      }
+   }
+   User struct {
+      Name string
+   }
+}
+
+func NewStatus(guest *Guest, id uint64) (*Status, error) {
+   buf := []byte(API)
+   buf = append(buf, "/statuses/show/"...)
+   buf = strconv.AppendUint(buf, id, 10)
+   buf = append(buf, ".json?tweet_mode=extended"...)
+   req, err := http.NewRequest("GET", string(buf), nil)
+   if err != nil {
+      return nil, err
+   }
+   req.Header = http.Header{
+      "Authorization": {"Bearer " + bearer},
+      "X-Guest-Token": {guest.Guest_Token},
+   }
+   LogLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   stat := new(Status)
+   if err := json.NewDecoder(res.Body).Decode(stat); err != nil {
+      return nil, err
+   }
+   return stat, nil
+}
+
+func (s Status) Variants() []Variant {
+   var varis []Variant
+   for _, med := range s.Extended_Entities.Media {
+      for _, vari := range med.Video_Info.Variants {
+         if vari.Content_Type != "application/x-mpegURL"{
+            varis = append(varis, vari)
+         }
+      }
+   }
+   return varis
+}
+
+type URL string
+
+func (u URL) String() string {
+   str := string(u)
+   addr, err := url.Parse(str)
+   if err != nil {
+      return str
+   }
+   addr.RawQuery = ""
+   return addr.String()
+}
+
+type Variant struct {
+   Content_Type string
+   URL URL
 }

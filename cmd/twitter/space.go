@@ -2,12 +2,10 @@ package main
 
 import (
    "fmt"
-   "github.com/89z/format"
    "github.com/89z/mech/twitter"
    "net/http"
    "net/url"
    "os"
-   "strings"
 )
 
 func spacePath(id string, info bool) error {
@@ -25,7 +23,7 @@ func spacePath(id string, info bool) error {
    }
    if info {
       fmt.Println("Admins:", space.Admins())
-      fmt.Println("Title:", space.Title())
+      fmt.Println("Title:", space.Data.AudioSpace.Metadata.Title)
       fmt.Println("Duration:", space.Duration())
       fmt.Println("Location:", stream.Source.Location)
    } else {
@@ -33,8 +31,7 @@ func spacePath(id string, info bool) error {
       if err != nil {
          return err
       }
-      name := space.Admins() + "-" + space.Title() + ".aac"
-      dst, err := os.Create(strings.Map(format.Clean, name))
+      dst, err := os.Create(space.Name())
       if err != nil {
          return err
       }
