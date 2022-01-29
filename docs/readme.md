@@ -19,26 +19,3 @@ click `Network Settings`, `Save All As HAR`. Rename file to JSON.
 7. MITM Proxy APK for JSON requests
 8. APK tool
 9. JADX
-
-## How to update topics?
-
-~~~
-PUT /repos/89z/mech/topics HTTP/1.1
-Host: api.github.com
-Authorization: Basic ODl6OmE1NzYxMjZlNzVlZjZiY2Y5ZDljNzEyZWIyN2RmZjFmOGFhZmQ...
-
-{"names":[
-   "youtube",
-   "instagram",
-   "tiktok",
-   "twitter",
-   "soundcloud",
-   "pandora",
-   "vimeo",
-
-   "bbc",
-   "ted",
-   "nbc",
-   "bandcamp"
-]}
-~~~

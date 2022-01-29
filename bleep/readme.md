@@ -1,44 +1,34 @@
 # Bleep
 
-## Four tet
-
-Checked December 14 2021. Apple Music:
-
-https://music.apple.com/us/artist/four-tet/35888604/see-all?section=full-albums
-
-Bandcamp:
-
-https://fourtet.bandcamp.com
-
-Bleep:
+## Why does this exist?
 
 - https://bleep.com/release/8728-four-tet-pause
 - https://bleep.com/release/9772-four-tet-rounds-special-anniversary-edition
 
-iHeart:
+Checked January 28 2022. YouTube:
 
-https://iheart.com/artist/four-tet-12058/albums
-
-Pandora:
-
-https://pandora.com/artist/4-tet/rounds/ALmwmkdxX4x6xgg
-
-Qobuz:
-
-https://qobuz.com/us-en/interpreter/four-tet/download-streaming-albums
+https://youtube.com/channel/UC3sZYInu3YYkyIXBif83ZCg/playlists
 
 SoundCloud:
 
 https://soundcloud.com/four-tet/albums
 
-Spotify:
+Pandora:
 
-https://open.spotify.com/artist/7Eu1txygG6nJttLHbZdQOh/discography/album
+https://pandora.com/artist/4-tet/rounds/ALmwmkdxX4x6xgg
 
-Tidal:
+iHeart:
 
-https://tidal.com/browse/artist/3520717
+https://iheart.com/artist/four-tet-12058/albums
 
-YouTube:
+Napster:
 
-<https://youtube.com/channel/UC3sZYInu3YYkyIXBif83ZCg/playlists?view=71&shelf_id=1744>
+https://napster.com/artist/four-tet/albums
+
+Bandcamp:
+
+https://fourtet.bandcamp.com
+
+Qobuz:
+
+https://qobuz.com/us-en/interpreter/four-tet/download-streaming-albums

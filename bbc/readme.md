@@ -1,5 +1,7 @@
 # BBC
 
+## Android client
+
 ~~~
 bbc.mobile.news.ww
 ~~~
@@ -23,3 +25,9 @@ user-agent: BBCNews/5.19.0 (Android SDK built for x86; Android 7.0)
 accept-encoding: gzip
 content-length: 0
 ~~~
+
+## Why does this exist?
+
+January 28 2022:
+
+https://github.com/ytdl-org/youtube-dl/issues/30565

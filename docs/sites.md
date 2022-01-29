@@ -15,7 +15,6 @@
 30.971 M true Vimeo
 29.889 M true BBC News
 29.538 M true TED
-24.087 M false TIDAL Music - Hifi Songs, Playlists, & Videos
 21.492 M false Paramount+ | Peak Streaming
 21.287 M false Napster Music
 13.593 M true The NBC App - Stream TV Shows
@@ -91,10 +90,6 @@ https://play.google.com/store/apps/details?id=com.soundcloud.android
 ## Spotify
 
 https://play.google.com/store/apps/details?id=com.spotify.music
-
-## TIDAL
-
-https://play.google.com/store/apps/details?id=com.aspiro.tidal
 
 ## TikTok
 

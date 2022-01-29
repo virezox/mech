@@ -1,5 +1,7 @@
 # Instagram
 
+## Android client
+
 ~~~
 com.instagram.android
 ~~~
@@ -43,6 +45,10 @@ const E = "7d4d42b121a214d23bd43206e5142c8c",
    v = 24,
    f = 3;
 ~~~
+
+## Why does this exist?
+
+I use it myself
 
 ## Why not use other APIs?
 
