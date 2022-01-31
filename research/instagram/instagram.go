@@ -9,29 +9,24 @@ import (
    "strconv"
 )
 
-var logLevel format.LogLevel
-
-func getID(shortcode string) (uint64, error) {
-   for len(shortcode) <= 11 {
-      shortcode = "A" + shortcode
-   }
-   buf, err := base64.StdEncoding.DecodeString(shortcode)
-   if err != nil {
-      return 0, err
-   }
-   return binary.BigEndian.Uint64(buf[1:]), nil
-}
-
-type errorString string
-
-func (e errorString) Error() string {
-   return string(e)
-}
-
 type media struct {
    Items []struct {
-      Image_Versions2 struct {
+      Like_Count int64
+      Image_Versions2 *struct { // This is omitted on carousel posts
          Candidates []struct {
+            URL string
+         }
+      }
+      Video_Versions []struct {
+         URL string
+      }
+      Carousel_Media []struct {
+         Image_Versions2 struct {
+            Candidates []struct {
+               URL string
+            }
+         }
+         Video_Versions []struct {
             URL string
          }
       }
@@ -48,7 +43,7 @@ func newMedia(id uint64) (*media, error) {
       return nil, err
    }
    req.Header = http.Header{
-      //"Authorization": {auth},
+      "Authorization": {auth},
       "user-agent": {"Instagram 206.1.0.34.121 Android"},
    }
    logLevel.Dump(req)
@@ -65,4 +60,23 @@ func newMedia(id uint64) (*media, error) {
       return nil, err
    }
    return info, nil
+}
+
+var logLevel format.LogLevel
+
+func getID(shortcode string) (uint64, error) {
+   for len(shortcode) <= 11 {
+      shortcode = "A" + shortcode
+   }
+   buf, err := base64.URLEncoding.DecodeString(shortcode)
+   if err != nil {
+      return 0, err
+   }
+   return binary.BigEndian.Uint64(buf[1:]), nil
+}
+
+type errorString string
+
+func (e errorString) Error() string {
+   return string(e)
 }
