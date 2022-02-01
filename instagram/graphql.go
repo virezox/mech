@@ -3,7 +3,6 @@ package instagram
 import (
    "bytes"
    "encoding/json"
-   "github.com/89z/format"
    "net/http"
    "os"
    "path/filepath"
@@ -16,8 +15,6 @@ const (
    // com.instagram.android
    userAgent = "Instagram 214.1.0.29.120 Android"
 )
-
-var LogLevel format.LogLevel
 
 // instagram.com/p/CT-cnxGhvvO
 // instagram.com/p/yza2PAPSx2
@@ -92,11 +89,41 @@ func (l Login) Create(name string) error {
    return enc.Encode(l)
 }
 
-// Request with Authorization
-func (l Login) Media(shortcode string) (*Media, error) {
-   var body mediaRequest
+type GraphQL struct {
+   Edge_Media_Preview_Like struct {
+      Count int64
+   }
+   Display_URL string
+   Video_URL string
+   Edge_Sidecar_To_Children *struct {
+      Edges []struct {
+         Node struct {
+            Display_URL string
+            Video_URL string
+         }
+      }
+   }
+}
+
+type graphqlRequest struct {
+   Query_Hash string `json:"query_hash"`
+   Variables struct {
+      Shortcode string `json:"shortcode"`
+   } `json:"variables"`
+}
+
+type notFound struct {
+   value string
+}
+
+func (n notFound) Error() string {
+   return strconv.Quote(n.value) + " not found"
+}
+
+// Anonymous request
+func NewGraphQL(shortcode string) (*GraphQL, error) {
+   var body graphqlRequest
    body.Query_Hash = queryHash
-   body.Variables.Fetch_Comment_Count = 9
    body.Variables.Shortcode = shortcode
    buf := new(bytes.Buffer)
    err := json.NewEncoder(buf).Encode(body)
@@ -111,9 +138,6 @@ func (l Login) Media(shortcode string) (*Media, error) {
       "Content-Type": {"application/json"},
       "User-Agent": {userAgent},
    }
-   if l.Authorization != "" {
-      req.Header.Set("Authorization", l.Authorization)
-   }
    LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
@@ -125,7 +149,7 @@ func (l Login) Media(shortcode string) (*Media, error) {
    }
    var med struct {
       Data struct {
-         Shortcode_Media Media
+         Shortcode_Media GraphQL
       }
    }
    if err := json.NewDecoder(res.Body).Decode(&med); err != nil {
@@ -134,56 +158,23 @@ func (l Login) Media(shortcode string) (*Media, error) {
    return &med.Data.Shortcode_Media, nil
 }
 
-type Media struct {
-   Edge_Media_Preview_Like struct {
-      Count int64
-   }
-   Edge_Media_To_Comment struct {
-      Edges []struct {
-         Node struct {
-            Text string
-         }
-      }
-   }
-   Display_URL string
-   Video_URL string
-   Edge_Sidecar_To_Children *struct {
-      Edges []struct {
-         Node struct {
-            Display_URL string
-            Video_URL string
-         }
-      }
-   }
-}
-
-// Anonymous request
-func NewMedia(shortcode string) (*Media, error) {
-   return Login{}.Media(shortcode)
-}
-
-func (m Media) String() string {
+func (g GraphQL) String() string {
    buf := []byte("Likes: ")
-   buf = strconv.AppendInt(buf, m.Edge_Media_Preview_Like.Count, 10)
+   buf = strconv.AppendInt(buf, g.Edge_Media_Preview_Like.Count, 10)
    buf = append(buf, "\nURLs: "...)
-   for _, addr := range m.URLs() {
+   for _, addr := range g.URLs() {
       buf = append(buf, "\n- "...)
       buf = append(buf, addr...)
-   }
-   buf = append(buf, "\nComments: "...)
-   for _, edge := range m.Edge_Media_To_Comment.Edges {
-      buf = append(buf, "\n- "...)
-      buf = append(buf, edge.Node.Text...)
    }
    return string(buf)
 }
 
-func (m Media) URLs() []string {
+func (g GraphQL) URLs() []string {
    src := make(map[string]bool)
-   src[m.Display_URL] = true
-   src[m.Video_URL] = true
-   if m.Edge_Sidecar_To_Children != nil {
-      for _, edge := range m.Edge_Sidecar_To_Children.Edges {
+   src[g.Display_URL] = true
+   src[g.Video_URL] = true
+   if g.Edge_Sidecar_To_Children != nil {
+      for _, edge := range g.Edge_Sidecar_To_Children.Edges {
          src[edge.Node.Display_URL] = true
          src[edge.Node.Video_URL] = true
       }
@@ -195,26 +186,4 @@ func (m Media) URLs() []string {
       }
    }
    return dst
-}
-
-type errorString string
-
-func (e errorString) Error() string {
-   return string(e)
-}
-
-type mediaRequest struct {
-   Query_Hash string `json:"query_hash"`
-   Variables struct {
-      Shortcode string `json:"shortcode"`
-      Fetch_Comment_Count int `json:"fetch_comment_count"`
-   } `json:"variables"`
-}
-
-type notFound struct {
-   input string
-}
-
-func (n notFound) Error() string {
-   return strconv.Quote(n.input) + " not found"
 }

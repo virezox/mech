@@ -56,20 +56,6 @@ https://instagram.com/p/CT-cnxGhvvO
 
 ## Why not use other APIs?
 
-`/api/v1/media` API requires separate calls for media and comments:
-
-~~~
-GET /api/v1/media/2755022163816059161/info/ HTTP/2.0
-Host: i.instagram.com
-user-agent: Instagram 206.1.0.34.121 Android
-Authorization: Bearer IGT:2:eyJkc191c2VyX2lkIjoiNDkzNzgxNzEzMzQiLCJzZXNzaW9ua...
-
-GET /api/v1/media/2755652849306967814/comments/ HTTP/2.0
-Host: i.instagram.com
-user-agent: Instagram 215.0.0.27.359 Android
-Authorization: Bearer IGT:2:eyJkc191c2VyX2lkIjoiNDkzNzgxNzEzMzQiLCJzZXNzaW9ua...
-~~~
-
 `/embed` API does not return URLs in all cases:
 
 <https://instagram.com/p/CY-Wwq_O6S0/embed>

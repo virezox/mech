@@ -9,6 +9,37 @@ import (
    "strconv"
 )
 
+// This gets us image 1241 by 1241, but requires authentication.
+func (l Login) MediaItems(id uint64) ([]MediaItem, error) {
+   buf := []byte("https://i.instagram.com/api/v1/media/")
+   buf = strconv.AppendUint(buf, id, 10)
+   buf = append(buf, "/info/"...)
+   req, err := http.NewRequest("GET", string(buf), nil)
+   if err != nil {
+      return nil, err
+   }
+   req.Header = http.Header{
+      "Authorization": {l.Authorization},
+      "User-Agent": {userAgent},
+   }
+   LogLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return nil, errorString(res.Status)
+   }
+   var info struct {
+      Items []MediaItem
+   }
+   if err := json.NewDecoder(res.Body).Decode(&info); err != nil {
+      return nil, err
+   }
+   return info.Items, nil
+}
+
 var LogLevel format.LogLevel
 
 func GetID(shortcode string) (uint64, error) {
@@ -70,37 +101,6 @@ func (i Info) Version() (*Version, error) {
 type MediaItem struct {
    Info
    Carousel_Media []Info
-}
-
-// This gets us image 1241 by 1241, but requires authentication.
-func MediaItems(id uint64) ([]MediaItem, error) {
-   buf := []byte("https://i.instagram.com/api/v1/media/")
-   buf = strconv.AppendUint(buf, id, 10)
-   buf = append(buf, "/info/"...)
-   req, err := http.NewRequest("GET", string(buf), nil)
-   if err != nil {
-      return nil, err
-   }
-   req.Header = http.Header{
-      "Authorization": {auth},
-      "user-agent": {"Instagram 206.1.0.34.121 Android"},
-   }
-   LogLevel.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return nil, errorString(res.Status)
-   }
-   var info struct {
-      Items []MediaItem
-   }
-   if err := json.NewDecoder(res.Body).Decode(&info); err != nil {
-      return nil, err
-   }
-   return info.Items, nil
 }
 
 func (m MediaItem) Infos() []Info {
