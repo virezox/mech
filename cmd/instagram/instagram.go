@@ -7,16 +7,46 @@ import (
    "net/url"
    "os"
    "path"
+   "time"
 )
 
 func graphqlPath(shortcode string, info bool) error {
-   media, err := instagram.NewGraphQL(shortcode)
+   graph, err := instagram.NewGraphQL(shortcode)
    if err != nil {
       return err
    }
    if info {
-      fmt.Println(media)
+      fmt.Println(graph)
    } else {
+      for _, addr := range graph.URLs() {
+         err := download(addr)
+         if err != nil {
+            return err
+         }
+         time.Sleep(99 * time.Millisecond)
+      }
+   }
+   return nil
+}
+
+func download(address string) error {
+   fmt.Println("GET", address)
+   res, err := http.Get(address)
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   addr, err := url.Parse(address)
+   if err != nil {
+      return err
+   }
+   file, err := os.Create(path.Base(addr.Path))
+   if err != nil {
+      return err
+   }
+   defer file.Close()
+   if _, err := file.ReadFrom(res.Body); err != nil {
+      return err
    }
    return nil
 }
@@ -48,24 +78,3 @@ func mediaItemPath(shortcode string, info bool) error {
    return nil
 }
 
-func download(address string) error {
-   fmt.Println("GET", address)
-   res, err := http.Get(address)
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   addr, err := url.Parse(address)
-   if err != nil {
-      return err
-   }
-   file, err := os.Create(path.Base(addr.Path))
-   if err != nil {
-      return err
-   }
-   defer file.Close()
-   if _, err := file.ReadFrom(res.Body); err != nil {
-      return err
-   }
-   return nil
-}
