@@ -2,7 +2,9 @@ package instagram
 
 import (
    "fmt"
+   "os"
    "testing"
+   "time"
 )
 
 type testType struct {
@@ -32,12 +34,12 @@ func TestMedia(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   for _, shortcode := range shortcodes {
-      med, err := login.Media(shortcode)
+   for _, test := range tests {
+      med, err := login.Media(test.shortcode)
       if err != nil {
          t.Fatal(err)
       }
-      fmt.Println(shortcode)
+      fmt.Println(test.shortcode)
       for _, addr := range med.URLs() {
          fmt.Println("-", addr)
       }

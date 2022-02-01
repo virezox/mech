@@ -95,22 +95,9 @@ func (e errorString) Error() string {
    return string(e)
 }
 
-type notFound struct {
-   input string
-}
-
-func (n notFound) Error() string {
-   return strconv.Quote(n.input) + " not found"
-}
-
 type Media struct {
-   Video_URL string
-   Display_URL string
    Edge_Media_Preview_Like struct { // Likes
       Count int64
-   }
-   Edge_Sidecar_To_Children *struct { // Sidecar
-      Edges []Sidecar
    }
    Edge_Media_To_Parent_Comment struct { // Comments
       Edges []struct {
@@ -119,14 +106,36 @@ type Media struct {
          }
       }
    }
-}
-
-type Sidecar struct {
-   Node struct {
-      Display_URL string
-      Video_URL string
+   Display_URL string
+   Video_URL string
+   Edge_Sidecar_To_Children *struct { // Sidecar
+      Edges []struct {
+         Node struct {
+            Display_URL string
+            Video_URL string
+         }
+      }
    }
 }
+
+func (m Media) URLs() []string {                               
+   src := make(map[string]bool)                                  
+   src[m.Display_URL] = true                                     
+   src[m.Video_URL] = true                                       
+   if m.Edge_Sidecar_To_Children != nil {                        
+      for _, edge := range m.Edge_Sidecar_To_Children.Edges {    
+         src[edge.Node.Display_URL] = true                       
+         src[edge.Node.Video_URL] = true                         
+      }                                                          
+   }                                                             
+   var dst []string                                              
+   for key := range src {                                        
+      if key != "" {                                             
+         dst = append(dst, key)                                  
+      }                                                          
+   }                                                             
+   return dst                                                    
+}                                                                
 
 // Request with Authorization
 func (l Login) Media(shortcode string) (*Media, error) {
@@ -166,40 +175,22 @@ func NewMedia(shortcode string) (*Media, error) {
    return Login{}.Media(shortcode)
 }
 
-func (m Media) Sidecar() []Sidecar {
-   if m.Edge_Sidecar_To_Children == nil {
-      return nil
-   }
-   return m.Edge_Sidecar_To_Children.Edges
-}
-
 func (m Media) String() string {
    buf := []byte("Likes: ")
    buf = strconv.AppendInt(buf, m.Edge_Media_Preview_Like.Count, 10)
-   if m.Video_URL != "" {
-      buf = append(buf, "\nVideo_URL: "...)
-      buf = append(buf, m.Video_URL...)
-   }
-   buf = append(buf, "\nDisplay_URL: "...)
-   buf = append(buf, m.Display_URL...)
-   for i, car := range m.Sidecar() {
-      if i == 0 {
-         buf = append(buf, "\nSidecar: "...)
+   buf = append(buf, "\nURLs: "...)
+   for i, addr := range m.URLs() {
+      if i >= 1 {
+         buf = append(buf, "\n---\n"...)
       }
-      buf = append(buf, "\n- "...)
-      buf = append(buf, car.URL()...)
+      buf = append(buf, addr...)
    }
    buf = append(buf, "\nComments: "...)
-   for _, edge := range m.Edge_Media_To_Parent_Comment.Edges {
-      buf = append(buf, "\n- "...)
+   for i, edge := range m.Edge_Media_To_Parent_Comment.Edges {
+      if i >= 1 {
+         buf = append(buf, "\n---\n"...)
+      }
       buf = append(buf, edge.Node.Text...)
    }
    return string(buf)
-}
-
-func (s Sidecar) URL() string {
-   if s.Node.Video_URL != "" {
-      return s.Node.Video_URL
-   }
-   return s.Node.Display_URL
 }
