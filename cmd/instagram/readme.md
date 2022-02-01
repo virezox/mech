@@ -1,19 +1,31 @@
 # Instagram
 
-Single image:
+One image:
 
 ~~~
-CU9ett-rP7I
+go run . -i CZVEugIPkVn
 ~~~
 
-Single video:
+One video:
 
 ~~~
-CUDJ4YhpF0Z
+go run . -i CUDJ4YhpF0Z
 ~~~
 
-Image and video:
+Six image:
 
 ~~~
-CUK-1wjqqsP
+go run . -i CXzGW6RPNmy
+~~~
+
+Two image and one video:
+
+~~~
+go run . -i CUK-1wjqqsP
+~~~
+
+Three video:
+
+~~~
+go run . -i BQ0eAlwhDrw
 ~~~

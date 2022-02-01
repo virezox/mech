@@ -5,7 +5,6 @@ import (
    "fmt"
    "github.com/89z/mech/instagram"
    "os"
-   "time"
 )
 
 func main() {
@@ -43,19 +42,15 @@ func main() {
       if !instagram.Valid(shortcode) {
          panic("invalid shortcode")
       }
-      med, err := newMedia(shortcode, auth)
-      if err != nil {
-         panic(err)
-      }
-      if info {
-         fmt.Println(med)
+      if auth {
+         err := mediaItemPath(shortcode, info)
+         if err != nil {
+            panic(err)
+         }
       } else {
-         for _, addr := range med.URLs() {
-            err := download(addr)
-            if err != nil {
-               panic(err)
-            }
-            time.Sleep(99 * time.Millisecond)
+         err := graphqlPath(shortcode, info)
+         if err != nil {
+            panic(err)
          }
       }
    }

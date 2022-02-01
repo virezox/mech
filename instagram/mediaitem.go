@@ -99,9 +99,24 @@ func (l Login) MediaItems(id uint64) ([]MediaItem, error) {
 }
 
 type MediaItem struct {
-   Like_Count int64
    Info
    Carousel_Media []Info
+   Like_Count int64
+}
+
+func (m MediaItem) Format() (string, error) {
+   buf := []byte("Like_Count: ")
+   buf = strconv.AppendInt(buf, m.Like_Count, 10)
+   buf = append(buf, "\nURLs:"...)
+   for _, info := range m.Infos() {
+      ver, err := info.Version()
+      if err != nil {
+         return "", err
+      }
+      buf = append(buf, "\n- "...)
+      buf = append(buf, ver.URL...)
+   }
+   return string(buf), nil
 }
 
 func (m MediaItem) Infos() []Info {
