@@ -26,69 +26,6 @@ func Valid(shortcode string) bool {
    return false
 }
 
-type Login struct {
-   Authorization string
-}
-
-func NewLogin(username, password string) (*Login, error) {
-   buf := bytes.NewBufferString("signed_body=SIGNATURE.")
-   sig := map[string]string{
-      "device_id": userAgent,
-      "enc_password": "#PWD_INSTAGRAM:0:0:" + password,
-      "username": username,
-   }
-   if err := json.NewEncoder(buf).Encode(sig); err != nil {
-      return nil, err
-   }
-   req, err := http.NewRequest("POST", origin + "/api/v1/accounts/login/", buf)
-   if err != nil {
-      return nil, err
-   }
-   req.Header = http.Header{
-      "Content-Type": {"application/x-www-form-urlencoded"},
-      "User-Agent": {userAgent},
-   }
-   LogLevel.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   auth := res.Header.Get("Ig-Set-Authorization")
-   if auth == "" {
-      return nil, notFound{"Ig-Set-Authorization"}
-   }
-   return &Login{auth}, nil
-}
-
-func OpenLogin(name string) (*Login, error) {
-   file, err := os.Open(name)
-   if err != nil {
-      return nil, err
-   }
-   defer file.Close()
-   log := new(Login)
-   if err := json.NewDecoder(file).Decode(log); err != nil {
-      return nil, err
-   }
-   return log, nil
-}
-
-func (l Login) Create(name string) error {
-   err := os.MkdirAll(filepath.Dir(name), os.ModeDir)
-   if err != nil {
-      return err
-   }
-   file, err := os.Create(name)
-   if err != nil {
-      return err
-   }
-   defer file.Close()
-   enc := json.NewEncoder(file)
-   enc.SetIndent("", " ")
-   return enc.Encode(l)
-}
-
 type GraphQL struct {
    Edge_Media_Preview_Like struct {
       Count int64
@@ -103,21 +40,6 @@ type GraphQL struct {
          }
       }
    }
-}
-
-type graphqlRequest struct {
-   Query_Hash string `json:"query_hash"`
-   Variables struct {
-      Shortcode string `json:"shortcode"`
-   } `json:"variables"`
-}
-
-type notFound struct {
-   value string
-}
-
-func (n notFound) Error() string {
-   return strconv.Quote(n.value) + " not found"
 }
 
 // Anonymous request
@@ -186,4 +108,82 @@ func (g GraphQL) URLs() []string {
       }
    }
    return dst
+}
+
+type Login struct {
+   Authorization string
+}
+
+func NewLogin(username, password string) (*Login, error) {
+   buf := bytes.NewBufferString("signed_body=SIGNATURE.")
+   sig := map[string]string{
+      "device_id": userAgent,
+      "enc_password": "#PWD_INSTAGRAM:0:0:" + password,
+      "username": username,
+   }
+   if err := json.NewEncoder(buf).Encode(sig); err != nil {
+      return nil, err
+   }
+   req, err := http.NewRequest("POST", origin + "/api/v1/accounts/login/", buf)
+   if err != nil {
+      return nil, err
+   }
+   req.Header = http.Header{
+      "Content-Type": {"application/x-www-form-urlencoded"},
+      "User-Agent": {userAgent},
+   }
+   LogLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   auth := res.Header.Get("Ig-Set-Authorization")
+   if auth == "" {
+      return nil, notFound{"Ig-Set-Authorization"}
+   }
+   return &Login{auth}, nil
+}
+
+func OpenLogin(name string) (*Login, error) {
+   file, err := os.Open(name)
+   if err != nil {
+      return nil, err
+   }
+   defer file.Close()
+   log := new(Login)
+   if err := json.NewDecoder(file).Decode(log); err != nil {
+      return nil, err
+   }
+   return log, nil
+}
+
+func (l Login) Create(name string) error {
+   err := os.MkdirAll(filepath.Dir(name), os.ModeDir)
+   if err != nil {
+      return err
+   }
+   file, err := os.Create(name)
+   if err != nil {
+      return err
+   }
+   defer file.Close()
+   enc := json.NewEncoder(file)
+   enc.SetIndent("", " ")
+   return enc.Encode(l)
+}
+
+type graphqlRequest struct {
+   Query_Hash string `json:"query_hash"`
+   Variables struct {
+      Shortcode string `json:"shortcode"`
+   } `json:"variables"`
+}
+
+type notFound struct {
+   value string
+}
+
+func (n notFound) Error() string {
+   return strconv.Quote(n.value) + " not found"
 }
