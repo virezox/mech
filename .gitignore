@@ -4,4 +4,4 @@
 *.mp4
 *.ts
 __pycache__
-secret.go
+ignore.go
