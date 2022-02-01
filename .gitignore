@@ -1,7 +1,2 @@
-*.exe
-*.html
-*.json
-*.mp4
-*.ts
-__pycache__
 ignore.go
+ignore.json
