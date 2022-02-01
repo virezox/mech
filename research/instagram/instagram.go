@@ -9,28 +9,23 @@ import (
    "strconv"
 )
 
-type media struct {
-   Items []struct {
-      Like_Count int64
-      Image_Versions2 *struct { // This is omitted on carousel posts
-         Candidates []struct {
-            URL string
-         }
-      }
-      Video_Versions []struct {
-         URL string
-      }
-      Carousel_Media []struct {
-         Image_Versions2 struct {
-            Candidates []struct {
-               URL string
-            }
-         }
-         Video_Versions []struct {
-            URL string
-         }
-      }
+var logLevel format.LogLevel
+
+func getID(shortcode string) (uint64, error) {
+   for len(shortcode) <= 11 {
+      shortcode = "A" + shortcode
    }
+   buf, err := base64.URLEncoding.DecodeString(shortcode)
+   if err != nil {
+      return 0, err
+   }
+   return binary.BigEndian.Uint64(buf[1:]), nil
+}
+
+type errorString string
+
+func (e errorString) Error() string {
+   return string(e)
 }
 
 // This gets us image 1241 by 1241, but requires authentication.
@@ -55,28 +50,34 @@ func newMedia(id uint64) (*media, error) {
    if res.StatusCode != http.StatusOK {
       return nil, errorString(res.Status)
    }
-   info := new(media)
-   if err := json.NewDecoder(res.Body).Decode(info); err != nil {
+   med := new(media)
+   if err := json.NewDecoder(res.Body).Decode(med); err != nil {
       return nil, err
    }
-   return info, nil
+   return med, nil
 }
 
-var logLevel format.LogLevel
-
-func getID(shortcode string) (uint64, error) {
-   for len(shortcode) <= 11 {
-      shortcode = "A" + shortcode
-   }
-   buf, err := base64.URLEncoding.DecodeString(shortcode)
-   if err != nil {
-      return 0, err
-   }
-   return binary.BigEndian.Uint64(buf[1:]), nil
+type media struct {
+   Items []item
 }
 
-type errorString string
+type version struct {
+   Width int
+   Height int
+   URL string
+}
 
-func (e errorString) Error() string {
-   return string(e)
+type item struct {
+   Media_Type int
+   Image_Versions2 struct {
+      Candidates []version
+   }
+   Video_Versions []version
+   Carousel_Media []struct {
+      Media_Type int
+      Image_Versions2 struct {
+         Candidates []version
+      }
+      Video_Versions []version
+   }
 }

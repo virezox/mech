@@ -12,16 +12,16 @@ type testType struct {
 }
 
 var tests = []testType{
-   // 0 image 1 video
-   {"CUDJ4YhpF0Z", 2667018861376986393},
-   // 0 image 2 video
-   {"BQ0eAlwhDrw", 1455920561485265648},
-   // 1 image 0 video
+   // type:1 video:0 image:1
    {"CZVEugIPkVn", 2762134734241678695},
-   // 1 image 1 video
-   {"CUK-1wjqqsP", 2669222102324390671},
-   // 2 image 0 video
+   // type:2 video:1 image:0
+   {"CUDJ4YhpF0Z", 2667018861376986393},
+   // type:8 video:0 image:2
    {"CXzGW6RPNmy", 2734557361417804210},
+   // type:8 video:1 image:1
+   {"CUK-1wjqqsP", 2669222102324390671},
+   // type:8 video:2 image:0
+   {"BQ0eAlwhDrw", 1455920561485265648},
 }
 
 func TestMedia(t *testing.T) {
