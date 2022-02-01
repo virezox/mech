@@ -1,7 +1,5 @@
 # Instagram
 
-## Android client
-
 ~~~
 com.instagram.android
 ~~~
@@ -59,16 +57,3 @@ https://instagram.com/p/CT-cnxGhvvO
 `/embed` API does not return URLs in all cases:
 
 <https://instagram.com/p/CY-Wwq_O6S0/embed>
-
-`__a=1` API is known to send a different response depending on the country. For
-example, the `dfw5` location produces this result:
-
-~~~
-graphql.shortcode_media.display_resources
-~~~
-
-while the `hel3` location produces this result:
-
-~~~
-items[0].carousel_media[0].image_versions2.candidates
-~~~

@@ -3,7 +3,6 @@ package instagram
 import (
    "fmt"
    "testing"
-   "time"
 )
 
 type testType struct {
@@ -25,31 +24,33 @@ var tests = []testType{
 }
 
 func TestMedia(t *testing.T) {
-   for _, test := range tests {
-      items, err := MediaItems(test.id)
+   cache, err := os.UserCacheDir()
+   if err != nil {
+      t.Fatal(err)
+   }
+   login, err := OpenLogin(cache + "/mech/instagram.json")
+   if err != nil {
+      t.Fatal(err)
+   }
+   for _, shortcode := range shortcodes {
+      med, err := login.Media(shortcode)
       if err != nil {
          t.Fatal(err)
       }
-      for _, item := range items {
-         for _, info := range item.Infos() {
-            ver, err := info.Version()
-            if err != nil {
-               t.Fatal(err)
-            }
-            fmt.Println(ver.URL[:99])
-         }
+      fmt.Println(shortcode)
+      for _, addr := range med.URLs() {
+         fmt.Println("-", addr)
       }
       time.Sleep(time.Second)
    }
 }
 
-func TestID(t *testing.T) {
-   for _, test := range tests {
-      id, err := GetID(test.shortcode)
-      if err != nil {
-         t.Fatal(err)
-      }
-      fmt.Println(id)
+func TestWrite(t *testing.T) {
+   login, err := NewLogin("srpen6", password)
+   if err != nil {
+      t.Fatal(err)
+   }
+   if err := login.Create("instagram.json"); err != nil {
+      t.Fatal(err)
    }
 }
-

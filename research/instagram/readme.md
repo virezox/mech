@@ -1,10 +1,62 @@
 # Instagram
 
+Here is last good commit:
+
+https://github.com/89z/mech/tree/6359bc37d669a56a7042a4de8eaa6d133a470407
+
+## Image
+
+Using this post:
+
+~~~
+CZVEugIPkVn
+2762134734241678695
+~~~
+
+here is what we get with `/graphql/query/`:
+
+~~~
+1080 x 1080
+750 x 750
+640 x 640
+~~~
+
+here is what we get with `/api/v1/media/`:
+
+~~~
+1241 x 1241
+1080 x 1080
+750 x 750
+640 x 640
+480 x 480
+320 x 320
+240 x 240
+150 x 150
+~~~
+
+here is what we get with `__a=1`:
+
+~~~
+1241 x 1241
+1080 x 1080
+750 x 750
+640 x 640
+480 x 480
+320 x 320
+240 x 240
+150 x 150
+~~~
+
+## Video
+
 https://github.com/instaloader/instaloader/issues/1022
 
 Using this post:
 
-https://instagram.com/p/CLHoAQpCI2i
+~~~
+CLHoAQpCI2i
+2506147657383710114
+~~~
 
 here is what we get with `/graphql/query/`:
 
@@ -21,13 +73,6 @@ here is what we get with `/api/v1/media/`:
 
 720 x 540
 239 KB
-~~~
-
-here is what we get with Web client:
-
-~~~
-720 x 540
-1.29 MB
 ~~~
 
 here is what we get with `__a=1`:
