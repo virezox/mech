@@ -12,46 +12,41 @@ var logLevel format.LogLevel
 type Info struct {
    Media_Type int
    Image_Versions2 struct {
-      Candidates []Version
+      Candidates []struct {
+         Width int
+         Height int
+         URL string
+      }
    }
-   Video_Versions []Version
+   Video_Versions []struct {
+      Type int
+      Width int
+      Height int
+      URL string
+   }
 }
 
-func (i Info) Version() (*Version, error) {
-   var dst Version
+func (i Info) URL() string {
+   var addr string
    switch i.Media_Type {
    case 1:
-      for _, src := range i.Image_Versions2.Candidates {
-         if src.Height > dst.Height {
-            dst = src
+      var height int
+      for _, can := range i.Image_Versions2.Candidates {
+         if can.Height > height {
+            addr = can.URL
+            height = can.Height
          }
       }
    case 2:
-      done := make(map[string]bool)
-      var length int64
-      for _, src := range i.Video_Versions {
-         if !done[src.URL] {
-            done[src.URL] = true
-            if src.Height > dst.Height {
-               dst = src
-            } else if src.Height == dst.Height {
-               req, err := http.NewRequest("HEAD", src.URL, nil)
-               if err != nil {
-                  return nil, err
-               }
-               logLevel.Dump(req)
-               res, err := new(http.Transport).RoundTrip(req)
-               if err != nil {
-                  return nil, err
-               }
-               if res.ContentLength > length {
-                  dst = src
-               }
-            }
+      for _, ver := range i.Video_Versions {
+         // Type:101 Bitrate:372 kb/s
+         // Type:102 Bitrate:567 kb/s
+         if ver.Type == 102 {
+            addr = ver.URL
          }
       }
    }
-   return &dst, nil
+   return addr
 }
 
 type MediaItem struct {
@@ -94,10 +89,4 @@ func (m MediaItem) Infos() []Info {
       return m.Carousel_Media
    }
    return []Info{m.Info}
-}
-
-type Version struct {
-   Width int
-   Height int
-   URL string
 }

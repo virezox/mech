@@ -7,22 +7,17 @@ import (
    "time"
 )
 
-type testType struct {
-   shortcode string
-   id uint64
-}
-
-var tests = []testType{
+var tests = []string{
    // type:1 video:0 image:1
-   {"CZVEugIPkVn", 2762134734241678695},
+   "CZVEugIPkVn",
    // type:2 video:1 image:0
-   {"CUDJ4YhpF0Z", 2667018861376986393},
+   "CUDJ4YhpF0Z",
    // type:8 video:0 image:6
-   {"CXzGW6RPNmy", 2734557361417804210},
+   "CXzGW6RPNmy",
    // type:8 video:1 image:2
-   {"CUK-1wjqqsP", 2669222102324390671},
+   "CUK-1wjqqsP",
    // type:8 video:3 image:0
-   {"BQ0eAlwhDrw", 1455920561485265648},
+   "BQ0eAlwhDrw",
 }
 
 func TestMedia(t *testing.T) {
