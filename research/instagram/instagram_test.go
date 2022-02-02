@@ -7,16 +7,16 @@ import (
 )
 
 var tests = []string{
-   // type:1 video:0 image:1
+   // image:1 video:0
    "CZVEugIPkVn",
-   // type:2 video:1 image:0
-   "CUDJ4YhpF0Z",
-   // type:8 video:0 image:6
+   // image:6 video:0
    "CXzGW6RPNmy",
-   // type:8 video:1 image:2
-   "CUK-1wjqqsP",
-   // type:8 video:3 image:0
+   // image:0 video:3 DASH:0
    "BQ0eAlwhDrw",
+   // image:2 video:1 DASH:1
+   "CUK-1wjqqsP",
+   // image:0 video:1 DASH:1
+   "CLHoAQpCI2i",
 }
 
 func TestMedia(t *testing.T) {

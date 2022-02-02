@@ -9,46 +9,6 @@ import (
 
 var logLevel format.LogLevel
 
-type Info struct {
-   Media_Type int
-   Image_Versions2 struct {
-      Candidates []struct {
-         Width int
-         Height int
-         URL string
-      }
-   }
-   Video_Versions []struct {
-      Type int
-      Width int
-      Height int
-      URL string
-   }
-}
-
-func (i Info) URL() string {
-   var addr string
-   switch i.Media_Type {
-   case 1:
-      var height int
-      for _, can := range i.Image_Versions2.Candidates {
-         if can.Height > height {
-            addr = can.URL
-            height = can.Height
-         }
-      }
-   case 2:
-      for _, ver := range i.Video_Versions {
-         // Type:101 Bitrate:372 kb/s
-         // Type:102 Bitrate:567 kb/s
-         if ver.Type == 102 {
-            addr = ver.URL
-         }
-      }
-   }
-   return addr
-}
-
 type MediaItem struct {
    Info
    Carousel_Media []Info
@@ -89,4 +49,48 @@ func (m MediaItem) Infos() []Info {
       return m.Carousel_Media
    }
    return []Info{m.Info}
+}
+
+type Info struct {
+   Image_Versions2 struct {
+      Candidates []struct {
+         Width int
+         Height int
+         URL string
+      }
+   }
+   Media_Type int
+   Video_DASH_Manifest string
+   Video_Versions []struct {
+      Type int
+      Width int
+      Height int
+      URL string
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+func (i Info) URL() string {
+   var addr string
+   switch i.Media_Type {
+   case 1:
+      var height int
+      for _, can := range i.Image_Versions2.Candidates {
+         if can.Height > height {
+            addr = can.URL
+            height = can.Height
+         }
+      }
+   case 2:
+      for _, ver := range i.Video_Versions {
+         // Type:101 Bandwidth:211,754
+         // Type:102 Bandwidth:541,145
+         // Type:103 Bandwidth:541,145
+         if ver.Type == 102 {
+            addr = ver.URL
+         }
+      }
+   }
+   return addr
 }

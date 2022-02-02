@@ -1,94 +1,28 @@
 # Instagram
 
-## Video
-
 https://github.com/instaloader/instaloader/issues/1022
 
 Using this post:
 
-~~~
-CLHoAQpCI2i
-2506147657383710114
-~~~
+<https://www.instagram.com/p/CLHoAQpCI2i/?__a=1>
 
-here is what we get with `/graphql/query/`:
+result with `video_dash_manifest`:
 
 ~~~
-720 x 540
-239 KB
+Width:720 Height:540 Bandwidth:1,288,420
+Width:720 Height:540 Bandwidth:541,145
+Width:720 Height:540 Bandwidth:211,754
+Width:490 Height:368 Bandwidth:90,571
 ~~~
 
-here is what we get with `/api/v1/media/`:
+and result with `video_versions`:
 
 ~~~
-720 x 540
-606 KB
-
-720 x 540
-239 KB
+Type:101 Width:720 Height:540 Bandwidth:211,754
+Type:102 Width:720 Height:540 Bandwidth:541,145
+Type:103 Width:720 Height:540 Bandwidth:541,145
 ~~~
 
-here is what we get with `__a=1`:
+XML:
 
-~~~
-720 x 540
-1.29 MB
-
-720 x 540
-606 KB
-
-720 x 540
-557 KB
-
-720 x 540
-239 KB
-
-720 x 540
-217 KB
-
-490 x 368
-93.2 KB
-~~~
-
-## Image
-
-Using this post:
-
-~~~
-CZVEugIPkVn
-2762134734241678695
-~~~
-
-here is what we get with `/graphql/query/`:
-
-~~~
-1080 x 1080
-750 x 750
-640 x 640
-~~~
-
-here is what we get with `/api/v1/media/`:
-
-~~~
-1241 x 1241
-1080 x 1080
-750 x 750
-640 x 640
-480 x 480
-320 x 320
-240 x 240
-150 x 150
-~~~
-
-here is what we get with `__a=1`:
-
-~~~
-1241 x 1241
-1080 x 1080
-750 x 750
-640 x 640
-480 x 480
-320 x 320
-240 x 240
-150 x 150
-~~~
+https://github.com/89z/mech/blob/dd5e2065/reddit/reddit.go

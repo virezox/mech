@@ -54,6 +54,10 @@ https://instagram.com/p/CT-cnxGhvvO
 
 ## Why not use other APIs?
 
+`/api/v1/media/` API get video bandwidth 541,145, but not bandwidth 1,288,420.
+
 `/embed` API does not return URLs in all cases:
 
 <https://instagram.com/p/CY-Wwq_O6S0/embed>
+
+`/graphql/query/` API gets images up to 1080p, but not original quality.
