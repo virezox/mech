@@ -34,6 +34,53 @@ type Info struct {
    }
 }
 
+func (i Info) URLs() ([]string, error) {
+   var addrs []string
+   switch i.Media_Type {
+   case 1:
+      var max int
+      for _, can := range i.Image_Versions2.Candidates {
+         if can.Height > max {
+            addrs = []string{can.URL}
+            max = can.Height
+         }
+      }
+   case 2:
+      if i.Video_DASH_Manifest != "" {
+         var manifest mpd
+         err := xml.Unmarshal([]byte(i.Video_DASH_Manifest), &manifest)
+         if err != nil {
+            return nil, err
+         }
+         for _, ada := range manifest.Period.AdaptationSet {
+            var (
+               addr string
+               max int
+            )
+            for _, rep := range ada.Representation {
+               if rep.Bandwidth > max {
+                  max = rep.Bandwidth
+                  addr = rep.BaseURL
+               }
+            }
+            addrs = append(addrs, addr)
+         }
+      } else {
+         // Type:101 Bandwidth:211,754
+         // Type:102 Bandwidth:541,145
+         // Type:103 Bandwidth:541,145
+         var max int
+         for _, ver := range i.Video_Versions {
+            if ver.Type > max {
+               addrs = []string{ver.URL}
+               max = ver.Type
+            }
+         }
+      }
+   }
+   return addrs, nil
+}
+
 type MediaItem struct {
    Info
    Carousel_Media []Info
@@ -43,6 +90,28 @@ type MediaItem struct {
 // Anonymous request
 func MediaItems(shortcode string) ([]MediaItem, error) {
    return Login{}.MediaItems(shortcode)
+}
+
+func (m MediaItem) Format() (string, error) {
+   buf := []byte("Like_Count: ")
+   buf = strconv.AppendInt(buf, m.Like_Count, 10)
+   buf = append(buf, "\nURLs: "...)
+   for i, info := range m.Infos() {
+      addrs, err := info.URLs()
+      if err != nil {
+         return "", err
+      }
+      if i >= 1 {
+         buf = append(buf, "\n---\n"...)
+      }
+      for j, addr := range addrs {
+         if j >= 1 {
+            buf = append(buf, "\n---\n"...)
+         }
+         buf = append(buf, addr...)
+      }
+   }
+   return string(buf), nil
 }
 
 func (m MediaItem) Infos() []Info {
@@ -89,11 +158,9 @@ func (u UserAgent) String() string {
    return string(buf)
 }
 
-////////////////////////////////////////////////////////////////////////////////
-
 type mpd struct {
    Period struct {
-      AdaptationSet struct {
+      AdaptationSet []struct {
          Representation []struct {
             Width int `xml:"width,attr"`
             Height int `xml:"height,attr"`
@@ -102,60 +169,4 @@ type mpd struct {
          }
       }
    }
-}
-
-func (i Info) URL() (string, error) {
-   var (
-      addr string
-      max int
-   )
-   switch {
-   case i.Media_Type == 1:
-      for _, can := range i.Image_Versions2.Candidates {
-         if can.Height > max {
-            addr = can.URL
-            max = can.Height
-         }
-      }
-   case i.Video_DASH_Manifest != "":
-      var manifest mpd
-      err := xml.Unmarshal([]byte(i.Video_DASH_Manifest), &manifest)
-      if err != nil {
-         return "", err
-      }
-      for _, rep := range manifest.Period.AdaptationSet.Representation {
-         if rep.Bandwidth > max {
-            addr = rep.BaseURL
-            max = rep.Bandwidth
-         }
-      }
-   case i.Media_Type == 2:
-      // Type:101 Bandwidth:211,754
-      // Type:102 Bandwidth:541,145
-      // Type:103 Bandwidth:541,145
-      for _, ver := range i.Video_Versions {
-         if ver.Type > max {
-            addr = ver.URL
-            max = ver.Type
-         }
-      }
-   }
-   return addr, nil
-}
-
-func (m MediaItem) Format() (string, error) {
-   buf := []byte("Like_Count: ")
-   buf = strconv.AppendInt(buf, m.Like_Count, 10)
-   buf = append(buf, "\nURLs: "...)
-   for i, info := range m.Infos() {
-      addr, err := info.URL()
-      if err != nil {
-         return "", err
-      }
-      if i >= 1 {
-         buf = append(buf, "\n---\n"...)
-      }
-      buf = append(buf, addr...)
-   }
-   return string(buf), nil
 }

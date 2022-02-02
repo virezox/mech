@@ -1,31 +1,18 @@
 # Instagram
 
-One image:
-
 ~~~
-go run . -i CZVEugIPkVn
-~~~
+// image:0 video:1 DASH:1
+{"CLHoAQpCI2i", []string{
 
-One video:
+// image:1 video:0
+{"CZVEugIPkVn", []string{
 
-~~~
-go run . -i CUDJ4YhpF0Z
-~~~
+// image:2 video:0
+{"CZAUQ_OvWZC", []string{
 
-Six image:
+// image:0 video:3 DASH:0
+{"BQ0eAlwhDrw", []string{
 
-~~~
-go run . -i CXzGW6RPNmy
-~~~
-
-Two image and one video:
-
-~~~
-go run . -i CUK-1wjqqsP
-~~~
-
-Three video:
-
-~~~
-go run . -i BQ0eAlwhDrw
+// image:2 video:1 DASH:1
+{"CUK-1wjqqsP", []string{
 ~~~

@@ -49,14 +49,17 @@ func main() {
             fmt.Println(form)
          } else {
             for _, info := range item.Infos() {
-               addr, err := info.URL()
+               addrs, err := info.URLs()
                if err != nil {
                   panic(err)
                }
-               if err := download(addr); err != nil {
-                  panic(err)
+               for _, addr := range addrs {
+                  err := download(addr)
+                  if err != nil {
+                     panic(err)
+                  }
+                  time.Sleep(99 * time.Millisecond)
                }
-               time.Sleep(99 * time.Millisecond)
             }
          }
       }
