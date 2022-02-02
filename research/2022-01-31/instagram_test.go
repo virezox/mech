@@ -8,13 +8,13 @@ import (
 
 var tests = []string{
    // image:1 video:0
-   "CZVEugIPkVn",
+   //"CZVEugIPkVn",
    // image:6 video:0
-   "CXzGW6RPNmy",
+   //"CXzGW6RPNmy",
    // image:0 video:3 DASH:0
-   "BQ0eAlwhDrw",
+   //"BQ0eAlwhDrw",
    // image:2 video:1 DASH:1
-   "CUK-1wjqqsP",
+   //"CUK-1wjqqsP",
    // image:0 video:1 DASH:1
    "CLHoAQpCI2i",
 }
@@ -33,7 +33,11 @@ func TestMedia(t *testing.T) {
             if i >= 1 {
                fmt.Println("---")
             }
-            fmt.Printf("%q\n", info.URL())
+            addr, err := info.URL()
+            if err != nil {
+               t.Fatal(err)
+            }
+            fmt.Printf("%q\n", addr)
          }
       }
       time.Sleep(time.Second)
