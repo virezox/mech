@@ -5,8 +5,53 @@ import (
    "net/http/httputil"
    "net/url"
    "os"
-   "strings"
+   "strconv"
 )
+
+var Android = UserAgent{
+   API: 99,
+   Brand: "!",
+   Device: "!",
+   Instagram: "195.0.0.31.123",
+   Model: "sdk",
+   Platform: "!",
+   Release: 9,
+   Resolution: "9x9",
+}
+
+type UserAgent struct {
+   API int64
+   Brand string
+   Density int64
+   Device string
+   Instagram string
+   Model string
+   Platform string
+   Release int64
+   Resolution string
+}
+
+func (u UserAgent) String() string {
+   buf := []byte("Instagram ")
+   buf = append(buf, u.Instagram...)
+   buf = append(buf, " Android ("...)
+   buf = strconv.AppendInt(buf, u.API, 10)
+   buf = append(buf, '/')
+   buf = strconv.AppendInt(buf, u.Release, 10)
+   buf = append(buf, "; "...)
+   buf = strconv.AppendInt(buf, u.Density, 10)
+   buf = append(buf, "; "...)
+   buf = append(buf, u.Resolution...)
+   buf = append(buf, "; "...)
+   buf = append(buf, u.Brand...)
+   buf = append(buf, "; "...)
+   buf = append(buf, u.Model...)
+   buf = append(buf, "; "...)
+   buf = append(buf, u.Device...)
+   buf = append(buf, "; "...)
+   buf = append(buf, u.Platform...)
+   return string(buf)
+}
 
 func main() {
    var req http.Request
@@ -15,19 +60,9 @@ func main() {
    req.URL.Host = "i.instagram.com"
    req.URL.Path = "/api/v1/media/2506147657383710114/info/"
    req.URL.Scheme = "https"
-   req.Header["Authorization"] = []string{"Bearer " + bearer}
-   req.Header["User-Agent"] = []string{
-      "Instagram 219.0.0.12.117 Android (" +
-      strings.Join([]string{
-         "24/7.0", // keep
-         "420dpi", // keep
-         "1080x1794", // keep
-         "Google/google", // keep
-         "Android SDK built for x86", // keep
-         "generic_x86", // keep
-         "ranchu", // keep
-      }, "; ") +
-      ")",
+   req.Header = http.Header{
+      "Authorization": {"Bearer " + bearer},
+      "User-Agent": {Android.String()},
    }
    res, err := new(http.Transport).RoundTrip(&req)
    if err != nil {

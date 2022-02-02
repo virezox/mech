@@ -30,11 +30,11 @@ func TestMedia(t *testing.T) {
       t.Fatal(err)
    }
    for _, test := range tests {
-      med, err := login.Media(test.shortcode)
+      med, err := login.Media(test)
       if err != nil {
          t.Fatal(err)
       }
-      fmt.Println(test.shortcode)
+      fmt.Println(test)
       for _, addr := range med.URLs() {
          fmt.Println("-", addr)
       }
