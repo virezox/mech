@@ -8,13 +8,13 @@ import (
 
 var tests = []string{
    // image:1 video:0
-   //"CZVEugIPkVn",
+   "CZVEugIPkVn",
    // image:6 video:0
-   //"CXzGW6RPNmy",
+   "CXzGW6RPNmy",
    // image:0 video:3 DASH:0
-   //"BQ0eAlwhDrw",
+   "BQ0eAlwhDrw",
    // image:2 video:1 DASH:1
-   //"CUK-1wjqqsP",
+   "CUK-1wjqqsP",
    // image:0 video:1 DASH:1
    "CLHoAQpCI2i",
 }

@@ -54,7 +54,7 @@ https://instagram.com/p/CT-cnxGhvvO
 
 ## Why not use other APIs?
 
-`/api/v1/media/` API get video bandwidth 541,145, but not bandwidth 1,288,420.
+`/api/v1/media/` uses ID instead of shortcode.
 
 `/embed` API does not return URLs in all cases:
 
