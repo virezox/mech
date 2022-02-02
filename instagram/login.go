@@ -85,7 +85,6 @@ func (l Login) Create(name string) error {
    return enc.Encode(l)
 }
 
-
 // Request with Authorization
 func (l Login) MediaItems(shortcode string) ([]MediaItem, error) {
    var str strings.Builder

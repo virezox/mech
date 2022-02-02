@@ -1,23 +1,43 @@
 package instagram
 
 import (
-   "fmt"
+   "net/url"
    "os"
    "testing"
    "time"
 )
 
-var tests = []string{
+type testType struct {
+   shortcode string
+   paths []string
+}
+
+var tests = []testType{
    // image:1 video:0
-   "CZVEugIPkVn",
-   // image:6 video:0
-   //"CXzGW6RPNmy",
-   // image:0 video:3 DASH:0
-   //"BQ0eAlwhDrw",
-   // image:2 video:1 DASH:1
-   //"CUK-1wjqqsP",
+   {"CZVEugIPkVn", []string{
+      "/v/t51.2885-15/e35/272868603_955434698415740_8419357209460643893_n.jpg",
+   }},
    // image:0 video:1 DASH:1
-   //"CLHoAQpCI2i",
+   {"CLHoAQpCI2i", []string{
+      "/v/t50.2886-16/147443688_171418268077432_595353563536612094_n.mp4",
+   }},
+   // image:0 video:3 DASH:0
+   {"BQ0eAlwhDrw", []string{
+      "/v/t50.2886-16/16936668_174021943097999_6018573358768062464_n.mp4",
+      "/v/t50.2886-16/16914924_575567635981228_3911260849125195776_n.mp4",
+      "/v/t50.2886-16/16812535_590210974523279_620796230821216256_n.mp4",
+   }},
+   // image:2 video:1 DASH:1
+   {"CUK-1wjqqsP", []string{
+      "/v/t51.2885-15/e35/242545662_1278053282609020_5170310197887813120_n.jpg",
+      "/v/t50.2886-16/242908146_4508662539195308_3750958489654012960_n.mp4",
+      "/v/t51.2885-15/e35/242495948_255838523113734_4044316450944265352_n.jpg",
+   }},
+   // image:2 video:0
+   {"CZAUQ_OvWZC", []string{
+      "/v/t51.2885-15/e35/272178059_418057813408942_8652558621028999033_n.jpg",
+      "/v/t51.2885-15/e35/272193572_305510171620132_8506371495778119983_n.jpg",
+   }},
 }
 
 func TestMedia(t *testing.T) {
@@ -29,24 +49,24 @@ func TestMedia(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   for i, test := range tests {
-      if i >= 1 {
-         fmt.Println("---")
-      }
-      items, err := login.MediaItems(test)
+   for _, test := range tests {
+      items, err := login.MediaItems(test.shortcode)
       if err != nil {
          t.Fatal(err)
       }
       for _, item := range items {
          for i, info := range item.Infos() {
-            if i >= 1 {
-               fmt.Println("---")
-            }
-            addr, err := info.URL()
+            address, err := info.URL()
             if err != nil {
                t.Fatal(err)
             }
-            fmt.Printf("%q\n", addr)
+            addr, err := url.Parse(address)
+            if err != nil {
+               t.Fatal(err)
+            }
+            if addr.Path != test.paths[i] {
+               t.Fatalf("%q\n", addr.Path)
+            }
          }
       }
       time.Sleep(time.Second)
