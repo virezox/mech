@@ -2,6 +2,7 @@ package instagram
 
 import (
    "fmt"
+   "os"
    "testing"
    "time"
 )
@@ -19,12 +20,20 @@ var tests = []string{
    "CLHoAQpCI2i",
 }
 
-func TestMedia(t *testing.T) {
+func TestMediaItems(t *testing.T) {
+   cache, err := os.UserCacheDir()
+   if err != nil {
+      t.Fatal(err)
+   }
+   login, err := OpenLogin(cache + "/mech/instagram.json")
+   if err != nil {
+      t.Fatal(err)
+   }
    for i, test := range tests {
       if i >= 1 {
          fmt.Println("---")
       }
-      items, err := MediaItems(test)
+      items, err := login.MediaItems(test)
       if err != nil {
          t.Fatal(err)
       }

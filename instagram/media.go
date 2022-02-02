@@ -1,12 +1,8 @@
 package instagram
 
 import (
-   "encoding/json"
    "encoding/xml"
-   "github.com/89z/format"
-   "net/http"
    "strconv"
-   "strings"
 )
 
 var Android = UserAgent{
@@ -19,8 +15,6 @@ var Android = UserAgent{
    Release: 9,
    Resolution: "9x9",
 }
-
-var logLevel format.LogLevel
 
 type Info struct {
    Image_Versions2 struct {
@@ -85,33 +79,26 @@ type MediaItem struct {
    Like_Count int64
 }
 
+// Anonymous request
 func MediaItems(shortcode string) ([]MediaItem, error) {
-   var str strings.Builder
-   str.WriteString("https://www.instagram.com/p/")
-   str.WriteString(shortcode)
-   str.WriteByte('/')
-   req, err := http.NewRequest("GET", str.String(), nil)
-   if err != nil {
-      return nil, err
+   return Login{}.MediaItems(shortcode)
+}
+
+func (m MediaItem) Format() (string, error) {
+   buf := []byte("Like_Count: ")
+   buf = strconv.AppendInt(buf, m.Like_Count, 10)
+   buf = append(buf, "\nURLs: "...)
+   for i, info := range m.Infos() {
+      addr, err := info.URL()
+      if err != nil {
+         return "", err
+      }
+      if i >= 1 {
+         buf = append(buf, "\n---\n"...)
+      }
+      buf = append(buf, addr...)
    }
-   req.Header = http.Header{
-      "Authorization": {auth},
-      "User-Agent": {Android.String()},
-   }
-   req.URL.RawQuery = "__a=1"
-   logLevel.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   var info struct {
-      Items []MediaItem
-   }
-   if err := json.NewDecoder(res.Body).Decode(&info); err != nil {
-      return nil, err
-   }
-   return info.Items, nil
+   return string(buf), nil
 }
 
 func (m MediaItem) Infos() []Info {
