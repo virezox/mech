@@ -6,10 +6,26 @@ import (
    "net/http"
    "net/url"
    "os"
-   "path"
+   "path/filepath"
 )
 
-func newMedia(shortcode string, auth bool) (*instagram.Media, error) {
+func login(username, password string) error {
+   login, err := instagram.NewLogin(username, password)
+   if err != nil {
+      return err
+   }
+   cache, err := os.UserCacheDir()
+   if err != nil {
+      return err
+   }
+   cache = filepath.Join(cache, "mech")
+   os.Mkdir(cache, os.ModePerm)
+   cache = filepath.Join(cache, "instagram.json")
+   fmt.Println("Create", cache)
+   return login.Create(cache)
+}
+
+func mediaItems(shortcode string, auth bool) ([]instagram.MediaItem, error) {
    if auth {
       cache, err := os.UserCacheDir()
       if err != nil {
@@ -19,9 +35,9 @@ func newMedia(shortcode string, auth bool) (*instagram.Media, error) {
       if err != nil {
          return nil, err
       }
-      return log.Media(shortcode)
+      return log.MediaItems(shortcode)
    }
-   return instagram.NewMedia(shortcode)
+   return instagram.MediaItems(shortcode)
 }
 
 func download(address string) error {
@@ -35,7 +51,7 @@ func download(address string) error {
    if err != nil {
       return err
    }
-   file, err := os.Create(path.Base(addr.Path))
+   file, err := os.Create(filepath.Base(addr.Path))
    if err != nil {
       return err
    }

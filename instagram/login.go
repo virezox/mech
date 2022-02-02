@@ -85,6 +85,7 @@ func (l Login) Create(name string) error {
    return enc.Encode(l)
 }
 
+
 // Request with Authorization
 func (l Login) MediaItems(shortcode string) ([]MediaItem, error) {
    var str strings.Builder
@@ -106,6 +107,9 @@ func (l Login) MediaItems(shortcode string) ([]MediaItem, error) {
       return nil, err
    }
    defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return nil, errorString(res.Status)
+   }
    var info struct {
       Items []MediaItem
    }
@@ -113,4 +117,10 @@ func (l Login) MediaItems(shortcode string) ([]MediaItem, error) {
       return nil, err
    }
    return info.Items, nil
+}
+
+type errorString string
+
+func (e errorString) Error() string {
+   return string(e)
 }

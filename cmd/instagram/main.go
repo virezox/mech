@@ -27,15 +27,8 @@ func main() {
       fmt.Println("instagram [flags] [shortcode]")
       flag.PrintDefaults()
    case username != "":
-      login, err := instagram.NewLogin(username, password)
+      err := login(username, password)
       if err != nil {
-         panic(err)
-      }
-      cache, err := os.UserCacheDir()
-      if err != nil {
-         panic(err)
-      }
-      if err := login.Create(cache + "/mech/instagram.json"); err != nil {
          panic(err)
       }
    default:
@@ -43,19 +36,28 @@ func main() {
       if !instagram.Valid(shortcode) {
          panic("invalid shortcode")
       }
-      med, err := newMedia(shortcode, auth)
+      items, err := mediaItems(shortcode, auth)
       if err != nil {
          panic(err)
       }
-      if info {
-         fmt.Println(med)
-      } else {
-         for _, addr := range med.URLs() {
-            err := download(addr)
+      for _, item := range items {
+         if info {
+            form, err := item.Format()
             if err != nil {
                panic(err)
             }
-            time.Sleep(99 * time.Millisecond)
+            fmt.Println(form)
+         } else {
+            for _, info := range item.Infos() {
+               addr, err := info.URL()
+               if err != nil {
+                  panic(err)
+               }
+               if err := download(addr); err != nil {
+                  panic(err)
+               }
+               time.Sleep(99 * time.Millisecond)
+            }
          }
       }
    }
