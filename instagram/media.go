@@ -5,17 +5,6 @@ import (
    "strconv"
 )
 
-var Android = UserAgent{
-   API: 99,
-   Brand: "brand",
-   Device: "device",
-   Instagram: "195.0.0.31.123",
-   Model: "model",
-   Platform: "platform",
-   Release: 9,
-   Resolution: "9999x9999",
-}
-
 type Info struct {
    Image_Versions2 struct {
       Candidates []struct {
@@ -59,8 +48,8 @@ func (i Info) URLs() ([]string, error) {
             )
             for _, rep := range ada.Representation {
                if rep.Bandwidth > max {
-                  max = rep.Bandwidth
                   addr = rep.BaseURL
+                  max = rep.Bandwidth
                }
             }
             addrs = append(addrs, addr)
@@ -127,13 +116,25 @@ func (m MediaItem) Infos() []Info {
 type UserAgent struct {
    API int64
    Brand string
-   Density int64
+   Density string
    Device string
    Instagram string
    Model string
    Platform string
    Release int64
    Resolution string
+}
+
+var Android = UserAgent{
+   API: 99,
+   Brand: "brand",
+   Density: "density",
+   Device: "device",
+   Instagram: "220.0.0.16.115",
+   Model: "model",
+   Platform: "platform",
+   Release: 9,
+   Resolution: "9999x9999",
 }
 
 func (u UserAgent) String() string {
@@ -144,7 +145,7 @@ func (u UserAgent) String() string {
    buf = append(buf, '/')
    buf = strconv.AppendInt(buf, u.Release, 10)
    buf = append(buf, "; "...)
-   buf = strconv.AppendInt(buf, u.Density, 10)
+   buf = append(buf, u.Density...)
    buf = append(buf, "; "...)
    buf = append(buf, u.Resolution...)
    buf = append(buf, "; "...)

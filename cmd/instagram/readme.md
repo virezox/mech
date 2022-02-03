@@ -1,18 +1,31 @@
 # Instagram
 
+One image:
+
 ~~~
-// image:0 video:1 DASH:1
-{"CLHoAQpCI2i", []string{
+instagram CZVEugIPkVn
+~~~
 
-// image:1 video:0
-{"CZVEugIPkVn", []string{
+One video:
 
-// image:2 video:0
-{"CZAUQ_OvWZC", []string{
+~~~
+instagram CLHoAQpCI2i
+~~~
 
-// image:0 video:3 DASH:0
-{"BQ0eAlwhDrw", []string{
+Two image:
 
-// image:2 video:1 DASH:1
-{"CUK-1wjqqsP", []string{
+~~~
+instagram CZAUQ_OvWZC
+~~~
+
+Three video:
+
+~~~
+instagram BQ0eAlwhDrw
+~~~
+
+Two image, one video:
+
+~~~
+instagram CUK-1wjqqsP
 ~~~
