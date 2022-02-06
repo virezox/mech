@@ -10,10 +10,9 @@ import (
 
 func main() {
    var (
-      auth, info, verbose bool
+      info, verbose bool
       username, password string
    )
-   flag.BoolVar(&auth, "a", false, "use authentication")
    flag.BoolVar(&info, "i", false, "info only")
    flag.StringVar(&password, "p", "", "password")
    flag.StringVar(&username, "u", "", "username")
@@ -27,7 +26,7 @@ func main() {
       fmt.Println("instagram [flags] [shortcode]")
       flag.PrintDefaults()
    case username != "":
-      err := login(username, password)
+      err := saveLogin(username, password)
       if err != nil {
          panic(err)
       }
@@ -36,7 +35,15 @@ func main() {
       if !instagram.Valid(shortcode) {
          panic("invalid shortcode")
       }
-      items, err := mediaItems(shortcode, auth)
+      cache, err := os.UserCacheDir()
+      if err != nil {
+         panic(err)
+      }
+      login, err := instagram.OpenLogin(cache + "/mech/instagram.json")
+      if err != nil {
+         panic(err)
+      }
+      items, err := login.MediaItems(shortcode)
       if err != nil {
          panic(err)
       }

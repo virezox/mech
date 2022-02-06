@@ -9,7 +9,7 @@ import (
    "path/filepath"
 )
 
-func login(username, password string) error {
+func saveLogin(username, password string) error {
    login, err := instagram.NewLogin(username, password)
    if err != nil {
       return err
@@ -23,21 +23,6 @@ func login(username, password string) error {
    cache = filepath.Join(cache, "instagram.json")
    fmt.Println("Create", cache)
    return login.Create(cache)
-}
-
-func mediaItems(shortcode string, auth bool) ([]instagram.MediaItem, error) {
-   if auth {
-      cache, err := os.UserCacheDir()
-      if err != nil {
-         return nil, err
-      }
-      log, err := instagram.OpenLogin(cache + "/mech/instagram.json")
-      if err != nil {
-         return nil, err
-      }
-      return log.MediaItems(shortcode)
-   }
-   return instagram.MediaItems(shortcode)
 }
 
 func download(address string) error {
