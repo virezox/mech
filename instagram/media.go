@@ -76,11 +76,6 @@ type MediaItem struct {
    Like_Count int64
 }
 
-// Anonymous request
-func MediaItems(shortcode string) ([]MediaItem, error) {
-   return Login{}.MediaItems(shortcode)
-}
-
 func (m MediaItem) Format() (string, error) {
    buf := []byte("Like_Count: ")
    buf = strconv.AppendInt(buf, m.Like_Count, 10)

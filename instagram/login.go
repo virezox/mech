@@ -85,7 +85,10 @@ func (l Login) Create(name string) error {
    return enc.Encode(l)
 }
 
-// Request with Authorization
+// It seems as of 2022-02-06, that all Instagram API require Authentication, and
+// that no endpoints allow for anonymous access, even public HTML pages. If I am
+// wrong about that, I will be happy to hear it, but for now I am giving up on
+// anonymous access.
 func (l Login) MediaItems(shortcode string) ([]MediaItem, error) {
    var str strings.Builder
    str.WriteString("https://www.instagram.com/p/")
@@ -95,9 +98,9 @@ func (l Login) MediaItems(shortcode string) ([]MediaItem, error) {
    if err != nil {
       return nil, err
    }
-   req.Header.Set("User-Agent", Android.String())
-   if l.Authorization != "" {
-      req.Header.Set("Authorization", l.Authorization)
+   req.Header = http.Header{
+      "Authorization": {l.Authorization},
+      "User-Agent": {Android.String()},
    }
    req.URL.RawQuery = "__a=1"
    LogLevel.Dump(req)
