@@ -29,13 +29,6 @@ func Parse(id string) (uint64, error) {
    return strconv.ParseUint(id, 10, 64)
 }
 
-func generateHash(text string, key []byte) string {
-   mac := hmac.New(sha256.New, key)
-   io.WriteString(mac, text)
-   sum := mac.Sum(nil)
-   return hex.EncodeToString(sum)
-}
-
 type AccessVOD struct {
    ManifestPath string // this is only valid for one minute
 }
@@ -59,12 +52,12 @@ func NewAccessVOD(guid uint64) (*AccessVOD, error) {
       return nil, err
    }
    unix := strconv.FormatInt(time.Now().UnixMilli(), 10)
-   var auth strings.Builder
+   auth := new(strings.Builder)
    auth.WriteString("NBC-Security key=android_nbcuniversal,version=2.4")
    auth.WriteString(",time=")
    auth.WriteString(unix)
    auth.WriteString(",hash=")
-   auth.WriteString(generateHash(unix, secretKey))
+   writeHash(auth, unix, secretKey)
    req.Header = http.Header{
       "Authorization": {auth.String()},
       "Content-Type": {"application/json"},
@@ -80,6 +73,12 @@ func NewAccessVOD(guid uint64) (*AccessVOD, error) {
       return nil, err
    }
    return vod, nil
+}
+
+func writeHash(dst io.Writer, text string, key []byte) {
+   mac := hmac.New(sha256.New, key)
+   io.WriteString(mac, text)
+   hex.NewEncoder(dst).Write(mac.Sum(nil))
 }
 
 type Video struct {

@@ -10,6 +10,12 @@ import (
 
 // Videos can support both AdaptiveFormats and DASH: zgJT91LA9gA
 func (c choice) adaptiveFormats(play *youtube.Player) error {
+   if !play.OK() {
+      fmt.Println(play.PlayabilityStatus)
+   }
+   if c.info {
+      fmt.Println(play.VideoDetails)
+   }
    if len(c.itags) == 0 {
       c.itags = map[string]bool{
          "247": true, // youtube.com/watch?v=Leq8J0E2TQ0
@@ -17,13 +23,9 @@ func (c choice) adaptiveFormats(play *youtube.Player) error {
          "302": true, // youtube.com/watch?v=kVNl1P9StSU
       }
    }
-   for i, form := range play.StreamingData.AdaptiveFormats {
+   for _, form := range play.StreamingData.AdaptiveFormats {
       switch {
       case c.info:
-         if i == 0 {
-            fmt.Println(play.PlayabilityStatus)
-            fmt.Println(play.VideoDetails)
-         }
          fmt.Println(form)
       case c.itags[fmt.Sprint(form.Itag)]:
          name, err := filename(play, form)

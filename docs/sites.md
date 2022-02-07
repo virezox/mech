@@ -50,10 +50,6 @@ https://play.google.com/store/apps/details?id=deezer.android.app
 - https://iheart.com/artist/the-black-dog-171111/albums/peel-session-48124450
 - https://play.google.com/store/apps/details?id=com.clearchannel.iheartradio.controller
 
-## Instagram
-
-https://play.google.com/store/apps/details?id=com.instagram.android
-
 ## Napster Music
 
 https://play.google.com/store/apps/details?id=com.rhapsody
