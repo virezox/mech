@@ -74,10 +74,6 @@ func (l Login) Create(name string) error {
    return enc.Encode(l)
 }
 
-// It seems as of 2022-02-06, that all Instagram API require Authentication, and
-// that no endpoints allow for anonymous access, even public HTML pages. If I am
-// wrong about that, I will be happy to hear it, but for now I am giving up on
-// anonymous access.
 func (l Login) MediaItems(shortcode string) ([]MediaItem, error) {
    var str strings.Builder
    str.WriteString("https://www.instagram.com/p/")
@@ -240,13 +236,10 @@ type mpd struct {
 type MediaItem struct {
    Info
    Carousel_Media []Info
-   Like_Count int64
 }
 
 func (m MediaItem) Format() (string, error) {
-   buf := []byte("Like_Count: ")
-   buf = strconv.AppendInt(buf, m.Like_Count, 10)
-   buf = append(buf, "\nURLs: "...)
+   var buf []byte
    for i, info := range m.Infos() {
       addrs, err := info.URLs()
       if err != nil {
