@@ -11,6 +11,38 @@ import (
    "strings"
 )
 
+type Item struct {
+   Media
+   Carousel_Media []Media
+}
+
+func (i Item) Format() (string, error) {
+   var buf []byte
+   for j, med := range i.Medias() {
+      addrs, err := med.URLs()
+      if err != nil {
+         return "", err
+      }
+      if j >= 1 {
+         buf = append(buf, "\n---\n"...)
+      }
+      for k, addr := range addrs {
+         if k >= 1 {
+            buf = append(buf, "\n---\n"...)
+         }
+         buf = append(buf, addr...)
+      }
+   }
+   return string(buf), nil
+}
+
+func (i Item) Medias() []Media {
+   if i.Media_Type == 8 {
+      return i.Carousel_Media
+   }
+   return []Media{i.Media}
+}
+
 type Login struct {
    Authorization string
 }
@@ -74,7 +106,7 @@ func (l Login) Create(name string) error {
    return enc.Encode(l)
 }
 
-func (l Login) MediaItems(shortcode string) ([]MediaItem, error) {
+func (l Login) Items(shortcode string) ([]Item, error) {
    var str strings.Builder
    str.WriteString("https://www.instagram.com/p/")
    str.WriteString(shortcode)
@@ -97,13 +129,78 @@ func (l Login) MediaItems(shortcode string) ([]MediaItem, error) {
    if res.StatusCode != http.StatusOK {
       return nil, errorString(res.Status)
    }
-   var info struct {
-      Items []MediaItem
+   var post struct {
+      Items []Item
    }
-   if err := json.NewDecoder(res.Body).Decode(&info); err != nil {
+   if err := json.NewDecoder(res.Body).Decode(&post); err != nil {
       return nil, err
    }
-   return info.Items, nil
+   return post.Items, nil
+}
+
+type Media struct {
+   Image_Versions2 struct {
+      Candidates []struct {
+         Width int
+         Height int
+         URL string
+      }
+   }
+   Media_Type int
+   Video_DASH_Manifest string
+   Video_Versions []struct {
+      Type int
+      Width int
+      Height int
+      URL string
+   }
+}
+
+func (m Media) URLs() ([]string, error) {
+   var addrs []string
+   switch m.Media_Type {
+   case 1:
+      var max int
+      for _, can := range m.Image_Versions2.Candidates {
+         if can.Height > max {
+            addrs = []string{can.URL}
+            max = can.Height
+         }
+      }
+   case 2:
+      if m.Video_DASH_Manifest != "" {
+         var manifest mpd
+         err := xml.Unmarshal([]byte(m.Video_DASH_Manifest), &manifest)
+         if err != nil {
+            return nil, err
+         }
+         for _, ada := range manifest.Period.AdaptationSet {
+            var (
+               addr string
+               max int
+            )
+            for _, rep := range ada.Representation {
+               if rep.Bandwidth > max {
+                  addr = rep.BaseURL
+                  max = rep.Bandwidth
+               }
+            }
+            addrs = append(addrs, addr)
+         }
+      } else {
+         // Type:101 Bandwidth:211,754
+         // Type:102 Bandwidth:541,145
+         // Type:103 Bandwidth:541,145
+         var max int
+         for _, ver := range m.Video_Versions {
+            if ver.Type > max {
+               addrs = []string{ver.URL}
+               max = ver.Type
+            }
+         }
+      }
+   }
+   return addrs, nil
 }
 
 // I noticed that even with the posts that have `video_dash_manifest`, you have
@@ -155,71 +252,6 @@ func (u UserAgent) String() string {
    return string(buf)
 }
 
-type Info struct {
-   Image_Versions2 struct {
-      Candidates []struct {
-         Width int
-         Height int
-         URL string
-      }
-   }
-   Media_Type int
-   Video_DASH_Manifest string
-   Video_Versions []struct {
-      Type int
-      Width int
-      Height int
-      URL string
-   }
-}
-
-func (i Info) URLs() ([]string, error) {
-   var addrs []string
-   switch i.Media_Type {
-   case 1:
-      var max int
-      for _, can := range i.Image_Versions2.Candidates {
-         if can.Height > max {
-            addrs = []string{can.URL}
-            max = can.Height
-         }
-      }
-   case 2:
-      if i.Video_DASH_Manifest != "" {
-         var manifest mpd
-         err := xml.Unmarshal([]byte(i.Video_DASH_Manifest), &manifest)
-         if err != nil {
-            return nil, err
-         }
-         for _, ada := range manifest.Period.AdaptationSet {
-            var (
-               addr string
-               max int
-            )
-            for _, rep := range ada.Representation {
-               if rep.Bandwidth > max {
-                  addr = rep.BaseURL
-                  max = rep.Bandwidth
-               }
-            }
-            addrs = append(addrs, addr)
-         }
-      } else {
-         // Type:101 Bandwidth:211,754
-         // Type:102 Bandwidth:541,145
-         // Type:103 Bandwidth:541,145
-         var max int
-         for _, ver := range i.Video_Versions {
-            if ver.Type > max {
-               addrs = []string{ver.URL}
-               max = ver.Type
-            }
-         }
-      }
-   }
-   return addrs, nil
-}
-
 type mpd struct {
    Period struct {
       AdaptationSet []struct {
@@ -231,36 +263,4 @@ type mpd struct {
          }
       }
    }
-}
-
-type MediaItem struct {
-   Info
-   Carousel_Media []Info
-}
-
-func (m MediaItem) Format() (string, error) {
-   var buf []byte
-   for i, info := range m.Infos() {
-      addrs, err := info.URLs()
-      if err != nil {
-         return "", err
-      }
-      if i >= 1 {
-         buf = append(buf, "\n---\n"...)
-      }
-      for j, addr := range addrs {
-         if j >= 1 {
-            buf = append(buf, "\n---\n"...)
-         }
-         buf = append(buf, addr...)
-      }
-   }
-   return string(buf), nil
-}
-
-func (m MediaItem) Infos() []Info {
-   if m.Media_Type == 8 {
-      return m.Carousel_Media
-   }
-   return []Info{m.Info}
 }

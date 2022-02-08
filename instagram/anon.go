@@ -19,7 +19,7 @@ func Valid(shortcode string) bool {
    return false
 }
 
-type Media struct {
+type GraphMedia struct {
    Display_URL string
    Video_URL string
    Edge_Sidecar_To_Children struct {
@@ -33,7 +33,7 @@ type Media struct {
 }
 
 // Anonymous request
-func NewMedia(shortcode string) (*Media, error) {
+func NewMedia(shortcode string) (*GraphMedia, error) {
    var addr strings.Builder
    addr.WriteString("https://www.instagram.com/p/")
    addr.WriteString(shortcode)
@@ -55,7 +55,7 @@ func NewMedia(shortcode string) (*Media, error) {
    }
    var post struct {
       GraphQL struct {
-         Shortcode_Media Media
+         Shortcode_Media GraphMedia
       }
    }
    if err := json.NewDecoder(res.Body).Decode(&post); err != nil {
@@ -64,9 +64,9 @@ func NewMedia(shortcode string) (*Media, error) {
    return &post.GraphQL.Shortcode_Media, nil
 }
 
-func (m Media) String() string {
+func (g GraphMedia) String() string {
    var buf []byte
-   for i, addr := range m.URLs() {
+   for i, addr := range g.URLs() {
       if i >= 1 {
          buf = append(buf, "\n---\n"...)
       }
@@ -75,11 +75,11 @@ func (m Media) String() string {
    return string(buf)
 }
 
-func (m Media) URLs() []string {
+func (g GraphMedia) URLs() []string {
    src := make(map[string]bool)
-   src[m.Display_URL] = true
-   src[m.Video_URL] = true
-   for _, edge := range m.Edge_Sidecar_To_Children.Edges {
+   src[g.Display_URL] = true
+   src[g.Video_URL] = true
+   for _, edge := range g.Edge_Sidecar_To_Children.Edges {
       src[edge.Node.Display_URL] = true
       src[edge.Node.Video_URL] = true
    }
