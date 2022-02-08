@@ -4,71 +4,51 @@ import (
    "flag"
    "fmt"
    "github.com/89z/mech/instagram"
-   "os"
-   "time"
 )
 
 func main() {
-   var (
-      info, verbose bool
-      username, password string
-   )
+   // a
+   var auth bool
+   flag.BoolVar(&auth, "a", false, "authentication")
+   // i
+   var info bool
    flag.BoolVar(&info, "i", false, "info only")
+   // p
+   var password string
    flag.StringVar(&password, "p", "", "password")
+   // u
+   var username string
    flag.StringVar(&username, "u", "", "username")
+   // v
+   var verbose bool
    flag.BoolVar(&verbose, "v", false, "verbose")
    flag.Parse()
    if verbose {
       instagram.LogLevel = 1
    }
-   switch {
-   case len(os.Args) == 1:
-      fmt.Println("instagram [flags] [shortcode]")
-      flag.PrintDefaults()
-   case username != "":
+   if username != "" {
       err := saveLogin(username, password)
       if err != nil {
          panic(err)
       }
-   default:
+   } else if flag.NArg() == 1 {
       shortcode := flag.Arg(0)
       if !instagram.Valid(shortcode) {
          panic("invalid shortcode")
       }
-      cache, err := os.UserCacheDir()
-      if err != nil {
-         panic(err)
-      }
-      login, err := instagram.OpenLogin(cache + "/mech/instagram.json")
-      if err != nil {
-         panic(err)
-      }
-      items, err := login.MediaItems(shortcode)
-      if err != nil {
-         panic(err)
-      }
-      for _, item := range items {
-         if info {
-            form, err := item.Format()
-            if err != nil {
-               panic(err)
-            }
-            fmt.Println(form)
-         } else {
-            for _, info := range item.Infos() {
-               addrs, err := info.URLs()
-               if err != nil {
-                  panic(err)
-               }
-               for _, addr := range addrs {
-                  err := download(addr)
-                  if err != nil {
-                     panic(err)
-                  }
-                  time.Sleep(99 * time.Millisecond)
-               }
-            }
+      if auth {
+         err := doItems(shortcode, info)
+         if err != nil {
+            panic(err)
+         }
+      } else {
+         err := doGraph(shortcode)
+         if err != nil {
+            panic(err)
          }
       }
+   } else {
+      fmt.Println("instagram [flags] [shortcode]")
+      flag.PrintDefaults()
    }
 }

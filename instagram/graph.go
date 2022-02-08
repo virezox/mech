@@ -33,7 +33,7 @@ type GraphMedia struct {
 }
 
 // Anonymous request
-func NewMedia(shortcode string) (*GraphMedia, error) {
+func NewGraphMedia(shortcode string) (*GraphMedia, error) {
    var addr strings.Builder
    addr.WriteString("https://www.instagram.com/p/")
    addr.WriteString(shortcode)
@@ -62,17 +62,6 @@ func NewMedia(shortcode string) (*GraphMedia, error) {
       return nil, err
    }
    return &post.GraphQL.Shortcode_Media, nil
-}
-
-func (g GraphMedia) String() string {
-   var buf []byte
-   for i, addr := range g.URLs() {
-      if i >= 1 {
-         buf = append(buf, "\n---\n"...)
-      }
-      buf = append(buf, addr...)
-   }
-   return string(buf)
 }
 
 func (g GraphMedia) URLs() []string {

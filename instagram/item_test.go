@@ -7,20 +7,6 @@ import (
    "time"
 )
 
-func TestLogin(t *testing.T) {
-   login, err := NewLogin("srpen6", password)
-   if err != nil {
-      t.Fatal(err)
-   }
-   cache, err := os.UserCacheDir()
-   if err != nil {
-      t.Fatal(err)
-   }
-   if err := login.Create(cache + "/mech/instagram.json"); err != nil {
-      t.Fatal(err)
-   }
-}
-
 type testType struct {
    shortcode string
    paths []string
@@ -55,6 +41,20 @@ var tests = []testType{
    }},
 }
 
+func TestLogin(t *testing.T) {
+   login, err := NewLogin("srpen6", password)
+   if err != nil {
+      t.Fatal(err)
+   }
+   cache, err := os.UserCacheDir()
+   if err != nil {
+      t.Fatal(err)
+   }
+   if err := login.Create(cache + "/mech/instagram.json"); err != nil {
+      t.Fatal(err)
+   }
+}
+
 func TestMedia(t *testing.T) {
    cache, err := os.UserCacheDir()
    if err != nil {
@@ -65,14 +65,14 @@ func TestMedia(t *testing.T) {
       t.Fatal(err)
    }
    for _, test := range tests {
-      items, err := login.MediaItems(test.shortcode)
+      items, err := login.Items(test.shortcode)
       if err != nil {
          t.Fatal(err)
       }
       for _, item := range items {
          var index int
-         for _, info := range item.Infos() {
-            addrs, err := info.URLs()
+         for _, med := range item.Medias() {
+            addrs, err := med.URLs()
             if err != nil {
                t.Fatal(err)
             }

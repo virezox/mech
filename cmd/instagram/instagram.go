@@ -7,7 +7,62 @@ import (
    "net/url"
    "os"
    "path/filepath"
+   "time"
 )
+
+func doGraph(shortcode string) error {
+   media, err := instagram.NewGraphMedia(shortcode)
+   if err != nil {
+      return err
+   }
+   for _, addr := range media.URLs() {
+      err := download(addr)
+      if err != nil {
+         return err
+      }
+      time.Sleep(99 * time.Millisecond)
+   }
+   return nil
+}
+
+func doItems(shortcode string, info bool) error {
+   cache, err := os.UserCacheDir()
+   if err != nil {
+      return err
+   }
+   login, err := instagram.OpenLogin(cache + "/mech/instagram.json")
+   if err != nil {
+      return err
+   }
+   items, err := login.Items(shortcode)
+   if err != nil {
+      return err
+   }
+   for _, item := range items {
+      if info {
+         form, err := item.Format()
+         if err != nil {
+            return err
+         }
+         fmt.Println(form)
+      } else {
+         for _, med := range item.Medias() {
+            addrs, err := med.URLs()
+            if err != nil {
+               return err
+            }
+            for _, addr := range addrs {
+               err := download(addr)
+               if err != nil {
+                  return err
+               }
+               time.Sleep(99 * time.Millisecond)
+            }
+         }
+      }
+   }
+   return nil
+}
 
 func saveLogin(username, password string) error {
    login, err := instagram.NewLogin(username, password)
