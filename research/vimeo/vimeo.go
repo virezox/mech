@@ -1,34 +1,45 @@
-package main
+package vimeo
 
 import (
+   "encoding/json"
    "net/http"
-   "net/http/httputil"
    "net/url"
-   "os"
 )
 
-func main() {
+type jsonWeb struct {
+   Token string
+}
+
+func newJsonWeb() (*jsonWeb, error) {
    var req http.Request
    req.Header = make(http.Header)
    req.URL = new(url.URL)
-   req.URL.Host = "player.vimeo.com"
-   req.URL.Path = "/video/581039021/config"
+   req.URL.Host = "vimeo.com"
+   req.URL.Path = "/_rv/jwt"
    req.URL.Scheme = "https"
-   val := make(url.Values)
-   val["context"] = []string{"Vimeo\\Controller\\Api\\Resources\\VideoController."}
-   val["email"] = []string{"0"}
-   val["force_embed"] = []string{"1"}
-   val["h"] = []string{"9603038895"}
-   val["s"] = []string{"7cbe9e2d4127a912c0f380bb8ad208e843b6a5ea_1642220050"}
-   req.URL.RawQuery = val.Encode()
+   req.Header["X-Requested-With"] = []string{"XMLHttpRequest"}
    res, err := new(http.Transport).RoundTrip(&req)
    if err != nil {
-      panic(err)
+      return nil, err
    }
    defer res.Body.Close()
-   buf, err := httputil.DumpResponse(res, true)
-   if err != nil {
-      panic(err)
+   web := new(jsonWeb)
+   if err := json.NewDecoder(res.Body).Decode(web); err != nil {
+      return nil, err
    }
-   os.Stdout.Write(buf)
+   return web, nil
+}
+
+func (w jsonWeb) video(path string) (*http.Response, error) {
+   var req http.Request
+   req.Header = make(http.Header)
+   req.URL = new(url.URL)
+   req.URL.Host = "api.vimeo.com"
+   req.URL.Scheme = "http"
+   req.Header["Authorization"] = []string{"jwt " + w.Token}
+   req.URL.Path = path
+   val := make(url.Values)
+   val["fields"] = []string{"download"}
+   req.URL.RawQuery = val.Encode()
+   return new(http.Transport).RoundTrip(&req)
 }
