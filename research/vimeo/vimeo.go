@@ -2,23 +2,24 @@ package vimeo
 
 import (
    "encoding/json"
+   "github.com/89z/format"
    "net/http"
-   "net/url"
 )
+
+var logLevel format.LogLevel
 
 type jsonWeb struct {
    Token string
 }
 
 func newJsonWeb() (*jsonWeb, error) {
-   var req http.Request
-   req.Header = make(http.Header)
-   req.URL = new(url.URL)
-   req.URL.Host = "vimeo.com"
-   req.URL.Path = "/_rv/jwt"
-   req.URL.Scheme = "https"
-   req.Header["X-Requested-With"] = []string{"XMLHttpRequest"}
-   res, err := new(http.Transport).RoundTrip(&req)
+   req, err := http.NewRequest("GET", "https://vimeo.com/_rv/jwt", nil)
+   if err != nil {
+      return nil, err
+   }
+   req.Header.Set("X-Requested-With", "XMLHttpRequest")
+   logLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
    }
@@ -30,16 +31,42 @@ func newJsonWeb() (*jsonWeb, error) {
    return web, nil
 }
 
-func (w jsonWeb) video(path string) (*http.Response, error) {
-   var req http.Request
-   req.Header = make(http.Header)
-   req.URL = new(url.URL)
-   req.URL.Host = "api.vimeo.com"
-   req.URL.Scheme = "http"
-   req.Header["Authorization"] = []string{"jwt " + w.Token}
-   req.URL.Path = path
-   val := make(url.Values)
-   val["fields"] = []string{"download"}
-   req.URL.RawQuery = val.Encode()
-   return new(http.Transport).RoundTrip(&req)
+type download struct {
+   Public_Name string
+   Size int64
+   Link string
+}
+
+func (d download) String() string {
+   buf := []byte("Name:")
+   buf = append(buf, d.Public_Name...)
+   buf = append(buf, " Size:"...)
+   buf = append(buf, format.Size.GetInt64(d.Size)...)
+   buf = append(buf, " Link:"...)
+   buf = append(buf, d.Link...)
+   return string(buf)
+}
+
+type video struct {
+   Download []download
+}
+
+func (w jsonWeb) video(path string) (*video, error) {
+   req, err := http.NewRequest("GET", "http://api.vimeo.com" + path, nil)
+   if err != nil {
+      return nil, err
+   }
+   req.Header.Set("Authorization", "jwt " + w.Token)
+   req.URL.RawQuery = "fields=download"
+   logLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   vid := new(video)
+   if err := json.NewDecoder(res.Body).Decode(vid); err != nil {
+      return nil, err
+   }
+   return vid, nil
 }
