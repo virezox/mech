@@ -8,27 +8,37 @@ import (
 
 var logLevel format.LogLevel
 
-type jsonWeb struct {
-   Token string
+func (w jsonWeb) video(path string) (*video, error) {
+   return newVideo(path, "JWT " + w.Token)
 }
 
-func newJsonWeb() (*jsonWeb, error) {
-   req, err := http.NewRequest("GET", "https://vimeo.com/_rv/jwt", nil)
+type errorString string
+
+func (e errorString) Error() string {
+   return string(e)
+}
+
+func newVideo(path, auth string) (*video, error) {
+   req, err := http.NewRequest("GET", "https://api.vimeo.com" + path, nil)
    if err != nil {
       return nil, err
    }
-   req.Header.Set("X-Requested-With", "XMLHttpRequest")
+   req.Header.Set("Authorization", auth)
+   req.URL.RawQuery = "fields=download"
    logLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
-   web := new(jsonWeb)
-   if err := json.NewDecoder(res.Body).Decode(web); err != nil {
+   if res.StatusCode != http.StatusOK {
+      return nil, errorString(res.Status)
+   }
+   vid := new(video)
+   if err := json.NewDecoder(res.Body).Decode(vid); err != nil {
       return nil, err
    }
-   return web, nil
+   return vid, nil
 }
 
 type download struct {
@@ -51,22 +61,25 @@ type video struct {
    Download []download
 }
 
-func (w jsonWeb) video(path string) (*video, error) {
-   req, err := http.NewRequest("GET", "http://api.vimeo.com" + path, nil)
+type jsonWeb struct {
+   Token string
+}
+
+func newJsonWeb() (*jsonWeb, error) {
+   req, err := http.NewRequest("GET", "https://vimeo.com/_rv/jwt", nil)
    if err != nil {
       return nil, err
    }
-   req.Header.Set("Authorization", "jwt " + w.Token)
-   req.URL.RawQuery = "fields=download"
+   req.Header.Set("X-Requested-With", "XMLHttpRequest")
    logLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
-   vid := new(video)
-   if err := json.NewDecoder(res.Body).Decode(vid); err != nil {
+   web := new(jsonWeb)
+   if err := json.NewDecoder(res.Body).Decode(web); err != nil {
       return nil, err
    }
-   return vid, nil
+   return web, nil
 }
