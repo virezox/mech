@@ -10,6 +10,8 @@ type Bearer struct {
    Access_Token string
 }
 
+// I am not sure if this is any better than JWT, but I didnt want to just
+// delete it. So leaving it here for now.
 func NewBearer() (*Bearer, error) {
    req, err := http.NewRequest(
       "POST", "https://api.vimeo.com/oauth/authorize/client",

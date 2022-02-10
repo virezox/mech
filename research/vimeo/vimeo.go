@@ -11,6 +11,10 @@ type Oembed struct {
    URI string
 }
 
+// //vimeo.com/477957994/2282452868
+// //vimeo.com/581039021/9603038895
+// //vimeo.com/581039021?owner=92976110&embedded=false&source=vimeo_logo
+// //vimeo.com/66531465
 func NewOembed(addr string) (*Oembed, error) {
    var buf strings.Builder
    buf.WriteString("http://vimeo.com/api/oembed.json?url=")
