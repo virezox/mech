@@ -8,6 +8,7 @@ import (
 const path = "/videos/581039021:9603038895"
 
 func TestVimeo(t *testing.T) {
+   logLevel = 1
    web, err := NewJsonWeb()
    if err != nil {
       t.Fatal(err)
