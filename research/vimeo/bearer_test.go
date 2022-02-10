@@ -6,12 +6,11 @@ import (
 )
 
 func TestBearer(t *testing.T) {
-   logLevel = 1
-   bear, err := newBearer()
+   bear, err := NewBearer()
    if err != nil {
       t.Fatal(err)
    }
-   video, err := bear.video(path)
+   video, err := bear.Video(path)
    if err != nil {
       t.Fatal(err)
    }

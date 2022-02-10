@@ -203,10 +203,10 @@ type Stream struct {
 type URL string
 
 func (u URL) String() string {
-   str := string(u)
-   addr, err := url.Parse(str)
+   address := string(u)
+   addr, err := url.Parse(address)
    if err != nil {
-      return str
+      return address
    }
    addr.RawQuery = ""
    return addr.String()

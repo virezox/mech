@@ -115,11 +115,11 @@ func (o OAuth) Exchange() (*Exchange, error) {
 }
 
 func (o OAuth) String() string {
-   var str strings.Builder
-   str.WriteString("1. Go to\n")
-   str.WriteString(o.Verification_URL)
-   str.WriteString("\n\n2. Enter this code\n")
-   str.WriteString(o.User_Code)
-   str.WriteString("\n\n3. Press Enter to continue")
-   return str.String()
+   var buf strings.Builder
+   buf.WriteString("1. Go to\n")
+   buf.WriteString(o.Verification_URL)
+   buf.WriteString("\n\n2. Enter this code\n")
+   buf.WriteString(o.User_Code)
+   buf.WriteString("\n\n3. Press Enter to continue")
+   return buf.String()
 }

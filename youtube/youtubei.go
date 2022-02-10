@@ -15,14 +15,14 @@ type PlayabilityStatus struct {
 }
 
 func (p PlayabilityStatus) String() string {
-   var str strings.Builder
-   str.WriteString("Status: ")
-   str.WriteString(p.Status)
+   var buf strings.Builder
+   buf.WriteString("Status: ")
+   buf.WriteString(p.Status)
    if p.Reason != "" {
-      str.WriteString("\nReason: ")
-      str.WriteString(p.Reason)
+      buf.WriteString("\nReason: ")
+      buf.WriteString(p.Reason)
    }
-   return str.String()
+   return buf.String()
 }
 
 type VideoDetails struct {

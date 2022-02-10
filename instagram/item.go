@@ -107,11 +107,11 @@ func (l Login) Create(name string) error {
 }
 
 func (l Login) Items(shortcode string) ([]Item, error) {
-   var str strings.Builder
-   str.WriteString("https://www.instagram.com/p/")
-   str.WriteString(shortcode)
-   str.WriteByte('/')
-   req, err := http.NewRequest("GET", str.String(), nil)
+   var buf strings.Builder
+   buf.WriteString("https://www.instagram.com/p/")
+   buf.WriteString(shortcode)
+   buf.WriteByte('/')
+   req, err := http.NewRequest("GET", buf.String(), nil)
    if err != nil {
       return nil, err
    }
