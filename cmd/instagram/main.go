@@ -2,7 +2,6 @@ package main
 
 import (
    "flag"
-   "fmt"
    "github.com/89z/mech/instagram"
 )
 
@@ -53,7 +52,6 @@ func main() {
          }
       }
    } else {
-      fmt.Println("instagram [flags]")
       flag.PrintDefaults()
    }
 }

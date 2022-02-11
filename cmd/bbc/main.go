@@ -2,7 +2,6 @@ package main
 
 import (
    "flag"
-   "fmt"
    "github.com/89z/mech/bbc"
 )
 
@@ -32,7 +31,6 @@ func main() {
          panic(err)
       }
    } else {
-      fmt.Println("bbc [flags]")
       flag.PrintDefaults()
    }
 }

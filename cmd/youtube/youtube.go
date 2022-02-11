@@ -8,6 +8,11 @@ import (
    "strings"
 )
 
+type choice struct {
+   itags map[string]bool
+   info bool
+}
+
 // Videos can support both AdaptiveFormats and DASH: zgJT91LA9gA
 func (c choice) adaptiveFormats(play *youtube.Player) error {
    if !play.OK() {
@@ -43,11 +48,6 @@ func (c choice) adaptiveFormats(play *youtube.Player) error {
       }
    }
    return nil
-}
-
-type choice struct {
-   itags map[string]bool
-   info bool
 }
 
 func filename(play *youtube.Player, form youtube.Format) (string, error) {

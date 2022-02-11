@@ -9,6 +9,9 @@ import (
 
 func main() {
    var choose choice
+   // a
+   var address string
+   flag.StringVar(&address, "a", "", "address")
    // c
    var construct bool
    flag.BoolVar(&construct, "c", false, "OAuth construct request")
@@ -39,8 +42,8 @@ func main() {
    if verbose {
       youtube.LogLevel = 1
    }
-   switch {
-   case exchange:
+   
+   if exchange {
       oauth, err := youtube.NewOAuth()
       if err != nil {
          panic(err)
@@ -58,7 +61,7 @@ func main() {
       if err := exc.Create(cache + "/mech/youtube.json"); err != nil {
          panic(err)
       }
-   case refresh:
+   } else if refresh {
       cache, err := os.UserCacheDir()
       if err != nil {
          panic(err)
@@ -73,7 +76,14 @@ func main() {
       if err := exc.Create(cache + "/mech/youtube.json"); err != nil {
          panic(err)
       }
-   case videoID != "":
+   } else if videoID != "" || address != "" {
+      if videoID == "" {
+         var err error
+         videoID, err = youtube.VideoID(address)
+         if err != nil {
+            panic(err)
+         }
+      }
       play, err := player(construct, embed, videoID)
       if err != nil {
          panic(err)
@@ -81,7 +91,7 @@ func main() {
       if err := choose.adaptiveFormats(play); err != nil {
          panic(err)
       }
-   default:
+   } else {
       fmt.Println("youtube [flags]")
       flag.PrintDefaults()
    }

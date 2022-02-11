@@ -47,7 +47,6 @@ func main() {
          }
       }
    } else {
-      fmt.Println("nbc [flags]")
       flag.PrintDefaults()
    }
 }

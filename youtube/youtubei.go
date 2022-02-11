@@ -4,6 +4,7 @@ import (
    "bytes"
    "encoding/json"
    "net/http"
+   "net/url"
    "strconv"
    "strings"
    "time"
@@ -19,6 +20,15 @@ var (
 
 var googAPI = http.Header{
    "X-Goog-Api-Key": {"AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8"},
+}
+
+// youtube.com/watch?v=XY-hOqcPGCY
+func VideoID(address string) (string, error) {
+   addr, err := url.Parse(address)
+   if err != nil {
+      return "", err
+   }
+   return addr.Query().Get("v"), nil
 }
 
 type Client struct {
