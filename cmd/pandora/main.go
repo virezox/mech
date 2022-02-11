@@ -39,7 +39,7 @@ func main() {
          panic(err)
       }
    } else if address != "" {
-      err := playback(cache, flag.Arg(0), info)
+      err := playback(cache, address, info)
       if err != nil {
          panic(err)
       }

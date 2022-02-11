@@ -1,7 +1,6 @@
 package main
 
 import (
-   "flag"
    "fmt"
    "github.com/89z/format"
    "github.com/89z/mech/soundcloud"
@@ -9,30 +8,6 @@ import (
    "os"
    "strings"
 )
-
-func main() {
-   var info bool
-   flag.BoolVar(&info, "i", false, "info only")
-   flag.Parse()
-   if flag.NArg() == 1 {
-      addr := flag.Arg(0)
-      track, err := soundcloud.Resolve(addr)
-      if err != nil {
-         panic(err)
-      }
-      if info {
-         fmt.Printf("%+v\n", track)
-      } else {
-         err := download(track)
-         if err != nil {
-            panic(err)
-         }
-      }
-   } else {
-      fmt.Println("soundcloud [-i] [URL]")
-      flag.PrintDefaults()
-   }
-}
 
 func download(track *soundcloud.Track) error {
    pro, err := track.Progressive()

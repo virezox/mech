@@ -1,7 +1,6 @@
 package main
 
 import (
-   "flag"
    "fmt"
    "github.com/89z/format"
    "github.com/89z/mech/ted"
@@ -39,29 +38,3 @@ func process(slug string, info bool, bitrate int64) error {
    }
    return nil
 }
-
-func main() {
-   var (
-      bitrate int64
-      info, verbose bool
-   )
-   flag.Int64Var(&bitrate, "b", 180, "bitrate")
-   flag.BoolVar(&info, "i", false, "info only")
-   flag.BoolVar(&verbose, "v", false, "verbose")
-   flag.Parse()
-   if verbose {
-      ted.LogLevel = 1
-   }
-   if flag.NArg() == 1 {
-      slug := flag.Arg(0)
-      err := process(slug, info, bitrate)
-      if err != nil {
-         panic(err)
-      }
-   } else {
-      fmt.Println("ted [flags] [slug]")
-      flag.PrintDefaults()
-   }
-}
-
-

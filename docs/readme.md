@@ -19,3 +19,7 @@ click `Network Settings`, `Save All As HAR`. Rename file to JSON.
 7. MITM Proxy APK for JSON requests
 8. APK tool
 9. JADX
+
+## Proxy
+
+https://freeproxylists.net/br.html
