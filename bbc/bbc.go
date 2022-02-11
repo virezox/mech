@@ -108,13 +108,13 @@ func (n NewsItem) Media() (*Media, error) {
 }
 
 func (n NewsItem) address() (string, error) {
-   var addr strings.Builder
-   addr.WriteString("http://open.live.bbc.co.uk")
-   addr.WriteString("/mediaselector/6/select/version/2.0/mediaset/pc/vpid/")
+   var buf strings.Builder
+   buf.WriteString("http://open.live.bbc.co.uk")
+   buf.WriteString("/mediaselector/6/select/version/2.0/mediaset/pc/vpid/")
    for _, rel := range n.Relations {
       if rel.PrimaryType == "bbc.mobile.news.video" {
-         addr.WriteString(rel.Content.ExternalID)
-         return addr.String(), nil
+         buf.WriteString(rel.Content.ExternalID)
+         return buf.String(), nil
       }
    }
    return "", notFound{"bbc.mobile.news.video"}

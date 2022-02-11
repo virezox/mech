@@ -29,11 +29,10 @@ Cr381pDsSsA
 Get ANDROID client:
 
 ~~~
-GET /fdfe/details?doc=com.google.android.youtube HTTP/1.1
-Host: android.clients.google.com
-Authorization: Bearer ya29.a0ARrdaM8lMFRwIzLPFAl9VPONVvM3ByCV_CKqMGzOmff6fnqSL...
-X-DFE-Device-ID: 3f48fb5589c...
+googleplay -a com.google.android.youtube
 ~~~
+
+https://github.com/89z/googleplay
 
 Get MWEB client:
 

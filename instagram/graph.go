@@ -35,11 +35,11 @@ type GraphMedia struct {
 
 // Anonymous request
 func NewGraphMedia(shortcode string) (*GraphMedia, error) {
-   var addr strings.Builder
-   addr.WriteString("https://www.instagram.com/p/")
-   addr.WriteString(shortcode)
-   addr.WriteByte('/')
-   req, err := http.NewRequest("GET", addr.String(), nil)
+   var buf strings.Builder
+   buf.WriteString("https://www.instagram.com/p/")
+   buf.WriteString(shortcode)
+   buf.WriteByte('/')
+   req, err := http.NewRequest("GET", buf.String(), nil)
    if err != nil {
       return nil, err
    }

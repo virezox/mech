@@ -13,8 +13,8 @@ import (
 const origin = "https://www.youtube.com"
 
 var (
-   Android = Client{Name: "ANDROID", Version: "17.01.35"}
-   Embed = Client{Name: "ANDROID", Screen: "EMBED", Version: "17.01.35"}
+   Android = Client{Name: "ANDROID", Version: "17.05.35"}
+   Embed = Client{Name: "ANDROID", Screen: "EMBED", Version: "17.05.35"}
    Mweb = Client{Name: "MWEB", Version: "2.20211109.01.00"}
 )
 

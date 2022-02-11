@@ -18,11 +18,11 @@ type TalkResponse struct {
 }
 
 func NewTalkResponse(slug string) (*TalkResponse, error) {
-   var addr strings.Builder
-   addr.WriteString("https://devices.ted.com/api/v2/videos/")
-   addr.WriteString(slug)
-   addr.WriteString("/react_native_v2.json")
-   req, err := http.NewRequest("GET", addr.String(), nil)
+   var buf strings.Builder
+   buf.WriteString("https://devices.ted.com/api/v2/videos/")
+   buf.WriteString(slug)
+   buf.WriteString("/react_native_v2.json")
+   req, err := http.NewRequest("GET", buf.String(), nil)
    if err != nil {
       return nil, err
    }

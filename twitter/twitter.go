@@ -4,13 +4,14 @@ import (
    "encoding/json"
    "github.com/89z/format"
    "net/http"
-   "net/url"
    "strconv"
 )
 
 const bearer =
    "AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs=" +
    "1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA"
+
+const root = "https://api.twitter.com/1.1"
 
 var LogLevel format.LogLevel
 
@@ -19,9 +20,7 @@ type Guest struct {
 }
 
 func NewGuest() (*Guest, error) {
-   req, err := http.NewRequest(
-      "POST", "https://api.twitter.com/1.1/guest/activate.json", nil,
-   )
+   req, err := http.NewRequest("POST", root + "/guest/activate.json", nil)
    if err != nil {
       return nil, err
    }
@@ -39,22 +38,52 @@ func NewGuest() (*Guest, error) {
    return guest, nil
 }
 
-type Status struct {
-   Extended_Entities struct {
-      Media []struct {
-         Media_URL string
-         Video_Info struct {
-            Variants []Variant
-         }
+type Media struct {
+   Media_URL string
+   Original_Info struct {
+      Width int64
+      Height int64
+   }
+   Video_Info struct {
+      Variants []Variant
+   }
+}
+
+func (m Media) String() string {
+   buf := []byte("Width: ")
+   buf = strconv.AppendInt(buf, m.Original_Info.Width, 10)
+   buf = append(buf, "\nHeight: "...)
+   buf = strconv.AppendInt(buf, m.Original_Info.Height, 10)
+   buf = append(buf, "\nVariants:"...)
+   for _, vari := range m.Variants() {
+      buf = append(buf, '\n')
+      buf = append(buf, variant.String()...)
+   }
+   return string(buf)
+}
+
+func (m Media) Variants() []Variant {
+   var varis []Variant
+   for _, vari := range m.Video_Info.Variants {
+      if vari.Content_Type != "application/x-mpegURL"{
+         varis = append(varis, vari)
       }
    }
+   return varis
+}
+
+type Status struct {
    User struct {
       Name string
+   }
+   Extended_Entities struct {
+      Media []Media
    }
 }
 
 func NewStatus(guest *Guest, id int64) (*Status, error) {
-   buf := []byte("https://api.twitter.com/1.1/statuses/show/")
+   buf := []byte(root)
+   buf = append(buf, "/statuses/show/"...)
    buf = strconv.AppendInt(buf, id, 10)
    buf = append(buf, ".json?tweet_mode=extended"...)
    req, err := http.NewRequest("GET", string(buf), nil)
@@ -78,37 +107,29 @@ func NewStatus(guest *Guest, id int64) (*Status, error) {
    return stat, nil
 }
 
-func (s Status) Variants() []Variant {
-   var varis []Variant
-   for _, med := range s.Extended_Entities.Media {
-      for _, vari := range med.Video_Info.Variants {
-         if vari.Content_Type != "application/x-mpegURL"{
-            varis = append(varis, vari)
-         }
-      }
+func (s Status) String() string {
+   buf := []byte("User: ")
+   buf = append(buf, s.User.Name...)
+   buf = append(buf, "\nMedia:"...)
+   for _, media := range s.Extended_Entities.Media {
+      buf = append(buf, '\n')
+      buf = append(buf, media.String()...)
    }
-   return varis
-}
-
-type Stream struct {
-   Source struct {
-      Location string
-   }
-}
-
-type URL string
-
-func (u URL) String() string {
-   address := string(u)
-   addr, err := url.Parse(address)
-   if err != nil {
-      return address
-   }
-   addr.RawQuery = ""
-   return addr.String()
+   return string(buf)
 }
 
 type Variant struct {
+   Bitrate int64
    Content_Type string
-   URL URL
+   URL string
+}
+
+func (v Variant) String() string {
+   buf := []byte("Bitrate:")
+   buf = strconv.AppendInt(buf, v.Bitrate, 10)
+   buf = append(buf, " Type:"...)
+   buf = append(buf, v.Content_Type...)
+   buf = append(buf, " URL:"...)
+   buf = append(buf, v.URL...)
+   return string(buf)
 }

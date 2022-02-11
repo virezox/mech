@@ -42,7 +42,6 @@ func main() {
          }
       }
    } else {
-      fmt.Println("tiktok [flags]")
       flag.PrintDefaults()
    }
 }

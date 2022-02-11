@@ -32,7 +32,6 @@ func main() {
    }
    clip, err := newClip(clipID, unlistedHash, address)
    if err != nil {
-      fmt.Println("vimeo [flags]")
       flag.PrintDefaults()
    } else {
       web, err := vimeo.NewJsonWeb()

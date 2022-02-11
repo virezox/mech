@@ -59,14 +59,14 @@ type Image struct {
 }
 
 func (i Image) Format(id string) string {
-   var addr strings.Builder
-   addr.WriteString("http://i.ytimg.com/vi")
+   var buf strings.Builder
+   buf.WriteString("http://i.ytimg.com/vi")
    if strings.HasSuffix(i.Base, ".webp") {
-      addr.WriteString("_webp")
+      buf.WriteString("_webp")
    }
-   addr.WriteByte('/')
-   addr.WriteString(id)
-   addr.WriteByte('/')
-   addr.WriteString(i.Base)
-   return addr.String()
+   buf.WriteByte('/')
+   buf.WriteString(id)
+   buf.WriteByte('/')
+   buf.WriteString(i.Base)
+   return buf.String()
 }

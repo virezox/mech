@@ -2,14 +2,13 @@ package main
 
 import (
    "flag"
-   "fmt"
    "github.com/89z/mech/twitter"
 )
 
 func main() {
-   // f
-   var form int
-   flag.IntVar(&form, "f", 0, "format")
+   // b
+   var bitrate int64
+   flag.Int64Var(&bitrate, "b", 0, "bitrate")
    // i
    var info bool
    flag.BoolVar(&info, "i", false, "info")
@@ -24,12 +23,11 @@ func main() {
       twitter.LogLevel = 1
    }
    if statusID >= 1 {
-      err := statusPath(statusID, info, form)
+      err := statusPath(statusID, bitrate, info)
       if err != nil {
          panic(err)
       }
    } else {
-      fmt.Println("twitter [flags]")
       flag.PrintDefaults()
    }
 }

@@ -28,7 +28,6 @@ func main() {
          }
       }
    } else {
-      fmt.Println("soundcloud [flags]")
       flag.PrintDefaults()
    }
 }

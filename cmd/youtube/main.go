@@ -92,7 +92,6 @@ func main() {
          panic(err)
       }
    } else {
-      fmt.Println("youtube [flags]")
       flag.PrintDefaults()
    }
 }

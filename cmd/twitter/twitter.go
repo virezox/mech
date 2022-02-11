@@ -9,7 +9,7 @@ import (
    "strconv"
 )
 
-func statusPath(statusID int64, info bool, format int) error {
+func statusPath(statusID, bitrate int64, info bool) error {
    guest, err := twitter.NewGuest()
    if err != nil {
       return err
@@ -18,21 +18,18 @@ func statusPath(statusID int64, info bool, format int) error {
    if err != nil {
       return err
    }
-   for index, variant := range stat.Variants() {
-      addr := variant.URL.String()
+   for _, variant := range stat.Variants() {
       switch {
       case info:
-         fmt.Print("ID:", index)
-         fmt.Print(" URL:", addr)
-         fmt.Println()
-      case format == index:
-         fmt.Println("GET", addr)
-         res, err := http.Get(addr)
+         fmt.Println(variant)
+      case variant.Bitrate == bitrate:
+         fmt.Println("GET", variant.URL)
+         res, err := http.Get(variant.URL)
          if err != nil {
             return err
          }
          defer res.Body.Close()
-         name := filename(stat.User.Name, addr, statusID)
+         name := filename(stat.User.Name, variant.URL, statusID)
          dst, err := os.Create(name)
          if err != nil {
             return err
