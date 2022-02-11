@@ -7,14 +7,8 @@ import (
 )
 
 func main() {
-   var (
-      info, space, verbose bool
-      form int
-      output string
-   )
    flag.BoolVar(&info, "i", false, "info")
    flag.IntVar(&form, "f", 0, "format")
-   flag.StringVar(&output, "o", "", "output")
    flag.BoolVar(&space, "s", false, "space")
    flag.BoolVar(&verbose, "v", false, "verbose")
    flag.Parse()
