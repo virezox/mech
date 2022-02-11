@@ -6,7 +6,7 @@ import (
    "time"
 )
 
-var ids = []uint64{
+var ids = []int64{
    // tiktok.com/@aamora_3mk/video/7028702876205632773
    7028702876205632773,
    // tiktok.com/@elpanaarabe/video/7038818332270808325

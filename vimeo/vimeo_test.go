@@ -28,6 +28,7 @@ func TestVimeo(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
+   LogLevel = 1
    video, err := web.Video(&clip)
    if err != nil {
       t.Fatal(err)

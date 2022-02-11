@@ -8,25 +8,33 @@ import (
 )
 
 func main() {
+   var choose choice
+   // c
    var construct bool
    flag.BoolVar(&construct, "c", false, "OAuth construct request")
+   // e
    var embed bool
    flag.BoolVar(&embed, "e", false, "use embedded player")
-   var refresh bool
-   flag.BoolVar(&refresh, "r", false, "OAuth token refresh")
-   var verbose bool
-   flag.BoolVar(&verbose, "v", false, "verbose")
-   var exchange bool
-   flag.BoolVar(&exchange, "x", false, "OAuth token exchange")
-   // choice
-   var choose choice
-   flag.BoolVar(&choose.info, "i", false, "video information")
+   // f
    choose.itags = make(map[string]bool)
    flag.Func("f", "formats", func(itag string) error {
       choose.itags[itag] = true
       return nil
    })
-   // Parse
+   // i
+   flag.BoolVar(&choose.info, "i", false, "information")
+   // r
+   var refresh bool
+   flag.BoolVar(&refresh, "r", false, "OAuth token refresh")
+   // v
+   var videoID string
+   flag.StringVar(&videoID, "v", "", "video ID")
+   // verbose
+   var verbose bool
+   flag.BoolVar(&verbose, "verbose", false, "verbose")
+   // x
+   var exchange bool
+   flag.BoolVar(&exchange, "x", false, "OAuth token exchange")
    flag.Parse()
    if verbose {
       youtube.LogLevel = 1
@@ -65,8 +73,8 @@ func main() {
       if err := exc.Create(cache + "/mech/youtube.json"); err != nil {
          panic(err)
       }
-   case flag.NArg() == 1:
-      play, err := player(construct, embed, flag.Arg(0))
+   case videoID != "":
+      play, err := player(construct, embed, videoID)
       if err != nil {
          panic(err)
       }
@@ -74,7 +82,7 @@ func main() {
          panic(err)
       }
    default:
-      fmt.Println("youtube [flags] [video ID]")
+      fmt.Println("youtube [flags]")
       flag.PrintDefaults()
    }
 }

@@ -6,7 +6,7 @@ import (
    "net/http"
    "os"
    "path"
-   "strings"
+   "strconv"
 )
 
 func statusPath(statusID int64, info bool, format int) error {
@@ -32,7 +32,7 @@ func statusPath(statusID int64, info bool, format int) error {
             return err
          }
          defer res.Body.Close()
-         name := filename(stat.User.Name, id, addr)
+         name := filename(stat.User.Name, addr, statusID)
          dst, err := os.Create(name)
          if err != nil {
             return err
@@ -46,11 +46,10 @@ func statusPath(statusID int64, info bool, format int) error {
    return nil
 }
 
-func filename(name, id, addr string) string {
-   var buf strings.Builder
-   buf.WriteString(name)
-   buf.WriteByte('-')
-   buf.WriteString(id)
-   buf.WriteString(path.Ext(addr))
-   return buf.String()
+func filename(name, addr string, id int64) string {
+   buf := []byte(name)
+   buf = append(buf, '-')
+   buf = strconv.AppendInt(buf, id, 10)
+   buf = append(buf, path.Ext(addr)...)
+   return string(buf)
 }

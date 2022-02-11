@@ -6,22 +6,10 @@ import (
    "net/http"
    "strconv"
    "strings"
-   "text/scanner"
    "time"
 )
 
 var LogLevel format.LogLevel
-
-func scanInt(buf *scanner.Scanner) (int64, error) {
-   for {
-      switch buf.Scan() {
-      case scanner.Int:
-         return strconv.ParseInt(buf.TokenText(), 10, 64)
-      case scanner.EOF:
-         return 0, nil
-      }
-   }
-}
 
 type Clip struct {
    ID, UnlistedHash int64
@@ -32,16 +20,19 @@ func NewClip(address string) (*Clip, error) {
       clipPage Clip
       err error
    )
-   buf := new(scanner.Scanner)
-   buf.Init(strings.NewReader(address))
-   buf.Mode = scanner.ScanInts
-   clipPage.ID, err = scanInt(buf)
-   if err != nil {
-      return nil, err
-   }
-   clipPage.UnlistedHash, err = scanInt(buf)
-   if err != nil {
-      return nil, err
+   fields := strings.FieldsFunc(address, func(r rune) bool {
+      return r < '0' || r > '9'
+   })
+   for key, val := range fields {
+      switch key {
+      case 0:
+         clipPage.ID, err = strconv.ParseInt(val, 10, 64)
+      case 1:
+         clipPage.UnlistedHash, err = strconv.ParseInt(val, 10, 64)
+      }
+      if err != nil {
+         return nil, err
+      }
    }
    return &clipPage, nil
 }
@@ -98,28 +89,45 @@ func (w JsonWeb) Video(clip *Clip) (*Video, error) {
    return vid, nil
 }
 
-type Video struct {
-   Duration int64
-   Download []struct {
-      Public_Name string
-      Size int64
-      Link string
-   }
+type Download struct {
+   Video_File_ID int64
+   Quality string
+   Width int64
+   Height int64
+   Size_Short string
+   Link string
 }
 
-func (v Video) String() string {
+type Video struct {
+   Duration int64
+   Download []Download
+}
+
+func (d Download) Format(link bool) string {
+   buf := []byte("ID:")
+   buf = strconv.AppendInt(buf, d.Video_File_ID, 10)
+   buf = append(buf, " Quality:"...)
+   buf = append(buf, d.Quality...)
+   buf = append(buf, " Width:"...)
+   buf = strconv.AppendInt(buf, d.Width, 10)
+   buf = append(buf, " Height:"...)
+   buf = strconv.AppendInt(buf, d.Height, 10)
+   buf = append(buf, " Size:"...)
+   buf = append(buf, d.Size_Short...)
+   if link {
+      buf = append(buf, " Link:"...)
+      buf = append(buf, d.Link...)
+   }
+   return string(buf)
+}
+
+func (v Video) Format(link bool) string {
    buf := []byte("Duration: ")
    buf = append(buf, v.Time().String()...)
    buf = append(buf, "\nDownloads:"...)
-   for _, dow := range v.Download {
-      buf = append(buf, "\nName:"...)
-      buf = append(buf, dow.Public_Name...)
-      buf = append(buf, " Size:"...)
-      buf = append(buf, format.Size.GetInt64(dow.Size)...)
-      if dow.Link != "" {
-         buf = append(buf, " Link:"...)
-         buf = append(buf, dow.Link...)
-      }
+   for _, down := range v.Download {
+      buf = append(buf, '\n')
+      buf = append(buf, down.Format(link)...)
    }
    return string(buf)
 }
