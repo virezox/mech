@@ -14,10 +14,6 @@ const bearer =
 
 var LogLevel format.LogLevel
 
-func Parse(id string) (uint64, error) {
-   return strconv.ParseUint(id, 10, 64)
-}
-
 type Guest struct {
    Guest_Token string
 }
@@ -57,9 +53,9 @@ type Status struct {
    }
 }
 
-func NewStatus(guest *Guest, id uint64) (*Status, error) {
+func NewStatus(guest *Guest, id int64) (*Status, error) {
    buf := []byte("https://api.twitter.com/1.1/statuses/show/")
-   buf = strconv.AppendUint(buf, id, 10)
+   buf = strconv.AppendInt(buf, id, 10)
    buf = append(buf, ".json?tweet_mode=extended"...)
    req, err := http.NewRequest("GET", string(buf), nil)
    if err != nil {
