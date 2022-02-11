@@ -4,39 +4,46 @@ import (
    "encoding/json"
    "github.com/89z/format"
    "net/http"
+   "strconv"
    "strings"
+   "text/scanner"
 )
 
-type Oembed struct {
-   URI string
+func scanInt(buf *scanner.Scanner) (int, error) {
+   for {
+      switch buf.Scan() {
+      case scanner.Int:
+         return strconv.Atoi(buf.TokenText())
+      case scanner.EOF:
+         return 0, nil
+      }
+   }
 }
 
-// //vimeo.com/477957994/2282452868
-// //vimeo.com/581039021/9603038895
-// //vimeo.com/581039021?owner=92976110&embedded=false&source=vimeo_logo
-// //vimeo.com/66531465
-func NewOembed(addr string) (*Oembed, error) {
-   var buf strings.Builder
-   buf.WriteString("http://vimeo.com/api/oembed.json?url=")
-   buf.WriteString(addr)
-   req, err := http.NewRequest("GET", buf.String(), nil)
+var LogLevel format.LogLevel
+
+type Clip struct {
+   ID, UnlistedHash int
+}
+
+func NewClip(address string) (*Clip, error) {
+   var (
+      clipPage Clip
+      err error
+   )
+   buf := new(scanner.Scanner)
+   buf.Init(strings.NewReader(address))
+   buf.Mode = scanner.ScanInts
+   clipPage.ID, err = scanInt(buf)
    if err != nil {
       return nil, err
    }
-   logLevel.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
+   clipPage.UnlistedHash, err = scanInt(buf)
    if err != nil {
       return nil, err
    }
-   defer res.Body.Close()
-   embed := new(Oembed)
-   if err := json.NewDecoder(res.Body).Decode(embed); err != nil {
-      return nil, err
-   }
-   return embed, nil
+   return &clipPage, nil
 }
-
-var logLevel format.LogLevel
 
 type Download struct {
    Public_Name string
@@ -64,7 +71,7 @@ func NewJsonWeb() (*JsonWeb, error) {
       return nil, err
    }
    req.Header.Set("X-Requested-With", "XMLHttpRequest")
-   logLevel.Dump(req)
+   LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -85,6 +92,7 @@ type Video struct {
    Download []Download
 }
 
+// leave this private
 func newVideo(path, auth string) (*Video, error) {
    req, err := http.NewRequest("GET", "https://api.vimeo.com" + path, nil)
    if err != nil {
@@ -92,7 +100,7 @@ func newVideo(path, auth string) (*Video, error) {
    }
    req.Header.Set("Authorization", auth)
    req.URL.RawQuery = "fields=download"
-   logLevel.Dump(req)
+   LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err

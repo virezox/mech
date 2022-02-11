@@ -26,7 +26,7 @@ func NewBearer() (*Bearer, error) {
    buf.WriteString("oE5SYTjTf7C3YV5lIoCrknxeex01dSsSVooIneJjLiwKDuc+")
    buf.WriteString("aLA5MKEkbahZ")
    req.SetBasicAuth("74fa89b811a1cbb750d8528d163f48af28a2dbe1", buf.String())
-   logLevel.Dump(req)
+   LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
