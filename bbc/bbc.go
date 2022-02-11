@@ -57,11 +57,11 @@ type NewsItem struct {
 }
 
 func NewNewsItem(addr string) (*NewsItem, error) {
-   var str strings.Builder
-   str.WriteString("http://walter-producer-cdn.api.bbci.co.uk")
-   str.WriteString("/content/cps/news/")
-   str.WriteString(path.Base(addr))
-   req, err := http.NewRequest("GET", str.String(), nil)
+   var buf strings.Builder
+   buf.WriteString("http://walter-producer-cdn.api.bbci.co.uk")
+   buf.WriteString("/content/cps/news/")
+   buf.WriteString(path.Base(addr))
+   req, err := http.NewRequest("GET", buf.String(), nil)
    if err != nil {
       return nil, err
    }

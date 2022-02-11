@@ -9,14 +9,15 @@ import (
 
 var LogLevel format.LogLevel
 
-// instagram.com/p/CT-cnxGhvvO
-// instagram.com/p/yza2PAPSx2
-func Valid(shortcode string) bool {
-   switch len(shortcode) {
-   case 10, 11:
-      return true
+func Shortcode(address string) string {
+   var prev string
+   for _, split := range strings.Split(address, "/") {
+      if prev == "p" {
+         return split
+      }
+      prev = split
    }
-   return false
+   return ""
 }
 
 type GraphMedia struct {

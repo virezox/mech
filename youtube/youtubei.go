@@ -9,49 +9,6 @@ import (
    "time"
 )
 
-type PlayabilityStatus struct {
-   Status string // LOGIN_REQUIRED
-   Reason string // Sign in to confirm your age
-}
-
-func (p PlayabilityStatus) String() string {
-   var buf strings.Builder
-   buf.WriteString("Status: ")
-   buf.WriteString(p.Status)
-   if p.Reason != "" {
-      buf.WriteString("\nReason: ")
-      buf.WriteString(p.Reason)
-   }
-   return buf.String()
-}
-
-type VideoDetails struct {
-   VideoID string
-   LengthSeconds int64 `json:"lengthSeconds,string"`
-   ViewCount int64 `json:"viewCount,string"`
-   Author string
-   Title string
-   ShortDescription string
-}
-
-func (v VideoDetails) Duration() time.Duration {
-   return time.Duration(v.LengthSeconds) * time.Second
-}
-
-func (v VideoDetails) String() string {
-   buf := []byte("VideoID: ")
-   buf = append(buf, v.VideoID...)
-   buf = append(buf, "\nLength: "...)
-   buf = append(buf, v.Duration().String()...)
-   buf = append(buf, "\nViewCount: "...)
-   buf = strconv.AppendInt(buf, v.ViewCount, 10)
-   buf = append(buf, "\nAuthor: "...)
-   buf = append(buf, v.Author...)
-   buf = append(buf, "\nTitle: "...)
-   buf = append(buf, v.Title...)
-   return string(buf)
-}
-
 const origin = "https://www.youtube.com"
 
 var (
@@ -152,6 +109,22 @@ type Item struct {
    }
 }
 
+type PlayabilityStatus struct {
+   Status string // LOGIN_REQUIRED
+   Reason string // Sign in to confirm your age
+}
+
+func (p PlayabilityStatus) String() string {
+   var buf strings.Builder
+   buf.WriteString("Status: ")
+   buf.WriteString(p.Status)
+   if p.Reason != "" {
+      buf.WriteString("\nReason: ")
+      buf.WriteString(p.Reason)
+   }
+   return buf.String()
+}
+
 type Player struct {
    Microformat struct {
       PlayerMicroformatRenderer struct {
@@ -202,6 +175,33 @@ func (s Search) Items() []Item {
       }
    }
    return items
+}
+
+type VideoDetails struct {
+   VideoID string
+   LengthSeconds int64 `json:"lengthSeconds,string"`
+   ViewCount int64 `json:"viewCount,string"`
+   Author string
+   Title string
+   ShortDescription string
+}
+
+func (v VideoDetails) Duration() time.Duration {
+   return time.Duration(v.LengthSeconds) * time.Second
+}
+
+func (v VideoDetails) String() string {
+   buf := []byte("VideoID: ")
+   buf = append(buf, v.VideoID...)
+   buf = append(buf, "\nLength: "...)
+   buf = append(buf, v.Duration().String()...)
+   buf = append(buf, "\nViewCount: "...)
+   buf = strconv.AppendInt(buf, v.ViewCount, 10)
+   buf = append(buf, "\nAuthor: "...)
+   buf = append(buf, v.Author...)
+   buf = append(buf, "\nTitle: "...)
+   buf = append(buf, v.Title...)
+   return string(buf)
 }
 
 type invalidVideo struct {

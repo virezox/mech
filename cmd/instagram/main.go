@@ -8,8 +8,11 @@ import (
 
 func main() {
    // a
+   var address string
+   flag.StringVar(&address, "a", "", "address")
+   // auth
    var auth bool
-   flag.BoolVar(&auth, "a", false, "authentication")
+   flag.BoolVar(&auth, "auth", false, "authentication")
    // i
    var info bool
    flag.BoolVar(&info, "i", false, "info only")
@@ -34,9 +37,9 @@ func main() {
       if err != nil {
          panic(err)
       }
-   } else if shortcode != "" {
-      if !instagram.Valid(shortcode) {
-         panic("invalid shortcode")
+   } else if shortcode != "" || address != "" {
+      if shortcode == "" {
+         shortcode = instagram.Shortcode(address)
       }
       if auth {
          err := doItems(shortcode, info)
