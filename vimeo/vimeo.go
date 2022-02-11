@@ -4,177 +4,132 @@ import (
    "encoding/json"
    "github.com/89z/format"
    "net/http"
-   "net/url"
    "strconv"
    "strings"
+   "text/scanner"
    "time"
 )
 
 var LogLevel format.LogLevel
 
-func Parse(id string) (uint64, error) {
-   return strconv.ParseUint(id, 10, 64)
-}
-
-type Config struct {
-   Request struct {
-      Files struct {
-         DASH struct {
-            CDNs struct {
-               Fastly_Skyfire struct {
-                  URL string
-               }
-            }
-         }
-         Progressive []struct {
-            Width int
-            Height int
-            URL string
-         }
+func scanInt(buf *scanner.Scanner) (int64, error) {
+   for {
+      switch buf.Scan() {
+      case scanner.Int:
+         return strconv.ParseInt(buf.TokenText(), 10, 64)
+      case scanner.EOF:
+         return 0, nil
       }
-      Timestamp int64 // this is just the current time
    }
-   Video ConfigVideo
 }
 
-func NewConfig(id uint64) (*Config, error) {
-   addr := []byte("https://player.vimeo.com/video/")
-   addr = strconv.AppendUint(addr, id, 10)
-   addr = append(addr, "/config"...)
-   req, err := http.NewRequest("GET", string(addr), nil)
+type Clip struct {
+   ID, UnlistedHash int64
+}
+
+func NewClip(address string) (*Clip, error) {
+   var (
+      clipPage Clip
+      err error
+   )
+   buf := new(scanner.Scanner)
+   buf.Init(strings.NewReader(address))
+   buf.Mode = scanner.ScanInts
+   clipPage.ID, err = scanInt(buf)
    if err != nil {
       return nil, err
    }
+   clipPage.UnlistedHash, err = scanInt(buf)
+   if err != nil {
+      return nil, err
+   }
+   return &clipPage, nil
+}
+
+type JsonWeb struct {
+   Token string
+}
+
+func NewJsonWeb() (*JsonWeb, error) {
+   req, err := http.NewRequest("GET", "https://vimeo.com/_rv/jwt", nil)
+   if err != nil {
+      return nil, err
+   }
+   req.Header.Set("X-Requested-With", "XMLHttpRequest")
    LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
-   con := new(Config)
-   if err := json.NewDecoder(res.Body).Decode(con); err != nil {
+   web := new(JsonWeb)
+   if err := json.NewDecoder(res.Body).Decode(web); err != nil {
       return nil, err
    }
-   return con, nil
+   return web, nil
 }
 
-// These are segmented, but you can actually get the full videos like this:
-// skyfire.vimeocdn.com/1640649881-0xc62066ffa3260c57af3d58b6b788399c3f8a52ef/
-// 64a97917-f2a3-46b6-a4cc-3e55e3dd07a8/parcel/video/fb8654f4.mp4
-// Its only advertised for 426x240, but it seems to work with all of them.
-// Careful, URLs like above are timestamped, so they only work for a short time.
-// Also, even though it says Video, audio is included too.
-func (c Config) Master() (*Master, error) {
-   addr, err := c.URL()
+func (w JsonWeb) Video(clip *Clip) (*Video, error) {
+   buf := []byte("https://api.vimeo.com/videos/")
+   buf = strconv.AppendInt(buf, clip.ID, 10)
+   if clip.UnlistedHash != 0 {
+      buf = append(buf, ':')
+      buf = strconv.AppendInt(buf, clip.UnlistedHash, 10)
+   }
+   req, err := http.NewRequest("GET", string(buf), nil)
    if err != nil {
       return nil, err
    }
-   req, err := http.NewRequest("GET", addr, nil)
-   if err != nil {
-      return nil, err
-   }
+   req.Header.Set("Authorization", "JWT " + w.Token)
+   req.URL.RawQuery = "fields=duration,download"
    LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
-   mas := new(Master)
-   if err := json.NewDecoder(res.Body).Decode(mas); err != nil {
+   if res.StatusCode != http.StatusOK {
+      return nil, errorString(res.Status)
+   }
+   vid := new(Video)
+   if err := json.NewDecoder(res.Body).Decode(vid); err != nil {
       return nil, err
    }
-   return mas, nil
+   return vid, nil
 }
 
-func (c Config) URL() (string, error) {
-   addr, err := url.Parse(c.Request.Files.DASH.CDNs.Fastly_Skyfire.URL)
-   if err != nil {
-      return "", err
-   }
-   addr.RawQuery = ""
-   return addr.String(), nil
-}
-
-type ConfigVideo struct {
-   Owner struct {
-      Name string
-   }
-   Title string
+type Video struct {
    Duration int64
-}
-
-func (c ConfigVideo) String() string {
-   var buf strings.Builder
-   buf.WriteString("Owner: ")
-   buf.WriteString(c.Owner.Name)
-   buf.WriteString("\nTitle: ")
-   buf.WriteString(c.Title)
-   buf.WriteString("\nDuration: ")
-   buf.WriteString(c.Time().String())
-   return buf.String()
-}
-
-func (c ConfigVideo) Time() time.Duration {
-   return time.Duration(c.Duration) * time.Second
-}
-
-type Master struct {
-   Video []MasterVideo
-}
-
-type MasterVideo struct {
-   Base_URL string
-   Height int
-   ID string
-   Mime_Type string
-   Width int
-}
-
-func (m MasterVideo) URL(con *Config) (string, error) {
-   addr, err := con.URL()
-   if err != nil {
-      return "", err
+   Download []struct {
+      Public_Name string
+      Size int64
+      Link string
    }
-   ind := strings.Index(addr, "/sep/")
-   if ind == -1 {
-      return "", notFound{"/sep/"}
-   }
-   ext, err := format.ExtensionByType(m.Mime_Type)
-   if err != nil {
-      return "", err
-   }
-   return addr[:ind] + "/parcel/video/" + m.ID + ext, nil
 }
 
-type Oembed struct {
-   Title string
-   Upload_Date string
-   Thumbnail_URL string
+func (v Video) String() string {
+   buf := []byte("Duration: ")
+   buf = append(buf, v.Time().String()...)
+   buf = append(buf, "\nDownloads:"...)
+   for _, dow := range v.Download {
+      buf = append(buf, "\nName:"...)
+      buf = append(buf, dow.Public_Name...)
+      buf = append(buf, " Size:"...)
+      buf = append(buf, format.Size.GetInt64(dow.Size)...)
+      if dow.Link != "" {
+         buf = append(buf, " Link:"...)
+         buf = append(buf, dow.Link...)
+      }
+   }
+   return string(buf)
 }
 
-func NewOembed(id uint64) (*Oembed, error) {
-   req, err := http.NewRequest("GET", "https://vimeo.com/api/oembed.json", nil)
-   if err != nil {
-      return nil, err
-   }
-   req.URL.RawQuery = "url=//vimeo.com/" + strconv.FormatUint(id, 10)
-   LogLevel.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   embed := new(Oembed)
-   if err := json.NewDecoder(res.Body).Decode(embed); err != nil {
-      return nil, err
-   }
-   return embed, nil
+func (v Video) Time() time.Duration {
+   return time.Duration(v.Duration) * time.Second
 }
 
-type notFound struct {
-   input string
-}
+type errorString string
 
-func (n notFound) Error() string {
-   return strconv.Quote(n.input) + " not found"
+func (e errorString) Error() string {
+   return string(e)
 }

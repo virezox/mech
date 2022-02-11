@@ -5,26 +5,32 @@ import (
    "testing"
 )
 
-const id = 660408476
+var clip = Clip{581039021, 9603038895}
 
-func TestConfig(t *testing.T) {
-   con, err := NewConfig(id)
-   if err != nil {
-      t.Fatal(err)
-   }
-   mas, err := con.Master()
-   if err != nil {
-      t.Fatal(err)
-   }
-   for _, vid := range mas.Video {
-      fmt.Println(vid.URL(con))
+var videos = []string{
+   "https://vimeo.com/66531465",
+   "https://vimeo.com/477957994/2282452868",
+   "https://vimeo.com/477957994?unlisted_hash=2282452868",
+}
+
+func TestScan(t *testing.T) {
+   for _, video := range videos {
+      clip, err := NewClip(video)
+      if err != nil {
+         t.Fatal(err)
+      }
+      fmt.Printf("%+v\n", clip)
    }
 }
 
-func TestOembed(t *testing.T) {
-   emb, err := NewOembed(id)
+func TestVimeo(t *testing.T) {
+   web, err := NewJsonWeb()
    if err != nil {
       t.Fatal(err)
    }
-   fmt.Printf("%+v\n", emb)
+   video, err := web.Video(&clip)
+   if err != nil {
+      t.Fatal(err)
+   }
+   fmt.Println(video)
 }
