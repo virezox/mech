@@ -3,36 +3,36 @@ package main
 import (
    "flag"
    "fmt"
-   "github.com/89z/mech/bbc"
+   "github.com/89z/mech/bandcamp"
+   "time"
 )
 
 func main() {
+   var choice flags
    // a
    var address string
    flag.StringVar(&address, "a", "", "address")
-   // f
-   var form int64
-   flag.Int64Var(&form, "f", 0, "format")
    // i
-   var info bool
-   flag.BoolVar(&info, "i", false, "info")
+   flag.BoolVar(&choice.info, "i", false, "info only")
+   // s
+   flag.DurationVar(&choice.sleep, "s", time.Second, "sleep")
    // v
    var verbose bool
    flag.BoolVar(&verbose, "v", false, "verbose")
    flag.Parse()
    if verbose {
-      bbc.LogLevel = 1
+      bandcamp.LogLevel = 1
    }
    if address != "" {
-      item, err := bbc.NewNewsItem(address)
+      data, err := bandcamp.NewDataTralbum(address)
       if err != nil {
          panic(err)
       }
-      if err := media(item, info, form); err != nil {
+      if err := choice.process(data); err != nil {
          panic(err)
       }
    } else {
-      fmt.Println("bbc [flags]")
+      fmt.Println("bandcamp [flags]")
       flag.PrintDefaults()
    }
 }

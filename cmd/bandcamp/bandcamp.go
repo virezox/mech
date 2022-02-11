@@ -1,7 +1,6 @@
 package main
 
 import (
-   "flag"
    "fmt"
    "github.com/89z/format"
    "github.com/89z/mech/bandcamp"
@@ -43,31 +42,4 @@ func (f flags) process(data *bandcamp.DataTralbum) error {
       }
    }
    return nil
-}
-
-func main() {
-   var (
-      choice flags
-      verbose bool
-   )
-   flag.BoolVar(&choice.info, "i", false, "info only")
-   flag.DurationVar(&choice.sleep, "s", time.Second, "sleep")
-   flag.BoolVar(&verbose, "v", false, "verbose")
-   flag.Parse()
-   if verbose {
-      bandcamp.LogLevel = 1
-   }
-   if flag.NArg() == 1 {
-      addr := flag.Arg(0)
-      data, err := bandcamp.NewDataTralbum(addr)
-      if err != nil {
-         panic(err)
-      }
-      if err := choice.process(data); err != nil {
-         panic(err)
-      }
-   } else {
-      fmt.Println("bandcamp [flags] [track or album]")
-      flag.PrintDefaults()
-   }
 }

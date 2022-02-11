@@ -16,6 +16,9 @@ func main() {
    // p
    var password string
    flag.StringVar(&password, "p", "", "password")
+   // s
+   var shortcode string
+   flag.StringVar(&shortcode, "s", "", "shortcode")
    // u
    var username string
    flag.StringVar(&username, "u", "", "username")
@@ -31,8 +34,7 @@ func main() {
       if err != nil {
          panic(err)
       }
-   } else if flag.NArg() == 1 {
-      shortcode := flag.Arg(0)
+   } else if shortcode != "" {
       if !instagram.Valid(shortcode) {
          panic("invalid shortcode")
       }
@@ -48,7 +50,7 @@ func main() {
          }
       }
    } else {
-      fmt.Println("instagram [flags] [shortcode]")
+      fmt.Println("instagram [flags]")
       flag.PrintDefaults()
    }
 }

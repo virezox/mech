@@ -72,7 +72,7 @@ func NewJsonWeb() (*JsonWeb, error) {
 func (w JsonWeb) Video(clip *Clip) (*Video, error) {
    buf := []byte("https://api.vimeo.com/videos/")
    buf = strconv.AppendInt(buf, clip.ID, 10)
-   if clip.UnlistedHash != 0 {
+   if clip.UnlistedHash >= 1 {
       buf = append(buf, ':')
       buf = strconv.AppendInt(buf, clip.UnlistedHash, 10)
    }

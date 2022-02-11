@@ -10,7 +10,7 @@ import (
    "time"
 )
 
-func video(guid uint64, info bool) (*nbc.Video, error) {
+func video(guid int64, info bool) (*nbc.Video, error) {
    if info {
       return nil, nil
    }

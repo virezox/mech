@@ -3,13 +3,13 @@
 Get stream information:
 
 ~~~
-nbc -hi 9000199366
+nbc -i 9000199366
 ~~~
 
 Download stream:
 
 ~~~
-nbc -h 2 9000199366
+nbc -f 2 9000199366
 ~~~
 
 - https://github.com/ytdl-org/youtube-dl/issues/29191

@@ -9,13 +9,20 @@ import (
 )
 
 func main() {
-   var (
-      info, verbose bool
-      username, password string
-   )
+   // a
+   var address string
+   flag.StringVar(&address, "a", "", "address")
+   // i
+   var info bool
    flag.BoolVar(&info, "i", false, "information")
+   // p
+   var password string
    flag.StringVar(&password, "p", "", "password")
+   // u
+   var username string
    flag.StringVar(&username, "u", "", "username")
+   // v
+   var verbose bool
    flag.BoolVar(&verbose, "v", false, "verbose")
    flag.Parse()
    if verbose {
@@ -26,19 +33,18 @@ func main() {
       panic(err)
    }
    cache = filepath.Join(cache, "/mech/pandora.json")
-   switch {
-   case username != "":
+   if username != "" {
       err := login(cache, username, password)
       if err != nil {
          panic(err)
       }
-   case flag.NArg() == 1:
+   } else if address != "" {
       err := playback(cache, flag.Arg(0), info)
       if err != nil {
          panic(err)
       }
-   default:
-      fmt.Println("pandora [flags] [URL]")
+   } else {
+      fmt.Println("pandora [flags]")
       flag.PrintDefaults()
    }
 }

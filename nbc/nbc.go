@@ -33,7 +33,7 @@ type AccessVOD struct {
    ManifestPath string // this is only valid for one minute
 }
 
-func NewAccessVOD(guid uint64) (*AccessVOD, error) {
+func NewAccessVOD(guid int64) (*AccessVOD, error) {
    var body vodRequest
    body.Device = "android"
    body.DeviceID = "android"
@@ -46,7 +46,7 @@ func NewAccessVOD(guid uint64) (*AccessVOD, error) {
    }
    addr := []byte("http://access-cloudpath.media.nbcuni.com")
    addr = append(addr, "/access/vod/nbcuniversal/"...)
-   addr = strconv.AppendUint(addr, guid, 10)
+   addr = strconv.AppendInt(addr, guid, 10)
    req, err := http.NewRequest("POST", string(addr), buf)
    if err != nil {
       return nil, err
@@ -91,11 +91,11 @@ type Video struct {
    }
 }
 
-func NewVideo(guid uint64) (*Video, error) {
+func NewVideo(guid int64) (*Video, error) {
    var body videoRequest
    body.Extensions.PersistedQuery.Sha256Hash = queryVideo
    body.Variables.App = "nbc"
-   body.Variables.Name = strconv.FormatUint(guid, 10)
+   body.Variables.Name = guid
    body.Variables.Platform = "android"
    body.Variables.Type = "VIDEO"
    buf := new(bytes.Buffer)
@@ -135,7 +135,7 @@ type videoRequest struct {
    } `json:"extensions"`
    Variables struct {
       App string `json:"app"`
-      Name string `json:"name"`
+      Name int64 `json:"name"`
       Platform string `json:"platform"`
       Type string `json:"type"`
       UserID string `json:"userId"` // can be empty
