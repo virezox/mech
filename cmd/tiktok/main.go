@@ -7,23 +7,20 @@ import (
 )
 
 func main() {
-   var (
-      info, verbose bool
-      output string
-   )
+   // a
+   var awemeID int64
+   flag.Int64Var(&awemeID, "a", 0, "aweme ID")
+   // i
+   var info bool
    flag.BoolVar(&info, "i", false, "info only")
-   flag.StringVar(&output, "o", "", "output")
+   // v
+   var verbose bool
    flag.BoolVar(&verbose, "v", false, "verbose")
    flag.Parse()
    if verbose {
       tiktok.LogLevel = 1
    }
-   if flag.NArg() == 1 {
-      id := flag.Arg(0)
-      awemeID, err := tiktok.Parse(id)
-      if err != nil {
-         panic(err)
-      }
+   if awemeID >= 1 {
       det, err := tiktok.NewAwemeDetail(awemeID)
       if err != nil {
          panic(err)
@@ -39,13 +36,13 @@ func main() {
             fmt.Println("-", addr)
          }
       } else {
-         err := get(det, output)
+         err := get(det)
          if err != nil {
             panic(err)
          }
       }
    } else {
-      fmt.Println("tiktok [flags] [aweme ID]")
+      fmt.Println("tiktok [flags]")
       flag.PrintDefaults()
    }
 }

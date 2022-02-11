@@ -9,13 +9,7 @@ import (
    "time"
 )
 
-const Origin = "http://api2.musical.ly"
-
 var LogLevel format.LogLevel
-
-func Parse(id string) (uint64, error) {
-   return strconv.ParseUint(id, 10, 64)
-}
 
 type AwemeDetail struct {
    Author struct {
@@ -34,12 +28,14 @@ type AwemeDetail struct {
    }
 }
 
-func NewAwemeDetail(id uint64) (*AwemeDetail, error) {
-   req, err := http.NewRequest("GET", Origin + "/aweme/v1/aweme/detail/", nil)
+func NewAwemeDetail(id int64) (*AwemeDetail, error) {
+   req, err := http.NewRequest(
+      "GET", "http://api2.musical.ly/aweme/v1/aweme/detail/", nil,
+   )
    if err != nil {
       return nil, err
    }
-   req.URL.RawQuery = "aweme_id=" + strconv.FormatUint(id, 10)
+   req.URL.RawQuery = "aweme_id=" + strconv.FormatInt(id, 10)
    LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {

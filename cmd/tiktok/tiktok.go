@@ -9,7 +9,7 @@ import (
    "strings"
 )
 
-func get(det *tiktok.AwemeDetail, output string) error {
+func get(det *tiktok.AwemeDetail) error {
    addr, err := det.URL()
    if err != nil {
       return err
@@ -20,15 +20,12 @@ func get(det *tiktok.AwemeDetail, output string) error {
       return err
    }
    defer res.Body.Close()
-   if output == "" {
-      ext, err := format.ExtensionByType(res.Header.Get("Content-Type"))
-      if err != nil {
-         return err
-      }
-      name := det.Author.Unique_ID + "-" + det.Aweme_ID + ext
-      output = strings.Map(format.Clean, name)
+   ext, err := format.ExtensionByType(res.Header.Get("Content-Type"))
+   if err != nil {
+      return err
    }
-   file, err := os.Create(output)
+   name := det.Author.Unique_ID + "-" + det.Aweme_ID + ext
+   file, err := os.Create(strings.Map(format.Clean, name))
    if err != nil {
       return err
    }
