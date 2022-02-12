@@ -8,7 +8,7 @@ import (
 func main() {
    // b
    var bitrate int64
-   flag.Int64Var(&bitrate, "b", 0, "bitrate")
+   flag.Int64Var(&bitrate, "b", 2_176_000, "bitrate")
    // i
    var info bool
    flag.BoolVar(&info, "i", false, "info")

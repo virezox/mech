@@ -17,8 +17,7 @@ click `Network Settings`, `Save All As HAR`. Rename file to JSON.
 5. check HTML
 6. check JavaScript
 7. MITM Proxy APK for JSON requests
-8. APK tool
-9. JADX
+8. JADX
 
 ## Proxy
 

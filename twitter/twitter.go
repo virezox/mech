@@ -4,6 +4,8 @@ import (
    "encoding/json"
    "github.com/89z/format"
    "net/http"
+   "net/url"
+   "path"
    "strconv"
 )
 
@@ -54,10 +56,9 @@ func (m Media) String() string {
    buf = strconv.AppendInt(buf, m.Original_Info.Width, 10)
    buf = append(buf, "\nHeight: "...)
    buf = strconv.AppendInt(buf, m.Original_Info.Height, 10)
-   buf = append(buf, "\nVariants:"...)
    for _, vari := range m.Variants() {
       buf = append(buf, '\n')
-      buf = append(buf, variant.String()...)
+      buf = append(buf, vari.String()...)
    }
    return string(buf)
 }
@@ -76,6 +77,7 @@ type Status struct {
    User struct {
       Name string
    }
+   Full_Text string
    Extended_Entities struct {
       Media []Media
    }
@@ -110,7 +112,8 @@ func NewStatus(guest *Guest, id int64) (*Status, error) {
 func (s Status) String() string {
    buf := []byte("User: ")
    buf = append(buf, s.User.Name...)
-   buf = append(buf, "\nMedia:"...)
+   buf = append(buf, "\nText: "...)
+   buf = append(buf, s.Full_Text...)
    for _, media := range s.Extended_Entities.Media {
       buf = append(buf, '\n')
       buf = append(buf, media.String()...)
@@ -122,6 +125,18 @@ type Variant struct {
    Bitrate int64
    Content_Type string
    URL string
+}
+
+func (v Variant) Name(stat *Status, id int64) (string, error) {
+   addr, err := url.Parse(v.URL)
+   if err != nil {
+      return "", err
+   }
+   buf := []byte(stat.User.Name)
+   buf = append(buf, '-')
+   buf = strconv.AppendInt(buf, id, 10)
+   buf = append(buf, path.Ext(addr.Path)...)
+   return string(buf), nil
 }
 
 func (v Variant) String() string {
