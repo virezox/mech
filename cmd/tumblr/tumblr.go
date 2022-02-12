@@ -15,12 +15,10 @@ func blogPost(link *tumblr.Permalink, info bool) error {
    if err != nil {
       return err
    }
-   if info {
-      for _, element := range post.Response.Timeline.Elements {
-         fmt.Println(element)
-      }
-   } else {
-      for _, elem := range post.Response.Timeline.Elements {
+   for _, elem := range post.Response.Timeline.Elements {
+      if info {
+         fmt.Println(elem)
+      } else {
          fmt.Println("GET", elem.Video_URL)
          res, err := http.Get(elem.Video_URL)
          if err != nil {
