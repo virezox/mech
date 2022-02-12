@@ -12,19 +12,44 @@ const consumerKey = "BUHsuO5U9DF42uJtc8QTZlOmnUaJmBJGuU1efURxeklbdiLn9L"
 
 var LogLevel format.LogLevel
 
+type Element struct {
+   Blog struct {
+      Title string
+   }
+   Summary string
+   Thumbnail_Width int64
+   Thumbnail_Height int64
+   Duration int64
+   Video_URL string
+}
+
+func (e Element) String() string {
+   buf := []byte("Width: ")
+   buf = strconv.AppendInt(buf, e.Thumbnail_Width, 10)
+   buf = append(buf, "\nHeight: "...)
+   buf = strconv.AppendInt(buf, e.Thumbnail_Height, 10)
+   buf = append(buf, "\nDuration: "...)
+   buf = strconv.AppendInt(buf, e.Duration, 10)
+   buf = append(buf, "\nBlog: "...)
+   buf = append(buf, e.Blog.Title...)
+   buf = append(buf, "\nSummary: "...)
+   buf = append(buf, e.Summary...)
+   buf = append(buf, "\nURL: "...)
+   buf = append(buf, e.Video_URL...)
+   return string(buf)
+}
+
 type BlogPost struct {
    Response struct {
       Timeline struct {
-         Elements []struct {
-            Video_URL string
-         }
+         Elements []Element
       }
    }
 }
 
 type Permalink struct {
-   blogName string
-   postID int64
+   BlogName string
+   PostID int64
 }
 
 func NewPermalink(address string) (*Permalink, error) {
@@ -38,10 +63,10 @@ func NewPermalink(address string) (*Permalink, error) {
    for _, field := range fields {
       switch prev {
       case "https:":
-         link.blogName = field
+         link.BlogName = field
       case "post":
          var err error
-         link.postID, err = strconv.ParseInt(field, 10, 64)
+         link.PostID, err = strconv.ParseInt(field, 10, 64)
          if err != nil {
             return nil, err
          }
@@ -53,9 +78,9 @@ func NewPermalink(address string) (*Permalink, error) {
 
 func (p Permalink) BlogPost() (*BlogPost, error) {
    buf := []byte("https://api-http2.tumblr.com/v2/blog/")
-   buf = append(buf, p.blogName...)
+   buf = append(buf, p.BlogName...)
    buf = append(buf, "/posts/"...)
-   buf = strconv.AppendInt(buf, p.postID, 10)
+   buf = strconv.AppendInt(buf, p.PostID, 10)
    buf = append(buf, "/permalink"...)
    req, err := http.NewRequest("GET", string(buf), nil)
    if err != nil {
