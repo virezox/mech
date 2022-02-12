@@ -23,8 +23,8 @@ type BlogPost struct {
 }
 
 type Permalink struct {
-   blogName string
-   postID int64
+   BlogName string
+   PostID int64
 }
 
 func NewPermalink(address string) (*Permalink, error) {
@@ -38,10 +38,10 @@ func NewPermalink(address string) (*Permalink, error) {
    for _, field := range fields {
       switch prev {
       case "https:":
-         link.blogName = field
+         link.BlogName = field
       case "post":
          var err error
-         link.postID, err = strconv.ParseInt(field, 10, 64)
+         link.PostID, err = strconv.ParseInt(field, 10, 64)
          if err != nil {
             return nil, err
          }
@@ -53,9 +53,9 @@ func NewPermalink(address string) (*Permalink, error) {
 
 func (p Permalink) BlogPost() (*BlogPost, error) {
    buf := []byte("https://api-http2.tumblr.com/v2/blog/")
-   buf = append(buf, p.blogName...)
+   buf = append(buf, p.BlogName...)
    buf = append(buf, "/posts/"...)
-   buf = strconv.AppendInt(buf, p.postID, 10)
+   buf = strconv.AppendInt(buf, p.PostID, 10)
    buf = append(buf, "/permalink"...)
    req, err := http.NewRequest("GET", string(buf), nil)
    if err != nil {
