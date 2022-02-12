@@ -7,7 +7,6 @@ import (
    "net/url"
    "os"
    "strings"
-   "time"
 )
 
 var body = strings.NewReader(`
