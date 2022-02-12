@@ -9,6 +9,30 @@ import (
    "time"
 )
 
+var apps = []application{
+   {id: "bbc.mobile.news.ww", done: true},
+   {id: "com.amazon.mp3"},
+   {id: "com.bandcamp.android", done: true},
+   {id: "com.cbs.app"},
+   {id: "com.clearchannel.iheartradio.controller"},
+   {id: "com.google.android.youtube", done: true},
+   {id: "com.instagram.android", done: true},
+   {id: "com.nbcuni.nbc", done: true},
+   {id: "com.pandora.android", done: true},
+   {id: "com.pbs.video"},
+   {id: "com.qobuz.music"},
+   {id: "com.reddit.frontpage"},
+   {id: "com.rhapsody"},
+   {id: "com.soundcloud.android", done: true},
+   {id: "com.spotify.music"},
+   {id: "com.ted.android", done: true},
+   {id: "com.tumblr", done: true},
+   {id: "com.twitter.android", done: true},
+   {id: "com.vimeo.android.videoapp", done: true},
+   {id: "com.zhiliaoapp.musically", done: true},
+   {id: "deezer.android.app"},
+}
+
 func main() {
    cache, err := os.UserCacheDir()
    if err != nil {
@@ -49,25 +73,3 @@ type application struct {
    installs uint64
 }
 
-var apps = []application{
-   {id: "bbc.mobile.news.ww", done: true},
-   {id: "com.amazon.mp3"},
-   {id: "com.bandcamp.android", done: true},
-   {id: "com.cbs.app"},
-   {id: "com.clearchannel.iheartradio.controller"},
-   {id: "com.google.android.youtube", done: true},
-   {id: "com.instagram.android", done: true},
-   {id: "com.nbcuni.nbc", done: true},
-   {id: "com.pandora.android", done: true},
-   {id: "com.pbs.video"},
-   {id: "com.qobuz.music"},
-   {id: "com.reddit.frontpage"},
-   {id: "com.rhapsody"},
-   {id: "com.soundcloud.android", done: true},
-   {id: "com.spotify.music"},
-   {id: "com.ted.android", done: true},
-   {id: "com.twitter.android", done: true},
-   {id: "com.vimeo.android.videoapp", done: true},
-   {id: "com.zhiliaoapp.musically", done: true},
-   {id: "deezer.android.app"},
-}

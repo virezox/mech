@@ -12,18 +12,19 @@ import (
 const addr = "https://api.github.com/repos/89z/mech/topics"
 
 var names = []string{
+   "youtube",
    "instagram",
-   "pandora",
-   "soundcloud",
    "tiktok",
    "twitter",
-   "vimeo",
-   "youtube",
+   "soundcloud",
+   "pandora",
+   "tumblr",
    ///////////
    "bandcamp",
    "bbc",
    "nbc",
    "ted",
+   "vimeo",
 }
 
 func userinfo() (*url.Userinfo, error) {

@@ -12,6 +12,14 @@ const consumerKey = "BUHsuO5U9DF42uJtc8QTZlOmnUaJmBJGuU1efURxeklbdiLn9L"
 
 var LogLevel format.LogLevel
 
+type BlogPost struct {
+   Response struct {
+      Timeline struct {
+         Elements []Element
+      }
+   }
+}
+
 type Element struct {
    Blog struct {
       Title string
@@ -37,14 +45,6 @@ func (e Element) String() string {
    buf = append(buf, "\nURL: "...)
    buf = append(buf, e.Video_URL...)
    return string(buf)
-}
-
-type BlogPost struct {
-   Response struct {
-      Timeline struct {
-         Elements []Element
-      }
-   }
 }
 
 type Permalink struct {
