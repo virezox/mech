@@ -10,6 +10,7 @@ import (
    "io"
    "net/http"
    "net/url"
+   "path"
    "strings"
    "time"
 )
@@ -20,7 +21,11 @@ const (
    sessionID = "726-7519652-9073110"
 )
 
-var logLevel format.LogLevel
+var LogLevel format.LogLevel
+
+func RgConst(address string) string {
+   return path.Base(address)
+}
 
 func newDate() string {
    return time.Now().Format(time.RFC1123)
@@ -38,7 +43,7 @@ func newSha(src io.Reader) []byte {
    return dst.Sum(nil)
 }
 
-type credentials struct {
+type Credential struct {
    Resource struct {
       AccessKeyID string
       SecretAccessKey string
@@ -46,7 +51,7 @@ type credentials struct {
    }
 }
 
-func newCredentials() (*credentials, error) {
+func NewCredential() (*Credential, error) {
    body := map[string]string{"appKey": appKey}
    buf := new(bytes.Buffer)
    err := json.NewEncoder(buf).Encode(body)
@@ -59,20 +64,20 @@ func newCredentials() (*credentials, error) {
    if err != nil {
       return nil, err
    }
-   logLevel.Dump(req)
+   LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
-   cred := new(credentials)
+   cred := new(Credential)
    if err := json.NewDecoder(res.Body).Decode(cred); err != nil {
       return nil, err
    }
    return cred, nil
 }
 
-func (c credentials) Gallery(rgconst string) (*http.Response, error) {
+func (c Credential) Gallery(rgconst string) (*Gallery, error) {
    var buf strings.Builder
    buf.WriteString(origin)
    buf.WriteString("/template/imdb-android-writable")
@@ -82,17 +87,30 @@ func (c credentials) Gallery(rgconst string) (*http.Response, error) {
       return nil, err
    }
    req.URL.RawQuery = "rgconst=" + url.QueryEscape(rgconst)
+   // Since we arent using `Set`, the case on these needs to be correct:
    req.Header = http.Header{
       "X-Amz-Date": {newDate()},
       "X-Amz-Security-Token": {c.Resource.SessionToken},
       "X-Amzn-Sessionid": {sessionID},
    }
    c.sign(req)
-   logLevel.Dump(req)
-   return new(http.Transport).RoundTrip(req)
+   LogLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return nil, errorString(res.Status)
+   }
+   gal := new(Gallery)
+   if err := json.NewDecoder(res.Body).Decode(gal); err != nil {
+      return nil, err
+   }
+   return gal, nil
 }
 
-func (c credentials) sign(req *http.Request) {
+func (c Credential) sign(req *http.Request) {
    buf := new(bytes.Buffer)
    buf.WriteString(req.Method)
    buf.WriteByte('\n')
@@ -102,14 +120,16 @@ func (c credentials) sign(req *http.Request) {
    buf.WriteString("\nhost:")
    buf.WriteString(req.URL.Host)
    buf.WriteString("\nx-amz-date:")
-   buf.WriteString(req.Header.Get("X-Amz-Date"))
+   buf.WriteString(req.Header.Get("x-amz-date"))
    buf.WriteString("\nx-amz-security-token:")
-   buf.WriteString(req.Header.Get("X-Amz-Security-Token"))
+   buf.WriteString(req.Header.Get("x-amz-security-token"))
    buf.WriteString("\nx-amzn-sessionid:")
-   buf.WriteString(req.Header.Get("X-Amzn-Sessionid"))
+   buf.WriteString(req.Header.Get("x-amzn-sessionid"))
    buf.WriteString("\n\n")
+   // Yes, it is stupid to SHA256 twice, but that is what the server requires.
    sha := newSha(buf)
    hmacSha := newHmacSha(sha, []byte(c.Resource.SecretAccessKey))
+   // All of this is needed:
    buf.WriteString("AWS3 AWSAccessKeyId=")
    buf.WriteString(c.Resource.AccessKeyID)
    buf.WriteString(",Algorithm=HmacSHA256,Signature=")
@@ -117,4 +137,16 @@ func (c credentials) sign(req *http.Request) {
    buf.WriteString(",SignedHeaders=")
    buf.WriteString("host;x-amz-date;x-amz-security-token;x-amzn-sessionid")
    req.Header.Set("x-amzn-authorization", buf.String())
+}
+
+type Gallery struct {
+   Images []struct {
+      URL string
+   }
+}
+
+type errorString string
+
+func (e errorString) Error() string {
+   return string(e)
 }
