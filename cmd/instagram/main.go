@@ -52,6 +52,6 @@ func main() {
          }
       }
    } else {
-      flag.PrintDefaults()
+      flag.Usage()
    }
 }
