@@ -1,14 +1,26 @@
 package imdb
 
 import (
-   "fmt"
    "testing"
+   "net/http/httputil"
+   "os"
 )
 
-func TestIMDb(t *testing.T) {
+const rgconst = "rg2774637312"
+
+func TestCred(t *testing.T) {
    cred, err := newCredentials()
    if err != nil {
       t.Fatal(err)
    }
-   fmt.Printf("%+v\n", cred)
+   res, err := cred.Gallery(rgconst)
+   if err != nil {
+      t.Fatal(err)
+   }
+   defer res.Body.Close()
+   buf, err := httputil.DumpResponse(res, true)
+   if err != nil {
+      t.Fatal(err)
+   }
+   os.Stdout.Write(buf)
 }
