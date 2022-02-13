@@ -92,6 +92,6 @@ func main() {
          panic(err)
       }
    } else {
-      flag.PrintDefaults()
+      flag.Usage()
    }
 }
