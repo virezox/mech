@@ -5,14 +5,14 @@ import (
    "testing"
 )
 
-const address = "https://www.imdb.com/gallery/rg2774637312"
+const rgconst = "rg2774637312"
 
 func TestCred(t *testing.T) {
    cred, err := NewCredential()
    if err != nil {
       t.Fatal(err)
    }
-   gal, err := cred.Gallery(RgConst(address))
+   gal, err := cred.Gallery(rgconst)
    if err != nil {
       t.Fatal(err)
    }

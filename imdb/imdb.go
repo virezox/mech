@@ -10,7 +10,7 @@ import (
    "io"
    "net/http"
    "net/url"
-   "path"
+   "strconv"
    "strings"
    "time"
 )
@@ -18,14 +18,9 @@ import (
 const (
    appKey = "4f833099-e4fe-4912-80f3-b1b169097914"
    origin = "https://api.imdbws.com"
-   sessionID = "726-7519652-9073110"
 )
 
 var LogLevel format.LogLevel
-
-func RgConst(address string) string {
-   return path.Base(address)
-}
 
 func newDate() string {
    return time.Now().Format(time.RFC1123)
@@ -91,7 +86,6 @@ func (c Credential) Gallery(rgconst string) (*Gallery, error) {
    req.Header = http.Header{
       "X-Amz-Date": {newDate()},
       "X-Amz-Security-Token": {c.Resource.SessionToken},
-      "X-Amzn-Sessionid": {sessionID},
    }
    c.sign(req)
    LogLevel.Dump(req)
@@ -123,8 +117,6 @@ func (c Credential) sign(req *http.Request) {
    buf.WriteString(req.Header.Get("x-amz-date"))
    buf.WriteString("\nx-amz-security-token:")
    buf.WriteString(req.Header.Get("x-amz-security-token"))
-   buf.WriteString("\nx-amzn-sessionid:")
-   buf.WriteString(req.Header.Get("x-amzn-sessionid"))
    buf.WriteString("\n\n")
    // Yes, it is stupid to SHA256 twice, but that is what the server requires.
    sha := newSha(buf)
@@ -134,15 +126,28 @@ func (c Credential) sign(req *http.Request) {
    buf.WriteString(c.Resource.AccessKeyID)
    buf.WriteString(",Algorithm=HmacSHA256,Signature=")
    buf.WriteString(base64.StdEncoding.EncodeToString(hmacSha))
-   buf.WriteString(",SignedHeaders=")
-   buf.WriteString("host;x-amz-date;x-amz-security-token;x-amzn-sessionid")
+   buf.WriteString(",SignedHeaders=host;x-amz-date;x-amz-security-token")
    req.Header.Set("x-amzn-authorization", buf.String())
 }
 
-type Gallery struct {
-   Images []struct {
-      URL string
+type Image struct {
+   URL string
+}
+
+func (i Image) Format(width int64) string {
+   n := strings.LastIndexByte(i.URL, '.')
+   if n == -1 {
+      return i.URL
    }
+   buf := []byte(i.URL[:n])
+   buf = append(buf, "UX"...)
+   buf = strconv.AppendInt(buf, width, 10)
+   buf = append(buf, i.URL[n:]...)
+   return string(buf)
+}
+
+type Gallery struct {
+   Images []Image
 }
 
 type errorString string
