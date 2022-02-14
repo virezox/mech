@@ -1,5 +1,14 @@
 # YouTube
 
+~~~mermaid
+flowchart TD
+   A[Android]
+   A --> C[Client.Player]
+   A --> D[Client.PlayerHeader]
+   B[Embed]
+   B --> C[Client.Player]
+~~~
+
 ## Clients
 
 ANDROID is needed for this:
@@ -162,4 +171,4 @@ January 28 2022.
 
 I use it myself.
 
-https://www.youtube.com/watch?v=Ts1Tcgj6nbc
+https://youtube.com/watch?v=Ts1Tcgj6nbc

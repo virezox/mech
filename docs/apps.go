@@ -16,6 +16,7 @@ var apps = []application{
    {id: "com.cbs.app"},
    {id: "com.clearchannel.iheartradio.controller"},
    {id: "com.google.android.youtube", done: true},
+   {id: "com.imdb.mobile", done: true},
    {id: "com.instagram.android", done: true},
    {id: "com.nbcuni.nbc", done: true},
    {id: "com.pandora.android", done: true},

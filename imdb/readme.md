@@ -1,7 +1,6 @@
 # IMDb
 
 - https://github.com/boto/boto/blob/develop/boto/auth.py
-- https://github.com/mikf/gallery-dl/issues/2242
 - https://github.com/richardARPANET/imdb-pie/blob/master/src/imdbpie/auth.py
 
 ## How to get `appKey`?
