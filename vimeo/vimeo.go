@@ -72,7 +72,7 @@ func (w JsonWeb) Video(clip *Clip) (*Video, error) {
       return nil, err
    }
    req.Header.Set("Authorization", "JWT " + w.Token)
-   req.URL.RawQuery = "fields=duration,download"
+   req.URL.RawQuery = "fields=duration,download,name,pictures,release_time"
    LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
@@ -98,11 +98,6 @@ type Download struct {
    Link string
 }
 
-type Video struct {
-   Duration int64
-   Download []Download
-}
-
 func (d Download) Format(link bool) string {
    buf := []byte("ID:")
    buf = strconv.AppendInt(buf, d.Video_File_ID, 10)
@@ -121,10 +116,27 @@ func (d Download) Format(link bool) string {
    return string(buf)
 }
 
+type Video struct {
+   Duration int64
+   Release_Time string
+   Name string
+   Pictures struct {
+      Base_Link string
+   }
+   Download []Download
+}
+
 func (v Video) Format(link bool) string {
    buf := []byte("Duration: ")
    buf = append(buf, v.Time().String()...)
-   buf = append(buf, "\nDownloads:"...)
+   buf = append(buf, "\nRelease: "...)
+   buf = append(buf, v.Release_Time...)
+   buf = append(buf, "\nName: "...)
+   buf = append(buf, v.Name...)
+   if link {
+      buf = append(buf, "\nPicture: "...)
+      buf = append(buf, v.Pictures.Base_Link...)
+   }
    for _, down := range v.Download {
       buf = append(buf, '\n')
       buf = append(buf, down.Format(link)...)
