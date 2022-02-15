@@ -99,8 +99,9 @@ type Download struct {
 }
 
 type Video struct {
-   Duration int64
    Download []Download
+   Duration int64
+   Release_Time string
 }
 
 func (d Download) Format(link bool) string {

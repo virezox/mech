@@ -8,18 +8,17 @@ import (
 )
 
 func main() {
+   clip := new(vimeo.Clip)
    // a
    var address string
    flag.StringVar(&address, "a", "", "address")
    // c
-   var clipID int64
-   flag.Int64Var(&clipID, "c", 0, "clip ID")
+   flag.Int64Var(&clip.ID, "c", 0, "clip ID")
    // d
    var downloadID int64
    flag.Int64Var(&downloadID, "d", 0, "download ID")
    // h
-   var unlistedHash int64
-   flag.Int64Var(&unlistedHash, "h", 0, "unlisted hash")
+   flag.Int64Var(&clip.UnlistedHash, "h", 0, "unlisted hash")
    // i
    var info bool
    flag.BoolVar(&info, "i", false, "info only")
@@ -30,13 +29,17 @@ func main() {
    if verbose {
       vimeo.LogLevel = 1
    }
-   clip, err := newClip(clipID, unlistedHash, address)
-   if err != nil {
-      flag.Usage()
-   } else {
+   if clip.ID >= 1 || address != "" {
       web, err := vimeo.NewJsonWeb()
       if err != nil {
          panic(err)
+      }
+      if address != "" {
+         var err error
+         clip, err = vimeo.NewClip(address)
+         if err != nil {
+            panic(err)
+         }
       }
       video, err := web.Video(clip)
       if err != nil {
@@ -58,5 +61,7 @@ func main() {
             }
          }
       }
+   } else {
+      flag.Usage()
    }
 }
