@@ -223,7 +223,7 @@ var Android = UserAgent{
    Brand: "brand",
    Density: "density",
    Device: "device",
-   Instagram: "220.0.0.16.115",
+   Instagram: "222.0.0.15.114",
    Model: "model",
    Platform: "platform",
    Release: 9,

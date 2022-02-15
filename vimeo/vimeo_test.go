@@ -13,16 +13,6 @@ var videos = []string{
    "https://vimeo.com/477957994?unlisted_hash=2282452868",
 }
 
-func TestScan(t *testing.T) {
-   for _, video := range videos {
-      clip, err := NewClip(video)
-      if err != nil {
-         t.Fatal(err)
-      }
-      fmt.Printf("%+v\n", clip)
-   }
-}
-
 func TestVimeo(t *testing.T) {
    web, err := NewJsonWeb()
    if err != nil {
@@ -33,5 +23,15 @@ func TestVimeo(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   fmt.Println(video)
+   fmt.Println(video.Format(true))
+}
+
+func TestScan(t *testing.T) {
+   for _, video := range videos {
+      clip, err := NewClip(video)
+      if err != nil {
+         t.Fatal(err)
+      }
+      fmt.Printf("%+v\n", clip)
+   }
 }

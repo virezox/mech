@@ -10,13 +10,6 @@ import (
    "path"
 )
 
-func newClip(clipID, unlistedHash int64, addr string) (*vimeo.Clip, error) {
-   if clipID >= 1 {
-      return &vimeo.Clip{clipID, unlistedHash}, nil
-   }
-   return vimeo.NewClip(addr)
-}
-
 func download(down vimeo.Download) error {
    fmt.Println("GET", down.Link)
    res, err := http.Get(down.Link)
