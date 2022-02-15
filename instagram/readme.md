@@ -20,6 +20,10 @@ Media
 
 ## How to get User-Agent?
 
+~~~
+com.instagram.android
+~~~
+
 https://github.com/89z/googleplay
 
 ## Why does this exist?
