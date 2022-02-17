@@ -1,6 +1,7 @@
 # Audible
 
 - https://github.com/89z/mech/issues/14
+- https://github.com/mkb79/Audible/issues/83
 - https://play.google.com/store/apps/details?id=com.audible.application
 
 Need to use Frida. Audio looks like this:
@@ -43,5 +44,39 @@ Host: api.audible.com
 Connection: Keep-Alive
 Accept-Encoding: gzip
 
-{"supported_drm_types":["Dash","Hls","Mpeg"],"consumption_type":"Streaming","use_adaptive_bit_rate":true,"response_groups":"content_reference,chapter_info,pdf_url,last_position_heard,ad_insertion"}
+{"supported_drm_types":["Dash","Hls","Mpeg"],"consumption_type":"Streaming",
+"use_adaptive_bit_rate":true,"response_groups":"content_reference,chapter_info,pdf_url,last_position_heard,ad_insertion"}
+~~~
+
+which comes from:
+
+~~~
+POST /auth/register HTTP/1.1
+Content-Type: application/json
+X-Amzn-RequestId: f84f99ee-066c-450d-94df-79a09477427b
+x-amzn-identity-auth-domain: www.audible.com
+Accept-Language: en-US
+Content-Length: 1688
+User-Agent: Dalvik/2.1.0 (Linux; U; Android 7.0; Android SDK built for x86 Build/NYC)
+Host: api.audible.com
+Connection: Keep-Alive
+Accept-Encoding: gzip
+
+{"auth_data":{"use_global_authentication":"true",
+"authorization_code":"ANMOGGoiisyuRROrKOaCEGcC",
+"code_verifier":"PKlpbL9oea1G4PAJcPBj3dM1qGq01jNLjKl-iFFuI_E",
+"code_algorithm":"SHA-256","client_domain":"DeviceLegacy",
+"client_id":"6562393738393965303131393466356638383932234131304b49535032475746304534"},
+"registration_data":{"domain":"DeviceLegacy","device_type":"A10KISP2GWF0E4",
+"device_serial":"eb97899e01194f5f8892","app_name":"com.audible.application",
+"app_version":"102028","device_model":"Android SDK built for x86",
+"os_version":"google\/sdk_google_phone_x86\/generic_x86:7.0\/NYC\/6696031:userdebug\/dev-keys",
+"software_version":"130050002",
+"device_name":"%FIRST_NAME%%FIRST_NAME_POSSESSIVE_STRING%%DUPE_STRATEGY_1ST%Audible for Android"},
+"requested_token_type":["bearer","mac_dms","store_authentication_cookie",
+"website_cookies"],"cookies":{"domain":"www.amazon.com","website_cookies":[]},
+"user_context_map":{"frc":"AJEQsJUmcYBNfnSTnhAuccfu9TybdN5DQ9xT06HSQrF6hspJ58bCQRjPHOywyguv1Ql+Wj7BMV1KzJIz3EUxdkR3t88+lqEoszOMb1CsVIkeiClo3QmBHhqrlba73GvHmS7C0OyEzCF5u7GlQHc9HwaUCcEUip0BWx2awBDGvWENHh0UVIGzQP3FRYkbV+hIaCeCBr3NkzJuCvdEyDT3ERI2ATZWjE3cC7dgPyU87j9+L\/B+OOSKZ84oAwE72q4pbYNwetE2thusCpNhdCTkHIRi+6zu5NLIll16mfXIXhzt6HigqXo++5tbOK64I\/ZKBVGGPoszzbOtRVO4eb8z3vaz0SmLdH\/1dFBqoG\/1FBnYAASXb1eVwJVCjmDTfQGyayHzcD8VA72KWaDEqMd\/vHMQUP2bWAEoN7XhlLn2KG88zxlRC9VdR3M="},
+"device_metadata":{"device_os_family":"android","device_type":"A10KISP2GWF0E4",
+"device_serial":"eb97899e01194f5f8892","manufacturer":"Google","model":"Android SDK built for x86","os_version":"24","android_id":"b64a782b67753606",
+"product":"sdk_google_phone_x86"},"requested_extensions":["device_info","customer_info"]}
 ~~~

@@ -46,7 +46,7 @@ func main() {
             panic(err)
          }
       } else {
-         err := doGraph(shortcode)
+         err := doGraph(shortcode, info)
          if err != nil {
             panic(err)
          }

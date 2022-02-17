@@ -22,6 +22,13 @@ func Shortcode(address string) string {
 }
 
 type GraphMedia struct {
+   Edge_Media_To_Caption struct {
+      Edges []struct {
+         Node struct {
+            Text string
+         }
+      }
+   }
    Display_URL string
    Video_URL string
    Edge_Sidecar_To_Children struct {
@@ -64,6 +71,22 @@ func NewGraphMedia(shortcode string) (*GraphMedia, error) {
       return nil, err
    }
    return &post.GraphQL.Shortcode_Media, nil
+}
+
+func (g GraphMedia) String() string {
+   buf := []byte("Caption: ")
+   for _, edge := range g.Edge_Media_To_Caption.Edges {
+      buf = append(buf, edge.Node.Text...)
+   }
+   buf = append(buf, "\nURLs:"...)
+   for i, addr := range g.URLs() {
+      if i >= 1 {
+         buf = append(buf, '\n')
+      }
+      buf = append(buf, '\n')
+      buf = append(buf, addr...)
+   }
+   return string(buf)
 }
 
 func (g GraphMedia) URLs() []string {

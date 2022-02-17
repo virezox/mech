@@ -10,17 +10,21 @@ import (
    "time"
 )
 
-func doGraph(shortcode string) error {
+func doGraph(shortcode string, info bool) error {
    media, err := instagram.NewGraphMedia(shortcode)
    if err != nil {
       return err
    }
-   for _, addr := range media.URLs() {
-      err := download(addr)
-      if err != nil {
-         return err
+   if info {
+      fmt.Println(media)
+   } else {
+      for _, addr := range media.URLs() {
+         err := download(addr)
+         if err != nil {
+            return err
+         }
+         time.Sleep(99 * time.Millisecond)
       }
-      time.Sleep(99 * time.Millisecond)
    }
    return nil
 }

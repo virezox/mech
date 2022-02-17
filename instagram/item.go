@@ -12,24 +12,30 @@ import (
 )
 
 type Item struct {
+   Caption struct {
+      Text string
+   }
    Media
    Carousel_Media []Media
 }
 
 func (i Item) Format() (string, error) {
-   var buf []byte
+   buf := []byte("Caption: ")
+   buf = append(buf, i.Caption.Text...)
+   buf = append(buf, "\nURLs:"...)
    for j, med := range i.Medias() {
       addrs, err := med.URLs()
       if err != nil {
          return "", err
       }
       if j >= 1 {
-         buf = append(buf, "\n---\n"...)
+         buf = append(buf, '\n')
       }
       for k, addr := range addrs {
          if k >= 1 {
-            buf = append(buf, "\n---\n"...)
+            buf = append(buf, '\n')
          }
+         buf = append(buf, '\n')
          buf = append(buf, addr...)
       }
    }
