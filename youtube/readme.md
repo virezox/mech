@@ -1,41 +1,6 @@
 # YouTube
 
-~~~mermaid
-flowchart TD
-   A[Android]
-   A --> C[Client.Player]
-   A --> D[Client.PlayerHeader]
-   B[Embed]
-   B --> C[Client.Player]
-~~~
-
-## Clients
-
-ANDROID is needed for this:
-
-~~~
-MeJVWBSsPAY
-~~~
-
-EMBED is needed for this:
-
-~~~
-QWlNyzzwgcc
-~~~
-
-MWEB is needed to get `publishDate`:
-
-~~~
-aN76CmldknI
-~~~
-
-OAuth is required:
-
-~~~
-Cr381pDsSsA
-~~~
-
-Get ANDROID client:
+## Client ANDROID
 
 ~~~
 googleplay -a com.google.android.youtube
@@ -43,7 +8,9 @@ googleplay -a com.google.android.youtube
 
 https://github.com/89z/googleplay
 
-Get MWEB client:
+Requires Android API 26. Install system certificate.
+
+## Client MWEB
 
 ~~~
 GET / HTTP/1.1
@@ -51,7 +18,13 @@ Host: m.youtube.com
 User-Agent: iPad
 ~~~
 
-Get TVHTML5 client:
+Needed to get `publishDate`:
+
+~~~
+aN76CmldknI
+~~~
+
+## Client TVHTML5
 
 ~~~
 GET /tv HTTP/1.1
@@ -59,14 +32,14 @@ Host: www.youtube.com
 User-Agent: Mozilla/5.0 (ChromiumStylePlatform) Cobalt/Version
 ~~~
 
-Get WEB client:
+## Client WEB
 
 ~~~
 GET / HTTP/1.1
 Host: www.youtube.com
 ~~~
 
-Get `WEB_CREATOR` client:
+## Client WEB\_CREATOR
 
 ~~~
 GET /?approve_browser_access=true HTTP/1.1
@@ -74,14 +47,14 @@ Host: studio.youtube.com
 Authorization: Bearer ya29.a0ARrdaM-2nXUrxlFNOx3hZAUNICfCwmhHKHenQkebpQFGNoYdE...
 ~~~
 
-Get `WEB_EMBEDDED_PLAYER` client:
+## Client WEB\_EMBEDDED\_PLAYER
 
 ~~~
 GET /embed/MIchMEqVwvg HTTP/1.1
 Host: www.youtube.com
 ~~~
 
-Get `WEB_KIDS` client:
+## Client WEB\_KIDS
 
 ~~~
 GET / HTTP/1.1
@@ -89,7 +62,7 @@ Host: www.youtubekids.com
 User-Agent: Firefox/44
 ~~~
 
-Get `WEB_REMIX` client:
+## Client WEB\_REMIX
 
 ~~~
 GET / HTTP/1.1
@@ -147,6 +120,12 @@ Host: www.youtube.com
 "grant_type":"http://oauth.net/grant_type/device/1.0"}
 ~~~
 
+Needed for videos like this:
+
+~~~
+Cr381pDsSsA
+~~~
+
 1. <https://github.com/youtube/cobalt/blob/master/src/cobalt/browser/user_agent_string.cc>
 
 ## Image
@@ -172,3 +151,4 @@ January 28 2022.
 I use it myself.
 
 https://youtube.com/watch?v=Ts1Tcgj6nbc
+
