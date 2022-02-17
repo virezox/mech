@@ -12,38 +12,14 @@ import (
    "time"
 )
 
-const origin = "https://bleep.com"
-
 var LogLevel format.LogLevel
-
-// 8728-1-1
-func Parse(track string) (*Track, error) {
-   split := strings.SplitN(track, "-", 3)
-   if sLen := len(split); sLen <= 2 {
-      return nil, format.InvalidSlice{2, sLen}
-   }
-   rel, err := strconv.ParseInt(split[0], 10, 64)
-   if err != nil {
-      return nil, err
-   }
-   dis, err := strconv.ParseInt(split[1], 10, 64)
-   if err != nil {
-      return nil, err
-   }
-   num, err := strconv.ParseInt(split[2], 10, 64)
-   if err != nil {
-      return nil, err
-   }
-   return &Track{ReleaseID: rel, Disc: dis, Number: num}, nil
-}
 
 type Meta []net.Node
 
 func NewMeta(releaseID int64) (Meta, error) {
-   addr := []byte(origin)
-   addr = append(addr, "/release/"...)
-   addr = strconv.AppendInt(addr, releaseID, 10)
-   req, err := http.NewRequest("GET", string(addr), nil)
+   buf := []byte("https://bleep.com/release/")
+   buf = strconv.AppendInt(buf, releaseID, 10)
+   req, err := http.NewRequest("GET", string(buf), nil)
    if err != nil {
       return nil, err
    }
@@ -83,21 +59,21 @@ func (m Meta) ReleaseDate() (time.Time, error) {
    return time.Time{}, notFound{"music:release_date"}
 }
 
-type Track struct {
-   Artist string
-   Title string
-   ReleaseID int64
-   Disc int64
-   Number int64
+type notFound struct {
+   value string
 }
 
-func Release(releaseID int64) ([]Track, error) {
+func (n notFound) Error() string {
+   return strconv.Quote(n.value) + " not found"
+}
+
+func Tracks(id int64) ([]Track, error) {
    val := url.Values{
-      "id": {strconv.FormatInt(releaseID, 10)},
+      "id": {strconv.FormatInt(id, 10)},
       "type": {"ReleaseProduct"},
    }.Encode()
    req, err := http.NewRequest(
-      "POST", origin + "/player/addToPlaylist", strings.NewReader(val),
+      "POST", "https://bleep.com/player/addToPlaylist", strings.NewReader(val),
    )
    if err != nil {
       return nil, err
@@ -109,16 +85,30 @@ func Release(releaseID int64) ([]Track, error) {
       return nil, err
    }
    defer res.Body.Close()
-   var rel []Track
-   if err := json.NewDecoder(res.Body).Decode(&rel); err != nil {
+   var tracks []Track
+   if err := json.NewDecoder(res.Body).Decode(&tracks); err != nil {
       return nil, err
    }
-   return rel, nil
+   return tracks, nil
+}
+
+type Track struct {
+   ReleaseID int64
+   Disc int64
+   Number int64
+   Artist string
+   Title string
 }
 
 func (t Track) Resolve() (string, error) {
+   buf := strconv.AppendInt(nil, t.ReleaseID, 10)
+   buf = append(buf, '-')
+   buf = strconv.AppendInt(buf, t.Disc, 10)
+   buf = append(buf, '-')
+   buf = strconv.AppendInt(buf, t.Number, 10)
+   return string(buf)
    req, err := http.NewRequest(
-      "GET", origin + "/player/resolve/" + t.String(), nil,
+      "GET", "https://bleep.com/player/resolve/" + t.String(), nil,
    )
    if err != nil {
       return "", err
@@ -134,21 +124,4 @@ func (t Track) Resolve() (string, error) {
       return "", err
    }
    return string(dst), nil
-}
-
-func (t Track) String() string {
-   track := strconv.AppendInt(nil, t.ReleaseID, 10)
-   track = append(track, '-')
-   track = strconv.AppendInt(track, t.Disc, 10)
-   track = append(track, '-')
-   track = strconv.AppendInt(track, t.Number, 10)
-   return string(track)
-}
-
-type notFound struct {
-   value string
-}
-
-func (n notFound) Error() string {
-   return strconv.Quote(n.value) + " not found"
 }
