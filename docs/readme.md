@@ -70,3 +70,7 @@ https://github.com/89z/mech/tree/c825743ab7594025b9c70632d934820e2c68d20a
 Reddit:
 
 https://github.com/89z/mech/tree/b901af458f09e04b662dbeabc8f5880527f9adfa
+
+Spotify:
+
+Audio is encrypted.
