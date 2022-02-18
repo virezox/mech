@@ -18,6 +18,8 @@ This one seems to work:
 2020.03.19-release
 ~~~
 
+API 24? Small fail. Big pass.
+
 ## How to get `client_id`
 
 First, make a request like this:
