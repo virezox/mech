@@ -12,6 +12,7 @@ import (
 var apps = []application{
    {id: "bbc.mobile.news.ww", done: true},
    {id: "com.amazon.mp3"},
+   {id: "com.apple.android.music"},
    {id: "com.aspiro.tidal"},
    {id: "com.bandcamp.android", done: true},
    {id: "com.cbs.app"},
