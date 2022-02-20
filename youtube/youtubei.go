@@ -13,9 +13,10 @@ import (
 const origin = "https://www.youtube.com"
 
 var (
-   Android = Client{Name: "ANDROID", Version: "17.05.35"}
-   Embed = Client{Name: "ANDROID", Screen: "EMBED", Version: "17.05.35"}
    Mweb = Client{Name: "MWEB", Version: "2.20211109.01.00"}
+   // com.google.android.youtube
+   Android = Client{Name: "ANDROID", Version: "17.06.32"}
+   Embed = Client{Name: "ANDROID", Screen: "EMBED", Version: "17.06.32"}
 )
 
 var googAPI = http.Header{

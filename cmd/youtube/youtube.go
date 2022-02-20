@@ -77,4 +77,3 @@ func player(construct, embed bool, id string) (*youtube.Player, error) {
    }
    return client.Player(id)
 }
-

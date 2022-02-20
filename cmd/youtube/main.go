@@ -42,7 +42,6 @@ func main() {
    if verbose {
       youtube.LogLevel = 1
    }
-   
    if exchange {
       oauth, err := youtube.NewOAuth()
       if err != nil {
