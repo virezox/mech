@@ -74,6 +74,7 @@ func (m Media) Variants() []Variant {
 }
 
 type Status struct {
+   Created_At string
    User struct {
       Name string
    }
@@ -110,7 +111,9 @@ func NewStatus(guest *Guest, id int64) (*Status, error) {
 }
 
 func (s Status) String() string {
-   buf := []byte("User: ")
+   buf := []byte("Created: ")
+   buf = append(buf, s.Created_At...)
+   buf = append(buf, "\nUser: "...)
    buf = append(buf, s.User.Name...)
    buf = append(buf, "\nText: "...)
    buf = append(buf, s.Full_Text...)
