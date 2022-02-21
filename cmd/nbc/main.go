@@ -10,12 +10,12 @@ func main() {
    // f
    var form int64
    flag.Int64Var(&form, "f", 0, "format")
+   // g
+   var guid int64
+   flag.Int64Var(&guid, "g", 0, "GUID")
    // i
    var info bool
    flag.BoolVar(&info, "i", false, "info")
-   // n
-   var guid int64
-   flag.Int64Var(&guid, "n", 0, "GUID")
    // v
    var verbose bool
    flag.BoolVar(&verbose, "v", false, "verbose")
