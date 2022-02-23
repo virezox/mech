@@ -29,3 +29,13 @@ func TestTracks(t *testing.T) {
    }
    fmt.Printf("%+v\n", pro)
 }
+
+func TestUser(t *testing.T) {
+   tracks, err := UserTracks(692707328)
+   if err != nil {
+      t.Fatal(err)
+   }
+   for _, track := range tracks {
+      fmt.Printf("%+v\n", track)
+   }
+}

@@ -9,6 +9,13 @@ import (
    "strings"
 )
 
+const (
+   clientID = "iZIs9mchVcX5lhVRyQGGAYlNPVldzAoX"
+   origin = "https://api-v2.soundcloud.com"
+)
+
+var LogLevel format.LogLevel
+
 type Image struct {
    Size string
    Crop bool
@@ -33,13 +40,6 @@ var Images = []Image{
    {Size: "t80x80"},
    {Size: "tx250"},
 }
-
-const (
-   clientID = "iZIs9mchVcX5lhVRyQGGAYlNPVldzAoX"
-   origin = "https://api-v2.soundcloud.com"
-)
-
-var LogLevel format.LogLevel
 
 type Media struct {
    // cf-media.sndcdn.com/QaV7QR1lxpc6.128.mp3?Policy=eyJTdGF0ZW1lbnQiOlt7IlJ...
@@ -148,4 +148,32 @@ func (t Track) Progressive() (*Media, error) {
       return nil, err
    }
    return med, nil
+}
+
+// We can also paginate, but for now this is good enough.
+func UserTracks(id int64) ([]Track, error) {
+   buf := []byte("https://api-v2.soundcloud.com/users/")
+   buf = strconv.AppendInt(buf, id, 10)
+   buf = append(buf, "/tracks"...)
+   req, err := http.NewRequest("GET", string(buf), nil)
+   if err != nil {
+      return nil, err
+   }
+   req.URL.RawQuery = url.Values{
+      "client_id": {clientID},
+      "limit": {"999"},
+   }.Encode()
+   LogLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   var user struct {
+      Collection []Track
+   }
+   if err := json.NewDecoder(res.Body).Decode(&user); err != nil {
+      return nil, err
+   }
+   return user.Collection, nil
 }
