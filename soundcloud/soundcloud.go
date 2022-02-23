@@ -6,52 +6,44 @@ import (
    "net/http"
    "net/url"
    "strconv"
+   "strings"
 )
 
+var ImageSizes = []string{
+   "t120x120",
+   "t1240x260",
+   "t200x200",
+   "t20x20",
+   "t240x240",
+   "t2480x520",
+   "t250x250",
+   "t300x300",
+   "t40x40",
+   "t47x47",
+   "t500x",
+   "t500x500",
+   "t50x50",
+   "t60x60",
+   "t67x67",
+   "t80x80",
+   "tx250",
+}
+
 const (
-   Placeholder = "https://soundcloud.com/images/fb_placeholder.png"
    clientID = "iZIs9mchVcX5lhVRyQGGAYlNPVldzAoX"
    origin = "https://api-v2.soundcloud.com"
 )
 
 var LogLevel format.LogLevel
 
-type Alternate struct {
-   Thumbnail_URL string
-   Author_URL string
-}
-
-func Oembed(addr string) (*Alternate, error) {
-   req, err := http.NewRequest("GET", "https://soundcloud.com/oembed", nil)
-   if err != nil {
-      return nil, err
-   }
-   req.URL.RawQuery = url.Values{
-      "format": {"json"}, "url": {addr},
-   }.Encode()
-   LogLevel.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   alt := new(Alternate)
-   if err := json.NewDecoder(res.Body).Decode(alt); err != nil {
-      return nil, err
-   }
-   return alt, nil
-}
-
 type Media struct {
-   // cf-media.sndcdn.com/QaV7QR1lxpc6.128.mp3?Policy=eyJTdGF0ZW1lbnQiOlt7IlJl...
+   // cf-media.sndcdn.com/QaV7QR1lxpc6.128.mp3?Policy=eyJTdGF0ZW1lbnQiOlt7IlJ...
    URL string
 }
 
 type Track struct {
+   Display_Date string // 2021-04-12T07:00:01Z
    ID int
-   Title string
-   // 2021-04-12T07:00:01Z
-   Display_Date string
    Media struct {
       Transcodings []struct {
          Format struct {
@@ -62,9 +54,20 @@ type Track struct {
          URL string
       }
    }
+   Title string
+   Artwork_URL string
    User struct {
+      Avatar_URL string
       Username string
    }
+}
+
+// i1.sndcdn.com/artworks-000308141235-7ep8lo-large.jpg
+func (t Track) Artwork() string {
+   if t.Artwork_URL == "" {
+      t.Artwork_URL = t.User.Avatar_URL
+   }
+   return strings.Replace(t.Artwork_URL, "large", "t500x500", 1)
 }
 
 func Resolve(addr string) (*Track, error) {
@@ -73,7 +76,8 @@ func Resolve(addr string) (*Track, error) {
       return nil, err
    }
    req.URL.RawQuery = url.Values{
-      "client_id": {clientID}, "url": {addr},
+      "client_id": {clientID},
+      "url": {addr},
    }.Encode()
    LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
@@ -88,13 +92,21 @@ func Resolve(addr string) (*Track, error) {
    return tra, nil
 }
 
-func Tracks(ids string) ([]Track, error) {
+func Tracks(ids []int64) ([]Track, error) {
    req, err := http.NewRequest("GET", origin + "/tracks", nil)
    if err != nil {
       return nil, err
    }
+   var buf []byte
+   for key, val := range ids {
+      if key >= 1 {
+         buf = append(buf, ',')
+      }
+      buf = strconv.AppendInt(buf, val, 10)
+   }
    req.URL.RawQuery = url.Values{
-      "client_id": {clientID}, "ids": {ids},
+      "client_id": {clientID},
+      "ids": {string(buf)},
    }.Encode()
    LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
@@ -116,9 +128,6 @@ func (t Track) Progressive() (*Media, error) {
          addr = code.URL
       }
    }
-   if addr == "" {
-      return nil, notFound{"progressive"}
-   }
    req, err := http.NewRequest("GET", addr + "?client_id=" + clientID, nil)
    if err != nil {
       return nil, err
@@ -134,12 +143,4 @@ func (t Track) Progressive() (*Media, error) {
       return nil, err
    }
    return med, nil
-}
-
-type notFound struct {
-   value string
-}
-
-func (n notFound) Error() string {
-   return strconv.Quote(n.value) + " not found"
 }

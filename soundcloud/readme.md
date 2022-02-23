@@ -35,25 +35,16 @@ In the HTML response, you should see something like this:
 "clientId":"iZIs9mchVcX5lhVRyQGGAYlNPVldzAoX"
 ~~~
 
+You can also get it with JADX, but more difficult:
+
+~~~
+com\soundcloud\android\api\di\a.java
+return new kt.a(cVar, "dbdsA8b6V6Lw7wzu1x0T4CLxt58yd4Bf", iVar.deobfuscateString("NykCWyEEEyUrRCd2AQAtEAUdfy9HKAAkKRwjJh4cMSk="));
+~~~
+
 The `client_id` seems to last at least a year:
 
 https://github.com/rrosajp/soundcloud-archive/commit/c02809dc
-
-Other `client_id`s:
-
-~~~
-widget & widget2
-https://w.soundcloud.com/player/
-
-win10_app
-https://soundcouch.soundcloud.com/#/
-
-win10_app_beta
-https://soundcouch-beta.soundcloud.com/#/
-~~~
-
-- https://archive.ph/IOglb
-- https://github.com/inkuringu-ika/inkuringu-ika.github.io/issues/1
 
 ## Image
 
