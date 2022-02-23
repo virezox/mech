@@ -5,18 +5,10 @@ import (
    "testing"
 )
 
-const (
-   addr = "https://soundcloud.com/afterhour-sounds/premiere-ele-bisu-caradamom-coffee"
-   ids = "1021056175"
-)
+const addr =
+   "https://soundcloud.com/afterhour-sounds/premiere-ele-bisu-caradamom-coffee"
 
-func TestAlternate(t *testing.T) {
-   a, err := Oembed(addr)
-   if err != nil {
-      t.Fatal(err)
-   }
-   fmt.Printf("%+v\n", a)
-}
+var ids = []int64{1021056175}
 
 func TestResolve(t *testing.T) {
    r, err := Resolve(addr)
