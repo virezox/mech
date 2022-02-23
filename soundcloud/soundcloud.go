@@ -9,24 +9,29 @@ import (
    "strings"
 )
 
-var ImageSizes = []string{
-   "t120x120",
-   "t1240x260",
-   "t200x200",
-   "t20x20",
-   "t240x240",
-   "t2480x520",
-   "t250x250",
-   "t300x300",
-   "t40x40",
-   "t47x47",
-   "t500x",
-   "t500x500",
-   "t50x50",
-   "t60x60",
-   "t67x67",
-   "t80x80",
-   "tx250",
+type Image struct {
+   Size string
+   Crop bool
+}
+
+var Images = []Image{
+   {Size: "t120x120"},
+   {Size: "t1240x260", Crop: true},
+   {Size: "t200x200"},
+   {Size: "t20x20"},
+   {Size: "t240x240"},
+   {Size: "t2480x520", Crop: true},
+   {Size: "t250x250"},
+   {Size: "t300x300"},
+   {Size: "t40x40"},
+   {Size: "t47x47"},
+   {Size: "t500x"},
+   {Size: "t500x500"},
+   {Size: "t50x50"},
+   {Size: "t60x60"},
+   {Size: "t67x67"},
+   {Size: "t80x80"},
+   {Size: "tx250"},
 }
 
 const (
@@ -67,7 +72,7 @@ func (t Track) Artwork() string {
    if t.Artwork_URL == "" {
       t.Artwork_URL = t.User.Avatar_URL
    }
-   return strings.Replace(t.Artwork_URL, "large", "t500x500", 1)
+   return strings.Replace(t.Artwork_URL, "large", "t500x", 1)
 }
 
 func Resolve(addr string) (*Track, error) {

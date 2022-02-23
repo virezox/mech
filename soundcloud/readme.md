@@ -52,21 +52,14 @@ artworks:
 
 ~~~
 https://soundcloud.com/oembed?format=json&url=https://soundcloud.com/western_vinyl/jessica-risker-cut-my-hair
-https://i1.sndcdn.com/artworks-000308141235-7ep8lo-t500x500.jpg
-~~~
-
-placeholder:
-
-~~~
-https://soundcloud.com/oembed?format=json&url=https://soundcloud.com/pdis_inpartmaint/harold-budd-perhaps-moss
-https://soundcloud.com/images/fb_placeholder.png
+https://i1.sndcdn.com/artworks-000308141235-7ep8lo-t500x.jpg
 ~~~
 
 avatars:
 
 ~~~
-https://soundcloud.com/oembed?format=json&url=https://soundcloud.com/pdis_inpartmaint
-https://i1.sndcdn.com/avatars-000274827119-0dxutu-t500x500.jpg
+https://soundcloud.com/oembed?format=json&url=https://soundcloud.com/pdis_inpartmaint/harold-budd-perhaps-moss
+https://i1.sndcdn.com/avatars-000274827119-0dxutu-t500x.jpg
 ~~~
 
 ## Why does this exist?
