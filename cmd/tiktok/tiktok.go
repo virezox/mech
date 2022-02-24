@@ -10,10 +10,7 @@ import (
 )
 
 func get(det *tiktok.AwemeDetail) error {
-   addr, err := det.URL()
-   if err != nil {
-      return err
-   }
+   addr := det.URL()
    fmt.Println("GET", addr)
    res, err := http.Get(addr)
    if err != nil {

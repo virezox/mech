@@ -28,12 +28,16 @@ func (c choice) adaptiveFormats(play *youtube.Player) error {
          "302": true, // youtube.com/watch?v=kVNl1P9StSU
       }
    }
-   for _, form := range play.StreamingData.AdaptiveFormats {
+   for _, ada := range play.StreamingData.AdaptiveFormats {
       switch {
       case c.info:
+         form, err := ada.Format(false)
+         if err != nil {
+            return err
+         }
          fmt.Println(form)
-      case c.itags[fmt.Sprint(form.Itag)]:
-         name, err := filename(play, form)
+      case c.itags[fmt.Sprint(ada.Itag)]:
+         name, err := filename(play, ada)
          if err != nil {
             return err
          }
@@ -42,7 +46,7 @@ func (c choice) adaptiveFormats(play *youtube.Player) error {
             return err
          }
          defer file.Close()
-         if err := form.Write(file); err != nil {
+         if err := ada.Write(file); err != nil {
             return err
          }
       }

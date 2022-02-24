@@ -4,10 +4,16 @@ import (
    "encoding/json"
    "github.com/89z/format"
    "net/http"
-   "net/url"
    "strconv"
    "time"
 )
+
+func (a AwemeDetail) URL() string {
+   for _, addr := range a.Video.Play_Addr.URL_List {
+      return addr
+   }
+   return ""
+}
 
 var LogLevel format.LogLevel
 
@@ -60,20 +66,6 @@ func (a AwemeDetail) Duration() time.Duration {
 
 func (a AwemeDetail) Time() time.Time {
    return time.Unix(a.Create_Time, 0)
-}
-
-func (a AwemeDetail) URL() (string, error) {
-   if len(a.Video.Play_Addr.URL_List) == 0 {
-      return "", format.InvalidSlice{}
-   }
-   first := a.Video.Play_Addr.URL_List[0]
-   addr, err := url.Parse(first)
-   if err != nil {
-      return "", err
-   }
-   addr.RawQuery = ""
-   addr.Scheme = "http"
-   return addr.String(), nil
 }
 
 type errorString string

@@ -5,14 +5,11 @@ import (
    "io"
    "mime"
    "net/http"
+   "net/url"
    "os"
    "strconv"
    "time"
 )
-
-const partLength = 10_000_000
-
-var LogLevel format.LogLevel
 
 type Format struct {
    AudioQuality string
@@ -24,7 +21,11 @@ type Format struct {
    URL string
 }
 
-func (f Format) String() string {
+const partLength = 10_000_000
+
+var LogLevel format.LogLevel
+
+func (f Format) Format(addr bool) (string, error) {
    buf := []byte("Itag:")
    buf = strconv.AppendInt(buf, f.Itag, 10)
    buf = append(buf, " Quality:"...)
@@ -38,15 +39,38 @@ func (f Format) String() string {
    buf = append(buf, " Size:"...)
    buf = strconv.AppendInt(buf, f.ContentLength, 10)
    justType, _, err := mime.ParseMediaType(f.MimeType)
-   if err == nil {
-      buf = append(buf, " Type:"...)
-      buf = append(buf, justType...)
+   if err != nil {
+      return "", err
    }
-   return string(buf)
+   buf = append(buf, " Type:"...)
+   buf = append(buf, justType...)
+   if addr {
+      buf = append(buf, " URL:"...)
+      buf = append(buf, f.URL...)
+   }
+   return string(buf), nil
+}
+
+func (f Format) address() (string, error) {
+   addr, err := url.Parse(f.URL)
+   if err != nil {
+      return "", err
+   }
+   val := addr.Query()
+   keys := []string{"c", "fexp", "fvip", "keepalive", "mt", "txp"}
+   for _, key := range keys {
+      val.Del(key)
+   }
+   addr.RawQuery = val.Encode()
+   return addr.String(), nil
 }
 
 func (f Format) Write(dst io.Writer) error {
-   req, err := http.NewRequest("GET", f.URL, nil)
+   addr, err := f.address()
+   if err != nil {
+      return err
+   }
+   req, err := http.NewRequest("GET", addr, nil)
    if err != nil {
       return err
    }
@@ -83,3 +107,5 @@ func (f Format) Write(dst io.Writer) error {
    }
    return nil
 }
+
+
