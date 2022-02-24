@@ -3,42 +3,40 @@ package soundcloud
 import (
    "fmt"
    "testing"
+   "time"
 )
 
-const addr =
-   "https://soundcloud.com/afterhour-sounds/premiere-ele-bisu-caradamom-coffee"
+type itemType struct {
+   id int64
+   addr string
+}
 
-const (
-   trackID = 1021056175
-   userID = 692707328
-)
-
-func TestTrack(t *testing.T) {
-   track, err := NewTrack(trackID)
-   if err != nil {
-      t.Fatal(err)
-   }
-   pro, err := track.Progressive()
-   if err != nil {
-      t.Fatal(err)
-   }
-   fmt.Printf("%+v\n", pro)
+var items = []itemType{
+   {936653761, "https://soundcloud.com/kino-scmusic/mqymd53jtwag"},
+   {692707328, "https://soundcloud.com/kino-scmusic"},
 }
 
 func TestResolve(t *testing.T) {
-   track, err := Resolve(addr)
-   if err != nil {
-      t.Fatal(err)
+   for _, item := range items {
+      tracks, err := Resolve(item.addr)
+      if err != nil {
+         t.Fatal(err)
+      }
+      for _, track := range tracks {
+         fmt.Printf("%+v\n", track)
+      }
+      time.Sleep(time.Second)
    }
-   fmt.Printf("%+v\n", track)
 }
 
-func TestUser(t *testing.T) {
-   tracks, err := UserTracks(userID)
+func TestTrack(t *testing.T) {
+   track, err := NewTrack(items[0].id)
    if err != nil {
       t.Fatal(err)
    }
-   for _, track := range tracks {
-      fmt.Printf("%+v\n", track)
+   media, err := track.Progressive()
+   if err != nil {
+      t.Fatal(err)
    }
+   fmt.Printf("%+v\n", media)
 }

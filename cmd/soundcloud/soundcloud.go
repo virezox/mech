@@ -2,12 +2,13 @@ package main
 
 import (
    "fmt"
+   "github.com/89z/format"
    "github.com/89z/mech/soundcloud"
    "net/http"
    "os"
 )
 
-func download(track *soundcloud.Track) error {
+func download(track soundcloud.Track) error {
    media, err := track.Progressive()
    if err != nil {
       return err
@@ -27,7 +28,8 @@ func download(track *soundcloud.Track) error {
       return err
    }
    defer file.Close()
-   if _, err := file.ReadFrom(res.Body); err != nil {
+   pro := format.NewProgress(res)
+   if _, err := file.ReadFrom(pro); err != nil {
       return err
    }
    return nil

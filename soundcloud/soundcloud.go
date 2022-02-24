@@ -2,17 +2,15 @@ package soundcloud
 
 import (
    "encoding/json"
-   "path"
    "github.com/89z/format"
    "net/http"
    "net/url"
+   "path"
    "strconv"
    "strings"
 )
 
-const (
-   clientID = "iZIs9mchVcX5lhVRyQGGAYlNPVldzAoX"
-)
+const clientID = "iZIs9mchVcX5lhVRyQGGAYlNPVldzAoX"
 
 var LogLevel format.LogLevel
 
@@ -41,12 +39,35 @@ var Images = []Image{
    {Size: "tx250"},
 }
 
-// i1.sndcdn.com/artworks-000308141235-7ep8lo-large.jpg
-func (t Track) Artwork() string {
-   if t.Artwork_URL == "" {
-      t.Artwork_URL = t.User.Avatar_URL
+type Media struct {
+   // cf-media.sndcdn.com/QaV7QR1lxpc6.128.mp3?Policy=eyJTdGF0ZW1lbnQiOlt7IlJ...
+   URL string
+}
+
+func (m Media) Name(t Track) (string, error) {
+   addr, err := url.Parse(m.URL)
+   if err != nil {
+      return "", err
    }
-   return strings.Replace(t.Artwork_URL, "large", "t500x", 1)
+   return t.User.Username + "-" + t.Title + path.Ext(addr.Path), nil
+}
+
+type Track struct {
+   Artwork_URL string
+   Display_Date string
+   Media struct {
+      Transcodings []struct {
+         Format struct {
+            Protocol string
+         }
+         URL string
+      }
+   }
+   Title string
+   User struct {
+      Avatar_URL string
+      Username string
+   }
 }
 
 func NewTrack(id int64) (*Track, error) {
@@ -70,64 +91,35 @@ func NewTrack(id int64) (*Track, error) {
    return tra, nil
 }
 
-func (m Media) Name(t *Track) (string, error) {
-   addr, err := url.Parse(m.URL)
-   if err != nil {
-      return "", err
-   }
-   return t.User.Username + "-" + t.Title + path.Ext(addr.Path), nil
-}
-
-// Also available is "hls", but all transcodings are quality "sq".
-// Same for "api-mobile.soundcloud.com".
-func (t Track) Progressive() (*Media, error) {
-   var addr string
-   for _, code := range t.Media.Transcodings {
-      if code.Format.Protocol == "progressive" {
-         addr = code.URL
-      }
-   }
-   req, err := http.NewRequest("GET", addr + "?client_id=" + clientID, nil)
+func Resolve(addr string) ([]Track, error) {
+   req, err := http.NewRequest(
+      "GET", "https://api-v2.soundcloud.com/resolve", nil,
+   )
    if err != nil {
       return nil, err
    }
+   req.URL.RawQuery = url.Values{
+      "client_id": {clientID},
+      "url": {addr},
+   }.Encode()
    LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
-   med := new(Media)
-   if err := json.NewDecoder(res.Body).Decode(med); err != nil {
+   var solve struct {
+      ID int64
+      Kind string
+      Track
+   }
+   if err := json.NewDecoder(res.Body).Decode(&solve); err != nil {
       return nil, err
    }
-   return med, nil
-}
-
-type Media struct {
-   // cf-media.sndcdn.com/QaV7QR1lxpc6.128.mp3?Policy=eyJTdGF0ZW1lbnQiOlt7IlJ...
-   URL string
-}
-
-type Track struct {
-   Display_Date string // 2021-04-12T07:00:01Z
-   ID int
-   Media struct {
-      Transcodings []struct {
-         Format struct {
-            Protocol string
-         }
-         // api-v2.soundcloud.com/media/soundcloud:tracks:103650107/
-         // aca81dd5-2feb-4fc4-a102-036fb35fe44a/stream/progressive
-         URL string
-      }
+   if solve.Kind == "track" {
+      return []Track{solve.Track}, nil
    }
-   Title string
-   Artwork_URL string
-   User struct {
-      Avatar_URL string
-      Username string
-   }
+   return UserTracks(solve.ID)
 }
 
 // We can also paginate, but for now this is good enough.
@@ -156,4 +148,38 @@ func UserTracks(id int64) ([]Track, error) {
       return nil, err
    }
    return user.Collection, nil
+}
+
+// i1.sndcdn.com/artworks-000308141235-7ep8lo-large.jpg
+func (t Track) Artwork() string {
+   if t.Artwork_URL == "" {
+      t.Artwork_URL = t.User.Avatar_URL
+   }
+   return strings.Replace(t.Artwork_URL, "large", "t500x", 1)
+}
+
+// Also available is "hls", but all transcodings are quality "sq".
+// Same for "api-mobile.soundcloud.com".
+func (t Track) Progressive() (*Media, error) {
+   var addr string
+   for _, code := range t.Media.Transcodings {
+      if code.Format.Protocol == "progressive" {
+         addr = code.URL
+      }
+   }
+   req, err := http.NewRequest("GET", addr + "?client_id=" + clientID, nil)
+   if err != nil {
+      return nil, err
+   }
+   LogLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   med := new(Media)
+   if err := json.NewDecoder(res.Body).Decode(med); err != nil {
+      return nil, err
+   }
+   return med, nil
 }
