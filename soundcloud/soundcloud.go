@@ -55,6 +55,7 @@ func (m Media) Name(t Track) (string, error) {
 type Track struct {
    Artwork_URL string
    Display_Date string
+   ID int64
    Media struct {
       Transcodings []struct {
          Format struct {
@@ -109,7 +110,6 @@ func Resolve(addr string) ([]Track, error) {
    }
    defer res.Body.Close()
    var solve struct {
-      ID int64
       Kind string
       Track
    }

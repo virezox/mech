@@ -17,21 +17,29 @@ func main() {
    // s
    var sleep time.Duration
    flag.DurationVar(&sleep, "s", time.Second, "sleep")
+   // v
+   var verbose bool
+   flag.BoolVar(&verbose, "v", false, "verbose")
    flag.Parse()
+   if verbose {
+      soundcloud.LogLevel = 1
+   }
    if address != "" {
       tracks, err := soundcloud.Resolve(address)
       if err != nil {
          panic(err)
       }
-      for _, track := range tracks {
+      for i, track := range tracks {
          if info {
             fmt.Printf("%+v\n", track)
          } else {
+            if i >= 1 {
+               time.Sleep(sleep)
+            }
             err := download(track)
             if err != nil {
                panic(err)
             }
-            time.Sleep(sleep)
          }
       }
    } else {

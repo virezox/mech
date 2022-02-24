@@ -6,19 +6,7 @@
 com.soundcloud.android
 ~~~
 
-Newer versions are broken. Even with no proxy, I just get this over and over:
-
-~~~
-Signing you in
-~~~
-
-This one seems to work:
-
-~~~
-2020.03.19-release
-~~~
-
-API 24? Small fail. Big pass.
+Install system certificate.
 
 ## How to get `client_id`
 
@@ -33,13 +21,6 @@ In the HTML response, you should see something like this:
 
 ~~~
 "clientId":"iZIs9mchVcX5lhVRyQGGAYlNPVldzAoX"
-~~~
-
-You can also get it with JADX, but more difficult:
-
-~~~
-com\soundcloud\android\api\di\a.java
-return new kt.a(cVar, "dbdsA8b6V6Lw7wzu1x0T4CLxt58yd4Bf", iVar.deobfuscateString("NykCWyEEEyUrRCd2AQAtEAUdfy9HKAAkKRwjJh4cMSk="));
 ~~~
 
 The `client_id` seems to last at least a year:
