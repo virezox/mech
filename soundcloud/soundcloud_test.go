@@ -8,7 +8,22 @@ import (
 const addr =
    "https://soundcloud.com/afterhour-sounds/premiere-ele-bisu-caradamom-coffee"
 
-var ids = []int64{1021056175}
+const (
+   trackID = 1021056175
+   userID = 692707328
+)
+
+func TestTrack(t *testing.T) {
+   track, err := NewTrack(trackID)
+   if err != nil {
+      t.Fatal(err)
+   }
+   pro, err := track.Progressive()
+   if err != nil {
+      t.Fatal(err)
+   }
+   fmt.Printf("%+v\n", pro)
+}
 
 func TestResolve(t *testing.T) {
    track, err := Resolve(addr)
@@ -18,20 +33,8 @@ func TestResolve(t *testing.T) {
    fmt.Printf("%+v\n", track)
 }
 
-func TestTracks(t *testing.T) {
-   tracks, err := Tracks(ids)
-   if err != nil {
-      t.Fatal(err)
-   }
-   pro, err := tracks[0].Progressive()
-   if err != nil {
-      t.Fatal(err)
-   }
-   fmt.Printf("%+v\n", pro)
-}
-
 func TestUser(t *testing.T) {
-   tracks, err := UserTracks(692707328)
+   tracks, err := UserTracks(userID)
    if err != nil {
       t.Fatal(err)
    }
