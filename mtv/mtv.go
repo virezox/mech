@@ -5,12 +5,11 @@ import (
    "github.com/89z/format"
    "net/http"
    "net/url"
-   "strings"
 )
 
 var LogLevel format.LogLevel
 
-type property struct {
+type Property struct {
    Data struct {
       Item struct {
          VideoServiceURL string
@@ -18,7 +17,7 @@ type property struct {
    }
 }
 
-func newProperty(typ, shortID string) (*property, error) {
+func NewProperty(typ, shortID string) (*Property, error) {
    req, err := http.NewRequest(
       "GET", "https://neutron-api.viacom.tech/api/2.9/property", nil,
    )
@@ -38,25 +37,34 @@ func newProperty(typ, shortID string) (*property, error) {
       return nil, err
    }
    defer res.Body.Close()
-   prop := new(property)
+   prop := new(Property)
    if err := json.NewDecoder(res.Body).Decode(prop); err != nil {
       return nil, err
    }
    return prop, nil
 }
 
-////////////////////////////////////////////////////////////////////////////////
-
-func topaz() (*http.Response, error) {
-   var buf strings.Builder
-   buf.WriteString("https://topaz.viacomcbs.digital/topaz/api/")
-   buf.WriteString("mgid:arc:episode:android.playplex.mtv.com:7d923439-a492-11ea-9225-70df2f866ace/")
-   buf.WriteString("mica.json")
-   req, err := http.NewRequest("GET", buf.String(), nil)
+func (p Property) Topaz() (*Topaz, error) {
+   req, err := http.NewRequest("GET", p.Data.Item.VideoServiceURL, nil)
    if err != nil {
       return nil, err
    }
    req.URL.RawQuery = "clientPlatform=android"
    LogLevel.Dump(req)
-   return new(http.Transport).RoundTrip(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   top := new(Topaz)
+   if err := json.NewDecoder(res.Body).Decode(top); err != nil {
+      return nil, err
+   }
+   return top, nil
+}
+
+type Topaz struct {
+   StitchedStream struct {
+      Source string
+   }
 }
