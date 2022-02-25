@@ -1,10 +1,5 @@
 package mech
 
-import (
-   "github.com/89z/format"
-)
+import "github.com/89z/format"
 
-type (
-   InvalidSlice = format.InvalidSlice
-   LogLevel = format.LogLevel
-)
+type LogLevel = format.LogLevel
