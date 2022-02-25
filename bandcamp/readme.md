@@ -8,6 +8,19 @@ com.bandcamp.android
 
 https://github.com/httptoolkit/frida-android-unpinning
 
+2022-02-25
+
+Bandcamp app as of the date above, does not monitor Bandcamp URLs, so deep
+linking is not possible. They do have their own scheme, but the only two URLs I
+could find are not helpful:
+
+~~~
+x-bandcamp://open
+x-bandcamp://show_tralbum?tralbum_type=a&tralbum_id=531538254&play
+~~~
+
+https://hisaac.net/2016/10/09/deep-linking-in-the-bandcamp-ios-app.html
+
 ## Why does this exist?
 
 January 28 2022.

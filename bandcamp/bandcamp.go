@@ -3,16 +3,11 @@ package bandcamp
 import (
    "encoding/json"
    "github.com/89z/format"
-   "github.com/89z/format/net"
-   "html"
    "net/http"
    "net/url"
    "strconv"
-   "strings"
    "time"
 )
-
-const root = "http://bandcamp.com/api/mobile/24"
 
 var Images = []Image{
    {ID:0, Width:1500, Height:1500, Ext:".jpg"},
@@ -79,38 +74,6 @@ type DataTralbum struct {
    }
 }
 
-func NewDataTralbum(addr string) (*DataTralbum, error) {
-   contains := func(s string) bool {
-      return strings.Contains(addr, s)
-   }
-   if !contains("/album/") && !contains("/track/") {
-      return nil, notFound{"/album/,/track/"}
-   }
-   req, err := http.NewRequest("GET", addr, nil)
-   if err != nil {
-      return nil, err
-   }
-   LogLevel.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   for _, node := range net.ReadHTML(res.Body, "script") {
-      data, ok := node.Attr["data-tralbum"]
-      if ok {
-         data = html.UnescapeString(data)
-         tra := new(DataTralbum)
-         err := json.Unmarshal([]byte(data), tra)
-         if err != nil {
-            return nil, err
-         }
-         return tra, nil
-      }
-   }
-   return nil, notFound{"data-tralbum"}
-}
-
 // jonasmunk.bandcamp.com/track/altered-light
 func (d DataTralbum) Date() (time.Time, error) {
    return time.Parse("02 Jan 2006 15:04:05 MST", d.Album_Release_Date)
@@ -159,7 +122,9 @@ type Tralbum struct {
 }
 
 func NewTralbum(typ byte, id int) (*Tralbum, error) {
-   req, err := http.NewRequest("GET", root + "/tralbum_details", nil)
+   req, err := http.NewRequest(
+      "GET", "http://bandcamp.com/api/mobile/24/tralbum_details", nil,
+   )
    if err != nil {
       return nil, err
    }
@@ -179,12 +144,4 @@ func NewTralbum(typ byte, id int) (*Tralbum, error) {
       return nil, err
    }
    return tra, nil
-}
-
-type notFound struct {
-   value string
-}
-
-func (n notFound) Error() string {
-   return strconv.Quote(n.value) + " not found"
 }

@@ -47,35 +47,6 @@ func NewNewsItem(addr string) (*NewsItem, error) {
    return item, nil
 }
 
-func (n NewsItem) Media() (*Media, error) {
-   addr, err := n.address()
-   if err != nil {
-      return nil, err
-   }
-   req, err := http.NewRequest("GET", addr, nil)
-   if err != nil {
-      return nil, err
-   }
-   LogLevel.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   var mediaset struct {
-      Media []Media
-   }
-   if err := json.NewDecoder(res.Body).Decode(&mediaset); err != nil {
-      return nil, err
-   }
-   for _, media := range mediaset.Media {
-      if media.Kind == "video" {
-         return &media, nil
-      }
-   }
-   return nil, notFound{"video"}
-}
-
 func (n NewsItem) address() (string, error) {
    var buf strings.Builder
    buf.WriteString("http://open.live.bbc.co.uk")
