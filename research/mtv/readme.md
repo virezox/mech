@@ -4,6 +4,12 @@
 - https://mtv.com/video-clips/s5iqyc/mtv-cribs-dj-khaled
 - https://play.google.com/store/apps/details?id=com.mtvn.mtvPrimeAndroid
 
+~~~
+api.viacom.tech -language:html
+~~~
+
+https://github.com/OpenKD/repository.cobramod/blob/main/repo/plugin.video.viacom.mtv/resources/lib/provider.py
+
 Install system certificate. This is it:
 
 ~~~
