@@ -12,19 +12,6 @@ import (
 
 var LogLevel format.LogLevel
 
-func (m Media) address() (string, error) {
-   for _, video := range m.Connection {
-      if video.Protocol == "http" {
-         if video.TransferFormat == "hls" {
-            if video.Supplier == "mf_akamai" {
-               return video.Href, nil
-            }
-         }
-      }
-   }
-   return "", notFound{"http,hls,mf_akamai"}
-}
-
 func NewNewsItem(addr string) (*NewsItem, error) {
    var buf strings.Builder
    buf.WriteString("http://walter-producer-cdn.api.bbci.co.uk")
@@ -45,27 +32,6 @@ func NewNewsItem(addr string) (*NewsItem, error) {
       return nil, err
    }
    return item, nil
-}
-
-func (n NewsItem) address() (string, error) {
-   var buf strings.Builder
-   buf.WriteString("http://open.live.bbc.co.uk")
-   buf.WriteString("/mediaselector/6/select/version/2.0/mediaset/pc/vpid/")
-   for _, rel := range n.Relations {
-      if rel.PrimaryType == "bbc.mobile.news.video" {
-         buf.WriteString(rel.Content.ExternalID)
-         return buf.String(), nil
-      }
-   }
-   return "", notFound{"bbc.mobile.news.video"}
-}
-
-type notFound struct {
-   value string
-}
-
-func (n notFound) Error() string {
-   return strconv.Quote(n.value) + " not found"
 }
 
 func (m Media) Streams() ([]Stream, error) {
@@ -146,4 +112,36 @@ func (s Stream) String() string {
    buf = append(buf, " Codecs:"...)
    buf = append(buf, s.Codecs...)
    return string(buf)
+}
+
+type NewsItem struct {
+   ShortName string
+   IstatsLabels struct {
+      CPS_Asset_ID string
+   }
+   Relations []struct {
+      PrimaryType string
+      Content struct {
+         ExternalID string
+      }
+   }
+}
+
+type Media struct {
+   Kind string
+   Type string
+   Connection []struct {
+      Protocol string
+      Supplier string
+      TransferFormat string
+      Href string
+   }
+}
+
+func (m Media) Name(item *NewsItem) (string, error) {
+   ext, err := format.ExtensionByType(m.Type)
+   if err != nil {
+      return "", err
+   }
+   return item.ShortName + "-" + item.IstatsLabels.CPS_Asset_ID + ext, nil
 }

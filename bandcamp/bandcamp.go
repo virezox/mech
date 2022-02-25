@@ -3,6 +3,8 @@ package bandcamp
 import (
    "encoding/json"
    "github.com/89z/format"
+   "github.com/89z/format/net"
+   "html"
    "net/http"
    "net/url"
    "strconv"
@@ -144,4 +146,30 @@ func NewTralbum(typ byte, id int) (*Tralbum, error) {
       return nil, err
    }
    return tra, nil
+}
+
+func NewDataTralbum(addr string) (*DataTralbum, error) {
+   req, err := http.NewRequest("GET", addr, nil)
+   if err != nil {
+      return nil, err
+   }
+   LogLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   data := new(DataTralbum)
+   for _, node := range net.ReadHTML(res.Body, "script") {
+      buf, ok := node.Attr["data-tralbum"]
+      if ok {
+         buf = html.UnescapeString(buf)
+         err := json.Unmarshal([]byte(buf), data)
+         if err != nil {
+            return nil, err
+         }
+         break
+      }
+   }
+   return data, nil
 }
