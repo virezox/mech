@@ -2,73 +2,50 @@
 
 - https://github.com/ytdl-org/youtube-dl/issues/30678
 - https://mtv.com/video-clips/s5iqyc/mtv-cribs-dj-khaled
+- https://play.google.com/store/apps/details?id=com.mtvn.mtvPrimeAndroid
 
-This is it:
+Install system certificate. This is it:
 
 ~~~
-GET /gsp.originmusicstor/reencode/mtv.com/onair/cribs/0/seg_320x240_449098_1.ts HTTP/1.1
+GET /h/a/dG9wYXoxYGM5M2FmYWIxLTYyYTctMTFlYy1hNGYxLTcwZGYyZjg2NmFjZWA5ZTY0NzY4OTI3ZjY3NDAzMGQ5YWY3YjhmMDM1YmZkMmY1MDVmNjM0YHFEelBYNC03cW5weENyc0dCaGQyMTNDQ3lPTkEzLVR3bWJjaFdmb3owMXM/segment-14-f5-v1.ts HTTP/1.1
 Accept-Encoding: identity
-Host: mtv-ns1.ts.mtvnservices.com
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36
-Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
-Accept-Language: en-us,en;q=0.5
-Sec-Fetch-Mode: navigate
-Connection: close
+Connection: Keep-Alive
+Host: mtv.orchestrator.viacomcbs-tech.com
+User-Agent: Dalvik/2.1.0 (Linux; U; Android 7.0; Android SDK built for x86 Build/NYC)
+X-NewRelic-ID: VQMGWFZaDBABVFdTAgADVVA=
+content-length: 0
+newrelic: eyJ2IjpbMCwyXSwiZCI6eyJkLnR5IjoiTW9iaWxlIiwiZC5hYyI6IjE1MTkwOTQiLCJkLmFwIjoiMTA2MTUxNDM0IiwiZC50ciI6ImM0OWQ4YTY1MmZjOTQzMmViYzg0MjU1ZDMwZDIxYjNjIiwiZC5pZCI6ImE4ZTE1NTJmMGQ1ZDQ3ZjgiLCJkLnRpIjoxNjQ1NzU2NDczMTMxfX0=
+traceparent: 00-c49d8a652fc9432ebc84255d30d21b3c-a8e1552f0d5d47f8-00
+tracestate: @nr=0-2-1519094-106151434-a8e1552f0d5d47f8----1645756473131
+~~~
+
+which comes from:
+
+~~~
+GET /ondemand/hls/content/2565036/vid/mgid:arc:episode:android.playplex.mtv.com:c93afab1-62a7-11ec-a4f1-70df2f866ace/TUL/streams/7396001c-fbd4-4418-92ec-a7faa8e19405/media/15115289387e1e34ef7ee8f62528587a.m3u8?hdntl=exp=1645842837~acl=%2f*~id=db4dc46b-795b-4a6f-9c4d-f7a53c2688ad~data=hdntl~hmac=35df712533eda2832787dc01c245bf148e8ad0113e91564f116ed19fd9d1e4fa HTTP/1.1
+User-Agent: Dalvik/2.1.0 (Linux; U; Android 7.0; Android SDK built for x86 Build/NYC)
+newrelic: eyJ2IjpbMCwyXSwiZCI6eyJkLnR5IjoiTW9iaWxlIiwiZC5hYyI6IjE1MTkwOTQiLCJkLmFwIjoiMTA2MTUxNDM0IiwiZC50ciI6IjliMGJmNjk0MTUzYTRiYjI5YjIzZTYyNzM3MzFjZTEzIiwiZC5pZCI6IjdkZjczOTgxYjRkYzQyNWEiLCJkLnRpIjoxNjQ1NzU2NDM5MjE1fX0=
+tracestate: @nr=0-2-1519094-106151434-7df73981b4dc425a----1645756439215
+traceparent: 00-9b0bf694153a4bb29b23e6273731ce13-7df73981b4dc425a-00
+Host: topaz.dai.viacomcbs.digital
+Connection: Keep-Alive
+Accept-Encoding: gzip
+Cookie: hdntl=exp=1645842837~acl=%2f*~id=db4dc46b-795b-4a6f-9c4d-f7a53c2688ad~data=hdntl~hmac=35df712533eda2832787dc01c245bf148e8ad0113e91564f116ed19fd9d1e4fa
+X-NewRelic-ID: VQMGWFZaDBABVFdTAgADVVA=
 content-length: 0
 ~~~
 
 which comes from:
 
 ~~~
-GET /api/playlist/gsp.originmusicstor/reencode/mtv.com/onair/cribs/0/stream_320x240_449098.m3u8?tk=st=1645751662~exp=1645766062~acl=/api/playlist/gsp.originmusicstor/reencode/mtv.com/onair/cribs/0/stream_320x240_449098.m3u8*~hmac=c67a1a4c6c86759d1e49636b84a70c5f2f8d0296a941a96e515da771567f7b96&account=mtv.com&cdn=ns1 HTTP/1.1
-Host: dlvrsvc.mtvnservices.com
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36
-Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
-Accept-Encoding: gzip, deflate
-Accept-Language: en-us,en;q=0.5
-Sec-Fetch-Mode: navigate
-Connection: close
-content-length: 0
-~~~
-
-which comes from:
-
-~~~
-GET /api/gen/gsp.originmusicstor/reencode/mtv.com/onair/cribs/,1/stream_320x240_171299_1045700095,0/stream_320x240_449098/master.m3u8?account=mtv.com&cdn=ns1&tk=st=1645751662~exp=1645838062~acl=/api/gen/gsp.originmusicstor/reencode/mtv.com/onair/cribs/*~hmac=ea88f00476c51e4b7dbbc633895f37ce1c2a66918e2a37a344cb0922a6e8c200 HTTP/1.1
-Host: dlvrsvc.mtvnservices.com
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36
-Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
-Accept-Encoding: gzip, deflate
-Accept-Language: en-us,en;q=0.5
-Sec-Fetch-Mode: navigate
-Connection: close
-content-length: 0
-~~~
-
-which comes from:
-
-~~~
-GET /services/MediaGenerator/mgid:arc:video:mtv.com:d26f2b22-097d-11e3-8a73-0026b9414f30?&arcPlatforms=7ac7942e-6481-457f-b39a-2b1aedb29f29,b995f21c-e76f-4e58-8d0f-0964dc76efd3,6caa8f01-72e5-4707-abd6-608a0146e2ee,39dfe10c-cc2a-40f9-a20d-962d2604d543,0a16f611-d105-436a-8188-33ea8871171e,f17d0e9b-657a-4785-b3ca-dae9e78563a1&acceptMethods=hls HTTP/1.1
-Host: media-utils.mtvnservices.com
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36
-Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
-Accept-Encoding: gzip, deflate
-Accept-Language: en-us,en;q=0.5
-Sec-Fetch-Mode: navigate
-Connection: close
-content-length: 0
-~~~
-
-which comes from:
-
-~~~
-GET /feeds/mrss/?uri=mgid%3Aarc%3Ashowvideo%3Amtv.com%3Ad26f2b22-097d-11e3-8a73-0026b9414f30 HTTP/1.1
-Host: www.mtv.com
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36
-Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
-Accept-Encoding: gzip, deflate
-Accept-Language: en-us,en;q=0.5
-Sec-Fetch-Mode: navigate
-Connection: close
+GET /h/a/dG9wYXoxYGM5M2FmYWIxLTYyYTctMTFlYy1hNGYxLTcwZGYyZjg2NmFjZWA5ZTY0NzY4OTI3ZjY3NDAzMGQ5YWY3YjhmMDM1YmZkMmY1MDVmNjM0YHFEelBYNC03cW5weENyc0dCaGQyMTNDQ3lPTkEzLVR3bWJjaFdmb3owMXM/master.m3u8?hdnea=st=1645755836~exp=1645759436~acl=/h/a/dG9wYXoxYGM5M2FmYWIxLTYyYTctMTFlYy1hNGYxLTcwZGYyZjg2NmFjZWA5ZTY0NzY4OTI3ZjY3NDAzMGQ5YWY3YjhmMDM1YmZkMmY1MDVmNjM0YHFEelBYNC03cW5weENyc0dCaGQyMTNDQ3lPTkEzLVR3bWJjaFdmb3owMXM/*~id=db4dc46b-795b-4a6f-9c4d-f7a53c2688ad~hmac=865ac57982303ae768e75eb128f703e276c74ece7aef7a1bc5cb3ce3a79f13c6&originpath=/ondemand/hls/content/2565036/vid/mgid:arc:episode:android.playplex.mtv.com:c93afab1-62a7-11ec-a4f1-70df2f866ace/TUL/streams/7396001c-fbd4-4418-92ec-a7faa8e19405/master.m3u8 HTTP/1.1
+User-Agent: Dalvik/2.1.0 (Linux; U; Android 7.0; Android SDK built for x86 Build/NYC)
+traceparent: 00-b00e10e9d5a44f2b9b21cbef57016a6c-873c9c080be94b58-00
+tracestate: @nr=0-2-1519094-106151434-873c9c080be94b58----1645756436638
+newrelic: eyJ2IjpbMCwyXSwiZCI6eyJkLnR5IjoiTW9iaWxlIiwiZC5hYyI6IjE1MTkwOTQiLCJkLmFwIjoiMTA2MTUxNDM0IiwiZC50ciI6ImIwMGUxMGU5ZDVhNDRmMmI5YjIxY2JlZjU3MDE2YTZjIiwiZC5pZCI6Ijg3M2M5YzA4MGJlOTRiNTgiLCJkLnRpIjoxNjQ1NzU2NDM2NjM4fX0=
+Host: topaz.dai.viacomcbs.digital
+Connection: Keep-Alive
+Accept-Encoding: gzip
+X-NewRelic-ID: VQMGWFZaDBABVFdTAgADVVA=
 content-length: 0
 ~~~
