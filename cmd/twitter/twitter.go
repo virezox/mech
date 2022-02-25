@@ -12,7 +12,7 @@ func statusPath(statusID, bitrate int64, info bool) error {
    if err != nil {
       return err
    }
-   stat, err := twitter.NewStatus(guest, statusID)
+   stat, err := guest.Status(statusID)
    if err != nil {
       return err
    }

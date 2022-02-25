@@ -13,8 +13,6 @@ const bearer =
    "AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs=" +
    "1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA"
 
-const root = "https://api.twitter.com/1.1"
-
 var LogLevel format.LogLevel
 
 type Guest struct {
@@ -22,7 +20,9 @@ type Guest struct {
 }
 
 func NewGuest() (*Guest, error) {
-   req, err := http.NewRequest("POST", root + "/guest/activate.json", nil)
+   req, err := http.NewRequest(
+      "POST", "https://api.twitter.com/1.1/guest/activate.json", nil,
+   )
    if err != nil {
       return nil, err
    }
@@ -84,9 +84,8 @@ type Status struct {
    }
 }
 
-func NewStatus(guest *Guest, id int64) (*Status, error) {
-   buf := []byte(root)
-   buf = append(buf, "/statuses/show/"...)
+func (g Guest) Status(id int64) (*Status, error) {
+   buf := []byte("https://api.twitter.com/1.1/statuses/show/")
    buf = strconv.AppendInt(buf, id, 10)
    buf = append(buf, ".json?tweet_mode=extended"...)
    req, err := http.NewRequest("GET", string(buf), nil)
@@ -95,7 +94,7 @@ func NewStatus(guest *Guest, id int64) (*Status, error) {
    }
    req.Header = http.Header{
       "Authorization": {"Bearer " + bearer},
-      "X-Guest-Token": {guest.Guest_Token},
+      "X-Guest-Token": {g.Guest_Token},
    }
    LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)

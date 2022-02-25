@@ -107,5 +107,3 @@ func (f Format) Write(dst io.Writer) error {
    }
    return nil
 }
-
-
