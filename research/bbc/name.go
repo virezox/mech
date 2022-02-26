@@ -35,15 +35,7 @@ type NewsItem struct {
    }
 }
 
-func (m Media) Name(item *NewsItem) (string, error) {
-   ext, err := format.ExtensionByType(m.Type)
-   if err != nil {
-      return "", err
-   }
-   return item.ShortName + "-" + item.IstatsLabels.CPS_Asset_ID + ext, nil
-}
-
-func (n NewsItem) Media() (*Media, error) {
+func (n NewsItem) Mediaset() (*Mediaset, error) {
    req, err := http.NewRequest("GET", n.address(), nil)
    if err != nil {
       return nil, err
@@ -54,28 +46,25 @@ func (n NewsItem) Media() (*Media, error) {
       return nil, err
    }
    defer res.Body.Close()
-   var mediaset struct {
-      Media []Media
-   }
-   if err := json.NewDecoder(res.Body).Decode(&mediaset); err != nil {
+   set := Mediaset{Parent: &n}
+   if err := json.NewDecoder(res.Body).Decode(&set.Child); err != nil {
       return nil, err
    }
-   var media Media
-   for _, media = range mediaset.Media {
-      if media.Kind == "video" {
-         break
-      }
-   }
-   return &media, nil
+   return &set, nil
 }
 
-type Media struct {
-   Kind string
-   Type string
-   Connection []struct {
-      Protocol string
-      Supplier string
-      TransferFormat string
-      Href string
+type Mediaset struct {
+   Parent *NewsItem
+   Child struct {
+      Media []struct {
+         Kind string
+         Type string
+         Connection []struct {
+            Protocol string
+            Supplier string
+            TransferFormat string
+            Href string
+         }
+      }
    }
 }
