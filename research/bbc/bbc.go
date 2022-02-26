@@ -42,7 +42,7 @@ func (m Media) Name() (string, error) {
    if err != nil {
       return "", err
    }
-   return m.mediaset.relation.newsItem.Base() + ext, nil
+   return m.mediaset.relation.newsItem.base() + ext, nil
 }
 
 type Mediaset struct {
@@ -90,7 +90,7 @@ func NewNewsItem(addr string) (*NewsItem, error) {
    return item, nil
 }
 
-func (n NewsItem) Base() string {
+func (n NewsItem) base() string {
    return n.ShortName + "-" + n.IstatsLabels.CPS_Asset_ID
 }
 
