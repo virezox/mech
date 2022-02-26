@@ -130,14 +130,6 @@ func (n NewsItem) Media() (*Media, error) {
    return &media, nil
 }
 
-func (m Media) Name(item *NewsItem) (string, error) {
-   ext, err := format.ExtensionByType(m.Type)
-   if err != nil {
-      return "", err
-   }
-   return item.ShortName + "-" + item.IstatsLabels.CPS_Asset_ID + ext, nil
-}
-
 type Media struct {
    Kind string
    Type string
@@ -193,4 +185,14 @@ func (m Media) Streams() ([]Stream, error) {
       streams = append(streams, stream)
    }
    return streams, nil
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+func (m Media) Name(item *NewsItem) (string, error) {
+   ext, err := format.ExtensionByType(m.Type)
+   if err != nil {
+      return "", err
+   }
+   return item.ShortName + "-" + item.IstatsLabels.CPS_Asset_ID + ext, nil
 }
