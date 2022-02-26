@@ -10,6 +10,58 @@ import (
 
 var LogLevel format.LogLevel
 
+type Connection struct {
+   Href string
+   TransferFormat string
+}
+
+type Media struct {
+   Kind string
+   Type string
+   Connection []Connection
+   mediaset *Mediaset
+}
+
+func (m Media) GetConnection() *Connection {
+   for _, con := range m.Connection {
+      if con.TransferFormat == "hls" {
+         return &con
+      }
+   }
+   return nil
+}
+
+func (m Media) Name() (string, error) {
+   ext, err := format.ExtensionByType(m.Type)
+   if err != nil {
+      return "", err
+   }
+   return m.mediaset.relation.newsItem.base() + ext, nil
+}
+
+type Mediaset struct {
+   Media []Media
+   relation *Relation
+}
+
+func (m Mediaset) GetMedia() *Media {
+   for _, med := range m.Media {
+      if med.Kind == "video" {
+         med.mediaset = &m
+         return &med
+      }
+   }
+   return nil
+}
+
+type NewsItem struct {
+   ShortName string
+   IstatsLabels struct {
+      CPS_Asset_ID string
+   }
+   Relations []Relation
+}
+
 func NewNewsItem(addr string) (*NewsItem, error) {
    var buf strings.Builder
    buf.WriteString("http://walter-producer-cdn.api.bbci.co.uk")
@@ -32,34 +84,34 @@ func NewNewsItem(addr string) (*NewsItem, error) {
    return item, nil
 }
 
-type NewsItem struct {
-   ShortName string
-   IstatsLabels struct {
-      CPS_Asset_ID string
-   }
-   Relations []struct {
-      PrimaryType string
-      Content struct {
-         ExternalID string
-      }
-   }
+func (n NewsItem) base() string {
+   return n.ShortName + "-" + n.IstatsLabels.CPS_Asset_ID
 }
 
-func (n NewsItem) address() string {
+func (n NewsItem) Relation() *Relation {
+   for _, rel := range n.Relations {
+      if rel.PrimaryType == "bbc.mobile.news.video" {
+         rel.newsItem = &n
+         return &rel
+      }
+   }
+   return nil
+}
+
+type Relation struct {
+   PrimaryType string
+   Content struct {
+      ExternalID string
+   }
+   newsItem *NewsItem
+}
+
+func (r Relation) Mediaset() (*Mediaset, error) {
    var buf strings.Builder
    buf.WriteString("http://open.live.bbc.co.uk")
    buf.WriteString("/mediaselector/6/select/version/2.0/mediaset/pc/vpid/")
-   for _, rel := range n.Relations {
-      if rel.PrimaryType == "bbc.mobile.news.video" {
-         buf.WriteString(rel.Content.ExternalID)
-         return buf.String()
-      }
-   }
-   return ""
-}
-
-func (n NewsItem) Media() (*Media, error) {
-   req, err := http.NewRequest("GET", n.address(), nil)
+   buf.WriteString(r.Content.ExternalID)
+   req, err := http.NewRequest("GET", buf.String(), nil)
    if err != nil {
       return nil, err
    }
@@ -69,49 +121,9 @@ func (n NewsItem) Media() (*Media, error) {
       return nil, err
    }
    defer res.Body.Close()
-   var mediaset struct {
-      Media []Media
-   }
-   if err := json.NewDecoder(res.Body).Decode(&mediaset); err != nil {
+   set := &Mediaset{relation: &r}
+   if err := json.NewDecoder(res.Body).Decode(set); err != nil {
       return nil, err
    }
-   var media Media
-   for _, media = range mediaset.Media {
-      if media.Kind == "video" {
-         break
-      }
-   }
-   return &media, nil
-}
-
-type Media struct {
-   Kind string
-   Type string
-   Connection []struct {
-      Protocol string
-      Supplier string
-      TransferFormat string
-      Href string
-   }
-}
-
-func (m Media) href() string {
-   for _, video := range m.Connection {
-      if video.Protocol == "http" {
-         if video.TransferFormat == "hls" {
-            if video.Supplier == "mf_akamai" {
-               return video.Href
-            }
-         }
-      }
-   }
-   return ""
-}
-
-func (m Media) Name(item *NewsItem) (string, error) {
-   ext, err := format.ExtensionByType(m.Type)
-   if err != nil {
-      return "", err
-   }
-   return item.ShortName + "-" + item.IstatsLabels.CPS_Asset_ID + ext, nil
+   return set, nil
 }

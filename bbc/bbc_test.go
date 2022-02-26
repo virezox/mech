@@ -12,9 +12,13 @@ func TestNews(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   media, err := item.Media()
+   set, err := item.Relation().Mediaset()
    if err != nil {
       t.Fatal(err)
    }
-   fmt.Printf("%+v\n", media)
+   name, err := set.GetMedia().Name()
+   if err != nil {
+      t.Fatal(err)
+   }
+   fmt.Println(name)
 }

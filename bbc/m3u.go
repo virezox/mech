@@ -16,9 +16,8 @@ type Stream struct {
    URI string
 }
 
-func (m Media) Streams() ([]Stream, error) {
-   addr := m.href()
-   req, err := http.NewRequest("GET", addr, nil)
+func (c Connection) Streams() ([]Stream, error) {
+   req, err := http.NewRequest("GET", c.Href, nil)
    if err != nil {
       return nil, err
    }
@@ -28,7 +27,7 @@ func (m Media) Streams() ([]Stream, error) {
       return nil, err
    }
    defer res.Body.Close()
-   dir, _ := path.Split(addr)
+   dir, _ := path.Split(c.Href)
    forms, err := m3u.Decode(res.Body, dir)
    if err != nil {
       return nil, err
