@@ -12,5 +12,9 @@ func TestNews(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   fmt.Printf("%+v\n", item)
+   media, err := item.Media()
+   if err != nil {
+      t.Fatal(err)
+   }
+   fmt.Printf("%+v\n", media)
 }
