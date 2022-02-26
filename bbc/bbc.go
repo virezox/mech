@@ -78,19 +78,6 @@ func (s Stream) String() string {
    return string(buf)
 }
 
-func (n NewsItem) address() string {
-   var buf strings.Builder
-   buf.WriteString("http://open.live.bbc.co.uk")
-   buf.WriteString("/mediaselector/6/select/version/2.0/mediaset/pc/vpid/")
-   for _, rel := range n.Relations {
-      if rel.PrimaryType == "bbc.mobile.news.video" {
-         buf.WriteString(rel.Content.ExternalID)
-         return buf.String()
-      }
-   }
-   return ""
-}
-
 type NewsItem struct {
    ShortName string
    IstatsLabels struct {
@@ -102,6 +89,19 @@ type NewsItem struct {
          ExternalID string
       }
    }
+}
+
+func (n NewsItem) address() string {
+   var buf strings.Builder
+   buf.WriteString("http://open.live.bbc.co.uk")
+   buf.WriteString("/mediaselector/6/select/version/2.0/mediaset/pc/vpid/")
+   for _, rel := range n.Relations {
+      if rel.PrimaryType == "bbc.mobile.news.video" {
+         buf.WriteString(rel.Content.ExternalID)
+         return buf.String()
+      }
+   }
+   return ""
 }
 
 func (n NewsItem) Media() (*Media, error) {
@@ -130,6 +130,14 @@ func (n NewsItem) Media() (*Media, error) {
    return &media, nil
 }
 
+func (m Media) Name(item *NewsItem) (string, error) {
+   ext, err := format.ExtensionByType(m.Type)
+   if err != nil {
+      return "", err
+   }
+   return item.ShortName + "-" + item.IstatsLabels.CPS_Asset_ID + ext, nil
+}
+
 type Media struct {
    Kind string
    Type string
@@ -140,8 +148,6 @@ type Media struct {
       Href string
    }
 }
-
-////////////////////////////////////////////////////////////////////////////////
 
 func (m Media) href() string {
    for _, video := range m.Connection {
@@ -187,12 +193,4 @@ func (m Media) Streams() ([]Stream, error) {
       streams = append(streams, stream)
    }
    return streams, nil
-}
-
-func (m Media) Name(item *NewsItem) (string, error) {
-   ext, err := format.ExtensionByType(m.Type)
-   if err != nil {
-      return "", err
-   }
-   return item.ShortName + "-" + item.IstatsLabels.CPS_Asset_ID + ext, nil
 }
