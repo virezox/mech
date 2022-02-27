@@ -1,7 +1,7 @@
 package bbc
 
 import (
-   "github.com/89z/format/m3u"
+   "github.com/89z/format/hls"
    "net/http"
    "path"
    "strconv"
@@ -28,7 +28,7 @@ func (c Connection) Streams() ([]Stream, error) {
    }
    defer res.Body.Close()
    dir, _ := path.Split(c.Href)
-   forms, err := m3u.Decode(res.Body, dir)
+   forms, err := hls.Decode(res.Body, dir)
    if err != nil {
       return nil, err
    }
@@ -72,7 +72,7 @@ func (s Stream) Information() ([]string, error) {
    }
    defer res.Body.Close()
    dir, _ := path.Split(s.URI)
-   forms, err := m3u.Decode(res.Body, dir)
+   forms, err := hls.Decode(res.Body, dir)
    if err != nil {
       return nil, err
    }

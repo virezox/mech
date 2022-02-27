@@ -27,7 +27,11 @@ func (f flags) process(data *bandcamp.DataTralbum) error {
                return err
             }
             defer res.Body.Close()
-            file, err := os.Create(track.Name(data, res.Header))
+            name, err := track.Name(data, res.Header)
+            if err != nil {
+               return err
+            }
+            file, err := os.Create(name)
             if err != nil {
                return err
             }
@@ -67,6 +71,6 @@ func main() {
          panic(err)
       }
    } else {
-      flag.PrintDefaults()
+      flag.Usage()
    }
 }

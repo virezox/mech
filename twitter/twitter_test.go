@@ -7,10 +7,12 @@ import (
 
 const statusID = 1470124083547418624
 
-var guest = &Guest{"1475108770955022337"}
-
 func TestStatus(t *testing.T) {
-   stat, err := NewStatus(guest, statusID)
+   guest, err := NewGuest()
+   if err != nil {
+      t.Fatal(err)
+   }
+   stat, err := guest.Status(statusID)
    if err != nil {
       t.Fatal(err)
    }

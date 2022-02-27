@@ -1,7 +1,7 @@
 package nbc
 
 import (
-   "github.com/89z/format/m3u"
+   "github.com/89z/format/hls"
    "net/http"
    "strconv"
 )
@@ -17,7 +17,7 @@ func (a AccessVOD) Streams() ([]Stream, error) {
       return nil, err
    }
    defer res.Body.Close()
-   forms, err := m3u.Decode(res.Body, "")
+   forms, err := hls.Decode(res.Body, "")
    if err != nil {
       return nil, err
    }
@@ -63,7 +63,7 @@ func (s Stream) Information() ([]Information, error) {
       return nil, err
    }
    defer res.Body.Close()
-   forms, err := m3u.Decode(res.Body, "")
+   forms, err := hls.Decode(res.Body, "")
    if err != nil {
       return nil, err
    }

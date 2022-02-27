@@ -21,6 +21,6 @@ arm64-v8a
 
 ## Why does this exist?
 
-January 25 2022:
+February 27 2022
 
-https://github.com/ytdl-org/youtube-dl/issues/30546
+https://github.com/avilash/TikTokAPI-Python/issues/13

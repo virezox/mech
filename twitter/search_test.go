@@ -6,7 +6,11 @@ import (
 )
 
 func TestSearch(t *testing.T) {
-   sea, err := NewSearch("filter:spaces")
+   guest, err := NewGuest()
+   if err != nil {
+      t.Fatal(err)
+   }
+   sea, err := guest.Search("filter:spaces")
    if err != nil {
       t.Fatal(err)
    }
