@@ -27,7 +27,7 @@ func main() {
       if err != nil {
          panic(err)
       }
-      if err := media(item, info, form); err != nil {
+      if err := newsItem(item, info, form); err != nil {
          panic(err)
       }
    } else {

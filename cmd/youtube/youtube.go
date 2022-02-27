@@ -2,10 +2,8 @@ package main
 
 import (
    "fmt"
-   "github.com/89z/format"
    "github.com/89z/mech/youtube"
    "os"
-   "strings"
 )
 
 type choice struct {
@@ -15,7 +13,7 @@ type choice struct {
 
 // Videos can support both AdaptiveFormats and DASH: zgJT91LA9gA
 func (c choice) adaptiveFormats(play *youtube.Player) error {
-   if !play.OK() {
+   if play.PlayabilityStatus.Status != "OK" {
       fmt.Println(play.PlayabilityStatus)
    }
    if c.info {
@@ -37,7 +35,7 @@ func (c choice) adaptiveFormats(play *youtube.Player) error {
          }
          fmt.Println(form)
       case c.itags[fmt.Sprint(ada.Itag)]:
-         name, err := filename(play, ada)
+         name, err := ada.Name(play)
          if err != nil {
             return err
          }
@@ -52,15 +50,6 @@ func (c choice) adaptiveFormats(play *youtube.Player) error {
       }
    }
    return nil
-}
-
-func filename(play *youtube.Player, form youtube.Format) (string, error) {
-   name, err := format.ExtensionByType(form.MimeType)
-   if err != nil {
-      return "", err
-   }
-   name = play.VideoDetails.Author + "-" + play.VideoDetails.Title + name
-   return strings.Map(format.Clean, name), nil
 }
 
 func player(construct, embed bool, id string) (*youtube.Player, error) {

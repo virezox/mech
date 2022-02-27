@@ -9,7 +9,33 @@ import (
    "time"
 )
 
-func download(name string, stream bbc.Stream) error {
+func newsItem(item *bbc.NewsItem, info bool, form int64) error {
+   set, err := item.Relation().Mediaset()
+   if err != nil {
+      return err
+   }
+   media := set.GetMedia()
+   streams, err := media.GetConnection().Streams()
+   if err != nil {
+      return err
+   }
+   for _, stream := range streams {
+      if info {
+         fmt.Println(stream)
+      } else if stream.ID == form {
+         name, err := media.Name(item)
+         if err != nil {
+            return err
+         }
+         if err := download(stream, name); err != nil {
+            return err
+         }
+      }
+   }
+   return nil
+}
+
+func download(stream bbc.Stream, name string) error {
    file, err := os.Create(name)
    if err != nil {
       return err
@@ -44,27 +70,4 @@ func download(name string, stream bbc.Stream) error {
    return nil
 }
 
-func media(item *bbc.NewsItem, info bool, form int64) error {
-   media, err := item.Media()
-   if err != nil {
-      return err
-   }
-   streams, err := media.Streams()
-   if err != nil {
-      return err
-   }
-   for _, stream := range streams {
-      if info {
-         fmt.Println(stream)
-      } else if stream.ID == form {
-         name, err := media.Name(item)
-         if err != nil {
-            return err
-         }
-         if err := download(name, stream); err != nil {
-            return err
-         }
-      }
-   }
-   return nil
-}
+

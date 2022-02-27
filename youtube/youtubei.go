@@ -121,8 +121,8 @@ type Item struct {
 }
 
 type PlayabilityStatus struct {
-   Status string // LOGIN_REQUIRED
-   Reason string // Sign in to confirm your age
+   Status string // "OK", "LOGIN_REQUIRED"
+   Reason string // "", "Sign in to confirm your age"
 }
 
 func (p PlayabilityStatus) String() string {
@@ -153,13 +153,13 @@ type Player struct {
    VideoDetails VideoDetails
 }
 
-func (p Player) OK() bool {
-   return p.PlayabilityStatus.Status == "OK"
-}
-
 func (p Player) Date() (time.Time, error) {
    date := p.Microformat.PlayerMicroformatRenderer.PublishDate
    return time.Parse("2006-01-02", date)
+}
+
+func (p Player) base() string {
+   return p.VideoDetails.Author + "-" + p.VideoDetails.Title
 }
 
 type Search struct {

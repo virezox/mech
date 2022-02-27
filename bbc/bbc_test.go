@@ -16,7 +16,7 @@ func TestNews(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   name, err := set.GetMedia().Name()
+   name, err := set.GetMedia().Name(item)
    if err != nil {
       t.Fatal(err)
    }

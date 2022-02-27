@@ -19,7 +19,6 @@ type Media struct {
    Kind string
    Type string
    Connection []Connection
-   mediaset *Mediaset
 }
 
 func (m Media) GetConnection() *Connection {
@@ -31,23 +30,21 @@ func (m Media) GetConnection() *Connection {
    return nil
 }
 
-func (m Media) Name() (string, error) {
+func (m Media) Name(item *NewsItem) (string, error) {
    ext, err := format.ExtensionByType(m.Type)
    if err != nil {
       return "", err
    }
-   return m.mediaset.relation.newsItem.base() + ext, nil
+   return item.base() + ext, nil
 }
 
 type Mediaset struct {
    Media []Media
-   relation *Relation
 }
 
 func (m Mediaset) GetMedia() *Media {
    for _, med := range m.Media {
       if med.Kind == "video" {
-         med.mediaset = &m
          return &med
       }
    }
@@ -91,7 +88,6 @@ func (n NewsItem) base() string {
 func (n NewsItem) Relation() *Relation {
    for _, rel := range n.Relations {
       if rel.PrimaryType == "bbc.mobile.news.video" {
-         rel.newsItem = &n
          return &rel
       }
    }
@@ -103,7 +99,6 @@ type Relation struct {
    Content struct {
       ExternalID string
    }
-   newsItem *NewsItem
 }
 
 func (r Relation) Mediaset() (*Mediaset, error) {
@@ -121,7 +116,7 @@ func (r Relation) Mediaset() (*Mediaset, error) {
       return nil, err
    }
    defer res.Body.Close()
-   set := &Mediaset{relation: &r}
+   set := new(Mediaset)
    if err := json.NewDecoder(res.Body).Decode(set); err != nil {
       return nil, err
    }

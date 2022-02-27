@@ -5,11 +5,15 @@ import (
    "io"
    "mime"
    "net/http"
-   "net/url"
    "os"
    "strconv"
+   "strings"
    "time"
 )
+
+const partLength = 10_000_000
+
+var LogLevel format.LogLevel
 
 type Format struct {
    AudioQuality string
@@ -20,10 +24,6 @@ type Format struct {
    QualityLabel string
    URL string
 }
-
-const partLength = 10_000_000
-
-var LogLevel format.LogLevel
 
 func (f Format) Format(addr bool) (string, error) {
    buf := []byte("Itag:")
@@ -51,26 +51,16 @@ func (f Format) Format(addr bool) (string, error) {
    return string(buf), nil
 }
 
-func (f Format) address() (string, error) {
-   addr, err := url.Parse(f.URL)
+func (f Format) Name(play *Player) (string, error) {
+   ext, err := format.ExtensionByType(f.MimeType)
    if err != nil {
       return "", err
    }
-   val := addr.Query()
-   keys := []string{"c", "fexp", "fvip", "keepalive", "mt", "txp"}
-   for _, key := range keys {
-      val.Del(key)
-   }
-   addr.RawQuery = val.Encode()
-   return addr.String(), nil
+   return strings.Map(format.Clean, play.base() + ext), nil
 }
 
 func (f Format) Write(dst io.Writer) error {
-   addr, err := f.address()
-   if err != nil {
-      return err
-   }
-   req, err := http.NewRequest("GET", addr, nil)
+   req, err := http.NewRequest("GET", f.URL, nil)
    if err != nil {
       return err
    }
