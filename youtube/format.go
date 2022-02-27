@@ -56,7 +56,7 @@ func (f Format) Name(play *Player) (string, error) {
    if err != nil {
       return "", err
    }
-   return strings.Map(format.Clean, play.base() + ext), nil
+   return strings.Map(format.Clean, play.base()) + ext, nil
 }
 
 func (f Format) Write(dst io.Writer) error {

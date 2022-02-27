@@ -8,6 +8,7 @@ import (
    "net/http"
    "net/url"
    "strconv"
+   "strings"
    "time"
 )
 
@@ -59,23 +60,6 @@ var Images = []Image{
 
 var LogLevel format.LogLevel
 
-type DataTralbum struct {
-   AlbumRelease []struct {
-      MusicReleaseFormat string
-   }
-   Album_Release_Date string // 20 Jan 2017 00:00:00 GMT
-   Art_ID int
-   Artist string
-   Current struct {
-      Title string
-   }
-   ID int
-   TrackInfo []struct {
-      Title string
-      File Streams
-   }
-}
-
 // jonasmunk.bandcamp.com/track/altered-light
 func (d DataTralbum) Date() (time.Time, error) {
    return time.Parse("02 Jan 2006 15:04:05 MST", d.Album_Release_Date)
@@ -96,31 +80,6 @@ func (i Image) Format(artID int64) string {
    buf = append(buf, '_')
    buf = strconv.AppendInt(buf, i.ID, 10)
    return string(buf)
-}
-
-type Streams map[string]string
-
-// some tracks cannot be streamed:
-// schnaussandmunk.bandcamp.com/album/passage-2
-func (s Streams) MP3_128() (string, bool) {
-   mp3, ok := s["mp3-128"]
-   if !ok {
-      return "", false
-   }
-   return mp3, true
-}
-
-// All fields available with Track and Album
-type Tralbum struct {
-   Art_ID int
-   Release_Date int64
-   Title string
-   Tracks []struct {
-      Track_Num int
-      Title string
-      Streaming_URL Streams
-   }
-   Tralbum_Artist string
 }
 
 func NewTralbum(typ byte, id int) (*Tralbum, error) {
@@ -173,3 +132,50 @@ func NewDataTralbum(addr string) (*DataTralbum, error) {
    }
    return data, nil
 }
+
+type DataTralbum struct {
+   AlbumRelease []struct {
+      MusicReleaseFormat string
+   }
+   Album_Release_Date string // 20 Jan 2017 00:00:00 GMT
+   Art_ID int
+   Artist string
+   Current struct {
+      Title string
+   }
+   ID int
+   TrackInfo []TrackInfo
+}
+
+type TrackInfo struct {
+   Title string
+   File map[string]string
+}
+
+func (t TrackInfo) Name(data *DataTralbum) string {
+   return strings.Map(format.Clean, data.Artist + "-" + t.Title) + ".mp3"
+}
+
+// some tracks cannot be streamed:
+// schnaussandmunk.bandcamp.com/album/passage-2
+func (t TrackInfo) MP3_128() (string, bool) {
+   mp3, ok := t.File["mp3-128"]
+   if !ok {
+      return "", false
+   }
+   return mp3, true
+}
+
+// All fields available with Track and Album
+type Tralbum struct {
+   Art_ID int
+   Release_Date int64
+   Title string
+   Tracks []struct {
+      Track_Num int
+      Title string
+      Streaming_URL map[string]string
+   }
+   Tralbum_Artist string
+}
+

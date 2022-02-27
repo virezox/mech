@@ -16,7 +16,7 @@ import (
 
 const (
    mpxAccountID = 2410887629
-   queryVideo = "31b459298c0bf48c3b6300ee4922eaf2c9bea4be1cb15a7ab1fe210cd210f779"
+   persistedQuery = "2bd26f1fee864ef6d7727c5e0a0654f665d8cf638b0023018032d0a945a67f2c"
 )
 
 var (
@@ -93,9 +93,9 @@ type Video struct {
 
 func NewVideo(guid int64) (*Video, error) {
    var body videoRequest
-   body.Extensions.PersistedQuery.Sha256Hash = queryVideo
+   body.Extensions.PersistedQuery.Sha256Hash = persistedQuery
    body.Variables.App = "nbc"
-   body.Variables.Name = guid
+   body.Variables.Name = strconv.FormatInt(guid, 10)
    body.Variables.Platform = "android"
    body.Variables.Type = "VIDEO"
    buf := new(bytes.Buffer)
@@ -135,7 +135,7 @@ type videoRequest struct {
    } `json:"extensions"`
    Variables struct {
       App string `json:"app"`
-      Name int64 `json:"name"`
+      Name string `json:"name"` // String cannot represent a non string value
       Platform string `json:"platform"`
       Type string `json:"type"`
       UserID string `json:"userId"` // can be empty
