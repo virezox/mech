@@ -27,7 +27,7 @@ func (f flags) process(data *bandcamp.DataTralbum) error {
                return err
             }
             defer res.Body.Close()
-            file, err := os.Create(track.Name(data))
+            file, err := os.Create(track.Name(data, res.Header))
             if err != nil {
                return err
             }

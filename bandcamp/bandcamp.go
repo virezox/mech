@@ -152,8 +152,12 @@ type TrackInfo struct {
    File map[string]string
 }
 
-func (t TrackInfo) Name(data *DataTralbum) string {
-   return strings.Map(format.Clean, data.Artist + "-" + t.Title) + ".mp3"
+func (t TrackInfo) Name(data *DataTralbum, head http.Header) (string, error) {
+   ext, err := format.ExtensionByType(head.Get("Content-Type"))
+   if err != nil {
+      return "", err
+   }
+   return strings.Map(format.Clean, data.Artist + "-" + t.Title) + ext, nil
 }
 
 // some tracks cannot be streamed:

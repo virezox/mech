@@ -8,36 +8,28 @@ import (
    "time"
 )
 
-func (a AwemeDetail) URL() string {
-   for _, addr := range a.Video.Play_Addr.URL_List {
-      return addr
-   }
-   return ""
-}
+const origin = "http://api2.musical.ly"
 
 var LogLevel format.LogLevel
 
-type AwemeDetail struct {
+type Detail struct {
    Author struct {
       Unique_ID string
    }
    Aweme_ID string
    Create_Time int64
-   // height field here is invalid
    Video struct {
       Duration int64
       Play_Addr struct {
-         Width int
-         Height int
+         Width int64
+         Height int64 // this is invalid
          URL_List []string
       }
    }
 }
 
-func NewAwemeDetail(id int64) (*AwemeDetail, error) {
-   req, err := http.NewRequest(
-      "GET", "http://api2.musical.ly/aweme/v1/aweme/detail/", nil,
-   )
+func NewDetail(id int64) (*Detail, error) {
+   req, err := http.NewRequest("GET", origin + "/aweme/v1/aweme/detail/", nil)
    if err != nil {
       return nil, err
    }
@@ -48,28 +40,46 @@ func NewAwemeDetail(id int64) (*AwemeDetail, error) {
       return nil, err
    }
    defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return nil, errorString(res.Status)
+   var aweme struct {
+      Aweme_Detail Detail
    }
-   var detail struct {
-      Aweme_Detail AwemeDetail
-   }
-   if err := json.NewDecoder(res.Body).Decode(&detail); err != nil {
+   if err := json.NewDecoder(res.Body).Decode(&aweme); err != nil {
       return nil, err
    }
-   return &detail.Aweme_Detail, nil
+   return &aweme.Aweme_Detail, nil
 }
 
-func (a AwemeDetail) Duration() time.Duration {
-   return time.Duration(a.Video.Duration) * time.Millisecond
+func (d Detail) Duration() time.Duration {
+   return time.Duration(d.Video.Duration) * time.Millisecond
 }
 
-func (a AwemeDetail) Time() time.Time {
-   return time.Unix(a.Create_Time, 0)
+func (d Detail) String() string {
+   buf := []byte("ID: ")
+   buf = append(buf, d.Aweme_ID...)
+   buf = append(buf, "\nAuthor: "...)
+   buf = append(buf, d.Author.Unique_ID...)
+   buf = append(buf, "\nCreate_Time: "...)
+   buf = strconv.AppendInt(buf, d.Create_Time, 10)
+   buf = append(buf, "\nDuration: "...)
+   buf = strconv.AppendInt(buf, d.Video.Duration, 10)
+   buf = append(buf, "\nWidth: "...)
+   buf = strconv.AppendInt(buf, d.Video.Play_Addr.Width, 10)
+   buf = append(buf, "\nHeight: "...)
+   buf = strconv.AppendInt(buf, d.Video.Play_Addr.Height, 10)
+   for _, addr := range d.Video.Play_Addr.URL_List {
+      buf = append(buf, "\nURL: "...)
+      buf = append(buf, addr...)
+   }
+   return string(buf)
 }
 
-type errorString string
+func (d Detail) Time() time.Time {
+   return time.Unix(d.Create_Time, 0)
+}
 
-func (e errorString) Error() string {
-   return string(e)
+func (d Detail) URL() string {
+   for _, addr := range d.Video.Play_Addr.URL_List {
+      return addr
+   }
+   return ""
 }
