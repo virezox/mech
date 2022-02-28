@@ -73,34 +73,9 @@ func (i Image) Format(artID int64) string {
    return string(buf)
 }
 
-func NewTralbum(typ byte, id int) (*Tralbum, error) {
-   req, err := http.NewRequest(
-      "GET", "http://bandcamp.com/api/mobile/24/tralbum_details", nil,
-   )
-   if err != nil {
-      return nil, err
-   }
-   req.URL.RawQuery = url.Values{
-      "band_id": {"1"},
-      "tralbum_id": {strconv.Itoa(id)},
-      "tralbum_type": {string(typ)},
-   }.Encode()
-   LogLevel.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   tra := new(Tralbum)
-   if err := json.NewDecoder(res.Body).Decode(tra); err != nil {
-      return nil, err
-   }
-   return tra, nil
-}
-
-// All fields available with Track and Album
 type Tralbum struct {
    Art_ID int
+   ID int
    Release_Date int64
    Title string
    Tracks []struct {
@@ -109,4 +84,30 @@ type Tralbum struct {
       Streaming_URL map[string]string
    }
    Tralbum_Artist string
+   Type byte
+}
+
+func NewTralbum(typ byte, id int) Tralbum {
+   return Tralbum{Type: typ, ID: id}
+}
+
+func (t *Tralbum) Get() error {
+   req, err := http.NewRequest(
+      "GET", "http://bandcamp.com/api/mobile/24/tralbum_details", nil,
+   )
+   if err != nil {
+      return err
+   }
+   req.URL.RawQuery = url.Values{
+      "band_id": {"1"},
+      "tralbum_type": {string(t.Type)},
+      "tralbum_id": {strconv.Itoa(t.ID)},
+   }.Encode()
+   LogLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   return json.NewDecoder(res.Body).Decode(t)
 }
