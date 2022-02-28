@@ -21,6 +21,9 @@ x-bandcamp://show_tralbum?tralbum_type=a&tralbum_id=531538254&play
 
 https://hisaac.net/2016/10/09/deep-linking-in-the-bandcamp-ios-app.html
 
+The API used with Bandcamp Android requires IDs for everything. This is the case
+going back to 2016 at least.
+
 ## Why does this exist?
 
 January 28 2022.

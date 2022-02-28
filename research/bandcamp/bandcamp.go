@@ -1,39 +1,29 @@
 package bandcamp
 
 import (
-   "encoding/json"
+   "fmt"
    "github.com/89z/format"
    "github.com/89z/format/net"
-   "html"
    "net/http"
 )
 
 var LogLevel format.LogLevel
 
-func NewDataTralbum(addr string) (*DataTralbum, error) {
+func NewDataTralbum(addr string) error {
    req, err := http.NewRequest("GET", addr, nil)
    if err != nil {
-      return nil, err
+      return err
    }
    LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
-      return nil, err
+      return err
    }
    defer res.Body.Close()
-   data := new(DataTralbum)
    for _, node := range net.ReadHTML(res.Body, "script") {
-      buf, ok := node.Attr["data-tralbum"]
-      if ok {
-         buf = html.UnescapeString(buf)
-         err := json.Unmarshal([]byte(buf), data)
-         if err != nil {
-            return nil, err
-         }
-         break
-      }
+      fmt.Print(node, "\n\n")
    }
-   return data, nil
+   return nil
 }
 
 type DataTralbum struct {
