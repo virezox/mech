@@ -8,9 +8,14 @@ import (
    "strconv"
    "strings"
    "text/scanner"
+   "time"
 )
 
 var LogLevel format.LogLevel
+
+type Band struct {
+   Discography []Item
+}
 
 type Image struct {
    ID int64
@@ -80,10 +85,6 @@ type Item struct {
    Item_ID int
 }
 
-type Band struct {
-   Discography []Item
-}
-
 func NewItem(addr string) (*Item, error) {
    req, err := http.NewRequest("HEAD", addr, nil)
    if err != nil {
@@ -148,13 +149,6 @@ func (i Item) Band() (*Band, error) {
    return band, nil
 }
 
-func (i Item) Type() string {
-   for _, r := range i.Item_Type {
-      return string(r)
-   }
-   return ""
-}
-
 func (i Item) Tralbum() (*Tralbum, error) {
    req, err := http.NewRequest(
       "GET", "http://bandcamp.com/api/mobile/24/tralbum_details", nil,
@@ -178,6 +172,13 @@ func (i Item) Tralbum() (*Tralbum, error) {
       return nil, err
    }
    return tra, nil
+}
+
+func (i Item) Type() string {
+   for _, r := range i.Item_Type {
+      return string(r)
+   }
+   return ""
 }
 
 type Track struct {
@@ -206,6 +207,10 @@ type Tralbum struct {
    Title string
    Tracks []Track
    Tralbum_Artist string
+}
+
+func (t Tralbum) Date() time.Time {
+   return time.Unix(t.Release_Date, 0)
 }
 
 type notPresent struct {
