@@ -10,6 +10,126 @@ import (
    "time"
 )
 
+const origin = "https://www.youtube.com"
+
+var googAPI = http.Header{
+   "X-Goog-Api-Key": {"AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8"},
+}
+
+// youtube.com/watch?v=XY-hOqcPGCY
+func VideoID(address string) (string, error) {
+   addr, err := url.Parse(address)
+   if err != nil {
+      return "", err
+   }
+   return addr.Query().Get("v"), nil
+}
+
+type Client struct {
+   Name string `json:"clientName"`
+   Screen string `json:"clientScreen,omitempty"`
+   Version string `json:"clientVersion"`
+}
+
+type Context struct {
+   Client Client `json:"client"`
+   ThirdParty *ThirdParty `json:"thirdParty,omitempty"`
+}
+
+var Android = Context{
+   Client: Client{Name: "ANDROID", Version: "17.06.32"},
+}
+
+// HsUATh_Nc2U
+var Embed = Context{
+   Client: Client{Name: "ANDROID", Screen: "EMBED", Version: "17.06.32"},
+   ThirdParty: &ThirdParty{EmbedURL: origin},
+}
+
+var Mweb = Context{
+   Client: Client{Name: "MWEB", Version: "2.20211109.01.00"},
+}
+
+func (c Context) Player(id string) (*Player, error) {
+   return c.PlayerHeader(googAPI, id)
+}
+
+func (c Context) PlayerHeader(head http.Header, id string) (*Player, error) {
+   res, err := c.player(head, id)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   play := new(Player)
+   if err := json.NewDecoder(res.Body).Decode(play); err != nil {
+      return nil, err
+   }
+   return play, nil
+}
+
+func (c Context) PlayerResponse(id string) (*http.Response, error) {
+   return c.player(googAPI, id)
+}
+
+func (c Context) Search(query string) (*Search, error) {
+   var body struct {
+      Context Context `json:"context"`
+      Params string `json:"params"`
+      Query string `json:"query"`
+   }
+   body.Query = query
+   filter := NewFilter().Type(TypeVideo)
+   body.Params = NewParams().Filter(filter).Encode()
+   body.Context = c
+   buf := new(bytes.Buffer)
+   if err := json.NewEncoder(buf).Encode(body); err != nil {
+      return nil, err
+   }
+   req, err := http.NewRequest("POST", origin + "/youtubei/v1/search", buf)
+   if err != nil {
+      return nil, err
+   }
+   req.Header = googAPI
+   LogLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   search := new(Search)
+   if err := json.NewDecoder(res.Body).Decode(search); err != nil {
+      return nil, err
+   }
+   return search, nil
+}
+
+func (c Context) player(head http.Header, id string) (*http.Response, error) {
+   var body struct {
+      Context Context `json:"context"`
+      RacyCheckOK bool `json:"racyCheckOk,omitempty"`
+      VideoID string `json:"videoId"`
+   }
+   body.Context = c
+   body.VideoID = id
+   if head.Get("Authorization") != "" {
+      body.RacyCheckOK = true // Cr381pDsSsA
+   }
+   buf := new(bytes.Buffer)
+   enc := json.NewEncoder(buf)
+   enc.SetIndent("", " ")
+   err := enc.Encode(body)
+   if err != nil {
+      return nil, err
+   }
+   req, err := http.NewRequest("POST", origin + "/youtubei/v1/player", buf)
+   if err != nil {
+      return nil, err
+   }
+   req.Header = head
+   LogLevel.Dump(req)
+   return new(http.Transport).RoundTrip(req)
+}
+
 type Item struct {
    CompactVideoRenderer *struct {
       LengthText text
@@ -86,6 +206,10 @@ func (s Search) Items() []Item {
    return items
 }
 
+type ThirdParty struct {
+   EmbedURL string `json:"embedUrl"`
+}
+
 type VideoDetails struct {
    VideoID string
    LengthSeconds int64 `json:"lengthSeconds,string"`
@@ -117,126 +241,4 @@ type text struct {
    Runs []struct {
       Text string
    }
-}
-
-// youtube.com/watch?v=XY-hOqcPGCY
-func VideoID(address string) (string, error) {
-   addr, err := url.Parse(address)
-   if err != nil {
-      return "", err
-   }
-   return addr.Query().Get("v"), nil
-}
-
-const origin = "https://www.youtube.com"
-
-var googAPI = http.Header{
-   "X-Goog-Api-Key": {"AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8"},
-}
-
-func (c Context) Player(id string) (*Player, error) {
-   return c.PlayerHeader(googAPI, id)
-}
-
-func (c Context) PlayerHeader(head http.Header, id string) (*Player, error) {
-   res, err := c.player(head, id)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   play := new(Player)
-   if err := json.NewDecoder(res.Body).Decode(play); err != nil {
-      return nil, err
-   }
-   return play, nil
-}
-
-func (c Context) PlayerResponse(id string) (*http.Response, error) {
-   return c.player(googAPI, id)
-}
-
-func (c Context) player(head http.Header, id string) (*http.Response, error) {
-   var body struct {
-      Context Context `json:"context"`
-      RacyCheckOK bool `json:"racyCheckOk"`
-      VideoID string `json:"videoId"`
-   }
-   body.Context = c
-   body.RacyCheckOK = true // Cr381pDsSsA
-   body.VideoID = id
-   buf := new(bytes.Buffer)
-   enc := json.NewEncoder(buf)
-   enc.SetIndent("", " ")
-   err := enc.Encode(body)
-   if err != nil {
-      return nil, err
-   }
-   req, err := http.NewRequest("POST", origin + "/youtubei/v1/player", buf)
-   if err != nil {
-      return nil, err
-   }
-   req.Header = head
-   LogLevel.Dump(req)
-   return new(http.Transport).RoundTrip(req)
-}
-
-func (c Context) Search(query string) (*Search, error) {
-   var body struct {
-      Context Context `json:"context"`
-      Params string `json:"params"`
-      Query string `json:"query"`
-   }
-   body.Query = query
-   filter := NewFilter().Type(TypeVideo)
-   body.Params = NewParams().Filter(filter).Encode()
-   body.Context = c
-   buf := new(bytes.Buffer)
-   if err := json.NewEncoder(buf).Encode(body); err != nil {
-      return nil, err
-   }
-   req, err := http.NewRequest("POST", origin + "/youtubei/v1/search", buf)
-   if err != nil {
-      return nil, err
-   }
-   req.Header = googAPI
-   LogLevel.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   search := new(Search)
-   if err := json.NewDecoder(res.Body).Decode(search); err != nil {
-      return nil, err
-   }
-   return search, nil
-}
-
-type Context struct {
-   Client Client `json:"client"`
-   ThirdParty *ThirdParty `json:"thirdParty,omitempty"`
-}
-
-type Client struct {
-   Name string `json:"clientName"`
-   Screen string `json:"clientScreen,omitempty"`
-   Version string `json:"clientVersion"`
-}
-
-type ThirdParty struct {
-   EmbedURL string `json:"embedUrl"`
-}
-
-var Android = Context{
-   Client: Client{Name: "ANDROID", Version: "17.06.32"},
-}
-
-var Mweb = Context{
-   Client: Client{Name: "MWEB", Version: "2.20211109.01.00"},
-}
-
-// HsUATh_Nc2U
-var Embed = Context{
-   Client: Client{Name: "ANDROID", Screen: "EMBED", Version: "17.06.32"},
-   ThirdParty: &ThirdParty{EmbedURL: origin},
 }
