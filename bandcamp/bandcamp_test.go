@@ -8,26 +8,14 @@ import (
 
 const artID = 3809045440
 
-var tralbums = []tralbum{
-   {2809477874, 't', "https://schnaussandmunk.bandcamp.com/track/amaris-2"},
-   {1670971920, 'a', "https://schnaussandmunk.bandcamp.com/album/passage-2"},
+type tokenTest struct {
+   typ, addr string
 }
 
-type tralbum struct {
-   id int
-   typ byte
-   addr string
-}
-
-func TestDataTralbum(t *testing.T) {
-   for _, tralbum := range tralbums {
-      data, err := NewDataTralbum(tralbum.addr)
-      if err != nil {
-         t.Fatal(err)
-      }
-      fmt.Printf("%+v\n", data)
-      time.Sleep(time.Second)
-   }
+var tests = []tokenTest{
+   {"a", "https://schnaussandmunk.bandcamp.com/album/passage-2"},
+   {"i", "https://schnaussandmunk.bandcamp.com/music"},
+   {"t", "https://schnaussandmunk.bandcamp.com/track/amaris-2"},
 }
 
 func TestImage(t *testing.T) {
@@ -37,13 +25,15 @@ func TestImage(t *testing.T) {
    }
 }
 
-func TestTralbum(t *testing.T) {
-   for _, ta := range tralbums {
-      data, err := NewTralbum(ta.typ, ta.id)
+func TestToken(t *testing.T) {
+   for _, test := range tests {
+      tok, err := NewToken(test.addr)
       if err != nil {
          t.Fatal(err)
       }
-      fmt.Printf("%+v\n", data)
-      time.Sleep(time.Second)
+      if tok.Type != test.typ {
+         t.Fatal(tok)
+      }
+      time.Sleep(99 * time.Millisecond)
    }
 }
