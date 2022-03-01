@@ -6,6 +6,8 @@ import (
    "net/http"
    "net/url"
    "strconv"
+   "strings"
+   "text/scanner"
 )
 
 var Images = []Image{
@@ -78,17 +80,20 @@ type Tralbum struct {
    ID int
    Release_Date int64
    Title string
-   Tracks []struct {
-      Track_Num int
-      Title string
-      Streaming_URL map[string]string
-   }
+   Tracks []Track
    Tralbum_Artist string
    Type byte
 }
 
-func NewTralbum(typ byte, id int) Tralbum {
-   return Tralbum{Type: typ, ID: id}
+type Track struct {
+   Track_Num int
+   Title string
+   Streaming_URL map[string]string
+}
+
+func (t Track) MP3_128() (string, bool) {
+   mp3, ok := t.Streaming_URL["mp3-128"]
+   return mp3, ok
 }
 
 func (t *Tralbum) Get() error {
@@ -110,4 +115,60 @@ func (t *Tralbum) Get() error {
    }
    defer res.Body.Close()
    return json.NewDecoder(res.Body).Decode(t)
+}
+
+type Token struct {
+   Type string
+   ID int
+}
+
+func NewToken(addr string) (*Token, error) {
+   req, err := http.NewRequest("HEAD", addr, nil)
+   if err != nil {
+      return nil, err
+   }
+   LogLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   var (
+      scan scanner.Scanner
+      tok Token
+   )
+   for _, cook := range res.Cookies() {
+      if cook.Name == "session" {
+         sess, err := url.QueryUnescape(cook.Value)
+         if err != nil {
+            return nil, err
+         }
+         scan.Init(strings.NewReader(sess))
+         scan.IsIdentRune = func(r rune, i int) bool {
+            return r >= 'A'
+         }
+         scan.Mode = scanner.ScanIdents | scanner.ScanInts
+         for scan.Scan() != scanner.EOF {
+            if scan.TokenText() == "nilZ" {
+               scan.Scan()
+               scan.Scan()
+               tok.Type = scan.TokenText()
+               scan.Scan()
+               tok.ID, err = strconv.Atoi(scan.TokenText())
+               if err != nil {
+                  return nil, err
+               }
+               return &tok, nil
+            }
+         }
+      }
+   }
+   return nil, notPresent{"nilZ"}
+}
+
+type notPresent struct {
+   value string
+}
+
+func (n notPresent) Error() string {
+   return strconv.Quote(n.value) + " is not present"
 }
