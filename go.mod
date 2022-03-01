@@ -7,7 +7,4 @@ require (
 	golang.org/x/crypto v0.0.0-20210817164053-32db794688a5
 )
 
-require (
-	github.com/tdewolff/parse/v2 v2.5.22 // indirect
-	google.golang.org/protobuf v1.27.1 // indirect
-)
+require google.golang.org/protobuf v1.27.1 // indirect

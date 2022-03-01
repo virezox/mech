@@ -1,22 +1,35 @@
 package main
 
 import (
-   "flag"
    "fmt"
+   "github.com/89z/format"
    "github.com/89z/mech/bandcamp"
    "net/http"
    "os"
    "time"
 )
 
-type flags struct {
-   info bool
-   sleep time.Duration
+func doBand(item *bandcamp.Item, info bool, sleep time.Duration) error {
+   band, err := item.Band()
+   if err != nil {
+      return err
+   }
+   for _, item := range band.Discography {
+      err := doTralbum(&item, info, sleep)
+      if err != nil {
+         return err
+      }
+   }
+   return nil
 }
 
-func (f flags) process(data *bandcamp.DataTralbum) error {
-   for _, track := range data.TrackInfo {
-      if f.info {
+func doTralbum(item *bandcamp.Item, info bool, sleep time.Duration) error {
+   tralb, err := item.Tralbum()
+   if err != nil {
+      return err
+   }
+   for _, track := range tralb.Tracks {
+      if info {
          fmt.Printf("%+v\n", track)
       } else {
          addr, ok := track.MP3_128()
@@ -27,7 +40,7 @@ func (f flags) process(data *bandcamp.DataTralbum) error {
                return err
             }
             defer res.Body.Close()
-            name, err := track.Name(data, res.Header)
+            name, err := track.Name(tralb, res.Header)
             if err != nil {
                return err
             }
@@ -36,41 +49,13 @@ func (f flags) process(data *bandcamp.DataTralbum) error {
                return err
             }
             defer file.Close()
-            if _, err := file.ReadFrom(res.Body); err != nil {
+            pro := format.NewProgress(res)
+            if _, err := file.ReadFrom(pro); err != nil {
                return err
             }
-            time.Sleep(f.sleep)
+            time.Sleep(sleep)
          }
       }
    }
    return nil
-}
-
-func main() {
-   var choice flags
-   // a
-   var address string
-   flag.StringVar(&address, "a", "", "address")
-   // i
-   flag.BoolVar(&choice.info, "i", false, "info only")
-   // s
-   flag.DurationVar(&choice.sleep, "s", time.Second, "sleep")
-   // v
-   var verbose bool
-   flag.BoolVar(&verbose, "v", false, "verbose")
-   flag.Parse()
-   if verbose {
-      bandcamp.LogLevel = 1
-   }
-   if address != "" {
-      data, err := bandcamp.NewDataTralbum(address)
-      if err != nil {
-         panic(err)
-      }
-      if err := choice.process(data); err != nil {
-         panic(err)
-      }
-   } else {
-      flag.Usage()
-   }
 }

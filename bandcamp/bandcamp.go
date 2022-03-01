@@ -127,6 +127,34 @@ func NewItem(addr string) (*Item, error) {
    return nil, notPresent{"nilZ"}
 }
 
+func (i Item) Band() (*Band, error) {
+   req, err := http.NewRequest(
+      "GET", "http://bandcamp.com/api/mobile/24/band_details", nil,
+   )
+   if err != nil {
+      return nil, err
+   }
+   req.URL.RawQuery = "band_id=" + strconv.Itoa(i.Item_ID)
+   LogLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   band := new(Band)
+   if err := json.NewDecoder(res.Body).Decode(band); err != nil {
+      return nil, err
+   }
+   return band, nil
+}
+
+func (i Item) Type() string {
+   for _, r := range i.Item_Type {
+      return string(r)
+   }
+   return ""
+}
+
 func (i Item) Tralbum() (*Tralbum, error) {
    req, err := http.NewRequest(
       "GET", "http://bandcamp.com/api/mobile/24/tralbum_details", nil,
@@ -136,8 +164,8 @@ func (i Item) Tralbum() (*Tralbum, error) {
    }
    req.URL.RawQuery = url.Values{
       "band_id": {"1"},
-      "tralbum_type": {i.Item_Type},
       "tralbum_id": {strconv.Itoa(i.Item_ID)},
+      "tralbum_type": {i.Type()},
    }.Encode()
    LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
@@ -161,6 +189,15 @@ type Track struct {
 func (t Track) MP3_128() (string, bool) {
    mp3, ok := t.Streaming_URL["mp3-128"]
    return mp3, ok
+}
+
+func (t Track) Name(tralb *Tralbum, head http.Header) (string, error) {
+   name, err := format.ExtensionByType(head.Get("Content-Type"))
+   if err != nil {
+      return "", err
+   }
+   name = tralb.Tralbum_Artist + "-" + t.Title + name
+   return strings.Map(format.Clean, name), nil
 }
 
 type Tralbum struct {

@@ -25,13 +25,13 @@ func TestImage(t *testing.T) {
    }
 }
 
-func TestToken(t *testing.T) {
+func TestItem(t *testing.T) {
    for _, test := range tests {
-      tok, err := NewToken(test.addr)
+      tok, err := NewItem(test.addr)
       if err != nil {
          t.Fatal(err)
       }
-      if tok.Type != test.typ {
+      if tok.Item_Type != test.typ {
          t.Fatal(tok)
       }
       time.Sleep(99 * time.Millisecond)
