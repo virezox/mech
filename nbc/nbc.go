@@ -24,13 +24,65 @@ var (
    secretKey = []byte("2b84a073ede61c766e4c0b3f1e656f7f")
 )
 
-// nbc.com/saturday-night-live/video/october-2-owen-wilson/9000199358
-func Parse(id string) (uint64, error) {
-   return strconv.ParseUint(id, 10, 64)
+func encode(val interface{}) (*bytes.Buffer, error) {
+   buf := new(bytes.Buffer)
+   enc := json.NewEncoder(buf)
+   enc.SetIndent("", " ")
+   err := enc.Encode(val)
+   if err != nil {
+      return nil, err
+   }
+   return buf, nil
 }
 
 type AccessVOD struct {
    ManifestPath string // this is only valid for one minute
+}
+
+func writeHash(dst io.Writer, text string, key []byte) {
+   mac := hmac.New(sha256.New, key)
+   io.WriteString(mac, text)
+   hex.NewEncoder(dst).Write(mac.Sum(nil))
+}
+
+type Video struct {
+   Data struct {
+      BonanzaPage struct {
+         Analytics struct {
+            ConvivaAssetName string
+         }
+      }
+   }
+}
+
+func (v Video) Name() string {
+   name := v.Data.BonanzaPage.Analytics.ConvivaAssetName
+   // FIXME
+   return strings.Map(format.Clean, name) + ".mp4"
+}
+
+type videoRequest struct {
+   Extensions struct {
+      PersistedQuery struct {
+         Sha256Hash string `json:"sha256Hash"`
+      } `json:"persistedQuery"`
+   } `json:"extensions"`
+   Variables struct {
+      App string `json:"app"`
+      Name string `json:"name"` // String cannot represent a non string value
+      Platform string `json:"platform"`
+      Type string `json:"type"`
+      UserID string `json:"userId"` // can be empty
+   } `json:"variables"`
+}
+
+type vodRequest struct {
+   Device string `json:"device"`
+   DeviceID string `json:"deviceId"`
+   ExternalAdvertiserID string `json:"externalAdvertiserId"`
+   Mpx struct {
+      AccountID int `json:"accountId"`
+   } `json:"mpx"`
 }
 
 func NewAccessVOD(guid int64) (*AccessVOD, error) {
@@ -39,8 +91,7 @@ func NewAccessVOD(guid int64) (*AccessVOD, error) {
    body.DeviceID = "android"
    body.ExternalAdvertiserID = "NBC"
    body.Mpx.AccountID = mpxAccountID
-   buf := new(bytes.Buffer)
-   err := json.NewEncoder(buf).Encode(body)
+   buf, err := encode(body)
    if err != nil {
       return nil, err
    }
@@ -75,22 +126,6 @@ func NewAccessVOD(guid int64) (*AccessVOD, error) {
    return vod, nil
 }
 
-func writeHash(dst io.Writer, text string, key []byte) {
-   mac := hmac.New(sha256.New, key)
-   io.WriteString(mac, text)
-   hex.NewEncoder(dst).Write(mac.Sum(nil))
-}
-
-type Video struct {
-   Data struct {
-      BonanzaPage struct {
-         Analytics struct {
-            ConvivaAssetName string
-         }
-      }
-   }
-}
-
 func NewVideo(guid int64) (*Video, error) {
    var body videoRequest
    body.Extensions.PersistedQuery.Sha256Hash = persistedQuery
@@ -98,8 +133,7 @@ func NewVideo(guid int64) (*Video, error) {
    body.Variables.Name = strconv.FormatInt(guid, 10)
    body.Variables.Platform = "android"
    body.Variables.Type = "VIDEO"
-   buf := new(bytes.Buffer)
-   err := json.NewEncoder(buf).Encode(body)
+   buf, err := encode(body)
    if err != nil {
       return nil, err
    }
@@ -121,32 +155,4 @@ func NewVideo(guid int64) (*Video, error) {
       return nil, err
    }
    return vid, nil
-}
-
-func (v Video) Name() string {
-   return v.Data.BonanzaPage.Analytics.ConvivaAssetName
-}
-
-type videoRequest struct {
-   Extensions struct {
-      PersistedQuery struct {
-         Sha256Hash string `json:"sha256Hash"`
-      } `json:"persistedQuery"`
-   } `json:"extensions"`
-   Variables struct {
-      App string `json:"app"`
-      Name string `json:"name"` // String cannot represent a non string value
-      Platform string `json:"platform"`
-      Type string `json:"type"`
-      UserID string `json:"userId"` // can be empty
-   } `json:"variables"`
-}
-
-type vodRequest struct {
-   Device string `json:"device"`
-   DeviceID string `json:"deviceId"`
-   ExternalAdvertiserID string `json:"externalAdvertiserId"`
-   Mpx struct {
-      AccountID int `json:"accountId"`
-   } `json:"mpx"`
 }

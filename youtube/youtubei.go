@@ -103,6 +103,17 @@ func (c Context) Search(query string) (*Search, error) {
    return search, nil
 }
 
+func encode(val interface{}) (*bytes.Buffer, error) {
+   buf := new(bytes.Buffer)
+   enc := json.NewEncoder(buf)
+   enc.SetIndent("", " ")
+   err := enc.Encode(val)
+   if err != nil {
+      return nil, err
+   }
+   return buf, nil
+}
+
 func (c Context) player(head http.Header, id string) (*http.Response, error) {
    var body struct {
       Context Context `json:"context"`
@@ -114,10 +125,7 @@ func (c Context) player(head http.Header, id string) (*http.Response, error) {
    if head.Get("Authorization") != "" {
       body.RacyCheckOK = true // Cr381pDsSsA
    }
-   buf := new(bytes.Buffer)
-   enc := json.NewEncoder(buf)
-   enc.SetIndent("", " ")
-   err := enc.Encode(body)
+   buf, err := encode(body)
    if err != nil {
       return nil, err
    }

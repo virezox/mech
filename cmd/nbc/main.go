@@ -2,7 +2,6 @@ package main
 
 import (
    "flag"
-   "fmt"
    "github.com/89z/mech/nbc"
 )
 
@@ -24,27 +23,9 @@ func main() {
       nbc.LogLevel = 1
    }
    if guid >= 1 {
-      vid, err := video(guid, info)
+      err := doManifest(guid, form, info)
       if err != nil {
          panic(err)
-      }
-      vod, err := nbc.NewAccessVOD(guid)
-      if err != nil {
-         panic(err)
-      }
-      streams, err := vod.Streams()
-      if err != nil {
-         panic(err)
-      }
-      for _, stream := range streams {
-         if info {
-            fmt.Println(stream)
-         } else if stream.ID == form {
-            err := download(vid, stream)
-            if err != nil {
-               panic(err)
-            }
-         }
       }
    } else {
       flag.Usage()

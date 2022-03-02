@@ -2,49 +2,60 @@ package main
 
 import (
    "fmt"
-   "github.com/89z/format"
+   "github.com/89z/format/hls"
    "github.com/89z/mech/nbc"
    "net/http"
    "os"
-   "strings"
-   "time"
 )
 
-func video(guid int64, info bool) (*nbc.Video, error) {
-   if info {
-      return nil, nil
+func newMaster(s string) (*hls.Master, error) {
+   res, err := http.Get(s)
+   if err != nil {
+      return nil, err
    }
-   return nbc.NewVideo(guid)
+   defer res.Body.Close()
+   return hls.NewMaster(res)
 }
 
-func download(vid *nbc.Video, stream nbc.Stream) error {
-   name := vid.Name() + "-" + stream.Resolution + ".mp4"
-   file, err := os.Create(strings.Map(format.Clean, name))
+func doManifest(guid, form int64, info bool) error {
+   vod, err := nbc.NewAccessVOD(guid)
+   if err != nil {
+      return err
+   }
+   vid, err := nbc.NewVideo(guid)
+   if err != nil {
+      return err
+   }
+   file, err := os.Create(vid.Name())
    if err != nil {
       return err
    }
    defer file.Close()
-   infos, err := stream.Information()
+   mas, err := newMaster(vod.ManifestPath)
    if err != nil {
       return err
    }
-   begin := time.Now()
-   var size float64
-   for i, info := range infos {
+   res, err := http.Get(mas.Stream[0].URI)
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   seg, err := hls.NewSegment(res)
+   if err != nil {
+      return err
+   }
+   for i, info := range seg.Info {
+      fmt.Println(i, len(seg.Info))
       res, err := http.Get(info.URI)
       if err != nil {
          return err
       }
-      defer res.Body.Close()
-      fmt.Print(format.PercentInt(i, len(infos)))
-      fmt.Print("\t")
-      fmt.Print(format.Size.Get(size))
-      fmt.Print("\t")
-      fmt.Println(format.Rate.Get(size/time.Since(begin).Seconds()))
       if _, err := file.ReadFrom(res.Body); err != nil {
          return err
       }
-      size += float64(res.ContentLength)
+      if err := res.Body.Close(); err != nil {
+         return err
+      }
    }
    return nil
 }

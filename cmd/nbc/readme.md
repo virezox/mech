@@ -9,6 +9,7 @@ nbc -i 9000199366
 Download stream:
 
 ~~~
+nbc 9000199366
 nbc -f 2 9000199366
 ~~~
 
