@@ -57,8 +57,7 @@ type Video struct {
 
 func (v Video) Name() string {
    name := v.Data.BonanzaPage.Analytics.ConvivaAssetName
-   // FIXME
-   return strings.Map(format.Clean, name) + ".mp4"
+   return strings.Map(format.Clean, name) + ".ts"
 }
 
 type videoRequest struct {
