@@ -41,7 +41,6 @@ https://freeproxylists.net/br.html
 84.644 M false iHeart: Radio, Music, Podcasts
 81.840 M false Apple Music
 31.245 M true Vimeo
-29.975 M true BBC News
 29.632 M true TED
 24.487 M false TIDAL Music
 21.773 M false Paramount+ | Peak Streaming

@@ -22,7 +22,6 @@ var names = []string{
    ///////////
    "tumblr",
    "bandcamp",
-   "bbc",
    "nbc",
    "ted",
    "vimeo",
