@@ -13,13 +13,7 @@ func TestAndroidVOD(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   streams, err := vod.Streams()
-   if err != nil {
-      t.Fatal(err)
-   }
-   for _, stream := range streams {
-      fmt.Println(stream)
-   }
+   fmt.Printf("%+v\n", vod)
 }
 
 func TestAndroidVideo(t *testing.T) {

@@ -7,14 +7,14 @@ import (
 
 func main() {
    // b
+   var statusID int64
+   flag.Int64Var(&statusID, "b", 0, "status ID")
+   // bitrate
    var bitrate int64
-   flag.Int64Var(&bitrate, "b", 2_176_000, "bitrate")
+   flag.Int64Var(&bitrate, "bitrate", 2_176_000, "bitrate")
    // i
    var info bool
    flag.BoolVar(&info, "i", false, "info")
-   // s
-   var statusID int64
-   flag.Int64Var(&statusID, "s", 0, "status ID")
    // v
    var verbose bool
    flag.BoolVar(&verbose, "v", false, "verbose")

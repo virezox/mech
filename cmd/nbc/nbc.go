@@ -8,13 +8,13 @@ import (
    "os"
 )
 
-func newMaster(s string) (*hls.Master, error) {
-   res, err := http.Get(s)
+func newMaster(addr string) (*hls.Master, error) {
+   res, err := http.Get(addr)
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
-   return hls.NewMaster(res)
+   return hls.NewMaster(res.Request.URL, res.Body)
 }
 
 func doManifest(guid, form int64, info bool) error {
@@ -40,7 +40,7 @@ func doManifest(guid, form int64, info bool) error {
       return err
    }
    defer res.Body.Close()
-   seg, err := hls.NewSegment(res)
+   seg, err := hls.NewSegment(res.Request.URL, res.Body)
    if err != nil {
       return err
    }

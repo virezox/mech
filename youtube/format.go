@@ -7,9 +7,31 @@ import (
    "net/http"
    "os"
    "strconv"
-   "strings"
    "time"
 )
+
+type notPresent struct {
+   value string
+}
+
+func (n notPresent) Error() string {
+   return strconv.Quote(n.value) + " is not present"
+}
+
+func (f Format) Name(play *Player) (string, error) {
+   exts, err := mime.ExtensionsByType(f.MimeType)
+   if err != nil {
+      return "", err
+   }
+   for _, ext := range exts {
+      return format.Clean(play.base()) + ext, nil
+   }
+   return "", notPresent{f.MimeType}
+}
+
+func (p Player) base() string {
+   return p.VideoDetails.Author + "-" + p.VideoDetails.Title
+}
 
 const partLength = 10_000_000
 
@@ -49,14 +71,6 @@ func (f Format) Format(addr bool) (string, error) {
       buf = append(buf, f.URL...)
    }
    return string(buf), nil
-}
-
-func (f Format) Name(play *Player) (string, error) {
-   ext, err := format.ExtensionByType(f.MimeType)
-   if err != nil {
-      return "", err
-   }
-   return strings.Map(format.Clean, play.base()) + ext, nil
 }
 
 func (f Format) Write(dst io.Writer) error {

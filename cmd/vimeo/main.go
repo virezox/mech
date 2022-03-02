@@ -12,13 +12,13 @@ func main() {
    // a
    var address string
    flag.StringVar(&address, "a", "", "address")
+   // b
+   flag.Int64Var(&clip.ID, "b", 0, "clip ID")
    // c
-   flag.Int64Var(&clip.ID, "c", 0, "clip ID")
+   flag.Int64Var(&clip.UnlistedHash, "c", 0, "unlisted hash")
    // d
    var downloadID int64
    flag.Int64Var(&downloadID, "d", 0, "download ID")
-   // h
-   flag.Int64Var(&clip.UnlistedHash, "h", 0, "unlisted hash")
    // i
    var info bool
    flag.BoolVar(&info, "i", false, "info only")

@@ -12,6 +12,9 @@ func main() {
    // a
    var address string
    flag.StringVar(&address, "a", "", "address")
+   // b
+   var videoID string
+   flag.StringVar(&videoID, "b", "", "video ID")
    // c
    var construct bool
    flag.BoolVar(&construct, "c", false, "OAuth construct request")
@@ -30,11 +33,8 @@ func main() {
    var refresh bool
    flag.BoolVar(&refresh, "r", false, "OAuth token refresh")
    // v
-   var videoID string
-   flag.StringVar(&videoID, "v", "", "video ID")
-   // verbose
    var verbose bool
-   flag.BoolVar(&verbose, "verbose", false, "verbose")
+   flag.BoolVar(&verbose, "v", false, "verbose")
    // x
    var exchange bool
    flag.BoolVar(&exchange, "x", false, "OAuth token exchange")

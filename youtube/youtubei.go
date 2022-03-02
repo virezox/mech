@@ -184,10 +184,6 @@ func (p Player) Date() (time.Time, error) {
    return time.Parse("2006-01-02", date)
 }
 
-func (p Player) base() string {
-   return p.VideoDetails.Author + "-" + p.VideoDetails.Title
-}
-
 type Search struct {
    Contents struct {
       SectionListRenderer struct {

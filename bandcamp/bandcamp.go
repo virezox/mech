@@ -3,6 +3,7 @@ package bandcamp
 import (
    "encoding/json"
    "github.com/89z/format"
+   "mime"
    "net/http"
    "net/url"
    "strconv"
@@ -10,6 +11,26 @@ import (
    "text/scanner"
    "time"
 )
+
+func (t Track) Name(tralb *Tralbum, head http.Header) (string, error) {
+   typ := head.Get("Content-Type")
+   exts, err := mime.ExtensionsByType(typ)
+   if err != nil {
+      return "", err
+   }
+   for _, ext := range exts {
+      return format.Clean(tralb.Tralbum_Artist + "-" + t.Title) + ext, nil
+   }
+   return "", notPresent{typ}
+}
+
+type notPresent struct {
+   value string
+}
+
+func (n notPresent) Error() string {
+   return strconv.Quote(n.value) + " is not present"
+}
 
 var LogLevel format.LogLevel
 
@@ -192,15 +213,6 @@ func (t Track) MP3_128() (string, bool) {
    return mp3, ok
 }
 
-func (t Track) Name(tralb *Tralbum, head http.Header) (string, error) {
-   name, err := format.ExtensionByType(head.Get("Content-Type"))
-   if err != nil {
-      return "", err
-   }
-   name = tralb.Tralbum_Artist + "-" + t.Title + name
-   return strings.Map(format.Clean, name), nil
-}
-
 type Tralbum struct {
    Art_ID int
    Release_Date int64
@@ -213,10 +225,3 @@ func (t Tralbum) Date() time.Time {
    return time.Unix(t.Release_Date, 0)
 }
 
-type notPresent struct {
-   value string
-}
-
-func (n notPresent) Error() string {
-   return strconv.Quote(n.value) + " is not present"
-}
