@@ -9,6 +9,9 @@ func main() {
    // a
    var address string
    flag.StringVar(&address, "a", "", "address")
+   // b
+   var shortcode string
+   flag.StringVar(&shortcode, "b", "", "shortcode")
    // auth
    var auth bool
    flag.BoolVar(&auth, "auth", false, "authentication")
@@ -18,9 +21,6 @@ func main() {
    // p
    var password string
    flag.StringVar(&password, "p", "", "password")
-   // s
-   var shortcode string
-   flag.StringVar(&shortcode, "s", "", "shortcode")
    // u
    var username string
    flag.StringVar(&username, "u", "", "username")

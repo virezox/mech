@@ -6,12 +6,12 @@ import (
 )
 
 func main() {
+   // b
+   var guid int64
+   flag.Int64Var(&guid, "b", 0, "GUID")
    // f
    var form int64
    flag.Int64Var(&form, "f", 0, "format")
-   // g
-   var guid int64
-   flag.Int64Var(&guid, "g", 0, "GUID")
    // i
    var info bool
    flag.BoolVar(&info, "i", false, "info")
