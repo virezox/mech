@@ -49,8 +49,7 @@ func main() {
          return video.Download[a].Height < video.Download[b].Height
       })
       if info {
-         form := video.Format(false)
-         fmt.Println(form)
+         fmt.Println(video)
       } else {
          for _, down := range video.Download {
             if down.Video_File_ID == downloadID {

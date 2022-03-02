@@ -10,8 +10,8 @@ func main() {
    var guid int64
    flag.Int64Var(&guid, "b", 0, "GUID")
    // f
-   var form int64
-   flag.Int64Var(&form, "f", 0, "format")
+   var bandwidth int64
+   flag.Int64Var(&bandwidth, "f", 5480000, "bandwidth")
    // i
    var info bool
    flag.BoolVar(&info, "i", false, "info")
@@ -23,7 +23,7 @@ func main() {
       nbc.LogLevel = 1
    }
    if guid >= 1 {
-      err := doManifest(guid, form, info)
+      err := doManifest(guid, bandwidth, info)
       if err != nil {
          panic(err)
       }

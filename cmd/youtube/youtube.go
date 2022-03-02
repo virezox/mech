@@ -29,7 +29,7 @@ func (c choice) adaptiveFormats(play *youtube.Player) error {
    for _, ada := range play.StreamingData.AdaptiveFormats {
       switch {
       case c.info:
-         form, err := ada.Format(false)
+         form, err := ada.Format()
          if err != nil {
             return err
          }
