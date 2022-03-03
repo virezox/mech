@@ -23,7 +23,7 @@ func TestVimeo(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   fmt.Println(video.Format(true))
+   fmt.Println(video)
 }
 
 func TestScan(t *testing.T) {

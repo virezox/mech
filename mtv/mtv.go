@@ -12,7 +12,11 @@ var LogLevel format.LogLevel
 
 type Item struct {
    EntityType string
+   ParentEntity struct {
+      Title string
+   }
    ShortID string
+   Title string
    VideoServiceURL string
 }
 
@@ -66,6 +70,10 @@ type Property struct {
    Data struct {
       Item Item
    }
+}
+
+func (p Property) Base() string {
+   return p.Data.Item.ParentEntity.Title + "-" + p.Data.Item.Title
 }
 
 func (p Property) Topaz() (*Topaz, error) {

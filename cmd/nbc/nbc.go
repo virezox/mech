@@ -13,6 +13,7 @@ func doManifest(guid, bandwidth int64, info bool) error {
    if err != nil {
       return err
    }
+   fmt.Println("GET", vod.ManifestPath)
    res, err := http.Get(vod.ManifestPath)
    if err != nil {
       return err
@@ -45,6 +46,7 @@ func download(stream hls.Stream, name string) error {
       return err
    }
    defer file.Close()
+   fmt.Println("GET", stream.URI)
    res, err := http.Get(stream.URI)
    if err != nil {
       return err

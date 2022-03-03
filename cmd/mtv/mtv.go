@@ -9,38 +9,6 @@ import (
    "sort"
 )
 
-func download(stream hls.Stream, name string) error {
-   file, err := os.Create(name)
-   if err != nil {
-      return err
-   }
-   defer file.Close()
-   fmt.Println(stream.URI)
-   res, err := http.Get(stream.URI)
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   seg, err := hls.NewSegment(res.Request.URL, res.Body)
-   if err != nil {
-      return err
-   }
-   for i, info := range seg.Info {
-      fmt.Println(i, len(seg.Info))
-      res, err := http.Get(info.URI)
-      if err != nil {
-         return err
-      }
-      if _, err := file.ReadFrom(res.Body); err != nil {
-         return err
-      }
-      if err := res.Body.Close(); err != nil {
-         return err
-      }
-   }
-   return nil
-}
-
 func doManifest(addr string, bandwidth int64, info bool) error {
    prop, err := mtv.NewItem(addr).Property()
    if err != nil {
@@ -50,7 +18,7 @@ func doManifest(addr string, bandwidth int64, info bool) error {
    if err != nil {
       return err
    }
-   fmt.Println(top.StitchedStream.Source)
+   fmt.Println("GET", top.StitchedStream.Source)
    res, err := http.Get(top.StitchedStream.Source)
    if err != nil {
       return err
@@ -63,19 +31,66 @@ func doManifest(addr string, bandwidth int64, info bool) error {
    sort.Slice(mas.Stream, func(a, b int) bool {
       return mas.Stream[a].Bandwidth < mas.Stream[b].Bandwidth
    })
-   for _, stream := range mas.Stream {
-      if info {
-         stream.URI = ""
-         fmt.Println(stream)
-      } else if stream.Bandwidth >= bandwidth {
-         err := download(stream, "ignore.mp4")
+   if info {
+      for _, str := range mas.Stream {
+         str.URI = ""
+         fmt.Println(str)
+      }
+   } else {
+      uris := mas.URIs(func(str hls.Stream) bool {
+         return str.Bandwidth >= bandwidth
+      })
+      for _, uri := range uris {
+         fmt.Println("GET", uri)
+         res, err := http.Get(uri)
          if err != nil {
             return err
          }
-         break
+         defer res.Body.Close()
+         seg, err := hls.NewSegment(res.Request.URL, res.Body)
+         if err != nil {
+            return err
+         }
+         ext, err := seg.Ext()
+         if err != nil {
+            return err
+         }
+         if err := download(seg, "ignore/" + prop.Base() + ext); err != nil {
+            return err
+         }
       }
    }
    return nil
 }
 
-
+func download(seg *hls.Segment, name string) error {
+   fmt.Println("GET", seg.Key.URI)
+   res, err := http.Get(seg.Key.URI)
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   dec, err := hls.NewDecrypter(res.Body)
+   if err != nil {
+      return err
+   }
+   file, err := os.Create(name)
+   if err != nil {
+      return err
+   }
+   defer file.Close()
+   for i, info := range seg.Info {
+      fmt.Println(i, len(seg.Info)-1)
+      res, err := http.Get(info.URI)
+      if err != nil {
+         return err
+      }
+      if _, err := dec.Copy(file, res.Body); err != nil {
+         return err
+      }
+      if err := res.Body.Close(); err != nil {
+         return err
+      }
+   }
+   return nil
+}

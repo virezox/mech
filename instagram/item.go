@@ -9,37 +9,44 @@ import (
    "path/filepath"
    "strconv"
    "strings"
+   "time"
 )
+
+func (i Item) Format() (string, error) {
+   var buf []byte
+   buf = append(buf, "User: "...)
+   buf = append(buf, i.User.Username...)
+   buf = append(buf, "\nCaption: "...)
+   buf = append(buf, i.Caption.Text...)
+   buf = append(buf, "\nTaken_At: "...)
+   buf = append(buf, i.Time().String()...)
+   for _, med := range i.Medias() {
+      addrs, err := med.URLs()
+      if err != nil {
+         return "", err
+      }
+      for _, addr := range addrs {
+         buf = append(buf, "\nURL: "...)
+         buf = append(buf, addr...)
+      }
+   }
+   return string(buf), nil
+}
+
+func (i Item) Time() time.Time {
+   return time.Unix(i.Taken_At, 0)
+}
 
 type Item struct {
    Caption struct {
       Text string
    }
-   Media
    Carousel_Media []Media
-}
-
-func (i Item) Format() (string, error) {
-   buf := []byte("Caption: ")
-   buf = append(buf, i.Caption.Text...)
-   buf = append(buf, "\nURLs:"...)
-   for j, med := range i.Medias() {
-      addrs, err := med.URLs()
-      if err != nil {
-         return "", err
-      }
-      if j >= 1 {
-         buf = append(buf, '\n')
-      }
-      for k, addr := range addrs {
-         if k >= 1 {
-            buf = append(buf, '\n')
-         }
-         buf = append(buf, '\n')
-         buf = append(buf, addr...)
-      }
+   Media
+   Taken_At int64
+   User struct {
+      Username string
    }
-   return string(buf), nil
 }
 
 func (i Item) Medias() []Media {
