@@ -6,18 +6,14 @@ import (
    "time"
 )
 
-type propertyTest struct {
-   typ, id string
-}
-
-var tests = []propertyTest{
-   {"episode", "scyb0g"},
-   {"showvideo", "s5iqyc"},
+var tests = []string{
+   "https://www.mtv.com/episodes/scyb0g/aeon-flux-utopia-or-deuteranopia-season-1-ep-1",
+   "https://www.mtv.com/video-clips/s5iqyc/mtv-cribs-dj-khaled",
 }
 
 func TestProperty(t *testing.T) {
    for _, test := range tests {
-      prop, err := NewProperty(test.typ, test.id)
+      prop, err := NewItem(test).Property()
       if err != nil {
          t.Fatal(err)
       }
@@ -27,7 +23,7 @@ func TestProperty(t *testing.T) {
 }
 
 func TestTopaz(t *testing.T) {
-   prop, err := NewProperty(tests[0].typ, tests[0].id)
+   prop, err := NewItem(tests[1]).Property()
    if err != nil {
       t.Fatal(err)
    }

@@ -5,19 +5,41 @@ import (
    "github.com/89z/format"
    "net/http"
    "net/url"
+   "strings"
 )
 
-var LogLevel format.LogLevel
+func NewItem(addr string) Item {
+   var (
+      item Item
+      prev string
+   )
+   for _, split := range strings.Split(addr, "/") {
+      switch prev {
+      case "episodes":
+         item.EntityType = "episode"
+         item.ShortID = split
+      case "video-clips":
+         item.EntityType = "showvideo"
+         item.ShortID = split
+      }
+      prev = split
+   }
+   return item
+}
 
 type Property struct {
    Data struct {
-      Item struct {
-         VideoServiceURL string
-      }
+      Item Item
    }
 }
 
-func NewProperty(typ, shortID string) (*Property, error) {
+type Item struct {
+   EntityType string
+   ShortID string
+   VideoServiceURL string
+}
+
+func (i Item) Property() (*Property, error) {
    req, err := http.NewRequest(
       "GET", "https://neutron-api.viacom.tech/api/2.9/property", nil,
    )
@@ -28,8 +50,8 @@ func NewProperty(typ, shortID string) (*Property, error) {
       "brand": {"mtv"},
       "platform": {"web"},
       "region": {"US-PHASE1"},
-      "shortId": {shortID},
-      "type": {typ},
+      "shortId": {i.ShortID},
+      "type": {i.EntityType},
    }.Encode()
    LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
@@ -43,6 +65,8 @@ func NewProperty(typ, shortID string) (*Property, error) {
    }
    return prop, nil
 }
+
+var LogLevel format.LogLevel
 
 func (p Property) Topaz() (*Topaz, error) {
    req, err := http.NewRequest("GET", p.Data.Item.VideoServiceURL, nil)
