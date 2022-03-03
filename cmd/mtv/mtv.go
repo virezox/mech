@@ -1,44 +1,13 @@
 package main
 
 import (
-   "flag"
    "fmt"
    "github.com/89z/format/hls"
    "github.com/89z/mech/mtv"
    "net/http"
    "os"
+   "sort"
 )
-
-func doManifest(guid, bandwidth int64, info bool) error {
-   vod, err := mtv.NewAccessVOD(guid)
-   if err != nil {
-      return err
-   }
-   res, err := http.Get(vod.ManifestPath)
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   mas, err := hls.NewMaster(res.Request.URL, res.Body)
-   if err != nil {
-      return err
-   }
-   for _, stream := range mas.Stream {
-      if info {
-         stream.URI = ""
-         fmt.Println(stream)
-      } else if stream.Bandwidth == bandwidth {
-         vid, err := mtv.NewVideo(guid)
-         if err != nil {
-            return err
-         }
-         if err := download(stream, vid.Name()); err != nil {
-            return err
-         }
-      }
-   }
-   return nil
-}
 
 func download(stream hls.Stream, name string) error {
    file, err := os.Create(name)
@@ -46,6 +15,7 @@ func download(stream hls.Stream, name string) error {
       return err
    }
    defer file.Close()
+   fmt.Println(stream.URI)
    res, err := http.Get(stream.URI)
    if err != nil {
       return err
@@ -71,29 +41,41 @@ func download(stream hls.Stream, name string) error {
    return nil
 }
 
-func main() {
-   // b
-   var guid int64
-   flag.Int64Var(&guid, "b", 0, "GUID")
-   // f
-   var bandwidth int64
-   flag.Int64Var(&bandwidth, "f", 5480000, "bandwidth")
-   // i
-   var info bool
-   flag.BoolVar(&info, "i", false, "info")
-   // v
-   var verbose bool
-   flag.BoolVar(&verbose, "v", false, "verbose")
-   flag.Parse()
-   if verbose {
-      mtv.LogLevel = 1
+func doManifest(addr string, bandwidth int64, info bool) error {
+   prop, err := mtv.NewItem(addr).Property()
+   if err != nil {
+      return err
    }
-   if guid >= 1 {
-      err := doManifest(guid, bandwidth, info)
-      if err != nil {
-         panic(err)
+   top, err := prop.Topaz()
+   if err != nil {
+      return err
+   }
+   fmt.Println(top.StitchedStream.Source)
+   res, err := http.Get(top.StitchedStream.Source)
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   mas, err := hls.NewMaster(res.Request.URL, res.Body)
+   if err != nil {
+      return err
+   }
+   sort.Slice(mas.Stream, func(a, b int) bool {
+      return mas.Stream[a].Bandwidth < mas.Stream[b].Bandwidth
+   })
+   for _, stream := range mas.Stream {
+      if info {
+         stream.URI = ""
+         fmt.Println(stream)
+      } else if stream.Bandwidth >= bandwidth {
+         err := download(stream, "ignore.mp4")
+         if err != nil {
+            return err
+         }
+         break
       }
-   } else {
-      flag.Usage()
    }
+   return nil
 }
+
+

@@ -14,9 +14,8 @@ func master() (*http.Response, error) {
    if err != nil {
       return nil, err
    }
-   req.URL.RawQuery = url.Values{
-      "format": {"SMIL"},
-      "formats": {"MPEG4,M3U"},
-   }.Encode()
-   return new(http.Client).Do(req) // this redirects
+   // We need "MPEG4", otherwise you get a "EXT-X-KEY" with "skd" scheme:
+   req.URL.RawQuery = "formats=MPEG4,M3U"
+   // This redirects:
+   return new(http.Client).Do(req)
 }

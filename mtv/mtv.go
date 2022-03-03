@@ -8,6 +8,14 @@ import (
    "strings"
 )
 
+var LogLevel format.LogLevel
+
+type Item struct {
+   EntityType string
+   ShortID string
+   VideoServiceURL string
+}
+
 func NewItem(addr string) Item {
    var (
       item Item
@@ -25,18 +33,6 @@ func NewItem(addr string) Item {
       prev = split
    }
    return item
-}
-
-type Property struct {
-   Data struct {
-      Item Item
-   }
-}
-
-type Item struct {
-   EntityType string
-   ShortID string
-   VideoServiceURL string
 }
 
 func (i Item) Property() (*Property, error) {
@@ -66,7 +62,11 @@ func (i Item) Property() (*Property, error) {
    return prop, nil
 }
 
-var LogLevel format.LogLevel
+type Property struct {
+   Data struct {
+      Item Item
+   }
+}
 
 func (p Property) Topaz() (*Topaz, error) {
    req, err := http.NewRequest("GET", p.Data.Item.VideoServiceURL, nil)
