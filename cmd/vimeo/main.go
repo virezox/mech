@@ -2,13 +2,11 @@ package main
 
 import (
    "flag"
-   "fmt"
    "github.com/89z/mech/vimeo"
-   "sort"
 )
 
 func main() {
-   clip := new(vimeo.Clip)
+   var clip vimeo.Clip
    // a
    var address string
    flag.StringVar(&address, "a", "", "address")
@@ -16,9 +14,9 @@ func main() {
    flag.Int64Var(&clip.ID, "b", 0, "clip ID")
    // c
    flag.Int64Var(&clip.UnlistedHash, "c", 0, "unlisted hash")
-   // d
-   var downloadID int64
-   flag.Int64Var(&downloadID, "d", 0, "download ID")
+   // f
+   var name string
+   flag.StringVar(&name, "f", "720p", "public name")
    // i
    var info bool
    flag.BoolVar(&info, "i", false, "info only")
@@ -30,35 +28,9 @@ func main() {
       vimeo.LogLevel = 1
    }
    if clip.ID >= 1 || address != "" {
-      web, err := vimeo.NewJsonWeb()
+      err := doClip(&clip, address, name, info)
       if err != nil {
          panic(err)
-      }
-      if address != "" {
-         var err error
-         clip, err = vimeo.NewClip(address)
-         if err != nil {
-            panic(err)
-         }
-      }
-      video, err := web.Video(clip)
-      if err != nil {
-         panic(err)
-      }
-      sort.Slice(video.Download, func(a, b int) bool {
-         return video.Download[a].Height < video.Download[b].Height
-      })
-      if info {
-         fmt.Println(video)
-      } else {
-         for _, down := range video.Download {
-            if down.Video_File_ID == downloadID {
-               err := download(down)
-               if err != nil {
-                  panic(err)
-               }
-            }
-         }
       }
    } else {
       flag.Usage()

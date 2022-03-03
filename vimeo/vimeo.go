@@ -89,15 +89,6 @@ func (w JsonWeb) Video(clip *Clip) (*Video, error) {
    return vid, nil
 }
 
-type Download struct {
-   Video_File_ID int64
-   Quality string
-   Width int64
-   Height int64
-   Size_Short string
-   Link string
-}
-
 type Video struct {
    Duration int64
    Release_Time string
@@ -118,24 +109,6 @@ func (e errorString) Error() string {
    return string(e)
 }
 
-func (d Download) String() string {
-   buf := []byte("ID:")
-   buf = strconv.AppendInt(buf, d.Video_File_ID, 10)
-   buf = append(buf, " Quality:"...)
-   buf = append(buf, d.Quality...)
-   buf = append(buf, " Width:"...)
-   buf = strconv.AppendInt(buf, d.Width, 10)
-   buf = append(buf, " Height:"...)
-   buf = strconv.AppendInt(buf, d.Height, 10)
-   buf = append(buf, " Size:"...)
-   buf = append(buf, d.Size_Short...)
-   if d.Link != "" {
-      buf = append(buf, " Link:"...)
-      buf = append(buf, d.Link...)
-   }
-   return string(buf)
-}
-
 func (v Video) String() string {
    buf := []byte("Duration: ")
    buf = append(buf, v.Time().String()...)
@@ -150,6 +123,31 @@ func (v Video) String() string {
    for _, down := range v.Download {
       buf = append(buf, '\n')
       buf = append(buf, down.String()...)
+   }
+   return string(buf)
+}
+
+type Download struct {
+   Public_Name string
+   Width int64
+   Height int64
+   Size_Short string
+   Link string
+}
+
+func (d Download) String() string {
+   var buf []byte
+   buf = append(buf, "Name:"...)
+   buf = append(buf, d.Public_Name...)
+   buf = append(buf, " Width:"...)
+   buf = strconv.AppendInt(buf, d.Width, 10)
+   buf = append(buf, " Height:"...)
+   buf = strconv.AppendInt(buf, d.Height, 10)
+   buf = append(buf, " Size:"...)
+   buf = append(buf, d.Size_Short...)
+   if d.Link != "" {
+      buf = append(buf, " Link:"...)
+      buf = append(buf, d.Link...)
    }
    return string(buf)
 }
