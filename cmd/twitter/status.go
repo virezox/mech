@@ -10,11 +10,14 @@ import (
 
 func main() {
    // b
-   var statusID int64
-   flag.Int64Var(&statusID, "b", 0, "status ID")
+   var status int64
+   flag.Int64Var(&status, "b", 0, "status ID")
+   // c
+   var space string
+   flag.StringVar(&space, "c", "", "space ID")
    // f
    var bitrate int64
-   flag.Int64Var(&bitrate, "f", 2_176_000, "bitrate")
+   flag.Int64Var(&bitrate, "f", 2_176_000, "status bitrate")
    // i
    var info bool
    flag.BoolVar(&info, "i", false, "info")
@@ -25,8 +28,13 @@ func main() {
    if verbose {
       twitter.LogLevel = 1
    }
-   if statusID >= 1 {
-      err := statusPath(statusID, bitrate, info)
+   if status >= 1 {
+      err := doStatus(status, bitrate, info)
+      if err != nil {
+         panic(err)
+      }
+   } else if space != "" {
+      err := doSpace(space, info)
       if err != nil {
          panic(err)
       }
@@ -35,12 +43,12 @@ func main() {
    }
 }
 
-func statusPath(statusID, bitrate int64, info bool) error {
+func doStatus(id, bitrate int64, info bool) error {
    guest, err := twitter.NewGuest()
    if err != nil {
       return err
    }
-   stat, err := guest.Status(statusID)
+   stat, err := guest.Status(id)
    if err != nil {
       return err
    }
@@ -56,7 +64,7 @@ func statusPath(statusID, bitrate int64, info bool) error {
                   return err
                }
                defer res.Body.Close()
-               name, err := variant.Name(stat, statusID)
+               name, err := variant.Name(stat, id)
                if err != nil {
                   return err
                }
@@ -74,5 +82,3 @@ func statusPath(statusID, bitrate int64, info bool) error {
    }
    return nil
 }
-
-

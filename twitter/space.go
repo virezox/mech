@@ -12,15 +12,39 @@ import (
 type AudioSpace struct {
    Metadata struct {
       Media_Key string
+      Title string
       Started_At int64
       Ended_At int64 `json:"ended_at,string"`
-      Title string
    }
    Participants struct {
       Admins []struct {
          Display_Name string
       }
    }
+}
+
+func (a AudioSpace) String() string {
+   var buf strings.Builder
+   buf.WriteString("Key: ")
+   buf.WriteString(a.Metadata.Media_Key)
+   buf.WriteString("\nTitle: ")
+   buf.WriteString(a.Metadata.Title)
+   buf.WriteString("\nStarted: ")
+   buf.WriteString(a.Time().String())
+   buf.WriteString("\nDuration: ")
+   buf.WriteString(a.Duration().String())
+   buf.WriteString("\nAdmins: ")
+   buf.WriteString(a.Admins())
+   return buf.String()
+}
+
+func (a AudioSpace) Duration() time.Duration {
+   dur := a.Metadata.Ended_At - a.Metadata.Started_At
+   return time.Duration(dur) * time.Millisecond
+}
+
+func (a AudioSpace) Time() time.Time {
+   return time.UnixMilli(a.Metadata.Started_At)
 }
 
 func (a AudioSpace) Admins() string {
@@ -40,11 +64,6 @@ func (a AudioSpace) Base() string {
    buf.WriteByte('-')
    buf.WriteString(a.Metadata.Title)
    return format.Clean(buf.String())
-}
-
-func (a AudioSpace) Duration() time.Duration {
-   dur := a.Metadata.Ended_At - a.Metadata.Started_At
-   return time.Duration(dur) * time.Millisecond
 }
 
 func (g Guest) AudioSpace(id string) (*AudioSpace, error) {
@@ -81,7 +100,24 @@ func (g Guest) AudioSpace(id string) (*AudioSpace, error) {
    return &space.Data.AudioSpace, nil
 }
 
-func (g Guest) Stream(space *AudioSpace) (*Stream, error) {
+type spaceRequest struct {
+   ID string `json:"id"`
+   IsMetatagsQuery bool `json:"isMetatagsQuery"`
+   WithBirdwatchPivots bool `json:"withBirdwatchPivots"`
+   WithDownvotePerspective bool `json:"withDownvotePerspective"`
+   WithReactionsMetadata bool `json:"withReactionsMetadata"`
+   WithReactionsPerspective bool `json:"withReactionsPerspective"`
+   WithReplays bool `json:"withReplays"`
+   WithScheduledSpaces bool `json:"withScheduledSpaces"`
+   WithSuperFollowsTweetFields bool `json:"withSuperFollowsTweetFields"`
+   WithSuperFollowsUserFields bool `json:"withSuperFollowsUserFields"`
+}
+
+type Source struct {
+   Location string // Segment
+}
+
+func (g Guest) Source(space *AudioSpace) (*Source, error) {
    var str strings.Builder
    str.WriteString("https://twitter.com/i/api/1.1/live_video_stream/status/")
    str.WriteString(space.Metadata.Media_Key)
@@ -99,28 +135,11 @@ func (g Guest) Stream(space *AudioSpace) (*Stream, error) {
       return nil, err
    }
    defer res.Body.Close()
-   stream := new(Stream)
-   if err := json.NewDecoder(res.Body).Decode(stream); err != nil {
+   var video struct {
+      Source Source
+   }
+   if err := json.NewDecoder(res.Body).Decode(&video); err != nil {
       return nil, err
    }
-   return stream, nil
-}
-
-type Stream struct {
-   Source struct {
-      Location string // Segment
-   }
-}
-
-type spaceRequest struct {
-   ID string `json:"id"`
-   IsMetatagsQuery bool `json:"isMetatagsQuery"`
-   WithBirdwatchPivots bool `json:"withBirdwatchPivots"`
-   WithDownvotePerspective bool `json:"withDownvotePerspective"`
-   WithReactionsMetadata bool `json:"withReactionsMetadata"`
-   WithReactionsPerspective bool `json:"withReactionsPerspective"`
-   WithReplays bool `json:"withReplays"`
-   WithScheduledSpaces bool `json:"withScheduledSpaces"`
-   WithSuperFollowsTweetFields bool `json:"withSuperFollowsTweetFields"`
-   WithSuperFollowsUserFields bool `json:"withSuperFollowsUserFields"`
+   return &video.Source, nil
 }
