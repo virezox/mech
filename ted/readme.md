@@ -25,6 +25,6 @@ content-length: 0
 
 ## Why does this exist?
 
-January 26 2022:
+February 11 2022:
 
 https://github.com/ytdl-org/youtube-dl/issues/30561

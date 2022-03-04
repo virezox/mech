@@ -55,7 +55,7 @@ func doManifest(addr string, bandwidth int64, info bool) error {
          if err != nil {
             return err
          }
-         if err := download(seg, "ignore/" + prop.Base() + ext); err != nil {
+         if err := download(seg, prop.Base() + ext); err != nil {
             return err
          }
       }

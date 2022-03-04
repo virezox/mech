@@ -21,10 +21,11 @@ var names = []string{
    "imdb",
    ///////////
    "tumblr",
-   "bandcamp",
-   "nbc",
-   "ted",
    "vimeo",
+   "ted",
+   "nbc",
+   "mtv",
+   "bandcamp",
 }
 
 func userinfo() (*url.Userinfo, error) {

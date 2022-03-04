@@ -1,15 +1,14 @@
 package paramount
 
 import (
-   "os"
+   "fmt"
    "testing"
 )
 
 func TestParamount(t *testing.T) {
-   res, err := master()
+   seg, err := segment()
    if err != nil {
       t.Fatal(err)
    }
-   defer res.Body.Close()
-   os.Stdout.ReadFrom(res.Body)
+   fmt.Printf("%+v\n", seg.Key)
 }
