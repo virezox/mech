@@ -1,67 +1,57 @@
 # Paramount+
 
-~~~
-yt-dlp --proxy 127.0.0.1:8080 --no-check-certificate `
-paramountplus.com/shows/star-trek-prodigy/video/3htV4fvVt4Z8gDZHqlzPOGLSMgcGc_vy/star-trek-prodigy-dreamcatcher
-~~~
+https://github.com/ytdl-org/youtube-dl/issues/30491
 
-- https://github.com/ytdl-org/youtube-dl/issues/30491
-- https://play.google.com/store/apps/details?id=com.cbs.app
-
-This is it:
+## How to get endpoint?
 
 ~~~
-GET /i/temp_hd_gallery_video/CBS_Production_Outlet_VMS/video_robot/CBS_Production_Entertainment/2021/10/18/1963091011554/NICKELODEON_STARTREKPRODIGY_104_HD_985058_,2228,4628,3128,1628,848,503,000.mp4.csmil/segment2_1_av.ts?null=0&id=AgBItRcmFya85M6kHmKe34Eu2IzJ1IHI2He5etlGwZvVWDnuRjMBNgeWRd%2fmV2csh0f3yRlamjyDXg%3d%3d&hdntl=exp=1646261838~acl=/i/temp_hd_gallery_video/CBS_Production_Outlet_VMS/video_robot/CBS_Production_Entertainment/2021/10/18/1963091011554/NICKELODEON_STARTREKPRODIGY_104_HD_985058_*~data=hdntl~hmac=c6fd17c4197dae64d2b9a055624536c851f2788e4e00524c6a8e391e511d4d04 HTTP/1.1
-Accept-Encoding: identity
-Host: cbsios-vh.akamaihd.net
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.20 Safari/537.36
-Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
-Accept-Language: en-us,en;q=0.5
-Sec-Fetch-Mode: navigate
-Cookie: _alid_=MbBNIhoN43TV17fPr98BXQ==; hdntl=exp=1646261838~acl=%2fi%2ftemp_hd_gallery_video%2fCBS_Production_Outlet_VMS%2fvideo_robot%2fCBS_Production_Entertainment%2f2021%2f10%2f18%2f1963091011554%2fNICKELODEON_STARTREKPRODIGY_104_HD_985058_*~data=hdntl~hmac=c6fd17c4197dae64d2b9a055624536c851f2788e4e00524c6a8e391e511d4d04
-Connection: close
-content-length: 0
+https://link.theplatform.com/s/dJ5BDC/media/guid/2198311517/
 ~~~
 
-which comes from:
+https://play.google.com/store/apps/details?id=com.cbs.app
+
+Install user certificate, then use Frida:
+
+https://github.com/httptoolkit/frida-android-unpinning
+
+Example two (`/media/guid/` not found):
+
+- <https://paramountplus.com/shows/star-trek-prodigy/video/_9JdOMR84RwqcRtCup9UynfldbPH4LdH/star-trek-prodigy-janeway-upgraded-s1-e10-paramount->
+- https://link.theplatform.com/s/dJ5BDC/Jl7FSgX2t2JT?format=SMIL&manifest=m3u&Tracking=true&mbr=true
 
 ~~~
-GET /i/temp_hd_gallery_video/CBS_Production_Outlet_VMS/video_robot/CBS_Production_Entertainment/2021/10/18/1963091011554/NICKELODEON_STARTREKPRODIGY_104_HD_985058_,2228,4628,3128,1628,848,503,000.mp4.csmil/index_1_av.m3u8?null=0&id=AgBItRcmFya85M6kHmKe34Eu2IzJ1IHI2He5etlGwZvVWDnuRjMBNgeWRd%2fmV2csh0f3yRlamjyDXg%3d%3d&hdntl=exp=1646261838~acl=%2fi%2ftemp_hd_gallery_video%2fCBS_Production_Outlet_VMS%2fvideo_robot%2fCBS_Production_Entertainment%2f2021%2f10%2f18%2f1963091011554%2fNICKELODEON_STARTREKPRODIGY_104_HD_985058_*~data=hdntl~hmac=c6fd17c4197dae64d2b9a055624536c851f2788e4e00524c6a8e391e511d4d04 HTTP/1.1
-Host: cbsios-vh.akamaihd.net
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.20 Safari/537.36
-Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
-Accept-Encoding: gzip, deflate
-Accept-Language: en-us,en;q=0.5
-Sec-Fetch-Mode: navigate
-Cookie: _alid_=MbBNIhoN43TV17fPr98BXQ==; hdntl=exp=1646261838~acl=%2fi%2ftemp_hd_gallery_video%2fCBS_Production_Outlet_VMS%2fvideo_robot%2fCBS_Production_Entertainment%2f2021%2f10%2f18%2f1963091011554%2fNICKELODEON_STARTREKPRODIGY_104_HD_985058_*~data=hdntl~hmac=c6fd17c4197dae64d2b9a055624536c851f2788e4e00524c6a8e391e511d4d04
-Connection: close
-content-length: 0
+https://can-services.cbs.com/canServices/playerService/video/search.xml?
+partner=cbs&
+contentId=_9JdOMR84RwqcRtCup9UynfldbPH4LdH
 ~~~
 
-which comes from:
+Example one (`/media/guid/` not found):
+
+- <https://paramountplus.com/shows/the-harper-house/video/eyT_RYkqNuH_6ZYrepLtxkiPO1HA7dIU/the-harper-house-the-harper-house>
+- https://link.theplatform.com/s/dJ5BDC/SDhY2iU6ETkC?format=SMIL&manifest=m3u&Tracking=true&mbr=true
+
+Android uses this:
 
 ~~~
-GET /i/temp_hd_gallery_video/CBS_Production_Outlet_VMS/video_robot/CBS_Production_Entertainment/2021/10/18/1963091011554/NICKELODEON_STARTREKPRODIGY_104_HD_985058_,2228,4628,3128,1628,848,503,000.mp4.csmil/master.m3u8?hdnea=acl=/i/temp_hd_gallery_video/CBS_Production_Outlet_VMS/video_robot/CBS_Production_Entertainment/2021/10/18/1963091011554/NICKELODEON_STARTREKPRODIGY_104_HD_985058_*~exp=1646175557~hmac=d431ae3ab4581e4e089a0aa9ec76dc3a364c4130a4359b42fb6d9398ae2b7c0c HTTP/1.1
-Host: cbsios-vh.akamaihd.net
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.20 Safari/537.36
-Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
-Accept-Encoding: gzip, deflate
-Accept-Language: en-us,en;q=0.5
-Sec-Fetch-Mode: navigate
-Connection: close
-content-length: 0
-~~~
-
-which comes from:
-
-~~~
-GET /s/dJ5BDC/media/guid/2198311517/3htV4fvVt4Z8gDZHqlzPOGLSMgcGc_vy?format=SMIL&formats=MPEG4%2CM3U HTTP/1.1
+GET /s/dJ5BDC/fNsRH_fjko5T?format=SMIL&Tracking=true&sig=0062224f03ccac6b6a1501b010c706455919c82f06fe441ab0706f63 HTTP/1.1
+X-NewRelic-ID: VQ4FVlJUARABVVRXAwEOVFc=
+User-Agent: Dalvik/2.1.0 (Linux; U; Android 7.0; Android SDK built for x86 Build/NYC)
 Host: link.theplatform.com
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.20 Safari/537.36
-Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
-Accept-Encoding: gzip, deflate
-Accept-Language: en-us,en;q=0.5
-Sec-Fetch-Mode: navigate
-Connection: close
+Connection: Keep-Alive
+Accept-Encoding: gzip
+content-length: 0
+~~~
+
+which comes from:
+
+~~~
+GET https://www.paramountplus.com/apps-api/v2.0/androidphone/video/cid/eyT_RYkqNuH_6ZYrepLtxkiPO1HA7dIU.json?locale=en-us&at=ABAJi4xSDPXIEUKTlJ6BFQpMdL3hrvn5xbm%2BXly%2B9QZJFycgSL%2F4%2FYiDMKY4XWomRkI%3D HTTP/2.0
+cache-control: no-cache
+tracestate: @nr=0-2-1827479-115540923-----1646415500980
+traceparent: 00-276e7b3dc2004b57bec2509a17c96d57--00
+newrelic: eyJ2IjpbMCwyXSwiZCI6eyJkLnR5IjoiTW9iaWxlIiwiZC5hYyI6IjE4Mjc0NzkiLCJkLmFwIjoiMTE1NTQwOTIzIiwiZC50ciI6IjI3NmU3YjNkYzIwMDRiNTdiZWMyNTA5YTE3Yzk2ZDU3IiwiZC5pZCI6ImRmNmQwNmRiODNiMjRiZWYiLCJkLnRpIjoxNjQ2NDE1NTAwOTgwfX0=
+accept-encoding: gzip
+user-agent: okhttp/4.9.0
+x-newrelic-id: VQ4FVlJUARABVVRXAwEOVFc=
 content-length: 0
 ~~~

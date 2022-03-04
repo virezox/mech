@@ -8,14 +8,6 @@ import (
    "strings"
 )
 
-func (p Property) Base() string {
-   var buf strings.Builder
-   buf.WriteString(p.Data.Item.ParentEntity.Title)
-   buf.WriteByte('-')
-   buf.WriteString(p.Data.Item.Title)
-   return format.Clean(buf.String())
-}
-
 var LogLevel format.LogLevel
 
 type Item struct {
@@ -78,6 +70,14 @@ type Property struct {
    Data struct {
       Item Item
    }
+}
+
+func (p Property) Base() string {
+   var buf strings.Builder
+   buf.WriteString(p.Data.Item.ParentEntity.Title)
+   buf.WriteByte('-')
+   buf.WriteString(p.Data.Item.Title)
+   return format.Clean(buf.String())
 }
 
 func (p Property) Topaz() (*Topaz, error) {
