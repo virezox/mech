@@ -37,12 +37,12 @@ type Context struct {
 }
 
 var Android = Context{
-   Client: Client{Name: "ANDROID", Version: "17.07.35"},
+   Client: Client{Name: "ANDROID", Version: "17.08.34"},
 }
 
 // HsUATh_Nc2U
 var Embed = Context{
-   Client: Client{Name: "ANDROID", Screen: "EMBED", Version: "17.07.35"},
+   Client: Client{Name: "ANDROID", Screen: "EMBED", Version: "17.08.34"},
    ThirdParty: &ThirdParty{EmbedURL: origin},
 }
 
@@ -180,8 +180,8 @@ type Player struct {
 }
 
 func (p Player) Date() (time.Time, error) {
-   date := p.Microformat.PlayerMicroformatRenderer.PublishDate
-   return time.Parse("2006-01-02", date)
+   value := p.Microformat.PlayerMicroformatRenderer.PublishDate
+   return time.Parse("2006-01-02", value)
 }
 
 type Search struct {
