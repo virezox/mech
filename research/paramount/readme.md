@@ -1,57 +1,78 @@
 # Paramount+
 
-https://github.com/ytdl-org/youtube-dl/issues/30491
+- https://github.com/ytdl-org/youtube-dl/issues/30491
+- https://play.google.com/store/apps/details?id=com.cbs.app
 
-## How to get endpoint?
+Should work without Frida. Install system certificate, then might have to try a
+couple of times.
 
-~~~
-https://link.theplatform.com/s/dJ5BDC/media/guid/2198311517/
-~~~
+## guid
 
-https://play.google.com/store/apps/details?id=com.cbs.app
+Looks like this:
 
-Install user certificate, then use Frida:
+<https://paramountplus.com/shows/the-harper-house/video/eyT_RYkqNuH_6ZYrepLtxkiPO1HA7dIU/the-harper-house-the-harper-house>
 
-https://github.com/httptoolkit/frida-android-unpinning
+## cmsAccountId
 
-Example two (`/media/guid/` not found):
-
-- <https://paramountplus.com/shows/star-trek-prodigy/video/_9JdOMR84RwqcRtCup9UynfldbPH4LdH/star-trek-prodigy-janeway-upgraded-s1-e10-paramount->
-- https://link.theplatform.com/s/dJ5BDC/Jl7FSgX2t2JT?format=SMIL&manifest=m3u&Tracking=true&mbr=true
+Looks like this:
 
 ~~~
-https://can-services.cbs.com/canServices/playerService/video/search.xml?
-partner=cbs&
-contentId=_9JdOMR84RwqcRtCup9UynfldbPH4LdH
+dJ5BDC
 ~~~
 
-Example one (`/media/guid/` not found):
-
-- <https://paramountplus.com/shows/the-harper-house/video/eyT_RYkqNuH_6ZYrepLtxkiPO1HA7dIU/the-harper-house-the-harper-house>
-- https://link.theplatform.com/s/dJ5BDC/SDhY2iU6ETkC?format=SMIL&manifest=m3u&Tracking=true&mbr=true
-
-Android uses this:
+can get it like this:
 
 ~~~
-GET /s/dJ5BDC/fNsRH_fjko5T?format=SMIL&Tracking=true&sig=0062224f03ccac6b6a1501b010c706455919c82f06fe441ab0706f63 HTTP/1.1
-X-NewRelic-ID: VQ4FVlJUARABVVRXAwEOVFc=
-User-Agent: Dalvik/2.1.0 (Linux; U; Android 7.0; Android SDK built for x86 Build/NYC)
-Host: link.theplatform.com
-Connection: Keep-Alive
-Accept-Encoding: gzip
-content-length: 0
+paramountplus.com/apps-api/v2.0/androidphone/video/cid/
+eyT_RYkqNuH_6ZYrepLtxkiPO1HA7dIU.json?
+at=ABAJi4xSDPXIEUKTlJ6BFQpMdL3hrvn5xbm%2BXly%2B9QZJFycgSL%2F4%2FYiDMKY4XWomRkI
 ~~~
 
-which comes from:
+## pid
+
+Looks like this:
 
 ~~~
-GET https://www.paramountplus.com/apps-api/v2.0/androidphone/video/cid/eyT_RYkqNuH_6ZYrepLtxkiPO1HA7dIU.json?locale=en-us&at=ABAJi4xSDPXIEUKTlJ6BFQpMdL3hrvn5xbm%2BXly%2B9QZJFycgSL%2F4%2FYiDMKY4XWomRkI%3D HTTP/2.0
-cache-control: no-cache
-tracestate: @nr=0-2-1827479-115540923-----1646415500980
-traceparent: 00-276e7b3dc2004b57bec2509a17c96d57--00
-newrelic: eyJ2IjpbMCwyXSwiZCI6eyJkLnR5IjoiTW9iaWxlIiwiZC5hYyI6IjE4Mjc0NzkiLCJkLmFwIjoiMTE1NTQwOTIzIiwiZC50ciI6IjI3NmU3YjNkYzIwMDRiNTdiZWMyNTA5YTE3Yzk2ZDU3IiwiZC5pZCI6ImRmNmQwNmRiODNiMjRiZWYiLCJkLnRpIjoxNjQ2NDE1NTAwOTgwfX0=
-accept-encoding: gzip
-user-agent: okhttp/4.9.0
-x-newrelic-id: VQ4FVlJUARABVVRXAwEOVFc=
-content-length: 0
+fNsRH_fjko5T
+~~~
+
+can get it with these:
+
+~~~
+paramountplus.com/apps-api/v2.0/androidphone/video/cid/
+eyT_RYkqNuH_6ZYrepLtxkiPO1HA7dIU.json?
+at=ABAJi4xSDPXIEUKTlJ6BFQpMdL3hrvn5xbm%2BXly%2B9QZJFycgSL%2F4%2FYiDMKY4XWomRkI
+
+link.theplatform.com/s/dJ5BDC/media/guid/2198311517/
+eyT_RYkqNuH_6ZYrepLtxkiPO1HA7dIU?format=preview
+~~~
+
+## aid
+
+Looks like this:
+
+~~~
+2198311517
+~~~
+
+can get it like this:
+
+~~~
+link.theplatform.com/s/dJ5BDC/fNsRH_fjko5T?format=preview
+~~~
+
+## M3U
+
+can get it like this:
+
+~~~
+link.theplatform.com/s/dJ5BDC/media/guid/2198311517/
+eyT_RYkqNuH_6ZYrepLtxkiPO1HA7dIU?formats=M3U
+
+link.theplatform.com/s/dJ5BDC/fNsRH_fjko5T?formats=M3U
+
+SKD:
+paramountplus.com/apps-api/v2.0/iphone/video/cid/
+eyT_RYkqNuH_6ZYrepLtxkiPO1HA7dIU.json?
+at=ABAJi4xSDPXIEUKTlJ6BFQpMdL3hrvn5xbm%2BXly%2B9QZJFycgSL%2F4%2FYiDMKY4XWomRkI
 ~~~
