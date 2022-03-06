@@ -1,21 +1,30 @@
 package paramount
 
 import (
+   "github.com/89z/format"
    "net/http"
    "net/url"
    "strings"
-   "github.com/89z/format"
+   "text/scanner"
 )
 
-// paramountplus.com/shows/star-trek-prodigy/video/
-// 3htV4fvVt4Z8gDZHqlzPOGLSMgcGc_vy/star-trek-prodigy-dreamcatcher
+// paramountplus.com/movies/building-star-trek/wQH9yE_y_Dt4ekDYm3yelhhY2KXvOra_
+// paramountplus.com/shows/bull/video/TUT_4UVB87huHEOfPCjMkxOW_Xe1hNWw/bull-gone
 func VideoID(addr string) string {
-   var prev string
-   for _, split := range strings.Split(addr, "/") {
-      if prev == "video" {
-         return split
+   var buf scanner.Scanner
+   buf.Init(strings.NewReader(addr))
+   buf.IsIdentRune = func(r rune, i int) bool {
+      return r == '-' || r > '/'
+   }
+   for buf.Scan() != scanner.EOF {
+      switch buf.TokenText() {
+      case "video":
+         buf.Scan(); buf.Scan()
+         return buf.TokenText()
+      case "movies":
+         buf.Scan(); buf.Scan(); buf.Scan(); buf.Scan()
+         return buf.TokenText()
       }
-      prev = split
    }
    return ""
 }
