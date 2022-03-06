@@ -7,11 +7,8 @@ import (
    "github.com/89z/format"
 )
 
-const endpoint = "/s/dJ5BDC/media/guid/2198311517/"
-
-var LogLevel format.LogLevel
-
-// paramountplus.com/shows/star-trek-prodigy/video/3htV4fvVt4Z8gDZHqlzPOGLSMgcGc_vy/star-trek-prodigy-dreamcatcher
+// paramountplus.com/shows/star-trek-prodigy/video/
+// 3htV4fvVt4Z8gDZHqlzPOGLSMgcGc_vy/star-trek-prodigy-dreamcatcher
 func VideoID(addr string) string {
    var prev string
    for _, split := range strings.Split(addr, "/") {
@@ -22,6 +19,10 @@ func VideoID(addr string) string {
    }
    return ""
 }
+
+const endpoint = "/s/dJ5BDC/media/guid/2198311517/"
+
+var LogLevel format.LogLevel
 
 func Media(videoID string) (*url.URL, error) {
    var buf strings.Builder

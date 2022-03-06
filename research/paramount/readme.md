@@ -1,10 +1,25 @@
 # Paramount+
 
-- https://github.com/ytdl-org/youtube-dl/issues/30491
-- https://play.google.com/store/apps/details?id=com.cbs.app
+https://play.google.com/store/apps/details?id=com.cbs.app
 
 Should work without Frida. Install system certificate, then might have to try a
 couple of times.
+
+## CBS
+
+check this out:
+
+~~~
+GET /s/dJ5BDC/media/guid/2198311517/wQH9yE_y_Dt4ekDYm3yelhhY2KXvOra_?mbr=true&assetTypes=StreamPack&formats=MPEG4%2CM3U&format=SMIL HTTP/1.1
+Host: link.theplatform.com
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.75 Safari/537.36
+Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.7
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Encoding: gzip, deflate
+Accept-Language: en-us,en;q=0.5
+Connection: close
+content-length: 0
+~~~
 
 ## Encrypted DASH
 

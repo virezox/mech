@@ -1,4 +1,4 @@
-package main
+package paramount
 
 import (
    "fmt"
@@ -9,7 +9,7 @@ import (
    "strings"
 )
 
-func main() {
+func widevine() {
    var req http.Request
    req.Body = io.NopCloser(body)
    req.Header = make(http.Header)
