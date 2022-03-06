@@ -14,12 +14,12 @@ import (
 
 func (i Item) Format() (string, error) {
    var buf []byte
-   buf = append(buf, "User: "...)
+   buf = append(buf, "Taken: "...)
+   buf = append(buf, i.Time().String()...)
+   buf = append(buf, "\nUser: "...)
    buf = append(buf, i.User.Username...)
    buf = append(buf, "\nCaption: "...)
    buf = append(buf, i.Caption.Text...)
-   buf = append(buf, "\nTaken_At: "...)
-   buf = append(buf, i.Time().String()...)
    for _, med := range i.Medias() {
       addrs, err := med.URLs()
       if err != nil {

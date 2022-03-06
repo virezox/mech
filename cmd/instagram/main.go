@@ -12,9 +12,9 @@ func main() {
    // b
    var shortcode string
    flag.StringVar(&shortcode, "b", "", "shortcode")
-   // auth
+   // h
    var auth bool
-   flag.BoolVar(&auth, "auth", false, "authentication")
+   flag.BoolVar(&auth, "h", false, "authentication")
    // i
    var info bool
    flag.BoolVar(&info, "i", false, "info only")

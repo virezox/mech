@@ -6,7 +6,60 @@ import (
    "net/http"
    "strconv"
    "strings"
+   "time"
 )
+
+type EdgeMedia struct {
+   Edges []struct {
+      Node struct {
+         Text string
+      }
+   }
+}
+
+func (g GraphMedia) String() string {
+   var buf []byte
+   buf = append(buf, "Taken: "...)
+   buf = append(buf, g.Time().String()...)
+   buf = append(buf, "\nOwner: "...)
+   buf = append(buf, g.Owner.Username...)
+   for _, edge := range g.Edge_Media_To_Caption.Edges {
+      buf = append(buf, "\nCaption: "...)
+      buf = append(buf, edge.Node.Text...)
+   }
+   for _, edge := range g.Edge_Media_To_Parent_Comment.Edges {
+      buf = append(buf, "\nComment: "...)
+      buf = append(buf, edge.Node.Text...)
+   }
+   for _, addr := range g.URLs() {
+      buf = append(buf, "\nURL: "...)
+      buf = append(buf, addr...)
+   }
+   return string(buf)
+}
+
+type GraphMedia struct {
+   Display_URL string
+   Edge_Media_To_Caption EdgeMedia
+   Edge_Media_To_Parent_Comment EdgeMedia
+   Edge_Sidecar_To_Children struct {
+      Edges []struct {
+         Node struct {
+            Display_URL string
+            Video_URL string
+         }
+      }
+   }
+   Owner struct {
+      Username string
+   }
+   Taken_At_Timestamp int64
+   Video_URL string
+}
+
+func (g GraphMedia) Time() time.Time {
+   return time.Unix(g.Taken_At_Timestamp, 0)
+}
 
 var LogLevel format.LogLevel
 
@@ -51,44 +104,6 @@ func NewGraphMedia(shortcode string) (*GraphMedia, error) {
       return nil, err
    }
    return &post.GraphQL.Shortcode_Media, nil
-}
-
-type GraphMedia struct {
-   Display_URL string
-   Edge_Media_To_Caption struct {
-      Edges []struct {
-         Node struct {
-            Text string
-         }
-      }
-   }
-   Edge_Sidecar_To_Children struct {
-      Edges []struct {
-         Node struct {
-            Display_URL string
-            Video_URL string
-         }
-      }
-   }
-   Owner struct {
-      Username string
-   }
-   Video_URL string
-}
-
-func (g GraphMedia) String() string {
-   var buf []byte
-   buf = append(buf, "Owner: "...)
-   buf = append(buf, g.Owner.Username...)
-   buf = append(buf, "\nCaption: "...)
-   for _, edge := range g.Edge_Media_To_Caption.Edges {
-      buf = append(buf, edge.Node.Text...)
-   }
-   for _, addr := range g.URLs() {
-      buf = append(buf, "\nURL: "...)
-      buf = append(buf, addr...)
-   }
-   return string(buf)
 }
 
 func (g GraphMedia) URLs() []string {
