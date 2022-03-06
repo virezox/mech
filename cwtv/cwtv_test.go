@@ -14,11 +14,11 @@ var shows = []string{
 
 func TestMedia(t *testing.T) {
    for _, show := range shows {
-      play, err := getPlay(show)
+      play, err := GetPlay(show)
       if err != nil {
          t.Fatal(err)
       }
-      addr, err := media(play)
+      addr, err := Media(play)
       if err != nil {
          t.Fatal(err)
       }

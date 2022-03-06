@@ -4,13 +4,14 @@ import (
    "github.com/89z/format"
    "net/http"
    "net/url"
+   "strings"
 )
 
-const endpoint = "http://link.theplatform.com/s/cwtv/media/guid/2703454149/"
+const mpxURL = "http://link.theplatform.com/s/cwtv/media/guid/2703454149"
 
 var LogLevel format.LogLevel
 
-func getPlay(addr string) (string, error) {
+func GetPlay(addr string) (string, error) {
    par, err := url.Parse(addr)
    if err != nil {
       return "", err
@@ -18,8 +19,12 @@ func getPlay(addr string) (string, error) {
    return par.Query().Get("play"), nil
 }
 
-func media(play string) (*url.URL, error) {
-   req, err := http.NewRequest("GET", endpoint + play, nil)
+func Media(play string) (*url.URL, error) {
+   var buf strings.Builder
+   buf.WriteString(mpxURL)
+   buf.WriteByte('/')
+   buf.WriteString(play)
+   req, err := http.NewRequest("GET", buf.String(), nil)
    if err != nil {
       return nil, err
    }
