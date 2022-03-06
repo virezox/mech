@@ -26,7 +26,7 @@ going back to 2016 at least.
 
 ## Why does this exist?
 
-February 28 2022
+2022-02-28
 
 https://jessylanza.bandcamp.com/album/pull-my-hair-back
 

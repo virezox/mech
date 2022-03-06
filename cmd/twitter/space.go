@@ -34,18 +34,14 @@ func doSpace(id string, info bool) error {
       if err != nil {
          return err
       }
-      ext, err := seg.Ext()
-      if err != nil {
-         return err
-      }
-      file, err := os.Create(space.Base() + ext)
+      file, err := os.Create(space.Base() + seg.Ext())
       if err != nil {
          return err
       }
       defer file.Close()
       for i, info := range seg.Info {
          fmt.Println(i, len(seg.Info)-1)
-         res, err := http.Get(info.URI)
+         res, err := http.Get(info.URI.String())
          if err != nil {
             return err
          }

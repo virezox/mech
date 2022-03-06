@@ -8,25 +8,21 @@ import (
    "strings"
 )
 
-func (v Video) Media() (*url.URL, error) {
-   req, err := http.NewRequest("GET", v.Video.MPX_URL, nil)
+var LogLevel format.LogLevel
+
+func GetPlay(addr string) (string, error) {
+   par, err := url.Parse(addr)
    if err != nil {
-      return nil, err
+      return "", err
    }
-   req.URL.RawQuery = "formats=M3U"
-   LogLevel.Dump(req)
-   // This redirects, but we only care about the URL, so we dont need to follow:
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   return res.Location()
+   return par.Query().Get("play"), nil
 }
 
 type Video struct {
    Video struct {
       MPX_URL string
+      Series_Name string
+      Title string
    }
 }
 
@@ -52,13 +48,26 @@ func NewVideo(play string) (*Video, error) {
    return vid, nil
 }
 
-var LogLevel format.LogLevel
-
-func GetPlay(addr string) (string, error) {
-   par, err := url.Parse(addr)
-   if err != nil {
-      return "", err
-   }
-   return par.Query().Get("play"), nil
+func (v Video) Base() string {
+   var buf strings.Builder
+   buf.WriteString(v.Video.Series_Name)
+   buf.WriteByte('-')
+   buf.WriteString(v.Video.Title)
+   return buf.String()
 }
 
+func (v Video) Media() (*url.URL, error) {
+   req, err := http.NewRequest("GET", v.Video.MPX_URL, nil)
+   if err != nil {
+      return nil, err
+   }
+   req.URL.RawQuery = "formats=M3U"
+   LogLevel.Dump(req)
+   // This redirects, but we only care about the URL, so we dont need to follow:
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   return res.Location()
+}

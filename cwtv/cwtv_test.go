@@ -12,17 +12,21 @@ var shows = []string{
    "https://cwtv.com/shows/4400/present-is-prologue?play=6cc4708a-9b9e-45e2-ada4-468355f6cb38",
 }
 
-func TestMedia(t *testing.T) {
+func TestCWTV(t *testing.T) {
    for _, show := range shows {
       play, err := GetPlay(show)
       if err != nil {
          t.Fatal(err)
       }
-      addr, err := Media(play)
+      vid, err := NewVideo(play)
       if err != nil {
          t.Fatal(err)
       }
-      fmt.Println(addr)
+      med, err := vid.Media()
+      if err != nil {
+         t.Fatal(err)
+      }
+      fmt.Println(med)
       time.Sleep(time.Second)
    }
 }

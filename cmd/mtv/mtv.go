@@ -33,39 +33,38 @@ func doManifest(addr string, bandwidth int64, info bool) error {
    })
    if info {
       for _, str := range mas.Stream {
-         str.URI = ""
+         str.URI = nil
          fmt.Println(str)
       }
    } else {
-      uris := mas.URIs(func(str hls.Stream) bool {
-         return str.Bandwidth >= bandwidth
+      stream := mas.GetStream(func(s hls.Stream) bool {
+         return s.Bandwidth >= bandwidth
       })
-      for _, uri := range uris {
-         fmt.Println("GET", uri)
-         res, err := http.Get(uri)
-         if err != nil {
-            return err
-         }
-         defer res.Body.Close()
-         seg, err := hls.NewSegment(res.Request.URL, res.Body)
-         if err != nil {
-            return err
-         }
-         ext, err := seg.Ext()
-         if err != nil {
-            return err
-         }
-         if err := download(seg, prop.Base() + ext); err != nil {
-            return err
-         }
+      err := download(stream, prop)
+      if err != nil {
+         return err
       }
    }
    return nil
 }
 
-func download(seg *hls.Segment, name string) error {
+func newSegment(str *hls.Stream) (*hls.Segment, error) {
+   fmt.Println("GET", str.URI)
+   res, err := http.Get(str.URI.String())
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   return hls.NewSegment(res.Request.URL, res.Body)
+}
+
+func download(str *hls.Stream, prop *mtv.Property) error {
+   seg, err := newSegment(str)
+   if err != nil {
+      return err
+   }
    fmt.Println("GET", seg.Key.URI)
-   res, err := http.Get(seg.Key.URI)
+   res, err := http.Get(seg.Key.URI.String())
    if err != nil {
       return err
    }
@@ -74,14 +73,14 @@ func download(seg *hls.Segment, name string) error {
    if err != nil {
       return err
    }
-   file, err := os.Create(name)
+   file, err := os.Create(prop.Base() + seg.Ext())
    if err != nil {
       return err
    }
    defer file.Close()
    for i, info := range seg.Info {
       fmt.Println(i, len(seg.Info)-1)
-      res, err := http.Get(info.URI)
+      res, err := http.Get(info.URI.String())
       if err != nil {
          return err
       }

@@ -14,7 +14,11 @@ func doManifest(addr string, bandwidth int64, info bool) error {
    if err != nil {
       return err
    }
-   media, err := cwtv.Media(play)
+   video, err := cwtv.NewVideo(play)
+   if err != nil {
+      return err
+   }
+   media, err := video.Media()
    if err != nil {
       return err
    }
@@ -34,40 +38,27 @@ func doManifest(addr string, bandwidth int64, info bool) error {
    if info {
       done := make(map[hls.Stream]bool)
       for _, str := range mas.Stream {
-         str.URI = ""
+         str.URI = nil
          if !done[str] {
             done[str] = true
             fmt.Println(str)
          }
       }
    } else {
-      uris := mas.URIs(func(str hls.Stream) bool {
-         return str.Bandwidth >= bandwidth
+      stream := mas.GetStream(func (s hls.Stream) bool {
+         return s.Bandwidth >= bandwidth
       })
-      for _, uri := range uris {
-         fmt.Println(uri)
-         /*
-         vid, err := cwtv.NewVideo(guid)
-         if err != nil {
-            return err
-         }
-         if err := download(stream, vid.Name()); err != nil {
-            return err
-         }
-         */
+      err := download(stream, video)
+      if err != nil {
+         return err
       }
    }
    return nil
 }
 
-func download(stream hls.Stream, name string) error {
-   file, err := os.Create(name)
-   if err != nil {
-      return err
-   }
-   defer file.Close()
+func download(stream *hls.Stream, video *cwtv.Video) error {
    fmt.Println("GET", stream.URI)
-   res, err := http.Get(stream.URI)
+   res, err := http.Get(stream.URI.String())
    if err != nil {
       return err
    }
@@ -76,9 +67,14 @@ func download(stream hls.Stream, name string) error {
    if err != nil {
       return err
    }
+   file, err := os.Create(video.Base() + seg.Ext())
+   if err != nil {
+      return err
+   }
+   defer file.Close()
    for i, info := range seg.Info {
       fmt.Println(i, len(seg.Info))
-      res, err := http.Get(info.URI)
+      res, err := http.Get(info.URI.String())
       if err != nil {
          return err
       }
