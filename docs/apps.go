@@ -14,7 +14,6 @@ var apps = []application{
    {id: "com.apple.android.music"},
    {id: "com.aspiro.tidal"},
    {id: "com.bandcamp.android", done: true},
-   {id: "com.cbs.app"},
    {id: "com.clearchannel.iheartradio.controller"},
    {id: "com.google.android.youtube", done: true},
    {id: "com.imdb.mobile", done: true},

@@ -43,7 +43,6 @@ https://freeproxylists.net/br.html
 31.354 M true Vimeo
 29.674 M true TED
 24.683 M false TIDAL Music
-21.914 M false Paramount+ | Peak Streaming
 21.298 M false Napster Music
 13.757 M true The NBC App - Stream TV Shows
 4.652 M true MTV
