@@ -7,37 +7,6 @@ import (
    "time"
 )
 
-func (l Login) User(username string) (*User, error) {
-   var buf strings.Builder
-   buf.WriteString("https://www.instagram.com/")
-   buf.WriteString(username)
-   buf.WriteByte('/')
-   req, err := http.NewRequest("GET", buf.String(), nil)
-   if err != nil {
-      return nil, err
-   }
-   req.Header.Set("User-Agent", Android.String())
-   if l.Authorization != "" {
-      req.Header.Set("Authorization", l.Authorization)
-   }
-   req.URL.RawQuery = "__a=1"
-   LogLevel.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   var profile struct {
-      GraphQL struct {
-         User User
-      }
-   }
-   if err := json.NewDecoder(res.Body).Decode(&profile); err != nil {
-      return nil, err
-   }
-   return &profile.GraphQL.User, nil
-}
-
 func NewGraphMedia(shortcode string) (*GraphMedia, error) {
    var buf strings.Builder
    buf.WriteString("https://www.instagram.com/p/")
@@ -111,10 +80,23 @@ func (g GraphMedia) URLs() []string {
    return dst
 }
 
+type EdgeMedia struct {
+   Edges []struct {
+      Node struct {
+         Text string
+      }
+   }
+}
+
 type GraphMedia struct {
-   Display_URL string
    Edge_Media_To_Caption EdgeMedia
    Edge_Media_To_Parent_Comment EdgeMedia
+   Owner struct {
+      Username string
+   }
+   Taken_At_Timestamp int64
+   Display_URL string
+   Video_URL string
    Edge_Sidecar_To_Children struct {
       Edges []struct {
          Node struct {
@@ -123,9 +105,4 @@ type GraphMedia struct {
          }
       }
    }
-   Owner struct {
-      Username string
-   }
-   Taken_At_Timestamp int64
-   Video_URL string
 }
