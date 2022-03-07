@@ -29,23 +29,12 @@ type dashManifest struct {
 }
 
 type Item struct {
-   Caption struct {
-      Text string
-   }
-   Carousel_Media []struct {
-      Media_Type int
-      Video_DASH_Manifest string
-      Video_Versions []VideoVersion
-      Image_Versions2 ImageVersion
-   }
-   Image_Versions2 ImageVersion
-   Media_Type int
-   Taken_At int64
-   User struct {
-      Username string
-   }
    Video_DASH_Manifest string
+   Image_Versions2 ImageVersion
    Video_Versions []VideoVersion
+   Carousel_Media []struct {
+      Video_DASH_Manifest string
+      Image_Versions2 ImageVersion
+      Video_Versions []VideoVersion
+   }
 }
-
-
