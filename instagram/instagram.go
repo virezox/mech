@@ -203,16 +203,3 @@ type errorString string
 func (e errorString) Error() string {
    return string(e)
 }
-
-type mpd struct {
-   Period struct {
-      AdaptationSet []struct {
-         Representation []struct {
-            Width int `xml:"width,attr"`
-            Height int `xml:"height,attr"`
-            Bandwidth int `xml:"bandwidth,attr"`
-            BaseURL string
-         }
-      }
-   }
-}
