@@ -1,3 +1,3 @@
 # Instagram
 
-https://github.com/realsirjoe/instagram-scraper/issues/208
+https://github.com/postaddictme/instagram-php-scraper/issues/959

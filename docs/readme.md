@@ -26,29 +26,29 @@ https://freeproxylists.net/br.html
 ## Sites
 
 ~~~
-11.366 B true YouTube
-4.046 B true Instagram
-2.017 B true TikTok
-1.276 B false Spotify: Music and Podcasts
-1.258 B true Twitter
-338.228 M true SoundCloud: Play Music & Songs
-315.762 M false Deezer: Music & Podcast Player
+11.389 B true YouTube
+4.053 B true Instagram
+2.022 B true TikTok
+1.280 B false Spotify: Music and Podcasts
+1.260 B true Twitter
+338.383 M true SoundCloud: Play Music & Songs
+315.952 M false Deezer: Music & Podcast Player
 278.179 M true Pandora - Music & Podcasts
-252.302 M false Amazon Music: Discover Songs
-167.009 M true IMDb: Your guide to movies, TV shows, celebrities
-132.597 M true Tumblr – Culture, Art, Chaos
-92.476 M false Reddit
-84.791 M false iHeart: Radio, Music, Podcasts
-82.606 M false Apple Music
-31.354 M true Vimeo
+252.543 M false Amazon Music: Discover Songs
+132.631 M true Tumblr – Culture, Art, Chaos
+92.649 M false Reddit
+84.821 M false iHeart: Radio, Music, Podcasts
+82.758 M false Apple Music
+31.402 M true Vimeo
 29.674 M true TED
-24.683 M false TIDAL Music
+24.731 M false TIDAL Music
 21.298 M false Napster Music
+15.834 M true The CW
 13.757 M true The NBC App - Stream TV Shows
-4.652 M true MTV
+4.653 M true MTV
 2.613 M true Bandcamp
 2.224 M false PBS Video: Live TV & On Demand
-687.669 K false Qobuz
+688.296 K false Qobuz
 ~~~
 
 Amazon Music:

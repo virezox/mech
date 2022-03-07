@@ -12,6 +12,137 @@ import (
    "time"
 )
 
+func NewGraphMedia(shortcode string) (*GraphMedia, error) {
+   var buf strings.Builder
+   buf.WriteString("https://www.instagram.com/p/")
+   buf.WriteString(shortcode)
+   buf.WriteByte('/')
+   req, err := http.NewRequest("GET", buf.String(), nil)
+   if err != nil {
+      return nil, err
+   }
+   req.Header.Set("User-Agent", Android.String())
+   req.URL.RawQuery = "__a=1"
+   LogLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return nil, errorString(res.Status)
+   }
+   var post struct {
+      GraphQL struct {
+         Shortcode_Media GraphMedia
+      }
+   }
+   if err := json.NewDecoder(res.Body).Decode(&post); err != nil {
+      return nil, err
+   }
+   return &post.GraphQL.Shortcode_Media, nil
+}
+
+func (g GraphMedia) String() string {
+   var buf []byte
+   buf = append(buf, "Taken: "...)
+   buf = append(buf, g.Time().String()...)
+   buf = append(buf, "\nOwner: "...)
+   buf = append(buf, g.Owner.Username...)
+   for _, edge := range g.Edge_Media_To_Caption.Edges {
+      buf = append(buf, "\nCaption: "...)
+      buf = append(buf, edge.Node.Text...)
+   }
+   for _, edge := range g.Edge_Media_To_Parent_Comment.Edges {
+      buf = append(buf, "\nComment: "...)
+      buf = append(buf, edge.Node.Text...)
+   }
+   for _, addr := range g.URLs() {
+      buf = append(buf, "\nURL: "...)
+      buf = append(buf, addr...)
+   }
+   return string(buf)
+}
+
+func (g GraphMedia) Time() time.Time {
+   return time.Unix(g.Taken_At_Timestamp, 0)
+}
+
+func Shortcode(address string) string {
+   var prev string
+   for _, split := range strings.Split(address, "/") {
+      if prev == "p" {
+         return split
+      }
+      prev = split
+   }
+   return ""
+}
+
+func (g GraphMedia) URLs() []string {
+   src := make(map[string]bool)
+   src[g.Display_URL] = true
+   src[g.Video_URL] = true
+   for _, edge := range g.Edge_Sidecar_To_Children.Edges {
+      src[edge.Node.Display_URL] = true
+      src[edge.Node.Video_URL] = true
+   }
+   var dst []string
+   for key := range src {
+      if key != "" {
+         dst = append(dst, key)
+      }
+   }
+   return dst
+}
+
+func (l Login) User(username string) (*User, error) {
+   var buf strings.Builder
+   buf.WriteString("https://www.instagram.com/")
+   buf.WriteString(username)
+   buf.WriteByte('/')
+   req, err := http.NewRequest("GET", buf.String(), nil)
+   if err != nil {
+      return nil, err
+   }
+   req.Header.Set("User-Agent", Android.String())
+   if l.Authorization != "" {
+      req.Header.Set("Authorization", l.Authorization)
+   }
+   req.URL.RawQuery = "__a=1"
+   LogLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   var profile struct {
+      GraphQL struct {
+         User User
+      }
+   }
+   if err := json.NewDecoder(res.Body).Decode(&profile); err != nil {
+      return nil, err
+   }
+   return &profile.GraphQL.User, nil
+}
+
+func NewUser(username string) (*User, error) {
+   return Login{}.User(username)
+}
+
+func (u User) String() string {
+   buf := []byte("Followers: ")
+   buf = strconv.AppendInt(buf, u.Edge_Followed_By.Count, 10)
+   buf = append(buf, "\nFollowing: "...)
+   buf = strconv.AppendInt(buf, u.Edge_Follow.Count, 10)
+   return string(buf)
+}
+
+func (e errorString) Error() string {
+   return string(e)
+}
+
 func (i Item) Format() (string, error) {
    var buf []byte
    buf = append(buf, "Taken: "...)
@@ -37,27 +168,11 @@ func (i Item) Time() time.Time {
    return time.Unix(i.Taken_At, 0)
 }
 
-type Item struct {
-   Caption struct {
-      Text string
-   }
-   Carousel_Media []Media
-   Media
-   Taken_At int64
-   User struct {
-      Username string
-   }
-}
-
 func (i Item) Medias() []Media {
    if i.Media_Type == 8 {
       return i.Carousel_Media
    }
    return []Media{i.Media}
-}
-
-type Login struct {
-   Authorization string
 }
 
 func NewLogin(username, password string) (*Login, error) {
@@ -151,24 +266,6 @@ func (l Login) Items(shortcode string) ([]Item, error) {
    return post.Items, nil
 }
 
-type Media struct {
-   Image_Versions2 struct {
-      Candidates []struct {
-         Width int
-         Height int
-         URL string
-      }
-   }
-   Media_Type int
-   Video_DASH_Manifest string
-   Video_Versions []struct {
-      Type int
-      Width int
-      Height int
-      URL string
-   }
-}
-
 func (m Media) URLs() ([]string, error) {
    var addrs []string
    switch m.Media_Type {
@@ -216,33 +313,6 @@ func (m Media) URLs() ([]string, error) {
    return addrs, nil
 }
 
-// I noticed that even with the posts that have `video_dash_manifest`, you have
-// to request with a correct User-Agent. If you use wrong agent, you will get a
-// normal response, but the `video_dash_manifest` will be missing.
-type UserAgent struct {
-   API int64
-   Brand string
-   Density string
-   Device string
-   Instagram string
-   Model string
-   Platform string
-   Release int64
-   Resolution string
-}
-
-var Android = UserAgent{
-   API: 99,
-   Brand: "brand",
-   Density: "density",
-   Device: "device",
-   Instagram: "222.0.0.15.114",
-   Model: "model",
-   Platform: "platform",
-   Release: 9,
-   Resolution: "9999x9999",
-}
-
 func (u UserAgent) String() string {
    buf := []byte("Instagram ")
    buf = append(buf, u.Instagram...)
@@ -263,17 +333,4 @@ func (u UserAgent) String() string {
    buf = append(buf, "; "...)
    buf = append(buf, u.Platform...)
    return string(buf)
-}
-
-type mpd struct {
-   Period struct {
-      AdaptationSet []struct {
-         Representation []struct {
-            Width int `xml:"width,attr"`
-            Height int `xml:"height,attr"`
-            Bandwidth int `xml:"bandwidth,attr"`
-            BaseURL string
-         }
-      }
-   }
 }
