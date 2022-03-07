@@ -43,7 +43,14 @@ type Item struct {
    Video_Versions []VideoVersion
 }
 
-func (i ItemMedia) URLs() ([]string, error) {
+func (i Item) GetItemMedia() []ItemMedia {
+   if i.Media_Type == 8 {
+      return i.Carousel_Media
+   }
+   return []ItemMedia{i.ItemMedia}
+}
+
+func (i Item) URLs() ([]string, error) {
    var addrs []string
    switch i.Media_Type {
    case 1:
@@ -85,32 +92,4 @@ func (i ItemMedia) URLs() ([]string, error) {
       }
    }
    return addrs, nil
-}
-
-func (i Item) GetItemMedia() []ItemMedia {
-   if i.Media_Type == 8 {
-      return i.Carousel_Media
-   }
-   return []ItemMedia{i.ItemMedia}
-}
-
-func (i Item) Format() (string, error) {
-   var buf []byte
-   buf = append(buf, "Taken: "...)
-   buf = append(buf, i.Time().String()...)
-   buf = append(buf, "\nUser: "...)
-   buf = append(buf, i.User.Username...)
-   buf = append(buf, "\nCaption: "...)
-   buf = append(buf, i.Caption.Text...)
-   for _, med := range i.GetItemMedia() {
-      addrs, err := med.URLs()
-      if err != nil {
-         return "", err
-      }
-      for _, addr := range addrs {
-         buf = append(buf, "\nURL: "...)
-         buf = append(buf, addr...)
-      }
-   }
-   return string(buf), nil
 }
