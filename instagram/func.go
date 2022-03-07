@@ -12,62 +12,6 @@ import (
    "time"
 )
 
-func NewGraphMedia(shortcode string) (*GraphMedia, error) {
-   var buf strings.Builder
-   buf.WriteString("https://www.instagram.com/p/")
-   buf.WriteString(shortcode)
-   buf.WriteByte('/')
-   req, err := http.NewRequest("GET", buf.String(), nil)
-   if err != nil {
-      return nil, err
-   }
-   req.Header.Set("User-Agent", Android.String())
-   req.URL.RawQuery = "__a=1"
-   LogLevel.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return nil, errorString(res.Status)
-   }
-   var post struct {
-      GraphQL struct {
-         Shortcode_Media GraphMedia
-      }
-   }
-   if err := json.NewDecoder(res.Body).Decode(&post); err != nil {
-      return nil, err
-   }
-   return &post.GraphQL.Shortcode_Media, nil
-}
-
-func (g GraphMedia) String() string {
-   var buf []byte
-   buf = append(buf, "Taken: "...)
-   buf = append(buf, g.Time().String()...)
-   buf = append(buf, "\nOwner: "...)
-   buf = append(buf, g.Owner.Username...)
-   for _, edge := range g.Edge_Media_To_Caption.Edges {
-      buf = append(buf, "\nCaption: "...)
-      buf = append(buf, edge.Node.Text...)
-   }
-   for _, edge := range g.Edge_Media_To_Parent_Comment.Edges {
-      buf = append(buf, "\nComment: "...)
-      buf = append(buf, edge.Node.Text...)
-   }
-   for _, addr := range g.URLs() {
-      buf = append(buf, "\nURL: "...)
-      buf = append(buf, addr...)
-   }
-   return string(buf)
-}
-
-func (g GraphMedia) Time() time.Time {
-   return time.Unix(g.Taken_At_Timestamp, 0)
-}
-
 func Shortcode(address string) string {
    var prev string
    for _, split := range strings.Split(address, "/") {
@@ -77,23 +21,6 @@ func Shortcode(address string) string {
       prev = split
    }
    return ""
-}
-
-func (g GraphMedia) URLs() []string {
-   src := make(map[string]bool)
-   src[g.Display_URL] = true
-   src[g.Video_URL] = true
-   for _, edge := range g.Edge_Sidecar_To_Children.Edges {
-      src[edge.Node.Display_URL] = true
-      src[edge.Node.Video_URL] = true
-   }
-   var dst []string
-   for key := range src {
-      if key != "" {
-         dst = append(dst, key)
-      }
-   }
-   return dst
 }
 
 func (l Login) User(username string) (*User, error) {
@@ -151,7 +78,7 @@ func (i Item) Format() (string, error) {
    buf = append(buf, i.User.Username...)
    buf = append(buf, "\nCaption: "...)
    buf = append(buf, i.Caption.Text...)
-   for _, med := range i.Medias() {
+   for _, med := range i.GetItemMedia() {
       addrs, err := med.URLs()
       if err != nil {
          return "", err
@@ -168,11 +95,11 @@ func (i Item) Time() time.Time {
    return time.Unix(i.Taken_At, 0)
 }
 
-func (i Item) Medias() []Media {
+func (i Item) GetItemMedia() []ItemMedia {
    if i.Media_Type == 8 {
       return i.Carousel_Media
    }
-   return []Media{i.Media}
+   return []ItemMedia{i.ItemMedia}
 }
 
 func NewLogin(username, password string) (*Login, error) {
@@ -266,21 +193,21 @@ func (l Login) Items(shortcode string) ([]Item, error) {
    return post.Items, nil
 }
 
-func (m Media) URLs() ([]string, error) {
+func (i ItemMedia) URLs() ([]string, error) {
    var addrs []string
-   switch m.Media_Type {
+   switch i.Media_Type {
    case 1:
       var max int
-      for _, can := range m.Image_Versions2.Candidates {
+      for _, can := range i.Image_Versions2.Candidates {
          if can.Height > max {
             addrs = []string{can.URL}
             max = can.Height
          }
       }
    case 2:
-      if m.Video_DASH_Manifest != "" {
+      if i.Video_DASH_Manifest != "" {
          var manifest mpd
-         err := xml.Unmarshal([]byte(m.Video_DASH_Manifest), &manifest)
+         err := xml.Unmarshal([]byte(i.Video_DASH_Manifest), &manifest)
          if err != nil {
             return nil, err
          }
@@ -302,7 +229,7 @@ func (m Media) URLs() ([]string, error) {
          // Type:102 Bandwidth:541,145
          // Type:103 Bandwidth:541,145
          var max int
-         for _, ver := range m.Video_Versions {
+         for _, ver := range i.Video_Versions {
             if ver.Type > max {
                addrs = []string{ver.URL}
                max = ver.Type
@@ -333,4 +260,77 @@ func (u UserAgent) String() string {
    buf = append(buf, "; "...)
    buf = append(buf, u.Platform...)
    return string(buf)
+}
+
+func NewGraphMedia(shortcode string) (*GraphMedia, error) {
+   var buf strings.Builder
+   buf.WriteString("https://www.instagram.com/p/")
+   buf.WriteString(shortcode)
+   buf.WriteByte('/')
+   req, err := http.NewRequest("GET", buf.String(), nil)
+   if err != nil {
+      return nil, err
+   }
+   req.Header.Set("User-Agent", Android.String())
+   req.URL.RawQuery = "__a=1"
+   LogLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return nil, errorString(res.Status)
+   }
+   var post struct {
+      GraphQL struct {
+         Shortcode_Media GraphMedia
+      }
+   }
+   if err := json.NewDecoder(res.Body).Decode(&post); err != nil {
+      return nil, err
+   }
+   return &post.GraphQL.Shortcode_Media, nil
+}
+
+func (g GraphMedia) String() string {
+   var buf []byte
+   buf = append(buf, "Taken: "...)
+   buf = append(buf, g.Time().String()...)
+   buf = append(buf, "\nOwner: "...)
+   buf = append(buf, g.Owner.Username...)
+   for _, edge := range g.Edge_Media_To_Caption.Edges {
+      buf = append(buf, "\nCaption: "...)
+      buf = append(buf, edge.Node.Text...)
+   }
+   for _, edge := range g.Edge_Media_To_Parent_Comment.Edges {
+      buf = append(buf, "\nComment: "...)
+      buf = append(buf, edge.Node.Text...)
+   }
+   for _, addr := range g.URLs() {
+      buf = append(buf, "\nURL: "...)
+      buf = append(buf, addr...)
+   }
+   return string(buf)
+}
+
+func (g GraphMedia) Time() time.Time {
+   return time.Unix(g.Taken_At_Timestamp, 0)
+}
+
+func (g GraphMedia) URLs() []string {
+   src := make(map[string]bool)
+   src[g.Display_URL] = true
+   src[g.Video_URL] = true
+   for _, edge := range g.Edge_Sidecar_To_Children.Edges {
+      src[edge.Node.Display_URL] = true
+      src[edge.Node.Video_URL] = true
+   }
+   var dst []string
+   for key := range src {
+      if key != "" {
+         dst = append(dst, key)
+      }
+   }
+   return dst
 }

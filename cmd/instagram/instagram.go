@@ -50,7 +50,7 @@ func doItems(shortcode string, info bool) error {
          }
          fmt.Println(form)
       } else {
-         for _, med := range item.Medias() {
+         for _, med := range item.GetItemMedia() {
             addrs, err := med.URLs()
             if err != nil {
                return err
