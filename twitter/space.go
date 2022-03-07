@@ -9,7 +9,7 @@ import (
    "time"
 )
 
-const spacePersistedQuery = "Uv5R_-Chxbn1FEkyUkSW2w"
+const spacePersistedQuery = "lFpix9BgFDhAMjn9CrW6jQ"
 
 func (g Guest) AudioSpace(id string) (*AudioSpace, error) {
    var str strings.Builder

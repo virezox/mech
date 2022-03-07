@@ -9,6 +9,85 @@ import (
    "time"
 )
 
+func appendImage(dst []string, src ImageVersion) []string {
+   var (
+      addr string
+      max int
+   )
+   for _, can := range src.Candidates {
+      if can.Height > max {
+         addr = can.URL
+         max = can.Height
+      }
+   }
+   return append(dst, addr)
+}
+
+func appendManifest(dst []string, src string) ([]string, error) {
+   var video dashManifest
+   err := xml.Unmarshal([]byte(src), &video)
+   if err != nil {
+      return nil, err
+   }
+   for _, ada := range video.Period.AdaptationSet {
+      var (
+         addr string
+         max int
+      )
+      for _, rep := range ada.Representation {
+         if rep.Bandwidth > max {
+            addr = rep.BaseURL
+            max = rep.Bandwidth
+         }
+      }
+      dst = append(dst, addr)
+   }
+   return dst, nil
+}
+
+func appendVideo(dst []string, src []VideoVersion) []string {
+   var (
+      addr string
+      max int
+   )
+   for _, ver := range src {
+      if ver.Type > max {
+         addr = ver.URL
+         max = ver.Type
+      }
+   }
+   return append(dst, addr)
+}
+
+type EdgeText struct {
+   Edges []struct {
+      Node struct {
+         Text string
+      }
+   }
+}
+
+type EdgeURL struct {
+   Edges []struct {
+      Node struct {
+         Display_URL string
+         Video_URL string
+      }
+   }
+}
+
+type GraphMedia struct {
+   Edge_Media_To_Caption EdgeText
+   Owner struct {
+      Username string
+   }
+   Display_URL string
+   Video_URL string
+   Edge_Sidecar_To_Children EdgeURL
+   Taken_At_Timestamp int64
+   Edge_Media_To_Parent_Comment EdgeText
+}
+
 func NewGraphMedia(shortcode string) (*GraphMedia, error) {
    var buf strings.Builder
    buf.WriteString("https://www.instagram.com/p/")
@@ -82,24 +161,12 @@ func (g GraphMedia) URLs() []string {
    return dst
 }
 
-type EdgeText struct {
-   Edges []struct {
-      Node struct {
-         Text string
-      }
+type ImageVersion struct {
+   Candidates []struct {
+      Width int
+      Height int
+      URL string
    }
-}
-
-type GraphMedia struct {
-   Edge_Media_To_Caption EdgeText
-   Owner struct {
-      Username string
-   }
-   Display_URL string
-   Video_URL string
-   Edge_Sidecar_To_Children EdgeURL
-   Taken_At_Timestamp int64
-   Edge_Media_To_Parent_Comment EdgeText
 }
 
 type Item struct {
@@ -120,80 +187,55 @@ type Item struct {
    Taken_At int64
 }
 
-type ImageVersion struct {
-   Candidates []struct {
-      Width int
-      Height int
-      URL string
-   }
-}
-
-type VideoVersion struct {
-   Type int
-   Width int
-   Height int
-   URL string
-}
-
-type dashManifest struct {
-   Period struct {
-      AdaptationSet []struct { // one video one audio
-         Representation []struct {
-            Width int `xml:"width,attr"`
-            Height int `xml:"height,attr"`
-            Bandwidth int `xml:"bandwidth,attr"`
-            BaseURL string
-         }
-      }
-   }
-}
-
-func appendImage(dst []string, src ImageVersion) []string {
-   var (
-      addr string
-      max int
-   )
-   for _, can := range src.Candidates {
-      if can.Height > max {
-         addr = can.URL
-         max = can.Height
-      }
-   }
-   return append(dst, addr)
-}
-
-func appendVideo(dst []string, src []VideoVersion) []string {
-   var (
-      addr string
-      max int
-   )
-   for _, ver := range src {
-      if ver.Type > max {
-         addr = ver.URL
-         max = ver.Type
-      }
-   }
-   return append(dst, addr)
-}
-
-func appendManifest(dst []string, src string) ([]string, error) {
-   var video dashManifest
-   err := xml.Unmarshal([]byte(src), &video)
+func (i Item) Format() (string, error) {
+   var buf []byte
+   buf = append(buf, "Taken: "...)
+   buf = append(buf, i.Time().String()...)
+   buf = append(buf, "\nUser: "...)
+   buf = append(buf, i.User.Username...)
+   buf = append(buf, "\nCaption: "...)
+   buf = append(buf, i.Caption.Text...)
+   addrs, err := i.URLs()
    if err != nil {
-      return nil, err
+      return "", err
    }
-   for _, ada := range video.Period.AdaptationSet {
-      var (
-         addr string
-         max int
-      )
-      for _, rep := range ada.Representation {
-         if rep.Bandwidth > max {
-            addr = rep.BaseURL
-            max = rep.Bandwidth
-         }
+   for _, addr := range addrs {
+      buf = append(buf, "\nURL: "...)
+      buf = append(buf, addr...)
+   }
+   return string(buf), nil
+}
+
+func (i Item) Time() time.Time {
+   return time.Unix(i.Taken_At, 0)
+}
+
+func (i Item) URLs() ([]string, error) {
+   var (
+      dst []string
+      err error
+   )
+   if i.Video_DASH_Manifest != "" {
+      dst, err = appendManifest(dst, i.Video_DASH_Manifest)
+      if err != nil {
+         return nil, err
       }
-      dst = append(dst, addr)
+   } else if i.Video_Versions != nil {
+      dst = appendVideo(dst, i.Video_Versions)
+   } else if i.Image_Versions2.Candidates != nil {
+      dst = appendImage(dst, i.Image_Versions2)
+   }
+   for _, med := range i.Carousel_Media {
+      if med.Video_DASH_Manifest != "" {
+         dst, err = appendManifest(dst, med.Video_DASH_Manifest)
+         if err != nil {
+            return nil, err
+         }
+      } else if med.Video_Versions != nil {
+         dst = appendVideo(dst, med.Video_Versions)
+      } else if med.Image_Versions2.Candidates != nil {
+         dst = appendImage(dst, med.Image_Versions2)
+      }
    }
    return dst, nil
 }
@@ -228,59 +270,6 @@ func (l Login) Items(shortcode string) ([]Item, error) {
       return nil, err
    }
    return post.Items, nil
-}
-
-func (i Item) Time() time.Time {
-   return time.Unix(i.Taken_At, 0)
-}
-
-func (i Item) Format() (string, error) {
-   var buf []byte
-   buf = append(buf, "Taken: "...)
-   buf = append(buf, i.Time().String()...)
-   buf = append(buf, "\nUser: "...)
-   buf = append(buf, i.User.Username...)
-   buf = append(buf, "\nCaption: "...)
-   buf = append(buf, i.Caption.Text...)
-   addrs, err := i.URLs()
-   if err != nil {
-      return "", err
-   }
-   for _, addr := range addrs {
-      buf = append(buf, "\nURL: "...)
-      buf = append(buf, addr...)
-   }
-   return string(buf), nil
-}
-
-func (i Item) URLs() ([]string, error) {
-   var (
-      dst []string
-      err error
-   )
-   if i.Video_DASH_Manifest != "" {
-      dst, err = appendManifest(dst, i.Video_DASH_Manifest)
-      if err != nil {
-         return nil, err
-      }
-   } else if i.Video_Versions != nil {
-      dst = appendVideo(dst, i.Video_Versions)
-   } else if i.Image_Versions2.Candidates != nil {
-      dst = appendImage(dst, i.Image_Versions2)
-   }
-   for _, med := range i.Carousel_Media {
-      if med.Video_DASH_Manifest != "" {
-         dst, err = appendManifest(dst, med.Video_DASH_Manifest)
-         if err != nil {
-            return nil, err
-         }
-      } else if med.Video_Versions != nil {
-         dst = appendVideo(dst, med.Video_Versions)
-      } else if med.Image_Versions2.Candidates != nil {
-         dst = appendImage(dst, med.Image_Versions2)
-      }
-   }
-   return dst, nil
 }
 
 func (l Login) User(username string) (*User, error) {
@@ -324,13 +313,8 @@ type User struct {
    Edge_Owner_To_Timeline_Media EdgeURL
 }
 
-type EdgeURL struct {
-   Edges []struct {
-      Node struct {
-         Display_URL string
-         Video_URL string
-      }
-   }
+func NewUser(username string) (*User, error) {
+   return Login{}.User(username)
 }
 
 func (u User) String() string {
@@ -341,6 +325,22 @@ func (u User) String() string {
    return string(buf)
 }
 
-func NewUser(username string) (*User, error) {
-   return Login{}.User(username)
+type VideoVersion struct {
+   Type int
+   Width int
+   Height int
+   URL string
+}
+
+type dashManifest struct {
+   Period struct {
+      AdaptationSet []struct { // one video one audio
+         Representation []struct {
+            Width int `xml:"width,attr"`
+            Height int `xml:"height,attr"`
+            Bandwidth int `xml:"bandwidth,attr"`
+            BaseURL string
+         }
+      }
+   }
 }

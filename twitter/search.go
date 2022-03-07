@@ -4,7 +4,29 @@ import (
    "encoding/json"
    "net/http"
    "net/url"
+   "strconv"
 )
+
+func (s Search) String() string {
+   var (
+      buf []byte
+      first = true
+   )
+   for key, val := range s.GlobalObjects.Tweets {
+      if first {
+         first = false
+      } else {
+         buf = append(buf, '\n')
+      }
+      buf = append(buf, "Tweet:"...)
+      buf = strconv.AppendInt(buf, key, 10)
+      for _, addr := range val.Entities.URLs {
+         buf = append(buf, " URL:"...)
+         buf = append(buf, addr.Expanded_URL...)
+      }
+   }
+   return string(buf)
+}
 
 type Search struct {
    GlobalObjects struct {
