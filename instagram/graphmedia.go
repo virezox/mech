@@ -80,7 +80,7 @@ func (g GraphMedia) URLs() []string {
    return dst
 }
 
-type EdgeMedia struct {
+type EdgeText struct {
    Edges []struct {
       Node struct {
          Text string
@@ -89,20 +89,13 @@ type EdgeMedia struct {
 }
 
 type GraphMedia struct {
-   Edge_Media_To_Caption EdgeMedia
-   Edge_Media_To_Parent_Comment EdgeMedia
+   Edge_Media_To_Caption EdgeText
+   Edge_Media_To_Parent_Comment EdgeText
    Owner struct {
       Username string
    }
    Taken_At_Timestamp int64
    Display_URL string
    Video_URL string
-   Edge_Sidecar_To_Children struct {
-      Edges []struct {
-         Node struct {
-            Display_URL string
-            Video_URL string
-         }
-      }
-   }
+   Edge_Sidecar_To_Children EdgeURL
 }

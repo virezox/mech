@@ -125,11 +125,14 @@ type User struct {
    Edge_Follow struct {
       Count int64
    }
-   Edge_Owner_To_Timeline_Media struct {
-      Edges []struct {
-         Node struct {
-            Display_URL string
-         }
+   Edge_Owner_To_Timeline_Media EdgeURL
+}
+
+type EdgeURL struct {
+   Edges []struct {
+      Node struct {
+         Display_URL string
+         Video_URL string
       }
    }
 }
