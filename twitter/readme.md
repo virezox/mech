@@ -14,6 +14,8 @@ in the response should be something like this:
 
 ## Why does this exist?
 
-January 20 2022:
+2022-02-25
 
 https://github.com/89z/mech/issues/12
+
+## How to get Space Persisted Query?

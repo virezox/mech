@@ -27,7 +27,6 @@ func doManifest(guid, bandwidth int64, info bool) error {
    sort.Slice(mas.Stream, func(a, b int) bool {
       return mas.Stream[a].Bandwidth < mas.Stream[b].Bandwidth
    })
-   
    if info {
       for _, str := range mas.Stream {
          str.URI = nil

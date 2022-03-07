@@ -40,7 +40,10 @@ func doSpace(id string, info bool) error {
       }
       defer file.Close()
       for i, info := range seg.Info {
-         fmt.Println(i, len(seg.Info)-1)
+         if i >= 1 {
+            fmt.Print(" ")
+         }
+         fmt.Print(len(seg.Info)-i)
          res, err := http.Get(info.URI.String())
          if err != nil {
             return err

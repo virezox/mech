@@ -9,6 +9,43 @@ import (
    "time"
 )
 
+const spacePersistedQuery = "Uv5R_-Chxbn1FEkyUkSW2w"
+
+func (g Guest) AudioSpace(id string) (*AudioSpace, error) {
+   var str strings.Builder
+   str.WriteString("https://twitter.com/i/api/graphql/")
+   str.WriteString(spacePersistedQuery)
+   str.WriteString("/AudioSpaceById")
+   req, err := http.NewRequest("GET", str.String(), nil)
+   if err != nil {
+      return nil, err
+   }
+   req.Header = http.Header{
+      "Authorization": {"Bearer " + bearer},
+      "X-Guest-Token": {g.Guest_Token},
+   }
+   buf, err := json.Marshal(spaceRequest{ID: id})
+   if err != nil {
+      return nil, err
+   }
+   req.URL.RawQuery = "variables=" + url.QueryEscape(string(buf))
+   LogLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   var space struct {
+      Data struct {
+         AudioSpace AudioSpace
+      }
+   }
+   if err := json.NewDecoder(res.Body).Decode(&space); err != nil {
+      return nil, err
+   }
+   return &space.Data.AudioSpace, nil
+}
+
 type AudioSpace struct {
    Metadata struct {
       Media_Key string
@@ -64,40 +101,6 @@ func (a AudioSpace) Base() string {
    buf.WriteByte('-')
    buf.WriteString(a.Metadata.Title)
    return format.Clean(buf.String())
-}
-
-func (g Guest) AudioSpace(id string) (*AudioSpace, error) {
-   var str strings.Builder
-   str.WriteString("https://twitter.com")
-   str.WriteString("/i/api/graphql/Uv5R_-Chxbn1FEkyUkSW2w/AudioSpaceById")
-   req, err := http.NewRequest("GET", str.String(), nil)
-   if err != nil {
-      return nil, err
-   }
-   req.Header = http.Header{
-      "Authorization": {"Bearer " + bearer},
-      "X-Guest-Token": {g.Guest_Token},
-   }
-   buf, err := json.Marshal(spaceRequest{ID: id})
-   if err != nil {
-      return nil, err
-   }
-   req.URL.RawQuery = "variables=" + url.QueryEscape(string(buf))
-   LogLevel.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   var space struct {
-      Data struct {
-         AudioSpace AudioSpace
-      }
-   }
-   if err := json.NewDecoder(res.Body).Decode(&space); err != nil {
-      return nil, err
-   }
-   return &space.Data.AudioSpace, nil
 }
 
 type spaceRequest struct {

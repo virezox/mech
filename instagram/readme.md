@@ -1,19 +1,5 @@
 # Instagram
 
-One response looks like this:
-
-~~~
-items[0].image_versions2.candidates[0].url
-Item
-~~~
-
-the other looks like this:
-
-~~~
-graphql.shortcode_media.display_url
-Media
-~~~
-
 ## Android client
 
 <https://github.com/itsMoji/Instagram_SSL_Pinning>
@@ -21,7 +7,7 @@ Media
 ## How to get User-Agent?
 
 ~~~
-com.instagram.android
+googleplay -a com.instagram.android
 ~~~
 
 https://github.com/89z/googleplay
