@@ -8,36 +8,100 @@ import (
    "time"
 )
 
-func (i Item) Format() (string, error) {
-   var buf []byte
-   buf = append(buf, "Taken: "...)
-   buf = append(buf, i.Time().String()...)
-   buf = append(buf, "\nUser: "...)
-   buf = append(buf, i.User.Username...)
-   buf = append(buf, "\nCaption: "...)
-   buf = append(buf, i.Caption.Text...)
-   for _, med := range i.GetItemMedia() {
-      addrs, err := med.URLs()
-      if err != nil {
-         return "", err
-      }
-      for _, addr := range addrs {
-         buf = append(buf, "\nURL: "...)
-         buf = append(buf, addr...)
-      }
+type ImageVersion struct {
+   Candidates []struct {
+      Width int
+      Height int
+      URL string
    }
-   return string(buf), nil
 }
 
-func (i Item) Time() time.Time {
-   return time.Unix(i.Taken_At, 0)
+type VideoVersion struct {
+   Type int
+   Width int
+   Height int
+   URL string
 }
 
-func (i Item) GetItemMedia() []ItemMedia {
-   if i.Media_Type == 8 {
-      return i.Carousel_Media
+type dashManifest struct {
+   Period struct {
+      AdaptationSet []struct { // one video one audio
+         Representation []struct {
+            Width int `xml:"width,attr"`
+            Height int `xml:"height,attr"`
+            Bandwidth int `xml:"bandwidth,attr"`
+            BaseURL string
+         }
+      }
    }
-   return []ItemMedia{i.ItemMedia}
+}
+
+func appendImage(dst []string, src ImageVersion) []string {
+   var (
+      addr string
+      max int
+   )
+   for _, can := range src.Candidates {
+      if can.Height > max {
+         addr = can.URL
+         max = can.Height
+      }
+   }
+   return append(dst, addr)
+}
+
+func appendVideo(dst []string, src []VideoVersion) []string {
+   var (
+      addr string
+      max int
+   )
+   for _, ver := range src {
+      if ver.Type > max {
+         addr = ver.URL
+         max = ver.Type
+      }
+   }
+   return append(dst, addr)
+}
+
+func appendManifest(dst []string, src string) ([]string, error) {
+   var video dashManifest
+   err := xml.Unmarshal([]byte(src), &video)
+   if err != nil {
+      return nil, err
+   }
+   for _, ada := range video.Period.AdaptationSet {
+      var (
+         addr string
+         max int
+      )
+      for _, rep := range ada.Representation {
+         if rep.Bandwidth > max {
+            addr = rep.BaseURL
+            max = rep.Bandwidth
+         }
+      }
+      dst = append(dst, addr)
+   }
+   return dst, nil
+}
+
+type Item struct {
+   Video_DASH_Manifest string
+   Image_Versions2 ImageVersion
+   Video_Versions []VideoVersion
+   Carousel_Media []struct {
+      Video_DASH_Manifest string
+      Image_Versions2 ImageVersion
+      Video_Versions []VideoVersion
+   }
+   Caption struct {
+      Text string
+   }
+   Taken_At int64
+   User struct {
+      Username string
+   }
 }
 
 func (l Login) Items(shortcode string) ([]Item, error) {
@@ -72,79 +136,56 @@ func (l Login) Items(shortcode string) ([]Item, error) {
    return post.Items, nil
 }
 
-func (i ItemMedia) URLs() ([]string, error) {
-   var addrs []string
-   switch i.Media_Type {
-   case 1:
-      var max int
-      for _, can := range i.Image_Versions2.Candidates {
-         if can.Height > max {
-            addrs = []string{can.URL}
-            max = can.Height
-         }
+func (i Item) Time() time.Time {
+   return time.Unix(i.Taken_At, 0)
+}
+
+func (i Item) Format() (string, error) {
+   var buf []byte
+   buf = append(buf, "Taken: "...)
+   buf = append(buf, i.Time().String()...)
+   buf = append(buf, "\nUser: "...)
+   buf = append(buf, i.User.Username...)
+   buf = append(buf, "\nCaption: "...)
+   buf = append(buf, i.Caption.Text...)
+   addrs, err := i.URLs()
+   if err != nil {
+      return "", err
+   }
+   for _, addr := range addrs {
+      buf = append(buf, "\nURL: "...)
+      buf = append(buf, addr...)
+   }
+   return string(buf), nil
+}
+
+func (i Item) URLs() ([]string, error) {
+   var (
+      dst []string
+      err error
+   )
+   if i.Video_DASH_Manifest != "" {
+      dst, err = appendManifest(dst, i.Video_DASH_Manifest)
+      if err != nil {
+         return nil, err
       }
-   case 2:
-      if i.Video_DASH_Manifest != "" {
-         var manifest mpd
-         err := xml.Unmarshal([]byte(i.Video_DASH_Manifest), &manifest)
+   } else if i.Video_Versions != nil {
+      dst = appendVideo(dst, i.Video_Versions)
+   } else if i.Image_Versions2.Candidates != nil {
+      dst = appendImage(dst, i.Image_Versions2)
+   }
+   for _, med := range i.Carousel_Media {
+      if med.Video_DASH_Manifest != "" {
+         dst, err = appendManifest(dst, med.Video_DASH_Manifest)
          if err != nil {
             return nil, err
          }
-         for _, ada := range manifest.Period.AdaptationSet {
-            var (
-               addr string
-               max int
-            )
-            for _, rep := range ada.Representation {
-               if rep.Bandwidth > max {
-                  addr = rep.BaseURL
-                  max = rep.Bandwidth
-               }
-            }
-            addrs = append(addrs, addr)
-         }
-      } else {
-         // Type:101 Bandwidth:211,754
-         // Type:102 Bandwidth:541,145
-         // Type:103 Bandwidth:541,145
-         var max int
-         for _, ver := range i.Video_Versions {
-            if ver.Type > max {
-               addrs = []string{ver.URL}
-               max = ver.Type
-            }
-         }
+      } else if med.Video_Versions != nil {
+         dst = appendVideo(dst, med.Video_Versions)
+      } else if med.Image_Versions2.Candidates != nil {
+         dst = appendImage(dst, med.Image_Versions2)
       }
    }
-   return addrs, nil
+   return dst, nil
 }
 
-type Item struct {
-   Caption struct {
-      Text string
-   }
-   Carousel_Media []ItemMedia
-   ItemMedia
-   Taken_At int64
-   User struct {
-      Username string
-   }
-}
-
-type ItemMedia struct {
-   Image_Versions2 struct {
-      Candidates []struct {
-         Width int
-         Height int
-         URL string
-      }
-   }
-   Media_Type int
-   Video_DASH_Manifest string
-   Video_Versions []struct {
-      Type int
-      Width int
-      Height int
-      URL string
-   }
-}
