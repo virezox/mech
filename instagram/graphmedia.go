@@ -90,12 +90,12 @@ type EdgeText struct {
 
 type GraphMedia struct {
    Edge_Media_To_Caption EdgeText
-   Edge_Media_To_Parent_Comment EdgeText
    Owner struct {
       Username string
    }
-   Taken_At_Timestamp int64
    Display_URL string
    Video_URL string
    Edge_Sidecar_To_Children EdgeURL
+   Taken_At_Timestamp int64
+   Edge_Media_To_Parent_Comment EdgeText
 }

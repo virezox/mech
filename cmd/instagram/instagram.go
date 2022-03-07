@@ -50,18 +50,16 @@ func doItems(shortcode string, info bool) error {
          }
          fmt.Println(form)
       } else {
-         for _, med := range item.GetItemMedia() {
-            addrs, err := med.URLs()
+         addrs, err := item.URLs()
+         if err != nil {
+            return err
+         }
+         for _, addr := range addrs {
+            err := download(addr)
             if err != nil {
                return err
             }
-            for _, addr := range addrs {
-               err := download(addr)
-               if err != nil {
-                  return err
-               }
-               time.Sleep(99 * time.Millisecond)
-            }
+            time.Sleep(99 * time.Millisecond)
          }
       }
    }

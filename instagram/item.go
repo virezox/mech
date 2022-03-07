@@ -8,6 +8,24 @@ import (
    "time"
 )
 
+type Item struct {
+   Caption struct {
+      Text string
+   }
+   User struct {
+      Username string
+   }
+   Video_DASH_Manifest string
+   Image_Versions2 ImageVersion
+   Video_Versions []VideoVersion
+   Carousel_Media []struct {
+      Video_DASH_Manifest string
+      Image_Versions2 ImageVersion
+      Video_Versions []VideoVersion
+   }
+   Taken_At int64
+}
+
 type ImageVersion struct {
    Candidates []struct {
       Width int
@@ -84,24 +102,6 @@ func appendManifest(dst []string, src string) ([]string, error) {
       dst = append(dst, addr)
    }
    return dst, nil
-}
-
-type Item struct {
-   Video_DASH_Manifest string
-   Image_Versions2 ImageVersion
-   Video_Versions []VideoVersion
-   Carousel_Media []struct {
-      Video_DASH_Manifest string
-      Image_Versions2 ImageVersion
-      Video_Versions []VideoVersion
-   }
-   Caption struct {
-      Text string
-   }
-   Taken_At int64
-   User struct {
-      Username string
-   }
 }
 
 func (l Login) Items(shortcode string) ([]Item, error) {

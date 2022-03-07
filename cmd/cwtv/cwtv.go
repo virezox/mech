@@ -45,10 +45,10 @@ func doManifest(addr string, bandwidth int64, info bool) error {
          }
       }
    } else {
-      stream := mas.GetStream(func (s hls.Stream) bool {
+      str := mas.GetStream(func (s hls.Stream) bool {
          return s.Bandwidth >= bandwidth
       })
-      err := download(stream, video)
+      err := download(str, video)
       if err != nil {
          return err
       }
@@ -56,9 +56,9 @@ func doManifest(addr string, bandwidth int64, info bool) error {
    return nil
 }
 
-func download(stream *hls.Stream, video *cwtv.Video) error {
-   fmt.Println("GET", stream.URI)
-   res, err := http.Get(stream.URI.String())
+func download(str *hls.Stream, video *cwtv.Video) error {
+   fmt.Println("GET", str.URI)
+   res, err := http.Get(str.URI.String())
    if err != nil {
       return err
    }
@@ -73,7 +73,10 @@ func download(stream *hls.Stream, video *cwtv.Video) error {
    }
    defer file.Close()
    for i, info := range seg.Info {
-      fmt.Println(i, len(seg.Info))
+      if i >= 1 {
+         fmt.Print(" ")
+      }
+      fmt.Print(len(seg.Info)-i)
       res, err := http.Get(info.URI.String())
       if err != nil {
          return err
