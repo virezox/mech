@@ -11,6 +11,22 @@ import (
    "strings"
 )
 
+func (l Login) mediaInfo(id int64) (*http.Response, error) {
+   buf := []byte("https://i.instagram.com/api/v1/media/")
+   buf = strconv.AppendInt(buf, id, 10)
+   buf = append(buf, "/info/"...)
+   req, err := http.NewRequest("GET", string(buf), nil)
+   if err != nil {
+      return nil, err
+   }
+   req.Header = http.Header{
+      "Authorization": {l.Authorization},
+      "User-Agent": {Android.String()},
+   }
+   LogLevel.Dump(req)
+   return new(http.Transport).RoundTrip(req)
+}
+
 var LogLevel format.LogLevel
 
 func Shortcode(address string) string {

@@ -24,8 +24,4 @@ https://instagram.com/p/CT-cnxGhvvO
 
 `/api/v1/media/` uses ID instead of shortcode.
 
-`/embed` API does not return URLs in all cases:
-
-<https://instagram.com/p/CY-Wwq_O6S0/embed>
-
 `/graphql/query/` API gets images up to 1080p, but not original quality.

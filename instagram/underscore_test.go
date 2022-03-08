@@ -12,25 +12,6 @@ var usernames = []string{
    "lokalist.id",
 }
 
-func TestUser(t *testing.T) {
-   cache, err := os.UserCacheDir()
-   if err != nil {
-      t.Fatal(err)
-   }
-   login, err := OpenLogin(cache + "/mech/instagram.json")
-   if err != nil {
-      t.Fatal(err)
-   }
-   for _, username := range usernames {
-      user, err := login.User(username)
-      if err != nil {
-         t.Fatal(err)
-      }
-      fmt.Println(user)
-      time.Sleep(time.Second)
-   }
-}
-
 type testType struct {
    shortcode string
    paths []string
@@ -65,7 +46,7 @@ var tests = []testType{
    }},
 }
 
-func TestMedia(t *testing.T) {
+func TestUnderscoreMedia(t *testing.T) {
    cache, err := os.UserCacheDir()
    if err != nil {
       t.Fatal(err)
@@ -89,6 +70,25 @@ func TestMedia(t *testing.T) {
          }
       }
       fmt.Println()
+      time.Sleep(time.Second)
+   }
+}
+
+func TestUnderscoreUser(t *testing.T) {
+   cache, err := os.UserCacheDir()
+   if err != nil {
+      t.Fatal(err)
+   }
+   login, err := OpenLogin(cache + "/mech/instagram.json")
+   if err != nil {
+      t.Fatal(err)
+   }
+   for _, username := range usernames {
+      user, err := login.User(username)
+      if err != nil {
+         t.Fatal(err)
+      }
+      fmt.Println(user)
       time.Sleep(time.Second)
    }
 }
