@@ -32,6 +32,8 @@ func doManifest(addr string, bandwidth int64, info bool) error {
       return mas.Stream[a].Bandwidth < mas.Stream[b].Bandwidth
    })
    if info {
+      prop.Data.Item.VideoServiceURL = ""
+      fmt.Println(prop.Data.Item)
       for _, str := range mas.Stream {
          str.URI = nil
          fmt.Println(str)
@@ -79,7 +81,10 @@ func download(str *hls.Stream, prop *mtv.Property) error {
    }
    defer file.Close()
    for i, info := range seg.Info {
-      fmt.Println(i, len(seg.Info)-1)
+      if i >= 1 {
+         fmt.Print(" ")
+      }
+      fmt.Print(len(seg.Info)-i)
       res, err := http.Get(info.URI.String())
       if err != nil {
          return err

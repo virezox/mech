@@ -6,11 +6,36 @@ import (
    "net/http"
    "net/url"
    "strings"
+   "time"
 )
 
-var LogLevel format.LogLevel
+func (i Item) GetDuration() time.Duration {
+   return time.Duration(i.Duration.Milliseconds) * time.Millisecond
+}
+
+func (i Item) String() string {
+   var buf strings.Builder
+   buf.WriteString("Duration: ")
+   buf.WriteString(i.GetDuration().String())
+   buf.WriteString("\nType: ")
+   buf.WriteString(i.EntityType)
+   buf.WriteString("\nParent: ")
+   buf.WriteString(i.ParentEntity.Title)
+   buf.WriteString("\nID: ")
+   buf.WriteString(i.ShortID)
+   buf.WriteString("\nTitle: ")
+   buf.WriteString(i.Title)
+   if i.VideoServiceURL != "" {
+      buf.WriteString("\nURL: ")
+      buf.WriteString(i.VideoServiceURL)
+   }
+   return buf.String()
+}
 
 type Item struct {
+   Duration struct {
+      Milliseconds int64
+   }
    EntityType string
    ParentEntity struct {
       Title string
@@ -19,6 +44,14 @@ type Item struct {
    Title string
    VideoServiceURL string
 }
+
+type Property struct {
+   Data struct {
+      Item Item
+   }
+}
+
+var LogLevel format.LogLevel
 
 func NewItem(addr string) Item {
    var (
@@ -64,12 +97,6 @@ func (i Item) Property() (*Property, error) {
       return nil, err
    }
    return prop, nil
-}
-
-type Property struct {
-   Data struct {
-      Item Item
-   }
 }
 
 func (p Property) Base() string {

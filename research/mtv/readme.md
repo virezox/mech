@@ -40,11 +40,11 @@ How are they getting this:
 BANDWIDTH=2291064,FRAME-RATE=23.976,CODECS="avc1.4D401F,mp4a.40.2",RESOLUTION=768x576
 ~~~
 
-From this:
+First:
 
 ~~~
-GET /api/gen/gsp.alias/mediabus/mtv.com/2018/11/28/11/06/52/ab596fbe5aba46b0acfc19c6046d34c8/974095/0/,stream_320x240_315417,stream_768x576_2041574,stream_640x480_1544131,stream_480x360_534749,stream_576x432_1086196/master.m3u8?account=mtv.com&cdn=ns1&tk=st=1646699601~exp=1646786001~acl=/api/gen/gsp.alias/mediabus/mtv.com/2018/11/28/11/06/52/ab596fbe5aba46b0acfc19c6046d34c8/974095/0/*~hmac=01361c6b53ffc56b952a759c90c532fb71c4400ef874ab6964ea4e020631101b HTTP/1.1
-Host: dlvrsvc.mtvnservices.com
+GET /feeds/mrss/?uri=mgid%3Aarc%3Aepisode%3Amtv.com%3A96defb28-d238-11e1-a549-0026b9414f30 HTTP/1.1
+Host: www.mtv.com
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.20 Safari/537.36
 Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
 Accept-Encoding: gzip, deflate
@@ -54,7 +54,7 @@ Connection: close
 content-length: 0
 ~~~
 
-From this:
+Then:
 
 ~~~
 GET /services/MediaGenerator/mgid:arc:video:mtv.com:d2eca5e3-a0c9-4058-9fb9-fd7459787e52?&arcPlatforms=7ac7942e-6481-457f-b39a-2b1aedb29f29,b995f21c-e76f-4e58-8d0f-0964dc76efd3,6caa8f01-72e5-4707-abd6-608a0146e2ee,39dfe10c-cc2a-40f9-a20d-962d2604d543,0a16f611-d105-436a-8188-33ea8871171e,f17d0e9b-657a-4785-b3ca-dae9e78563a1&acceptMethods=hls HTTP/1.1
@@ -68,11 +68,11 @@ Connection: close
 content-length: 0
 ~~~
 
-From this:
+Then:
 
 ~~~
-GET /feeds/mrss/?uri=mgid%3Aarc%3Aepisode%3Amtv.com%3A96defb28-d238-11e1-a549-0026b9414f30 HTTP/1.1
-Host: www.mtv.com
+GET /api/gen/gsp.alias/mediabus/mtv.com/2018/11/28/11/06/52/ab596fbe5aba46b0acfc19c6046d34c8/974095/0/,stream_320x240_315417,stream_768x576_2041574,stream_640x480_1544131,stream_480x360_534749,stream_576x432_1086196/master.m3u8?account=mtv.com&cdn=ns1&tk=st=1646699601~exp=1646786001~acl=/api/gen/gsp.alias/mediabus/mtv.com/2018/11/28/11/06/52/ab596fbe5aba46b0acfc19c6046d34c8/974095/0/*~hmac=01361c6b53ffc56b952a759c90c532fb71c4400ef874ab6964ea4e020631101b HTTP/1.1
+Host: dlvrsvc.mtvnservices.com
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.20 Safari/537.36
 Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
 Accept-Encoding: gzip, deflate
