@@ -15,7 +15,9 @@ func (i Item) GetDuration() time.Duration {
 
 func (i Item) String() string {
    var buf strings.Builder
-   buf.WriteString("Duration: ")
+   buf.WriteString("Date: ")
+   buf.WriteString(i.AirDate.DateString)
+   buf.WriteString("\nDuration: ")
    buf.WriteString(i.GetDuration().String())
    buf.WriteString("\nType: ")
    buf.WriteString(i.EntityType)
@@ -33,10 +35,14 @@ func (i Item) String() string {
 }
 
 type Item struct {
+   AirDate struct {
+      DateString string
+   }
    Duration struct {
       Milliseconds int64
    }
    EntityType string
+   MGID string
    ParentEntity struct {
       Title string
    }
@@ -127,6 +133,11 @@ func (p Property) Topaz() (*Topaz, error) {
 }
 
 type Topaz struct {
+   Content []struct {
+      Chapters []struct {
+         ID string
+      }
+   }
    StitchedStream struct {
       Source string
    }
