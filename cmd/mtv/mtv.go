@@ -1,6 +1,7 @@
 package main
 
 import (
+   "flag"
    "fmt"
    "github.com/89z/format/hls"
    "github.com/89z/mech/mtv"
@@ -14,50 +15,48 @@ func doManifest(addr string, bandwidth int64, info bool) error {
    if err != nil {
       return err
    }
-   top, err := prop.Topaz()
+   topaz, err := mtv.NewTopaz(prop.Data.Item.MGID)
    if err != nil {
       return err
    }
-   fmt.Println("GET", top.StitchedStream.Source)
-   res, err := http.Get(top.StitchedStream.Source)
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   mas, err := hls.NewMaster(res.Request.URL, res.Body)
-   if err != nil {
-      return err
-   }
-   sort.Slice(mas.Stream, func(a, b int) bool {
-      return mas.Stream[a].Bandwidth < mas.Stream[b].Bandwidth
-   })
-   if info {
-      prop.Data.Item.VideoServiceURL = ""
-      fmt.Println(prop.Data.Item)
-      for _, str := range mas.Stream {
-         str.URI = nil
-         fmt.Println(str)
-      }
-   } else {
-      stream := mas.GetStream(func(s hls.Stream) bool {
-         return s.Bandwidth >= bandwidth
-      })
-      err := download(stream, prop)
-      if err != nil {
-         return err
+   for _, content := range topaz.Content {
+      for _, chapter := range content.Chapters {
+         topaz, err := mtv.NewTopaz(chapter.ID)
+         if err != nil {
+            return err
+         }
+         fmt.Println("GET", topaz.StitchedStream.Source)
+         res, err := http.Get(topaz.StitchedStream.Source)
+         if err != nil {
+            return err
+         }
+         mas, err := hls.NewMaster(res.Request.URL, res.Body)
+         if err != nil {
+            return err
+         }
+         if err := res.Body.Close(); err != nil {
+            return err
+         }
+         sort.Slice(mas.Stream, func(a, b int) bool {
+            return mas.Stream[a].Bandwidth < mas.Stream[b].Bandwidth
+         })
+         if info {
+            fmt.Println(prop.Data.Item)
+            for _, str := range mas.Stream {
+               str.URI = nil
+               fmt.Println(str)
+            }
+            break
+         }
+         stream := mas.GetStream(func(str hls.Stream) bool {
+            return str.Bandwidth >= bandwidth
+         })
+         if err := download(stream, prop); err != nil {
+            return err
+         }
       }
    }
    return nil
-}
-
-func newSegment(str *hls.Stream) (*hls.Segment, error) {
-   fmt.Println("GET", str.URI)
-   res, err := http.Get(str.URI.String())
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   return hls.NewSegment(res.Request.URL, res.Body)
 }
 
 func download(str *hls.Stream, prop *mtv.Property) error {
@@ -97,4 +96,41 @@ func download(str *hls.Stream, prop *mtv.Property) error {
       }
    }
    return nil
+}
+
+func newSegment(str *hls.Stream) (*hls.Segment, error) {
+   fmt.Println("GET", str.URI)
+   res, err := http.Get(str.URI.String())
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   return hls.NewSegment(res.Request.URL, res.Body)
+}
+
+func main() {
+   // a
+   var address string
+   flag.StringVar(&address, "a", "", "address")
+   // f
+   var bandwidth int64
+   flag.Int64Var(&bandwidth, "f", 420_000, "min bandwidth")
+   // i
+   var info bool
+   flag.BoolVar(&info, "i", false, "info")
+   // v
+   var verbose bool
+   flag.BoolVar(&verbose, "v", false, "verbose")
+   flag.Parse()
+   if verbose {
+      mtv.LogLevel = 1
+   }
+   if address != "" {
+      err := doManifest(address, bandwidth, info)
+      if err != nil {
+         panic(err)
+      }
+   } else {
+      flag.Usage()
+   }
 }
