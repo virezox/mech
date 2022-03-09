@@ -5,6 +5,7 @@ import (
    "encoding/json"
    "net/http"
    "net/url"
+   "path"
    "strconv"
    "strings"
    "time"
@@ -12,12 +13,16 @@ import (
 
 // https://youtube.com/shorts/9Vsdft81Q6w
 // https://youtube.com/watch?v=XY-hOqcPGCY
-func VideoID(address string) (string, error) {
-   addr, err := url.Parse(address)
+func VideoID(rawURL string) (string, error) {
+   addr, err := url.Parse(rawURL)
    if err != nil {
       return "", err
    }
-   return addr.Query().Get("v"), nil
+   v := addr.Query().Get("v")
+   if v != "" {
+      return v, nil
+   }
+   return path.Base(addr.Path), nil
 }
 
 const origin = "https://www.youtube.com"
