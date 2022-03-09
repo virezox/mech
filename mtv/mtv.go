@@ -15,21 +15,40 @@ func (i Item) GetDuration() time.Duration {
 
 func (i Item) String() string {
    var buf strings.Builder
-   buf.WriteString("Date: ")
-   buf.WriteString(i.AirDate.DateString)
-   buf.WriteString("\nDuration: ")
+   buf.WriteString("Duration: ")
    buf.WriteString(i.GetDuration().String())
    buf.WriteString("\nType: ")
    buf.WriteString(i.EntityType)
-   buf.WriteString("\nMGID: ")
-   buf.WriteString(i.MGID)
    buf.WriteString("\nParent: ")
    buf.WriteString(i.ParentEntity.Title)
-   buf.WriteString("\nShortID: ")
+   buf.WriteString("\nID: ")
    buf.WriteString(i.ShortID)
    buf.WriteString("\nTitle: ")
    buf.WriteString(i.Title)
+   if i.VideoServiceURL != "" {
+      buf.WriteString("\nURL: ")
+      buf.WriteString(i.VideoServiceURL)
+   }
    return buf.String()
+}
+
+type Item struct {
+   Duration struct {
+      Milliseconds int64
+   }
+   EntityType string
+   ParentEntity struct {
+      Title string
+   }
+   ShortID string
+   Title string
+   VideoServiceURL string
+}
+
+type Property struct {
+   Data struct {
+      Item Item
+   }
 }
 
 var LogLevel format.LogLevel
@@ -88,45 +107,8 @@ func (p Property) Base() string {
    return format.Clean(buf.String())
 }
 
-type Property struct {
-   Data struct {
-      Item Item
-   }
-}
-
-type Item struct {
-   AirDate struct {
-      DateString string
-   }
-   Duration struct {
-      Milliseconds int64
-   }
-   EntityType string
-   MGID string
-   ParentEntity struct {
-      Title string
-   }
-   ShortID string
-   Title string
-}
-
-type Topaz struct {
-   Content []struct {
-      Chapters []struct {
-         ID string // MGID
-      }
-   }
-   StitchedStream struct {
-      Source string
-   }
-}
-
-func NewTopaz(mgid string) (*Topaz, error) {
-   var buf strings.Builder
-   buf.WriteString("https://topaz.viacomcbs.digital/topaz/api/")
-   buf.WriteString(mgid)
-   buf.WriteString("/mica.json")
-   req, err := http.NewRequest("GET", buf.String(), nil)
+func (p Property) Topaz() (*Topaz, error) {
+   req, err := http.NewRequest("GET", p.Data.Item.VideoServiceURL, nil)
    if err != nil {
       return nil, err
    }
@@ -142,4 +124,10 @@ func NewTopaz(mgid string) (*Topaz, error) {
       return nil, err
    }
    return top, nil
+}
+
+type Topaz struct {
+   StitchedStream struct {
+      Source string
+   }
 }
