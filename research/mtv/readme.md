@@ -1,13 +1,31 @@
 # MTV
 
-Can neutron get the chapters?
+If we compare this:
 
-## episode
+~~~
+topaz.viacomcbs.digital/topaz/api/
+mgid:arc:showvideo:mtv.com:f2ea0986-48b0-4d95-ada3-d3d3a89710ed
+/mica.json?clientPlatform=android
 
-- https://neutron-api.viacom.tech/api/2.9/property/mgid:arc:episode:mtv.com:96defb28-d238-11e1-a549-0026b9414f30?region=US-PHASE1&brand=mtv&platform=web
-- https://topaz.viacomcbs.digital/topaz/api/mgid:arc:episode:mtv.com:96defb28-d238-11e1-a549-0026b9414f30/mica.json?clientPlatform=android
+#EXT-X-STREAM-INF:PROGRAM-ID=1,BANDWIDTH=1488968,RESOLUTION=768x576,
+FRAME-RATE=23.974,CODECS="avc1.4d401f,mp4a.40.2",AUDIO="audio0",SUBTITLES="subs0"
+~~~
 
-## showvideo
+with this:
 
-- https://neutron-api.viacom.tech/api/2.9/property/mgid:arc:showvideo:mtv.com:40c2dfe9-1a66-4f9f-b557-f3ad9e54729c?region=US-PHASE1&brand=mtv&platform=web
-- https://topaz.viacomcbs.digital/topaz/api/mgid:arc:showvideo:mtv.com:40c2dfe9-1a66-4f9f-b557-f3ad9e54729c/mica.json?clientPlatform=android
+~~~
+media-utils.mtvnservices.com/services/MediaGenerator/
+mgid:arc:showvideo:mtv.com:f2ea0986-48b0-4d95-ada3-d3d3a89710ed
+?acceptMethods=hls
+
+#EXT-X-STREAM-INF:AVERAGE-BANDWIDTH=1575904,BANDWIDTH=2538475,FRAME-RATE=23.976,
+CODECS="avc1.4D401F,mp4a.40.2",RESOLUTION=768x576
+~~~
+
+the second seems to have better BANDWIDTH. However if we run both through FFmpeg,
+we get this result:
+
+~~~
+49422944 MediaGenerator.ts
+49431404 topaz.ts
+~~~
