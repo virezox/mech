@@ -1,12 +1,11 @@
 package paramount
 
 import (
+   "encoding/xml"
    "github.com/89z/format"
    "net/http"
    "net/url"
    "strconv"
-   "strings"
-   "text/scanner"
 )
 
 const (
@@ -16,26 +15,18 @@ const (
 
 var LogLevel format.LogLevel
 
-func GUID(addr string) string {
-   var buf scanner.Scanner
-   buf.Init(strings.NewReader(addr))
-   buf.IsIdentRune = func(r rune, i int) bool {
-      return r == '-' || r > '/'
-   }
-   for buf.Scan() != scanner.EOF {
-      switch buf.TokenText() {
-      case "video":
-         buf.Scan(); buf.Scan()
-         return buf.TokenText()
-      case "movies":
-         buf.Scan(); buf.Scan(); buf.Scan(); buf.Scan()
-         return buf.TokenText()
-      }
-   }
-   return ""
+type Media struct {
+   Body struct {
+      Seq  struct {
+         Video struct {
+            Title string `xml:"title,attr"`
+            Src string `xml:"src,attr"`
+         } `xml:"video"`
+      } `xml:"seq"`
+   } `xml:"body"`
 }
 
-func Media(guid string) (*url.URL, error) {
+func NewMedia(guid string) (*Media, error) {
    buf := []byte("https://link.theplatform.com/s/")
    buf = append(buf, sid...)
    buf = append(buf, "/media/guid/"...)
@@ -47,13 +38,19 @@ func Media(guid string) (*url.URL, error) {
       return nil, err
    }
    // We need "MPEG4", otherwise you get a "EXT-X-KEY" with "skd" scheme:
-   req.URL.RawQuery = "formats=MPEG4,M3U"
+   req.URL.RawQuery = url.Values{
+      "format": {"SMIL"},
+      "formats": {"MPEG4,M3U"},
+   }.Encode()
    LogLevel.Dump(req)
-   // This redirects, but we only care about the URL, so we dont need to follow:
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
-   return res.Location()
+   med := new(Media)
+   if err := xml.NewDecoder(res.Body).Decode(med); err != nil {
+      return nil, err
+   }
+   return med, nil
 }

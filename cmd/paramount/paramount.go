@@ -1,22 +1,32 @@
 package main
 
 import (
-   "flag"
    "fmt"
    "github.com/89z/format/hls"
    "github.com/89z/mech/paramount"
    "net/http"
+   "net/url"
    "os"
    "sort"
 )
 
-func doManifest(guid, bandwidth int64, info bool) error {
-   vod, err := paramount.NewAccessVOD(guid)
+func newSegment(addr *url.URL) (*hls.Segment, error) {
+   fmt.Println("GET", addr)
+   res, err := http.Get(addr.String())
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   return hls.NewSegment(res.Request.URL, res.Body)
+}
+
+func doManifest(guid string, bandwidth int64, info bool) error {
+   media, err := paramount.NewMedia(guid)
    if err != nil {
       return err
    }
-   fmt.Println("GET", vod.ManifestPath)
-   res, err := http.Get(vod.ManifestPath)
+   fmt.Println("GET", media.Body.Seq.Video.Src)
+   res, err := http.Get(media.Body.Seq.Video.Src)
    if err != nil {
       return err
    }
@@ -29,6 +39,7 @@ func doManifest(guid, bandwidth int64, info bool) error {
       return mas.Stream[a].Bandwidth < mas.Stream[b].Bandwidth
    })
    if info {
+      fmt.Println(media.Body.Seq.Video.Title)
       for _, str := range mas.Stream {
          str.URI = nil
          fmt.Println(str)
@@ -37,42 +48,42 @@ func doManifest(guid, bandwidth int64, info bool) error {
       str := mas.GetStream(func (s hls.Stream) bool {
          return s.Bandwidth >= bandwidth
       })
-      vid, err := paramount.NewVideo(guid)
-      if err != nil {
-         return err
-      }
-      if err := download(str, vid); err != nil {
+      if err := download(media, str); err != nil {
          return err
       }
    }
    return nil
 }
 
-func download(str *hls.Stream, video *paramount.Video) error {
-   fmt.Println("GET", str.URI)
-   res, err := http.Get(str.URI.String())
+func download(media *paramount.Media, str *hls.Stream) error {
+   seg, err := newSegment(str.URI)
+   if err != nil {
+      return err
+   }
+   fmt.Println("GET", seg.Key.URI)
+   res, err := http.Get(seg.Key.URI.String())
    if err != nil {
       return err
    }
    defer res.Body.Close()
-   str.URI = nil
-   fmt.Println(str)
-   seg, err := hls.NewSegment(res.Request.URL, res.Body)
+   dec, err := hls.NewDecrypter(res.Body)
    if err != nil {
       return err
    }
-   file, err := os.Create(video.Base() + seg.Ext())
+   file, err := os.Create(media.Body.Seq.Video.Title + seg.Ext())
    if err != nil {
       return err
    }
    defer file.Close()
+   str.URI = nil
+   fmt.Println(str)
    for i, info := range seg.Info {
       fmt.Print(seg.Progress(i))
       res, err := http.Get(info.URI.String())
       if err != nil {
          return err
       }
-      if _, err := file.ReadFrom(res.Body); err != nil {
+      if _, err := dec.Copy(file, res.Body); err != nil {
          return err
       }
       if err := res.Body.Close(); err != nil {
@@ -80,31 +91,4 @@ func download(str *hls.Stream, video *paramount.Video) error {
       }
    }
    return nil
-}
-
-func main() {
-   // b
-   var guid int64
-   flag.Int64Var(&guid, "b", 0, "GUID")
-   // f
-   var bandwidth int64
-   flag.Int64Var(&bandwidth, "f", 4_000_000, "min bandwidth")
-   // i
-   var info bool
-   flag.BoolVar(&info, "i", false, "info")
-   // v
-   var verbose bool
-   flag.BoolVar(&verbose, "v", false, "verbose")
-   flag.Parse()
-   if verbose {
-      paramount.LogLevel = 1
-   }
-   if guid >= 1 {
-      err := doManifest(guid, bandwidth, info)
-      if err != nil {
-         panic(err)
-      }
-   } else {
-      flag.Usage()
-   }
 }

@@ -1,0 +1,33 @@
+package main
+
+import (
+   "flag"
+   "github.com/89z/mech/paramount"
+)
+
+func main() {
+   // b
+   var guid string
+   flag.StringVar(&guid, "b", "", "GUID")
+   // f
+   var bandwidth int64
+   flag.Int64Var(&bandwidth, "f", 999_999, "min bandwidth")
+   // i
+   var info bool
+   flag.BoolVar(&info, "i", false, "info")
+   // v
+   var verbose bool
+   flag.BoolVar(&verbose, "v", false, "verbose")
+   flag.Parse()
+   if verbose {
+      paramount.LogLevel = 1
+   }
+   if guid != "" {
+      err := doManifest(guid, bandwidth, info)
+      if err != nil {
+         panic(err)
+      }
+   } else {
+      flag.Usage()
+   }
+}
