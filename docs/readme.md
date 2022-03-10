@@ -71,10 +71,6 @@ IMDb:
 
 https://github.com/89z/mech/tree/134506e3245b8dd2541dfae40757645a057d02a2
 
-Paramount:
-
-https://github.com/89z/mech/tree/2735fb502732b9e682f7a78b86893d509819102f
-
 PBS:
 
 https://github.com/89z/mech/tree/c825743ab7594025b9c70632d934820e2c68d20a

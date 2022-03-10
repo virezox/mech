@@ -72,6 +72,8 @@ func download(str *hls.Stream, video *cwtv.Video) error {
       return err
    }
    defer file.Close()
+   str.URI = nil
+   fmt.Println(str)
    for i, info := range seg.Info {
       fmt.Print(seg.Progress(i))
       res, err := http.Get(info.URI.String())
