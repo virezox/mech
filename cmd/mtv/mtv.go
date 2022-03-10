@@ -39,29 +39,24 @@ func doManifest(addr string, bandwidth int64, info bool) error {
          fmt.Println(str)
       }
    } else {
-      stream := mas.GetStream(func(s hls.Stream) bool {
+      video := mas.GetStream(func(s hls.Stream) bool {
          return s.Bandwidth >= bandwidth
       })
-      err := download(stream, prop)
+      addr := video.RemoveURI()
+      err := download(prop, addr.String(), video.String())
       if err != nil {
+         return err
+      }
+      audio := mas.GetMedia(video)
+      if err := download(prop, audio.URI.String(), ""); err != nil {
          return err
       }
    }
    return nil
 }
 
-func newSegment(str *hls.Stream) (*hls.Segment, error) {
-   fmt.Println("GET", str.URI)
-   res, err := http.Get(str.URI.String())
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   return hls.NewSegment(res.Request.URL, res.Body)
-}
-
-func download(str *hls.Stream, prop *mtv.Property) error {
-   seg, err := newSegment(str)
+func download(prop *mtv.Property, addr, stream string) error {
+   seg, err := newSegment(addr)
    if err != nil {
       return err
    }
@@ -80,11 +75,11 @@ func download(str *hls.Stream, prop *mtv.Property) error {
       return err
    }
    defer file.Close()
+   if stream != "" {
+      fmt.Println(stream)
+   }
    for i, info := range seg.Info {
-      if i >= 1 {
-         fmt.Print(" ")
-      }
-      fmt.Print(len(seg.Info)-i)
+      fmt.Print(seg.Progress(i))
       res, err := http.Get(info.URI.String())
       if err != nil {
          return err
@@ -97,4 +92,14 @@ func download(str *hls.Stream, prop *mtv.Property) error {
       }
    }
    return nil
+}
+
+func newSegment(addr string) (*hls.Segment, error) {
+   fmt.Println("GET", addr)
+   res, err := http.Get(addr)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   return hls.NewSegment(res.Request.URL, res.Body)
 }

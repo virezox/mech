@@ -9,13 +9,31 @@ import (
    "time"
 )
 
+type Item struct {
+   AirDate struct {
+      DateString string
+   }
+   Duration struct {
+      Milliseconds int64
+   }
+   EntityType string
+   ParentEntity struct {
+      Title string
+   }
+   ShortID string
+   Title string
+   VideoServiceURL string
+}
+
 func (i Item) GetDuration() time.Duration {
    return time.Duration(i.Duration.Milliseconds) * time.Millisecond
 }
 
 func (i Item) String() string {
    var buf strings.Builder
-   buf.WriteString("Duration: ")
+   buf.WriteString("Date: ")
+   buf.WriteString(i.AirDate.DateString)
+   buf.WriteString("\nDuration: ")
    buf.WriteString(i.GetDuration().String())
    buf.WriteString("\nType: ")
    buf.WriteString(i.EntityType)
@@ -30,19 +48,6 @@ func (i Item) String() string {
       buf.WriteString(i.VideoServiceURL)
    }
    return buf.String()
-}
-
-type Item struct {
-   Duration struct {
-      Milliseconds int64
-   }
-   EntityType string
-   ParentEntity struct {
-      Title string
-   }
-   ShortID string
-   Title string
-   VideoServiceURL string
 }
 
 type Property struct {
