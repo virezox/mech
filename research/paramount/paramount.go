@@ -4,13 +4,21 @@ import (
    "github.com/89z/format"
    "net/http"
    "net/url"
+   "strconv"
    "strings"
    "text/scanner"
 )
 
+const (
+   aid = 2198311517
+   sid = "dJ5BDC"
+)
+
+var LogLevel format.LogLevel
+
 // paramountplus.com/movies/building-star-trek/wQH9yE_y_Dt4ekDYm3yelhhY2KXvOra_
 // paramountplus.com/shows/bull/video/TUT_4UVB87huHEOfPCjMkxOW_Xe1hNWw/bull-gone
-func VideoID(addr string) string {
+func GUID(addr string) string {
    var buf scanner.Scanner
    buf.Init(strings.NewReader(addr))
    buf.IsIdentRune = func(r rune, i int) bool {
@@ -29,16 +37,14 @@ func VideoID(addr string) string {
    return ""
 }
 
-const endpoint = "/s/dJ5BDC/media/guid/2198311517/"
-
-var LogLevel format.LogLevel
-
-func Media(videoID string) (*url.URL, error) {
-   var buf strings.Builder
-   buf.WriteString("https://link.theplatform.com")
-   buf.WriteString(endpoint)
-   buf.WriteString(videoID)
-   req, err := http.NewRequest("GET", buf.String(), nil)
+func Media(guid string) (*url.URL, error) {
+   buf := []byte("https://link.theplatform.com/s/")
+   buf = append(buf, sid...)
+   buf = append(buf, "/media/guid/"...)
+   buf = strconv.AppendInt(buf, aid, 10)
+   buf = append(buf, '/')
+   buf = append(buf, guid...)
+   req, err := http.NewRequest("GET", string(buf), nil)
    if err != nil {
       return nil, err
    }

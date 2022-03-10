@@ -40,20 +40,20 @@ func main() {
    if err != nil {
       panic(err)
    }
-   tok, err := googleplay.OpenToken(cache + "/googleplay/token.json")
+   token, err := googleplay.OpenToken(cache, "/googleplay/token.json")
    if err != nil {
       panic(err)
    }
-   auth, err := tok.Auth()
+   device, err := googleplay.OpenDevice(cache, "/googleplay/device.json")
    if err != nil {
       panic(err)
    }
-   dev, err := googleplay.OpenDevice(cache + "/googleplay/device.json")
+   header, err := token.Header(device)
    if err != nil {
       panic(err)
    }
    for i, app := range apps {
-      det, err := auth.Details(dev, app.id)
+      det, err := header.Details(app.id)
       if err != nil {
          panic(err)
       }
@@ -74,4 +74,3 @@ type application struct {
    done bool
    installs uint64
 }
-
