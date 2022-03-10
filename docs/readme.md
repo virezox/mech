@@ -82,3 +82,7 @@ https://github.com/89z/mech/tree/b901af458f09e04b662dbeabc8f5880527f9adfa
 Spotify:
 
 Audio is encrypted.
+
+TED:
+
+https://github.com/89z/mech/tree/8ddaa050fbffe14a12166dae83f8f53f52de2480
