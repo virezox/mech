@@ -16,8 +16,6 @@ const (
 
 var LogLevel format.LogLevel
 
-// paramountplus.com/movies/building-star-trek/wQH9yE_y_Dt4ekDYm3yelhhY2KXvOra_
-// paramountplus.com/shows/bull/video/TUT_4UVB87huHEOfPCjMkxOW_Xe1hNWw/bull-gone
 func GUID(addr string) string {
    var buf scanner.Scanner
    buf.Init(strings.NewReader(addr))
