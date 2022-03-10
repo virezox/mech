@@ -5,20 +5,9 @@ import (
    "github.com/89z/format/hls"
    "github.com/89z/mech/paramount"
    "net/http"
-   "net/url"
    "os"
    "sort"
 )
-
-func newSegment(addr *url.URL) (*hls.Segment, error) {
-   fmt.Println("GET", addr)
-   res, err := http.Get(addr.String())
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   return hls.NewSegment(res.Request.URL, res.Body)
-}
 
 func doManifest(guid string, bandwidth int64, info bool) error {
    media, err := paramount.NewMedia(guid)
@@ -40,23 +29,23 @@ func doManifest(guid string, bandwidth int64, info bool) error {
    })
    if info {
       fmt.Println(media.Body.Seq.Video.Title)
-      for _, str := range mas.Stream {
-         str.URI = nil
-         fmt.Println(str)
+      for _, video := range mas.Stream {
+         video.URI = nil
+         fmt.Println(video)
       }
    } else {
-      str := mas.GetStream(func (s hls.Stream) bool {
+      video := mas.GetStream(func (s hls.Stream) bool {
          return s.Bandwidth >= bandwidth
       })
-      if err := download(media, str); err != nil {
+      if err := download(media, video); err != nil {
          return err
       }
    }
    return nil
 }
 
-func download(media *paramount.Media, str *hls.Stream) error {
-   seg, err := newSegment(str.URI)
+func download(media *paramount.Media, video *hls.Stream) error {
+   seg, err := newSegment(video.URI.String())
    if err != nil {
       return err
    }
@@ -75,8 +64,8 @@ func download(media *paramount.Media, str *hls.Stream) error {
       return err
    }
    defer file.Close()
-   str.URI = nil
-   fmt.Println(str)
+   video.URI = nil
+   fmt.Println(video)
    for i, info := range seg.Info {
       fmt.Print(seg.Progress(i))
       res, err := http.Get(info.URI.String())
@@ -91,4 +80,14 @@ func download(media *paramount.Media, str *hls.Stream) error {
       }
    }
    return nil
+}
+
+func newSegment(addr string) (*hls.Segment, error) {
+   fmt.Println("GET", addr)
+   res, err := http.Get(addr)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   return hls.NewSegment(res.Request.URL, res.Body)
 }
