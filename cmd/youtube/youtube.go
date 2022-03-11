@@ -13,11 +13,9 @@ type choice struct {
 
 // Videos can support both AdaptiveFormats and DASH: zgJT91LA9gA
 func (c choice) adaptiveFormats(play *youtube.Player) error {
-   if play.PlayabilityStatus.Status != "OK" {
-      fmt.Println(play.PlayabilityStatus)
-   }
+   fmt.Println(play.Status())
    if c.info {
-      fmt.Println(play.VideoDetails)
+      fmt.Println(play.Details())
    }
    if len(c.itags) == 0 {
       c.itags = map[string]bool{

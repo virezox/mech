@@ -10,12 +10,46 @@ import (
    "time"
 )
 
-type notPresent struct {
-   value string
+const partLength = 10_000_000
+
+var LogLevel format.LogLevel
+
+type Format struct {
+   AudioQuality string
+   Bitrate int64
+   ContentLength int64 `json:"contentLength,string"`
+   Height int
+   Itag int64
+   MimeType string
+   QualityLabel string
+   URL string
+   Width int
 }
 
-func (n notPresent) Error() string {
-   return strconv.Quote(n.value) + " is not present"
+func (f Format) Format() (string, error) {
+   buf := []byte("Itag:")
+   buf = strconv.AppendInt(buf, f.Itag, 10)
+   buf = append(buf, " Quality:"...)
+   if f.QualityLabel != "" {
+      buf = append(buf, f.QualityLabel...)
+   } else {
+      buf = append(buf, f.AudioQuality...)
+   }
+   buf = append(buf, " Bitrate:"...)
+   buf = strconv.AppendInt(buf, f.Bitrate, 10)
+   buf = append(buf, " Size:"...)
+   buf = strconv.AppendInt(buf, f.ContentLength, 10)
+   justType, _, err := mime.ParseMediaType(f.MimeType)
+   if err != nil {
+      return "", err
+   }
+   buf = append(buf, " Type:"...)
+   buf = append(buf, justType...)
+   if f.URL != "" {
+      buf = append(buf, " URL:"...)
+      buf = append(buf, f.URL...)
+   }
+   return string(buf), nil
 }
 
 func (f Format) Name(play *Player) (string, error) {
@@ -28,14 +62,6 @@ func (f Format) Name(play *Player) (string, error) {
    }
    return "", notPresent{f.MimeType}
 }
-
-func (p Player) base() string {
-   return p.VideoDetails.Author + "-" + p.VideoDetails.Title
-}
-
-const partLength = 10_000_000
-
-var LogLevel format.LogLevel
 
 func (f Format) Write(dst io.Writer) error {
    req, err := http.NewRequest("GET", f.URL, nil)
@@ -76,38 +102,10 @@ func (f Format) Write(dst io.Writer) error {
    return nil
 }
 
-func (f Format) Format() (string, error) {
-   buf := []byte("Itag:")
-   buf = strconv.AppendInt(buf, f.Itag, 10)
-   buf = append(buf, " Quality:"...)
-   if f.QualityLabel != "" {
-      buf = append(buf, f.QualityLabel...)
-   } else {
-      buf = append(buf, f.AudioQuality...)
-   }
-   buf = append(buf, " Bitrate:"...)
-   buf = strconv.AppendInt(buf, f.Bitrate, 10)
-   buf = append(buf, " Size:"...)
-   buf = strconv.AppendInt(buf, f.ContentLength, 10)
-   justType, _, err := mime.ParseMediaType(f.MimeType)
-   if err != nil {
-      return "", err
-   }
-   buf = append(buf, " Type:"...)
-   buf = append(buf, justType...)
-   if f.URL != "" {
-      buf = append(buf, " URL:"...)
-      buf = append(buf, f.URL...)
-   }
-   return string(buf), nil
+type notPresent struct {
+   value string
 }
 
-type Format struct {
-   AudioQuality string
-   Bitrate int64
-   ContentLength int64 `json:"contentLength,string"`
-   Itag int64
-   MimeType string
-   QualityLabel string
-   URL string
+func (n notPresent) Error() string {
+   return strconv.Quote(n.value) + " is not present"
 }

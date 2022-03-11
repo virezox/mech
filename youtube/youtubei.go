@@ -99,11 +99,6 @@ func encode(val interface{}) (*bytes.Buffer, error) {
    return buf, nil
 }
 
-func (p Player) Date() (time.Time, error) {
-   value := p.Microformat.PlayerMicroformatRenderer.PublishDate
-   return time.Parse("2006-01-02", value)
-}
-
 type ThirdParty struct {
    EmbedURL string `json:"embedUrl"`
 }
@@ -182,54 +177,88 @@ func (s Search) Items() []Item {
    return items
 }
 
-type VideoDetails struct {
-   VideoID string
-   LengthSeconds int64 `json:"lengthSeconds,string"`
-   ViewCount int64 `json:"viewCount,string"`
-   Author string
-   Title string
-   ShortDescription string
+func (p Player) Date() (time.Time, error) {
+   value := p.Microformat.PlayerMicroformatRenderer.PublishDate
+   return time.Parse("2006-01-02", value)
 }
 
-func (v VideoDetails) String() string {
-   buf := []byte("VideoID: ")
-   buf = append(buf, v.VideoID...)
-   buf = append(buf, "\nLength: "...)
-   buf = strconv.AppendInt(buf, v.LengthSeconds, 10)
-   buf = append(buf, "\nViewCount: "...)
-   buf = strconv.AppendInt(buf, v.ViewCount, 10)
-   buf = append(buf, "\nAuthor: "...)
-   buf = append(buf, v.Author...)
-   buf = append(buf, "\nTitle: "...)
-   buf = append(buf, v.Title...)
-   return string(buf)
-}
-
-type PlayabilityStatus struct {
-   Status string // "OK", "LOGIN_REQUIRED"
-   Reason string // "", "Sign in to confirm your age"
-}
-
-func (p PlayabilityStatus) String() string {
+func (p Player) Status() string {
    var buf strings.Builder
    buf.WriteString("Status: ")
-   buf.WriteString(p.Status)
-   if p.Reason != "" {
+   buf.WriteString(p.PlayabilityStatus.Status)
+   if p.PlayabilityStatus.Reason != "" {
       buf.WriteString("\nReason: ")
-      buf.WriteString(p.Reason)
+      buf.WriteString(p.PlayabilityStatus.Reason)
    }
    return buf.String()
 }
 
+func (p Player) Details() string {
+   buf := []byte("VideoID: ")
+   buf = append(buf, p.VideoDetails.VideoID...)
+   buf = append(buf, "\nLength: "...)
+   buf = strconv.AppendInt(buf, p.VideoDetails.LengthSeconds, 10)
+   buf = append(buf, "\nViewCount: "...)
+   buf = strconv.AppendInt(buf, p.VideoDetails.ViewCount, 10)
+   buf = append(buf, "\nAuthor: "...)
+   buf = append(buf, p.VideoDetails.Author...)
+   buf = append(buf, "\nTitle: "...)
+   buf = append(buf, p.VideoDetails.Title...)
+   return string(buf)
+}
+
+func (p Player) base() string {
+   return p.VideoDetails.Author + "-" + p.VideoDetails.Title
+}
+
 type Player struct {
+   StreamingData StreamingData
    Microformat struct {
       PlayerMicroformatRenderer struct {
          PublishDate string // 2013-06-11
       }
    }
-   PlayabilityStatus PlayabilityStatus
-   StreamingData struct {
-      AdaptiveFormats []Format
+   PlayabilityStatus struct {
+      Status string // "OK", "LOGIN_REQUIRED"
+      Reason string // "", "Sign in to confirm your age"
    }
-   VideoDetails VideoDetails
+   VideoDetails struct {
+      VideoID string
+      LengthSeconds int64 `json:"lengthSeconds,string"`
+      ViewCount int64 `json:"viewCount,string"`
+      Author string
+      Title string
+      ShortDescription string
+   }
+}
+
+type Height struct {
+   StreamingData
+   Target int
+}
+
+func (h Height) Less(i, j int) bool {
+   return h.distance(i) < h.distance(j)
+}
+
+func (h Height) distance(i int) int {
+   diff := h.AdaptiveFormats[i].Height - h.Target
+   if diff >= 0 {
+      return diff
+   }
+   return -diff
+}
+
+type StreamingData struct {
+   AdaptiveFormats []Format
+}
+
+func (s StreamingData) Len() int {
+   return len(s.AdaptiveFormats)
+}
+
+func (s StreamingData) Swap(i, j int) {
+   swap := s.AdaptiveFormats[i]
+   s.AdaptiveFormats[i] = s.AdaptiveFormats[j]
+   s.AdaptiveFormats[j] = swap
 }
