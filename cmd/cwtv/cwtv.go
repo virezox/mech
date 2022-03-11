@@ -32,9 +32,6 @@ func doManifest(addr string, bandwidth int64, info bool) error {
    if err != nil {
       return err
    }
-   sort.Slice(mas.Stream, func(a, b int) bool {
-      return mas.Stream[a].Bandwidth < mas.Stream[b].Bandwidth
-   })
    if info {
       done := make(map[hls.Stream]bool)
       for _, str := range mas.Stream {
@@ -45,7 +42,8 @@ func doManifest(addr string, bandwidth int64, info bool) error {
          }
       }
    } else {
-      err := download(mas.GetStream(bandwidth), video)
+      sort.Sort(hls.Bandwidth{mas, bandwidth})
+      err := download(video, mas.Stream[0])
       if err != nil {
          return err
       }
@@ -53,7 +51,7 @@ func doManifest(addr string, bandwidth int64, info bool) error {
    return nil
 }
 
-func download(str *hls.Stream, video *cwtv.Video) error {
+func download(video *cwtv.Video, str hls.Stream) error {
    fmt.Println("GET", str.URI)
    res, err := http.Get(str.URI.String())
    if err != nil {

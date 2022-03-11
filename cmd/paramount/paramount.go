@@ -24,9 +24,6 @@ func doManifest(guid string, bandwidth int64, info bool) error {
    if err != nil {
       return err
    }
-   sort.Slice(mas.Stream, func(a, b int) bool {
-      return mas.Stream[a].Bandwidth < mas.Stream[b].Bandwidth
-   })
    if info {
       fmt.Println(media.Body.Seq.Video.Title)
       for _, video := range mas.Stream {
@@ -34,14 +31,15 @@ func doManifest(guid string, bandwidth int64, info bool) error {
          fmt.Println(video)
       }
    } else {
-      if err := download(media, mas.GetStream(bandwidth)); err != nil {
+      sort.Sort(hls.Bandwidth{mas, bandwidth})
+      if err := download(media, mas.Stream[0]); err != nil {
          return err
       }
    }
    return nil
 }
 
-func download(media *paramount.Media, video *hls.Stream) error {
+func download(media *paramount.Media, video hls.Stream) error {
    seg, err := newSegment(video.URI.String())
    if err != nil {
       return err

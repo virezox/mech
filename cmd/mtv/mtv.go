@@ -28,9 +28,6 @@ func doManifest(addr string, bandwidth int64, info bool) error {
    if err != nil {
       return err
    }
-   sort.Slice(mas.Stream, func(a, b int) bool {
-      return mas.Stream[a].Bandwidth < mas.Stream[b].Bandwidth
-   })
    if info {
       prop.Data.Item.VideoServiceURL = ""
       fmt.Println(prop.Data.Item)
@@ -39,7 +36,8 @@ func doManifest(addr string, bandwidth int64, info bool) error {
          fmt.Println(str)
       }
    } else {
-      video := mas.GetStream(bandwidth)
+      sort.Sort(hls.Bandwidth{mas, bandwidth})
+      video := mas.Stream[0]
       addr := video.RemoveURI()
       err := download(prop, addr.String(), video.String())
       if err != nil {
