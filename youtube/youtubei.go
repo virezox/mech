@@ -56,27 +56,6 @@ var Mweb = Context{
    Client: Client{Name: "MWEB", Version: "2.20211109.01.00"},
 }
 
-func (c Context) Player(id string) (*Player, error) {
-   return c.PlayerHeader(googAPI, id)
-}
-
-func (c Context) PlayerHeader(head http.Header, id string) (*Player, error) {
-   res, err := c.player(head, id)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   play := new(Player)
-   if err := json.NewDecoder(res.Body).Decode(play); err != nil {
-      return nil, err
-   }
-   return play, nil
-}
-
-func (c Context) PlayerResponse(id string) (*http.Response, error) {
-   return c.player(googAPI, id)
-}
-
 func (c Context) Search(query string) (*Search, error) {
    var body struct {
       Context Context `json:"context"`
@@ -120,7 +99,20 @@ func encode(val interface{}) (*bytes.Buffer, error) {
    return buf, nil
 }
 
-func (c Context) player(head http.Header, id string) (*http.Response, error) {
+func (p Player) Date() (time.Time, error) {
+   value := p.Microformat.PlayerMicroformatRenderer.PublishDate
+   return time.Parse("2006-01-02", value)
+}
+
+type ThirdParty struct {
+   EmbedURL string `json:"embedUrl"`
+}
+
+func (c Context) Player(id string) (*Player, error) {
+   return c.PlayerHeader(googAPI, id)
+}
+
+func (c Context) PlayerHeader(head http.Header, id string) (*Player, error) {
    var body struct {
       Context Context `json:"context"`
       RacyCheckOK bool `json:"racyCheckOk,omitempty"`
@@ -141,15 +133,76 @@ func (c Context) player(head http.Header, id string) (*http.Response, error) {
    }
    req.Header = head
    LogLevel.Dump(req)
-   return new(http.Transport).RoundTrip(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   play := new(Player)
+   if err := json.NewDecoder(res.Body).Decode(play); err != nil {
+      return nil, err
+   }
+   return play, nil
+}
+
+type Search struct {
+   Contents struct {
+      SectionListRenderer struct {
+         Contents []struct {
+            ItemSectionRenderer *struct {
+               Contents []Item
+            }
+         }
+      }
+   }
 }
 
 type Item struct {
    CompactVideoRenderer *struct {
-      LengthText text
-      Title text
+      Title struct {
+         Runs []struct {
+            Text string
+         }
+      }
       VideoID string
    }
+}
+
+func (s Search) Items() []Item {
+   var items []Item
+   for _, sect := range s.Contents.SectionListRenderer.Contents {
+      if sect.ItemSectionRenderer != nil {
+         for _, item := range sect.ItemSectionRenderer.Contents {
+            if item.CompactVideoRenderer != nil {
+               items = append(items, item)
+            }
+         }
+      }
+   }
+   return items
+}
+
+type VideoDetails struct {
+   VideoID string
+   LengthSeconds int64 `json:"lengthSeconds,string"`
+   ViewCount int64 `json:"viewCount,string"`
+   Author string
+   Title string
+   ShortDescription string
+}
+
+func (v VideoDetails) String() string {
+   buf := []byte("VideoID: ")
+   buf = append(buf, v.VideoID...)
+   buf = append(buf, "\nLength: "...)
+   buf = strconv.AppendInt(buf, v.LengthSeconds, 10)
+   buf = append(buf, "\nViewCount: "...)
+   buf = strconv.AppendInt(buf, v.ViewCount, 10)
+   buf = append(buf, "\nAuthor: "...)
+   buf = append(buf, v.Author...)
+   buf = append(buf, "\nTitle: "...)
+   buf = append(buf, v.Title...)
+   return string(buf)
 }
 
 type PlayabilityStatus struct {
@@ -171,84 +224,12 @@ func (p PlayabilityStatus) String() string {
 type Player struct {
    Microformat struct {
       PlayerMicroformatRenderer struct {
-         AvailableCountries []string
          PublishDate string // 2013-06-11
       }
    }
    PlayabilityStatus PlayabilityStatus
    StreamingData struct {
       AdaptiveFormats []Format
-      // just including this so I can bail if video is Dash Manifest
-      DashManifestURL string
-      Formats []Format
    }
    VideoDetails VideoDetails
-}
-
-func (p Player) Date() (time.Time, error) {
-   value := p.Microformat.PlayerMicroformatRenderer.PublishDate
-   return time.Parse("2006-01-02", value)
-}
-
-type Search struct {
-   Contents struct {
-      SectionListRenderer struct {
-         Contents []struct {
-            ItemSectionRenderer *struct {
-               Contents []Item
-            }
-         }
-      }
-   }
-}
-
-func (s Search) Items() []Item {
-   var items []Item
-   for _, sect := range s.Contents.SectionListRenderer.Contents {
-      if sect.ItemSectionRenderer != nil {
-         for _, item := range sect.ItemSectionRenderer.Contents {
-            if item.CompactVideoRenderer != nil {
-               items = append(items, item)
-            }
-         }
-      }
-   }
-   return items
-}
-
-type ThirdParty struct {
-   EmbedURL string `json:"embedUrl"`
-}
-
-type VideoDetails struct {
-   VideoID string
-   LengthSeconds int64 `json:"lengthSeconds,string"`
-   ViewCount int64 `json:"viewCount,string"`
-   Author string
-   Title string
-   ShortDescription string
-}
-
-func (v VideoDetails) Duration() time.Duration {
-   return time.Duration(v.LengthSeconds) * time.Second
-}
-
-func (v VideoDetails) String() string {
-   buf := []byte("VideoID: ")
-   buf = append(buf, v.VideoID...)
-   buf = append(buf, "\nLength: "...)
-   buf = append(buf, v.Duration().String()...)
-   buf = append(buf, "\nViewCount: "...)
-   buf = strconv.AppendInt(buf, v.ViewCount, 10)
-   buf = append(buf, "\nAuthor: "...)
-   buf = append(buf, v.Author...)
-   buf = append(buf, "\nTitle: "...)
-   buf = append(buf, v.Title...)
-   return string(buf)
-}
-
-type text struct {
-   Runs []struct {
-      Text string
-   }
 }
