@@ -43,12 +43,12 @@ type Context struct {
 }
 
 var Android = Context{
-   Client: Client{Name: "ANDROID", Version: "17.08.34"},
+   Client: Client{Name: "ANDROID", Version: "17.09.33"},
 }
 
 // HsUATh_Nc2U
 var Embed = Context{
-   Client: Client{Name: "ANDROID", Screen: "EMBED", Version: "17.08.34"},
+   Client: Client{Name: "ANDROID", Screen: "EMBED", Version: "17.09.33"},
    ThirdParty: &ThirdParty{EmbedURL: origin},
 }
 

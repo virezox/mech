@@ -39,9 +39,7 @@ func doManifest(addr string, bandwidth int64, info bool) error {
          fmt.Println(str)
       }
    } else {
-      video := mas.GetStream(func(s hls.Stream) bool {
-         return s.Bandwidth >= bandwidth
-      })
+      video := mas.GetStream(bandwidth)
       addr := video.RemoveURI()
       err := download(prop, addr.String(), video.String())
       if err != nil {

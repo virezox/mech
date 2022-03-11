@@ -33,14 +33,11 @@ func doManifest(guid, bandwidth int64, info bool) error {
          fmt.Println(str)
       }
    } else {
-      str := mas.GetStream(func (s hls.Stream) bool {
-         return s.Bandwidth >= bandwidth
-      })
-      vid, err := nbc.NewVideo(guid)
+      video, err := nbc.NewVideo(guid)
       if err != nil {
          return err
       }
-      if err := download(str, vid); err != nil {
+      if err := download(mas.GetStream(bandwidth), video); err != nil {
          return err
       }
    }

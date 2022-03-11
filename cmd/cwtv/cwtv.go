@@ -45,10 +45,7 @@ func doManifest(addr string, bandwidth int64, info bool) error {
          }
       }
    } else {
-      str := mas.GetStream(func (s hls.Stream) bool {
-         return s.Bandwidth >= bandwidth
-      })
-      err := download(str, video)
+      err := download(mas.GetStream(bandwidth), video)
       if err != nil {
          return err
       }

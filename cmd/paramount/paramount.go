@@ -34,10 +34,7 @@ func doManifest(guid string, bandwidth int64, info bool) error {
          fmt.Println(video)
       }
    } else {
-      video := mas.GetStream(func (s hls.Stream) bool {
-         return s.Bandwidth >= bandwidth
-      })
-      if err := download(media, video); err != nil {
+      if err := download(media, mas.GetStream(bandwidth)); err != nil {
          return err
       }
    }

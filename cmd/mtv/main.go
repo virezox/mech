@@ -11,7 +11,7 @@ func main() {
    flag.StringVar(&address, "a", "", "address")
    // f
    var bandwidth int64
-   flag.Int64Var(&bandwidth, "f", 999_999, "min bandwidth")
+   flag.Int64Var(&bandwidth, "f", 1_287_890, "target bandwidth")
    // i
    var info bool
    flag.BoolVar(&info, "i", false, "info")
