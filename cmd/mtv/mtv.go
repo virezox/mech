@@ -30,8 +30,7 @@ func doManifest(addr string, bandwidth int64, info bool) error {
       return err
    }
    if info {
-      prop.Data.Item.VideoServiceURL = ""
-      fmt.Println(prop.Data.Item)
+      fmt.Println(prop.Data.Item.WithURL(""))
       for _, str := range mas.Stream {
          fmt.Println(str.WithURI(nil))
       }

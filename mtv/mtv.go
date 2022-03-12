@@ -50,6 +50,11 @@ func (i Item) String() string {
    return buf.String()
 }
 
+func (i Item) WithURL(s string) Item {
+   i.VideoServiceURL = s
+   return i
+}
+
 type Property struct {
    Data struct {
       Item Item

@@ -63,6 +63,11 @@ func (f Format) Format() (string, error) {
    return string(buf), nil
 }
 
+func (f Format) WithURL(s string) Format {
+   f.URL = s
+   return f
+}
+
 func (f Format) Write(dst io.Writer) error {
    req, err := http.NewRequest("GET", f.URL, nil)
    if err != nil {
