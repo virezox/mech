@@ -207,10 +207,6 @@ func (p Player) Details() string {
    return string(buf)
 }
 
-func (p Player) base() string {
-   return p.VideoDetails.Author + "-" + p.VideoDetails.Title
-}
-
 type Player struct {
    StreamingData StreamingData
    Microformat struct {
