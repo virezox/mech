@@ -84,6 +84,27 @@ type Status struct {
    }
 }
 
+func (s Status) Base(id int64) string {
+   buf := []byte(s.User.Name)
+   buf = append(buf, '-')
+   buf = strconv.AppendInt(buf, id, 10)
+   return string(buf)
+}
+
+type Variant struct {
+   Bitrate int64
+   Content_Type string
+   URL string
+}
+
+func (v Variant) Ext() (string, error) {
+   addr, err := url.Parse(v.URL)
+   if err != nil {
+      return "", err
+   }
+   return path.Ext(addr.Path), nil
+}
+
 func (g Guest) Status(id int64) (*Status, error) {
    buf := []byte("https://api.twitter.com/1.1/statuses/show/")
    buf = strconv.AppendInt(buf, id, 10)
@@ -121,24 +142,6 @@ func (s Status) String() string {
       buf = append(buf, media.String()...)
    }
    return string(buf)
-}
-
-type Variant struct {
-   Bitrate int64
-   Content_Type string
-   URL string
-}
-
-func (v Variant) Name(stat *Status, id int64) (string, error) {
-   addr, err := url.Parse(v.URL)
-   if err != nil {
-      return "", err
-   }
-   buf := []byte(stat.User.Name)
-   buf = append(buf, '-')
-   buf = strconv.AppendInt(buf, id, 10)
-   buf = append(buf, path.Ext(addr.Path)...)
-   return string(buf), nil
 }
 
 func (v Variant) String() string {
