@@ -9,19 +9,19 @@ import (
    "strings"
 )
 
-func (x Exchange) Create(name string) error {
+func (x Exchange) Create(elem ...string) error {
+   name := filepath.Join(elem...)
    err := os.MkdirAll(filepath.Dir(name), os.ModeDir)
    if err != nil {
       return err
    }
+   os.Stdout.WriteString("Create " + name + "\n")
    file, err := os.Create(name)
    if err != nil {
       return err
    }
    defer file.Close()
-   enc := json.NewEncoder(file)
-   enc.SetIndent("", " ")
-   return enc.Encode(x)
+   return json.NewEncoder(file).Encode(x)
 }
 
 func OpenExchange(elem ...string) (*Exchange, error) {
