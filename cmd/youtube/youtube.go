@@ -129,15 +129,17 @@ func (v video) doAudio(play *youtube.Player) error {
 
 func (v video) doVideo(play *youtube.Player) error {
    sort.Sort(youtube.Height{play.StreamingData, v.height})
-   form := play.StreamingData.AdaptiveFormats[0]
-   ext, err := form.Ext()
-   if err != nil {
-      return err
+   for _, form := range play.StreamingData.AdaptiveFormats {
+      ext, err := form.Ext()
+      if err != nil {
+         return err
+      }
+      file, err := os.Create(play.Base() + ext)
+      if err != nil {
+         return err
+      }
+      defer file.Close()
+      return form.Write(file)
    }
-   file, err := os.Create(play.Base() + ext)
-   if err != nil {
-      return err
-   }
-   defer file.Close()
-   return form.Write(file)
+   return nil
 }
