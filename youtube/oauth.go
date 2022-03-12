@@ -9,6 +9,21 @@ import (
    "strings"
 )
 
+func (x Exchange) Create(name string) error {
+   err := os.MkdirAll(filepath.Dir(name), os.ModeDir)
+   if err != nil {
+      return err
+   }
+   file, err := os.Create(name)
+   if err != nil {
+      return err
+   }
+   defer file.Close()
+   enc := json.NewEncoder(file)
+   enc.SetIndent("", " ")
+   return enc.Encode(x)
+}
+
 func OpenExchange(elem ...string) (*Exchange, error) {
    file, err := os.Open(filepath.Join(elem...))
    if err != nil {
@@ -40,21 +55,6 @@ func (x Exchange) Header() http.Header {
    head := make(http.Header)
    head.Set("Authorization", "Bearer " + x.Access_Token)
    return head
-}
-
-func (x Exchange) Create(name string) error {
-   err := os.MkdirAll(filepath.Dir(name), os.ModeDir)
-   if err != nil {
-      return err
-   }
-   file, err := os.Create(name)
-   if err != nil {
-      return err
-   }
-   defer file.Close()
-   enc := json.NewEncoder(file)
-   enc.SetIndent("", " ")
-   return enc.Encode(x)
 }
 
 func (x *Exchange) Refresh() error {
