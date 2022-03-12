@@ -26,8 +26,7 @@ func doManifest(guid, bandwidth int64, info bool) error {
    }
    if info {
       for _, str := range mas.Stream {
-         str.URI = nil
-         fmt.Println(str)
+         fmt.Println(str.WithURI(nil))
       }
    } else {
       video, err := nbc.NewVideo(guid)
@@ -49,8 +48,6 @@ func download(video *nbc.Video, str hls.Stream) error {
       return err
    }
    defer res.Body.Close()
-   str.URI = nil
-   fmt.Println(str)
    seg, err := hls.NewSegment(res.Request.URL, res.Body)
    if err != nil {
       return err
@@ -60,6 +57,7 @@ func download(video *nbc.Video, str hls.Stream) error {
       return err
    }
    defer file.Close()
+   fmt.Println(str.WithURI(nil))
    for i, info := range seg.Info {
       fmt.Print(seg.Progress(i))
       res, err := http.Get(info.URI.String())

@@ -5,6 +5,7 @@ import (
    "github.com/89z/format/hls"
    "github.com/89z/mech/mtv"
    "net/http"
+   "net/url"
    "os"
    "sort"
 )
@@ -32,26 +33,21 @@ func doManifest(addr string, bandwidth int64, info bool) error {
       prop.Data.Item.VideoServiceURL = ""
       fmt.Println(prop.Data.Item)
       for _, str := range mas.Stream {
-         str.URI = nil
-         fmt.Println(str)
+         fmt.Println(str.WithURI(nil))
       }
    } else {
       sort.Sort(hls.Bandwidth{mas, bandwidth})
       video := mas.Stream[0]
-      addr := video.RemoveURI()
-      err := download(prop, addr.String(), video.String())
+      err := download(prop, video.URI, video.WithURI(nil).String())
       if err != nil {
          return err
       }
-      audio := mas.GetMedia(video)
-      if err := download(prop, audio.URI.String(), ""); err != nil {
-         return err
-      }
+      return download(prop, mas.GetMedia(video).URI, "")
    }
    return nil
 }
 
-func download(prop *mtv.Property, addr, stream string) error {
+func download(prop *mtv.Property, addr *url.URL, stream string) error {
    seg, err := newSegment(addr)
    if err != nil {
       return err
@@ -90,9 +86,9 @@ func download(prop *mtv.Property, addr, stream string) error {
    return nil
 }
 
-func newSegment(addr string) (*hls.Segment, error) {
+func newSegment(addr *url.URL) (*hls.Segment, error) {
    fmt.Println("GET", addr)
-   res, err := http.Get(addr)
+   res, err := http.Get(addr.String())
    if err != nil {
       return nil, err
    }

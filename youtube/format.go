@@ -10,21 +10,6 @@ import (
    "time"
 )
 
-func (p Player) Base() string {
-   return format.Clean(p.VideoDetails.Author + "-" + p.VideoDetails.Title)
-}
-
-func (f Format) Ext() (string, error) {
-   exts, err := mime.ExtensionsByType(f.MimeType)
-   if err != nil {
-      return "", err
-   }
-   for _, ext := range exts {
-      return ext, nil
-   }
-   return "", notPresent{f.MimeType}
-}
-
 const partLength = 10_000_000
 
 var LogLevel format.LogLevel
@@ -39,6 +24,17 @@ type Format struct {
    QualityLabel string
    URL string
    Width int
+}
+
+func (f Format) Ext() (string, error) {
+   exts, err := mime.ExtensionsByType(f.MimeType)
+   if err != nil {
+      return "", err
+   }
+   for _, ext := range exts {
+      return ext, nil
+   }
+   return "", notPresent{f.MimeType}
 }
 
 func (f Format) Format() (string, error) {

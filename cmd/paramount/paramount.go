@@ -27,8 +27,7 @@ func doManifest(guid string, bandwidth int64, info bool) error {
    if info {
       fmt.Println(media.Body.Seq.Video.Title)
       for _, video := range mas.Stream {
-         video.URI = nil
-         fmt.Println(video)
+         fmt.Println(video.WithURI(nil))
       }
    } else {
       sort.Sort(hls.Bandwidth{mas, bandwidth})
@@ -59,8 +58,7 @@ func download(media *paramount.Media, video hls.Stream) error {
       return err
    }
    defer file.Close()
-   video.URI = nil
-   fmt.Println(video)
+   fmt.Println(video.WithURI(nil))
    for i, info := range seg.Info {
       fmt.Print(seg.Progress(i))
       res, err := http.Get(info.URI.String())

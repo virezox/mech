@@ -3,7 +3,34 @@ package main
 import (
    "flag"
    "github.com/89z/mech/youtube"
+   "os"
 )
+
+func (v video) player() (*youtube.Player, error) {
+   client := youtube.Android
+   if v.embed {
+      client = youtube.Embed
+   }
+   if v.id == "" {
+      var err error
+      v.id, err = youtube.VideoID(v.address)
+      if err != nil {
+         return nil, err
+      }
+   }
+   if v.construct {
+      cache, err := os.UserCacheDir()
+      if err != nil {
+         return nil, err
+      }
+      exc, err := youtube.OpenExchange(cache, "/mech/youtube.json")
+      if err != nil {
+         return nil, err
+      }
+      return client.PlayerHeader(exc.Header(), v.id)
+   }
+   return client.Player(v.id)
+}
 
 func main() {
    var vid video

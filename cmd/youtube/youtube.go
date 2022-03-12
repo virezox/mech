@@ -51,33 +51,7 @@ type video struct {
 }
 
 func (v video) do() error {
-   client := youtube.Android
-   if v.embed {
-      client = youtube.Embed
-   }
-   var (
-      err error
-      play *youtube.Player
-   )
-   if v.id == "" {
-      v.id, err = youtube.VideoID(v.address)
-      if err != nil {
-         return err
-      }
-   }
-   if v.construct {
-      cache, err := os.UserCacheDir()
-      if err != nil {
-         return err
-      }
-      exc, err := youtube.OpenExchange(cache, "/mech/youtube.json")
-      if err != nil {
-         return err
-      }
-      play, err = client.PlayerHeader(exc.Header(), v.id)
-   } else {
-      play, err = client.Player(v.id)
-   }
+   play, err := v.player()
    if err != nil {
       return err
    }
@@ -139,7 +113,9 @@ func (v video) doVideo(play *youtube.Player) error {
          return err
       }
       defer file.Close()
-      return form.Write(file)
+      if err := form.Write(file); err != nil {
+         return err
+      }
    }
    return nil
 }

@@ -11,6 +11,12 @@ import (
    "time"
 )
 
+const origin = "https://www.youtube.com"
+
+var googAPI = http.Header{
+   "X-Goog-Api-Key": {"AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8"},
+}
+
 // https://youtube.com/shorts/9Vsdft81Q6w
 // https://youtube.com/watch?v=XY-hOqcPGCY
 func VideoID(address string) (string, error) {
@@ -25,10 +31,15 @@ func VideoID(address string) (string, error) {
    return path.Base(parse.Path), nil
 }
 
-const origin = "https://www.youtube.com"
-
-var googAPI = http.Header{
-   "X-Goog-Api-Key": {"AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8"},
+func encode(val interface{}) (*bytes.Buffer, error) {
+   buf := new(bytes.Buffer)
+   enc := json.NewEncoder(buf)
+   enc.SetIndent("", " ")
+   err := enc.Encode(val)
+   if err != nil {
+      return nil, err
+   }
+   return buf, nil
 }
 
 type Client struct {
@@ -54,53 +65,6 @@ var Embed = Context{
 
 var Mweb = Context{
    Client: Client{Name: "MWEB", Version: "2.20211109.01.00"},
-}
-
-func (c Context) Search(query string) (*Search, error) {
-   var body struct {
-      Context Context `json:"context"`
-      Params string `json:"params"`
-      Query string `json:"query"`
-   }
-   body.Query = query
-   filter := NewFilter().Type(TypeVideo)
-   body.Params = NewParams().Filter(filter).Encode()
-   body.Context = c
-   buf := new(bytes.Buffer)
-   if err := json.NewEncoder(buf).Encode(body); err != nil {
-      return nil, err
-   }
-   req, err := http.NewRequest("POST", origin + "/youtubei/v1/search", buf)
-   if err != nil {
-      return nil, err
-   }
-   req.Header = googAPI
-   LogLevel.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   search := new(Search)
-   if err := json.NewDecoder(res.Body).Decode(search); err != nil {
-      return nil, err
-   }
-   return search, nil
-}
-
-func encode(val interface{}) (*bytes.Buffer, error) {
-   buf := new(bytes.Buffer)
-   enc := json.NewEncoder(buf)
-   enc.SetIndent("", " ")
-   err := enc.Encode(val)
-   if err != nil {
-      return nil, err
-   }
-   return buf, nil
-}
-
-type ThirdParty struct {
-   EmbedURL string `json:"embedUrl"`
 }
 
 func (c Context) Player(id string) (*Player, error) {
@@ -140,16 +104,53 @@ func (c Context) PlayerHeader(head http.Header, id string) (*Player, error) {
    return play, nil
 }
 
-type Search struct {
-   Contents struct {
-      SectionListRenderer struct {
-         Contents []struct {
-            ItemSectionRenderer *struct {
-               Contents []Item
-            }
-         }
-      }
+func (c Context) Search(query string) (*Search, error) {
+   var body struct {
+      Context Context `json:"context"`
+      Params string `json:"params"`
+      Query string `json:"query"`
    }
+   body.Query = query
+   filter := NewFilter().Type(TypeVideo)
+   body.Params = NewParams().Filter(filter).Encode()
+   body.Context = c
+   buf := new(bytes.Buffer)
+   if err := json.NewEncoder(buf).Encode(body); err != nil {
+      return nil, err
+   }
+   req, err := http.NewRequest("POST", origin + "/youtubei/v1/search", buf)
+   if err != nil {
+      return nil, err
+   }
+   req.Header = googAPI
+   LogLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   search := new(Search)
+   if err := json.NewDecoder(res.Body).Decode(search); err != nil {
+      return nil, err
+   }
+   return search, nil
+}
+
+type Height struct {
+   StreamingData
+   Target int
+}
+
+func (h Height) Less(i, j int) bool {
+   return h.distance(i) < h.distance(j)
+}
+
+func (h Height) distance(i int) int {
+   diff := h.AdaptiveFormats[i].Height - h.Target
+   if diff >= 0 {
+      return diff
+   }
+   return -diff
 }
 
 type Item struct {
@@ -161,50 +162,6 @@ type Item struct {
       }
       VideoID string
    }
-}
-
-func (s Search) Items() []Item {
-   var items []Item
-   for _, sect := range s.Contents.SectionListRenderer.Contents {
-      if sect.ItemSectionRenderer != nil {
-         for _, item := range sect.ItemSectionRenderer.Contents {
-            if item.CompactVideoRenderer != nil {
-               items = append(items, item)
-            }
-         }
-      }
-   }
-   return items
-}
-
-func (p Player) Date() (time.Time, error) {
-   value := p.Microformat.PlayerMicroformatRenderer.PublishDate
-   return time.Parse("2006-01-02", value)
-}
-
-func (p Player) Status() string {
-   var buf strings.Builder
-   buf.WriteString("Status: ")
-   buf.WriteString(p.PlayabilityStatus.Status)
-   if p.PlayabilityStatus.Reason != "" {
-      buf.WriteString("\nReason: ")
-      buf.WriteString(p.PlayabilityStatus.Reason)
-   }
-   return buf.String()
-}
-
-func (p Player) Details() string {
-   buf := []byte("VideoID: ")
-   buf = append(buf, p.VideoDetails.VideoID...)
-   buf = append(buf, "\nLength: "...)
-   buf = strconv.AppendInt(buf, p.VideoDetails.LengthSeconds, 10)
-   buf = append(buf, "\nViewCount: "...)
-   buf = strconv.AppendInt(buf, p.VideoDetails.ViewCount, 10)
-   buf = append(buf, "\nAuthor: "...)
-   buf = append(buf, p.VideoDetails.Author...)
-   buf = append(buf, "\nTitle: "...)
-   buf = append(buf, p.VideoDetails.Title...)
-   return string(buf)
 }
 
 type Player struct {
@@ -228,21 +185,64 @@ type Player struct {
    }
 }
 
-type Height struct {
-   StreamingData
-   Target int
+func (p Player) Base() string {
+   return format.Clean(p.VideoDetails.Author + "-" + p.VideoDetails.Title)
 }
 
-func (h Height) Less(i, j int) bool {
-   return h.distance(i) < h.distance(j)
+func (p Player) Date() (time.Time, error) {
+   value := p.Microformat.PlayerMicroformatRenderer.PublishDate
+   return time.Parse("2006-01-02", value)
 }
 
-func (h Height) distance(i int) int {
-   diff := h.AdaptiveFormats[i].Height - h.Target
-   if diff >= 0 {
-      return diff
+func (p Player) Details() string {
+   buf := []byte("VideoID: ")
+   buf = append(buf, p.VideoDetails.VideoID...)
+   buf = append(buf, "\nLength: "...)
+   buf = strconv.AppendInt(buf, p.VideoDetails.LengthSeconds, 10)
+   buf = append(buf, "\nViewCount: "...)
+   buf = strconv.AppendInt(buf, p.VideoDetails.ViewCount, 10)
+   buf = append(buf, "\nAuthor: "...)
+   buf = append(buf, p.VideoDetails.Author...)
+   buf = append(buf, "\nTitle: "...)
+   buf = append(buf, p.VideoDetails.Title...)
+   return string(buf)
+}
+
+func (p Player) Status() string {
+   var buf strings.Builder
+   buf.WriteString("Status: ")
+   buf.WriteString(p.PlayabilityStatus.Status)
+   if p.PlayabilityStatus.Reason != "" {
+      buf.WriteString("\nReason: ")
+      buf.WriteString(p.PlayabilityStatus.Reason)
    }
-   return -diff
+   return buf.String()
+}
+
+type Search struct {
+   Contents struct {
+      SectionListRenderer struct {
+         Contents []struct {
+            ItemSectionRenderer *struct {
+               Contents []Item
+            }
+         }
+      }
+   }
+}
+
+func (s Search) Items() []Item {
+   var items []Item
+   for _, sect := range s.Contents.SectionListRenderer.Contents {
+      if sect.ItemSectionRenderer != nil {
+         for _, item := range sect.ItemSectionRenderer.Contents {
+            if item.CompactVideoRenderer != nil {
+               items = append(items, item)
+            }
+         }
+      }
+   }
+   return items
 }
 
 type StreamingData struct {
@@ -257,4 +257,8 @@ func (s StreamingData) Swap(i, j int) {
    swap := s.AdaptiveFormats[i]
    s.AdaptiveFormats[i] = s.AdaptiveFormats[j]
    s.AdaptiveFormats[j] = swap
+}
+
+type ThirdParty struct {
+   EmbedURL string `json:"embedUrl"`
 }
