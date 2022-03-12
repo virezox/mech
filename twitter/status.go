@@ -11,12 +11,12 @@ import (
 
 func (s Status) String() string {
    var buf []byte
-   buf = append(buf, "Created: "...)
-   buf = append(buf, s.Created_At...)
-   buf = append(buf, "\nScreen Name: "...)
+   buf = append(buf, "Screen Name: "...)
    buf = append(buf, s.User.Screen_Name...)
    buf = append(buf, "\nName: "...)
    buf = append(buf, s.User.Name...)
+   buf = append(buf, "\nCreated: "...)
+   buf = append(buf, s.Created_At...)
    buf = append(buf, "\nText: "...)
    buf = append(buf, s.Full_Text...)
    for _, media := range s.Extended_Entities.Media {
@@ -150,10 +150,9 @@ func (g Guest) Status(id int64) (*Status, error) {
 }
 
 func (v Variant) String() string {
-   buf := []byte("Bitrate:")
+   var buf []byte
+   buf = append(buf, "Bitrate:"...)
    buf = strconv.AppendInt(buf, v.Bitrate, 10)
-   buf = append(buf, " Type:"...)
-   buf = append(buf, v.Content_Type...)
    buf = append(buf, " URL:"...)
    buf = append(buf, v.URL...)
    return string(buf)

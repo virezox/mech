@@ -4,37 +4,75 @@ import (
    "encoding/json"
    "github.com/89z/format"
    "net/http"
+   "net/url"
    "strconv"
    "strings"
    "time"
 )
 
+func (w JsonWeb) Video(clip *Clip) (*Video, error) {
+   buf := []byte("https://api.vimeo.com/videos/")
+   buf = strconv.AppendInt(buf, clip.ID, 10)
+   if clip.UnlistedHash != "" {
+      buf = append(buf, ':')
+      buf = append(buf, clip.UnlistedHash...)
+   }
+   req, err := http.NewRequest("GET", string(buf), nil)
+   if err != nil {
+      return nil, err
+   }
+   req.Header.Set("Authorization", "JWT " + w.Token)
+   req.URL.RawQuery = "fields=duration,download,name,pictures,release_time"
+   LogLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return nil, errorString(res.Status)
+   }
+   vid := new(Video)
+   if err := json.NewDecoder(res.Body).Decode(vid); err != nil {
+      return nil, err
+   }
+   return vid, nil
+}
+
 var LogLevel format.LogLevel
 
 type Clip struct {
-   ID, UnlistedHash int64
+   ID int64
+   UnlistedHash string
 }
 
 func NewClip(address string) (*Clip, error) {
-   var (
-      clipPage Clip
-      err error
-   )
-   fields := strings.FieldsFunc(address, func(r rune) bool {
-      return r < '0' || r > '9'
+   addr, err := url.Parse(address)
+   if err != nil {
+      return nil, err
+   }
+   field := strings.FieldsFunc(addr.Path, func(r rune) bool {
+      return r == '/'
    })
-   for key, val := range fields {
-      switch key {
-      case 0:
-         clipPage.ID, err = strconv.ParseInt(val, 10, 64)
-      case 1:
-         clipPage.UnlistedHash, err = strconv.ParseInt(val, 10, 64)
-      }
-      if err != nil {
-         return nil, err
+   var clip Clip
+   for key, val := range field {
+      if clip.ID >= 1 {
+         clip.UnlistedHash = val
+      } else if key == 1 || val != "video" {
+         clip.ID, err = strconv.ParseInt(val, 10, 64)
+         if err != nil {
+            return nil, err
+         }
       }
    }
-   return &clipPage, nil
+   val := addr.Query()
+   if hash := val.Get("h"); hash != "" {
+      clip.UnlistedHash = hash
+   }
+   if hash := val.Get("unlisted_hash"); hash != "" {
+      clip.UnlistedHash = hash
+   }
+   return &clip, nil
 }
 
 type JsonWeb struct {
@@ -58,35 +96,6 @@ func NewJsonWeb() (*JsonWeb, error) {
       return nil, err
    }
    return web, nil
-}
-
-func (w JsonWeb) Video(clip *Clip) (*Video, error) {
-   buf := []byte("https://api.vimeo.com/videos/")
-   buf = strconv.AppendInt(buf, clip.ID, 10)
-   if clip.UnlistedHash >= 1 {
-      buf = append(buf, ':')
-      buf = strconv.AppendInt(buf, clip.UnlistedHash, 10)
-   }
-   req, err := http.NewRequest("GET", string(buf), nil)
-   if err != nil {
-      return nil, err
-   }
-   req.Header.Set("Authorization", "JWT " + w.Token)
-   req.URL.RawQuery = "fields=duration,download,name,pictures,release_time"
-   LogLevel.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return nil, errorString(res.Status)
-   }
-   vid := new(Video)
-   if err := json.NewDecoder(res.Body).Decode(vid); err != nil {
-      return nil, err
-   }
-   return vid, nil
 }
 
 type Video struct {
