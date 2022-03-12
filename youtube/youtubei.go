@@ -13,16 +13,16 @@ import (
 
 // https://youtube.com/shorts/9Vsdft81Q6w
 // https://youtube.com/watch?v=XY-hOqcPGCY
-func VideoID(rawURL string) (string, error) {
-   addr, err := url.Parse(rawURL)
+func VideoID(address string) (string, error) {
+   parse, err := url.Parse(address)
    if err != nil {
       return "", err
    }
-   v := addr.Query().Get("v")
+   v := parse.Query().Get("v")
    if v != "" {
       return v, nil
    }
-   return path.Base(addr.Path), nil
+   return path.Base(parse.Path), nil
 }
 
 const origin = "https://www.youtube.com"

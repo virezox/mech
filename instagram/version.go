@@ -98,11 +98,8 @@ func (l Login) Create(name string) error {
       return err
    }
    defer file.Close()
-   enc := json.NewEncoder(file)
-   enc.SetIndent("", " ")
-   return enc.Encode(l)
+   return json.NewEncoder(file).Encode(l)
 }
-
 
 // I noticed that even with the posts that have `video_dash_manifest`, you have
 // to request with a correct User-Agent. If you use wrong agent, you will get a

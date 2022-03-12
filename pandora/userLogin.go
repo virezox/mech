@@ -101,9 +101,7 @@ func (u UserLogin) Create(name string) error {
       return err
    }
    defer file.Close()
-   enc := json.NewEncoder(file)
-   enc.SetIndent("", " ")
-   return enc.Encode(u)
+   return json.NewEncoder(file).Encode(u)
 }
 
 func (u UserLogin) PlaybackInfo(id string) (*PlaybackInfo, error) {

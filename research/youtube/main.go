@@ -2,28 +2,35 @@ package main
 
 import (
    "flag"
-   "fmt"
    "github.com/89z/mech/youtube"
 )
 
+type video struct {
+   address string
+   audio string
+   construct bool
+   embed bool
+   height int
+   id string
+   info bool
+}
+
 func main() {
+   var vid video
    // a
-   var address string
-   flag.StringVar(&address, "a", "", "address")
+   flag.StringVar(&vid.address, "a", "", "address")
    // b
-   var videoID string
-   flag.StringVar(&videoID, "b", "", "video ID")
+   flag.StringVar(&vid.id, "b", "", "video ID")
    // c
-   var construct bool
-   flag.BoolVar(&construct, "c", false, "OAuth construct request")
+   flag.BoolVar(&vid.construct, "c", false, "OAuth construct request")
    // e
-   var embed bool
-   flag.BoolVar(&embed, "e", false, "use embedded player")
+   flag.BoolVar(&vid.embed, "e", false, "use embedded player")
    // f
+   flag.IntVar(&vid.height, "f", 720, "target video height")
    // g
+   flag.StringVar(&vid.audio, "g", "AUDIO_QUALITY_MEDIUM", "target audio")
    // i
-   var info bool
-   flag.BoolVar(&info, "i", false, "information")
+   flag.BoolVar(&vid.info, "i", false, "information")
    // r
    var refresh bool
    flag.BoolVar(&refresh, "r", false, "OAuth token refresh")
@@ -47,12 +54,11 @@ func main() {
       if err != nil {
          panic(err)
       }
-   } else if videoID != "" || address != "" {
-      id, err := getID(videoID, address)
+   } else if vid.id != "" || vid.address != "" {
+      err := vid.do()
       if err != nil {
          panic(err)
       }
-      fmt.Println(id)
    } else {
       flag.Usage()
    }
