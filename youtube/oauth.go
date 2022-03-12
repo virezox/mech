@@ -9,6 +9,19 @@ import (
    "strings"
 )
 
+func OpenExchange(elem ...string) (*Exchange, error) {
+   file, err := os.Open(filepath.Join(elem...))
+   if err != nil {
+      return nil, err
+   }
+   defer file.Close()
+   exc := new(Exchange)
+   if err := json.NewDecoder(file).Decode(exc); err != nil {
+      return nil, err
+   }
+   return exc, nil
+}
+
 const (
    // YouTube on TV
    clientID =
@@ -27,19 +40,6 @@ func (x Exchange) Header() http.Header {
    head := make(http.Header)
    head.Set("Authorization", "Bearer " + x.Access_Token)
    return head
-}
-
-func OpenExchange(name string) (*Exchange, error) {
-   file, err := os.Open(name)
-   if err != nil {
-      return nil, err
-   }
-   defer file.Close()
-   exc := new(Exchange)
-   if err := json.NewDecoder(file).Decode(exc); err != nil {
-      return nil, err
-   }
-   return exc, nil
 }
 
 func (x Exchange) Create(name string) error {
