@@ -10,8 +10,7 @@ func TestSearch(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   LogLevel = 1
-   sea, err := guest.Search("filter:spaces", 2)
+   sea, err := guest.Search("filter:spaces")
    if err != nil {
       t.Fatal(err)
    }
