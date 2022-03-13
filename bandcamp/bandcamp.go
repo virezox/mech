@@ -12,18 +12,6 @@ import (
    "time"
 )
 
-func (t Track) Name(tralb *Tralbum, head http.Header) (string, error) {
-   typ := head.Get("Content-Type")
-   exts, err := mime.ExtensionsByType(typ)
-   if err != nil {
-      return "", err
-   }
-   for _, ext := range exts {
-      return format.Clean(tralb.Tralbum_Artist + "-" + t.Title) + ext, nil
-   }
-   return "", notPresent{typ}
-}
-
 type notPresent struct {
    value string
 }
@@ -202,15 +190,14 @@ func (i Item) Type() string {
    return ""
 }
 
-type Track struct {
-   Track_Num int
-   Title string
-   Streaming_URL map[string]string
-}
-
 func (t Track) MP3_128() (string, bool) {
    mp3, ok := t.Streaming_URL["mp3-128"]
    return mp3, ok
+}
+
+
+func (t Tralbum) Date() time.Time {
+   return time.Unix(t.Release_Date, 0)
 }
 
 type Tralbum struct {
@@ -221,7 +208,24 @@ type Tralbum struct {
    Tralbum_Artist string
 }
 
-func (t Tralbum) Date() time.Time {
-   return time.Unix(t.Release_Date, 0)
+func (t Tralbum) Base() string {
+   return format.Clean(t.Tralbum_Artist + "-" + t.Title)
 }
 
+type Track struct {
+   Track_Num int
+   Title string
+   Streaming_URL map[string]string
+}
+
+func (t Track) Ext(head http.Header) (string, error) {
+   typ := head.Get("Content-Type")
+   exts, err := mime.ExtensionsByType(typ)
+   if err != nil {
+      return "", err
+   }
+   for _, ext := range exts {
+      return ext, nil
+   }
+   return "", notPresent{typ}
+}

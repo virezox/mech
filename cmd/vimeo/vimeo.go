@@ -8,27 +8,21 @@ import (
    "net/url"
    "os"
    "path"
-   "sort"
 )
 
-func doClip(clip *vimeo.Clip, addr, name string, info bool) error {
+func doClip(addr, name string, info bool) error {
    web, err := vimeo.NewJsonWeb()
    if err != nil {
       return err
    }
-   if addr != "" {
-      clip, err = vimeo.NewClip(addr)
-      if err != nil {
-         return err
-      }
+   clip, err := vimeo.NewClip(addr)
+   if err != nil {
+      return err
    }
    video, err := web.Video(clip)
    if err != nil {
       return err
    }
-   sort.Slice(video.Download, func(a, b int) bool {
-      return video.Download[a].Height < video.Download[b].Height
-   })
    if info {
       fmt.Println(video)
    } else {
