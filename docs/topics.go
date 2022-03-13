@@ -22,7 +22,6 @@ var names = []string{
    ///////////
    "vimeo",
    "paramount",
-   "cwtv",
    "nbc",
    "mtv",
    "bandcamp",

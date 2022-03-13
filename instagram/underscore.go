@@ -6,7 +6,6 @@ import (
    "net/http"
    "strconv"
    "strings"
-   "time"
 )
 
 func appendImage(dst []string, src ImageVersion) []string {
@@ -67,27 +66,6 @@ type EdgeText struct {
    }
 }
 
-type EdgeURL struct {
-   Edges []struct {
-      Node struct {
-         Display_URL string
-         Video_URL string
-      }
-   }
-}
-
-type GraphMedia struct {
-   Edge_Media_To_Caption EdgeText
-   Owner struct {
-      Username string
-   }
-   Display_URL string
-   Video_URL string
-   Edge_Sidecar_To_Children EdgeURL
-   Taken_At_Timestamp int64
-   Edge_Media_To_Parent_Comment EdgeText
-}
-
 func NewGraphMedia(shortcode string) (*GraphMedia, error) {
    var buf strings.Builder
    buf.WriteString("https://www.instagram.com/p/")
@@ -119,31 +97,6 @@ func NewGraphMedia(shortcode string) (*GraphMedia, error) {
    return &post.GraphQL.Shortcode_Media, nil
 }
 
-func (g GraphMedia) String() string {
-   var buf []byte
-   buf = append(buf, "Taken: "...)
-   buf = append(buf, g.Time().String()...)
-   buf = append(buf, "\nOwner: "...)
-   buf = append(buf, g.Owner.Username...)
-   for _, edge := range g.Edge_Media_To_Caption.Edges {
-      buf = append(buf, "\nCaption: "...)
-      buf = append(buf, edge.Node.Text...)
-   }
-   for _, edge := range g.Edge_Media_To_Parent_Comment.Edges {
-      buf = append(buf, "\nComment: "...)
-      buf = append(buf, edge.Node.Text...)
-   }
-   for _, addr := range g.URLs() {
-      buf = append(buf, "\nURL: "...)
-      buf = append(buf, addr...)
-   }
-   return string(buf)
-}
-
-func (g GraphMedia) Time() time.Time {
-   return time.Unix(g.Taken_At_Timestamp, 0)
-}
-
 func (g GraphMedia) URLs() []string {
    src := make(map[string]bool)
    src[g.Display_URL] = true
@@ -167,47 +120,6 @@ type ImageVersion struct {
       Height int
       URL string
    }
-}
-
-type Item struct {
-   Caption struct {
-      Text string
-   }
-   User struct {
-      Username string
-   }
-   Video_DASH_Manifest string
-   Image_Versions2 ImageVersion
-   Video_Versions []VideoVersion
-   Carousel_Media []struct {
-      Video_DASH_Manifest string
-      Image_Versions2 ImageVersion
-      Video_Versions []VideoVersion
-   }
-   Taken_At int64
-}
-
-func (i Item) Format() (string, error) {
-   var buf []byte
-   buf = append(buf, "Taken: "...)
-   buf = append(buf, i.Time().String()...)
-   buf = append(buf, "\nUser: "...)
-   buf = append(buf, i.User.Username...)
-   buf = append(buf, "\nCaption: "...)
-   buf = append(buf, i.Caption.Text...)
-   addrs, err := i.URLs()
-   if err != nil {
-      return "", err
-   }
-   for _, addr := range addrs {
-      buf = append(buf, "\nURL: "...)
-      buf = append(buf, addr...)
-   }
-   return string(buf), nil
-}
-
-func (i Item) Time() time.Time {
-   return time.Unix(i.Taken_At, 0)
 }
 
 func (i Item) URLs() ([]string, error) {
@@ -303,16 +215,6 @@ func (l Login) User(username string) (*User, error) {
    return &profile.GraphQL.User, nil
 }
 
-type User struct {
-   Edge_Followed_By struct {
-      Count int64
-   }
-   Edge_Follow struct {
-      Count int64
-   }
-   Edge_Owner_To_Timeline_Media EdgeURL
-}
-
 func NewUser(username string) (*User, error) {
    return Login{}.User(username)
 }
@@ -343,4 +245,95 @@ type dashManifest struct {
          }
       }
    }
+}
+
+func (g GraphMedia) String() string {
+   var buf []byte
+   buf = append(buf, "Taken: "...)
+   buf = strconv.AppendInt(buf, g.Taken_At_Timestamp, 10)
+   buf = append(buf, "\nOwner: "...)
+   buf = append(buf, g.Owner.Username...)
+   for _, edge := range g.Edge_Media_To_Caption.Edges {
+      buf = append(buf, "\nCaption: "...)
+      buf = append(buf, edge.Node.Text...)
+   }
+   for _, edge := range g.Edge_Media_To_Parent_Comment.Edges {
+      buf = append(buf, "\nComment: "...)
+      buf = append(buf, edge.Node.Text...)
+   }
+   for _, addr := range g.URLs() {
+      buf = append(buf, "\nURL: "...)
+      buf = append(buf, addr...)
+   }
+   return string(buf)
+}
+
+type Item struct {
+   Caption struct {
+      Text string
+   }
+   User struct {
+      Username string
+   }
+   Video_DASH_Manifest string
+   Image_Versions2 ImageVersion
+   Video_Versions []VideoVersion
+   Carousel_Media []struct {
+      Video_DASH_Manifest string
+      Image_Versions2 ImageVersion
+      Video_Versions []VideoVersion
+   }
+   Taken_At int64
+}
+
+func (i Item) Format() (string, error) {
+   var buf []byte
+   buf = append(buf, "Taken: "...)
+   buf = strconv.AppendInt(buf, i.Taken_At, 10)
+   buf = append(buf, "\nUser: "...)
+   buf = append(buf, i.User.Username...)
+   buf = append(buf, "\nCaption: "...)
+   buf = append(buf, i.Caption.Text...)
+   addrs, err := i.URLs()
+   if err != nil {
+      return "", err
+   }
+   for _, addr := range addrs {
+      buf = append(buf, "\nURL: "...)
+      buf = append(buf, addr...)
+   }
+   return string(buf), nil
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+type EdgeURL struct {
+   Edges []struct {
+      Node struct {
+         Display_URL string
+         Video_URL string
+      }
+   }
+}
+
+type GraphMedia struct {
+   Edge_Media_To_Caption EdgeText
+   Owner struct {
+      Username string
+   }
+   Display_URL string
+   Video_URL string
+   Edge_Sidecar_To_Children EdgeURL
+   Taken_At_Timestamp int64
+   Edge_Media_To_Parent_Comment EdgeText
+}
+
+type User struct {
+   Edge_Followed_By struct {
+      Count int64
+   }
+   Edge_Follow struct {
+      Count int64
+   }
+   Edge_Owner_To_Timeline_Media EdgeURL
 }
