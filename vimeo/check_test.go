@@ -11,11 +11,11 @@ const (
 )
 
 func TestVideo(t *testing.T) {
-   vid, err := NewVideo(id, password)
+   check, err := Clip{ID: id}.Check(password)
    if err != nil {
       t.Fatal(err)
    }
-   for _, pro := range vid.Request.Files.Progressive {
-      fmt.Printf("%+v\n", pro)
+   for _, pro := range check.Request.Files.Progressive {
+      fmt.Printf("%+v\n", pro.WithURL(""))
    }
 }
