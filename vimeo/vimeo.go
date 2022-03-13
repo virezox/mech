@@ -10,6 +10,34 @@ import (
    "time"
 )
 
+func NewClip(address string) (*Clip, error) {
+   addr, err := url.Parse(address)
+   if err != nil {
+      return nil, err
+   }
+   fields := strings.FieldsFunc(addr.Path, func(r rune) bool {
+      return r == '/'
+   })
+   var clip Clip
+   for _, field := range fields {
+      if clip.ID >= 1 {
+         clip.UnlistedHash = field
+      } else if field != "video" {
+         clip.ID, err = strconv.ParseInt(field, 10, 64)
+         if err != nil {
+            return nil, err
+         }
+      }
+   }
+   for _, key := range []string{"h", "unlisted_hash"} {
+      hash := addr.Query().Get(key)
+      if hash != "" {
+         clip.UnlistedHash = hash
+      }
+   }
+   return &clip, nil
+}
+
 func (w JsonWeb) Video(clip *Clip) (*Video, error) {
    buf := []byte("https://api.vimeo.com/videos/")
    buf = strconv.AppendInt(buf, clip.ID, 10)
@@ -44,35 +72,6 @@ var LogLevel format.LogLevel
 type Clip struct {
    ID int64
    UnlistedHash string
-}
-
-func NewClip(address string) (*Clip, error) {
-   addr, err := url.Parse(address)
-   if err != nil {
-      return nil, err
-   }
-   field := strings.FieldsFunc(addr.Path, func(r rune) bool {
-      return r == '/'
-   })
-   var clip Clip
-   for key, val := range field {
-      if clip.ID >= 1 {
-         clip.UnlistedHash = val
-      } else if key == 1 || val != "video" {
-         clip.ID, err = strconv.ParseInt(val, 10, 64)
-         if err != nil {
-            return nil, err
-         }
-      }
-   }
-   val := addr.Query()
-   if hash := val.Get("h"); hash != "" {
-      clip.UnlistedHash = hash
-   }
-   if hash := val.Get("unlisted_hash"); hash != "" {
-      clip.UnlistedHash = hash
-   }
-   return &clip, nil
 }
 
 type JsonWeb struct {
