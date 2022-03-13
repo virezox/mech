@@ -30,7 +30,7 @@ func doManifest(addr string, bandwidth int, info bool) error {
       return err
    }
    if info {
-      fmt.Println(prop.Data.Item.WithURL(""))
+      fmt.Println(prop.Data.Item)
       for _, str := range mas.Stream {
          fmt.Println(str)
       }

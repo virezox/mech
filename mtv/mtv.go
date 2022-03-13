@@ -2,11 +2,11 @@ package mtv
 
 import (
    "encoding/json"
+   "fmt"
    "github.com/89z/format"
    "net/http"
    "net/url"
    "strings"
-   "time"
 )
 
 type Item struct {
@@ -25,34 +25,16 @@ type Item struct {
    VideoServiceURL string
 }
 
-func (i Item) GetDuration() time.Duration {
-   return time.Duration(i.Duration.Milliseconds) * time.Millisecond
-}
-
-func (i Item) String() string {
-   var buf strings.Builder
-   buf.WriteString("Date: ")
-   buf.WriteString(i.AirDate.DateString)
-   buf.WriteString("\nDuration: ")
-   buf.WriteString(i.GetDuration().String())
-   buf.WriteString("\nType: ")
-   buf.WriteString(i.EntityType)
-   buf.WriteString("\nParent: ")
-   buf.WriteString(i.ParentEntity.Title)
-   buf.WriteString("\nID: ")
-   buf.WriteString(i.ShortID)
-   buf.WriteString("\nTitle: ")
-   buf.WriteString(i.Title)
-   if i.VideoServiceURL != "" {
-      buf.WriteString("\nURL: ")
-      buf.WriteString(i.VideoServiceURL)
+func (i Item) Format(f fmt.State, verb rune) {
+   fmt.Fprintln(f, "Date:", i.AirDate.DateString)
+   fmt.Fprintln(f, "Duration:", i.Duration.Milliseconds)
+   fmt.Fprintln(f, "Type:", i.EntityType)
+   fmt.Fprintln(f, "Parent:", i.ParentEntity.Title)
+   fmt.Fprintln(f, "ID:", i.ShortID)
+   fmt.Fprint(f, "Title: ", i.Title)
+   if verb == 'u' {
+      fmt.Fprint(f, "\nURL: ", i.VideoServiceURL)
    }
-   return buf.String()
-}
-
-func (i Item) WithURL(s string) Item {
-   i.VideoServiceURL = s
-   return i
 }
 
 type Property struct {

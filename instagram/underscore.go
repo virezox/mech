@@ -97,23 +97,6 @@ func NewGraphMedia(shortcode string) (*GraphMedia, error) {
    return &post.GraphQL.Shortcode_Media, nil
 }
 
-func (g GraphMedia) URLs() []string {
-   src := make(map[string]bool)
-   src[g.Display_URL] = true
-   src[g.Video_URL] = true
-   for _, edge := range g.Edge_Sidecar_To_Children.Edges {
-      src[edge.Node.Display_URL] = true
-      src[edge.Node.Video_URL] = true
-   }
-   var dst []string
-   for key := range src {
-      if key != "" {
-         dst = append(dst, key)
-      }
-   }
-   return dst
-}
-
 type ImageVersion struct {
    Candidates []struct {
       Width int
@@ -219,14 +202,6 @@ func NewUser(username string) (*User, error) {
    return Login{}.User(username)
 }
 
-func (u User) String() string {
-   buf := []byte("Followers: ")
-   buf = strconv.AppendInt(buf, u.Edge_Followed_By.Count, 10)
-   buf = append(buf, "\nFollowing: "...)
-   buf = strconv.AppendInt(buf, u.Edge_Follow.Count, 10)
-   return string(buf)
-}
-
 type VideoVersion struct {
    Type int
    Width int
@@ -305,15 +280,16 @@ func (i Item) Format() (string, error) {
    return string(buf), nil
 }
 
-////////////////////////////////////////////////////////////////////////////////
-
-type EdgeURL struct {
-   Edges []struct {
-      Node struct {
-         Display_URL string
-         Video_URL string
+func (e EdgeURL) URLs() []string {
+   var ret []string
+   for _, edge := range e.Edges {
+      if edge.Node.Video_URL != "" {
+         ret = append(ret, edge.Node.Video_URL)
+      } else {
+         ret = append(ret, edge.Node.Display_URL)
       }
    }
+   return ret
 }
 
 type GraphMedia struct {
@@ -323,9 +299,18 @@ type GraphMedia struct {
    }
    Display_URL string
    Video_URL string
-   Edge_Sidecar_To_Children EdgeURL
+   Edge_Sidecar_To_Children *EdgeURL
    Taken_At_Timestamp int64
    Edge_Media_To_Parent_Comment EdgeText
+}
+
+func (g GraphMedia) URLs() []string {
+   if g.Edge_Sidecar_To_Children != nil {
+      return g.Edge_Sidecar_To_Children.URLs()
+   } else if g.Video_URL != "" {
+      return []string{g.Video_URL}
+   }
+   return []string{g.Display_URL}
 }
 
 type User struct {
@@ -336,4 +321,25 @@ type User struct {
       Count int64
    }
    Edge_Owner_To_Timeline_Media EdgeURL
+}
+
+type EdgeURL struct {
+   Edges []struct {
+      Node struct {
+         Display_URL string
+         Video_URL string
+      }
+   }
+}
+
+func (u User) String() string {
+   buf := []byte("Followers: ")
+   buf = strconv.AppendInt(buf, u.Edge_Followed_By.Count, 10)
+   buf = append(buf, "\nFollowing: "...)
+   buf = strconv.AppendInt(buf, u.Edge_Follow.Count, 10)
+   for _, addr := range u.Edge_Owner_To_Timeline_Media.URLs() {
+      buf = append(buf, "\nURL: "...)
+      buf = append(buf, addr...)
+   }
+   return string(buf)
 }
