@@ -9,7 +9,7 @@ import (
    "sort"
 )
 
-func doManifest(guid, bandwidth int64, info bool) error {
+func doManifest(guid int64, bandwidth int, info bool) error {
    vod, err := nbc.NewAccessVOD(guid)
    if err != nil {
       return err
@@ -26,7 +26,7 @@ func doManifest(guid, bandwidth int64, info bool) error {
    }
    if info {
       for _, str := range mas.Stream {
-         fmt.Println(str.WithURI(nil))
+         fmt.Println(str)
       }
    } else {
       video, err := nbc.NewVideo(guid)
@@ -57,7 +57,7 @@ func download(video *nbc.Video, str hls.Stream) error {
       return err
    }
    defer file.Close()
-   fmt.Println(str.WithURI(nil))
+   fmt.Println(str)
    for i, info := range seg.Info {
       fmt.Print(seg.Progress(i))
       res, err := http.Get(info.URI.String())

@@ -9,7 +9,7 @@ import (
    "sort"
 )
 
-func doManifest(addr string, bandwidth int64, info bool) error {
+func doManifest(addr string, bandwidth int, info bool) error {
    play, err := cwtv.GetPlay(addr)
    if err != nil {
       return err
@@ -67,7 +67,7 @@ func download(video *cwtv.Video, str hls.Stream) error {
       return err
    }
    defer file.Close()
-   fmt.Println(str.WithURI(nil))
+   fmt.Println(str)
    for i, info := range seg.Info {
       fmt.Print(seg.Progress(i))
       res, err := http.Get(info.URI.String())

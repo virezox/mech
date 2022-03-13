@@ -10,8 +10,8 @@ func main() {
    var guid int64
    flag.Int64Var(&guid, "b", 0, "GUID")
    // f
-   var bandwidth int64
-   flag.Int64Var(&bandwidth, "f", 2_757_800, "target bandwidth")
+   var bandwidth int
+   flag.IntVar(&bandwidth, "f", 2_757_800, "target bandwidth")
    // i
    var info bool
    flag.BoolVar(&info, "i", false, "info")

@@ -10,7 +10,7 @@ import (
    "sort"
 )
 
-func doManifest(addr string, bandwidth int64, info bool) error {
+func doManifest(addr string, bandwidth int, info bool) error {
    prop, err := mtv.NewItem(addr).Property()
    if err != nil {
       return err
@@ -32,12 +32,12 @@ func doManifest(addr string, bandwidth int64, info bool) error {
    if info {
       fmt.Println(prop.Data.Item.WithURL(""))
       for _, str := range mas.Stream {
-         fmt.Println(str.WithURI(nil))
+         fmt.Println(str)
       }
    } else {
       sort.Sort(hls.Bandwidth{mas, bandwidth})
       video := mas.Stream[0]
-      err := download(prop, video.URI, video.WithURI(nil).String())
+      err := download(prop, video.URI, fmt.Sprint(video))
       if err != nil {
          return err
       }
