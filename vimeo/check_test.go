@@ -10,7 +10,7 @@ const (
    password = "butter"
 )
 
-func TestVideo(t *testing.T) {
+func TestCheck(t *testing.T) {
    check, err := Clip{ID: id}.Check(password)
    if err != nil {
       t.Fatal(err)

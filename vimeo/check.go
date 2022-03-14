@@ -9,6 +9,14 @@ import (
    "net/http"
 )
 
+type Check struct {
+   Request struct {
+      Files struct {
+         Progressive []Progressive
+      }
+   }
+}
+
 func (c Clip) Check(password string) (*Check, error) {
    body := new(bytes.Buffer)
    body.WriteString("password=")
@@ -48,13 +56,5 @@ func (p Progressive) Format(f fmt.State, verb rune) {
    fmt.Fprint(f, " FPS:", p.FPS)
    if verb == 'a' {
       fmt.Fprint(f, " URL:", p.URL)
-   }
-}
-
-type Check struct {
-   Request struct {
-      Files struct {
-         Progressive []Progressive
-      }
    }
 }

@@ -15,6 +15,9 @@ func main() {
    // i
    var info bool
    flag.BoolVar(&info, "i", false, "info only")
+   // p
+   var password string
+   flag.StringVar(&password, "p", "", "password")
    // v
    var verbose bool
    flag.BoolVar(&verbose, "v", false, "verbose")
