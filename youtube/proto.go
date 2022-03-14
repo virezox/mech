@@ -28,15 +28,6 @@ const (
    SortByViewCount = 3
 )
 
-type Params struct {
-   protobuf.Message
-}
-
-func (p Params) Encode() string {
-   buf := p.Marshal()
-   return base64.StdEncoding.EncodeToString(buf)
-}
-
 type Filter struct {
    protobuf.Message
 }
@@ -45,12 +36,6 @@ func NewFilter() Filter {
    var filter Filter
    filter.Message = make(protobuf.Message)
    return filter
-}
-
-func NewParams() Params {
-   var par Params
-   par.Message = make(protobuf.Message)
-   return par
 }
 
 func (f Filter) CreativeCommons(val uint64) Filter {
@@ -123,12 +108,27 @@ func (f Filter) VR180(val uint64) Filter {
    return f
 }
 
-func (p Params) SortBy(val uint64) Params {
-   p.Message[1] = val
-   return p
+type Params struct {
+   protobuf.Message
+}
+
+func NewParams() Params {
+   var par Params
+   par.Message = make(protobuf.Message)
+   return par
+}
+
+func (p Params) Encode() string {
+   buf := p.Marshal()
+   return base64.StdEncoding.EncodeToString(buf)
 }
 
 func (p Params) Filter(val Filter) Params {
    p.Message[2] = val.Message
+   return p
+}
+
+func (p Params) SortBy(val uint64) Params {
+   p.Message[1] = val
    return p
 }
