@@ -14,7 +14,7 @@ click `Network Settings`, `Save All As HAR`. Rename file to JSON.
    to page
 3. check media page for JSON requests
 4. MITM Proxy Firefox
-5. MITM Proxy APK for JSON requests
+5. MITM Proxy APK
 6. JADX
 
 ## Proxy

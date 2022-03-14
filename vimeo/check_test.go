@@ -11,6 +11,7 @@ const (
 )
 
 func TestCheck(t *testing.T) {
+   LogLevel = 1
    check, err := Clip{ID: id}.Check(password)
    if err != nil {
       t.Fatal(err)

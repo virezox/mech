@@ -9,6 +9,50 @@ import (
    "strings"
 )
 
+type Video struct {
+   Duration int64
+   Release_Time string
+   Name string
+   Pictures struct {
+      Base_Link string
+   }
+   Download []Download
+}
+
+type Download struct {
+   Public_Name string
+   Width int
+   Height int
+   Size_Short string
+   Link string
+}
+
+func (d Download) Format(f fmt.State, verb rune) {
+   fmt.Fprint(f, "Name:", d.Public_Name)
+   fmt.Fprint(f, " Width:", d.Width)
+   fmt.Fprint(f, " Height:", d.Height)
+   fmt.Fprint(f, " Size:", d.Size_Short)
+   if verb == 'a' {
+      fmt.Fprint(f, " Link:", d.Link)
+   }
+}
+
+func (v Video) Format(f fmt.State, verb rune) {
+   fmt.Fprintln(f, "Duration:", v.Duration)
+   fmt.Fprintln(f, "Release:", v.Release_Time)
+   fmt.Fprint(f, "Name: ", v.Name)
+   if verb == 'a' {
+      fmt.Fprint(f, "\nPicture: ", v.Pictures.Base_Link)
+   }
+   for _, down := range v.Download {
+      if verb == 'a' {
+         fmt.Fprintf(f, "\n%a", down)
+      } else {
+         fmt.Fprint(f, "\n", down)
+      }
+   }
+}
+
 var LogLevel format.LogLevel
 
 type Clip struct {
@@ -42,24 +86,6 @@ func NewClip(address string) (*Clip, error) {
       }
    }
    return &clip, nil
-}
-
-type Download struct {
-   Public_Name string
-   Width int
-   Height int
-   Size_Short string
-   Link string
-}
-
-func (d Download) Format(f fmt.State, verb rune) {
-   fmt.Fprint(f, "Name:", d.Public_Name)
-   fmt.Fprint(f, " Width:", d.Width)
-   fmt.Fprint(f, " Height:", d.Height)
-   fmt.Fprint(f, " Size:", d.Size_Short)
-   if verb == 'a' {
-      fmt.Fprint(f, " Link:", d.Link)
-   }
 }
 
 type JsonWeb struct {
@@ -110,28 +136,6 @@ func (w JsonWeb) Video(clip *Clip) (*Video, error) {
       return nil, err
    }
    return vid, nil
-}
-
-type Video struct {
-   Duration int64
-   Release_Time string
-   Name string
-   Pictures struct {
-      Base_Link string
-   }
-   Download []Download
-}
-
-func (v Video) Format(f fmt.State, verb rune) {
-   fmt.Fprintln(f, "Duration:", v.Duration)
-   fmt.Fprintln(f, "Release:", v.Release_Time)
-   fmt.Fprint(f, "Name: ", v.Name)
-   if verb == 'a' {
-      fmt.Fprint(f, "\nPicture: ", v.Pictures.Base_Link)
-      for _, down := range v.Download {
-         fmt.Fprintf(f, "\n%a", down)
-      }
-   }
 }
 
 type errorString string

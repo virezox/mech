@@ -17,9 +17,7 @@ func TestVideo(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   for _, down := range video.Download {
-      fmt.Println(down)
-   }
+   fmt.Println(video)
 }
 
 var videos = []string{
