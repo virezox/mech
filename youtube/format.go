@@ -1,72 +1,14 @@
 package youtube
 
 import (
+   "fmt"
    "github.com/89z/format"
    "io"
    "mime"
    "net/http"
    "os"
-   "strconv"
    "time"
 )
-
-const partLength = 10_000_000
-
-var LogLevel format.LogLevel
-
-type Format struct {
-   AudioQuality string
-   Bitrate int64
-   ContentLength int64 `json:"contentLength,string"`
-   Height int
-   Itag int64
-   MimeType string
-   QualityLabel string
-   URL string
-   Width int
-}
-
-func (f Format) Ext() (string, error) {
-   exts, err := mime.ExtensionsByType(f.MimeType)
-   if err != nil {
-      return "", err
-   }
-   for _, ext := range exts {
-      return ext, nil
-   }
-   return "", notPresent{f.MimeType}
-}
-
-func (f Format) Format() (string, error) {
-   buf := []byte("Itag:")
-   buf = strconv.AppendInt(buf, f.Itag, 10)
-   buf = append(buf, " Quality:"...)
-   if f.QualityLabel != "" {
-      buf = append(buf, f.QualityLabel...)
-   } else {
-      buf = append(buf, f.AudioQuality...)
-   }
-   buf = append(buf, " Bitrate:"...)
-   buf = strconv.AppendInt(buf, f.Bitrate, 10)
-   buf = append(buf, " Size:"...)
-   buf = strconv.AppendInt(buf, f.ContentLength, 10)
-   justType, _, err := mime.ParseMediaType(f.MimeType)
-   if err != nil {
-      return "", err
-   }
-   buf = append(buf, " Type:"...)
-   buf = append(buf, justType...)
-   if f.URL != "" {
-      buf = append(buf, " URL:"...)
-      buf = append(buf, f.URL...)
-   }
-   return string(buf), nil
-}
-
-func (f Format) WithURL(s string) Format {
-   f.URL = s
-   return f
-}
 
 func (f Format) Write(dst io.Writer) error {
    req, err := http.NewRequest("GET", f.URL, nil)
@@ -79,11 +21,9 @@ func (f Format) Write(dst io.Writer) error {
       content int64
    )
    for content < f.ContentLength {
-      buf := []byte("bytes=")
-      buf = strconv.AppendInt(buf, content, 10)
-      buf = append(buf, '-')
-      buf = strconv.AppendInt(buf, content+partLength-1, 10)
-      req.Header.Set("Range", string(buf))
+      req.Header.Set(
+         "Range", fmt.Sprintf("bytes=%v-%v", content, content+partLength-1),
+      )
       end := time.Since(begin).Seconds()
       if end >= 1 {
          os.Stdout.WriteString(format.PercentInt64(content, f.ContentLength))
@@ -112,5 +52,48 @@ type notPresent struct {
 }
 
 func (n notPresent) Error() string {
-   return strconv.Quote(n.value) + " is not present"
+   return fmt.Sprintf("%q is not present", n.value)
 }
+
+func (f Format) Format(s fmt.State, verb rune) {
+   fmt.Fprint(s, "Itag:", f.Itag)
+   if f.QualityLabel != "" {
+      fmt.Fprint(s, " Quality:", f.QualityLabel)
+   } else {
+      fmt.Fprint(s, " Quality:", f.AudioQuality)
+   }
+   fmt.Fprint(s, " Bitrate:", f.Bitrate)
+   fmt.Fprint(s, " Size:", f.ContentLength)
+   fmt.Fprint(s, " Type:", f.MimeType)
+   if verb == 'a' {
+      fmt.Fprint(s, " URL:", f.URL)
+   }
+}
+
+const partLength = 10_000_000
+
+var LogLevel format.LogLevel
+
+type Format struct {
+   AudioQuality string
+   Bitrate int
+   ContentLength int64 `json:"contentLength,string"`
+   Height int
+   Itag int
+   MimeType string
+   QualityLabel string
+   URL string
+   Width int
+}
+
+func (f Format) Ext() (string, error) {
+   exts, err := mime.ExtensionsByType(f.MimeType)
+   if err != nil {
+      return "", err
+   }
+   for _, ext := range exts {
+      return ext, nil
+   }
+   return "", notPresent{f.MimeType}
+}
+

@@ -16,6 +16,6 @@ func TestVideo(t *testing.T) {
       t.Fatal(err)
    }
    for _, pro := range check.Request.Files.Progressive {
-      fmt.Printf("%+v\n", pro.WithURL(""))
+      fmt.Println(pro)
    }
 }

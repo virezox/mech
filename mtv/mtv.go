@@ -32,7 +32,7 @@ func (i Item) Format(f fmt.State, verb rune) {
    fmt.Fprintln(f, "Parent:", i.ParentEntity.Title)
    fmt.Fprintln(f, "ID:", i.ShortID)
    fmt.Fprint(f, "Title: ", i.Title)
-   if verb == 'u' {
+   if verb == 'a' {
       fmt.Fprint(f, "\nURL: ", i.VideoServiceURL)
    }
 }

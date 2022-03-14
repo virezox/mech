@@ -2,12 +2,11 @@ package vimeo
 
 import (
    "encoding/json"
+   "fmt"
    "github.com/89z/format"
    "net/http"
    "net/url"
-   "strconv"
    "strings"
-   "time"
 )
 
 type Video struct {
@@ -20,47 +19,26 @@ type Video struct {
    Download []Download
 }
 
-func (v Video) String() string {
-   buf := []byte("Duration: ")
-   buf = append(buf, v.Time().String()...)
-   buf = append(buf, "\nRelease: "...)
-   buf = append(buf, v.Release_Time...)
-   buf = append(buf, "\nName: "...)
-   buf = append(buf, v.Name...)
-   if v.Pictures.Base_Link != "" {
-      buf = append(buf, "\nPicture: "...)
-      buf = append(buf, v.Pictures.Base_Link...)
+func (v Video) Format(f fmt.State, verb rune) {
+   fmt.Fprintln(f, "Duration:", v.Duration)
+   fmt.Fprintln(f, "Release:", v.Release_Time)
+   fmt.Fprint(f, "Name: ", v.Name)
+   if verb == 'a' {
+      fmt.Fprint(f, "\nPicture: ", v.Pictures.Base_Link)
+      for _, down := range v.Download {
+         fmt.Fprintf(f, "\n%a", down)
+      }
    }
-   for _, down := range v.Download {
-      buf = append(buf, '\n')
-      buf = append(buf, down.String()...)
-   }
-   return string(buf)
 }
 
-type Download struct {
-   Public_Name string
-   Width int64
-   Height int64
-   Size_Short string
-   Link string
-}
-
-func (d Download) String() string {
-   var buf []byte
-   buf = append(buf, "Name:"...)
-   buf = append(buf, d.Public_Name...)
-   buf = append(buf, " Width:"...)
-   buf = strconv.AppendInt(buf, d.Width, 10)
-   buf = append(buf, " Height:"...)
-   buf = strconv.AppendInt(buf, d.Height, 10)
-   buf = append(buf, " Size:"...)
-   buf = append(buf, d.Size_Short...)
-   if d.Link != "" {
-      buf = append(buf, " Link:"...)
-      buf = append(buf, d.Link...)
+func (d Download) Format(f fmt.State, verb rune) {
+   fmt.Fprint(f, "Name:", d.Public_Name)
+   fmt.Fprint(f, " Width:", d.Width)
+   fmt.Fprint(f, " Height:", d.Height)
+   fmt.Fprint(f, " Size:", d.Size_Short)
+   if verb == 'a' {
+      fmt.Fprint(f, " Link:", d.Link)
    }
-   return string(buf)
 }
 
 func NewClip(address string) (*Clip, error) {
@@ -76,7 +54,7 @@ func NewClip(address string) (*Clip, error) {
       if clip.ID >= 1 {
          clip.UnlistedHash = field
       } else if field != "video" {
-         clip.ID, err = strconv.ParseInt(field, 10, 64)
+         _, err := fmt.Sscan(field, &clip.ID)
          if err != nil {
             return nil, err
          }
@@ -92,13 +70,11 @@ func NewClip(address string) (*Clip, error) {
 }
 
 func (w JsonWeb) Video(clip *Clip) (*Video, error) {
-   buf := []byte("https://api.vimeo.com/videos/")
-   buf = strconv.AppendInt(buf, clip.ID, 10)
+   buf := fmt.Sprint("https://api.vimeo.com/videos/", clip.ID)
    if clip.UnlistedHash != "" {
-      buf = append(buf, ':')
-      buf = append(buf, clip.UnlistedHash...)
+      buf = fmt.Sprint(buf, ":", clip.UnlistedHash)
    }
-   req, err := http.NewRequest("GET", string(buf), nil)
+   req, err := http.NewRequest("GET", buf, nil)
    if err != nil {
       return nil, err
    }
@@ -120,10 +96,18 @@ func (w JsonWeb) Video(clip *Clip) (*Video, error) {
    return vid, nil
 }
 
+type Download struct {
+   Public_Name string
+   Width int
+   Height int
+   Size_Short string
+   Link string
+}
+
 var LogLevel format.LogLevel
 
 type Clip struct {
-   ID int64
+   ID int
    UnlistedHash string
 }
 
@@ -150,13 +134,8 @@ func NewJsonWeb() (*JsonWeb, error) {
    return web, nil
 }
 
-func (v Video) Time() time.Duration {
-   return time.Duration(v.Duration) * time.Second
-}
-
 type errorString string
 
 func (e errorString) Error() string {
    return string(e)
 }
-

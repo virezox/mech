@@ -59,11 +59,7 @@ func (v video) do() error {
    if v.info {
       fmt.Println(play.Details())
       for _, form := range play.StreamingData.AdaptiveFormats {
-         str, err := form.WithURL("").Format()
-         if err != nil {
-            return err
-         }
-         fmt.Println(str)
+         fmt.Println(form)
       }
    } else {
       if v.height >= 1 {
