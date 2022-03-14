@@ -1,0 +1,144 @@
+{
+  "name": "Thursday, July 29, 2021 BMA Evening Video Update",
+  "duration": 976,
+  "release_time": "2021-07-30T04:56:54+00:00",
+  "pictures": {
+    "uri": "/videos/581039021:9603038895/pictures/1202249320",
+    "active": true,
+    "type": "custom",
+    "base_link": "http://i.vimeocdn.com/video/1202249320-4ddb2c30398c0dc0ee059172d1bd5ea481ad12f0e0e3ad01d2266f56c744b015-d",
+    "sizes": [
+      {
+        "width": 100,
+        "height": 75,
+        "link": "http://i.vimeocdn.com/video/1202249320-4ddb2c30398c0dc0ee059172d1bd5ea481ad12f0e0e3ad01d2266f56c744b015-d_100x75?r=pad",
+        "link_with_play_button": "http://i.vimeocdn.com/filter/overlay?src0=http%3A%2F%2Fi.vimeocdn.com%2Fvideo%2F1202249320-4ddb2c30398c0dc0ee059172d1bd5ea481ad12f0e0e3ad01d2266f56c744b015-d_100x75&src1=http%3A%2F%2Ff.vimeocdn.com%2Fp%2Fimages%2Fcrawler_play.png"
+      },
+      {
+        "width": 200,
+        "height": 150,
+        "link": "http://i.vimeocdn.com/video/1202249320-4ddb2c30398c0dc0ee059172d1bd5ea481ad12f0e0e3ad01d2266f56c744b015-d_200x150?r=pad",
+        "link_with_play_button": "http://i.vimeocdn.com/filter/overlay?src0=http%3A%2F%2Fi.vimeocdn.com%2Fvideo%2F1202249320-4ddb2c30398c0dc0ee059172d1bd5ea481ad12f0e0e3ad01d2266f56c744b015-d_200x150&src1=http%3A%2F%2Ff.vimeocdn.com%2Fp%2Fimages%2Fcrawler_play.png"
+      },
+      {
+        "width": 295,
+        "height": 166,
+        "link": "http://i.vimeocdn.com/video/1202249320-4ddb2c30398c0dc0ee059172d1bd5ea481ad12f0e0e3ad01d2266f56c744b015-d_295x166?r=pad",
+        "link_with_play_button": "http://i.vimeocdn.com/filter/overlay?src0=http%3A%2F%2Fi.vimeocdn.com%2Fvideo%2F1202249320-4ddb2c30398c0dc0ee059172d1bd5ea481ad12f0e0e3ad01d2266f56c744b015-d_295x166&src1=http%3A%2F%2Ff.vimeocdn.com%2Fp%2Fimages%2Fcrawler_play.png"
+      },
+      {
+        "width": 640,
+        "height": 360,
+        "link": "http://i.vimeocdn.com/video/1202249320-4ddb2c30398c0dc0ee059172d1bd5ea481ad12f0e0e3ad01d2266f56c744b015-d_640x360?r=pad",
+        "link_with_play_button": "http://i.vimeocdn.com/filter/overlay?src0=http%3A%2F%2Fi.vimeocdn.com%2Fvideo%2F1202249320-4ddb2c30398c0dc0ee059172d1bd5ea481ad12f0e0e3ad01d2266f56c744b015-d_640x360&src1=http%3A%2F%2Ff.vimeocdn.com%2Fp%2Fimages%2Fcrawler_play.png"
+      },
+      {
+        "width": 960,
+        "height": 540,
+        "link": "http://i.vimeocdn.com/video/1202249320-4ddb2c30398c0dc0ee059172d1bd5ea481ad12f0e0e3ad01d2266f56c744b015-d_960x540?r=pad",
+        "link_with_play_button": "http://i.vimeocdn.com/filter/overlay?src0=http%3A%2F%2Fi.vimeocdn.com%2Fvideo%2F1202249320-4ddb2c30398c0dc0ee059172d1bd5ea481ad12f0e0e3ad01d2266f56c744b015-d_960x540&src1=http%3A%2F%2Ff.vimeocdn.com%2Fp%2Fimages%2Fcrawler_play.png"
+      },
+      {
+        "width": 1280,
+        "height": 720,
+        "link": "http://i.vimeocdn.com/video/1202249320-4ddb2c30398c0dc0ee059172d1bd5ea481ad12f0e0e3ad01d2266f56c744b015-d_1280x720?r=pad",
+        "link_with_play_button": "http://i.vimeocdn.com/filter/overlay?src0=http%3A%2F%2Fi.vimeocdn.com%2Fvideo%2F1202249320-4ddb2c30398c0dc0ee059172d1bd5ea481ad12f0e0e3ad01d2266f56c744b015-d_1280x720&src1=http%3A%2F%2Ff.vimeocdn.com%2Fp%2Fimages%2Fcrawler_play.png"
+      },
+      {
+        "width": 1920,
+        "height": 1080,
+        "link": "http://i.vimeocdn.com/video/1202249320-4ddb2c30398c0dc0ee059172d1bd5ea481ad12f0e0e3ad01d2266f56c744b015-d_1920x1080?r=pad",
+        "link_with_play_button": "http://i.vimeocdn.com/filter/overlay?src0=http%3A%2F%2Fi.vimeocdn.com%2Fvideo%2F1202249320-4ddb2c30398c0dc0ee059172d1bd5ea481ad12f0e0e3ad01d2266f56c744b015-d_1920x1080&src1=http%3A%2F%2Ff.vimeocdn.com%2Fp%2Fimages%2Fcrawler_play.png"
+      }
+    ],
+    "resource_key": "e51389b2f97e6a5f7aea7a4b0fcc1ff8304a19f7",
+    "default_picture": false
+  },
+  "download": [
+    {
+      "quality": "sd",
+      "rendition": "540p",
+      "type": "video/mp4",
+      "width": 960,
+      "height": 540,
+      "expires": "2022-03-15T05:35:29+00:00",
+      "link": "https://player.vimeo.com/progressive_redirect/download/581039021/container/f2b2d19e-44d5-4907-94b7-c69c9db2af1d/7248713b/thursday,_july_29,_2021_bma_evening_video_update%20%28540p%29.mp4?expires=1647322529&loc=external&signature=f4c3609d7b4a0c4ea4f22e840ef6c08d6c783ac2445e32e867d6e62e5082c6d2",
+      "created_time": "2021-07-30T05:05:41+00:00",
+      "fps": 30,
+      "video_file_id": 0,
+      "size": 81229662,
+      "md5": "0541aa36d359ccf973bc62cdb4bd3907",
+      "public_name": "540p",
+      "size_short": "77.47MB",
+      "link_secure": "https://player.vimeo.com/progressive_redirect/download/581039021/container/f2b2d19e-44d5-4907-94b7-c69c9db2af1d/7248713b/thursday,_july_29,_2021_bma_evening_video_update%20%28540p%29.mp4?expires=1647322529&loc=external&signature=f4c3609d7b4a0c4ea4f22e840ef6c08d6c783ac2445e32e867d6e62e5082c6d2"
+    },
+    {
+      "quality": "hd",
+      "rendition": "1080p",
+      "type": "video/mp4",
+      "width": 1920,
+      "height": 1080,
+      "expires": "2022-03-15T05:35:29+00:00",
+      "link": "https://player.vimeo.com/progressive_redirect/download/581039021/container/f2b2d19e-44d5-4907-94b7-c69c9db2af1d/dd3d0639/thursday,_july_29,_2021_bma_evening_video_update%20%281080p%29.mp4?expires=1647322529&loc=external&signature=5ab7a9678e70d8634d2f392f06de16b8721067779befadec32a2dfc94ca76322",
+      "created_time": "2021-07-30T05:05:20+00:00",
+      "fps": 30,
+      "video_file_id": 0,
+      "size": 183670037,
+      "md5": "b86f3510621126711718f1c2e0873ed9",
+      "public_name": "1080p",
+      "size_short": "175.16MB",
+      "link_secure": "https://player.vimeo.com/progressive_redirect/download/581039021/container/f2b2d19e-44d5-4907-94b7-c69c9db2af1d/dd3d0639/thursday,_july_29,_2021_bma_evening_video_update%20%281080p%29.mp4?expires=1647322529&loc=external&signature=5ab7a9678e70d8634d2f392f06de16b8721067779befadec32a2dfc94ca76322"
+    },
+    {
+      "quality": "sd",
+      "rendition": "360p",
+      "type": "video/mp4",
+      "width": 640,
+      "height": 360,
+      "expires": "2022-03-15T05:35:29+00:00",
+      "link": "https://player.vimeo.com/progressive_redirect/download/581039021/container/f2b2d19e-44d5-4907-94b7-c69c9db2af1d/ded7a2c1/thursday,_july_29,_2021_bma_evening_video_update%20%28360p%29.mp4?expires=1647322529&loc=external&signature=ffb0c6010be4d98f86e4473e1863cc4953ce36e8c38252b0b7e0ab0153c53003",
+      "created_time": "2021-07-30T05:03:18+00:00",
+      "fps": 30,
+      "video_file_id": 0,
+      "size": 41610062,
+      "md5": "79c6ae48c3aea213a44dbd84fc8f106a",
+      "public_name": "360p",
+      "size_short": "39.68MB",
+      "link_secure": "https://player.vimeo.com/progressive_redirect/download/581039021/container/f2b2d19e-44d5-4907-94b7-c69c9db2af1d/ded7a2c1/thursday,_july_29,_2021_bma_evening_video_update%20%28360p%29.mp4?expires=1647322529&loc=external&signature=ffb0c6010be4d98f86e4473e1863cc4953ce36e8c38252b0b7e0ab0153c53003"
+    },
+    {
+      "quality": "hd",
+      "rendition": "720p",
+      "type": "video/mp4",
+      "width": 1280,
+      "height": 720,
+      "expires": "2022-03-15T05:35:29+00:00",
+      "link": "https://player.vimeo.com/progressive_redirect/download/581039021/container/f2b2d19e-44d5-4907-94b7-c69c9db2af1d/36b397cb/thursday,_july_29,_2021_bma_evening_video_update%20%28720p%29.mp4?expires=1647322529&loc=external&signature=fb324c04d14059d4332d9404b1678ca40a68164098b895ce33d1d4e7c0ae5837",
+      "created_time": "2021-07-30T05:04:04+00:00",
+      "fps": 30,
+      "video_file_id": 0,
+      "size": 112325679,
+      "md5": "1e7cdbf9933edb24f396e1cfb7899d7f",
+      "public_name": "720p",
+      "size_short": "107.12MB",
+      "link_secure": "https://player.vimeo.com/progressive_redirect/download/581039021/container/f2b2d19e-44d5-4907-94b7-c69c9db2af1d/36b397cb/thursday,_july_29,_2021_bma_evening_video_update%20%28720p%29.mp4?expires=1647322529&loc=external&signature=fb324c04d14059d4332d9404b1678ca40a68164098b895ce33d1d4e7c0ae5837"
+    },
+    {
+      "quality": "source",
+      "rendition": "source",
+      "type": "video/mp4",
+      "width": 1920,
+      "height": 1080,
+      "expires": "2022-03-15T05:35:29+00:00",
+      "link": "https://player.vimeo.com/progressive_redirect/download/581039021/container/f2b2d19e-44d5-4907-94b7-c69c9db2af1d/f1ee12d3/thursday,_july_29,_2021_bma_evening_video_update%20%28Original%29.mp4?expires=1647322529&loc=external&signature=3fdd45f4ef104bdfbaf5842ea81fec62973ec180e5284676d337e04e6be44931",
+      "created_time": "2021-07-30T05:00:09+00:00",
+      "fps": 30,
+      "video_file_id": 0,
+      "size": 151548529,
+      "md5": null,
+      "public_name": "source",
+      "size_short": "144.53MB",
+      "link_secure": "https://player.vimeo.com/progressive_redirect/download/581039021/container/f2b2d19e-44d5-4907-94b7-c69c9db2af1d/f1ee12d3/thursday,_july_29,_2021_bma_evening_video_update%20%28Original%29.mp4?expires=1647322529&loc=external&signature=3fdd45f4ef104bdfbaf5842ea81fec62973ec180e5284676d337e04e6be44931"
+    }
+  ]
+}

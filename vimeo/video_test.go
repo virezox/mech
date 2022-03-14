@@ -12,11 +12,14 @@ func TestVideo(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
+   LogLevel = 1
    video, err := web.Video(&clip)
    if err != nil {
       t.Fatal(err)
    }
-   fmt.Println(video)
+   for _, down := range video.Download {
+      fmt.Println(down)
+   }
 }
 
 var videos = []string{
