@@ -9,57 +9,6 @@ import (
    "strconv"
 )
 
-func (s Status) String() string {
-   var buf []byte
-   buf = append(buf, "Screen Name: "...)
-   buf = append(buf, s.User.Screen_Name...)
-   buf = append(buf, "\nName: "...)
-   buf = append(buf, s.User.Name...)
-   buf = append(buf, "\nCreated: "...)
-   buf = append(buf, s.Created_At...)
-   buf = append(buf, "\nText: "...)
-   buf = append(buf, s.Full_Text...)
-   for _, media := range s.Extended_Entities.Media {
-      buf = append(buf, '\n')
-      buf = append(buf, media.String()...)
-   }
-   return string(buf)
-}
-
-type Variant struct {
-   Bitrate int64
-   Content_Type string
-   URL string
-}
-
-func (v Variant) Ext() (string, error) {
-   addr, err := url.Parse(v.URL)
-   if err != nil {
-      return "", err
-   }
-   return path.Ext(addr.Path), nil
-}
-
-type Status struct {
-   Created_At string
-   User struct {
-      Screen_Name string
-      Name string
-   }
-   Full_Text string
-   Extended_Entities struct {
-      Media []Media
-   }
-}
-
-func (s Status) Base(id int64) string {
-   var buf []byte
-   buf = append(buf, s.User.Screen_Name...)
-   buf = append(buf, '-')
-   buf = strconv.AppendInt(buf, id, 10)
-   return string(buf)
-}
-
 const bearer =
    "AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs=" +
    "1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA"
@@ -89,6 +38,31 @@ func NewGuest() (*Guest, error) {
       return nil, err
    }
    return guest, nil
+}
+
+func (g Guest) Status(id int64) (*Status, error) {
+   buf := []byte("https://api.twitter.com/1.1/statuses/show/")
+   buf = strconv.AppendInt(buf, id, 10)
+   buf = append(buf, ".json?tweet_mode=extended"...)
+   req, err := http.NewRequest("GET", string(buf), nil)
+   if err != nil {
+      return nil, err
+   }
+   req.Header = http.Header{
+      "Authorization": {"Bearer " + bearer},
+      "X-Guest-Token": {g.Guest_Token},
+   }
+   LogLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   stat := new(Status)
+   if err := json.NewDecoder(res.Body).Decode(stat); err != nil {
+      return nil, err
+   }
+   return stat, nil
 }
 
 type Media struct {
@@ -124,29 +98,55 @@ func (m Media) Variants() []Variant {
    return varis
 }
 
-func (g Guest) Status(id int64) (*Status, error) {
-   buf := []byte("https://api.twitter.com/1.1/statuses/show/")
+type Status struct {
+   Created_At string
+   User struct {
+      Screen_Name string
+      Name string
+   }
+   Full_Text string
+   Extended_Entities struct {
+      Media []Media
+   }
+}
+
+func (s Status) Base(id int64) string {
+   var buf []byte
+   buf = append(buf, s.User.Screen_Name...)
+   buf = append(buf, '-')
    buf = strconv.AppendInt(buf, id, 10)
-   buf = append(buf, ".json?tweet_mode=extended"...)
-   req, err := http.NewRequest("GET", string(buf), nil)
+   return string(buf)
+}
+
+func (s Status) String() string {
+   var buf []byte
+   buf = append(buf, "Screen Name: "...)
+   buf = append(buf, s.User.Screen_Name...)
+   buf = append(buf, "\nName: "...)
+   buf = append(buf, s.User.Name...)
+   buf = append(buf, "\nCreated: "...)
+   buf = append(buf, s.Created_At...)
+   buf = append(buf, "\nText: "...)
+   buf = append(buf, s.Full_Text...)
+   for _, media := range s.Extended_Entities.Media {
+      buf = append(buf, '\n')
+      buf = append(buf, media.String()...)
+   }
+   return string(buf)
+}
+
+type Variant struct {
+   Bitrate int64
+   Content_Type string
+   URL string
+}
+
+func (v Variant) Ext() (string, error) {
+   addr, err := url.Parse(v.URL)
    if err != nil {
-      return nil, err
+      return "", err
    }
-   req.Header = http.Header{
-      "Authorization": {"Bearer " + bearer},
-      "X-Guest-Token": {g.Guest_Token},
-   }
-   LogLevel.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   stat := new(Status)
-   if err := json.NewDecoder(res.Body).Decode(stat); err != nil {
-      return nil, err
-   }
-   return stat, nil
+   return path.Ext(addr.Path), nil
 }
 
 func (v Variant) String() string {

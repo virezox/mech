@@ -60,30 +60,6 @@ type AudioSpace struct {
    }
 }
 
-func (a AudioSpace) String() string {
-   var buf strings.Builder
-   buf.WriteString("Key: ")
-   buf.WriteString(a.Metadata.Media_Key)
-   buf.WriteString("\nTitle: ")
-   buf.WriteString(a.Metadata.Title)
-   buf.WriteString("\nStarted: ")
-   buf.WriteString(a.Time().String())
-   buf.WriteString("\nDuration: ")
-   buf.WriteString(a.Duration().String())
-   buf.WriteString("\nAdmins: ")
-   buf.WriteString(a.Admins())
-   return buf.String()
-}
-
-func (a AudioSpace) Duration() time.Duration {
-   dur := a.Metadata.Ended_At - a.Metadata.Started_At
-   return time.Duration(dur) * time.Millisecond
-}
-
-func (a AudioSpace) Time() time.Time {
-   return time.UnixMilli(a.Metadata.Started_At)
-}
-
 func (a AudioSpace) Admins() string {
    var buf strings.Builder
    for i, admin := range a.Participants.Admins {
@@ -101,6 +77,30 @@ func (a AudioSpace) Base() string {
    buf.WriteByte('-')
    buf.WriteString(a.Metadata.Title)
    return format.Clean(buf.String())
+}
+
+func (a AudioSpace) Duration() time.Duration {
+   dur := a.Metadata.Ended_At - a.Metadata.Started_At
+   return time.Duration(dur) * time.Millisecond
+}
+
+func (a AudioSpace) String() string {
+   var buf strings.Builder
+   buf.WriteString("Key: ")
+   buf.WriteString(a.Metadata.Media_Key)
+   buf.WriteString("\nTitle: ")
+   buf.WriteString(a.Metadata.Title)
+   buf.WriteString("\nStarted: ")
+   buf.WriteString(a.Time().String())
+   buf.WriteString("\nDuration: ")
+   buf.WriteString(a.Duration().String())
+   buf.WriteString("\nAdmins: ")
+   buf.WriteString(a.Admins())
+   return buf.String()
+}
+
+func (a AudioSpace) Time() time.Time {
+   return time.UnixMilli(a.Metadata.Started_At)
 }
 
 type spaceRequest struct {

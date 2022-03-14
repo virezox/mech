@@ -18,9 +18,8 @@ var names = []string{
    "twitter",
    "soundcloud",
    "pandora",
-   "tumblr",
-   ///////////
    "vimeo",
+   ///////////
    "paramount",
    "nbc",
    "mtv",
