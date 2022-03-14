@@ -10,8 +10,8 @@ func main() {
    var address string
    flag.StringVar(&address, "a", "", "address")
    // f
-   var name string
-   flag.StringVar(&name, "f", "720p", "public name")
+   var height int
+   flag.IntVar(&height, "f", 720, "target height")
    // i
    var info bool
    flag.BoolVar(&info, "i", false, "info only")
@@ -25,8 +25,13 @@ func main() {
    if verbose {
       vimeo.LogLevel = 1
    }
-   if address != "" {
-      err := doClip(address, name, info)
+   if password != "" {
+      err := doAuth(address, height, info)
+      if err != nil {
+         panic(err)
+      }
+   } else if address != "" {
+      err := doAnon(address, height, info)
       if err != nil {
          panic(err)
       }

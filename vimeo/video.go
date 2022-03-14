@@ -9,28 +9,56 @@ import (
    "strings"
 )
 
+type Height struct {
+   *Video
+   Target int
+}
+
+func (h Height) distance(i int) int {
+   diff := h.Download[i].Height - h.Target
+   if diff >= 0 {
+      return diff
+   }
+   return -diff
+}
+
+func (h Height) Less(i, j int) bool {
+   return h.distance(i) < h.distance(j)
+}
+
+type Download struct {
+   Width int
+   Height int
+   Quality string
+   Size_Short string
+   Link string
+}
+
 type Video struct {
+   Name string
+   User struct {
+      Name string
+   }
    Duration int64
    Release_Time string
-   Name string
    Pictures struct {
       Base_Link string
    }
    Download []Download
 }
 
-type Download struct {
-   Public_Name string
-   Width int
-   Height int
-   Size_Short string
-   Link string
+func (v Video) Swap(i, j int) {
+   v.Download[i], v.Download[j] = v.Download[j], v.Download[i]
+}
+
+func (v Video) Len() int {
+   return len(v.Download)
 }
 
 func (d Download) Format(f fmt.State, verb rune) {
-   fmt.Fprint(f, "Name:", d.Public_Name)
-   fmt.Fprint(f, " Width:", d.Width)
+   fmt.Fprint(f, "Width:", d.Width)
    fmt.Fprint(f, " Height:", d.Height)
+   fmt.Fprint(f, " Quality:", d.Quality)
    fmt.Fprint(f, " Size:", d.Size_Short)
    if verb == 'a' {
       fmt.Fprint(f, " Link:", d.Link)
@@ -38,18 +66,16 @@ func (d Download) Format(f fmt.State, verb rune) {
 }
 
 func (v Video) Format(f fmt.State, verb rune) {
+   fmt.Fprintln(f, "Name:", v.Name)
+   fmt.Fprintln(f, "User:", v.User.Name)
    fmt.Fprintln(f, "Duration:", v.Duration)
    fmt.Fprintln(f, "Release:", v.Release_Time)
-   fmt.Fprint(f, "Name: ", v.Name)
    if verb == 'a' {
-      fmt.Fprint(f, "\nPicture: ", v.Pictures.Base_Link)
+      fmt.Fprintln(f, "Picture:", v.Pictures.Base_Link)
    }
    for _, down := range v.Download {
-      if verb == 'a' {
-         fmt.Fprintf(f, "\n%a", down)
-      } else {
-         fmt.Fprint(f, "\n", down)
-      }
+      fmt.Fprintln(f)
+      down.Format(f, verb)
    }
 }
 
@@ -121,7 +147,7 @@ func (w JsonWeb) Video(clip *Clip) (*Video, error) {
       return nil, err
    }
    req.Header.Set("Authorization", "JWT " + w.Token)
-   req.URL.RawQuery = "fields=duration,download,name,pictures,release_time"
+   req.URL.RawQuery = "fields=duration,download,name,pictures,release_time,user"
    LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {

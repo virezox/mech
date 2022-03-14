@@ -9,11 +9,45 @@ import (
    "net/http"
 )
 
+type FilesHeight struct {
+   Files
+   Target int
+}
+
+func (f FilesHeight) distance(i int) int {
+   diff := f.Progressive[i].Height - f.Target
+   if diff >= 0 {
+      return diff
+   }
+   return -diff
+}
+
+func (f FilesHeight) Less(i, j int) bool {
+   return f.distance(i) < f.distance(j)
+}
+
+type Files struct {
+   Progressive []Progressive
+}
+
+type Progressive struct {
+   Width int
+   Height int
+   FPS int
+   URL string
+}
+
+func (f Files) Swap(i, j int) {
+   f.Progressive[i], f.Progressive[j] = f.Progressive[j], f.Progressive[i]
+}
+
+func (f Files) Len() int {
+   return len(f.Progressive)
+}
+
 type Check struct {
    Request struct {
-      Files struct {
-         Progressive []Progressive
-      }
+      Files Files
    }
 }
 
@@ -41,13 +75,6 @@ func (c Clip) Check(password string) (*Check, error) {
       return nil, err
    }
    return check, nil
-}
-
-type Progressive struct {
-   Width int
-   Height int
-   FPS int
-   URL string
 }
 
 func (p Progressive) Format(f fmt.State, verb rune) {

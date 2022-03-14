@@ -10,7 +10,11 @@ import (
    "path"
 )
 
-func doClip(addr, name string, info bool) error {
+func doAuth(addr string, height int, info bool) error {
+   return nil
+}
+
+func doAnon(addr string, height int, info bool) error {
    web, err := vimeo.NewJsonWeb()
    if err != nil {
       return err
@@ -27,36 +31,28 @@ func doClip(addr, name string, info bool) error {
       fmt.Println(video)
    } else {
       for _, down := range video.Download {
-         if down.Public_Name == name {
-            err := download(down)
+         if down.Height == height {
+            fmt.Println("GET", down.Link)
+            res, err := http.Get(down.Link)
             if err != nil {
+               return err
+            }
+            defer res.Body.Close()
+            addr, err := url.Parse(down.Link)
+            if err != nil {
+               return err
+            }
+            file, err := os.Create(path.Base(addr.Path))
+            if err != nil {
+               return err
+            }
+            defer file.Close()
+            pro := format.NewProgress(res)
+            if _, err := file.ReadFrom(pro); err != nil {
                return err
             }
          }
       }
-   }
-   return nil
-}
-
-func download(down vimeo.Download) error {
-   fmt.Println("GET", down.Link)
-   res, err := http.Get(down.Link)
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   addr, err := url.Parse(down.Link)
-   if err != nil {
-      return err
-   }
-   file, err := os.Create(path.Base(addr.Path))
-   if err != nil {
-      return err
-   }
-   defer file.Close()
-   pro := format.NewProgress(res)
-   if _, err := file.ReadFrom(pro); err != nil {
-      return err
    }
    return nil
 }
