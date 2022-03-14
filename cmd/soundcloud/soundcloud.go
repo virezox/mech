@@ -19,11 +19,11 @@ func download(track soundcloud.Track) error {
       return err
    }
    defer res.Body.Close()
-   name, err := media.Name(track)
+   ext, err := media.Ext()
    if err != nil {
       return err
    }
-   file, err := os.Create(name)
+   file, err := os.Create(track.Base() + ext)
    if err != nil {
       return err
    }

@@ -13,11 +13,9 @@ click `Network Settings`, `Save All As HAR`. Rename file to JSON.
 2. try navigating to the target page from home screen, instead of going directly
    to page
 3. check media page for JSON requests
-4. check HAR file
-5. check HTML
-6. check JavaScript
-7. MITM Proxy APK for JSON requests
-8. JADX
+4. MITM Proxy Firefox
+5. MITM Proxy APK for JSON requests
+6. JADX
 
 ## Proxy
 

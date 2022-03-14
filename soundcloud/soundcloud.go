@@ -10,6 +10,42 @@ import (
    "strings"
 )
 
+type Track struct {
+   Artwork_URL string
+   Display_Date string
+   ID int64
+   Media struct {
+      Transcodings []struct {
+         Format struct {
+            Protocol string
+         }
+         URL string
+      }
+   }
+   Title string
+   User struct {
+      Avatar_URL string
+      Username string
+   }
+}
+
+func (t Track) Base() string {
+   return t.User.Username + "-" + t.Title
+}
+
+type Media struct {
+   // cf-media.sndcdn.com/QaV7QR1lxpc6.128.mp3?Policy=eyJTdGF0ZW1lbnQiOlt7IlJ...
+   URL string
+}
+
+func (m Media) Ext() (string, error) {
+   addr, err := url.Parse(m.URL)
+   if err != nil {
+      return "", err
+   }
+   return path.Ext(addr.Path), nil
+}
+
 const clientID = "iZIs9mchVcX5lhVRyQGGAYlNPVldzAoX"
 
 var LogLevel format.LogLevel
@@ -37,38 +73,6 @@ var Images = []Image{
    {Size: "t67x67"},
    {Size: "t80x80"},
    {Size: "tx250"},
-}
-
-type Media struct {
-   // cf-media.sndcdn.com/QaV7QR1lxpc6.128.mp3?Policy=eyJTdGF0ZW1lbnQiOlt7IlJ...
-   URL string
-}
-
-func (m Media) Name(t Track) (string, error) {
-   addr, err := url.Parse(m.URL)
-   if err != nil {
-      return "", err
-   }
-   return t.User.Username + "-" + t.Title + path.Ext(addr.Path), nil
-}
-
-type Track struct {
-   Artwork_URL string
-   Display_Date string
-   ID int64
-   Media struct {
-      Transcodings []struct {
-         Format struct {
-            Protocol string
-         }
-         URL string
-      }
-   }
-   Title string
-   User struct {
-      Avatar_URL string
-      Username string
-   }
 }
 
 func NewTrack(id int64) (*Track, error) {

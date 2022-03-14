@@ -11,7 +11,8 @@ func main() {
    flag.Int64Var(&guid, "b", 0, "GUID")
    // f
    var bandwidth int
-   flag.IntVar(&bandwidth, "f", 2_757_800, "target bandwidth")
+   // nbc.com/saturday-night-live/video/march-12-zoe-kravitz/9000199371
+   flag.IntVar(&bandwidth, "f", 5_581_000, "target bandwidth")
    // i
    var info bool
    flag.BoolVar(&info, "i", false, "info")

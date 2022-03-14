@@ -54,7 +54,8 @@ func (d Detail) Duration() time.Duration {
 }
 
 func (d Detail) String() string {
-   buf := []byte("ID: ")
+   var buf []byte
+   buf = append(buf, "ID: "...)
    buf = append(buf, d.Aweme_ID...)
    buf = append(buf, "\nAuthor: "...)
    buf = append(buf, d.Author.Unique_ID...)
