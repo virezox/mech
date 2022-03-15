@@ -10,6 +10,42 @@ import (
    "time"
 )
 
+func (f *Format) ParseMediaType() error {
+   typ, _, err := mime.ParseMediaType(f.MimeType)
+   if err != nil {
+      return err
+   }
+   f.MimeType = typ
+   return nil
+}
+
+type Format struct {
+   AudioQuality string
+   Bitrate int
+   ContentLength int64 `json:"contentLength,string"`
+   Height int
+   Itag int
+   MimeType string
+   QualityLabel string
+   URL string
+   Width int
+}
+
+func (f Format) Format(s fmt.State, verb rune) {
+   fmt.Fprint(s, "Itag:", f.Itag)
+   if f.QualityLabel != "" {
+      fmt.Fprint(s, " Quality:", f.QualityLabel)
+   } else {
+      fmt.Fprint(s, " Quality:", f.AudioQuality)
+   }
+   fmt.Fprint(s, " Bitrate:", f.Bitrate)
+   fmt.Fprint(s, " Size:", f.ContentLength)
+   fmt.Fprint(s, " Type:", f.MimeType)
+   if verb == 'a' {
+      fmt.Fprint(s, " URL:", f.URL)
+   }
+}
+
 func (f Format) Write(dst io.Writer) error {
    req, err := http.NewRequest("GET", f.URL, nil)
    if err != nil {
@@ -55,36 +91,9 @@ func (n notPresent) Error() string {
    return fmt.Sprintf("%q is not present", n.value)
 }
 
-func (f Format) Format(s fmt.State, verb rune) {
-   fmt.Fprint(s, "Itag:", f.Itag)
-   if f.QualityLabel != "" {
-      fmt.Fprint(s, " Quality:", f.QualityLabel)
-   } else {
-      fmt.Fprint(s, " Quality:", f.AudioQuality)
-   }
-   fmt.Fprint(s, " Bitrate:", f.Bitrate)
-   fmt.Fprint(s, " Size:", f.ContentLength)
-   fmt.Fprint(s, " Type:", f.MimeType)
-   if verb == 'a' {
-      fmt.Fprint(s, " URL:", f.URL)
-   }
-}
-
 const partLength = 10_000_000
 
 var LogLevel format.LogLevel
-
-type Format struct {
-   AudioQuality string
-   Bitrate int
-   ContentLength int64 `json:"contentLength,string"`
-   Height int
-   Itag int
-   MimeType string
-   QualityLabel string
-   URL string
-   Width int
-}
 
 func (f Format) Ext() (string, error) {
    exts, err := mime.ExtensionsByType(f.MimeType)
@@ -96,4 +105,3 @@ func (f Format) Ext() (string, error) {
    }
    return "", notPresent{f.MimeType}
 }
-

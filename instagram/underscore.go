@@ -8,6 +8,73 @@ import (
    "strings"
 )
 
+func (i Item) String() (string, error) {
+   var buf []byte
+   buf = append(buf, "Taken: "...)
+   buf = strconv.AppendInt(buf, i.Taken_At, 10)
+   buf = append(buf, "\nUser: "...)
+   buf = append(buf, i.User.Username...)
+   buf = append(buf, "\nCaption: "...)
+   buf = append(buf, i.Caption.Text...)
+   addrs, err := i.URLs()
+   if err != nil {
+      return "", err
+   }
+   for _, addr := range addrs {
+      buf = append(buf, "\nURL: "...)
+      buf = append(buf, addr...)
+   }
+   return string(buf), nil
+}
+
+type Item struct {
+   Caption struct {
+      Text string
+   }
+   User struct {
+      Username string
+   }
+   Video_DASH_Manifest string
+   Image_Versions2 ImageVersion
+   Video_Versions []VideoVersion
+   Carousel_Media []struct {
+      Video_DASH_Manifest string
+      Image_Versions2 ImageVersion
+      Video_Versions []VideoVersion
+   }
+   Taken_At int64
+}
+
+func (i Item) URLs() ([]string, error) {
+   var (
+      dst []string
+      err error
+   )
+   if i.Video_DASH_Manifest != "" {
+      dst, err = appendManifest(dst, i.Video_DASH_Manifest)
+      if err != nil {
+         return nil, err
+      }
+   } else if i.Video_Versions != nil {
+      dst = appendVideo(dst, i.Video_Versions)
+   } else if i.Image_Versions2.Candidates != nil {
+      dst = appendImage(dst, i.Image_Versions2)
+   }
+   for _, med := range i.Carousel_Media {
+      if med.Video_DASH_Manifest != "" {
+         dst, err = appendManifest(dst, med.Video_DASH_Manifest)
+         if err != nil {
+            return nil, err
+         }
+      } else if med.Video_Versions != nil {
+         dst = appendVideo(dst, med.Video_Versions)
+      } else if med.Image_Versions2.Candidates != nil {
+         dst = appendImage(dst, med.Image_Versions2)
+      }
+   }
+   return dst, nil
+}
+
 func appendImage(dst []string, src ImageVersion) []string {
    var (
       addr string
@@ -103,36 +170,6 @@ type ImageVersion struct {
       Height int
       URL string
    }
-}
-
-func (i Item) URLs() ([]string, error) {
-   var (
-      dst []string
-      err error
-   )
-   if i.Video_DASH_Manifest != "" {
-      dst, err = appendManifest(dst, i.Video_DASH_Manifest)
-      if err != nil {
-         return nil, err
-      }
-   } else if i.Video_Versions != nil {
-      dst = appendVideo(dst, i.Video_Versions)
-   } else if i.Image_Versions2.Candidates != nil {
-      dst = appendImage(dst, i.Image_Versions2)
-   }
-   for _, med := range i.Carousel_Media {
-      if med.Video_DASH_Manifest != "" {
-         dst, err = appendManifest(dst, med.Video_DASH_Manifest)
-         if err != nil {
-            return nil, err
-         }
-      } else if med.Video_Versions != nil {
-         dst = appendVideo(dst, med.Video_Versions)
-      } else if med.Image_Versions2.Candidates != nil {
-         dst = appendImage(dst, med.Image_Versions2)
-      }
-   }
-   return dst, nil
 }
 
 func (l Login) Items(shortcode string) ([]Item, error) {
@@ -241,43 +278,6 @@ func (g GraphMedia) String() string {
       buf = append(buf, addr...)
    }
    return string(buf)
-}
-
-type Item struct {
-   Caption struct {
-      Text string
-   }
-   User struct {
-      Username string
-   }
-   Video_DASH_Manifest string
-   Image_Versions2 ImageVersion
-   Video_Versions []VideoVersion
-   Carousel_Media []struct {
-      Video_DASH_Manifest string
-      Image_Versions2 ImageVersion
-      Video_Versions []VideoVersion
-   }
-   Taken_At int64
-}
-
-func (i Item) Format() (string, error) {
-   var buf []byte
-   buf = append(buf, "Taken: "...)
-   buf = strconv.AppendInt(buf, i.Taken_At, 10)
-   buf = append(buf, "\nUser: "...)
-   buf = append(buf, i.User.Username...)
-   buf = append(buf, "\nCaption: "...)
-   buf = append(buf, i.Caption.Text...)
-   addrs, err := i.URLs()
-   if err != nil {
-      return "", err
-   }
-   for _, addr := range addrs {
-      buf = append(buf, "\nURL: "...)
-      buf = append(buf, addr...)
-   }
-   return string(buf), nil
 }
 
 func (e EdgeURL) URLs() []string {

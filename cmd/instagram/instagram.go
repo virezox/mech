@@ -44,11 +44,11 @@ func doItems(shortcode string, info bool) error {
    }
    for _, item := range items {
       if info {
-         form, err := item.Format()
+         str, err := item.String()
          if err != nil {
             return err
          }
-         fmt.Println(form)
+         fmt.Println(str)
       } else {
          addrs, err := item.URLs()
          if err != nil {

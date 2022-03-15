@@ -59,6 +59,7 @@ func (v video) do() error {
    if v.info {
       fmt.Println(play.Details())
       for _, form := range play.StreamingData.AdaptiveFormats {
+         form.ParseMediaType()
          fmt.Println(form)
       }
    } else {
