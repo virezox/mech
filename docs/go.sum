@@ -1,7 +1,8 @@
-github.com/89z/format v1.24.7 h1:POvZPQrqoZg9t+/2yh6vTL0xJfAGa6g4KGqfy6n0gUY=
-github.com/89z/format v1.24.7/go.mod h1:pYQxDbs1bd/F5HnQN6TkZKT1cyOuKQiyXgAGzsLujis=
-github.com/89z/googleplay v1.8.1 h1:53kdrwqe04ctEBBah9dwrghqK532X59XrvFmLhngVkY=
-github.com/89z/googleplay v1.8.1/go.mod h1:spD4cLJl4TaUaCAhDIVVC5cEFOaPcQly28QqmgmS+rI=
+github.com/89z/format v1.25.6/go.mod h1:pYQxDbs1bd/F5HnQN6TkZKT1cyOuKQiyXgAGzsLujis=
+github.com/89z/format v1.26.2 h1:+kVsEkO6qM0ZmA5JqifAXKXsOzK9bbCPHNetYDyjUpI=
+github.com/89z/format v1.26.2/go.mod h1:pYQxDbs1bd/F5HnQN6TkZKT1cyOuKQiyXgAGzsLujis=
+github.com/89z/googleplay v1.8.2 h1:R998xRBN8h0D7KwkCCqwx3wf+KdGPZ7R5teo/TozoN0=
+github.com/89z/googleplay v1.8.2/go.mod h1:9E1v8T+yk0TT5pxzptTopOXbcJtOw3EW9+3BR3DvmYA=
 github.com/golang/protobuf v1.5.0/go.mod h1:FsONVRAS9T7sI+LIUmWTfcYkHO4aIWwzhcaSAoJOfIk=
 github.com/google/go-cmp v0.5.5/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/gNBxE=
 github.com/refraction-networking/utls v1.0.0 h1:6XQHSjDmeBCF9sPq8p2zMVGq7Ud3rTD2q88Fw8Tz1tA=
