@@ -6,32 +6,6 @@ import (
    "os"
 )
 
-func (v video) player() (*youtube.Player, error) {
-   client := youtube.Android
-   if v.embed {
-      client = youtube.Embed
-   }
-   if v.id == "" {
-      var err error
-      v.id, err = youtube.VideoID(v.address)
-      if err != nil {
-         return nil, err
-      }
-   }
-   if v.construct {
-      cache, err := os.UserCacheDir()
-      if err != nil {
-         return nil, err
-      }
-      exc, err := youtube.OpenExchange(cache, "/mech/youtube.json")
-      if err != nil {
-         return nil, err
-      }
-      return client.PlayerHeader(exc.Header(), v.id)
-   }
-   return client.Player(v.id)
-}
-
 func main() {
    var vid video
    // a
@@ -43,7 +17,9 @@ func main() {
    // e
    flag.BoolVar(&vid.embed, "e", false, "use embedded player")
    // f
-   flag.IntVar(&vid.height, "f", 720, "target video height")
+   // youtube.com/watch?v=G4Uk8bL274E
+   // youtube.com/watch?v=p-P5-7eV9GE
+   flag.IntVar(&vid.bitrate, "f", 1_567_492, "target video bitrate")
    // g
    flag.StringVar(&vid.audio, "g", "AUDIO_QUALITY_MEDIUM", "target audio")
    // i
@@ -79,4 +55,30 @@ func main() {
    } else {
       flag.Usage()
    }
+}
+
+func (v video) player() (*youtube.Player, error) {
+   client := youtube.Android
+   if v.embed {
+      client = youtube.Embed
+   }
+   if v.id == "" {
+      var err error
+      v.id, err = youtube.VideoID(v.address)
+      if err != nil {
+         return nil, err
+      }
+   }
+   if v.construct {
+      cache, err := os.UserCacheDir()
+      if err != nil {
+         return nil, err
+      }
+      exc, err := youtube.OpenExchange(cache, "/mech/youtube.json")
+      if err != nil {
+         return nil, err
+      }
+      return client.PlayerHeader(exc.Header(), v.id)
+   }
+   return client.Player(v.id)
 }

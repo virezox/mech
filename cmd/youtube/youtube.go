@@ -43,9 +43,9 @@ func doRefresh() error {
 type video struct {
    address string
    audio string
+   bitrate int
    construct bool
    embed bool
-   height int
    id string
    info bool
 }
@@ -63,7 +63,7 @@ func (v video) do() error {
          fmt.Println(form)
       }
    } else {
-      if v.height >= 1 {
+      if v.bitrate >= 1 {
          err := v.doVideo(play)
          if err != nil {
             return err
@@ -98,8 +98,10 @@ func (v video) doAudio(play *youtube.Player) error {
 }
 
 func (v video) doVideo(play *youtube.Player) error {
-   sort.Sort(youtube.Height{play.StreamingData, v.height})
+   sort.Sort(youtube.Bitrate{play.StreamingData, v.bitrate})
    for i, form := range play.StreamingData.AdaptiveFormats {
+      form.ParseMediaType()
+      fmt.Println(form)
       ext, err := form.Ext()
       if err != nil {
          return err

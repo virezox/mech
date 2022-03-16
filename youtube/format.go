@@ -10,13 +10,21 @@ import (
    "time"
 )
 
-func (f *Format) ParseMediaType() error {
-   typ, _, err := mime.ParseMediaType(f.MimeType)
-   if err != nil {
-      return err
+type Bitrate struct {
+   StreamingData
+   Target int
+}
+
+func (b Bitrate) Less(i, j int) bool {
+   return b.distance(i) < b.distance(j)
+}
+
+func (b Bitrate) distance(i int) int {
+   diff := b.AdaptiveFormats[i].Bitrate - b.Target
+   if diff >= 0 {
+      return diff
    }
-   f.MimeType = typ
-   return nil
+   return -diff
 }
 
 type Format struct {
@@ -29,6 +37,15 @@ type Format struct {
    QualityLabel string
    URL string
    Width int
+}
+
+func (f *Format) ParseMediaType() error {
+   typ, _, err := mime.ParseMediaType(f.MimeType)
+   if err != nil {
+      return err
+   }
+   f.MimeType = typ
+   return nil
 }
 
 func (f Format) Format(s fmt.State, verb rune) {

@@ -111,10 +111,13 @@ func (c Context) Search(query string) (*Search, error) {
       Params string `json:"params"`
       Query string `json:"query"`
    }
-   body.Query = query
-   filter := NewFilter().Type(TypeVideo)
-   body.Params = NewParams().Filter(filter).Encode()
    body.Context = c
+   filter := NewFilter()
+   filter.Type(Type["Video"])
+   param := NewParams()
+   param.Filter(filter)
+   body.Params = param.Encode()
+   body.Query = query
    buf := new(bytes.Buffer)
    if err := json.NewEncoder(buf).Encode(body); err != nil {
       return nil, err
@@ -135,23 +138,6 @@ func (c Context) Search(query string) (*Search, error) {
       return nil, err
    }
    return search, nil
-}
-
-type Height struct {
-   StreamingData
-   Target int
-}
-
-func (h Height) Less(i, j int) bool {
-   return h.distance(i) < h.distance(j)
-}
-
-func (h Height) distance(i int) int {
-   diff := h.AdaptiveFormats[i].Height - h.Target
-   if diff >= 0 {
-      return diff
-   }
-   return -diff
 }
 
 type Item struct {

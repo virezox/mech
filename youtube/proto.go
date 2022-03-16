@@ -5,28 +5,47 @@ import (
    "github.com/89z/format/protobuf"
 )
 
-const (
-   // UPLOAD DATE
-   UploadDateLastHour = 1
-   UploadDateToday = 2
-   UploadDateThisWeek = 3
-   UploadDateThisMonth = 4
-   UploadDateThisYear = 5
-   // TYPE
-   TypeVideo = 1
-   TypeChannel = 2
-   TypePlaylist = 3
-   TypeMovie = 4
-   // DURATION
-   DurationUnderFourMinutes = 1
-   DurationOverTwentyMinutes = 2
-   DurationFourToTwentyMinutes = 3
-   // SORT BY
-   SortByRelevance = 0
-   SortByRating = 1
-   SortByUploadDate = 2
-   SortByViewCount = 3
-)
+var Duration = map[string]uint64{
+   "Under 4 minutes": 1,
+   "4 - 20 minutes": 3,
+   "Over 20 minutes": 2,
+}
+
+var Features = map[string]protobuf.Tag{
+   "360°": {Number: 15},
+   "3D": {Number: 7},
+   "4K": {Number: 14},
+   "Creative Commons": {Number: 6},
+   "HD": {Number: 4},
+   "HDR": {Number: 25},
+   "Live": {Number: 8},
+   "Location": {Number: 23},
+   "Purchased": {Number: 9},
+   "Subtitles/CC": {Number: 5},
+   "VR180": {Number: 26},
+}
+
+var SortBy = map[string]uint64{
+   "Relevance": 0,
+   "Upload date": 2,
+   "View count": 3,
+   "Rating": 1,
+}
+
+var Type = map[string]uint64{
+   "Video": 1,
+   "Channel": 2,
+   "Playlist": 3,
+   "Movie": 4,
+}
+
+var UploadDate = map[string]uint64{
+   "Last hour": 1,
+   "Today": 2,
+   "This week": 3,
+   "This month": 4,
+   "This year": 5,
+}
 
 type Filter struct {
    protobuf.Message
@@ -38,74 +57,23 @@ func NewFilter() Filter {
    return filter
 }
 
-func (f Filter) CreativeCommons(val uint64) Filter {
-   f.Message[6] = val
-   return f
+func (f Filter) Duration(val uint64) {
+   key := protobuf.Tag{Number: 3}
+   f.Message[key] = val
 }
 
-func (f Filter) Duration(val uint64) Filter {
-   f.Message[3] = val
-   return f
+func (f Filter) Features(key protobuf.Tag) {
+   f.Message[key] = 1
 }
 
-func (f Filter) FourK(val uint64) Filter {
-   f.Message[14] = val
-   return f
+func (f Filter) Type(val uint64) {
+   key := protobuf.Tag{Number: 2}
+   f.Message[key] = val
 }
 
-func (f Filter) HD(val uint64) Filter {
-   f.Message[4] = val
-   return f
-}
-
-func (f Filter) HDR(val uint64) Filter {
-   f.Message[25] = val
-   return f
-}
-
-func (f Filter) Live(val uint64) Filter {
-   f.Message[8] = val
-   return f
-}
-
-func (f Filter) Location(val uint64) Filter {
-   f.Message[23] = val
-   return f
-}
-
-func (f Filter) Purchased(val uint64) Filter {
-   f.Message[9] = val
-   return f
-}
-
-func (f Filter) Subtitles(val uint64) Filter {
-   f.Message[5] = val
-   return f
-}
-
-func (f Filter) ThreeD(val uint64) Filter {
-   f.Message[7] = val
-   return f
-}
-
-func (f Filter) ThreeSixty(val uint64) Filter {
-   f.Message[15] = val
-   return f
-}
-
-func (f Filter) Type(val uint64) Filter {
-   f.Message[2] = val
-   return f
-}
-
-func (f Filter) UploadDate(val uint64) Filter {
-   f.Message[1] = val
-   return f
-}
-
-func (f Filter) VR180(val uint64) Filter {
-   f.Message[26] = val
-   return f
+func (f Filter) UploadDate(val uint64) {
+   key := protobuf.Tag{Number: 1}
+   f.Message[key] = val
 }
 
 type Params struct {
@@ -123,12 +91,12 @@ func (p Params) Encode() string {
    return base64.StdEncoding.EncodeToString(buf)
 }
 
-func (p Params) Filter(val Filter) Params {
-   p.Message[2] = val.Message
-   return p
+func (p Params) Filter(val Filter) {
+   key := protobuf.Tag{Number: 2}
+   p.Message[key] = val.Message
 }
 
-func (p Params) SortBy(val uint64) Params {
-   p.Message[1] = val
-   return p
+func (p Params) SortBy(val uint64) {
+   key := protobuf.Tag{Number: 1}
+   p.Message[key] = val
 }
