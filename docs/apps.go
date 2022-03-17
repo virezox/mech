@@ -63,7 +63,7 @@ func main() {
       return apps[b].installs < apps[a].installs
    })
    for _, app := range apps {
-      fmt.Println(format.Number.GetUint64(app.installs), app.done, app.name)
+      fmt.Println(format.LabelNumber(app.installs), app.done, app.name)
    }
 }
 
