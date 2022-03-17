@@ -1,10 +1,10 @@
 module docs
 
-go 1.17
+go 1.18
 
 require (
-	github.com/89z/format v1.26.2
-	github.com/89z/googleplay v1.8.2
+	github.com/89z/format v1.26.3
+	github.com/89z/googleplay v1.8.3
 )
 
 require (

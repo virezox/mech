@@ -53,7 +53,7 @@ func download(media *paramount.Media, video hls.Stream) error {
    if err != nil {
       return err
    }
-   file, err := os.Create(media.Body.Seq.Video.Title + seg.Ext())
+   file, err := os.Create(media.Base() + seg.Ext())
    if err != nil {
       return err
    }

@@ -54,3 +54,7 @@ func NewMedia(guid string) (*Media, error) {
    }
    return med, nil
 }
+
+func (m Media) Base() string {
+   return format.Clean(m.Body.Seq.Video.Title)
+}

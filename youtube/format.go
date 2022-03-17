@@ -6,9 +6,42 @@ import (
    "io"
    "mime"
    "net/http"
-   "os"
    "time"
 )
+
+func (f Format) Write(dst io.Writer) error {
+   req, err := http.NewRequest("GET", f.URL, nil)
+   if err != nil {
+      return err
+   }
+   LogLevel.Dump(req)
+   var (
+      begin = time.Now()
+      content int64
+   )
+   for content < f.ContentLength {
+      req.Header.Set(
+         "Range", fmt.Sprintf("bytes=%v-%v", content, content+partLength-1),
+      )
+      end := time.Since(begin).Seconds()
+      if end >= 1 {
+         fmt.Print(format.Percent(content, f.ContentLength), "\t")
+         fmt.Print(format.LabelSize(content), "\t")
+         fmt.Println(format.LabelRate(float64(content)/end))
+      }
+      // this sometimes redirects, so cannot use http.Transport
+      res, err := new(http.Client).Do(req)
+      if err != nil {
+         return err
+      }
+      defer res.Body.Close()
+      if _, err := io.Copy(dst, res.Body); err != nil {
+         return err
+      }
+      content += partLength
+   }
+   return nil
+}
 
 type Bitrate struct {
    StreamingData
@@ -61,43 +94,6 @@ func (f Format) Format(s fmt.State, verb rune) {
    if verb == 'a' {
       fmt.Fprint(s, " URL:", f.URL)
    }
-}
-
-func (f Format) Write(dst io.Writer) error {
-   req, err := http.NewRequest("GET", f.URL, nil)
-   if err != nil {
-      return err
-   }
-   LogLevel.Dump(req)
-   var (
-      begin = time.Now()
-      content int64
-   )
-   for content < f.ContentLength {
-      req.Header.Set(
-         "Range", fmt.Sprintf("bytes=%v-%v", content, content+partLength-1),
-      )
-      end := time.Since(begin).Seconds()
-      if end >= 1 {
-         os.Stdout.WriteString(format.PercentInt64(content, f.ContentLength))
-         os.Stdout.WriteString("\t")
-         os.Stdout.WriteString(format.Size.GetInt64(content))
-         os.Stdout.WriteString("\t")
-         os.Stdout.WriteString(format.Rate.Get(float64(content)/end))
-         os.Stdout.WriteString("\n")
-      }
-      // this sometimes redirects, so cannot use http.Transport
-      res, err := new(http.Client).Do(req)
-      if err != nil {
-         return err
-      }
-      defer res.Body.Close()
-      if _, err := io.Copy(dst, res.Body); err != nil {
-         return err
-      }
-      content += partLength
-   }
-   return nil
 }
 
 type notPresent struct {
