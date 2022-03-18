@@ -3,7 +3,6 @@ package bandcamp
 import (
    "encoding/json"
    "github.com/89z/format"
-   "mime"
    "net/http"
    "net/url"
    "strconv"
@@ -216,16 +215,4 @@ type Track struct {
    Track_Num int
    Title string
    Streaming_URL map[string]string
-}
-
-func (t Track) Ext(head http.Header) (string, error) {
-   typ := head.Get("Content-Type")
-   exts, err := mime.ExtensionsByType(typ)
-   if err != nil {
-      return "", err
-   }
-   for _, ext := range exts {
-      return ext, nil
-   }
-   return "", notPresent{typ}
 }

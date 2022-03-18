@@ -28,6 +28,10 @@ type Detail struct {
    }
 }
 
+func (d Detail) Base() string {
+   return format.Clean(d.Author.Unique_ID + "-" + d.Aweme_ID)
+}
+
 func NewDetail(id int64) (*Detail, error) {
    req, err := http.NewRequest("GET", origin + "/aweme/v1/aweme/detail/", nil)
    if err != nil {

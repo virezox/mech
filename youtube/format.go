@@ -9,6 +9,8 @@ import (
    "time"
 )
 
+var LogLevel format.LogLevel
+
 func (f Format) Write(dst io.Writer) error {
    req, err := http.NewRequest("GET", f.URL, nil)
    if err != nil {
@@ -105,8 +107,6 @@ func (n notPresent) Error() string {
 }
 
 const partLength = 10_000_000
-
-var LogLevel format.LogLevel
 
 func (f Format) Ext() (string, error) {
    exts, err := mime.ExtensionsByType(f.MimeType)
