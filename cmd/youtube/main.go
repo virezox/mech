@@ -6,14 +6,6 @@ import (
    "os"
 )
 
-/*
-ID          | 720 low | 720 mid | 720 high | 1080 low
-------------|---------|---------|----------|---------
-p-P5-7eV9GE | 1052477 | 1325265 | 1350187  | 2078318
-qqiC88f9ogU | 2097952 | 2679828 | 3478455  | 3962169
-*/
-const bitrate = 1_350_187
-
 func main() {
    var vid video
    // a
@@ -25,7 +17,7 @@ func main() {
    // e
    flag.BoolVar(&vid.embed, "e", false, "use embedded player")
    // f
-   flag.IntVar(&vid.bitrate, "f", bitrate, "target video bitrate")
+   flag.IntVar(&vid.height, "f", 720, "target video height")
    // g
    flag.StringVar(&vid.audio, "g", "AUDIO_QUALITY_MEDIUM", "target audio")
    // i

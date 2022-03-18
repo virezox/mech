@@ -4,8 +4,38 @@ import (
    "fmt"
    "github.com/89z/mech/youtube"
    "os"
-   "sort"
+   //"sort"
 )
+
+func (v video) do() error {
+   play, err := v.player()
+   if err != nil {
+      return err
+   }
+   fmt.Println(play.Status())
+   sort.Stable(youtube.Height{play.StreamingData, v.height})
+   if v.info {
+      fmt.Println(play.Details())
+      for _, form := range play.StreamingData.AdaptiveFormats {
+         form.ParseMediaType()
+         fmt.Println(form)
+      }
+   } else {
+      if v.height >= 1 {
+         err := v.doVideo(play)
+         if err != nil {
+            return err
+         }
+      }
+      if v.audio != "" {
+         err := v.doAudio(play)
+         if err != nil {
+            return err
+         }
+      }
+   }
+   return nil
+}
 
 func doExchange() error {
    oauth, err := youtube.NewOAuth()
@@ -43,40 +73,11 @@ func doRefresh() error {
 type video struct {
    address string
    audio string
-   bitrate int
+   height int
    construct bool
    embed bool
    id string
    info bool
-}
-
-func (v video) do() error {
-   play, err := v.player()
-   if err != nil {
-      return err
-   }
-   fmt.Println(play.Status())
-   if v.info {
-      fmt.Println(play.Details())
-      for _, form := range play.StreamingData.AdaptiveFormats {
-         form.ParseMediaType()
-         fmt.Println(form)
-      }
-   } else {
-      if v.bitrate >= 1 {
-         err := v.doVideo(play)
-         if err != nil {
-            return err
-         }
-      }
-      if v.audio != "" {
-         err := v.doAudio(play)
-         if err != nil {
-            return err
-         }
-      }
-   }
-   return nil
 }
 
 func (v video) doAudio(play *youtube.Player) error {
@@ -98,10 +99,7 @@ func (v video) doAudio(play *youtube.Player) error {
 }
 
 func (v video) doVideo(play *youtube.Player) error {
-   sort.Sort(youtube.Bitrate{play.StreamingData, v.bitrate})
    for i, form := range play.StreamingData.AdaptiveFormats {
-      form.ParseMediaType()
-      fmt.Println(form)
       ext, err := form.Ext()
       if err != nil {
          return err
