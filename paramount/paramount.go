@@ -3,6 +3,7 @@ package paramount
 import (
    "encoding/xml"
    "github.com/89z/format"
+   "github.com/89z/mech"
    "net/http"
    "net/url"
    "strconv"
@@ -56,5 +57,5 @@ func NewMedia(guid string) (*Media, error) {
 }
 
 func (m Media) Base() string {
-   return format.Clean(m.Body.Seq.Video.Title)
+   return mech.Clean(m.Body.Seq.Video.Title)
 }

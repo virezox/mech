@@ -3,7 +3,7 @@ package youtube
 import (
    "bytes"
    "encoding/json"
-   "github.com/89z/format"
+   "github.com/89z/mech"
    "net/http"
    "net/url"
    "path"
@@ -173,7 +173,7 @@ type Player struct {
 }
 
 func (p Player) Base() string {
-   return format.Clean(p.VideoDetails.Author + "-" + p.VideoDetails.Title)
+   return mech.Clean(p.VideoDetails.Author + "-" + p.VideoDetails.Title)
 }
 
 func (p Player) Date() (time.Time, error) {

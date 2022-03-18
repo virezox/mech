@@ -3,6 +3,7 @@ package tiktok
 import (
    "encoding/json"
    "github.com/89z/format"
+   "github.com/89z/mech"
    "net/http"
    "strconv"
    "time"
@@ -26,6 +27,10 @@ type Detail struct {
          URL_List []string
       }
    }
+}
+
+func (d Detail) Base() string {
+   return mech.Clean(d.Author.Unique_ID + "-" + d.Aweme_ID)
 }
 
 func NewDetail(id int64) (*Detail, error) {

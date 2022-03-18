@@ -4,6 +4,7 @@ import (
    "encoding/json"
    "fmt"
    "github.com/89z/format"
+   "github.com/89z/mech"
    "net/http"
    "net/url"
    "strings"
@@ -96,7 +97,7 @@ func (p Property) Base() string {
    buf.WriteString(p.Data.Item.ParentEntity.Title)
    buf.WriteByte('-')
    buf.WriteString(p.Data.Item.Title)
-   return format.Clean(buf.String())
+   return mech.Clean(buf.String())
 }
 
 func (p Property) Topaz() (*Topaz, error) {

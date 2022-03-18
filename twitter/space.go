@@ -2,7 +2,7 @@ package twitter
 
 import (
    "encoding/json"
-   "github.com/89z/format"
+   "github.com/89z/mech"
    "net/http"
    "net/url"
    "strings"
@@ -76,7 +76,7 @@ func (a AudioSpace) Base() string {
    buf.WriteString(a.Admins())
    buf.WriteByte('-')
    buf.WriteString(a.Metadata.Title)
-   return format.Clean(buf.String())
+   return mech.Clean(buf.String())
 }
 
 func (a AudioSpace) Duration() time.Duration {

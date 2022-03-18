@@ -3,6 +3,7 @@ package main
 import (
    "fmt"
    "github.com/89z/format"
+   "github.com/89z/mech"
    "github.com/89z/mech/bandcamp"
    "net/http"
    "os"
@@ -26,7 +27,7 @@ func doTralbum(item *bandcamp.Item, info bool, sleep time.Duration) error {
                return err
             }
             defer res.Body.Close()
-            ext, err := track.Ext(res.Header)
+            ext, err := mech.Ext(res.Header)
             if err != nil {
                return err
             }

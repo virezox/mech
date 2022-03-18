@@ -7,6 +7,7 @@ import (
    "encoding/hex"
    "encoding/json"
    "github.com/89z/format"
+   "github.com/89z/mech"
    "io"
    "net/http"
    "strconv"
@@ -56,7 +57,7 @@ type Video struct {
 }
 
 func (v Video) Base() string {
-   return format.Clean(v.Data.BonanzaPage.Analytics.ConvivaAssetName)
+   return mech.Clean(v.Data.BonanzaPage.Analytics.ConvivaAssetName)
 }
 
 type videoRequest struct {
