@@ -17,7 +17,8 @@ func main() {
    // e
    flag.BoolVar(&vid.embed, "e", false, "use embedded player")
    // f
-   flag.IntVar(&vid.height, "f", 720, "target video height")
+   // youtube.com/watch?v=7WTEB7Qbt4U
+   flag.IntVar(&vid.bitrate, "f", 513_601, "target video bitrate")
    // g
    flag.StringVar(&vid.audio, "g", "AUDIO_QUALITY_MEDIUM", "target audio")
    // i

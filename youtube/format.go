@@ -6,8 +6,19 @@ import (
    "io"
    "mime"
    "net/http"
+   "strings"
    "time"
 )
+
+func (f *Format) MediaType() error {
+   t, param, err := mime.ParseMediaType(f.MimeType)
+   if err != nil {
+      return err
+   }
+   param["codecs"], _, _ = strings.Cut(param["codecs"], ".")
+   f.MimeType = mime.FormatMediaType(t, param)
+   return nil
+}
 
 var LogLevel format.LogLevel
 
@@ -45,30 +56,6 @@ func (f Format) Write(dst io.Writer) error {
    return nil
 }
 
-func (f *Format) ParseMediaType() error {
-   typ, _, err := mime.ParseMediaType(f.MimeType)
-   if err != nil {
-      return err
-   }
-   f.MimeType = typ
-   return nil
-}
-
-func (f Format) Format(s fmt.State, verb rune) {
-   fmt.Fprint(s, "Itag:", f.Itag)
-   if f.QualityLabel != "" {
-      fmt.Fprint(s, " Quality:", f.QualityLabel)
-   } else {
-      fmt.Fprint(s, " Quality:", f.AudioQuality)
-   }
-   fmt.Fprint(s, " Bitrate:", f.Bitrate)
-   fmt.Fprint(s, " Size:", f.ContentLength)
-   fmt.Fprint(s, " Type:", f.MimeType)
-   if verb == 'a' {
-      fmt.Fprint(s, " URL:", f.URL)
-   }
-}
-
 type notPresent struct {
    value string
 }
@@ -90,41 +77,53 @@ func (f Format) Ext() (string, error) {
    return "", notPresent{f.MimeType}
 }
 
+// averageBitrate is a better marker for quality than bitrate. For example, if
+// you look a video:
+// 7WTEB7Qbt4U
+// you get this:
+//
+// itag | bitrate | averageBitrate | contentLength
+// -----|---------|----------------|--------------
+// 136  | 1038025 | 286687         | 6891870
+// 247  | 1192816 | 513601         | 12346788
+// 398  | 1117347 | 349310         | 8397292
+
 type Format struct {
    AudioQuality string
-   Bitrate int
+   AverageBitrate int
    ContentLength int64 `json:"contentLength,string"`
    Height int
-   Itag int
    MimeType string
    QualityLabel string
    URL string
    Width int
 }
 
-// We cannot do bitrate. If we look at this video:
-//
-// ID          | 720 low | 720 mid | 720 high | 1080 low
-// ------------|---------|---------|----------|---------
-// p-P5-7eV9GE | 1052477 | 1325265 | 1350187  | 2078318
-//
-// then the target would be 1350187. Then if we look at this video, 480 would
-// be chosen:
-//
-// ID          | 480     | 720 low
-// ------------|---------|--------
-// qqiC88f9ogU | 1158788 | 2097952
-type Height struct {
+func (f Format) Format(s fmt.State, verb rune) {
+   if f.QualityLabel != "" {
+      fmt.Fprint(s, "Quality:", f.QualityLabel)
+   } else {
+      fmt.Fprint(s, "Quality:", f.AudioQuality)
+   }
+   fmt.Fprint(s, " Bitrate:", f.AverageBitrate)
+   fmt.Fprint(s, " Size:", f.ContentLength)
+   fmt.Fprint(s, " Type:", f.MimeType)
+   if verb == 'a' {
+      fmt.Fprint(s, " URL:", f.URL)
+   }
+}
+
+type Bitrate struct {
    StreamingData
    Target int
 }
 
-func (h Height) Less(i, j int) bool {
-   return h.distance(i) < h.distance(j)
+func (b Bitrate) Less(i, j int) bool {
+   return b.distance(i) < b.distance(j)
 }
 
-func (h Height) distance(i int) int {
-   diff := h.AdaptiveFormats[i].Height - h.Target
+func (b Bitrate) distance(i int) int {
+   diff := b.AdaptiveFormats[i].AverageBitrate - b.Target
    if diff >= 0 {
       return diff
    }

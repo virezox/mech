@@ -4,7 +4,7 @@ import (
    "fmt"
    "github.com/89z/mech/youtube"
    "os"
-   //"sort"
+   "sort"
 )
 
 func (v video) do() error {
@@ -13,15 +13,15 @@ func (v video) do() error {
       return err
    }
    fmt.Println(play.Status())
-   sort.Stable(youtube.Height{play.StreamingData, v.height})
+   sort.Sort(youtube.Bitrate{play.StreamingData, v.bitrate})
    if v.info {
       fmt.Println(play.Details())
       for _, form := range play.StreamingData.AdaptiveFormats {
-         form.ParseMediaType()
+         form.MediaType()
          fmt.Println(form)
       }
    } else {
-      if v.height >= 1 {
+      if v.bitrate >= 1 {
          err := v.doVideo(play)
          if err != nil {
             return err
@@ -73,7 +73,7 @@ func doRefresh() error {
 type video struct {
    address string
    audio string
-   height int
+   bitrate int
    construct bool
    embed bool
    id string
