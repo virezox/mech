@@ -3,7 +3,6 @@ package main
 import (
    "flag"
    "github.com/89z/mech/youtube"
-   "os"
 )
 
 func main() {
@@ -17,8 +16,7 @@ func main() {
    // e
    flag.BoolVar(&vid.embed, "e", false, "use embedded player")
    // f
-   // youtube.com/watch?v=7WTEB7Qbt4U
-   flag.IntVar(&vid.bitrate, "f", 513_601, "target video bitrate")
+   flag.IntVar(&vid.height, "f", 720, "target video height")
    // g
    flag.StringVar(&vid.audio, "g", "AUDIO_QUALITY_MEDIUM", "target audio")
    // i
@@ -54,30 +52,4 @@ func main() {
    } else {
       flag.Usage()
    }
-}
-
-func (v video) player() (*youtube.Player, error) {
-   client := youtube.Android
-   if v.embed {
-      client = youtube.Embed
-   }
-   if v.id == "" {
-      var err error
-      v.id, err = youtube.VideoID(v.address)
-      if err != nil {
-         return nil, err
-      }
-   }
-   if v.construct {
-      cache, err := os.UserCacheDir()
-      if err != nil {
-         return nil, err
-      }
-      exc, err := youtube.OpenExchange(cache, "/mech/youtube.json")
-      if err != nil {
-         return nil, err
-      }
-      return client.PlayerHeader(exc.Header(), v.id)
-   }
-   return client.Player(v.id)
 }

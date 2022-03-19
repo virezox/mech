@@ -3,11 +3,12 @@ package youtube
 import (
    "bytes"
    "encoding/json"
+   "fmt"
    "github.com/89z/mech"
+   "mime"
    "net/http"
    "net/url"
    "path"
-   "strconv"
    "strings"
    "time"
 )
@@ -32,7 +33,7 @@ func VideoID(address string) (string, error) {
    return path.Base(parse.Path), nil
 }
 
-func encode(val interface{}) (*bytes.Buffer, error) {
+func encode(val any) (*bytes.Buffer, error) {
    buf := new(bytes.Buffer)
    enc := json.NewEncoder(buf)
    enc.SetIndent("", " ")
@@ -152,12 +153,6 @@ type Item struct {
 }
 
 type Player struct {
-   StreamingData StreamingData
-   Microformat struct {
-      PlayerMicroformatRenderer struct {
-         PublishDate string // 2013-06-11
-      }
-   }
    PlayabilityStatus struct {
       Status string // "OK", "LOGIN_REQUIRED"
       Reason string // "", "Sign in to confirm your age"
@@ -170,6 +165,12 @@ type Player struct {
       Title string
       ShortDescription string
    }
+   Microformat struct {
+      PlayerMicroformatRenderer struct {
+         PublishDate string // 2013-06-11
+      }
+   }
+   StreamingData StreamingData
 }
 
 func (p Player) Base() string {
@@ -181,18 +182,21 @@ func (p Player) Date() (time.Time, error) {
    return time.Parse("2006-01-02", value)
 }
 
-func (p Player) Details() string {
-   buf := []byte("VideoID: ")
-   buf = append(buf, p.VideoDetails.VideoID...)
-   buf = append(buf, "\nLength: "...)
-   buf = strconv.AppendInt(buf, p.VideoDetails.LengthSeconds, 10)
-   buf = append(buf, "\nViewCount: "...)
-   buf = strconv.AppendInt(buf, p.VideoDetails.ViewCount, 10)
-   buf = append(buf, "\nAuthor: "...)
-   buf = append(buf, p.VideoDetails.Author...)
-   buf = append(buf, "\nTitle: "...)
-   buf = append(buf, p.VideoDetails.Title...)
-   return string(buf)
+func (p Player) Format(f fmt.State, verb rune) {
+   fmt.Fprintln(f, p.Status())
+   fmt.Fprintln(f, "VideoID:", p.VideoDetails.VideoID)
+   fmt.Fprintln(f, "Length:", p.VideoDetails.LengthSeconds)
+   fmt.Fprintln(f, "ViewCount:", p.VideoDetails.ViewCount)
+   fmt.Fprintln(f, "Author:", p.VideoDetails.Author)
+   fmt.Fprintln(f, "Title:", p.VideoDetails.Title)
+   date := p.Microformat.PlayerMicroformatRenderer.PublishDate
+   if date != "" {
+      fmt.Fprintln(f, "Date:", date)
+   }
+   for _, form := range p.StreamingData.AdaptiveFormats {
+      fmt.Fprintln(f)
+      form.Format(f, verb)
+   }
 }
 
 func (p Player) Status() string {
@@ -238,6 +242,18 @@ type StreamingData struct {
 
 func (s StreamingData) Len() int {
    return len(s.AdaptiveFormats)
+}
+
+func (s *StreamingData) MediaType() error {
+   for i, form := range s.AdaptiveFormats {
+      t, param, err := mime.ParseMediaType(form.MimeType)
+      if err != nil {
+         return err
+      }
+      param["codecs"], _, _ = strings.Cut(param["codecs"], ".")
+      s.AdaptiveFormats[i].MimeType = mime.FormatMediaType(t, param)
+   }
+   return nil
 }
 
 func (s StreamingData) Swap(i, j int) {

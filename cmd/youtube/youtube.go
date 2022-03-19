@@ -12,16 +12,13 @@ func (v video) do() error {
    if err != nil {
       return err
    }
-   fmt.Println(play.Status())
-   sort.Sort(youtube.Bitrate{play.StreamingData, v.bitrate})
+   sort.Stable(youtube.Height{play.StreamingData, v.height})
    if v.info {
-      fmt.Println(play.Details())
-      for _, form := range play.StreamingData.AdaptiveFormats {
-         form.MediaType()
-         fmt.Println(form)
-      }
+      play.StreamingData.MediaType()
+      fmt.Println(play)
    } else {
-      if v.bitrate >= 1 {
+      fmt.Println(play.Status())
+      if v.height >= 1 {
          err := v.doVideo(play)
          if err != nil {
             return err
@@ -73,9 +70,9 @@ func doRefresh() error {
 type video struct {
    address string
    audio string
-   bitrate int
    construct bool
    embed bool
+   height int
    id string
    info bool
 }
@@ -114,4 +111,30 @@ func (v video) doVideo(play *youtube.Player) error {
       }
    }
    return nil
+}
+
+func (v video) player() (*youtube.Player, error) {
+   client := youtube.Android
+   if v.embed {
+      client = youtube.Embed
+   }
+   if v.id == "" {
+      var err error
+      v.id, err = youtube.VideoID(v.address)
+      if err != nil {
+         return nil, err
+      }
+   }
+   if v.construct {
+      cache, err := os.UserCacheDir()
+      if err != nil {
+         return nil, err
+      }
+      exc, err := youtube.OpenExchange(cache, "/mech/youtube.json")
+      if err != nil {
+         return nil, err
+      }
+      return client.PlayerHeader(exc.Header(), v.id)
+   }
+   return client.Player(v.id)
 }
