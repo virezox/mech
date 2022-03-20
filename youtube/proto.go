@@ -11,18 +11,18 @@ var Duration = map[string]uint64{
    "Over 20 minutes": 2,
 }
 
-var Features = map[string]protobuf.Tag{
-   "360°": {Number: 15},
-   "3D": {Number: 7},
-   "4K": {Number: 14},
-   "Creative Commons": {Number: 6},
-   "HD": {Number: 4},
-   "HDR": {Number: 25},
-   "Live": {Number: 8},
-   "Location": {Number: 23},
-   "Purchased": {Number: 9},
-   "Subtitles/CC": {Number: 5},
-   "VR180": {Number: 26},
+var Features = map[string]protobuf.Number{
+   "360°": 15,
+   "3D": 7,
+   "4K": 14,
+   "Creative Commons": 6,
+   "HD": 4,
+   "HDR": 25,
+   "Live": 8,
+   "Location": 23,
+   "Purchased": 9,
+   "Subtitles/CC": 5,
+   "VR180": 26,
 }
 
 var SortBy = map[string]uint64{
@@ -57,25 +57,6 @@ func NewFilter() Filter {
    return filter
 }
 
-func (f Filter) Duration(val uint64) {
-   key := protobuf.Tag{Number: 3}
-   f.Message[key] = val
-}
-
-func (f Filter) Features(key protobuf.Tag) {
-   f.Message[key] = 1
-}
-
-func (f Filter) Type(val uint64) {
-   key := protobuf.Tag{Number: 2}
-   f.Message[key] = val
-}
-
-func (f Filter) UploadDate(val uint64) {
-   key := protobuf.Tag{Number: 1}
-   f.Message[key] = val
-}
-
 type Params struct {
    protobuf.Message
 }
@@ -91,12 +72,26 @@ func (p Params) Encode() string {
    return base64.StdEncoding.EncodeToString(buf)
 }
 
+func (f Filter) Features(num protobuf.Number) {
+   f.Message[num] = 1
+}
+
+func (f Filter) Duration(val uint64) {
+   f.Message[3] = val
+}
+
+func (f Filter) Type(val uint64) {
+   f.Message[2] = val
+}
+
+func (f Filter) UploadDate(val uint64) {
+   f.Message[1] = val
+}
+
 func (p Params) Filter(val Filter) {
-   key := protobuf.Tag{Number: 2}
-   p.Message[key] = val.Message
+   p.Message[2] = val.Message
 }
 
 func (p Params) SortBy(val uint64) {
-   key := protobuf.Tag{Number: 1}
-   p.Message[key] = val
+   p.Message[1] = val
 }

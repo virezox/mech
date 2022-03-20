@@ -25,11 +25,11 @@ var (
    secretKey = []byte("2b84a073ede61c766e4c0b3f1e656f7f")
 )
 
-func encode(val interface{}) (*bytes.Buffer, error) {
+func encode(value any) (*bytes.Buffer, error) {
    buf := new(bytes.Buffer)
    enc := json.NewEncoder(buf)
    enc.SetIndent("", " ")
-   err := enc.Encode(val)
+   err := enc.Encode(value)
    if err != nil {
       return nil, err
    }

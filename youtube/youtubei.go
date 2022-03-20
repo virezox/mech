@@ -13,6 +13,39 @@ import (
    "time"
 )
 
+func (c Context) PlayerHeader(head http.Header, id string) (*Player, error) {
+   var body struct {
+      Context Context `json:"context"`
+      RacyCheckOK bool `json:"racyCheckOk,omitempty"`
+      VideoID string `json:"videoId"`
+   }
+   body.Context = c
+   body.VideoID = id
+   if head.Get("Authorization") != "" {
+      body.RacyCheckOK = true // Cr381pDsSsA
+   }
+   buf, err := encode(body)
+   if err != nil {
+      return nil, err
+   }
+   req, err := http.NewRequest("POST", origin + "/youtubei/v1/player", buf)
+   if err != nil {
+      return nil, err
+   }
+   req.Header = head
+   LogLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   play := new(Player)
+   if err := json.NewDecoder(res.Body).Decode(play); err != nil {
+      return nil, err
+   }
+   return play, nil
+}
+
 const origin = "https://www.youtube.com"
 
 var googAPI = http.Header{
@@ -71,39 +104,6 @@ var Mweb = Context{
 
 func (c Context) Player(id string) (*Player, error) {
    return c.PlayerHeader(googAPI, id)
-}
-
-func (c Context) PlayerHeader(head http.Header, id string) (*Player, error) {
-   var body struct {
-      Context Context `json:"context"`
-      RacyCheckOK bool `json:"racyCheckOk,omitempty"`
-      VideoID string `json:"videoId"`
-   }
-   body.Context = c
-   body.VideoID = id
-   if head.Get("Authorization") != "" {
-      body.RacyCheckOK = true // Cr381pDsSsA
-   }
-   buf, err := encode(body)
-   if err != nil {
-      return nil, err
-   }
-   req, err := http.NewRequest("POST", origin + "/youtubei/v1/player", buf)
-   if err != nil {
-      return nil, err
-   }
-   req.Header = head
-   LogLevel.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   play := new(Player)
-   if err := json.NewDecoder(res.Body).Decode(play); err != nil {
-      return nil, err
-   }
-   return play, nil
 }
 
 func (c Context) Search(query string) (*Search, error) {
@@ -246,12 +246,12 @@ func (s StreamingData) Len() int {
 
 func (s *StreamingData) MediaType() error {
    for i, form := range s.AdaptiveFormats {
-      t, param, err := mime.ParseMediaType(form.MimeType)
+      typ, param, err := mime.ParseMediaType(form.MimeType)
       if err != nil {
          return err
       }
       param["codecs"], _, _ = strings.Cut(param["codecs"], ".")
-      s.AdaptiveFormats[i].MimeType = mime.FormatMediaType(t, param)
+      s.AdaptiveFormats[i].MimeType = mime.FormatMediaType(typ, param)
    }
    return nil
 }
