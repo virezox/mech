@@ -51,7 +51,7 @@ func TestUnderscoreMedia(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   login, err := OpenLogin(cache + "/mech/instagram.json")
+   login, err := OpenLogin(cache, "/mech/instagram.json")
    if err != nil {
       t.Fatal(err)
    }
@@ -79,7 +79,7 @@ func TestUnderscoreUser(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   login, err := OpenLogin(cache + "/mech/instagram.json")
+   login, err := OpenLogin(cache, "/mech/instagram.json")
    if err != nil {
       t.Fatal(err)
    }

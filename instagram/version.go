@@ -5,11 +5,17 @@ import (
    "encoding/json"
    "github.com/89z/format"
    "net/http"
-   "os"
-   "path/filepath"
    "strconv"
    "strings"
 )
+
+func OpenLogin(elem ...string) (*Login, error) {
+   return format.Open[Login](elem...)
+}
+
+func (l Login) Create(elem ...string) error {
+   return format.Create(l, elem...)
+}
 
 var LogLevel format.LogLevel
 
@@ -59,34 +65,6 @@ func NewLogin(username, password string) (*Login, error) {
    login.Authorization = res.Header.Get("Ig-Set-Authorization")
    login.Date = res.Header.Get("Date")
    return &login, nil
-}
-
-func OpenLogin(name string) (*Login, error) {
-   file, err := os.Open(name)
-   if err != nil {
-      return nil, err
-   }
-   defer file.Close()
-   login := new(Login)
-   if err := json.NewDecoder(file).Decode(login); err != nil {
-      return nil, err
-   }
-   return login, nil
-}
-
-func (l Login) Create(name string) error {
-   err := os.MkdirAll(filepath.Dir(name), os.ModeDir)
-   if err != nil {
-      return err
-   }
-   file, err := os.Create(name)
-   if err != nil {
-      return err
-   }
-   defer file.Close()
-   enc := json.NewEncoder(file)
-   enc.SetIndent("", " ")
-   return enc.Encode(l)
 }
 
 func (l Login) mediaInfo(id int64) (*http.Response, error) {

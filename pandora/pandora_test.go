@@ -27,7 +27,7 @@ func TestCreate(t *testing.T) {
    if tLen != 34 {
       t.Fatal(tLen)
    }
-   user, err := part.UserLogin("srpen6@gmail.com", password)
+   user, err := part.UserLogin(email, password)
    if err != nil {
       t.Fatal(err)
    }
@@ -38,7 +38,7 @@ func TestCreate(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   if err := user.Create(cache + "/mech/pandora.json"); err != nil {
+   if err := user.Create(cache, "/mech/pandora.json"); err != nil {
       t.Fatal(err)
    }
 }

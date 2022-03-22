@@ -2,39 +2,18 @@ package youtube
 
 import (
    "encoding/json"
+   "github.com/89z/format"
    "net/http"
    "net/url"
-   "os"
-   "path/filepath"
    "strings"
 )
 
-func (x Exchange) Create(elem ...string) error {
-   name := filepath.Join(elem...)
-   err := os.MkdirAll(filepath.Dir(name), os.ModeDir)
-   if err != nil {
-      return err
-   }
-   os.Stdout.WriteString("Create " + name + "\n")
-   file, err := os.Create(name)
-   if err != nil {
-      return err
-   }
-   defer file.Close()
-   return json.NewEncoder(file).Encode(x)
+func OpenExchange(elem ...string) (*Exchange, error) {
+   return format.Open[Exchange](elem...)
 }
 
-func OpenExchange(elem ...string) (*Exchange, error) {
-   file, err := os.Open(filepath.Join(elem...))
-   if err != nil {
-      return nil, err
-   }
-   defer file.Close()
-   exc := new(Exchange)
-   if err := json.NewDecoder(file).Decode(exc); err != nil {
-      return nil, err
-   }
-   return exc, nil
+func (x Exchange) Create(elem ...string) error {
+   return format.Create(x, elem...)
 }
 
 const (

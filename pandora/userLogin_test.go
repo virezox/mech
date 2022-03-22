@@ -32,7 +32,7 @@ func TestOpen(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   user, err := OpenUserLogin(cache + "/mech/pandora.json")
+   user, err := OpenUserLogin(cache, "/mech/pandora.json")
    if err != nil {
       t.Fatal(err)
    }

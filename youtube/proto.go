@@ -5,7 +5,7 @@ import (
    "github.com/89z/format/protobuf"
 )
 
-var Duration = map[string]protobuf.Uint64{
+var Duration = map[string]protobuf.Varint{
    "Under 4 minutes": 1,
    "4 - 20 minutes": 3,
    "Over 20 minutes": 2,
@@ -25,21 +25,21 @@ var Features = map[string]protobuf.Number{
    "VR180": 26,
 }
 
-var SortBy = map[string]protobuf.Uint64{
+var SortBy = map[string]protobuf.Varint{
    "Relevance": 0,
    "Upload date": 2,
    "View count": 3,
    "Rating": 1,
 }
 
-var Type = map[string]protobuf.Uint64{
+var Type = map[string]protobuf.Varint{
    "Video": 1,
    "Channel": 2,
    "Playlist": 3,
    "Movie": 4,
 }
 
-var UploadDate = map[string]protobuf.Uint64{
+var UploadDate = map[string]protobuf.Varint{
    "Last hour": 1,
    "Today": 2,
    "This week": 3,
@@ -73,18 +73,18 @@ func (p Params) Encode() string {
 }
 
 func (f Filter) Features(num protobuf.Number) {
-   f.Message[num] = protobuf.Uint64(1)
+   f.Message[num] = protobuf.Varint(1)
 }
 
-func (f Filter) Duration(val protobuf.Uint64) {
+func (f Filter) Duration(val protobuf.Varint) {
    f.Message[3] = val
 }
 
-func (f Filter) Type(val protobuf.Uint64) {
+func (f Filter) Type(val protobuf.Varint) {
    f.Message[2] = val
 }
 
-func (f Filter) UploadDate(val protobuf.Uint64) {
+func (f Filter) UploadDate(val protobuf.Varint) {
    f.Message[1] = val
 }
 
@@ -92,6 +92,6 @@ func (p Params) Filter(val Filter) {
    p.Message[2] = val.Message
 }
 
-func (p Params) SortBy(val protobuf.Uint64) {
+func (p Params) SortBy(val protobuf.Varint) {
    p.Message[1] = val
 }

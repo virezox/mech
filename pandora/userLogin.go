@@ -7,11 +7,18 @@ import (
    "github.com/89z/format"
    "net/http"
    "net/url"
-   "os"
    "path/filepath"
    "strconv"
    "strings"
 )
+
+func OpenUserLogin(elem ...string) (*UserLogin, error) {
+   return format.Open[UserLogin](elem...)
+}
+
+func (u UserLogin) Create(elem ...string) error {
+   return format.Create(u, elem...)
+}
 
 var LogLevel format.LogLevel
 
@@ -76,32 +83,6 @@ type UserLogin struct {
       UserID string
       UserAuthToken string
    }
-}
-
-func OpenUserLogin(name string) (*UserLogin, error) {
-   file, err := os.Open(name)
-   if err != nil {
-      return nil, err
-   }
-   defer file.Close()
-   user := new(UserLogin)
-   if err := json.NewDecoder(file).Decode(user); err != nil {
-      return nil, err
-   }
-   return user, nil
-}
-
-func (u UserLogin) Create(name string) error {
-   err := os.MkdirAll(filepath.Dir(name), os.ModeDir)
-   if err != nil {
-      return err
-   }
-   file, err := os.Create(name)
-   if err != nil {
-      return err
-   }
-   defer file.Close()
-   return json.NewEncoder(file).Encode(u)
 }
 
 func (u UserLogin) PlaybackInfo(id string) (*PlaybackInfo, error) {

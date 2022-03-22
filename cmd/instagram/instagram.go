@@ -34,7 +34,7 @@ func doItems(shortcode string, info bool) error {
    if err != nil {
       return err
    }
-   login, err := instagram.OpenLogin(cache + "/mech/instagram.json")
+   login, err := instagram.OpenLogin(cache, "/mech/instagram.json")
    if err != nil {
       return err
    }
@@ -75,11 +75,7 @@ func saveLogin(username, password string) error {
    if err != nil {
       return err
    }
-   cache = filepath.Join(cache, "mech")
-   os.Mkdir(cache, os.ModePerm)
-   cache = filepath.Join(cache, "instagram.json")
-   fmt.Println("Create", cache)
-   return login.Create(cache)
+   return login.Create(cache, "mech/instagram.json")
 }
 
 func download(address string) error {
