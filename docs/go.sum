@@ -1,5 +1,5 @@
-github.com/89z/format v1.27.3 h1:KEQjnHXTh6rusXL35pzlLZT1zk+504vZGKKL/O3Wn3M=
-github.com/89z/format v1.27.3/go.mod h1:LOnStaZjVnM7LtoIGOp8eZiiGXVkrdaGeIhItYDUjbY=
+github.com/89z/format v1.27.4 h1:i6SOsDsgQw2L+IQUy9xcEtwQbjgLWwoXZT60sT4x7a8=
+github.com/89z/format v1.27.4/go.mod h1:LOnStaZjVnM7LtoIGOp8eZiiGXVkrdaGeIhItYDUjbY=
 github.com/89z/googleplay v1.8.4 h1:HSsn15lkiyJOUkQ9O3QORe3wfpxzDGLm0F34e9oqLH0=
 github.com/89z/googleplay v1.8.4/go.mod h1:oy9LJ8/VWW0HpAtaaSHN985qqU2KQh/xLy0G4XPhJE0=
 github.com/golang/protobuf v1.5.0/go.mod h1:FsONVRAS9T7sI+LIUmWTfcYkHO4aIWwzhcaSAoJOfIk=

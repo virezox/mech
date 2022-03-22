@@ -12,6 +12,9 @@ func (v video) do() error {
    if err != nil {
       return err
    }
+   sort.SliceStable(play.StreamingData.AdaptiveFormats, func(int, int) bool {
+      return true
+   })
    sort.Stable(youtube.Height{play.StreamingData, v.height})
    if v.info {
       play.StreamingData.MediaType()
