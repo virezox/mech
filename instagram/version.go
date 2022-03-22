@@ -11,22 +11,6 @@ import (
    "strings"
 )
 
-func (l Login) mediaInfo(id int64) (*http.Response, error) {
-   buf := []byte("https://i.instagram.com/api/v1/media/")
-   buf = strconv.AppendInt(buf, id, 10)
-   buf = append(buf, "/info/"...)
-   req, err := http.NewRequest("GET", string(buf), nil)
-   if err != nil {
-      return nil, err
-   }
-   req.Header = http.Header{
-      "Authorization": {l.Authorization},
-      "User-Agent": {Android.String()},
-   }
-   LogLevel.Dump(req)
-   return new(http.Transport).RoundTrip(req)
-}
-
 var LogLevel format.LogLevel
 
 func Shortcode(address string) string {
@@ -42,6 +26,7 @@ func Shortcode(address string) string {
 
 type Login struct {
    Authorization string
+   Date string
 }
 
 func NewLogin(username, password string) (*Login, error) {
@@ -72,6 +57,7 @@ func NewLogin(username, password string) (*Login, error) {
    defer res.Body.Close()
    var login Login
    login.Authorization = res.Header.Get("Ig-Set-Authorization")
+   login.Date = res.Header.Get("Date")
    return &login, nil
 }
 
@@ -81,11 +67,11 @@ func OpenLogin(name string) (*Login, error) {
       return nil, err
    }
    defer file.Close()
-   log := new(Login)
-   if err := json.NewDecoder(file).Decode(log); err != nil {
+   login := new(Login)
+   if err := json.NewDecoder(file).Decode(login); err != nil {
       return nil, err
    }
-   return log, nil
+   return login, nil
 }
 
 func (l Login) Create(name string) error {
@@ -98,7 +84,25 @@ func (l Login) Create(name string) error {
       return err
    }
    defer file.Close()
-   return json.NewEncoder(file).Encode(l)
+   enc := json.NewEncoder(file)
+   enc.SetIndent("", " ")
+   return enc.Encode(l)
+}
+
+func (l Login) mediaInfo(id int64) (*http.Response, error) {
+   buf := []byte("https://i.instagram.com/api/v1/media/")
+   buf = strconv.AppendInt(buf, id, 10)
+   buf = append(buf, "/info/"...)
+   req, err := http.NewRequest("GET", string(buf), nil)
+   if err != nil {
+      return nil, err
+   }
+   req.Header = http.Header{
+      "Authorization": {l.Authorization},
+      "User-Agent": {Android.String()},
+   }
+   LogLevel.Dump(req)
+   return new(http.Transport).RoundTrip(req)
 }
 
 // I noticed that even with the posts that have `video_dash_manifest`, you have

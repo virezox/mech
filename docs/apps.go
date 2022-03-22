@@ -55,8 +55,8 @@ func main() {
       if err != nil {
          panic(err)
       }
-      apps[i].installs = det.NumDownloads
-      apps[i].name = det.Title
+      apps[i].installs = uint64(det.NumDownloads)
+      apps[i].name = string(det.Title)
       time.Sleep(99 * time.Millisecond)
    }
    sort.Slice(apps, func(a, b int) bool {

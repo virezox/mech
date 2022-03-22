@@ -11,41 +11,6 @@ import (
 
 const spacePersistedQuery = "lFpix9BgFDhAMjn9CrW6jQ"
 
-func (g Guest) AudioSpace(id string) (*AudioSpace, error) {
-   var str strings.Builder
-   str.WriteString("https://twitter.com/i/api/graphql/")
-   str.WriteString(spacePersistedQuery)
-   str.WriteString("/AudioSpaceById")
-   req, err := http.NewRequest("GET", str.String(), nil)
-   if err != nil {
-      return nil, err
-   }
-   req.Header = http.Header{
-      "Authorization": {"Bearer " + bearer},
-      "X-Guest-Token": {g.Guest_Token},
-   }
-   buf, err := json.Marshal(spaceRequest{ID: id})
-   if err != nil {
-      return nil, err
-   }
-   req.URL.RawQuery = "variables=" + url.QueryEscape(string(buf))
-   LogLevel.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   var space struct {
-      Data struct {
-         AudioSpace AudioSpace
-      }
-   }
-   if err := json.NewDecoder(res.Body).Decode(&space); err != nil {
-      return nil, err
-   }
-   return &space.Data.AudioSpace, nil
-}
-
 type AudioSpace struct {
    Metadata struct {
       Media_Key string
@@ -103,21 +68,39 @@ func (a AudioSpace) Time() time.Time {
    return time.UnixMilli(a.Metadata.Started_At)
 }
 
-type spaceRequest struct {
-   ID string `json:"id"`
-   IsMetatagsQuery bool `json:"isMetatagsQuery"`
-   WithBirdwatchPivots bool `json:"withBirdwatchPivots"`
-   WithDownvotePerspective bool `json:"withDownvotePerspective"`
-   WithReactionsMetadata bool `json:"withReactionsMetadata"`
-   WithReactionsPerspective bool `json:"withReactionsPerspective"`
-   WithReplays bool `json:"withReplays"`
-   WithScheduledSpaces bool `json:"withScheduledSpaces"`
-   WithSuperFollowsTweetFields bool `json:"withSuperFollowsTweetFields"`
-   WithSuperFollowsUserFields bool `json:"withSuperFollowsUserFields"`
-}
-
-type Source struct {
-   Location string // Segment
+func (g Guest) AudioSpace(id string) (*AudioSpace, error) {
+   var str strings.Builder
+   str.WriteString("https://twitter.com/i/api/graphql/")
+   str.WriteString(spacePersistedQuery)
+   str.WriteString("/AudioSpaceById")
+   req, err := http.NewRequest("GET", str.String(), nil)
+   if err != nil {
+      return nil, err
+   }
+   req.Header = http.Header{
+      "Authorization": {"Bearer " + bearer},
+      "X-Guest-Token": {g.Guest_Token},
+   }
+   buf, err := json.Marshal(spaceRequest{ID: id})
+   if err != nil {
+      return nil, err
+   }
+   req.URL.RawQuery = "variables=" + url.QueryEscape(string(buf))
+   LogLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   var space struct {
+      Data struct {
+         AudioSpace AudioSpace
+      }
+   }
+   if err := json.NewDecoder(res.Body).Decode(&space); err != nil {
+      return nil, err
+   }
+   return &space.Data.AudioSpace, nil
 }
 
 func (g Guest) Source(space *AudioSpace) (*Source, error) {
@@ -145,4 +128,21 @@ func (g Guest) Source(space *AudioSpace) (*Source, error) {
       return nil, err
    }
    return &video.Source, nil
+}
+
+type Source struct {
+   Location string // Segment
+}
+
+type spaceRequest struct {
+   ID string `json:"id"`
+   IsMetatagsQuery bool `json:"isMetatagsQuery"`
+   WithBirdwatchPivots bool `json:"withBirdwatchPivots"`
+   WithDownvotePerspective bool `json:"withDownvotePerspective"`
+   WithReactionsMetadata bool `json:"withReactionsMetadata"`
+   WithReactionsPerspective bool `json:"withReactionsPerspective"`
+   WithReplays bool `json:"withReplays"`
+   WithScheduledSpaces bool `json:"withScheduledSpaces"`
+   WithSuperFollowsTweetFields bool `json:"withSuperFollowsTweetFields"`
+   WithSuperFollowsUserFields bool `json:"withSuperFollowsUserFields"`
 }

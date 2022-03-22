@@ -68,7 +68,7 @@ func (p PlaybackInfo) Ext() (string, error) {
       }
       return filepath.Ext(addr.Path), nil
    }
-   return "", nilPointer{".Result"}
+   return "", notPresent{"Result"}
 }
 
 type UserLogin struct {
@@ -181,10 +181,10 @@ func (u UserLogin) ValueExchange() error {
    return res.Body.Close()
 }
 
-type nilPointer struct {
+type notPresent struct {
    value string
 }
 
-func (n nilPointer) Error() string {
-   return strconv.Quote(n.value) + " nil pointer dereference"
+func (n notPresent) Error() string {
+   return strconv.Quote(n.value) + " is not present"
 }

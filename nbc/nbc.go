@@ -25,7 +25,7 @@ var (
    secretKey = []byte("2b84a073ede61c766e4c0b3f1e656f7f")
 )
 
-func encode(value any) (*bytes.Buffer, error) {
+func encode[T videoRequest|vodRequest](value T) (*bytes.Buffer, error) {
    buf := new(bytes.Buffer)
    enc := json.NewEncoder(buf)
    enc.SetIndent("", " ")

@@ -12,19 +12,7 @@ import (
    "time"
 )
 
-type notPresent struct {
-   value string
-}
-
-func (n notPresent) Error() string {
-   return strconv.Quote(n.value) + " is not present"
-}
-
 var LogLevel format.LogLevel
-
-type Band struct {
-   Discography []Item
-}
 
 type Image struct {
    ID int64
@@ -200,6 +188,11 @@ func (t Tralbum) Date() time.Time {
    return time.Unix(t.Release_Date, 0)
 }
 
+type Band struct {
+   Name string
+   Discography []Item
+}
+
 type Tralbum struct {
    Art_ID int
    Release_Date int64
@@ -216,4 +209,12 @@ type Track struct {
    Track_Num int
    Title string
    Streaming_URL map[string]string
+}
+
+type notPresent struct {
+   value string
+}
+
+func (n notPresent) Error() string {
+   return strconv.Quote(n.value) + " is not present"
 }
