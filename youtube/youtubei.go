@@ -24,7 +24,7 @@ func (c Context) PlayerHeader(head http.Header, id string) (*Player, error) {
    if head.Get("Authorization") != "" {
       body.RacyCheckOK = true // Cr381pDsSsA
    }
-   buf, err := encode(body)
+   buf, err := mech.Encode(body)
    if err != nil {
       return nil, err
    }
@@ -64,17 +64,6 @@ func VideoID(address string) (string, error) {
       return v, nil
    }
    return path.Base(parse.Path), nil
-}
-
-func encode(val any) (*bytes.Buffer, error) {
-   buf := new(bytes.Buffer)
-   enc := json.NewEncoder(buf)
-   enc.SetIndent("", " ")
-   err := enc.Encode(val)
-   if err != nil {
-      return nil, err
-   }
-   return buf, nil
 }
 
 type Client struct {
@@ -238,6 +227,7 @@ func (s Search) Items() []Item {
 
 type StreamingData struct {
    AdaptiveFormats []Format
+   Formats []Format
 }
 
 func (s StreamingData) Len() int {

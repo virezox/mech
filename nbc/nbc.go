@@ -1,7 +1,6 @@
 package nbc
 
 import (
-   "bytes"
    "crypto/hmac"
    "crypto/sha256"
    "encoding/hex"
@@ -24,17 +23,6 @@ var (
    LogLevel format.LogLevel
    secretKey = []byte("2b84a073ede61c766e4c0b3f1e656f7f")
 )
-
-func encode[T videoRequest|vodRequest](value T) (*bytes.Buffer, error) {
-   buf := new(bytes.Buffer)
-   enc := json.NewEncoder(buf)
-   enc.SetIndent("", " ")
-   err := enc.Encode(value)
-   if err != nil {
-      return nil, err
-   }
-   return buf, nil
-}
 
 type AccessVOD struct {
    ManifestPath string // this is only valid for one minute
@@ -90,7 +78,7 @@ func NewAccessVOD(guid int64) (*AccessVOD, error) {
    body.DeviceID = "android"
    body.ExternalAdvertiserID = "NBC"
    body.Mpx.AccountID = mpxAccountID
-   buf, err := encode(body)
+   buf, err := mech.Encode(body)
    if err != nil {
       return nil, err
    }
@@ -132,7 +120,7 @@ func NewVideo(guid int64) (*Video, error) {
    body.Variables.Name = strconv.FormatInt(guid, 10)
    body.Variables.Platform = "android"
    body.Variables.Type = "VIDEO"
-   buf, err := encode(body)
+   buf, err := mech.Encode(body)
    if err != nil {
       return nil, err
    }
