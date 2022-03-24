@@ -21,14 +21,14 @@ not with the API? Well you can, using this module.
 
 ## How to install?
 
-Check here first:
+This module works with Windows, macOS or Linux. Check here first:
 
 https://github.com/89z/mech/releases
 
 I dont do a build for every tag, but some tags will have builds available. To
 build yourself, download Go from here:
 
-https://golang.org/dl
+https://go.dev/dl
 
 and extract archive. Then download Mech:
 
