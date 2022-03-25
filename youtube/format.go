@@ -9,6 +9,29 @@ import (
    "time"
 )
 
+func (h Height) Less(i, j int) bool {
+   return h.distance(i) < h.distance(j)
+}
+
+// We cannot use bitrate to sort, as you end up with different heights:
+//
+// ID          | 480    | 720 low | 720 high | 1080
+// ------------|--------|---------|----------|-----
+// 7WTEB7Qbt4U | 285106 | 286687  | 513601   | 513675
+// RPjE9riEhtA | 584072 | 1169166 | 1693812  | 2151670
+type Height struct {
+   Formats
+   Target int
+}
+
+func (h Height) distance(i int) int {
+   diff := h.Formats[i].Height - h.Target
+   if diff >= 0 {
+      return diff
+   }
+   return -diff
+}
+
 const partLength = 10_000_000
 
 var LogLevel format.LogLevel
@@ -91,29 +114,6 @@ func (f Format) Write(dst io.Writer) error {
       content += partLength
    }
    return nil
-}
-
-// We cannot use bitrate to sort, as you end up with different heights:
-//
-// ID          | 480    | 720 low | 720 high | 1080
-// ------------|--------|---------|----------|-----
-// 7WTEB7Qbt4U | 285106 | 286687  | 513601   | 513675
-// RPjE9riEhtA | 584072 | 1169166 | 1693812  | 2151670
-type Height struct {
-   StreamingData
-   Target int
-}
-
-func (h Height) Less(i, j int) bool {
-   return h.distance(i) < h.distance(j)
-}
-
-func (h Height) distance(i int) int {
-   diff := h.AdaptiveFormats[i].Height - h.Target
-   if diff >= 0 {
-      return diff
-   }
-   return -diff
 }
 
 type notPresent struct {
