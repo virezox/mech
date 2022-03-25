@@ -19,29 +19,26 @@ that in many cases, the same information is available via HTML on the primary
 website, usually without being logged in. So why can you do that with HTML, but
 not with the API? Well you can, using this module.
 
+[1]://f002.backblazeb2.com/file/ql8mlh/Paint.It.Black.2016.mp4
+
 ## How to install?
 
-This module works with Windows, macOS or Linux. Check here first:
+This module works with Windows, macOS or Linux. Check [the releases][2] first.
+I dont do a build for every tag, but some tags will have builds available. You
+can download, build and run in less than [one&nbsp;minute][3].
 
-https://github.com/89z/mech/releases
-
-I dont do a build for every tag, but some tags will have builds available. To
-build yourself, download Go from here:
-
-https://go.dev/dl
-
-and extract archive. Then download Mech:
-
-https://github.com/89z/mech/archive/refs/heads/master.zip
-
-and extract archive. Then navigate to `mech-master/cmd/youtube`, and enter:
+First, [download Go][4] and extract archive. Then [download Mech][5] and
+extract archive. Then navigate to `mech-master/cmd/youtube`, and enter:
 
 ~~~
 go build
 ~~~
 
+[2]://github.com/89z/mech/releases
+[3]://f002.backblazeb2.com/file/ql8mlh/googleplay.webm
+[4]://go.dev/dl
+[5]://github.com/89z/mech/archive/refs/heads/master.zip
+
 ## Repo
 
 https://github.com/89z/mech
-
-[1]://f002.backblazeb2.com/file/ql8mlh/Paint.It.Black.2016.mp4

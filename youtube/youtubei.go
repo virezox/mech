@@ -11,6 +11,16 @@ import (
    "time"
 )
 
+func (p Player) Base() string {
+   var buf strings.Builder
+   buf.WriteString(p.VideoDetails.Author)
+   buf.WriteByte('-')
+   buf.WriteString(p.VideoDetails.Title)
+   buf.WriteByte('-')
+   buf.WriteString(p.VideoDetails.VideoID)
+   return mech.Clean(buf.String())
+}
+
 const origin = "https://www.youtube.com"
 
 var googAPI = http.Header{
@@ -153,10 +163,6 @@ type Player struct {
       AdaptiveFormats Formats
       Formats Formats
    }
-}
-
-func (p Player) Base() string {
-   return mech.Clean(p.VideoDetails.Author + "-" + p.VideoDetails.Title)
 }
 
 func (p Player) Date() (time.Time, error) {
