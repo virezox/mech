@@ -4,20 +4,12 @@ import (
    "encoding/json"
    "fmt"
    "github.com/89z/mech"
-   "mime"
    "net/http"
    "net/url"
    "path"
    "strings"
    "time"
 )
-
-var Android = Client{Name: "ANDROID", Version: "17.11.34"}
-
-var Mweb = Client{Name: "MWEB", Version: "2.20211109.01.00"}
-
-// HtVdAasjOgU
-var Embed = Client{Name: "ANDROID_EMBEDDED_PLAYER", Version: "17.09.33"}
 
 const origin = "https://www.youtube.com"
 
@@ -45,125 +37,12 @@ type Client struct {
    Version string `json:"clientVersion"`
 }
 
-type Search struct {
-   Contents struct {
-      SectionListRenderer struct {
-         Contents []struct {
-            ItemSectionRenderer *struct {
-               Contents []Item
-            }
-         }
-      }
-   }
-}
+var Android = Client{Name: "ANDROID", Version: "17.11.34"}
 
-func (s Search) Items() []Item {
-   var items []Item
-   for _, sect := range s.Contents.SectionListRenderer.Contents {
-      if sect.ItemSectionRenderer != nil {
-         for _, item := range sect.ItemSectionRenderer.Contents {
-            if item.CompactVideoRenderer != nil {
-               items = append(items, item)
-            }
-         }
-      }
-   }
-   return items
-}
+var Mweb = Client{Name: "MWEB", Version: "2.20211109.01.00"}
 
-type Item struct {
-   CompactVideoRenderer *struct {
-      Title struct {
-         Runs []struct {
-            Text string
-         }
-      }
-      VideoID string
-   }
-}
-
-func (p Player) Base() string {
-   return mech.Clean(p.VideoDetails.Author + "-" + p.VideoDetails.Title)
-}
-
-func (p Player) Date() (time.Time, error) {
-   value := p.Microformat.PlayerMicroformatRenderer.PublishDate
-   return time.Parse("2006-01-02", value)
-}
-
-func (p Player) Format(f fmt.State, verb rune) {
-   fmt.Fprintln(f, p.Status())
-   fmt.Fprintln(f, "VideoID:", p.VideoDetails.VideoID)
-   fmt.Fprintln(f, "Length:", p.VideoDetails.LengthSeconds)
-   fmt.Fprintln(f, "ViewCount:", p.VideoDetails.ViewCount)
-   fmt.Fprintln(f, "Author:", p.VideoDetails.Author)
-   fmt.Fprintln(f, "Title:", p.VideoDetails.Title)
-   date := p.Microformat.PlayerMicroformatRenderer.PublishDate
-   if date != "" {
-      fmt.Fprintln(f, "Date:", date)
-   }
-   for _, form := range p.StreamingData.AdaptiveFormats {
-      fmt.Fprintln(f)
-      form.Format(f, verb)
-   }
-}
-
-func (p Player) Status() string {
-   var buf strings.Builder
-   buf.WriteString("Status: ")
-   buf.WriteString(p.PlayabilityStatus.Status)
-   if p.PlayabilityStatus.Reason != "" {
-      buf.WriteString("\nReason: ")
-      buf.WriteString(p.PlayabilityStatus.Reason)
-   }
-   return buf.String()
-}
-
-func (f Formats) Len() int {
-   return len(f)
-}
-
-type Player struct {
-   PlayabilityStatus struct {
-      Status string // "OK", "LOGIN_REQUIRED"
-      Reason string // "", "Sign in to confirm your age"
-   }
-   VideoDetails struct {
-      VideoID string
-      LengthSeconds int64 `json:"lengthSeconds,string"`
-      ViewCount int64 `json:"viewCount,string"`
-      Author string
-      Title string
-      ShortDescription string
-   }
-   Microformat struct {
-      PlayerMicroformatRenderer struct {
-         PublishDate string // 2013-06-11
-      }
-   }
-   StreamingData struct {
-      AdaptiveFormats Formats
-      Formats Formats
-   }
-}
-
-type Formats []Format
-
-func (f Formats) MediaType() error {
-   for i, form := range f {
-      typ, param, err := mime.ParseMediaType(form.MimeType)
-      if err != nil {
-         return err
-      }
-      param["codecs"], _, _ = strings.Cut(param["codecs"], ".")
-      f[i].MimeType = mime.FormatMediaType(typ, param)
-   }
-   return nil
-}
-
-func (f Formats) Swap(i, j int) {
-   f[i], f[j] = f[j], f[i]
-}
+// HtVdAasjOgU
+var Embed = Client{Name: "ANDROID_EMBEDDED_PLAYER", Version: "17.11.34"}
 
 func (c Client) Player(id string) (*Player, error) {
    return c.PlayerHeader(googAPI, id)
@@ -239,4 +118,102 @@ func (c Client) Search(query string) (*Search, error) {
       return nil, err
    }
    return search, nil
+}
+
+type Item struct {
+   CompactVideoRenderer *struct {
+      Title struct {
+         Runs []struct {
+            Text string
+         }
+      }
+      VideoID string
+   }
+}
+
+type Player struct {
+   PlayabilityStatus struct {
+      Status string // "OK", "LOGIN_REQUIRED"
+      Reason string // "", "Sign in to confirm your age"
+   }
+   VideoDetails struct {
+      VideoID string
+      LengthSeconds int64 `json:"lengthSeconds,string"`
+      ViewCount int64 `json:"viewCount,string"`
+      Author string
+      Title string
+      ShortDescription string
+   }
+   Microformat struct {
+      PlayerMicroformatRenderer struct {
+         PublishDate string // 2013-06-11
+      }
+   }
+   StreamingData struct {
+      AdaptiveFormats Formats
+      Formats Formats
+   }
+}
+
+func (p Player) Base() string {
+   return mech.Clean(p.VideoDetails.Author + "-" + p.VideoDetails.Title)
+}
+
+func (p Player) Date() (time.Time, error) {
+   value := p.Microformat.PlayerMicroformatRenderer.PublishDate
+   return time.Parse("2006-01-02", value)
+}
+
+func (p Player) Format(f fmt.State, verb rune) {
+   fmt.Fprintln(f, p.Status())
+   fmt.Fprintln(f, "VideoID:", p.VideoDetails.VideoID)
+   fmt.Fprintln(f, "Length:", p.VideoDetails.LengthSeconds)
+   fmt.Fprintln(f, "ViewCount:", p.VideoDetails.ViewCount)
+   fmt.Fprintln(f, "Author:", p.VideoDetails.Author)
+   fmt.Fprintln(f, "Title:", p.VideoDetails.Title)
+   date := p.Microformat.PlayerMicroformatRenderer.PublishDate
+   if date != "" {
+      fmt.Fprintln(f, "Date:", date)
+   }
+   for _, form := range p.StreamingData.AdaptiveFormats {
+      fmt.Fprintln(f)
+      form.Format(f, verb)
+   }
+}
+
+func (p Player) Status() string {
+   var buf strings.Builder
+   buf.WriteString("Status: ")
+   buf.WriteString(p.PlayabilityStatus.Status)
+   if p.PlayabilityStatus.Reason != "" {
+      buf.WriteString("\nReason: ")
+      buf.WriteString(p.PlayabilityStatus.Reason)
+   }
+   return buf.String()
+}
+
+type Search struct {
+   Contents struct {
+      SectionListRenderer struct {
+         Contents []struct {
+            ItemSectionRenderer *struct {
+               Contents []Item
+            }
+         }
+      }
+   }
+}
+
+func (s Search) Items() []Item {
+   var items []Item
+   for _, sect := range s.Contents.SectionListRenderer.Contents {
+      if sect.ItemSectionRenderer != nil {
+         for _, item := range sect.ItemSectionRenderer.Contents {
+            if item.CompactVideoRenderer != nil {
+               items = append(items, item)
+            }
+         }
+      }
+   }
+   return items
 }
