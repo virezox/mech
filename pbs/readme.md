@@ -1,8 +1,6 @@
 # PBS
 
-https://github.com/ytdl-org/youtube-dl/issues/30205
-
-## APK
+## Android client
 
 ~~~
 com.pbs.video

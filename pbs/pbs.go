@@ -2,12 +2,12 @@ package pbs
 
 import (
    "encoding/json"
-   "github.com/89z/mech"
+   "github.com/89z/format"
    "net/http"
    "net/url"
    "path"
+   "strconv"
    "strings"
-   "time"
 )
 
 const (
@@ -15,7 +15,27 @@ const (
    platformVersion = "5.4.2"
 )
 
-var LogLevel mech.LogLevel
+var LogLevel format.LogLevel
+
+type notPresent struct {
+   value string
+}
+
+func (n notPresent) Error() string {
+   return strconv.Quote(n.value) + " is not present"
+}
+
+type Video struct {
+   Episodes []struct {
+      Episode struct {
+         Assets []struct {
+            Object_Type string
+            Slug string
+         }
+      }
+      Slug string
+   }
+}
 
 func Slug(addr string) (string, error) {
    par, err := url.Parse(addr)
@@ -26,7 +46,7 @@ func Slug(addr string) (string, error) {
    ind := strings.Index(par.Path, "/video/")
    switch ind {
    case -1:
-      return "", mech.NotFound{"/video/"}
+      return "", notPresent{"/video/"}
    case 0:
       return slug, nil
    }
@@ -54,12 +74,12 @@ func Slug(addr string) (string, error) {
          }
       }
    }
-   return "", mech.NotFound{slug}
+   return "", notPresent{slug}
 }
 
 type Asset struct {
    Resource struct {
-      Duration Duration
+      Duration int64
       MP4_Videos []AssetVideo
       Title string
    }
@@ -93,23 +113,4 @@ func NewAsset(slug string) (*Asset, error) {
 type AssetVideo struct {
    Profile string
    URL string
-}
-
-type Duration int64
-
-func (d Duration) String() string {
-   dur := time.Duration(d) * time.Second
-   return dur.String()
-}
-
-type Video struct {
-   Episodes []struct {
-      Episode struct {
-         Assets []struct {
-            Object_Type string
-            Slug string
-         }
-      }
-      Slug string
-   }
 }
