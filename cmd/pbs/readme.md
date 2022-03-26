@@ -4,11 +4,6 @@
 
 ~~~
 go run . -a https://pbs.org/video/pandora-papersmassacre-in-el-salvador-v2wjzz
-~~~
-
-## 410 Gone
-
-~~~
 go run . -a https://www.pbs.org/wgbh/nova/video/nova-universe-revealed-milky-way/
 ~~~
 

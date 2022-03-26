@@ -106,6 +106,7 @@ func NewAsset(slug string) (*Asset, error) {
    }
    req.Header.Set("X-PBS-PlatformVersion", platformVersion)
    req.SetBasicAuth("android", android)
+   req.URL.RawQuery = "station_id=b3291387-78a4-41e1-beb0-da2f61a96a3e"
    LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
