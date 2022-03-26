@@ -25,15 +25,21 @@ func main() {
    if verbose {
       vimeo.LogLevel = 1
    }
-   if password != "" {
-      err := doAuth(address, height, info)
+   if address != "" {
+      clip, err := vimeo.NewClip(address)
       if err != nil {
          panic(err)
       }
-   } else if address != "" {
-      err := doAnon(address, height, info)
-      if err != nil {
-         panic(err)
+      if password != "" {
+         err := doAuth(clip, password, height, info)
+         if err != nil {
+            panic(err)
+         }
+      } else {
+         err := doAnon(clip, height, info)
+         if err != nil {
+            panic(err)
+         }
       }
    } else {
       flag.Usage()

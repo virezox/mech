@@ -105,7 +105,7 @@ func (p Property) Topaz() (*Topaz, error) {
    if err != nil {
       return nil, err
    }
-   req.URL.RawQuery = "clientPlatform=android"
+   req.URL.RawQuery = "clientPlatform=desktop"
    LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {

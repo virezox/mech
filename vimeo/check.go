@@ -9,45 +9,11 @@ import (
    "net/http"
 )
 
-type FilesHeight struct {
-   Files
-   Target int
-}
-
-func (f FilesHeight) distance(i int) int {
-   diff := f.Progressive[i].Height - f.Target
-   if diff >= 0 {
-      return diff
-   }
-   return -diff
-}
-
-func (f FilesHeight) Less(i, j int) bool {
-   return f.distance(i) < f.distance(j)
-}
-
-type Files struct {
-   Progressive []Progressive
-}
-
-type Progressive struct {
-   Width int
-   Height int
-   FPS int
-   URL string
-}
-
-func (f Files) Swap(i, j int) {
-   f.Progressive[i], f.Progressive[j] = f.Progressive[j], f.Progressive[i]
-}
-
-func (f Files) Len() int {
-   return len(f.Progressive)
-}
-
 type Check struct {
    Request struct {
-      Files Files
+      Files struct {
+         Progressive Progressives
+      }
    }
 }
 
@@ -77,6 +43,30 @@ func (c Clip) Check(password string) (*Check, error) {
    return check, nil
 }
 
+type ProgHeight struct {
+   Progressives
+   Target int
+}
+
+func (p ProgHeight) Less(i, j int) bool {
+   return p.distance(i) < p.distance(j)
+}
+
+func (p ProgHeight) distance(i int) int {
+   diff := p.Progressives[i].Height - p.Target
+   if diff >= 0 {
+      return diff
+   }
+   return -diff
+}
+
+type Progressive struct {
+   Width int
+   Height int
+   FPS int
+   URL string
+}
+
 func (p Progressive) Format(f fmt.State, verb rune) {
    fmt.Fprint(f, "Width:", p.Width)
    fmt.Fprint(f, " Height:", p.Height)
@@ -84,4 +74,14 @@ func (p Progressive) Format(f fmt.State, verb rune) {
    if verb == 'a' {
       fmt.Fprint(f, " URL:", p.URL)
    }
+}
+
+type Progressives []Progressive
+
+func (p Progressives) Len() int {
+   return len(p)
+}
+
+func (p Progressives) Swap(i, j int) {
+   p[i], p[j] = p[j], p[i]
 }
