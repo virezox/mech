@@ -10,31 +10,10 @@ import (
    "strings"
 )
 
-const (
-   android = "baXE7humuVat"
-   platformVersion = "5.4.2"
-)
+type ErrorString string
 
-var LogLevel format.LogLevel
-
-type notPresent struct {
-   value string
-}
-
-func (n notPresent) Error() string {
-   return strconv.Quote(n.value) + " is not present"
-}
-
-type Video struct {
-   Episodes []struct {
-      Episode struct {
-         Assets []struct {
-            Object_Type string
-            Slug string
-         }
-      }
-      Slug string
-   }
+func (e ErrorString) Error() string {
+   return string(e)
 }
 
 func Slug(addr string) (string, error) {
@@ -61,6 +40,9 @@ func Slug(addr string) (string, error) {
       return "", err
    }
    defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return "", ErrorString(res.Status)
+   }
    var vid Video
    if err := json.NewDecoder(res.Body).Decode(&vid); err != nil {
       return "", err
@@ -75,6 +57,33 @@ func Slug(addr string) (string, error) {
       }
    }
    return "", notPresent{slug}
+}
+
+const (
+   android = "baXE7humuVat"
+   platformVersion = "5.4.2"
+)
+
+var LogLevel format.LogLevel
+
+type notPresent struct {
+   value string
+}
+
+func (n notPresent) Error() string {
+   return strconv.Quote(n.value) + " is not present"
+}
+
+type Video struct {
+   Episodes []struct {
+      Episode struct {
+         Assets []struct {
+            Object_Type string
+            Slug string
+         }
+      }
+      Slug string
+   }
 }
 
 type Asset struct {
@@ -103,6 +112,9 @@ func NewAsset(slug string) (*Asset, error) {
       return nil, err
    }
    defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return nil, ErrorString(res.Status)
+   }
    ass := new(Asset)
    if err := json.NewDecoder(res.Body).Decode(ass); err != nil {
       return nil, err

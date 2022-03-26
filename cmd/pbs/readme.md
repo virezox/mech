@@ -1,6 +1,19 @@
 # PBS
 
-- https://github.com/yt-dlp/yt-dlp/issues/3092
-- https://www.pbs.org/video/pandora-papersmassacre-in-el-salvador-v2wjzz/
-- https://www.pbs.org/wgbh/nova/video/nova-universe-revealed-milky-way/
-- https://www.pbs.org/wnet/nature/about-american-horses/26867/
+## pass
+
+~~~
+go run . -a https://pbs.org/video/pandora-papersmassacre-in-el-salvador-v2wjzz
+~~~
+
+## 410 Gone
+
+~~~
+go run . -a https://www.pbs.org/wgbh/nova/video/nova-universe-revealed-milky-way/
+~~~
+
+## "/video/" is not present
+
+~~~
+go run . -a https://pbs.org/wnet/nature/about-american-horses/26867
+~~~
