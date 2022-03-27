@@ -6,6 +6,23 @@ import (
    "net/http"
 )
 
+var Clients = []Client{
+   {Name: "ANDROID", Version: "17.11.34"},
+   {Name: "ANDROID_EMBEDDED_PLAYER", Version: "17.11.34"}, // HtVdAasjOgU
+   {Name: "MWEB", Version: "2.20211109.01.00"},
+   {Name: "TVHTML5"},
+   {Name: "WEB"},
+   {Name: "WEB_CREATOR"},
+   {Name: "WEB_EMBEDDED_PLAYER"},
+   {Name: "WEB_KIDS"},
+   {Name: "WEB_REMIX"},
+}
+
+type Client struct {
+   Name string `json:"clientName"`
+   Version string `json:"clientVersion"`
+}
+
 func (c Client) Player(id string) (*Player, error) {
    return c.PlayerHeader(googAPI, id)
 }
@@ -38,11 +55,20 @@ func (c Client) PlayerHeader(head http.Header, id string) (*Player, error) {
       return nil, err
    }
    defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return nil, errorString(res.Status)
+   }
    play := new(Player)
    if err := json.NewDecoder(res.Body).Decode(play); err != nil {
       return nil, err
    }
    return play, nil
+}
+
+type errorString string
+
+func (e errorString) Error() string {
+   return string(e)
 }
 
 func (c Client) Search(query string) (*Search, error) {
@@ -82,24 +108,3 @@ func (c Client) Search(query string) (*Search, error) {
    return search, nil
 }
 
-type Client struct {
-   Name string `json:"clientName"`
-   Version string `json:"clientVersion"`
-}
-
-var Android = Client{Name: "ANDROID", Version: "17.11.34"}
-
-// HtVdAasjOgU
-var Embed = Client{Name: "ANDROID_EMBEDDED_PLAYER", Version: "17.11.34"}
-
-var Clients = []Client{
-   Android,
-   Embed,
-   {Name: "MWEB", Version: "2.20211109.01.00"},
-   {Name: "TVHTML5"},
-   {Name: "WEB"},
-   {Name: "WEB_CREATOR"},
-   {Name: "WEB_EMBEDDED_PLAYER"},
-   {Name: "WEB_KIDS"},
-   {Name: "WEB_REMIX"},
-}

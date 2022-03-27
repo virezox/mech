@@ -7,20 +7,10 @@ import (
    "time"
 )
 
-func (p Player) Base() string {
-   var buf strings.Builder
-   buf.WriteString(p.VideoDetails.Author)
-   buf.WriteByte('-')
-   buf.WriteString(p.VideoDetails.Title)
-   buf.WriteByte('-')
-   buf.WriteString(p.VideoDetails.VideoID)
-   return mech.Clean(buf.String())
-}
-
 type Player struct {
    PlayabilityStatus struct {
-      Status string // "OK", "LOGIN_REQUIRED"
-      Reason string // "", "Sign in to confirm your age"
+      Status string
+      Reason string
    }
    VideoDetails struct {
       VideoID string
@@ -39,6 +29,16 @@ type Player struct {
       AdaptiveFormats Formats
       Formats Formats
    }
+}
+
+func (p Player) Base() string {
+   var buf strings.Builder
+   buf.WriteString(p.VideoDetails.Author)
+   buf.WriteByte('-')
+   buf.WriteString(p.VideoDetails.Title)
+   buf.WriteByte('-')
+   buf.WriteString(p.VideoDetails.VideoID)
+   return mech.Clean(buf.String())
 }
 
 func (p Player) Date() (time.Time, error) {
