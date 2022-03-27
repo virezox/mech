@@ -38,19 +38,3 @@ GET /?approve_browser_access=true HTTP/1.1
 Host: studio.youtube.com
 Authorization: Bearer ya29.a0ARrdaM-2nXUrxlFNOx3hZAUNICfCwmhHKHenQkebpQFGNoYdE...
 ~~~
-
-## WEB\_KIDS
-
-~~~
-GET / HTTP/1.1
-Host: www.youtubekids.com
-User-Agent: Firefox/44
-~~~
-
-## WEB\_REMIX
-
-~~~
-GET / HTTP/1.1
-Host: music.youtube.com
-User-Agent: Firefox/44
-~~~

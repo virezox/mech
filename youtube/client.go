@@ -87,9 +87,14 @@ type Client struct {
    Version string `json:"clientVersion"`
 }
 
+var Android = Client{Name: "ANDROID", Version: "17.11.34"}
+
+// HtVdAasjOgU
+var Embed = Client{Name: "ANDROID_EMBEDDED_PLAYER", Version: "17.11.34"}
+
 var Clients = []Client{
-   {Name: "ANDROID", Version: "17.11.34"},
-   {Name: "ANDROID_EMBEDDED_PLAYER", Version: "17.11.34"}, // HtVdAasjOgU
+   Android,
+   Embed,
    {Name: "MWEB", Version: "2.20211109.01.00"},
    {Name: "TVHTML5"},
    {Name: "WEB"},

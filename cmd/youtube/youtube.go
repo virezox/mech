@@ -7,6 +7,44 @@ import (
    "sort"
 )
 
+type video struct {
+   address string
+   audio string
+   client string
+   height int
+   id string
+   info bool
+   token bool
+}
+
+func (v video) player() (*youtube.Player, error) {
+   var client youtube.Client
+   for _, each := range youtube.Clients {
+      if each.Name == v.client {
+         client = each
+      }
+   }
+   if v.id == "" {
+      var err error
+      v.id, err = youtube.VideoID(v.address)
+      if err != nil {
+         return nil, err
+      }
+   }
+   if v.token {
+      cache, err := os.UserCacheDir()
+      if err != nil {
+         return nil, err
+      }
+      exc, err := youtube.OpenExchange(cache, "/mech/youtube.json")
+      if err != nil {
+         return nil, err
+      }
+      return client.PlayerHeader(exc.Header(), v.id)
+   }
+   return client.Player(v.id)
+}
+
 func (v video) do() error {
    play, err := v.player()
    if err != nil {
@@ -37,7 +75,7 @@ func (v video) do() error {
    return nil
 }
 
-func doExchange() error {
+func doRefresh() error {
    oauth, err := youtube.NewOAuth()
    if err != nil {
       return err
@@ -55,7 +93,7 @@ func doExchange() error {
    return exc.Create(cache, "/mech/youtube.json")
 }
 
-func doRefresh() error {
+func doAccess() error {
    cache, err := os.UserCacheDir()
    if err != nil {
       return err
@@ -68,16 +106,6 @@ func doRefresh() error {
       return err
    }
    return exc.Create(cache, "/mech/youtube.json")
-}
-
-type video struct {
-   address string
-   audio string
-   construct bool
-   embed bool
-   height int
-   id string
-   info bool
 }
 
 func (v video) doAudio(play *youtube.Player) error {
@@ -116,28 +144,3 @@ func (v video) doVideo(play *youtube.Player) error {
    return nil
 }
 
-func (v video) player() (*youtube.Player, error) {
-   client := youtube.Android
-   if v.embed {
-      client = youtube.Embed
-   }
-   if v.id == "" {
-      var err error
-      v.id, err = youtube.VideoID(v.address)
-      if err != nil {
-         return nil, err
-      }
-   }
-   if v.construct {
-      cache, err := os.UserCacheDir()
-      if err != nil {
-         return nil, err
-      }
-      exc, err := youtube.OpenExchange(cache, "/mech/youtube.json")
-      if err != nil {
-         return nil, err
-      }
-      return client.PlayerHeader(exc.Header(), v.id)
-   }
-   return client.Player(v.id)
-}
