@@ -12,8 +12,6 @@ import (
 
 const partLength = 10_000_000
 
-var LogLevel format.LogLevel
-
 // averageBitrate is a better marker for quality than bitrate. For example, if
 // you look a video:
 // 7WTEB7Qbt4U

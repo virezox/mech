@@ -2,6 +2,7 @@ package youtube
 
 import (
    "fmt"
+   "io"
    "net/http"
    "testing"
    "time"
