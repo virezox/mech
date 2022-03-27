@@ -1,28 +1,24 @@
 package youtube
 
 import (
-   "fmt"
-   "io"
-   "net/http"
    "testing"
-   "time"
 )
 
 func TestProtoFilter(t *testing.T) {
-   fil := NewFilter()
-   fil.UploadDate(UploadDateLastHour)
-   par := NewParams()
-   par.Filter(fil)
-   enc := par.Encode()
+   filter := NewFilter()
+   filter.UploadDate(UploadDate["Last hour"])
+   param := NewParams()
+   param.Filter(filter)
+   enc := param.Encode()
    if enc != "EgIIAQ==" {
       t.Fatal(enc)
    }
 }
 
 func TestProtoSort(t *testing.T) {
-   par := NewParams()
-   par.SortBy(SortByRating)
-   enc := par.Encode()
+   param := NewParams()
+   param.SortBy(SortBy["Rating"])
+   enc := param.Encode()
    if enc != "CAE=" {
       t.Fatal(enc)
    }
