@@ -25,31 +25,10 @@ https://github.com/89z/googleplay
 
 ## MWEB
 
-~~~
-GET / HTTP/1.1
-Host: m.youtube.com
-User-Agent: iPad
-~~~
-
 Needed to get `publishDate`:
 
 ~~~
 aN76CmldknI
-~~~
-
-## TVHTML5
-
-~~~
-GET /tv HTTP/1.1
-Host: www.youtube.com
-User-Agent: Mozilla/5.0 (ChromiumStylePlatform) Cobalt/Version
-~~~
-
-## WEB
-
-~~~
-GET / HTTP/1.1
-Host: www.youtube.com
 ~~~
 
 ## WEB\_CREATOR
@@ -58,13 +37,6 @@ Host: www.youtube.com
 GET /?approve_browser_access=true HTTP/1.1
 Host: studio.youtube.com
 Authorization: Bearer ya29.a0ARrdaM-2nXUrxlFNOx3hZAUNICfCwmhHKHenQkebpQFGNoYdE...
-~~~
-
-## WEB\_EMBEDDED\_PLAYER
-
-~~~
-GET /embed/MIchMEqVwvg HTTP/1.1
-Host: www.youtube.com
 ~~~
 
 ## WEB\_KIDS
