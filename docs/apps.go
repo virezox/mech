@@ -18,7 +18,6 @@ var apps = []application{
    {id: "com.clearchannel.iheartradio.controller"},
    {id: "com.google.android.youtube", done: true},
    {id: "com.instagram.android", done: true},
-   {id: "com.mtvn.mtvPrimeAndroid", done: true},
    {id: "com.nbcuni.nbc", done: true},
    {id: "com.pandora.android", done: true},
    {id: "com.pbs.video"},

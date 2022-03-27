@@ -14,8 +14,9 @@ func doManifest(guid string, bandwidth int, info bool) error {
    if err != nil {
       return err
    }
-   fmt.Println("GET", media.Body.Seq.Video.Src)
-   res, err := http.Get(media.Body.Seq.Video.Src)
+   video := media.Video()
+   fmt.Println("GET", video.Src)
+   res, err := http.Get(video.Src)
    if err != nil {
       return err
    }
@@ -24,22 +25,20 @@ func doManifest(guid string, bandwidth int, info bool) error {
    if err != nil {
       return err
    }
+   sort.Sort(hls.Bandwidth{mas, bandwidth})
    if info {
-      fmt.Println(media.Body.Seq.Video.Title)
-      for _, video := range mas.Stream {
-         fmt.Println(video)
+      fmt.Println(video.Title)
+      for _, stream := range mas.Stream {
+         fmt.Println(stream)
       }
    } else {
-      sort.Sort(hls.Bandwidth{mas, bandwidth})
-      if err := download(media, mas.Stream[0]); err != nil {
-         return err
-      }
+      return download(video, mas.Stream[0])
    }
    return nil
 }
 
-func download(media *paramount.Media, video hls.Stream) error {
-   seg, err := newSegment(video.URI.String())
+func download(video *paramount.Video, stream hls.Stream) error {
+   seg, err := newSegment(stream.URI.String())
    if err != nil {
       return err
    }
@@ -53,12 +52,11 @@ func download(media *paramount.Media, video hls.Stream) error {
    if err != nil {
       return err
    }
-   file, err := os.Create(media.Base() + seg.Ext())
+   file, err := os.Create(video.Base() + seg.Ext())
    if err != nil {
       return err
    }
    defer file.Close()
-   fmt.Println(video)
    for i, info := range seg.Info {
       fmt.Print(seg.Progress(i))
       res, err := http.Get(info.URI.String())

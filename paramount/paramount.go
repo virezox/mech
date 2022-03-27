@@ -3,10 +3,11 @@ package paramount
 import (
    "encoding/xml"
    "github.com/89z/format"
-   "github.com/89z/mech"
    "net/http"
    "net/url"
+   "github.com/89z/mech"
    "strconv"
+   "strings"
 )
 
 const (
@@ -19,10 +20,7 @@ var LogLevel format.LogLevel
 type Media struct {
    Body struct {
       Seq  struct {
-         Video struct {
-            Title string `xml:"title,attr"`
-            Src string `xml:"src,attr"`
-         } `xml:"video"`
+         Video []Video `xml:"video"`
       } `xml:"seq"`
    } `xml:"body"`
 }
@@ -56,6 +54,46 @@ func NewMedia(guid string) (*Media, error) {
    return med, nil
 }
 
-func (m Media) Base() string {
-   return mech.Clean(m.Body.Seq.Video.Title)
+func (m Media) Video() *Video {
+   for _, vid := range m.Body.Seq.Video {
+      return &vid
+   }
+   return nil
+}
+
+type Video struct {
+   Title string `xml:"title,attr"`
+   Src string `xml:"src,attr"`
+   Param []struct {
+      Name string `xml:"name,attr"`
+      Value string `xml:"value,attr"`
+   } `xml:"param"`
+}
+
+func (v Video) Base() string {
+   var buf strings.Builder
+   buf.WriteString(v.Title)
+   buf.WriteByte('-')
+   buf.WriteString(v.SeasonNumber())
+   buf.WriteByte('-')
+   buf.WriteString(v.EpisodeNumber())
+   return mech.Clean(buf.String())
+}
+
+func (v Video) EpisodeNumber() string {
+   for _, par := range v.Param {
+      if par.Name == "EpisodeNumber" {
+         return par.Value
+      }
+   }
+   return ""
+}
+
+func (v Video) SeasonNumber() string {
+   for _, par := range v.Param {
+      if par.Name == "SeasonNumber" {
+         return par.Value
+      }
+   }
+   return ""
 }

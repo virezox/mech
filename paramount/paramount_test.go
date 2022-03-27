@@ -19,7 +19,9 @@ func TestParamount(t *testing.T) {
       if err != nil {
          t.Fatal(err)
       }
-      fmt.Printf("%+v\n", med)
+      for _, param := range med.Video().Param {
+         fmt.Printf("%+v\n", param)
+      }
       time.Sleep(time.Second)
    }
 }

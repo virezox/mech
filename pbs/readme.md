@@ -10,7 +10,7 @@
 com.pbs.video
 ~~~
 
-https://github.com/httptoolkit/frida-android-unpinning
+Install system certificate.
 
 ## How to get X-PBS-PlatformVersion?
 

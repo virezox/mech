@@ -41,7 +41,6 @@ https://freeproxylists.net/br.html
 22.027 M true Paramount+ | Peak Streaming
 21.303 M false Napster Music
 13.797 M true The NBC App - Stream TV Shows
-4.656 M true MTV
 2.633 M true Bandcamp
 2.236 M false PBS Video: Live TV & On Demand
 690.047 K false Qobuz
