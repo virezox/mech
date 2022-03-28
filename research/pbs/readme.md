@@ -1,36 +1,13 @@
 # PBS
 
-~~~xml
-<data android:pathPattern="/show/.*/"/>
-<data android:pathPattern="/video/.*/"/>
-~~~
+## Done
 
-## Masterpiece
+https://player.pbs.org/widget/partnerplayer/3016754074
 
-https://pbs.org/wgbh/masterpiece/episodes/sanditon-s2-e1
+## To do
 
-## Nature
+https://pbs.org/nova/video/nova-universe-revealed-milky-way
 
-https://pbs.org/wnet/nature/my-garden-thousand-bees-about
+This is it:
 
-## Nova
-
-https://pbs.org/wgbh/nova/video/secret-mind-of-slime
-
-API:
-
-https://pbs.org/wgbh/nova/api/video/secret-mind-of-slime
-
-## PBS
-
-Masterpiece:
-
-https://pbs.org/video/episode-1-eyn9m9
-
-Nature:
-
-https://pbs.org/video/my-garden-of-a-thousand-bees-trjhzt
-
-Nova:
-
-https://pbs.org/video/secret-mind-of-slime-oa3w89
+https://player.pbs.org/partnerplayer/wwGgFRSNeKGrsgjdYh6efQ==

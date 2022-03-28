@@ -6,6 +6,11 @@ import (
    "net/http"
 )
 
+type Client struct {
+   Name string `json:"clientName"`
+   Version string `json:"clientVersion"`
+}
+
 var Clients = []Client{
    {"ANDROID", "17.12.34"},
    {"ANDROID_EMBEDDED_PLAYER", "17.12.34"}, // HtVdAasjOgU
@@ -16,11 +21,6 @@ var Clients = []Client{
    {"WEB_EMBEDDED_PLAYER", "1.20220323.01.00"},
    {"WEB_KIDS", "2.20220323.08.00"},
    {"WEB_REMIX", "1.20220321.01.00"},
-}
-
-type Client struct {
-   Name string `json:"clientName"`
-   Version string `json:"clientVersion"`
 }
 
 func (c Client) Player(id string) (*Player, error) {
@@ -65,12 +65,6 @@ func (c Client) PlayerHeader(head http.Header, id string) (*Player, error) {
    return play, nil
 }
 
-type errorString string
-
-func (e errorString) Error() string {
-   return string(e)
-}
-
 func (c Client) Search(query string) (*Search, error) {
    var body struct {
       Params string `json:"params"`
@@ -108,3 +102,8 @@ func (c Client) Search(query string) (*Search, error) {
    return search, nil
 }
 
+type errorString string
+
+func (e errorString) Error() string {
+   return string(e)
+}
