@@ -4,7 +4,7 @@ import (
    "github.com/89z/format"
    "github.com/89z/format/json"
    "net/http"
-   "strconv"
+   "net/url"
 )
 
 var LogLevel format.LogLevel
@@ -13,11 +13,8 @@ type VideoBridge struct {
    Encodings []string
 }
 
-func NewVideoBridge(id int64) (*VideoBridge, error) {
-   buf := []byte("https://player.pbs.org/widget/partnerplayer/")
-   buf = strconv.AppendInt(buf, id, 10)
-   buf = append(buf, '/')
-   req, err := http.NewRequest("GET", string(buf), nil)
+func NewVideoBridge(addr *url.URL) (*VideoBridge, error) {
+   req, err := http.NewRequest("GET", addr.String(), nil)
    if err != nil {
       return nil, err
    }
