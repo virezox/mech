@@ -122,7 +122,7 @@ func NewItem(addr string) (*Item, error) {
          }
       }
    }
-   return nil, notPresent{"nilZ"}
+   return nil, notFound{"nilZ"}
 }
 
 func (i Item) Band() (*Band, error) {
@@ -211,10 +211,10 @@ type Track struct {
    Streaming_URL map[string]string
 }
 
-type notPresent struct {
+type notFound struct {
    value string
 }
 
-func (n notPresent) Error() string {
-   return strconv.Quote(n.value) + " is not present"
+func (n notFound) Error() string {
+   return strconv.Quote(n.value) + " is not found"
 }

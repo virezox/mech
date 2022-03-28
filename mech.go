@@ -39,13 +39,13 @@ func Ext(head http.Header) (string, error) {
    for _, ext := range exts {
       return ext, nil
    }
-   return "", notPresent{typ}
+   return "", notFound{typ}
 }
 
-type notPresent struct {
+type notFound struct {
    value string
 }
 
-func (n notPresent) Error() string {
-   return strconv.Quote(n.value) + " is not present"
+func (n notFound) Error() string {
+   return strconv.Quote(n.value) + " is not found"
 }

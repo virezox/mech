@@ -25,7 +25,7 @@ func Slug(addr string) (string, error) {
    ind := strings.Index(par.Path, "/video/")
    switch ind {
    case -1:
-      return "", notPresent{"/video/"}
+      return "", notFound{"/video/"}
    case 0:
       return slug, nil
    }
@@ -56,7 +56,7 @@ func Slug(addr string) (string, error) {
          }
       }
    }
-   return "", notPresent{slug}
+   return "", notFound{slug}
 }
 
 const (
@@ -66,12 +66,12 @@ const (
 
 var LogLevel format.LogLevel
 
-type notPresent struct {
+type notFound struct {
    value string
 }
 
-func (n notPresent) Error() string {
-   return strconv.Quote(n.value) + " is not present"
+func (n notFound) Error() string {
+   return strconv.Quote(n.value) + " is not found"
 }
 
 type Video struct {

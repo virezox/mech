@@ -75,7 +75,7 @@ func (p PlaybackInfo) Ext() (string, error) {
       }
       return filepath.Ext(addr.Path), nil
    }
-   return "", notPresent{"Result"}
+   return "", notFound{"Result"}
 }
 
 type UserLogin struct {
@@ -162,10 +162,10 @@ func (u UserLogin) ValueExchange() error {
    return res.Body.Close()
 }
 
-type notPresent struct {
+type notFound struct {
    value string
 }
 
-func (n notPresent) Error() string {
-   return strconv.Quote(n.value) + " is not present"
+func (n notFound) Error() string {
+   return strconv.Quote(n.value) + " is not found"
 }

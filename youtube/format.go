@@ -41,7 +41,7 @@ func (f Format) Ext() (string, error) {
    for _, ext := range exts {
       return ext, nil
    }
-   return "", notPresent{f.MimeType}
+   return "", notFound{f.MimeType}
 }
 
 func (f Format) Format(s fmt.State, verb rune) {
@@ -137,10 +137,10 @@ func (h Height) distance(i int) int {
    return -diff
 }
 
-type notPresent struct {
+type notFound struct {
    value string
 }
 
-func (n notPresent) Error() string {
-   return fmt.Sprintf("%q is not present", n.value)
+func (n notFound) Error() string {
+   return fmt.Sprintf("%q is not found", n.value)
 }
