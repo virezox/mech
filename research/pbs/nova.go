@@ -1,8 +1,8 @@
 package pbs
 
 import (
-   "encoding/json"
    "fmt"
+   "github.com/89z/format/json"
    "net/http"
    "net/url"
    "strconv"
@@ -13,6 +13,67 @@ type Asset struct {
    Object_Type string
    Slug string
    Player_Code string
+}
+
+type Episode struct {
+   Assets []Asset
+}
+
+func (e Episode) Asset() *Asset {
+   for _, asset := range e.Assets {
+      if asset.Object_Type == "full_length" {
+         return &asset
+      }
+   }
+   return nil
+}
+
+func (n NextData) Episode() *Episode {
+   if n.Props.PageProps.IsSeries == nil {
+      return &n.Props.PageProps.IsEpisode
+   }
+   for _, episode := range n.Props.PageProps.IsSeries {
+      if episode.Slug == n.Query.Video {
+         return &episode.Episode
+      }
+   }
+   return nil
+}
+
+type NextData struct {
+   Props struct {
+      PageProps struct {
+         IsEpisode Episode
+         IsSeries []struct {
+            Episode Episode
+            Slug string
+         }
+      }
+   }
+   Query struct {
+      Video string
+   }
+}
+
+func NewNextData(addr string) (*NextData, error) {
+   req, err := http.NewRequest("GET", addr, nil)
+   if err != nil {
+      return nil, err
+   }
+   LogLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   var (
+      data = new(NextData)
+      sep = []byte(` id="__NEXT_DATA__" type="application/json">`)
+   )
+   if err := json.Decode(res.Body, sep, data); err != nil {
+      return nil, err
+   }
+   return data, nil
 }
 
 func (a Asset) VideoBridge() (*VideoBridge, error) {
@@ -35,50 +96,6 @@ func (a Asset) Format(f fmt.State, verb rune) {
    if verb == 'a' {
       fmt.Fprint(f, "\nPlayer_Code: ", a.Player_Code)
    }
-}
-
-type NextData struct {
-   Props struct {
-      PageProps struct {
-         IsSeries []struct {
-            Episode struct {
-               Assets []Asset
-            }
-            Slug string
-         }
-      }
-   }
-}
-
-func NewNextData(addr string) (*NextData, error) {
-   req, err := http.NewRequest("GET", addr, nil)
-   if err != nil {
-      return nil, err
-   }
-   LogLevel.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   data := new(NextData)
-   if err := json.NewDecoder(res.Body).Decode(data); err != nil {
-      return nil, err
-   }
-   return data, nil
-}
-
-func (n NextData) Asset() *Asset {
-   for _, episode := range n.Props.PageProps.IsSeries {
-      if episode.Slug == "nova-universe-revealed-milky-way" {
-         for _, asset := range episode.Episode.Assets {
-            if asset.Object_Type == "full_length" {
-               return &asset
-            }
-         }
-      }
-   }
-   return nil
 }
 
 type notFound struct {

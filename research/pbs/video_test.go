@@ -2,16 +2,17 @@ package pbs
 
 import (
    "fmt"
+   "net/url"
    "testing"
 )
 
-var addr = &url.URL{
-   Scheme: "https",
-   Host: "player.pbs.org",
-   Path: "/widget/partnerplayer/3016754074/",
-}
+const videoTest = "https://player.pbs.org/widget/partnerplayer/3016754074/"
 
-func TestJSON(t *testing.T) {
+func TestVideo(t *testing.T) {
+   addr, err := url.Parse(videoTest)
+   if err != nil {
+      t.Fatal(err)
+   }
    video, err := NewVideoBridge(addr)
    if err != nil {
       t.Fatal(err)

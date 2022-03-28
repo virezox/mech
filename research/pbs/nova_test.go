@@ -3,14 +3,26 @@ package pbs
 import (
    "fmt"
    "testing"
+   "time"
 )
 
-const iframe = "<iframe  id='partnerPlayer' frameborder='0' marginwidth='0' marginheight='0' scrolling='no' width='100%' height='100%' src='//player.pbs.org/partnerplayer/wwGgFRSNeKGrsgjdYh6efQ==/?topbar=false&end=0&endscreen=true&start=0&autoplay=false' allowfullscreen></iframe>"
+var novaTests = []string{
+   "https://www.pbs.org/wgbh/nova/video/australias-first-4-billion-years-awakening/",
+   "https://www.pbs.org/wgbh/nova/video/nova-universe-revealed-milky-way/",
+   "https://www.pbs.org/wgbh/nova/video/the-planets-inner-worlds/",
+}
 
-func TestURL(t *testing.T) {
-   addr, err := PartnerPlayer(iframe)
-   if err != nil {
-      t.Fatal(err)
+func TestNova(t *testing.T) {
+   for _, test := range novaTests {
+      data, err := NewNextData(test)
+      if err != nil {
+         t.Fatal(err)
+      }
+      video, err := data.Episode().Asset().VideoBridge()
+      if err != nil {
+         t.Fatal(err)
+      }
+      fmt.Printf("%+v\n", video)
+      time.Sleep(time.Second)
    }
-   fmt.Println(addr)
 }
