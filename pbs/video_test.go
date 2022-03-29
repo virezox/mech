@@ -13,15 +13,15 @@ var videoTests = []string{
 
 func TestVideo(t *testing.T) {
    for _, test := range videoTests {
-      vid, err := NewVideo(test)
+      video, err := NewWidgeter(test)
       if err != nil {
          t.Fatal(err)
       }
-      wid, err := vid.Widget()
+      widget, err := video.Widget()
       if err != nil {
          t.Fatal(err)
       }
-      fmt.Println(wid)
+      fmt.Printf("%+v\n", widget)
       time.Sleep(time.Second)
    }
 }

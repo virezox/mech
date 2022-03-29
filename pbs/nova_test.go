@@ -14,15 +14,15 @@ var playerTests = []string{
 
 func TestNova(t *testing.T) {
    for _, test := range playerTests {
-      nova, err := NewNova(test)
+      nova, err := NewWidgeter(test)
       if err != nil {
          t.Fatal(err)
       }
-      wid, err := nova.Episode().Asset().Widget()
+      widget, err := nova.Widget()
       if err != nil {
          t.Fatal(err)
       }
-      fmt.Printf("%+v\n", wid)
+      fmt.Printf("%+v\n", widget)
       time.Sleep(time.Second)
    }
 }

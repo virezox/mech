@@ -1,9 +1,5 @@
 # PBS
 
-- https://pbs.org/nova/video/nova-universe-revealed-milky-way
-- https://pbs.org/video/pandora-papersmassacre-in-el-salvador-v2wjzz
-- https://pbs.org/wnet/nature/about-american-horses/26867
-
 ## Android client
 
 ~~~
@@ -12,10 +8,29 @@ com.pbs.video
 
 Install system certificate.
 
-## How to get X-PBS-PlatformVersion?
+## Frontline
 
-https://github.com/89z/googleplay
+https://www.pbs.org/wgbh/frontline/film/inside-italys-covid-war/
 
-## How to get password?
+## Masterpiece
 
-https://github.com/mitmproxy/mitmproxy
+https://www.pbs.org/wgbh/masterpiece/episodes/downton-abbey-s6-e2/
+
+## Nature
+
+https://www.pbs.org/wnet/nature/about-american-horses/
+
+## Nova
+
+- https://www.pbs.org/wgbh/nova/video/australias-first-4-billion-years-awakening/
+- https://www.pbs.org/wgbh/nova/video/nova-universe-revealed-milky-way/
+- https://www.pbs.org/wgbh/nova/video/the-planets-inner-worlds/
+
+## Video
+
+- https://www.pbs.org/video/frontlineworld-children-of-the-taliban/
+- https://www.pbs.org/video/the-future-of-restaurants-rbs0v8/
+
+## Widget
+
+https://player.pbs.org/widget/partnerplayer/3016754074/

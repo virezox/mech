@@ -8,13 +8,13 @@ import (
 const nature = "https://www.pbs.org/wnet/nature/about-american-horses/"
 
 func TestNature(t *testing.T) {
-   nat, err := NewNature(nature)
+   nat, err := NewWidgeter(nature)
    if err != nil {
       t.Fatal(err)
    }
-   wid, err := nat.Widget()
+   widget, err := nat.Widget()
    if err != nil {
       t.Fatal(err)
    }
-   fmt.Printf("%+v\n", wid)
+   fmt.Printf("%+v\n", widget)
 }

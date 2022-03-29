@@ -9,6 +9,9 @@ func main() {
    // a
    var address string
    flag.StringVar(&address, "a", "", "address")
+   // f
+   var bandwidth int
+   flag.IntVar(&bandwidth, "f", 5651601, "bandwidth")
    // i
    var info bool
    flag.BoolVar(&info, "i", false, "info only")
@@ -20,7 +23,7 @@ func main() {
       pbs.LogLevel = 1
    }
    if address != "" {
-      err := doAsset(address, info)
+      err := doWidget(address, bandwidth, info)
       if err != nil {
          panic(err)
       }

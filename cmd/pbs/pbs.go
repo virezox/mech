@@ -2,46 +2,81 @@ package main
 
 import (
    "fmt"
-   "github.com/89z/format"
-   "github.com/89z/mech"
+   "github.com/89z/format/hls"
    "github.com/89z/mech/pbs"
    "net/http"
+   "net/url"
    "os"
+   "sort"
 )
 
-func doAsset(address string, info bool) error {
-   slug, err := pbs.Slug(address)
+func doWidget(address string, bandwidth int, info bool) error {
+   getter, err := pbs.NewWidgeter(address)
    if err != nil {
       return err
    }
-   asset, err := pbs.NewAsset(slug)
+   widget, err := getter.Widget()
    if err != nil {
       return err
    }
-   if info {
-      fmt.Printf("%+v\n", asset)
-   } else {
-      for _, video := range asset.Resource.MP4_Videos {
-         fmt.Println("GET", video.URL)
-         res, err := http.Get(video.URL)
+   addr := widget.HLS()
+   fmt.Println("GET", addr)
+   res, err := http.Get(addr)
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   master, err := hls.NewMaster(res.Request.URL, res.Body)
+   if err != nil {
+      return err
+   }
+   sort.Sort(hls.Bandwidth{master, bandwidth})
+   for _, stream := range master.Stream {
+      if info {
+         fmt.Println(stream)
+      } else {
+         // video
+         err := download(stream.URI, widget.Slug)
          if err != nil {
             return err
          }
-         defer res.Body.Close()
-         if res.StatusCode != http.StatusOK {
-            return pbs.ErrorString(res.Status)
-         }
-         name := asset.Resource.Title + "-" + video.Profile + ".mp4"
-         file, err := os.Create(mech.Clean(name))
-         if err != nil {
-            return err
-         }
-         defer file.Close()
-         pro := format.NewProgress(res)
-         if _, err := file.ReadFrom(pro); err != nil {
-            return err
-         }
+         // audio
+         audio := master.GetMedia(stream)
+         return download(audio.URI, widget.Slug)
       }
    }
    return nil
+}
+
+func download(addr *url.URL, base string) error {
+   fmt.Println("GET", addr)
+   res, err := http.Get(addr.String())
+   if err != nil {
+      return err
+   }
+   seg, err := hls.NewSegment(res.Request.URL, res.Body)
+   if err != nil {
+      return err
+   }
+   if err := res.Body.Close(); err != nil {
+      return err
+   }
+   file, err := os.Create(base + seg.Ext())
+   if err != nil {
+      return err
+   }
+   for i, info := range seg.Info {
+      fmt.Print(seg.Progress(i))
+      res, err := http.Get(info.URI.String())
+      if err != nil {
+         return err
+      }
+      if _, err := file.ReadFrom(res.Body); err != nil {
+         return err
+      }
+      if err := res.Body.Close(); err != nil {
+         return err
+      }
+   }
+   return file.Close()
 }

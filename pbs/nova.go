@@ -1,7 +1,6 @@
 package pbs
 
 import (
-   "fmt"
    "github.com/89z/format/json"
    "net/http"
    "net/url"
@@ -13,14 +12,6 @@ type Asset struct {
    Object_Type string
    Slug string
    Player_Code string
-}
-
-func (a Asset) Format(f fmt.State, verb rune) {
-   fmt.Fprintln(f, "Object_Type:", a.Object_Type)
-   fmt.Fprint(f, "Slug: ", a.Slug)
-   if verb == 'a' {
-      fmt.Fprint(f, "\nPlayer_Code: ", a.Player_Code)
-   }
 }
 
 func (a Asset) Widget() (*Widget, error) {
@@ -48,14 +39,6 @@ func (e Episode) Asset() *Asset {
       }
    }
    return nil
-}
-
-type notFound struct {
-   value string
-}
-
-func (n notFound) Error() string {
-   return strconv.Quote(n.value) + " is not found"
 }
 
 type Nova struct {
@@ -104,4 +87,12 @@ func (n Nova) Episode() *Episode {
       }
    }
    return nil
+}
+
+type notFound struct {
+   value string
+}
+
+func (n notFound) Error() string {
+   return strconv.Quote(n.value) + " is not found"
 }
