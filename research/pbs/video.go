@@ -6,13 +6,14 @@ import (
    "net/url"
 )
 
-type Video struct {
-   Full_Length map[string]struct {
-      Video_Iframe string
+type Content struct {
+   ContentURL string
+   Video struct {
+      ContentURL string
    }
 }
 
-func NewVideo(addr string) (*Video, error) {
+func NewContent(addr string) (*Content, error) {
    req, err := http.NewRequest("GET", addr, nil)
    if err != nil {
       return nil, err
@@ -24,23 +25,22 @@ func NewVideo(addr string) (*Video, error) {
    }
    defer res.Body.Close()
    var (
-      sep = []byte(" STAGE_VIDEOS =")
-      vid = new(Video)
+      con = new(Content)
+      sep = []byte(`"application/ld+json">`)
    )
-   if err := json.Decode(res.Body, sep, vid); err != nil {
+   if err := json.Decode(res.Body, sep, con); err != nil {
       return nil, err
    }
-   return vid, nil
+   return con, nil
 }
 
-func (v Video) Bridge() (*Bridge, error) {
-   for _, val := range v.Full_Length {
-      addr, err := url.Parse(val.Video_Iframe)
-      if err != nil {
-         return nil, err
-      }
-      addr.Scheme = "https"
-      return NewBridge(addr)
+func (c Content) Bridge() (*Bridge, error) {
+   if c.ContentURL == "" {
+      c.ContentURL = c.Video.ContentURL
    }
-   return nil, notFound{"full_length"}
+   addr, err := url.Parse(c.ContentURL)
+   if err != nil {
+      return nil, err
+   }
+   return NewBridge(addr)
 }
