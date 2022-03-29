@@ -3,20 +3,19 @@ package pbs
 import (
    "fmt"
    "testing"
-   "time"
 )
 
 const contentTest =
    "https://www.pbs.org/video/frontlineworld-children-of-the-taliban/"
 
-func TestFrontline(t *testing.T) {
-   line, err := NewFrontline(test)
+func TestContent(t *testing.T) {
+   con, err := NewContent(contentTest)
    if err != nil {
       t.Fatal(err)
    }
-   bridge, err := line.VideoObject().VideoBridge()
+   brid, err := con.Bridge()
    if err != nil {
       t.Fatal(err)
    }
-   fmt.Println(bridge)
+   fmt.Println(brid)
 }

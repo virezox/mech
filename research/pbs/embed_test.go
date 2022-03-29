@@ -13,11 +13,11 @@ var embedTests = []string{
 
 func TestEmbed(t *testing.T) {
    for _, test := range embedTests {
-      line, err := NewEmbed(test)
+      embed, err := NewEmbed(test)
       if err != nil {
          t.Fatal(err)
       }
-      bridge, err := line.VideoObject().VideoBridge()
+      bridge, err := embed.VideoObject().Bridge()
       if err != nil {
          t.Fatal(err)
       }

@@ -1,0 +1,79 @@
+{
+  "@context": "http://schema.org",
+  "@graph": [
+    {
+      "@id": "https://www.pbs.org/wgbh/frontline/film/inside-italys-covid-war/",
+      "@type": "TVEpisode",
+      "name": "Inside Italy's COVID War",
+      "episodeNumber": "19",
+      "partOfSeason": {
+        "@type": "TVSeason",
+        "seasonNumber": "37"
+      },
+      "partOfSeries": {
+        "@type": "TVSeries",
+        "name": "Frontline",
+        "sameAs": "http://www.imdb.com/title/tt0133302/"
+      },
+      "releasedEvent": {
+        "@type": "PublicationEvent",
+        "startDate": "2020-05-19",
+        "location": {
+          "@type": "Country",
+          "name": "US"
+        }
+      },
+      "sameAs": "http://www.imdb.com/title/tt0133302/",
+      "url": "https://www.pbs.org/wgbh/frontline/film/inside-italys-covid-war/",
+      "image": [
+        "https://i1.wp.com/www.pbs.org/wgbh/frontline/wp-content/uploads/2020/05/3719_SG_0046.jpg?resize=510%2C290"
+      ],
+      "potentialAction": [
+        {
+          "@type": "WatchAction",
+          "target": {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://www.pbs.org/wgbh/frontline/film/inside-italys-covid-war/",
+            "inLanguage": "en",
+            "actionPlatform": [
+              "http://schema.org/DesktopWebPlatform",
+              "http://schema.org/MobileWebPlatform"
+            ]
+          },
+          "expectsAcceptanceOf": [
+            {
+              "@type": "Offer",
+              "category": "free",
+              "availabilityStarts": "2020-05-19",
+              "availabilityEnds": "2030-01-01",
+              "eligibleRegion": {
+                "@type": "Country",
+                "name": "US"
+              }
+            }
+          ]
+        }
+      ],
+      "trailer": {
+        "@context": "http://schema.org",
+        "@type": "VideoObject",
+        "name": "Inside Italy's COVID War - Trailer",
+        "description": "FRONTLINE goes inside a hospital battling the coronavirus crisis in northern Italy, as doctors are forced to make life and death decisions.",
+        "thumbnailUrl": "https://i1.wp.com/www.pbs.org/wgbh/frontline/wp-content/uploads/2020/05/3719_SG_0046.jpg?resize=510%2C290",
+        "uploadDate": "2020-05-19",
+        "duration": "PT31S",
+        "embedUrl": "https://video.pbs.org/widget/partnerplayer/3041796754/?autoplay=true&amp;start=0&amp;end=0&amp;chapterbar=false&amp;topbar=false&amp;endscreen=true"
+      }
+    },
+    {
+      "@context": "http://schema.org",
+      "@type": "VideoObject",
+      "name": "Inside Italy's COVID War",
+      "description": "FRONTLINE goes inside a hospital battling the coronavirus crisis in northern Italy, as doctors are forced to make life and death decisions.",
+      "thumbnailUrl": "https://i1.wp.com/www.pbs.org/wgbh/frontline/wp-content/uploads/2020/05/3719_SG_0046.jpg?resize=510%2C290",
+      "uploadDate": "2020-05-19",
+      "duration": "PT54M22S",
+      "embedUrl": "https://video.pbs.org/widget/partnerplayer/3042636767/?autoplay=true&amp;start=0&amp;end=0&amp;chapterbar=false&amp;topbar=false&amp;endscreen=true"
+    }
+  ]
+}

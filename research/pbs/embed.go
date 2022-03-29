@@ -3,9 +3,16 @@ package pbs
 import (
    "bytes"
    "github.com/89z/format/json"
+   "html"
    "io"
    "net/http"
+   "net/url"
 )
+
+type Object struct {
+   EmbedURL string
+   Type string `json:"@type"`
+}
 
 type Embed struct {
    Graph []Object `json:"@graph"`
@@ -30,13 +37,13 @@ func NewEmbed(addr string) (*Embed, error) {
    // pbs.org/wgbh/masterpiece/episodes/downton-abbey-s6-e2
    buf = bytes.ReplaceAll(buf, []byte{'\n'}, nil)
    var (
-      line = new(Embed)
+      embed = new(Embed)
       sep = []byte(`"application/ld+json">`)
    )
-   if err := json.Unmarshal(buf, sep, line); err != nil {
+   if err := json.Unmarshal(buf, sep, embed); err != nil {
       return nil, err
    }
-   return line, nil
+   return embed, nil
 }
 
 func (e Embed) VideoObject() Object {
@@ -46,4 +53,12 @@ func (e Embed) VideoObject() Object {
       }
    }
    return e.Object
+}
+
+func (o Object) Bridge() (*Bridge, error) {
+   parse, err := url.Parse(html.UnescapeString(o.EmbedURL))
+   if err != nil {
+      return nil, err
+   }
+   return NewBridge(parse)
 }

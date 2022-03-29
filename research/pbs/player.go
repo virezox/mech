@@ -23,7 +23,7 @@ func (a Asset) Format(f fmt.State, verb rune) {
    }
 }
 
-func (a Asset) VideoBridge() (*VideoBridge, error) {
+func (a Asset) Bridge() (*Bridge, error) {
    for _, split := range strings.Split(a.Player_Code, "'") {
       if strings.Contains(split, "/partnerplayer/") {
          addr, err := url.Parse(split)
@@ -31,7 +31,7 @@ func (a Asset) VideoBridge() (*VideoBridge, error) {
             return nil, err
          }
          addr.Scheme = "https"
-         return NewVideoBridge(addr)
+         return NewBridge(addr)
       }
    }
    return nil, notFound{"/partnerplayer/"}
@@ -50,7 +50,15 @@ func (e Episode) Asset() *Asset {
    return nil
 }
 
-type NextData struct {
+type notFound struct {
+   value string
+}
+
+func (n notFound) Error() string {
+   return strconv.Quote(n.value) + " is not found"
+}
+
+type Player struct {
    Props struct {
       PageProps struct {
          IsEpisode Episode
@@ -65,7 +73,7 @@ type NextData struct {
    }
 }
 
-func NewNextData(addr string) (*NextData, error) {
+func NewPlayer(addr string) (*Player, error) {
    req, err := http.NewRequest("GET", addr, nil)
    if err != nil {
       return nil, err
@@ -77,7 +85,7 @@ func NewNextData(addr string) (*NextData, error) {
    }
    defer res.Body.Close()
    var (
-      data = new(NextData)
+      data = new(Player)
       sep = []byte(` id="__NEXT_DATA__" type="application/json">`)
    )
    if err := json.Decode(res.Body, sep, data); err != nil {
@@ -86,22 +94,14 @@ func NewNextData(addr string) (*NextData, error) {
    return data, nil
 }
 
-func (n NextData) Episode() *Episode {
-   if n.Props.PageProps.IsSeries == nil {
-      return &n.Props.PageProps.IsEpisode
+func (p Player) Episode() *Episode {
+   if p.Props.PageProps.IsSeries == nil {
+      return &p.Props.PageProps.IsEpisode
    }
-   for _, episode := range n.Props.PageProps.IsSeries {
-      if episode.Slug == n.Query.Video {
+   for _, episode := range p.Props.PageProps.IsSeries {
+      if episode.Slug == p.Query.Video {
          return &episode.Episode
       }
    }
    return nil
-}
-
-type notFound struct {
-   value string
-}
-
-func (n notFound) Error() string {
-   return strconv.Quote(n.value) + " is not found"
 }

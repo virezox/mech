@@ -6,19 +6,19 @@ import (
    "time"
 )
 
-var novaTests = []string{
+var playerTests = []string{
    "https://www.pbs.org/wgbh/nova/video/australias-first-4-billion-years-awakening/",
    "https://www.pbs.org/wgbh/nova/video/nova-universe-revealed-milky-way/",
    "https://www.pbs.org/wgbh/nova/video/the-planets-inner-worlds/",
 }
 
-func TestNova(t *testing.T) {
-   for _, test := range novaTests {
-      data, err := NewNextData(test)
+func TestPlayer(t *testing.T) {
+   for _, test := range playerTests {
+      play, err := NewPlayer(test)
       if err != nil {
          t.Fatal(err)
       }
-      bridge, err := data.Episode().Asset().VideoBridge()
+      bridge, err := play.Episode().Asset().Bridge()
       if err != nil {
          t.Fatal(err)
       }
