@@ -6,10 +6,8 @@ import (
    "net/url"
 )
 
-type Nature struct {
-   Full_Length map[string]struct {
-      Video_Iframe string
-   }
+type Nature map[string]struct {
+   Video_Iframe string
 }
 
 func NewNature(addr string) (*Nature, error) {
@@ -24,8 +22,8 @@ func NewNature(addr string) (*Nature, error) {
    }
    defer res.Body.Close()
    var (
-      sep = []byte(" STAGE_VIDEOS =")
       nat = new(Nature)
+      sep = []byte(`"full_length":`)
    )
    if err := json.Decode(res.Body, sep, nat); err != nil {
       return nil, err
@@ -34,7 +32,7 @@ func NewNature(addr string) (*Nature, error) {
 }
 
 func (n Nature) Widget() (*Widget, error) {
-   for _, val := range n.Full_Length {
+   for _, val := range n {
       addr, err := url.Parse(val.Video_Iframe)
       if err != nil {
          return nil, err
@@ -42,5 +40,5 @@ func (n Nature) Widget() (*Widget, error) {
       addr.Scheme = "https"
       return NewWidget(addr)
    }
-   return nil, notFound{"full_length"}
+   return nil, notFound{"video_iframe"}
 }

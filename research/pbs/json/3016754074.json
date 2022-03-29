@@ -1,0 +1,158 @@
+{
+  "availability": "available",
+  "encodings": [
+    "https://urs.pbs.org/redirect/cf7e880aec374f57a9d01fdb3d5c440f/",
+    "https://urs.pbs.org/redirect/a26117b58e6a4bac8bd6960f2c07134b/"
+  ],
+  "has_hls_encodings": true,
+  "has_mp4_encodings": true,
+  "cc": {
+    "WebVTT": "https://ga.video.cdn.pbs.org/captions/tpt-presents/660ab7f2-9673-41e9-a520-49b77b4e0a78/captions/0EFHGn_caption.vtt",
+    "SRT": "https://ga.video.cdn.pbs.org/captions/tpt-presents/660ab7f2-9673-41e9-a520-49b77b4e0a78/captions/HKWXGu_caption.srt",
+    "DFXP": "https://ga.video.cdn.pbs.org/captions/tpt-presents/660ab7f2-9673-41e9-a520-49b77b4e0a78/captions/TpmJV0_caption.dfxp",
+    "Caption-SAMI": "https://ga.video.cdn.pbs.org/captions/tpt-presents/660ab7f2-9673-41e9-a520-49b77b4e0a78/captions/cxa2Dr_caption.sami"
+  },
+  "can_play_preroll": true,
+  "image_url": "https://image.pbs.org/video-assets/noXFzWv-asset-mezzanine-16x9-F7e4syK.jpg",
+  "chapters": [],
+  "mvod_info": {
+    "show_mvod_icon": false,
+    "show_upsell_overlay": false
+  },
+  "program": {
+    "title": "TPT Presents",
+    "slug": "tpt-presents",
+    "producer": "KTCA"
+  },
+  "related_videos": [
+    {
+      "id": 3064891333,
+      "title": "Official Preview",
+      "images": {
+        "mezzanine": "https://image.pbs.org/video-assets/W0Wpk0j-asset-mezzanine-16x9-wxzNvlb.jpg"
+      },
+      "program": {
+        "audience": [
+          {
+            "scope": "national",
+            "station": null
+          }
+        ],
+        "display_episode_number": true,
+        "franchise": {
+          "slug": "masterpiece",
+          "title": "Masterpiece",
+          "cid": "e08bf78d-e6a3-44b9-b356-8753d01c7327",
+          "resource_type": "franchise",
+          "funder_message": "Funding for MASTERPIECE is provided by Viking and Raymond James with additional support from public television viewers and contributors to The MASTERPIECE Trust, created to help ensure the series’ future."
+        },
+        "seasons_count": 2,
+        "slug": "sanditon",
+        "title": "Sanditon",
+        "tracking_ga_event": "UA-3988763-2",
+        "tracking_ga_page": "UA-3988763-1",
+        "cid": "aabde07f-49c6-4f54-ae59-ae6282a13a96",
+        "resource_type": "show",
+        "funder_message": "Funding for MASTERPIECE is provided by Viking and Raymond James with additional support from public television viewers and contributors to The MASTERPIECE Trust, created to help ensure the series’ future."
+      },
+      "slug": "official-preview-ksbjbc"
+    },
+    {
+      "id": 3064237149,
+      "title": "Official Trailer",
+      "images": {
+        "mezzanine": "https://image.pbs.org/video-assets/tO9Tc16-asset-mezzanine-16x9-dKnmmzc.jpg"
+      },
+      "program": {
+        "audience": [
+          {
+            "scope": "national",
+            "station": null
+          }
+        ],
+        "display_episode_number": true,
+        "franchise": {
+          "slug": "ken-burns",
+          "title": "Ken Burns",
+          "cid": "f7062296-fa3d-4393-8b50-c0cac2db9a6d",
+          "resource_type": "franchise",
+          "funder_message": ""
+        },
+        "seasons_count": 1,
+        "slug": "benjamin-franklin",
+        "title": "Benjamin Franklin",
+        "tracking_ga_event": "",
+        "tracking_ga_page": "",
+        "cid": "44a78f46-58e6-4d32-844d-853eb62e2476",
+        "resource_type": "show",
+        "funder_message": "Corporate funding for BENJAMIN FRANKLIN was provided by Bank of America. Major funding was provided by David M. Rubenstein. Major funding was also provided by The Pew Charitable Trusts, the Corporation for Public Broadcasting, and by The Better Angels Society and its members Jeannie and Jonathan Lavine; University of Pennsylvania; Gilchrist and Amy Berg; Perry and Donna Golkin; Kissick Family Foundation; Deborah and Jon Dawson; Diane and Hal Brierley; McCloskey Family Charitable Trust; Cappy and Janie McGarr; Lavender Butterfly Fund; and Susan and Charles Shanor Charitable Trust."
+      },
+      "slug": "official-trailer-benjamin-franklin-xj22fa"
+    },
+    {
+      "id": 3063751852,
+      "title": "Luna + Sophie Preview",
+      "images": {
+        "mezzanine": "https://image.pbs.org/video-assets/Arbafxq-asset-mezzanine-16x9-rEpvbOd.jpg"
+      },
+      "program": {
+        "audience": [
+          {
+            "scope": "national",
+            "station": null
+          }
+        ],
+        "display_episode_number": true,
+        "franchise": {
+          "slug": "walters-choice",
+          "title": "Walter's Choice",
+          "cid": "613fdecb-c4e1-467a-b3a4-2ba9af7d294e",
+          "resource_type": "franchise",
+          "funder_message": ""
+        },
+        "seasons_count": 2,
+        "slug": "luna-and-sophie",
+        "title": "Luna and Sophie",
+        "tracking_ga_event": "",
+        "tracking_ga_page": "",
+        "cid": "537c8d10-d9f5-4444-8651-8db29f3242d5",
+        "resource_type": "show",
+        "funder_message": ""
+      },
+      "slug": "luna-sophie-preview-bxfadf"
+    }
+  ],
+  "member_stations": [],
+  "video_type": "full_length",
+  "id": "3016754074",
+  "cid": "660ab7f2-9673-41e9-a520-49b77b4e0a78",
+  "slug": "ramones-1978-live-in-minneapolis-imkfwc",
+  "title": "Ramones 1978: Live in Minneapolis",
+  "short_description": "In 1978 KTCA went to a Ramones concert at the State Theater in Minneapolis.",
+  "long_description": "In 1978 KTCA went to a Ramones concert at the State Theater in Minneapolis, to document this groundbreaking band.",
+  "series_info": "Season 2 Episode 32",
+  "duration": 684,
+  "air_date": "2018-09-28T00:00:00-04:00",
+  "air_date_formatted": "September 28th, 2018",
+  "air_date_nielsen": "20180928 00:00:00",
+  "expire_date": null,
+  "rating": null,
+  "is_mvod": false,
+  "allow_embed": true,
+  "trick_play_file": null,
+  "short_common_name": "KERA",
+  "full_common_name": "KERA",
+  "station_color_logo": "https://image.pbs.org/stations/kera-color-cobranded-logo-vVTh1Ut.png",
+  "donation_url": "https://www.kera.org/donate/tv/",
+  "passport_url": "https://www.kera.org/passport/",
+  "passport_learn_more_url": "https://video.kera.org/passport/learn-more/",
+  "dvd_link": null,
+  "itunes_link": null,
+  "has_drm": false,
+  "GA_events_codes": [
+    "UA-417630-12"
+  ],
+  "GA_national_codes": [
+    "UA-1996666-7"
+  ]
+}

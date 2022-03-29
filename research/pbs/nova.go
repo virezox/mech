@@ -9,42 +9,6 @@ import (
    "strings"
 )
 
-type Nova struct {
-   Props struct {
-      PageProps struct {
-         IsEpisode Episode
-         IsSeries []struct {
-            Episode Episode
-            Slug string
-         }
-      }
-   }
-   Query struct {
-      Video string
-   }
-}
-
-func NewNova(addr string) (*Nova, error) {
-   req, err := http.NewRequest("GET", addr, nil)
-   if err != nil {
-      return nil, err
-   }
-   LogLevel.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   var (
-      nova = new(Nova)
-      sep = []byte(` id="__NEXT_DATA__" type="application/json">`)
-   )
-   if err := json.Decode(res.Body, sep, nova); err != nil {
-      return nil, err
-   }
-   return nova, nil
-}
-
 type Asset struct {
    Object_Type string
    Slug string
@@ -92,6 +56,42 @@ type notFound struct {
 
 func (n notFound) Error() string {
    return strconv.Quote(n.value) + " is not found"
+}
+
+type Nova struct {
+   Props struct {
+      PageProps struct {
+         IsEpisode Episode
+         IsSeries []struct {
+            Episode Episode
+            Slug string
+         }
+      }
+   }
+   Query struct {
+      Video string
+   }
+}
+
+func NewNova(addr string) (*Nova, error) {
+   req, err := http.NewRequest("GET", addr, nil)
+   if err != nil {
+      return nil, err
+   }
+   LogLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   var (
+      nova = new(Nova)
+      sep = []byte(` id="__NEXT_DATA__" type="application/json">`)
+   )
+   if err := json.Decode(res.Body, sep, nova); err != nil {
+      return nil, err
+   }
+   return nova, nil
 }
 
 func (n Nova) Episode() *Episode {
