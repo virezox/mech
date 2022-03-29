@@ -6,16 +6,16 @@ import (
    "testing"
 )
 
-const bridgeTest = "https://player.pbs.org/widget/partnerplayer/3016754074/"
+const widget = "https://player.pbs.org/widget/partnerplayer/3016754074/"
 
-func TestBridge(t *testing.T) {
-   address, err := url.Parse(bridgeTest)
+func TestWidget(t *testing.T) {
+   addr, err := url.Parse(widget)
    if err != nil {
       t.Fatal(err)
    }
-   bridge, err := NewBridge(address)
+   wid, err := NewWidget(addr)
    if err != nil {
       t.Fatal(err)
    }
-   fmt.Printf("%+v\n", bridge)
+   fmt.Printf("%+v\n", wid)
 }

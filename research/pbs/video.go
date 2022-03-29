@@ -6,14 +6,14 @@ import (
    "net/url"
 )
 
-type Content struct {
+type Video struct {
    ContentURL string
    Video struct {
       ContentURL string
    }
 }
 
-func NewContent(addr string) (*Content, error) {
+func NewVideo(addr string) (*Video, error) {
    req, err := http.NewRequest("GET", addr, nil)
    if err != nil {
       return nil, err
@@ -25,20 +25,20 @@ func NewContent(addr string) (*Content, error) {
    }
    defer res.Body.Close()
    var (
-      con = new(Content)
+      vid = new(Video)
       sep = []byte(`"application/ld+json">`)
    )
-   if err := json.Decode(res.Body, sep, con); err != nil {
+   if err := json.Decode(res.Body, sep, vid); err != nil {
       return nil, err
    }
-   return con, nil
+   return vid, nil
 }
 
-func (c Content) Widget() (*Widget, error) {
-   if c.ContentURL == "" {
-      c.ContentURL = c.Video.ContentURL
+func (v Video) Widget() (*Widget, error) {
+   if v.ContentURL == "" {
+      v.ContentURL = v.Video.ContentURL
    }
-   addr, err := url.Parse(c.ContentURL)
+   addr, err := url.Parse(v.ContentURL)
    if err != nil {
       return nil, err
    }

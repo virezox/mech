@@ -9,6 +9,42 @@ import (
    "strings"
 )
 
+type Nova struct {
+   Props struct {
+      PageProps struct {
+         IsEpisode Episode
+         IsSeries []struct {
+            Episode Episode
+            Slug string
+         }
+      }
+   }
+   Query struct {
+      Video string
+   }
+}
+
+func NewNova(addr string) (*Nova, error) {
+   req, err := http.NewRequest("GET", addr, nil)
+   if err != nil {
+      return nil, err
+   }
+   LogLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   var (
+      nova = new(Nova)
+      sep = []byte(` id="__NEXT_DATA__" type="application/json">`)
+   )
+   if err := json.Decode(res.Body, sep, nova); err != nil {
+      return nil, err
+   }
+   return nova, nil
+}
+
 type Asset struct {
    Object_Type string
    Slug string
@@ -58,48 +94,12 @@ func (n notFound) Error() string {
    return strconv.Quote(n.value) + " is not found"
 }
 
-type Player struct {
-   Props struct {
-      PageProps struct {
-         IsEpisode Episode
-         IsSeries []struct {
-            Episode Episode
-            Slug string
-         }
-      }
+func (n Nova) Episode() *Episode {
+   if n.Props.PageProps.IsSeries == nil {
+      return &n.Props.PageProps.IsEpisode
    }
-   Query struct {
-      Video string
-   }
-}
-
-func NewPlayer(addr string) (*Player, error) {
-   req, err := http.NewRequest("GET", addr, nil)
-   if err != nil {
-      return nil, err
-   }
-   LogLevel.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   var (
-      data = new(Player)
-      sep = []byte(` id="__NEXT_DATA__" type="application/json">`)
-   )
-   if err := json.Decode(res.Body, sep, data); err != nil {
-      return nil, err
-   }
-   return data, nil
-}
-
-func (p Player) Episode() *Episode {
-   if p.Props.PageProps.IsSeries == nil {
-      return &p.Props.PageProps.IsEpisode
-   }
-   for _, episode := range p.Props.PageProps.IsSeries {
-      if episode.Slug == p.Query.Video {
+   for _, episode := range n.Props.PageProps.IsSeries {
+      if episode.Slug == n.Query.Video {
          return &episode.Episode
       }
    }

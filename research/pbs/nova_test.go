@@ -12,17 +12,17 @@ var playerTests = []string{
    "https://www.pbs.org/wgbh/nova/video/the-planets-inner-worlds/",
 }
 
-func TestPlayer(t *testing.T) {
+func TestNova(t *testing.T) {
    for _, test := range playerTests {
-      play, err := NewPlayer(test)
+      nova, err := NewNova(test)
       if err != nil {
          t.Fatal(err)
       }
-      bridge, err := play.Episode().Asset().Bridge()
+      wid, err := nova.Episode().Asset().Widget()
       if err != nil {
          t.Fatal(err)
       }
-      fmt.Printf("%+v\n", bridge)
+      fmt.Printf("%+v\n", wid)
       time.Sleep(time.Second)
    }
 }

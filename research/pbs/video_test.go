@@ -6,22 +6,22 @@ import (
    "time"
 )
 
-var contents = []string{
+var videoTests = []string{
    "https://www.pbs.org/video/frontlineworld-children-of-the-taliban/",
    "https://www.pbs.org/video/the-future-of-restaurants-rbs0v8/",
 }
 
-func TestContent(t *testing.T) {
-   for _, content := range contents {
-      con, err := NewContent(content)
+func TestVideo(t *testing.T) {
+   for _, test := range videoTests {
+      vid, err := NewVideo(test)
       if err != nil {
          t.Fatal(err)
       }
-      bridge, err := con.Bridge()
+      wid, err := vid.Widget()
       if err != nil {
          t.Fatal(err)
       }
-      fmt.Println(bridge)
+      fmt.Println(wid)
       time.Sleep(time.Second)
    }
 }

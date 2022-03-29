@@ -6,13 +6,13 @@ import (
    "net/url"
 )
 
-type Video struct {
+type Nature struct {
    Full_Length map[string]struct {
       Video_Iframe string
    }
 }
 
-func NewVideo(addr string) (*Video, error) {
+func NewNature(addr string) (*Nature, error) {
    req, err := http.NewRequest("GET", addr, nil)
    if err != nil {
       return nil, err
@@ -25,16 +25,16 @@ func NewVideo(addr string) (*Video, error) {
    defer res.Body.Close()
    var (
       sep = []byte(" STAGE_VIDEOS =")
-      vid = new(Video)
+      nat = new(Nature)
    )
-   if err := json.Decode(res.Body, sep, vid); err != nil {
+   if err := json.Decode(res.Body, sep, nat); err != nil {
       return nil, err
    }
-   return vid, nil
+   return nat, nil
 }
 
-func (v Video) Widget() (*Widget, error) {
-   for _, val := range v.Full_Length {
+func (n Nature) Widget() (*Widget, error) {
+   for _, val := range n.Full_Length {
       addr, err := url.Parse(val.Video_Iframe)
       if err != nil {
          return nil, err
