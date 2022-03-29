@@ -1,0 +1,33 @@
+{
+  "@context": "https://schema.org",
+  "@type": "VideoObject",
+  "name": "Children of the Taliban",
+  "contentRating": "NR",
+  "datePublished": "2012-05-17T03:37:55Z",
+  "description": "Sharmeen Obaid-Chinoy takes a dangerous journey through Pakistan to investigate the recruitment methods of a militant branch of the Taliban; Correspondent Douglas Rushkoff travels to South Korea to see how the country&#x27;s digital revolution is changing the place and its people.",
+  "duration": "P3406S",
+  "contentUrl": "https://player.pbs.org/viralplayer/1134781691",
+  "potentialAction": {
+    "@type": "SeekToAction",
+    "target": "https://www.pbs.org/video/frontlineworld-children-of-the-taliban/?start={seek_to_second_number}",
+    "startOffset-input": "required name=seek_to_second_number"
+  },
+  "hasPart": [
+    {
+      "@type": "Clip",
+      "name": "Children of the Taliban",
+      "startOffset": 0,
+      "endOffset": 2355,
+      "url": "https://www.pbs.org/video/frontlineworld-children-of-the-taliban/?start=0.0"
+    },
+    {
+      "@type": "Clip",
+      "name": "South Korea: Most Wired Place",
+      "startOffset": 2354,
+      "endOffset": 3407,
+      "url": "https://www.pbs.org/video/frontlineworld-children-of-the-taliban/?start=2354.0"
+    }
+  ],
+  "thumbnailUrl": "https://image.pbs.org/video-assets/pbs/frontline-world/12663/images/Mezzanine_845.jpg",
+  "uploadDate": "2012-05-17T03:37:55Z"
+}

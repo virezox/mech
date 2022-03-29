@@ -1,0 +1,53 @@
+{
+  "@context": "https://schema.org",
+  "@type": "TVEpisode",
+  "@id": "https://www.pbs.org/video/the-future-of-restaurants-rbs0v8/",
+  "url": "https://www.pbs.org/video/the-future-of-restaurants-rbs0v8/",
+  "partOfTVSeries": {
+    "@type": "TVSeries",
+    "name": "Broken Bread"
+  },
+  "name": "The Future of Restaurants",
+  "partOfSeason": {
+    "@type": "TVSeason",
+    "seasonNumber": "2"
+  },
+  "contentRating": "NR",
+  "description": "Roy breaks bread with chef Wolfgang Puck, journalist Patricia Escárcega and restaurateurs who are working to address the worker exploitation, high food prices and unsustainable financial models that have long defined the restaurant industry.",
+  "duration": "P1606S",
+  "datePublished": "2022-01-25",
+  "dateCreated": "2022-01-25",
+  "episodeNumber": "1",
+  "isAccessibleForFree": "True",
+  "thumbnailUrl": "https://image.pbs.org/video-assets/dsF5U5M-asset-mezzanine-16x9-TsKzUTZ.jpg",
+  "image": "https://image.pbs.org/video-assets/dsF5U5M-asset-mezzanine-16x9-TsKzUTZ.jpg",
+  "potentialAction": [
+    {
+      "@type": "WatchAction",
+      "target": {
+        "@type": "EntryPoint",
+        "urlTemplate": "https://www.pbs.org/video/the-future-of-restaurants-rbs0v8/",
+        "actionPlatform": [
+          "http://schema.org/DesktopWebPlatform",
+          "http://schema.org/MobileWebPlatform"
+        ]
+      }
+    }
+  ],
+  "video": {
+    "@context": "https://schema.org",
+    "@type": "VideoObject",
+    "name": "The Future of Restaurants",
+    "description": "Roy breaks bread with chef Wolfgang Puck, journalist Patricia Escárcega and restaurateurs who are working to address the worker exploitation, high food prices and unsustainable financial models that have long defined the restaurant industry.",
+    "thumbnailUrl": "https://image.pbs.org/video-assets/dsF5U5M-asset-mezzanine-16x9-TsKzUTZ.jpg",
+    "contentUrl": "https://player.pbs.org/viralplayer/3063552025",
+    "uploadDate": "2022-01-26T00:45:00Z",
+    "datePublished": "2022-01-26T00:45:00Z",
+    "duration": "P1606S",
+    "potentialAction": {
+      "@type": "SeekToAction",
+      "target": "https://www.pbs.org/video/the-future-of-restaurants-rbs0v8/?start={seek_to_second_number}",
+      "startOffset-input": "required name=seek_to_second_number"
+    }
+  }
+}
