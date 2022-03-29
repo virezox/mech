@@ -2,20 +2,27 @@ package pbs
 
 import (
    "fmt"
-   "net/url"
    "testing"
+   "time"
 )
 
-const videoTest = "https://player.pbs.org/widget/partnerplayer/3016754074/"
+var novaTests = []string{
+   "https://www.pbs.org/wgbh/nova/video/australias-first-4-billion-years-awakening/",
+   "https://www.pbs.org/wgbh/nova/video/nova-universe-revealed-milky-way/",
+   "https://www.pbs.org/wgbh/nova/video/the-planets-inner-worlds/",
+}
 
-func TestVideo(t *testing.T) {
-   addr, err := url.Parse(videoTest)
-   if err != nil {
-      t.Fatal(err)
+func TestNova(t *testing.T) {
+   for _, test := range novaTests {
+      data, err := NewNextData(test)
+      if err != nil {
+         t.Fatal(err)
+      }
+      bridge, err := data.Episode().Asset().VideoBridge()
+      if err != nil {
+         t.Fatal(err)
+      }
+      fmt.Printf("%+v\n", bridge)
+      time.Sleep(time.Second)
    }
-   video, err := NewVideoBridge(addr)
-   if err != nil {
-      t.Fatal(err)
-   }
-   fmt.Printf("%+v\n", video)
 }

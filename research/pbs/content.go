@@ -1,7 +1,6 @@
 package pbs
 
 import (
-   "bytes"
    "github.com/89z/format/json"
    "html"
    "io"
@@ -9,7 +8,12 @@ import (
    "net/url"
 )
 
-func NewFrontline(addr string) (*Frontline, error) {
+type Content struct {
+   Graph []Object `json:"@graph"`
+   Object
+}
+
+func NewContent(addr string) (*Content, error) {
    req, err := http.NewRequest("GET", addr, nil)
    if err != nil {
       return nil, err
@@ -24,10 +28,8 @@ func NewFrontline(addr string) (*Frontline, error) {
    if err != nil {
       return nil, err
    }
-   // pbs.org/wgbh/masterpiece/episodes/downton-abbey-s6-e2
-   buf = bytes.ReplaceAll(buf, []byte{'\n'}, nil)
    var (
-      line = new(Frontline)
+      line = new(Content)
       sep = []byte(`"application/ld+json">`)
    )
    if err := json.Unmarshal(buf, sep, line); err != nil {
@@ -36,24 +38,19 @@ func NewFrontline(addr string) (*Frontline, error) {
    return line, nil
 }
 
-type Frontline struct {
-   Graph []Object `json:"@graph"`
-   Object
+func (c Content) VideoObject() Object {
+   for _, graph := range c.Graph {
+      if graph.Type == "VideoObject" {
+         return graph
+      }
+   }
+   return c.Object
 }
 
 type Object struct {
    ContentURL string
    EmbedURL string
    Type string `json:"@type"`
-}
-
-func (f Frontline) VideoObject() Object {
-   for _, graph := range f.Graph {
-      if graph.Type == "VideoObject" {
-         return graph
-      }
-   }
-   return f.Object
 }
 
 func (o Object) VideoBridge() (*VideoBridge, error) {
