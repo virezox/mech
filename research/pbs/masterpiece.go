@@ -9,17 +9,11 @@ import (
    "net/url"
 )
 
-type Object struct {
+type Masterpiece struct {
    EmbedURL string
-   Type string `json:"@type"`
 }
 
-type Embed struct {
-   Graph []Object `json:"@graph"`
-   Object
-}
-
-func NewEmbed(addr string) (*Embed, error) {
+func NewMasterpiece(addr string) (*Masterpiece, error) {
    req, err := http.NewRequest("GET", addr, nil)
    if err != nil {
       return nil, err
@@ -37,28 +31,19 @@ func NewEmbed(addr string) (*Embed, error) {
    // pbs.org/wgbh/masterpiece/episodes/downton-abbey-s6-e2
    buf = bytes.ReplaceAll(buf, []byte{'\n'}, nil)
    var (
-      embed = new(Embed)
+      master = new(Masterpiece)
       sep = []byte(`"application/ld+json">`)
    )
-   if err := json.Unmarshal(buf, sep, embed); err != nil {
+   if err := json.Unmarshal(buf, sep, master); err != nil {
       return nil, err
    }
-   return embed, nil
+   return master, nil
 }
 
-func (e Embed) VideoObject() Object {
-   for _, graph := range e.Graph {
-      if graph.Type == "VideoObject" {
-         return graph
-      }
-   }
-   return e.Object
-}
-
-func (o Object) Bridge() (*Bridge, error) {
-   parse, err := url.Parse(html.UnescapeString(o.EmbedURL))
+func (m Masterpiece) Widget() (*Widget, error) {
+   addr, err := url.Parse(html.UnescapeString(m.EmbedURL))
    if err != nil {
       return nil, err
    }
-   return NewBridge(parse)
+   return NewWidget(addr)
 }

@@ -23,7 +23,7 @@ func (a Asset) Format(f fmt.State, verb rune) {
    }
 }
 
-func (a Asset) Bridge() (*Bridge, error) {
+func (a Asset) Widget() (*Widget, error) {
    for _, split := range strings.Split(a.Player_Code, "'") {
       if strings.Contains(split, "/partnerplayer/") {
          addr, err := url.Parse(split)
@@ -31,7 +31,7 @@ func (a Asset) Bridge() (*Bridge, error) {
             return nil, err
          }
          addr.Scheme = "https"
-         return NewBridge(addr)
+         return NewWidget(addr)
       }
    }
    return nil, notFound{"/partnerplayer/"}

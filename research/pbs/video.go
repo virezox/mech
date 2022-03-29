@@ -34,7 +34,7 @@ func NewContent(addr string) (*Content, error) {
    return con, nil
 }
 
-func (c Content) Bridge() (*Bridge, error) {
+func (c Content) Widget() (*Widget, error) {
    if c.ContentURL == "" {
       c.ContentURL = c.Video.ContentURL
    }
@@ -42,5 +42,5 @@ func (c Content) Bridge() (*Bridge, error) {
    if err != nil {
       return nil, err
    }
-   return NewBridge(addr)
+   return NewWidget(addr)
 }

@@ -33,14 +33,14 @@ func NewVideo(addr string) (*Video, error) {
    return vid, nil
 }
 
-func (v Video) Bridge() (*Bridge, error) {
+func (v Video) Widget() (*Widget, error) {
    for _, val := range v.Full_Length {
       addr, err := url.Parse(val.Video_Iframe)
       if err != nil {
          return nil, err
       }
       addr.Scheme = "https"
-      return NewBridge(addr)
+      return NewWidget(addr)
    }
    return nil, notFound{"full_length"}
 }

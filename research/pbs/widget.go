@@ -9,11 +9,11 @@ import (
 
 var LogLevel format.LogLevel
 
-type Bridge struct {
+type Widget struct {
    Encodings []string
 }
 
-func NewBridge(addr *url.URL) (*Bridge, error) {
+func NewWidget(addr *url.URL) (*Widget, error) {
    req, err := http.NewRequest("GET", addr.String(), nil)
    if err != nil {
       return nil, err
@@ -28,10 +28,10 @@ func NewBridge(addr *url.URL) (*Bridge, error) {
    defer res.Body.Close()
    var (
       sep = []byte("\twindow.videoBridge = ")
-      brid = new(Bridge)
+      wid = new(Widget)
    )
-   if err := json.Decode(res.Body, sep, brid); err != nil {
+   if err := json.Decode(res.Body, sep, wid); err != nil {
       return nil, err
    }
-   return brid, nil
+   return wid, nil
 }
