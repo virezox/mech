@@ -18,11 +18,11 @@ func TestNova(t *testing.T) {
       if err != nil {
          t.Fatal(err)
       }
-      video, err := data.Episode().Asset().VideoBridge()
+      bridge, err := data.Episode().Asset().VideoBridge()
       if err != nil {
          t.Fatal(err)
       }
-      fmt.Printf("%+v\n", video)
+      fmt.Printf("%+v\n", bridge)
       time.Sleep(time.Second)
    }
 }

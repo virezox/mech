@@ -20,7 +20,8 @@ func NewVideoBridge(addr *url.URL) (*VideoBridge, error) {
    }
    req.Header.Set("Cookie", "pbsol.station=KERA")
    LogLevel.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
+   // this can redirect
+   res, err := new(http.Client).Do(req)
    if err != nil {
       return nil, err
    }
