@@ -90,6 +90,10 @@ TED:
 
 https://github.com/89z/mech/tree/8ddaa050fbffe14a12166dae83f8f53f52de2480
 
+TikTok:
+
+https://github.com/89z/mech/tree/71948e302088290408a68734c641bf7dcab0b590
+
 Tumblr:
 
 https://github.com/89z/mech/tree/b133200505b6767f65654574fd98ab905bec2fba
