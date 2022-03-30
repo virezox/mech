@@ -78,15 +78,12 @@ func NewNova(addr string) (*Nova, error) {
 }
 
 func (n Nova) Episode() *Episode {
-   if n.Props.PageProps.IsSeries == nil {
-      return &n.Props.PageProps.IsEpisode
-   }
    for _, episode := range n.Props.PageProps.IsSeries {
       if episode.Slug == n.Query.Video {
          return &episode.Episode
       }
    }
-   return nil
+   return &n.Props.PageProps.IsEpisode
 }
 
 type notFound struct {
