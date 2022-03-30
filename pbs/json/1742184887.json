@@ -1,28 +1,77 @@
 {
   "availability": "available",
   "encodings": [
-    "https://urs.pbs.org/redirect/cf7e880aec374f57a9d01fdb3d5c440f/",
-    "https://urs.pbs.org/redirect/a26117b58e6a4bac8bd6960f2c07134b/"
+    "https://urs.pbs.org/redirect/a7468f6551ac4733baa89952f1caa3b9/",
+    "https://urs.pbs.org/redirect/c3396e3f2cd548e8a08bb178fd527142/"
   ],
   "has_hls_encodings": true,
   "has_mp4_encodings": true,
   "cc": {
-    "WebVTT": "https://ga.video.cdn.pbs.org/captions/tpt-presents/660ab7f2-9673-41e9-a520-49b77b4e0a78/captions/0EFHGn_caption.vtt",
-    "SRT": "https://ga.video.cdn.pbs.org/captions/tpt-presents/660ab7f2-9673-41e9-a520-49b77b4e0a78/captions/HKWXGu_caption.srt",
-    "DFXP": "https://ga.video.cdn.pbs.org/captions/tpt-presents/660ab7f2-9673-41e9-a520-49b77b4e0a78/captions/TpmJV0_caption.dfxp",
-    "Caption-SAMI": "https://ga.video.cdn.pbs.org/captions/tpt-presents/660ab7f2-9673-41e9-a520-49b77b4e0a78/captions/cxa2Dr_caption.sami"
+    "WebVTT": "https://ga.video.cdn.pbs.org/captions/downton-abbey/81a6bff1-7ce1-47ad-9b33-e2b3568626da/captions/ChYTP0_caption.vtt",
+    "SRT": "https://ga.video.cdn.pbs.org/captions/downton-abbey/81a6bff1-7ce1-47ad-9b33-e2b3568626da/captions/rZtiEg_caption.srt",
+    "DFXP": "https://ga.video.cdn.pbs.org/captions/downton-abbey/81a6bff1-7ce1-47ad-9b33-e2b3568626da/captions/A7x1zx_caption.dfxp",
+    "Caption-SAMI": "https://ga.video.cdn.pbs.org/captions/downton-abbey/81a6bff1-7ce1-47ad-9b33-e2b3568626da/captions/iHIlta_caption.sami"
   },
   "can_play_preroll": true,
-  "image_url": "https://image.pbs.org/video-assets/noXFzWv-asset-mezzanine-16x9-F7e4syK.jpg",
-  "chapters": [],
+  "image_url": "https://image.pbs.org/video-assets/pbs/masterpiece/22809/images/Mezzanine_808.jpg",
+  "chapters": [
+    {
+      "duration": 633000,
+      "start_time": 0,
+      "title": "Here to Stay",
+      "image": ""
+    },
+    {
+      "duration": 713000,
+      "start_time": 632000,
+      "title": "A Visit from the Past",
+      "image": ""
+    },
+    {
+      "duration": 701000,
+      "start_time": 1344000,
+      "title": "New Roles",
+      "image": ""
+    },
+    {
+      "duration": 704000,
+      "start_time": 2044000,
+      "title": "A Different Life",
+      "image": ""
+    },
+    {
+      "duration": 677000,
+      "start_time": 2747000,
+      "title": "An Instant Attraction",
+      "image": ""
+    },
+    {
+      "duration": 497000,
+      "start_time": 3423000,
+      "title": "An Unspeakable Cover-Up",
+      "image": ""
+    },
+    {
+      "duration": 613000,
+      "start_time": 3919000,
+      "title": "Consequences",
+      "image": ""
+    },
+    {
+      "duration": 482000,
+      "start_time": 4531000,
+      "title": "Answers",
+      "image": ""
+    }
+  ],
   "mvod_info": {
-    "show_mvod_icon": false,
-    "show_upsell_overlay": false
+    "show_mvod_icon": true,
+    "show_upsell_overlay": true
   },
   "program": {
-    "title": "TPT Presents",
-    "slug": "tpt-presents",
-    "producer": "KTCA"
+    "title": "Downton Abbey",
+    "slug": "downton-abbey",
+    "producer": "PBS"
   },
   "related_videos": [
     {
@@ -124,20 +173,20 @@
   ],
   "member_stations": [],
   "video_type": "full_length",
-  "id": "3016754074",
-  "cid": "660ab7f2-9673-41e9-a520-49b77b4e0a78",
-  "slug": "ramones-1978-live-in-minneapolis-imkfwc",
-  "title": "Ramones 1978: Live in Minneapolis",
-  "short_description": "In 1978 KTCA went to a Ramones concert at the State Theater in Minneapolis.",
-  "long_description": "In 1978 KTCA went to a Ramones concert at the State Theater in Minneapolis, to document this groundbreaking band.",
-  "series_info": "Season 2 Episode 32",
-  "duration": 684,
-  "air_date": "2018-09-28T00:00:00-04:00",
-  "air_date_formatted": "September 28th, 2018",
-  "air_date_nielsen": "20180928 00:00:00",
-  "expire_date": null,
+  "id": "1742184887",
+  "cid": "81a6bff1-7ce1-47ad-9b33-e2b3568626da",
+  "slug": "masterpiece-downton-abbey-season-1-ep-2",
+  "title": "Episode 2",
+  "short_description": "Mary entertains three suitors. Carson's former life is unmasked. Bates risks his health.",
+  "long_description": "Mary entertains three suitors, including a Turkish diplomat whose boldness leads to a surprising event.  Downstairs, the shocking former life of Carson, the butler, is unmasked and Bates risks his health to remain valet.",
+  "series_info": "Season 1 Episode 2",
+  "duration": 4887,
+  "air_date": "2011-12-18T00:00:00-05:00",
+  "air_date_formatted": "December 18th, 2011",
+  "air_date_nielsen": "20111218 00:00:00",
+  "expire_date": "2023-02-01T04:59:59Z",
   "rating": null,
-  "is_mvod": false,
+  "is_mvod": true,
   "allow_embed": true,
   "trick_play_file": null,
   "short_common_name": "KERA",
@@ -146,11 +195,11 @@
   "donation_url": "https://www.kera.org/donate/tv/",
   "passport_url": "https://www.kera.org/passport/",
   "passport_learn_more_url": "https://video.kera.org/passport/learn-more/",
-  "dvd_link": null,
-  "itunes_link": null,
+  "dvd_link": "http://www.shoppbs.org/product/index.jsp?productId=10912278&utm_source=PBS&utm_medium=Link&utm_content=mpt_downtonabbey_covebuyit&utm_campaign=cove_buyit",
+  "itunes_link": "http://click.linksynergy.com/fs-bin/click?id=ci2UI/ZGI6E&subid=&offerid=146261.1&type=10&tmpid=3909&u1=DowntonAbbeycove&RD_PARM1=http%3A%2F%2Fitunes.apple.com%2FWebObjects%2FMZStore.woa%2Fwa%2FviewTVSeason%3Fid%3D410597630%2526s%3D143441",
   "has_drm": false,
   "GA_events_codes": [
-    "UA-417630-12"
+    "UA-3988763-2"
   ],
   "GA_national_codes": [
     "UA-1996666-7"

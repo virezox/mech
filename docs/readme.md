@@ -26,7 +26,6 @@ https://freeproxylists.net/br.html
 ~~~
 11.526 B true YouTube
 4.095 B true Instagram
-2.053 B true TikTok
 1.303 B false Spotify: Music and Podcasts
 1.269 B true Twitter
 340.219 M true SoundCloud: Play Music & Songs
@@ -42,7 +41,7 @@ https://freeproxylists.net/br.html
 21.308 M false Napster Music
 13.849 M true The NBC App - Stream TV Shows
 2.654 M true Bandcamp
-2.259 M false PBS Video: Live TV & On Demand
+2.259 M true PBS Video: Live TV & On Demand
 695.077 K false Qobuz
 ~~~
 

@@ -20,7 +20,7 @@ var apps = []application{
    {id: "com.instagram.android", done: true},
    {id: "com.nbcuni.nbc", done: true},
    {id: "com.pandora.android", done: true},
-   {id: "com.pbs.video"},
+   {id: "com.pbs.video", done: true},
    {id: "com.qobuz.music"},
    {id: "com.reddit.frontpage"},
    {id: "com.rhapsody"},
@@ -28,7 +28,6 @@ var apps = []application{
    {id: "com.spotify.music"},
    {id: "com.twitter.android", done: true},
    {id: "com.vimeo.android.videoapp", done: true},
-   {id: "com.zhiliaoapp.musically", done: true},
    {id: "deezer.android.app"},
 }
 

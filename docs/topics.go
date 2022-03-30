@@ -14,15 +14,15 @@ const addr = "https://api.github.com/repos/89z/mech/topics"
 var names = []string{
    "youtube",
    "instagram",
-   "tiktok",
    "twitter",
    "soundcloud",
    "pandora",
    "vimeo",
-   ///////////
    "paramount",
+   ///////////
    "nbc",
    "bandcamp",
+   "pbs",
 }
 
 func userinfo() (*url.Userinfo, error) {

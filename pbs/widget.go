@@ -14,17 +14,17 @@ var LogLevel format.LogLevel
 
 type Widget struct {
    Slug string
+   Program struct {
+      Title string
+   }
    Title string
    Duration int64
    Encodings []string
 }
 
-func (w Widget) GetDuration() time.Duration {
-   return time.Duration(w.Duration) * time.Second
-}
-
 func (w Widget) Format(f fmt.State, verb rune) {
    fmt.Fprintln(f, "Slug:", w.Slug)
+   fmt.Fprintln(f, "Program:", w.Program.Title)
    fmt.Fprintln(f, "Title:", w.Title)
    fmt.Fprint(f, "Duration: ", w.GetDuration())
    if verb == 'a' {
@@ -32,6 +32,10 @@ func (w Widget) Format(f fmt.State, verb rune) {
          fmt.Fprint(f, "\nEncoding: ", enc)
       }
    }
+}
+
+func (w Widget) GetDuration() time.Duration {
+   return time.Duration(w.Duration) * time.Second
 }
 
 func NewWidget(addr *url.URL) (*Widget, error) {

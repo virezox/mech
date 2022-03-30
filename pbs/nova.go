@@ -77,13 +77,14 @@ func NewNova(addr string) (*Nova, error) {
    return nova, nil
 }
 
-func (n Nova) Episode() *Episode {
+// Since we dont need "nil", we dont need to return a pointer
+func (n Nova) Episode() Episode {
    for _, episode := range n.Props.PageProps.IsSeries {
       if episode.Slug == n.Query.Video {
-         return &episode.Episode
+         return episode.Episode
       }
    }
-   return &n.Props.PageProps.IsEpisode
+   return n.Props.PageProps.IsEpisode
 }
 
 type notFound struct {
