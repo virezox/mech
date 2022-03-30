@@ -11,10 +11,12 @@ type Client struct {
    Version string `json:"clientVersion"`
 }
 
+var Mweb = Client{"MWEB", "2.20220322.05.00"}
+
 var Clients = []Client{
+   Mweb,
    {"ANDROID", "17.12.34"},
    {"ANDROID_EMBEDDED_PLAYER", "17.12.34"}, // HtVdAasjOgU
-   {"MWEB", "2.20220322.05.00"},
    {"TVHTML5", "7.20220323.10.00"},
    {"WEB", "2.20220325.00.00"},
    {"WEB_CREATOR", "1.20220324.00.00"},
