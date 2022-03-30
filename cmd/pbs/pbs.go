@@ -31,18 +31,19 @@ func doWidget(address string, bandwidth int, info bool) error {
       return err
    }
    sort.Sort(hls.Bandwidth{master, bandwidth})
+   fmt.Println(widget)
    for _, stream := range master.Stream {
       if info {
          fmt.Println(stream)
       } else {
-         // video
-         err := download(stream.URI, widget.Slug)
-         if err != nil {
-            return err
-         }
-         // audio
          audio := master.GetMedia(stream)
-         return download(audio.URI, widget.Slug)
+         if audio != nil {
+            err := download(audio.URI, widget.Slug)
+            if err != nil {
+               return err
+            }
+         }
+         return download(stream.URI, widget.Slug)
       }
    }
    return nil

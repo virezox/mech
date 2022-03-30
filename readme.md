@@ -24,20 +24,23 @@ not with the API? Well you can, using this module.
 ## How to install?
 
 This module works with Windows, macOS or Linux. Check [the releases][2] first.
-I dont do a build for every tag, but some tags will have builds available. You
-can download, build and run in less than [one&nbsp;minute][3].
+I dont do a build for every tag, but some tags will have builds available.
+First, [download Go][3] and extract archive. Then [download Mech][4] and
+extract archive. Then navigate to:
 
-First, [download Go][4] and extract archive. Then [download Mech][5] and
-extract archive. Then navigate to `mech-master/cmd/youtube`, and enter:
+~~~
+mech-master/cmd/youtube
+~~~
+
+and enter:
 
 ~~~
 go build
 ~~~
 
 [2]://github.com/89z/mech/releases
-[3]://f002.backblazeb2.com/file/ql8mlh/googleplay.webm
-[4]://go.dev/dl
-[5]://github.com/89z/mech/archive/refs/heads/master.zip
+[3]://go.dev/dl
+[4]://github.com/89z/mech/archive/refs/heads/master.zip
 
 ## Repo
 

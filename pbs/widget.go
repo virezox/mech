@@ -1,14 +1,38 @@
 package pbs
 
 import (
+   "fmt"
    "github.com/89z/format"
    "github.com/89z/format/json"
    "net/http"
    "net/url"
    "strings"
+   "time"
 )
 
 var LogLevel format.LogLevel
+
+type Widget struct {
+   Slug string
+   Title string
+   Duration int64
+   Encodings []string
+}
+
+func (w Widget) GetDuration() time.Duration {
+   return time.Duration(w.Duration) * time.Second
+}
+
+func (w Widget) Format(f fmt.State, verb rune) {
+   fmt.Fprintln(f, "Slug:", w.Slug)
+   fmt.Fprintln(f, "Title:", w.Title)
+   fmt.Fprint(f, "Duration: ", w.GetDuration())
+   if verb == 'a' {
+      for _, enc := range w.Encodings {
+         fmt.Fprint(f, "\nEncoding: ", enc)
+      }
+   }
+}
 
 func NewWidget(addr *url.URL) (*Widget, error) {
    req, err := http.NewRequest("GET", addr.String(), nil)
@@ -31,6 +55,13 @@ func NewWidget(addr *url.URL) (*Widget, error) {
       return nil, err
    }
    return wid, nil
+}
+
+func (w Widget) HLS() string {
+   for _, enc := range w.Encodings {
+      return enc
+   }
+   return ""
 }
 
 func (w Widget) Widget() (*Widget, error) {
@@ -68,16 +99,4 @@ func NewWidgeter(addr string) (Widgeter, error) {
       return NewVideo(addr)
    }
    return nil, notFound{parse.Path}
-}
-
-type Widget struct {
-   Encodings []string
-   Slug string
-}
-
-func (w Widget) HLS() string {
-   for _, enc := range w.Encodings {
-      return enc
-   }
-   return ""
 }
