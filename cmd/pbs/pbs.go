@@ -30,8 +30,8 @@ func doWidget(address string, bandwidth int, info bool) error {
    if err != nil {
       return err
    }
-   sort.Sort(hls.Bandwidth{master, bandwidth})
    fmt.Println(widget)
+   sort.Sort(hls.Bandwidth{master, bandwidth})
    for _, stream := range master.Stream {
       if info {
          fmt.Println(stream)
