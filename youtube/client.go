@@ -4,7 +4,46 @@ import (
    "encoding/json"
    "github.com/89z/mech"
    "net/http"
+   
+   "fmt"
 )
+
+func (c Client) Search(query string) (*Search, error) {
+   var body struct {
+      Params string `json:"params"`
+      Query string `json:"query"`
+      Context struct {
+         Client Client `json:"client"`
+      } `json:"context"`
+   }
+   filter := NewFilter()
+   filter.Type(Type["Video"])
+   param := NewParams()
+   param.Filter(filter)
+   body.Params = param.Encode()
+   body.Query = query
+   body.Context.Client = c
+   buf, err := mech.Encode(body)
+   if err != nil {
+      return nil, err
+   }
+   req, err := http.NewRequest("POST", origin + "/youtubei/v1/search", buf)
+   if err != nil {
+      return nil, err
+   }
+   req.Header = googAPI
+   LogLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   search := new(Search)
+   if err := json.NewDecoder(res.Body).Decode(search); err != nil {
+      return nil, err
+   }
+   return search, nil
+}
 
 type Client struct {
    Name string `json:"clientName"`
@@ -65,43 +104,6 @@ func (c Client) PlayerHeader(head http.Header, id string) (*Player, error) {
       return nil, err
    }
    return play, nil
-}
-
-func (c Client) Search(query string) (*Search, error) {
-   var body struct {
-      Params string `json:"params"`
-      Query string `json:"query"`
-      Context struct {
-         Client Client `json:"client"`
-      } `json:"context"`
-   }
-   filter := NewFilter()
-   filter.Type(Type["Video"])
-   param := NewParams()
-   param.Filter(filter)
-   body.Params = param.Encode()
-   body.Query = query
-   body.Context.Client = c
-   buf, err := mech.Encode(body)
-   if err != nil {
-      return nil, err
-   }
-   req, err := http.NewRequest("POST", origin + "/youtubei/v1/search", buf)
-   if err != nil {
-      return nil, err
-   }
-   req.Header = googAPI
-   LogLevel.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   search := new(Search)
-   if err := json.NewDecoder(res.Body).Decode(search); err != nil {
-      return nil, err
-   }
-   return search, nil
 }
 
 type errorString string

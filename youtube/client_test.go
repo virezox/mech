@@ -19,15 +19,11 @@ func TestPlayer(t *testing.T) {
 }
 
 func TestSearch(t *testing.T) {
-   for _, client := range Clients {
-      if client.Name == "MWEB" {
-         s, err := client.Search("oneohtrix point never along")
-         if err != nil {
-            t.Fatal(err)
-         }
-         for _, i := range s.Items() {
-            fmt.Println(i.CompactVideoRenderer)
-         }
-      }
+   search, err := Mweb.Search("oneohtrix point never along")
+   if err != nil {
+      t.Fatal(err)
+   }
+   for _, item := range search.Items() {
+      fmt.Println(item.CompactVideoRenderer)
    }
 }

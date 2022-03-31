@@ -4,18 +4,18 @@ import (
    "testing"
 )
 
-func TestProtoFilter(t *testing.T) {
+func TestFilter(t *testing.T) {
    filter := NewFilter()
-   filter.UploadDate(UploadDate["Last hour"])
+   filter.Features(Features["Subtitles/CC"])
    param := NewParams()
    param.Filter(filter)
    enc := param.Encode()
-   if enc != "EgIIAQ==" {
+   if enc != "EgIoAQ==" {
       t.Fatal(enc)
    }
 }
 
-func TestProtoSort(t *testing.T) {
+func TestSort(t *testing.T) {
    param := NewParams()
    param.SortBy(SortBy["Rating"])
    enc := param.Encode()
