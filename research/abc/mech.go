@@ -1,6 +1,7 @@
 package abc
 
 import (
+   "encoding/json"
    "github.com/89z/format"
    "net/http"
    "net/url"
@@ -9,7 +10,13 @@ import (
 
 var LogLevel format.LogLevel
 
-func Route(addr string) (*http.Response, error) {
+type Route struct {
+   Modules []struct {
+      Resource string
+   }
+}
+
+func NewRoute(addr string) (*Route, error) {
    var buf strings.Builder
    buf.WriteString("http://prod.gatekeeper.us-abc.symphony.edgedatg.com")
    buf.WriteString("/api/ws/pluto/v1/layout/route")
@@ -24,5 +31,14 @@ func Route(addr string) (*http.Response, error) {
       "url": {addr},
    }.Encode()
    LogLevel.Dump(req)
-   return new(http.Transport).RoundTrip(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   route := new(Route)
+   if err := json.NewDecoder(res.Body).Decode(route); err != nil {
+      return nil, err
+   }
+   return route, nil
 }

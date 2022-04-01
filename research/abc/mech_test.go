@@ -1,7 +1,7 @@
 package abc
 
 import (
-   "os"
+   "fmt"
    "testing"
 )
 
@@ -9,10 +9,9 @@ const grey =
    "/shows/greys-anatomy/episode-guide/season-18/12-the-makings-of-you"
 
 func TestMech(t *testing.T) {
-   res, err := Route(grey)
+   route, err := NewRoute(grey)
    if err != nil {
       t.Fatal(err)
    }
-   defer res.Body.Close()
-   os.Stdout.ReadFrom(res.Body)
+   fmt.Printf("%+v\n", route)
 }

@@ -1,0 +1,109 @@
+{
+  "version": 1,
+  "id": "3719885",
+  "type": "video",
+  "title": "video",
+  "show": {
+    "id": "SH559058",
+    "brand": "001",
+    "type": "Show",
+    "title": "Grey's Anatomy",
+    "sortTitle": "Grey's Anatomy",
+    "language": "en",
+    "genre": "drama",
+    "dayPart": "Primetime",
+    "dailyShow": false,
+    "showPrefix": "GREY",
+    "about": "The medical drama follows the personal and professional lives of the doctors at Seattle's Grey Sloan Memorial Hospital.",
+    "aboutTheShowSummary": "The medical drama follows the personal and professional lives of the doctors at Seattle's Grey Sloan Memorial Hospital.",
+    "social": {
+      "accounts": [
+        {
+          "type": "twitter",
+          "value": "greysabc"
+        },
+        {
+          "type": "facebook",
+          "value": "GreysAnatomy"
+        },
+        {
+          "type": "instagram",
+          "value": "greysabc"
+        }
+      ]
+    },
+    "nielsen": {
+      "genres": [
+        "GD"
+      ]
+    },
+    "trackTitle": "greysanatomy",
+    "audioDescription": true
+  },
+  "video": {
+    "id": "VDKA26847512",
+    "brand": "001",
+    "type": "lf",
+    "title": "The Makings of You",
+    "description": "Nick whisks Mer away for a romantic weekend.",
+    "duration": 2511264,
+    "show": {
+      "id": "SH559058",
+      "brand": "001",
+      "type": "Show",
+      "title": "Grey's Anatomy",
+      "sortTitle": "Grey's Anatomy",
+      "language": "en",
+      "genre": "drama",
+      "dayPart": "primetime",
+      "dailyShow": false,
+      "showPrefix": "GREY",
+      "about": "The medical drama follows the personal and professional lives of the doctors at Seattle's Grey Sloan Memorial Hospital.",
+      "nielsen": {
+        "genres": [
+          "GD"
+        ]
+      },
+      "trackTitle": "greysanatomy",
+      "audioDescription": false
+    },
+    "availableDate": "Fri, 25 Mar 2022 02:00:00 -0700",
+    "tracking": [
+      {
+        "vendor": "nielsen",
+        "type": "NO_TRACKING"
+      }
+    ],
+    "trackTitle": "themakingsofyou",
+    "accessTags": [
+      "urn:accesslevel:UNGATED"
+    ],
+    "videoQuizEnabled": false,
+    "digitalOnly": false,
+    "accesslevel": "0",
+    "expiredate": "Mon, 19 Sep 2022 02:00:00 -0700",
+    "longdescription": "Nick whisks Meredith away to his Minnesota cabin for a romantic weekend, leaving Winston and Maggie to care for Meredith's children; Amelia and Kai grow closer.",
+    "tvrating": "TV-14",
+    "tvratingDescriptors": [
+      "S"
+    ],
+    "rating": {
+      "value": "TV-14",
+      "descriptors": "S",
+      "system": "USTV"
+    },
+    "airtime": "Thu, 17 Mar 2022 21:00:00 -0700",
+    "displayAirtime": "Thu, 17 Mar 2022 21:00:00",
+    "episodenumber": "12",
+    "seasonnumber": "18",
+    "tmsid": "EP007322830450"
+  },
+  "modules": [
+    {
+      "id": "2124246",
+      "type": "videoplayer",
+      "name": "video_player_vod",
+      "resource": "http://prod.gatekeeper.us-abc.symphony.edgedatg.com/api/ws/pluto/v1/module/videoplayer/2124246?brand=001&device=031_04&authlevel=0&layout=3719885&show=SH559058&video=VDKA26847512"
+    }
+  ]
+}
