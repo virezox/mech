@@ -3,62 +3,50 @@
 - https://abc.com/shows/greys-anatomy/episode-guide/season-18/12-the-makings-of-you
 - https://github.com/ytdl-org/youtube-dl/issues/29544
 
-## Android
+## Web
+
+this is it:
 
 ~~~
-com.disney.datg.videoplatforms.android.abc
-~~~
-
-Install system certificate.
-
-~~~
-adb shell am start -a android.intent.action.VIEW `
--d https://abc.com/shows/greys-anatomy/episode-guide/season-18/12-the-makings-of-you
-~~~
-
-first:
-
-~~~
-GET https://prod.gatekeeper.us-abc.symphony.edgedatg.com/api/ws/pluto/v1/layout/route?authlevel=0&brand=001&country=usa&defaultlanguage=en-US&device=031_04&distributionchannel=2&url=%2Fshows%2Fgreys-anatomy%2Fepisode-guide%2Fseason-18%2F12-the-makings-of-you HTTP/2.0
-user-agent: com.disney.datg.videoplatforms.android.abc/10.23.1 (Linux; U; Android 7.0; Android SDK built for x86 Build/NYC)
-datg-usertz: -0500
-accept: application/json
-appversion: 10.23.1
-accept-encoding: gzip
-cookie: SWID=D5ED8ABC-F508-4ADB-8B97-50AA8D4F7CEC
-x-newrelic-id: VQIEVFdTGwcDXVFQDggG
+GET https://x-disney-datg-stgec.uplynk.com/ausw/slices/037/d874124ecca24c88a3c9575e78686acf/0376293b438b4e9d9472606fa38d98bb/F00000003.m4f?pbs=5c1c2f90fced491390139dd7847eeb20&drm=1&cloud=aws&si=0&d=4.096&cdn=eci HTTP/2.0
+user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:88.0) Gecko/20100101 Firefox/88.0
+accept: */*
+accept-language: en-US,en;q=0.5
+accept-encoding: gzip, deflate, br
+referer: https://abc.com/
+origin: https://abc.com
+te: trailers
 content-length: 0
 ~~~
 
-then:
+from:
 
 ~~~
-https://prod.gatekeeper.us-abc.symphony.edgedatg.com/api/ws/pluto/v1/module/
-videoplayer/2124246?brand=001&device=031_04&authlevel=0&defaultlanguage=en-US&
-distributionchannel=2&country=USA&layout=3719885&show=SH559058&video=VDKA26847512
+GET https://content-dtci.uplynk.com/ext/d874124ecca24c88a3c9575e78686acf/5e6dda216a5e43309543689d3fd85f91.mpd?cqs=27sXcKWLLGswzbVl4xdjnoq2xtwhaFe4MY20fk_FVKLTt5DjNSlP-fUHqEV7sc4qGPKUsmwRLO1xWqGiuZDEWa6xXeT9sl7iSOpndBh8ySG1J-OLzg-IOofpDELNhMjjg-2u7PkG-GGAhG6mWFVEhpw6IDe0IaoOiaToLR6kgWlnxumV20LHOLOf6Gdeh-CHBFVuti7Ce6pHaxdzyb_fmnvRK1yps4my9TgGjjwuUj9cgwxtiwBi6VBxVwWh5mzBWlylTclzRrchvsnrOefuwc24I7ZJaXhRPC7B1UaPNVYGBNpXNs-URB7AHT4TgsBmooOp6c7Wq6JxuFYPORXZk1RXqeVfjOzRs_m1xFoh3NLWjrxnooJ6OM7Wcx12MtZDMdQGeOJwh4S6QLP4E5a77XiGpukgA0GOeNffzhb8yVE9BDD63MiqPxW3MNW4IL84BT4bnJ3TZzay0H429Nt9EQY16F9f6ialw9dMa-AHmTyoJ_BdQC1FBjz7g7-0acrsM8oU2hevV8_fjjlV3FVxRVKlCIZ5iP3vBApz1iwTEa-WBzYluJHHJ7ls3l5RQLcIHCY6IKMTzx-9ikVhotHRwhR_RauCErp6GyTpvvAtFjg=&kid=4098a6a720374bfcbb4e362b652bcd51 HTTP/2.0
+user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:88.0) Gecko/20100101 Firefox/88.0
+accept: */*
+accept-language: en-US,en;q=0.5
+accept-encoding: gzip, deflate, br
+referer: https://abc.com/
+origin: https://abc.com
+te: trailers
+content-length: 0
 ~~~
 
-then:
+from:
 
 ~~~
-POST https://prod.gatekeeper.us-abc.symphony.edgedatg.com/vp2/ws-secure/entitlement/2020/g/playmanifest_secure.json HTTP/2.0
-user-agent: com.disney.datg.videoplatforms.android.abc/10.23.1 (Linux; U; Android 7.0; Android SDK built for x86 Build/NYC)
-datg-usertz: -0500
+POST https://prod.gatekeeper.us-abc.symphony.edgedatg.go.com/vp2/ws-secure/entitlement/2020/playmanifest_secure.json HTTP/2.0
+user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:88.0) Gecko/20100101 Firefox/88.0
 accept: application/json
-appversion: 10.23.1
-authorization: JWT eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIyMzk2M2U2Yi01NzFkLTQwNDAtYTUzYS1lNGJkOWU2YWY4NzQiLCJpYXQiOjE2NDg3ODQ1NzIsInN1YiI6InBjNmY3N2Y2Ny0zODI5LTQ0NWUtOTYwYS01YjJiNzEyYzVhNzEiLCJpc3MiOiJhYmMifQ.FUhBBAWS6gnidhi-1lIR_Ofo6esRtFYZWvDBsHeXyg8
-content-type: application/x-www-form-urlencoded; charset=utf-8
-content-length: 1739
-accept-encoding: gzip
-cookie: SWID=D5ED8ABC-F508-4ADB-8B97-50AA8D4F7CEC
-x-newrelic-id: VQIEVFdTGwcDXVFQDggG
+accept-language: en-US,en;q=0.5
+accept-encoding: gzip, deflate, br
+referer: https://abc.com/
+appversion: 2.2.0
+content-type: application/x-www-form-urlencoded
+origin: https://abc.com
+content-length: 102
+te: trailers
 
-ad.paln=AQzzBGQEPTTHmV-m-hTZDgnbylfsSEQrJ1VJaXF1sF4jtf4uQoudMwpmfyorhPrtDvCMwuat6PyFwPAhqDpoNlEt546tL6LWPTFR57x91wj1kANwG8YxQAqCbLmpZFGQ5lfQrHtZ7rA4U5oSyujoTAhA5XeZ-dwbQmUJ48hNn8YJQh_wB-AFWQ_tLb1lrpm86dy4QM5IgFMNTT2mlLfVO5x6839N7iZvSm9Tt7QuSp2J-MTzGSUZ7V9kxraOLVPeqoX8lW5fDUtVmjtZk_KSST4Ty0Sy9S_R4wMqP1UKdUIrAxiskr1j8ighAxQ3QJX9aBVPFABBsm4v0FA9PZ3WGAQ8NJcRj2t3bD0o-RdW1-tc987hp2fd096m-S0gjQ9HNzazkuycVOMAMSnq2hOZcwip5gkq0ypfQ9H6H40mLkbZ3uoS-5HshOQnyUfAyP2Udya6ILznyklXBELM5iVw_HisEbcUrJ7uU4dY4uXtisO6akvAB63rr0rABkOSziEpeiqxn03EpSrCDR3GViLjf-SeHKnlB6ZxGU_Cz6arbBL7AIEttwWBCYcR_vJqunUyQH615HOGcCjnRM--ya315RR0SnqF9R4wn4LF4AgwEvj7PFRQmnXJmZigBPCPBNjyjAj3A-kht0Q7Vs2Yd57iIg3vC9SVXwp8JKelePNipdWmWq9OTgyzXqpI44aQVGGEl7vbuKRQiKF-1Qk3gdJsb-Ck7G8HflGMf6TWRvdG-Mfq2bQTrJNmpY6KHNblQQ5H_x5F5Jh7wR8_4WcbYrkXj6acrGXhksO7Dc2N622_QkukI_Mg64z7NzKMOR9OSxuXUcW8uR6TdGClwKBnDxKscW7OlMCTYl8aXSlMmwoitFjazAmutW6oeYZctjv6EhTjurXcfMfBgWXpFdQqD3d_yosTJJmD6dXVcJAQSwD4f3X4YL6XQgLt75FjrioJT6qe1NnJCk68hSJHeiDYnt17XNkd52fBYPEsEd77z5F9Ej_H-cSFeBci-DnD0N7WpjHdy7WMMXUbPkREmUcpIPP-7GWBKuOW1TvOdEYSgZmkIhpK5U41QAtlxZkWGGmqR8n2eHv0&adid=0b70ba69-8caa-403e-af2b-846d96d7a4f4&affiliate=WFAA&airing_id=VDKA26847512&app_name=abcv2&brand=001&bundleId=com.disney.datg.videoplatforms.android.abc&device=031_04&deviceOS=7.0&deviceType=Google+Android+SDK+built+for+x86&device_id=391c1b66bbb2ce6f2ae2bfde591fdc7e&hdcp_level=0.0&hip=3571f507982d4eba645235d75c3b0d984ae542962795413bce1afee4b82c430e&hlsver=6&isAutoplay=false&latitude=0.0&longitude=0.0&maxBitrate=2500&minBitrate=0&nielsenAppId=PDFB2C928-9709-4DBE-B612-7C7480302256&player_id=e9d7e484-5b3e-4ced-b477-45f413f21f77&prefBitrate=10&token_type=ap&tracking=1&video_id=VDKA26847512&video_type=lf&vps=1920x1080&zipcode=75039
-~~~
-
-then:
-
-~~~
-https://content-dtci.uplynk.com/ext/d874124ecca24c88a3c9575e78686acf/5e6dda216a5e43309543689d3fd85f91.m3u8?
-cqs=tBc8IraEmzXRunYUY0_jtsgHB21sn48WpVI68jdmqu2urUUFQUrkTPkJR1QbBt0J8k1UH137Ar9ZQ4QfKWlqXwe-J7eVlCIxSLSDmo8R3Z8433NbKn-pe2Ch1Evkboe1V2d6Fon7kj0Z7nZ3lwgJw5BvndeabbI4sD8jeCMzGtvzbl3HnfRdmXp9NDq4FJ8lxsy3zshzaQCRcDMmaoo8LUJHhdJYDQlHcrgCnvIZoHx08dk46vxkEiftBYEewDLvwYgaOcUE87xFq6MY8KZU2VOuIDgo-G8bXlbJkOCneeKhAfPsU4XddVpxQTLnBLDU_6BnyP7KCBUZS8omBnSbeDwXk-YjnfKl9hhxJuBbQ1d9jLjBm4_1Yos_pRJmnoAbiGNkz1yqjIUi9IR440zptZaN9E59uM269VXcAP7JK9XlsBvkqQWMPrraZOZnguGNviDzwWeyaV6lI6vhF1YNY9-Y0mZ-rM6I3mPrWOvjD8EtPN6tsaPo5B_HJX0E7vaachC2OclqAge3lQgWpzWQr9J3tL4z_VeIacMrC0XtgxQ__0c43MKocJzsBcs-36jfv84iKv0KfW_YzNLLXjva7v0T5vqg32xCF4Zu4QSO_c7q4tDCc-zepkjrhctWEMHIQgz9fI5LtdvEccacqw3zZ8BQpi_EdWTaaQLrBknKcuwpREshy6RGD6OfY4Me86XmUsen8_BWKdqa0dnAyCZCkiSaq1_1Jkfc6XOcXn6J6TZbr1ySg2jj1BFVdwQKrMR2a_Sq6ShvRt60h6TYhL1QdkXuGQ2EqmjeS21d3WgRGiPzjesPLUb26kWB3_0lH_hzv5YmkFVIFk1ulncVKdkRwnIFTy8RIivZ-5NLUk4dqRLTFHpuWpyVwwSFCGZAP5Jt5ScqHEn-iUhl0l7e4gNb_REzy-z5woneW9GRgi0fiMAxyupqI3v5K5dRB21Q0Fpo86mV05zwryKMgkX2yCknWntvfIbyNQgTiHgE2K3cMv1Nld225W-LFyGtwM6ctf5bDYaT1IYv3OAmUp4hVWFyEqGPzUAPv34W9kau2ImSUtcbhlOG8YpIG0WMuppIJkDZXGA1JaUHLBvaPHAb4mzgkt71FOuVmnE221Z2oEVb86Zku8JZukIaEw7pYgCcT0T2hEh7Rkpl8C5QUgku1KO3KNT0NqNrKU_RrTrbBVflslp99d7YpwoZPZ6uzXIBaAb0-zU3rtqPy79f0hiNK4XFVoiwlHYEk10l8Ct_woNOubwEUNUUibFja7VrBFCcmdq-R47nCqTX_Yy9-6MWg4NSBs9Ql5pgAw9p-9PI18GouEeMsMOva1wTeMGYiLEdXHpBPngikbhcpN9qXEtfvuzOuyBfN3JO6wDMkuwNlgnP4IM3bM53nrfptHlkVG4fnLLMGDZhxAKiQFtmM-YlY_fUGOLrjhSeEc38Cld3cVbWTW_eYxsH-uu4kmI_zTKqSA5TqRx1pclGU12K3KIhAIPxs0HG7KJTCUhLkKLQiezIYTfLyGz4NeKbJidA4uhGXhgy0SdlZwKaop5I-TnC-IpPube5f5hJtI-TkaonFsPAV2iDlevpkDYE-1uA8AwsEv15vL1562ieyJBP0yv1JmRLMfZ-AP1G50r6Irll4FpfCX8JLiaShFJa3TJdh5pax6GS75IlZgiImr7TAuF6NLA5-lhRWUSkij7PRPDOnOLCEnY_8_2_Mp_bT_LLpW1EIw8Fe0WlnLbt-weVf8F9kdi84gWM_xIbcDrM8MCEDiDa48VIYzD1NLx0i_i2Yppjz-D33e4h92AGr-QKg6cEELloM4LkJ42He34t1Vk49uZeDvYYhe2T29cvABWNEUwWF3phfvDaqDJvp4U_dA6PnLeNrcHPa2gJfyROxP_SbF6VhJeAIKT-Uh4dlncviZV5W6nORVwelEhlPkTE65zU0rlgQBY7_cHsop9FfhNJx2M3Rpl-mLVfXhQoDiGNVEqp6pw7fP-7YTjPXXBy_y1g9QeDItSdRj0Pm2T723-niUSDLvXXPElTZ07U3wTws99-Q9p_t7gFUWiyfMi8K4FPILdq2PXT3yW44p5dyk-JimdYtB6YndlZIgS8KcX-GjvFvLiqhu8mqxxlU856z9qZhsdjqvAbgbbl176fv0eX6V579_tXqtyqzYGzlGcPIkzez0BjyXM_eJHTz1oeZvzugUcvrI2oq0QjBZCnud-hESphNou6_lyc0gaTHZHUQYe99ak6Xdk1P3TQT6GbCuo2SRPkpFtR0abAVfvDOyC2a8wAwDcBb4FmaY296bYsI0WNPqvbXP7oHdJuR8tc4PoIJyPRKs-1r7pmM0qeK25a515sxXCPksIGq9lgJ-BBIV6K0fgzk9c2buUi5FI5ap9Y79teSNi2dT2fl1-SrNE_E0G0Z0eFDf9OweKuB3eEUnuDz5jx0vxQ5dMqZz7dpBs0tFg0WMlmvmqTxNoJz09GnwnCndZgkbdHjaMw1jdO6sETiAWB8xPi20kB0onSOtbwPVPHHPba3KLN2Z36Bub2aACxTrO-L5vh5IUVCEwJmih_1Bl4Rr-D-rFPUFmP5zPvd1XueDHgQGA9f1fnCLicLbyrY6--iqYfHEOjdhJs9Xb78xJh92FaMQEuT8HLeRULqZ0rfpBxawKgjG6GHZ40Rh98NJbnfA5tzQqSkMly0n6hcDnrKueMvS5EbPMxuAnT0RUIXbLdTZZeVkzY6tuhBSoJTh9DzJD7KEG_InbX079zt8scKD69WSqlrwk9GudI1dcPowhvGgvegO3OLIMpFp7vYzAA8OVPJBZiKeHtvT56Nc9_iLCZRN3R67Q2wJqkCOVwdEPKSmy3N16qsuP5ZC8NI20N9iGBMcmHxzZGZyDkzQhk7NeA_QzH2dBskIylUvQKajrkai888m5VT22JaN7oJV2HeTeRB74yx11TY1NCcw0-gybDWpE7PQgv3Lp-DVJ29kOXU80fmwynhNNOMcirDLAzn7V15jnxSXMAjRaCh1yS03sLFr-9-nrG7su29YVxWdtFYDcfmlW3P8zTT608h4qGQDFMUJCapyzLqAUrWrQsNxbn94wZBoTk6dNXnRjEQl6qvi5LfcFBS3Yh93agojvzEpQ7ESLHNlOc7Sukq9iGqSYOviT7Nh_tnpmN222imxAb3OqM9Evni3aAUDomr52QUlR8mSjY0VbIGy4KMdMmo2z0gTisOskl6NHgLNm9t59qmriTEiyVlUQLRBlhFcdzVcHFVnU1w6dR4SVQFFFlp53iyInLn6uYpZLw-n2D34qVC5aWp9noYm4xF-C2uPG47r-j_ETpLdHT9TawJU5wwLM5gxrSRjT4tm4qtRWuBwZoXWhF9MhqwEg1PrT6_bz7PFjc66Jw2a5z86sJFO5vaEKgwfLF43xJ8FB9J5Nujd8hhA6S2qEWc5yfHWPuSFqroL41nn6y_ZgkHvau85EmiZTtwUcfiD5rHyj6jlN3ZUkQO0CzgbGstIphiSxJLN4luH3vaRfD2_SuLdpxD_allIEwpKxYO6_syYdhK9BhIoellUKYZuABk9BRpK9aEjuJZuND7HavcYwo4IBfUcBSs9dZFAwD9SO3fpP5n-njhBne5Ip9n1cgZghvCG7vou9UpFgQ0b9cAqO76dk33vNvF_IFcGVWVVf-T7PBX_N_yacRICD5R2JIgZQK-HM81ZMwBA8yg3lmIOY83A2_WUC8_ggfm-lCs1sybUbr4g87TUu_-UYZ_elWLYBqVNOoK4uhw76P5sOoZjT-3tQyhWO7mgcvfnTrj_R_3KPviNo4-3z0tlmaEM2W7BQDOj7Kv4XP54TmdaIFhFs5Mey5rI3qzBCmumxlRE5z1fizjgr3sgDIKoeHj8Gb0UTkpUuwPqM=&kid=4098a6a720374bfcbb4e362b652bcd51
+brand=001&device=001&app_name=webplayer-abc&video_type=lf&video_id=VDKA26847512&adobe_requestor_id=ABC
 ~~~
