@@ -7,6 +7,23 @@ import (
    "sort"
 )
 
+func (v video) doVideo(play *youtube.Player) error {
+   if len(play.StreamingData.AdaptiveFormats) == 0 {
+      return nil
+   }
+   form := play.StreamingData.AdaptiveFormats[0]
+   ext, err := form.Ext()
+   if err != nil {
+      return err
+   }
+   file, err := os.Create(play.Base() + ext)
+   if err != nil {
+      return err
+   }
+   defer file.Close()
+   return form.Write(file)
+}
+
 type video struct {
    address string
    audio string
@@ -125,22 +142,3 @@ func (v video) doAudio(play *youtube.Player) error {
    }
    return nil
 }
-
-func (v video) doVideo(play *youtube.Player) error {
-   for i, form := range play.StreamingData.AdaptiveFormats {
-      ext, err := form.Ext()
-      if err != nil {
-         return err
-      }
-      file, err := os.Create(play.Base() + ext)
-      if err != nil {
-         return err
-      }
-      defer file.Close()
-      if i == 0 {
-         return form.Write(file)
-      }
-   }
-   return nil
-}
-

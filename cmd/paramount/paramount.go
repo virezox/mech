@@ -21,23 +21,25 @@ func doManifest(guid string, bandwidth int, info bool) error {
       return err
    }
    defer res.Body.Close()
-   mas, err := hls.NewMaster(res.Request.URL, res.Body)
+   master, err := hls.NewMaster(res.Request.URL, res.Body)
    if err != nil {
       return err
    }
-   sort.Sort(hls.Bandwidth{mas, bandwidth})
+   sort.Sort(hls.Bandwidth{master, bandwidth})
    if info {
       fmt.Println(video.Title)
-      for _, stream := range mas.Stream {
+      for _, stream := range master.Stream {
          fmt.Println(stream)
       }
    } else {
-      return download(video, mas.Stream[0])
+      for _, stream := range master.Stream {
+         return download(stream, video)
+      }
    }
    return nil
 }
 
-func download(video *paramount.Video, stream hls.Stream) error {
+func download(stream hls.Stream, video *paramount.Video) error {
    seg, err := newSegment(stream.URI.String())
    if err != nil {
       return err
@@ -48,7 +50,7 @@ func download(video *paramount.Video, stream hls.Stream) error {
       return err
    }
    defer res.Body.Close()
-   dec, err := hls.NewDecrypter(res.Body)
+   block, err := hls.NewCipher(res.Body)
    if err != nil {
       return err
    }
@@ -63,7 +65,11 @@ func download(video *paramount.Video, stream hls.Stream) error {
       if err != nil {
          return err
       }
-      if _, err := dec.Copy(file, res.Body); err != nil {
+      buf, err := block.Decrypt(info, res.Body)
+      if err != nil {
+         return err
+      }
+      if _, err := file.Write(buf); err != nil {
          return err
       }
       if err := res.Body.Close(); err != nil {

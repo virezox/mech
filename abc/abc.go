@@ -10,8 +10,11 @@ import (
 )
 
 const (
+   MaxAppVersion = "99.99.9"
+   MaxDevice = "033_05"
+   MinAppVersion = "10.12.0"
+   MinDevice = "031_01"
    brand = "001"
-   device = "033_05"
 )
 
 var LogLevel format.LogLevel
@@ -23,6 +26,10 @@ type Route struct {
 }
 
 func NewRoute(addr string) (*Route, error) {
+   parse, err := url.Parse(addr)
+   if err != nil {
+      return nil, err
+   }
    var buf strings.Builder
    buf.WriteString("http://prod.gatekeeper.us-abc.symphony.edgedatg.com")
    buf.WriteString("/api/ws/pluto/v1/layout/route")
@@ -30,11 +37,11 @@ func NewRoute(addr string) (*Route, error) {
    if err != nil {
       return nil, err
    }
-   req.Header.Set("Appversion", "99.99.9")
+   req.Header.Set("Appversion", MaxAppVersion)
    req.URL.RawQuery = url.Values{
       "brand": {brand},
-      "device": {device},
-      "url": {addr},
+      "device": {MaxDevice},
+      "url": {parse.Path},
    }.Encode()
    LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
@@ -50,26 +57,26 @@ func NewRoute(addr string) (*Route, error) {
 }
 
 func (r Route) Video() (*Video, error) {
-   for _, mod := range r.Modules {
-      req, err := http.NewRequest("GET", mod.Resource, nil)
-      if err != nil {
-         return nil, err
-      }
-      LogLevel.Dump(req)
-      res, err := new(http.Transport).RoundTrip(req)
-      if err != nil {
-         return nil, err
-      }
-      defer res.Body.Close()
-      var play struct {
-         Video Video
-      }
-      if err := json.NewDecoder(res.Body).Decode(&play); err != nil {
-         return nil, err
-      }
-      return &play.Video, nil
+   if len(r.Modules) == 0 {
+      return nil, notFound{"resource"}
    }
-   return nil, notFound{"resource"}
+   req, err := http.NewRequest("GET", r.Modules[0].Resource, nil)
+   if err != nil {
+      return nil, err
+   }
+   LogLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   var play struct {
+      Video Video
+   }
+   if err := json.NewDecoder(res.Body).Decode(&play); err != nil {
+      return nil, err
+   }
+   return &play.Video, nil
 }
 
 type Video struct {
@@ -78,6 +85,8 @@ type Video struct {
       Title string
    }
    Title string
+   SeasonNumber string
+   EpisodeNumber string
    Assets []struct {
       Format string
       Value string
@@ -90,15 +99,17 @@ func (v *Video) Authorize() error {
    addr.WriteString("/vp2/ws-secure/entitlement/2020/authorize.json")
    body := url.Values{
       "brand": {brand},
-      "device": {device},
+      "device": {MaxDevice},
       "video_id": {v.ID},
       // this can be empty, but it must be present
       "video_type": {""},
-      
    }.Encode()
    req, err := http.NewRequest(
       "POST", addr.String(), strings.NewReader(body),
    )
+   if err != nil {
+      return err
+   }
    req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
    LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
@@ -125,10 +136,24 @@ func (v *Video) Authorize() error {
    return nil
 }
 
+func (v Video) Base() string {
+   var buf strings.Builder
+   buf.WriteString(v.Show.Title)
+   buf.WriteByte('-')
+   buf.WriteString(v.Title)
+   buf.WriteByte('-')
+   buf.WriteString(v.SeasonNumber)
+   buf.WriteByte('-')
+   buf.WriteString(v.EpisodeNumber)
+   return buf.String()
+}
+
 func (v Video) Format(f fmt.State, verb rune) {
    fmt.Fprintln(f, "ID:", v.ID)
    fmt.Fprintln(f, "Show:", v.Show.Title)
-   fmt.Fprint(f, "Title: ", v.Title)
+   fmt.Fprintln(f, "Title:", v.Title)
+   fmt.Fprintln(f, "Season:", v.SeasonNumber)
+   fmt.Fprint(f, "Episode: ", v.EpisodeNumber)
    if verb == 'a' {
       for _, asset := range v.Assets {
          fmt.Fprint(f, "\nFormat:", asset.Format)
