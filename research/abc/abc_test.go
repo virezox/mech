@@ -13,9 +13,12 @@ func TestMech(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   play, err := route.Player()
+   video, err := route.Video()
    if err != nil {
       t.Fatal(err)
    }
-   fmt.Printf("%+v\n", play)
+   if err := video.Authorize(); err != nil {
+      t.Fatal(err)
+   }
+   fmt.Printf("%a\n", video)
 }
