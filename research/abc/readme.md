@@ -3,7 +3,20 @@
 - https://abc.com/shows/greys-anatomy/episode-guide/season-18/12-the-makings-of-you
 - https://github.com/ytdl-org/youtube-dl/issues/29544
 
-## Web
+## Android client
+
+~~~
+com.disney.datg.videoplatforms.android.abc
+~~~
+
+Install system certificate.
+
+~~~
+adb shell am start -a android.intent.action.VIEW `
+-d https://abc.com/shows/greys-anatomy/episode-guide/season-18/12-the-makings-of-you
+~~~
+
+## Web client
 
 this is it:
 
