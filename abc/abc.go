@@ -9,6 +9,11 @@ import (
    "strings"
 )
 
+const (
+   brand = "001"
+   device = "033_05"
+)
+
 var LogLevel format.LogLevel
 
 type Route struct {
@@ -25,10 +30,10 @@ func NewRoute(addr string) (*Route, error) {
    if err != nil {
       return nil, err
    }
-   req.Header.Set("Appversion", "10.23.1")
+   req.Header.Set("Appversion", "99.99.9")
    req.URL.RawQuery = url.Values{
-      "brand": {"001"},
-      "device": {"031_04"},
+      "brand": {brand},
+      "device": {device},
       "url": {addr},
    }.Encode()
    LogLevel.Dump(req)
@@ -84,10 +89,12 @@ func (v *Video) Authorize() error {
    addr.WriteString("http://api.entitlement.watchabc.go.com")
    addr.WriteString("/vp2/ws-secure/entitlement/2020/authorize.json")
    body := url.Values{
-      "brand": {"001"},
-      "device": {"031_04"},
+      "brand": {brand},
+      "device": {device},
       "video_id": {v.ID},
-      "video_type": {"lf"},
+      // this can be empty, but it must be present
+      "video_type": {""},
+      
    }.Encode()
    req, err := http.NewRequest(
       "POST", addr.String(), strings.NewReader(body),
