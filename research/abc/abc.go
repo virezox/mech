@@ -15,11 +15,11 @@ func main() {
    req.URL.Path = "/api/ws/pluto/v1/layout/route"
    val := make(url.Values)
    val["url"] = []string{"/shows/greys-anatomy/episode-guide/season-18/12-the-makings-of-you"}
-   req.Header["Appversion"] = []string{"10.23.1"}
    val["brand"] = []string{"001"}
    val["device"] = []string{"031_04"}
    req.URL.RawQuery = val.Encode()
    req.URL.Scheme = "http"
+   req.Header["Appversion"] = []string{"10.23.1"}
    res, err := new(http.Transport).RoundTrip(&req)
    if err != nil {
       panic(err)
