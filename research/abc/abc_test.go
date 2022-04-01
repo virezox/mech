@@ -13,5 +13,9 @@ func TestMech(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   fmt.Printf("%+v\n", route)
+   play, err := route.Player()
+   if err != nil {
+      t.Fatal(err)
+   }
+   fmt.Printf("%+v\n", play)
 }
