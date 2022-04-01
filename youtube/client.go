@@ -4,8 +4,6 @@ import (
    "encoding/json"
    "github.com/89z/mech"
    "net/http"
-   
-   "fmt"
 )
 
 func (c Client) Search(query string) (*Search, error) {
