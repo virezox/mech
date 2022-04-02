@@ -20,25 +20,25 @@ click `Network Settings`, `Save All As HAR`. Rename file to JSON.
 ## Sites
 
 ~~~
-11.526 B true YouTube
-4.095 B true Instagram
-1.303 B false Spotify: Music and Podcasts
-1.269 B true Twitter
-340.219 M true SoundCloud: Play Music & Songs
-317.142 M false Deezer: Music & Podcast Player
-279.073 M true Pandora - Music & Podcasts
-254.341 M false Amazon Music: Discover Songs
-94.791 M false Reddit
-85.068 M false iHeart: Radio, Music, Podcasts
-84.356 M false Apple Music
-31.636 M true Vimeo
-25.030 M false TIDAL Music
-22.292 M true Paramount+ | Peak Streaming
-21.308 M false Napster Music
-13.849 M true The NBC App - Stream TV Shows
-2.654 M true Bandcamp
-2.259 M true PBS Video: Live TV & On Demand
-695.077 K false Qobuz
+11.542 B true YouTube
+4.100 B true Instagram
+1.305 B false Spotify: Music and Podcasts
+1.270 B true Twitter
+340.410 M true SoundCloud: Play Music & Songs
+317.269 M false Deezer: Music & Podcast Player
+254.577 M false Amazon Music: Discover Songs
+94.988 M false Reddit
+85.098 M false iHeart: Music, Radio, Podcasts
+84.538 M false Apple Music
+31.661 M true Vimeo
+25.059 M false TIDAL Music
+22.338 M true Paramount+ | Peak Streaming
+21.309 M false Napster Music
+13.856 M true The NBC App - Stream TV Shows
+12.728 M true ABC – Live TV & Full Episodes
+2.656 M true Bandcamp
+2.262 M true PBS Video: Live TV & On Demand
+695.926 K false Qobuz
 ~~~
 
 Amazon Music:

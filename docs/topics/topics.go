@@ -16,11 +16,11 @@ var names = []string{
    "instagram",
    "twitter",
    "soundcloud",
-   "pandora",
    "vimeo",
    "paramount",
-   ///////////
    "nbc",
+   ///////////
+   "abc",
    "bandcamp",
    "pbs",
 }
