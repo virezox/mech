@@ -14,7 +14,10 @@ func doManifest(guid string, bandwidth int, info bool) error {
    if err != nil {
       return err
    }
-   video := media.Video()
+   video, err := media.Video()
+   if err != nil {
+      return err
+   }
    fmt.Println("GET", video.Src)
    res, err := http.Get(video.Src)
    if err != nil {
@@ -28,11 +31,11 @@ func doManifest(guid string, bandwidth int, info bool) error {
    sort.Sort(hls.Bandwidth{master, bandwidth})
    if info {
       fmt.Println(video.Title)
-      for _, stream := range master.Stream {
+   }
+   for _, stream := range master.Stream {
+      if info {
          fmt.Println(stream)
-      }
-   } else {
-      for _, stream := range master.Stream {
+      } else {
          return download(stream, video)
       }
    }

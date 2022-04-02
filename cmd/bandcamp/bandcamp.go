@@ -31,7 +31,7 @@ func doTralbum(item *bandcamp.Item, info bool, sleep time.Duration) error {
    }
    for _, track := range tralb.Tracks {
       if info {
-         fmt.Printf("%+v\n", track)
+         fmt.Println(track)
       } else if track.Streaming_URL != nil {
          fmt.Println("GET", track.Streaming_URL.MP3_128)
          res, err := http.Get(track.Streaming_URL.MP3_128)

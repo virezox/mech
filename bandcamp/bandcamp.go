@@ -7,7 +7,33 @@ import (
    "time"
 )
 
+type Track struct {
+   Track_Num int64
+   Title string
+   Streaming_URL *struct {
+      MP3_128 string `json:"mp3-128"`
+   }
+}
+
+func (t Track) String() string {
+   var buf []byte
+   buf = append(buf, "Num:"...)
+   buf = strconv.AppendInt(buf, t.Track_Num, 10)
+   buf = append(buf, " Title:"...)
+   buf = append(buf, t.Title...)
+   if t.Streaming_URL != nil {
+      buf = append(buf, " URL:"...)
+      buf = append(buf, t.Streaming_URL.MP3_128...)
+   }
+   return string(buf)
+}
+
 var LogLevel format.LogLevel
+
+type Band struct {
+   Name string
+   Discography []Item
+}
 
 type Image struct {
    ID int64
@@ -72,23 +98,6 @@ func (i Image) Format(artID int64) string {
    return string(buf)
 }
 
-type Track struct {
-   Track_Num int
-   Title string
-   Streaming_URL *struct {
-      MP3_128 string `json:"mp3-128"`
-   }
-}
-
-func (t Tralbum) Date() time.Time {
-   return time.Unix(t.Release_Date, 0)
-}
-
-type Band struct {
-   Name string
-   Discography []Item
-}
-
 type Tralbum struct {
    Art_ID int
    Release_Date int64
@@ -101,3 +110,6 @@ func (t Tralbum) Base() string {
    return mech.Clean(t.Tralbum_Artist + "-" + t.Title)
 }
 
+func (t Tralbum) Date() time.Time {
+   return time.Unix(t.Release_Date, 0)
+}

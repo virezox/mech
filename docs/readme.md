@@ -61,6 +61,11 @@ CWTV:
 
 https://github.com/89z/mech/tree/fdf4b6c0f4015d5ef2de6dcbba25bd1ac296c743
 
+Hulu:
+
+- https://archive.ph/CzT12
+- https://github.com/chris124567/hulu/issues/14
+
 IMDb:
 
 https://github.com/89z/mech/tree/134506e3245b8dd2541dfae40757645a057d02a2

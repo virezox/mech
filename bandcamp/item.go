@@ -104,8 +104,8 @@ func (i Item) Tralbum() (*Tralbum, error) {
 }
 
 func (i Item) Type() string {
-   for _, typ := range i.Item_Type {
-      return string(typ)
+   for _, char := range i.Item_Type {
+      return string(char)
    }
    return ""
 }

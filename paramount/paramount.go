@@ -10,12 +10,20 @@ import (
    "strings"
 )
 
-const (
-   aid = 2198311517
-   sid = "dJ5BDC"
-)
+func (m Media) Video() (*Video, error) {
+   for _, vid := range m.Body.Seq.Video {
+      return &vid, nil
+   }
+   return nil, notFound{".body.seq.video"}
+}
 
-var LogLevel format.LogLevel
+type notFound struct {
+   value string
+}
+
+func (n notFound) Error() string {
+   return strconv.Quote(n.value) + " is not found"
+}
 
 type Media struct {
    Body struct {
@@ -24,6 +32,13 @@ type Media struct {
       } `xml:"seq"`
    } `xml:"body"`
 }
+
+const (
+   aid = 2198311517
+   sid = "dJ5BDC"
+)
+
+var LogLevel format.LogLevel
 
 func NewMedia(guid string) (*Media, error) {
    buf := []byte("https://link.theplatform.com/s/")
@@ -52,13 +67,6 @@ func NewMedia(guid string) (*Media, error) {
       return nil, err
    }
    return med, nil
-}
-
-func (m Media) Video() *Video {
-   for _, vid := range m.Body.Seq.Video {
-      return &vid
-   }
-   return nil
 }
 
 type Video struct {
