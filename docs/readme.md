@@ -17,10 +17,6 @@ click `Network Settings`, `Save All As HAR`. Rename file to JSON.
 5. MITM Proxy APK
 6. JADX
 
-## Proxy
-
-https://freeproxylists.net/br.html
-
 ## Sites
 
 ~~~
@@ -73,9 +69,9 @@ MTV:
 
 https://github.com/89z/mech/tree/e90712f2f47ad49d50aaa1b32f83a1fbd541adfa
 
-PBS:
+Pandora:
 
-https://github.com/89z/mech/tree/c825743ab7594025b9c70632d934820e2c68d20a
+https://github.com/89z/mech/tree/15253dcf97be8d21cd6eccb3bfc8aac7a736725e
 
 Reddit:
 
