@@ -1,0 +1,13 @@
+POST /youtubei/v1/player HTTP/1.1
+Host: www.youtube.com
+X-Goog-Api-Key: AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8
+
+{
+ "context": {
+  "client": {
+   "clientName": "ANDROID",
+   "clientVersion": "17.11.34"
+  }
+ },
+ "videoId": "kPauR6tP_cg"
+}
