@@ -35,8 +35,10 @@ func (f Format) Write(dst io.Writer) error {
       if err != nil {
          return err
       }
-      defer res.Body.Close()
       if _, err := io.Copy(dst, res.Body); err != nil {
+         return err
+      }
+      if err := res.Body.Close(); err != nil {
          return err
       }
       content += partLength
