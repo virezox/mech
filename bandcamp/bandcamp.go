@@ -7,38 +7,14 @@ import (
    "time"
 )
 
-type Track struct {
-   Track_Num int64
-   Title string
-   Band_Name string
-   Streaming_URL *struct {
-      MP3_128 string `json:"mp3-128"`
-   }
-}
-
-func (t Track) Base() string {
-   return mech.Clean(t.Band_Name + "-" + t.Title)
-}
-
-func (t Track) String() string {
-   var buf []byte
-   buf = append(buf, "Num:"...)
-   buf = strconv.AppendInt(buf, t.Track_Num, 10)
-   buf = append(buf, " Title:"...)
-   buf = append(buf, t.Title...)
-   buf = append(buf, " Band:"...)
-   buf = append(buf, t.Band_Name...)
-   if t.Streaming_URL != nil {
-      buf = append(buf, " URL:"...)
-      buf = append(buf, t.Streaming_URL.MP3_128...)
-   }
-   return string(buf)
-}
-
 var LogLevel format.LogLevel
 
 type Band struct {
    Name string
+   Bio string
+   Sites []struct {
+      URL string
+   }
    Discography []Item
 }
 
@@ -102,6 +78,34 @@ func (i Image) URL(artID int64) string {
    buf = strconv.AppendInt(buf, artID, 10)
    buf = append(buf, '_')
    buf = strconv.AppendInt(buf, i.ID, 10)
+   return string(buf)
+}
+
+type Track struct {
+   Track_Num int64
+   Title string
+   Band_Name string
+   Streaming_URL *struct {
+      MP3_128 string `json:"mp3-128"`
+   }
+}
+
+func (t Track) Base() string {
+   return mech.Clean(t.Band_Name + "-" + t.Title)
+}
+
+func (t Track) String() string {
+   var buf []byte
+   buf = append(buf, "Num:"...)
+   buf = strconv.AppendInt(buf, t.Track_Num, 10)
+   buf = append(buf, " Title:"...)
+   buf = append(buf, t.Title...)
+   buf = append(buf, " Band:"...)
+   buf = append(buf, t.Band_Name...)
+   if t.Streaming_URL != nil {
+      buf = append(buf, " URL:"...)
+      buf = append(buf, t.Streaming_URL.MP3_128...)
+   }
    return string(buf)
 }
 

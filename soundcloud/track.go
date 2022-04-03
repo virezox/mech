@@ -6,12 +6,18 @@ import (
    "net/url"
    "strconv"
    "strings"
+   "time"
 )
 
 type Track struct {
-   Artwork_URL string
-   Display_Date string
    ID int64
+   Display_Date string // 2021-04-12T07:00:01Z
+   User struct {
+      Username string
+      Avatar_URL string
+   }
+   Title string
+   Artwork_URL string
    Media struct {
       Transcodings []struct {
          Format struct {
@@ -20,15 +26,6 @@ type Track struct {
          URL string
       }
    }
-   Title string
-   User struct {
-      Avatar_URL string
-      Username string
-   }
-}
-
-func (t Track) Base() string {
-   return t.User.Username + "-" + t.Title
 }
 
 func NewTrack(id int64) (*Track, error) {
@@ -118,6 +115,10 @@ func (t Track) Artwork() string {
    return strings.Replace(t.Artwork_URL, "large", "t500x", 1)
 }
 
+func (t Track) Base() string {
+   return t.User.Username + "-" + t.Title
+}
+
 // Also available is "hls", but all transcodings are quality "sq".
 // Same for "api-mobile.soundcloud.com".
 func (t Track) Progressive() (*Media, error) {
@@ -142,4 +143,33 @@ func (t Track) Progressive() (*Media, error) {
       return nil, err
    }
    return med, nil
+}
+
+func (t Track) String() string {
+   var buf []byte
+   buf = append(buf, "ID: "...)
+   buf = strconv.AppendInt(buf, t.ID, 10)
+   buf = append(buf, "\nDate: "...)
+   buf = append(buf, t.Display_Date...)
+   buf = append(buf, "\nUser: "...)
+   buf = append(buf, t.User.Username...)
+   buf = append(buf, "\nAvatar: "...)
+   buf = append(buf, t.User.Avatar_URL...)
+   buf = append(buf, "\nTitle: "...)
+   buf = append(buf, t.Title...)
+   if t.Artwork_URL != "" {
+      buf = append(buf, "\nArtwork: "...)
+      buf = append(buf, t.Artwork_URL...)
+   }
+   for _, coding := range t.Media.Transcodings {
+      buf = append(buf, "\nFormat: "...)
+      buf = append(buf, coding.Format.Protocol...)
+      buf = append(buf, "\nURL: "...)
+      buf = append(buf, coding.URL...)
+   }
+   return string(buf)
+}
+
+func (t Track) Time() (time.Time, error) {
+   return time.Parse(time.RFC3339, t.Display_Date)
 }

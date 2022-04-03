@@ -31,7 +31,7 @@ func main() {
       }
       for i, track := range tracks {
          if info {
-            fmt.Printf("%+v\n", track)
+            fmt.Println(track)
          } else {
             if i >= 1 {
                time.Sleep(sleep)
