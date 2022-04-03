@@ -17,7 +17,7 @@ func main() {
    flag.BoolVar(&auth, "h", false, "authentication")
    // i
    var info bool
-   flag.BoolVar(&info, "i", false, "info only")
+   flag.BoolVar(&info, "i", false, "information")
    // p
    var password string
    flag.StringVar(&password, "p", "", "password")

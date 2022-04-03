@@ -18,7 +18,7 @@ func main() {
    // g
    flag.StringVar(&vid.audio, "g", "AUDIO_QUALITY_MEDIUM", "target audio")
    // i
-   flag.BoolVar(&vid.info, "i", false, "information only")
+   flag.BoolVar(&vid.info, "i", false, "information")
    // r
    var refresh bool
    flag.BoolVar(&refresh, "r", false, "create OAuth refresh token")

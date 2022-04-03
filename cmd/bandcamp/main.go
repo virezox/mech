@@ -14,7 +14,7 @@ func main() {
    // e
    flag.StringVar(&arg.ext, "e", ".mp3", "extension")
    // i
-   flag.BoolVar(&arg.info, "i", false, "information only")
+   flag.BoolVar(&arg.info, "i", false, "information")
    // s
    flag.DurationVar(&arg.sleep, "s", time.Second, "sleep")
    // v

@@ -15,7 +15,7 @@ func main() {
    flag.IntVar(&bandwidth, "f", 5_581_000, "target bandwidth")
    // i
    var info bool
-   flag.BoolVar(&info, "i", false, "info")
+   flag.BoolVar(&info, "i", false, "information")
    // v
    var verbose bool
    flag.BoolVar(&verbose, "v", false, "verbose")

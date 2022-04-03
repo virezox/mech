@@ -13,7 +13,7 @@ func main() {
    flag.StringVar(&address, "a", "", "address")
    // i
    var info bool
-   flag.BoolVar(&info, "i", false, "info only")
+   flag.BoolVar(&info, "i", false, "information")
    // s
    var sleep time.Duration
    flag.DurationVar(&sleep, "s", time.Second, "sleep")
