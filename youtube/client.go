@@ -7,41 +7,47 @@ import (
 )
 
 type Client struct {
-   Name string `json:"clientName"`
-   Version string `json:"clientVersion"`
+   Name string
+   MinVersion string
+   MaxVersion string
 }
 
-var Mweb = Client{"MWEB", "2.20220322.05.00"}
+var Android = Client{Name: "ANDROID", MaxVersion: "17.11.34"}
 
-var Clients = []Client{
-   Mweb,
-   {"ANDROID", "17.11.34"},
-   {"ANDROID_EMBEDDED_PLAYER", "17.11.34"}, // HtVdAasjOgU
-   {"TVHTML5", "7.20220323.10.00"},
-   {"WEB", "2.20220325.00.00"},
-   {"WEB_CREATOR", "1.20220324.00.00"},
-   {"WEB_EMBEDDED_PLAYER", "1.20220323.01.00"},
-   {"WEB_KIDS", "2.20220323.08.00"},
-   {"WEB_REMIX", "1.20220321.01.00"},
-}
+var Mweb = Client{Name: "MWEB", MaxVersion: "2.20220322.05.00"}
+
+// HtVdAasjOgU
+var Embed = Client{Name: "ANDROID_EMBEDDED_PLAYER", MaxVersion: "17.11.34"}
 
 func (c Client) Player(id string) (*Player, error) {
    return c.PlayerHeader(googAPI, id)
 }
 
+type errorString string
+
+func (e errorString) Error() string {
+   return string(e)
+}
+
+type context struct {
+   Client struct {
+      ClientName string `json:"clientName"`
+      ClientVersion string `json:"clientVersion"`
+   } `json:"client"`
+}
+
 func (c Client) PlayerHeader(head http.Header, id string) (*Player, error) {
    var body struct {
+      Context context `json:"context"`
       RacyCheckOK bool `json:"racyCheckOk,omitempty"`
       VideoID string `json:"videoId"`
-      Context struct {
-         Client Client `json:"client"`
-      } `json:"context"`
    }
-   body.VideoID = id
+   body.Context.Client.ClientName = c.Name
+   body.Context.Client.ClientVersion = c.MaxVersion
    if head.Get("Authorization") != "" {
       body.RacyCheckOK = true // Cr381pDsSsA
    }
-   body.Context.Client = c
+   body.VideoID = id
    buf, err := mech.Encode(body)
    if err != nil {
       return nil, err
@@ -69,19 +75,18 @@ func (c Client) PlayerHeader(head http.Header, id string) (*Player, error) {
 
 func (c Client) Search(query string) (*Search, error) {
    var body struct {
+      Context context `json:"context"`
       Params string `json:"params"`
       Query string `json:"query"`
-      Context struct {
-         Client Client `json:"client"`
-      } `json:"context"`
    }
+   body.Context.Client.ClientName = c.Name
+   body.Context.Client.ClientVersion = c.MaxVersion
    filter := NewFilter()
    filter.Type(Type["Video"])
    param := NewParams()
    param.Filter(filter)
    body.Params = param.Encode()
    body.Query = query
-   body.Context.Client = c
    buf, err := mech.Encode(body)
    if err != nil {
       return nil, err
@@ -102,10 +107,4 @@ func (c Client) Search(query string) (*Search, error) {
       return nil, err
    }
    return search, nil
-}
-
-type errorString string
-
-func (e errorString) Error() string {
-   return string(e)
 }

@@ -11,8 +11,8 @@ func main() {
    flag.StringVar(&vid.address, "a", "", "address")
    // b
    flag.StringVar(&vid.id, "b", "", "video ID")
-   // c
-   flag.StringVar(&vid.client, "c", "ANDROID", "client")
+   // e
+   flag.BoolVar(&vid.embed, "e", false, "use embed client")
    // f
    flag.IntVar(&vid.height, "f", 720, "target video height")
    // g

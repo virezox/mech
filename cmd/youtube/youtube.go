@@ -27,7 +27,7 @@ func (v video) doVideo(play *youtube.Player) error {
 type video struct {
    address string
    audio string
-   client string
+   embed bool
    height int
    id string
    info bool
@@ -35,11 +35,9 @@ type video struct {
 }
 
 func (v video) player() (*youtube.Player, error) {
-   var client youtube.Client
-   for _, each := range youtube.Clients {
-      if each.Name == v.client {
-         client = each
-      }
+   client := youtube.Android
+   if v.embed {
+      client = youtube.Embed
    }
    if v.id == "" {
       var err error
