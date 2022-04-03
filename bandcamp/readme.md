@@ -8,7 +8,7 @@ com.bandcamp.android
 
 https://github.com/httptoolkit/frida-android-unpinning
 
-2022-02-25
+2022-04-03
 
 Bandcamp app as of the date above, does not monitor Bandcamp URLs, so deep
 linking is not possible. They do have their own scheme, but the only two URLs I
