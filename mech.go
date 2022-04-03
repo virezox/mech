@@ -3,9 +3,6 @@ package mech
 import (
    "bytes"
    "encoding/json"
-   "mime"
-   "net/http"
-   "strconv"
    "strings"
 )
 
@@ -28,24 +25,4 @@ func Clean(path string) string {
       return r
    }
    return strings.Map(fn, path)
-}
-
-func Ext(head http.Header) (string, error) {
-   typ := head.Get("Content-Type")
-   exts, err := mime.ExtensionsByType(typ)
-   if err != nil {
-      return "", err
-   }
-   for _, ext := range exts {
-      return ext, nil
-   }
-   return "", notFound{typ}
-}
-
-type notFound struct {
-   value string
-}
-
-func (n notFound) Error() string {
-   return strconv.Quote(n.value) + " is not found"
 }

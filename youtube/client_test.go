@@ -3,18 +3,15 @@ package youtube
 import (
    "fmt"
    "testing"
-   "time"
 )
 
 func TestPlayer(t *testing.T) {
-   for _, client := range Clients {
-      play, err := client.Player("sjNRpkQd68s")
-      if err != nil {
-         t.Fatal(err)
-      }
-      date := play.Microformat.PlayerMicroformatRenderer.PublishDate
-      fmt.Printf("%+v %q\n", client, date)
-      time.Sleep(time.Second)
+   play, err := Mweb.Player("sjNRpkQd68s")
+   if err != nil {
+      t.Fatal(err)
+   }
+   if play.Microformat.PlayerMicroformatRenderer.PublishDate == "" {
+      t.Fatal(play)
    }
 }
 

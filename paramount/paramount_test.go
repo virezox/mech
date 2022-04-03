@@ -15,11 +15,15 @@ var guids = []string{
 
 func TestParamount(t *testing.T) {
    for _, guid := range guids {
-      med, err := NewMedia(guid)
+      media, err := NewMedia(guid)
       if err != nil {
          t.Fatal(err)
       }
-      for _, param := range med.Video().Param {
+      video, err := media.Video()
+      if err != nil {
+         t.Fatal(err)
+      }
+      for _, param := range video.Param {
          fmt.Printf("%+v\n", param)
       }
       time.Sleep(time.Second)

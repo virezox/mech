@@ -10,9 +10,14 @@ import (
 type Track struct {
    Track_Num int64
    Title string
+   Band_Name string
    Streaming_URL *struct {
       MP3_128 string `json:"mp3-128"`
    }
+}
+
+func (t Track) Base() string {
+   return mech.Clean(t.Band_Name + "-" + t.Title)
 }
 
 func (t Track) String() string {
@@ -21,6 +26,8 @@ func (t Track) String() string {
    buf = strconv.AppendInt(buf, t.Track_Num, 10)
    buf = append(buf, " Title:"...)
    buf = append(buf, t.Title...)
+   buf = append(buf, " Band:"...)
+   buf = append(buf, t.Band_Name...)
    if t.Streaming_URL != nil {
       buf = append(buf, " URL:"...)
       buf = append(buf, t.Streaming_URL.MP3_128...)
@@ -90,7 +97,7 @@ var Images = []Image{
 }
 
 // Extension is optional.
-func (i Image) Format(artID int64) string {
+func (i Image) URL(artID int64) string {
    buf := []byte("http://f4.bcbits.com/img/a")
    buf = strconv.AppendInt(buf, artID, 10)
    buf = append(buf, '_')
@@ -104,10 +111,6 @@ type Tralbum struct {
    Title string
    Tracks []Track
    Tralbum_Artist string
-}
-
-func (t Tralbum) Base() string {
-   return mech.Clean(t.Tralbum_Artist + "-" + t.Title)
 }
 
 func (t Tralbum) Date() time.Time {

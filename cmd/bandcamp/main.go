@@ -7,15 +7,16 @@ import (
 )
 
 func main() {
+   var arg argument
    // a
    var address string
    flag.StringVar(&address, "a", "", "address")
+   // e
+   flag.StringVar(&arg.ext, "e", ".mp3", "extension")
    // i
-   var info bool
-   flag.BoolVar(&info, "i", false, "info only")
+   flag.BoolVar(&arg.info, "i", false, "information only")
    // s
-   var sleep time.Duration
-   flag.DurationVar(&sleep, "s", time.Second, "sleep")
+   flag.DurationVar(&arg.sleep, "s", time.Second, "sleep")
    // v
    var verbose bool
    flag.BoolVar(&verbose, "v", false, "verbose")
@@ -30,12 +31,12 @@ func main() {
       }
       switch item.Item_Type {
       case "t", "a":
-         err := doTralbum(item, info, sleep)
+         err := arg.tralbum(item)
          if err != nil {
             panic(err)
          }
       case "i":
-         err := doBand(item, info, sleep)
+         err := arg.band(item)
          if err != nil {
             panic(err)
          }

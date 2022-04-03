@@ -20,30 +20,28 @@ func doManifest(guid int64, bandwidth int, info bool) error {
       return err
    }
    defer res.Body.Close()
-   mas, err := hls.NewMaster(res.Request.URL, res.Body)
+   master, err := hls.NewMaster(res.Request.URL, res.Body)
    if err != nil {
       return err
    }
-   if info {
-      for _, str := range mas.Stream {
-         fmt.Println(str)
-      }
-   } else {
-      video, err := nbc.NewVideo(guid)
-      if err != nil {
-         return err
-      }
-      sort.Sort(hls.Bandwidth{mas, bandwidth})
-      if err := download(video, mas.Stream[0]); err != nil {
-         return err
+   sort.Sort(hls.Bandwidth{master, bandwidth})
+   for _, stream := range master.Stream {
+      if info {
+         fmt.Println(stream)
+      } else {
+         video, err := nbc.NewVideo(guid)
+         if err != nil {
+            return err
+         }
+         return download(stream, video)
       }
    }
    return nil
 }
 
-func download(video *nbc.Video, str hls.Stream) error {
-   fmt.Println("GET", str.URI)
-   res, err := http.Get(str.URI.String())
+func download(stream hls.Stream, video *nbc.Video) error {
+   fmt.Println("GET", stream.URI)
+   res, err := http.Get(stream.URI.String())
    if err != nil {
       return err
    }
@@ -57,7 +55,6 @@ func download(video *nbc.Video, str hls.Stream) error {
       return err
    }
    defer file.Close()
-   fmt.Println(str)
    for i, info := range seg.Info {
       fmt.Print(seg.Progress(i))
       res, err := http.Get(info.URI.String())
