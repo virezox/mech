@@ -9,8 +9,8 @@ import (
 var guids = []string{
    // paramountplus.com/movies/building-star-trek/wQH9yE_y_Dt4ekDYm3yelhhY2KXvOra_
    "wQH9yE_y_Dt4ekDYm3yelhhY2KXvOra_",
-   // paramountplus.com/shows/aeon-flux/video/IBmGAIrEofp2vQNvSEvO5MavtZy5GOAy/aeon-flux-isthmus-crypticus
-   "IBmGAIrEofp2vQNvSEvO5MavtZy5GOAy",
+   // paramountplus.com/shows/melrose_place/video/622520382/melrose-place-pilot
+   "622520382",
 }
 
 func TestParamount(t *testing.T) {

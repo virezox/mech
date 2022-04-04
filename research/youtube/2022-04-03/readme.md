@@ -8,3 +8,4 @@ youtube language:go pushed:>2021-04-04 stars:>1
 
 - https://github.com/kkdai/youtube/issues/232
 - https://github.com/marethyu/gotube/issues/21
+- https://github.com/paij0se/ymp3cli/issues/10
