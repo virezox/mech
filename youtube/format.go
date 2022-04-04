@@ -53,11 +53,11 @@ const partLength = 10_000_000
 // 7WTEB7Qbt4U
 // you get this:
 //
-// itag | bitrate | averageBitrate | contentLength
-// -----|---------|----------------|--------------
-// 136  | 1038025 | 286687         | 6891870
-// 247  | 1192816 | 513601         | 12346788
-// 398  | 1117347 | 349310         | 8397292
+//  itag | bitrate | averageBitrate | contentLength
+//  -----|---------|----------------|--------------
+//  136  | 1038025 | 286687         | 6891870
+//  247  | 1192816 | 513601         | 12346788
+//  398  | 1117347 | 349310         | 8397292
 type Format struct {
    AudioQuality string
    AverageBitrate int
