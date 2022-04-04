@@ -96,7 +96,7 @@ func NewWidgeter(addr string) (Widgeter, error) {
       if err != nil {
          return nil, err
       }
-      return nova.Episode().Asset(), nil
+      return nova.Asset(), nil
    case hasPrefix("/widget/"):
       return NewWidget(parse)
    case hasPrefix("/video/"):
