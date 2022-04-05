@@ -1,6 +1,96 @@
-# Throttle
+# Missing clients
 
-- <https://github.com/ytdl-org/youtube-dl/blob/17d295a1/youtube_dl/extractor/youtube.py#L1528-L1540>
-- https://github.com/kkdai/youtube/blob/master/decipher.go
-- https://github.com/tombulled/innertube/blob/main/innertube/infos.py
-- https://github.com/zerodytrash/YouTube-Internal-Clients/issues/1
+Thanks for the great work on this research. However as people are starting to
+adopt the `TVHTML5_SIMPLY_EMBEDDED_PLAYER`, I wanted to look at this project a
+little closer. The reason is because, as useful as the
+`TVHTML5_SIMPLY_EMBEDDED_PLAYER` client is, it has the big drawback of
+throttling connections, unlike `ANDROID` and similar. So I am wondering if any
+other clients avoid the age restriction. To that end, I pulled the current APK,
+and I found the full list of clients.
+
+## Done
+
+~~~
+200 OK {ANDROID 17.11.34}
+~~~
+
+## To do
+
+~~~
+ANDROID_CASUAL(54),
+ANDROID_CREATOR(14),
+ANDROID_EMBEDDED_PLAYER(55),
+ANDROID_GAMING(24),
+ANDROID_INSTANT(20),
+ANDROID_KIDS(18),
+ANDROID_LITE(38),
+ANDROID_MUSIC(21),
+ANDROID_PRODUCER(91),
+ANDROID_SPORTS(36),
+ANDROID_TESTSUITE(30),
+ANDROID_TV(23),
+ANDROID_TV_KIDS(74),
+ANDROID_UNPLUGGED(29),
+ANDROID_VR(28),
+ANDROID_WITNESS(34),
+CLIENTX(12),
+GOOGLE_ASSISTANT(84),
+GOOGLE_MEDIA_ACTIONS(89);
+IOS(5),
+IOS_CREATOR(15),
+IOS_DIRECTOR(40),
+IOS_EMBEDDED_PLAYER(39),
+IOS_GAMING(25),
+IOS_INSTANT(17),
+IOS_KIDS(19),
+IOS_LIVE_CREATION_EXTENSION(64),
+IOS_MESSAGES_EXTENSION(66),
+IOS_MUSIC(26),
+IOS_PILOT_STUDIO(53),
+IOS_PRODUCER(92),
+IOS_SPORTS(37),
+IOS_TABLOID(22),
+IOS_UNPLUGGED(33),
+IOS_UPTIME(68),
+IOS_WITNESS(35),
+MUSIC_INTEGRATIONS(77),
+MWEB(2),
+MWEB_TIER_2(27),
+TVANDROID(10),
+TVAPPLE(16),
+TVHTML5(7),
+TVHTML5_AUDIO(57),
+TVHTML5_CAST(43),
+TVHTML5_FOR_KIDS(93),
+TVHTML5_KIDS(59),
+TVHTML5_SIMPLY(75),
+TVHTML5_SIMPLY_EMBEDDED_PLAYER(85),
+TVHTML5_UNPLUGGED(65),
+TVHTML5_VR(72),
+TVHTML5_YONGLE(80),
+TVLITE(8),
+TV_UNPLUGGED_ANDROID(63),
+TV_UNPLUGGED_CAST(58),
+UNKNOWN_INTERFACE(0),
+WEB(1),
+WEB_CREATOR(62),
+WEB_EMBEDDED_PLAYER(56),
+WEB_EXPERIMENTS(42),
+WEB_GAMING(32),
+WEB_HEROES(60),
+WEB_INTERNAL_ANALYTICS(87),
+WEB_KIDS(76),
+WEB_LIVE_STREAMING(73),
+WEB_MUSIC(61),
+WEB_MUSIC_ANALYTICS(31),
+WEB_MUSIC_EMBEDDED_PLAYER(86),
+WEB_PARENT_TOOLS(88),
+WEB_PHONE_VERIFICATION(90),
+WEB_REMIX(67),
+WEB_UNPLUGGED(41),
+WEB_UNPLUGGED_ONBOARDING(69),
+WEB_UNPLUGGED_OPS(70),
+WEB_UNPLUGGED_PUBLIC(71),
+XBOX(11),
+XBOXONEGUIDE(13),
+~~~
