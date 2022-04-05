@@ -1,4 +1,4 @@
-package main
+package youtube
 
 import (
    "fmt"
@@ -13,7 +13,7 @@ type token struct {
    Access_Token string
 }
 
-func main() {
+func WEB_CREATOR() {
    cache, err := os.UserCacheDir()
    if err != nil {
       panic(err)

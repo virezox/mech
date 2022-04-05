@@ -1,4 +1,4 @@
-package main
+package youtube
 
 import (
    "fmt"
@@ -7,7 +7,7 @@ import (
    "strings"
 )
 
-func main() {
+func WEB_EMBEDDED_PLAYER() {
    res, err := http.Get("https://www.youtube.com/embed/MIchMEqVwvg")
    if err != nil {
       panic(err)

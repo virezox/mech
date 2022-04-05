@@ -1,4 +1,4 @@
-package main
+package youtube
 
 import (
    "fmt"
@@ -7,7 +7,7 @@ import (
    "strings"
 )
 
-func main() {
+func WEB_KIDS() {
    req, err := http.NewRequest("GET", "https://www.youtubekids.com", nil)
    if err != nil {
       panic(err)

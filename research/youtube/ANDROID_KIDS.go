@@ -1,4 +1,4 @@
-package main
+package youtube
 
 import (
    "fmt"
@@ -6,7 +6,7 @@ import (
    gp "github.com/89z/googleplay"
 )
 
-func main() {
+func ANDROID_KIDS() {
    cache, err := os.UserCacheDir()
    if err != nil {
       panic(err)

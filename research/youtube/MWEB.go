@@ -1,4 +1,4 @@
-package main
+package youtube
 
 import (
    "fmt"
@@ -7,7 +7,7 @@ import (
    "strings"
 )
 
-func main() {
+func MWEB() {
    req, err := http.NewRequest("GET", "https://m.youtube.com", nil)
    if err != nil {
       panic(err)

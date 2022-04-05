@@ -1,4 +1,4 @@
-package main
+package youtube
 
 import (
    "fmt"
@@ -7,7 +7,7 @@ import (
    "strings"
 )
 
-func main() {
+func WEB_REMIX() {
    req, err := http.NewRequest("GET", "https://music.youtube.com", nil)
    if err != nil {
       panic(err)

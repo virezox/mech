@@ -1,4 +1,4 @@
-package main
+package youtube
 
 import (
    "fmt"
@@ -7,7 +7,7 @@ import (
    "strings"
 )
 
-func main() {
+func TVHTML5() {
    req, err := http.NewRequest("GET", "https://www.youtube.com/tv", nil)
    if err != nil {
       panic(err)
