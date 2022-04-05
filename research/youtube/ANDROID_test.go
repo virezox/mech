@@ -1,41 +1,108 @@
 package youtube
 
 import (
-   "bytes"
-   "encoding/json"
    "fmt"
-   "net/http"
    "os"
    "testing"
    gp "github.com/89z/googleplay"
 )
 
 func TestAndroid(t *testing.T) {
-   var (
-      err error
-      play player
-   )
-   play.VideoID = "eZHsmb4ezEk"
-   play.Context.Client.ClientName = "ANDROID"
-   play.Context.Client.ClientVersion, err = appVersion(
-      "com.google.android.youtube",
-   )
+   const name = "ANDROID"
+   version, err := appVersion("com.google.android.youtube")
    if err != nil {
       t.Fatal(err)
    }
-   buf := new(bytes.Buffer)
-   json.NewEncoder(buf).Encode(play)
-   req, err := http.NewRequest(
-      "POST", "https://www.youtube.com/youtubei/v1/player", buf,
-   )
-   if err != nil {
-      t.Fatal(err)
-   }
-   req.Header.Set("X-Goog-Api-Key", "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8")
-   res, err := new(http.Transport).RoundTrip(req)
+   res, err := post(name, version)
    if err != nil {
       t.Fatal(err)
    }
    defer res.Body.Close()
-   fmt.Println(res.Status, play.Context.Client)
+   fmt.Println(res.Status, name,  version)
+}
+
+func TestAndroidCreator(t *testing.T) {
+   const name = "ANDROID_CREATOR"
+   version, err := appVersion("com.google.android.apps.youtube.creator")
+   if err != nil {
+      t.Fatal(err)
+   }
+   res, err := post(name, version)
+   if err != nil {
+      t.Fatal(err)
+   }
+   defer res.Body.Close()
+   fmt.Println(res.Status, name,  version)
+}
+
+func ANDROID_EMBEDDED_PLAYER() {
+   cache, err := os.UserCacheDir()
+   if err != nil {
+      panic(err)
+   }
+   tok, err := gp.OpenToken(cache, "googleplay/token.json")
+   if err != nil {
+      panic(err)
+   }
+   dev, err := gp.OpenDevice(cache, "googleplay/device.json")
+   if err != nil {
+      panic(err)
+   }
+   head, err := tok.Header(dev)
+   if err != nil {
+      panic(err)
+   }
+   det, err := head.Details("com.google.android.youtube")
+   if err != nil {
+      panic(err)
+   }
+   fmt.Println(det)
+}
+
+func ANDROID_KIDS() {
+   cache, err := os.UserCacheDir()
+   if err != nil {
+      panic(err)
+   }
+   tok, err := gp.OpenToken(cache, "googleplay/token.json")
+   if err != nil {
+      panic(err)
+   }
+   dev, err := gp.OpenDevice(cache, "googleplay/device.json")
+   if err != nil {
+      panic(err)
+   }
+   head, err := tok.Header(dev)
+   if err != nil {
+      panic(err)
+   }
+   det, err := head.Details("com.google.android.apps.youtube.kids")
+   if err != nil {
+      panic(err)
+   }
+   fmt.Println(det)
+}
+
+func ANDROID_MUSIC() {
+   cache, err := os.UserCacheDir()
+   if err != nil {
+      panic(err)
+   }
+   tok, err := gp.OpenToken(cache, "googleplay/token.json")
+   if err != nil {
+      panic(err)
+   }
+   dev, err := gp.OpenDevice(cache, "googleplay/device.json")
+   if err != nil {
+      panic(err)
+   }
+   head, err := tok.Header(dev)
+   if err != nil {
+      panic(err)
+   }
+   det, err := head.Details("com.google.android.apps.youtube.music")
+   if err != nil {
+      panic(err)
+   }
+   fmt.Println(det)
 }

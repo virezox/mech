@@ -1,19 +1,38 @@
 package youtube
 
 import (
+   "bytes"
+   "encoding/json"
+   "github.com/89z/format"
+   "net/http"
    "os"
    gp "github.com/89z/googleplay"
 )
 
-type player struct {
-   VideoID string `json:"videoId"`
-   Context struct {
-      Client struct {
-         ClientName string `json:"clientName"`
-         ClientVersion string `json:"clientVersion"`
-      } `json:"client"`
-   } `json:"context"`
+func post(name, version string) (*http.Response, error) {
+   var (
+      err error
+      play player
+   )
+   play.VideoID = "eZHsmb4ezEk"
+   play.Context.Client.ClientName = name
+   play.Context.Client.ClientVersion = version
+   buf := new(bytes.Buffer)
+   if err := json.NewEncoder(buf).Encode(play); err != nil {
+      return nil, err
+   }
+   req, err := http.NewRequest(
+      "POST", "https://www.youtube.com/youtubei/v1/player", buf,
+   )
+   if err != nil {
+      return nil, err
+   }
+   req.Header.Set("X-Goog-Api-Key", "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8")
+   logLevel.Dump(req)
+   return new(http.Transport).RoundTrip(req)
 }
+
+var logLevel format.LogLevel
 
 func appVersion(app string) (string, error) {
    cache, err := os.UserCacheDir()
@@ -37,4 +56,14 @@ func appVersion(app string) (string, error) {
       return "", err
    }
    return string(det.VersionString), nil
+}
+
+type player struct {
+   VideoID string `json:"videoId"`
+   Context struct {
+      Client struct {
+         ClientName string `json:"clientName"`
+         ClientVersion string `json:"clientVersion"`
+      } `json:"client"`
+   } `json:"context"`
 }
