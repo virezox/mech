@@ -10,13 +10,13 @@ import (
    stdjson "encoding/json"
 )
 
-type token struct {
-   Access_Token string
-}
+const (
+   phone = "googleplay/phone.json"
+   tablet = "googleplay/tablet.json"
+   tv = "googleplay/tv.json"
+)
 
-var logLevel format.LogLevel
-
-func appVersion(app string, tv bool) (string, error) {
+func appVersion(app, elem string) (string, error) {
    cache, err := os.UserCacheDir()
    if err != nil {
       return "", err
@@ -24,10 +24,6 @@ func appVersion(app string, tv bool) (string, error) {
    token, err := googleplay.OpenToken(cache, "googleplay/token.json")
    if err != nil {
       return "", err
-   }
-   elem := "googleplay/phone.json"
-   if tv {
-      elem = "googleplay/tv.json"
    }
    phone, err := googleplay.OpenDevice(cache, elem)
    if err != nil {
@@ -64,6 +60,12 @@ func post(name, version string) (*http.Response, error) {
    logLevel.Dump(req)
    return new(http.Transport).RoundTrip(req)
 }
+
+type token struct {
+   Access_Token string
+}
+
+var logLevel format.LogLevel
 
 type player struct {
    VideoID string `json:"videoId"`
