@@ -5,9 +5,12 @@ import (
    "testing"
 )
 
-func TestMweb(t *testing.T) {
-   const name = "MWEB"
-   version, err := newVersion("https://m.youtube.com", "iPad")
+func TestTvhtml5(t *testing.T) {
+   const name = "TVHTML5"
+   version, err := newVersion(
+      "https://www.youtube.com/tv",
+      "Mozilla/5.0 (ChromiumStylePlatform) Cobalt/Version",
+   )
    if err != nil {
       t.Fatal(err)
    }

@@ -2,12 +2,17 @@ package youtube
 
 import (
    "bytes"
-   "encoding/json"
    "github.com/89z/format"
+   "github.com/89z/format/json"
+   "github.com/89z/googleplay"
    "net/http"
    "os"
-   gp "github.com/89z/googleplay"
+   stdjson "encoding/json"
 )
+
+type token struct {
+   Access_Token string
+}
 
 var logLevel format.LogLevel
 
@@ -16,11 +21,11 @@ func appVersion(app string) (string, error) {
    if err != nil {
       return "", err
    }
-   token, err := gp.OpenToken(cache, "googleplay/token.json")
+   token, err := googleplay.OpenToken(cache, "googleplay/token.json")
    if err != nil {
       return "", err
    }
-   device, err := gp.OpenDevice(cache, "googleplay/device.json")
+   device, err := googleplay.OpenDevice(cache, "googleplay/device.json")
    if err != nil {
       return "", err
    }
@@ -41,7 +46,7 @@ func post(name, version string) (*http.Response, error) {
    play.Context.Client.ClientName = name
    play.Context.Client.ClientVersion = version
    buf := new(bytes.Buffer)
-   if err := json.NewEncoder(buf).Encode(play); err != nil {
+   if err := stdjson.NewEncoder(buf).Encode(play); err != nil {
       return nil, err
    }
    req, err := http.NewRequest(
@@ -64,4 +69,28 @@ type player struct {
          ClientVersion string `json:"clientVersion"`
       } `json:"client"`
    } `json:"context"`
+}
+
+func newVersion(addr, agent string) (string, error) {
+   req, err := http.NewRequest("GET", addr, nil)
+   if err != nil {
+      return "", err
+   }
+   if agent != "" {
+      req.Header.Set("User-Agent", agent)
+   }
+   logLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return "", err
+   }
+   defer res.Body.Close()
+   sep := []byte(`"client":`)
+   var client struct {
+      ClientVersion string
+   }
+   if err := json.Decode(res.Body, sep, &client); err != nil {
+      return "", err
+   }
+   return client.ClientVersion, nil
 }
