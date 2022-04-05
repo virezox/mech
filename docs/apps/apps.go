@@ -40,11 +40,11 @@ func main() {
    if err != nil {
       panic(err)
    }
-   device, err := googleplay.OpenDevice(cache, "/googleplay/device.json")
+   phone, err := googleplay.OpenDevice(cache, "/googleplay/phone.json")
    if err != nil {
       panic(err)
    }
-   header, err := token.Header(device)
+   header, err := token.Header(phone)
    if err != nil {
       panic(err)
    }

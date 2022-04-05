@@ -16,7 +16,7 @@ type token struct {
 
 var logLevel format.LogLevel
 
-func appVersion(app string) (string, error) {
+func appVersion(app string, tv bool) (string, error) {
    cache, err := os.UserCacheDir()
    if err != nil {
       return "", err
@@ -25,19 +25,23 @@ func appVersion(app string) (string, error) {
    if err != nil {
       return "", err
    }
-   device, err := googleplay.OpenDevice(cache, "googleplay/device.json")
+   elem := "googleplay/phone.json"
+   if tv {
+      elem = "googleplay/tv.json"
+   }
+   phone, err := googleplay.OpenDevice(cache, elem)
    if err != nil {
       return "", err
    }
-   head, err := token.Header(device)
+   head, err := token.Header(phone)
    if err != nil {
       return "", err
    }
-   det, err := head.Details(app)
+   detail, err := head.Details(app)
    if err != nil {
       return "", err
    }
-   return string(det.VersionString), nil
+   return string(detail.VersionString), nil
 }
 
 func post(name, version string) (*http.Response, error) {

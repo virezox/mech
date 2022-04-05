@@ -9,6 +9,20 @@ import (
    "testing"
 )
 
+func TestWeb(t *testing.T) {
+   const name = "WEB"
+   version, err := newVersion("https://www.youtube.com", "")
+   if err != nil {
+      t.Fatal(err)
+   }
+   res, err := post(name, version)
+   if err != nil {
+      t.Fatal(err)
+   }
+   defer res.Body.Close()
+   fmt.Println(res.Status, name, version)
+}
+
 func TestWebUnplugged(t *testing.T) {
    const name = "WEB_UNPLUGGED"
    version, err := newVersion("https://www.youtube.com/embed/MIchMEqVwvg", "")
@@ -40,20 +54,6 @@ func TestWebEmbeddedPlayer(t *testing.T) {
 func TestWebRemix(t *testing.T) {
    const name = "WEB_REMIX"
    version, err := newVersion("https://music.youtube.com", "Firefox/99")
-   if err != nil {
-      t.Fatal(err)
-   }
-   res, err := post(name, version)
-   if err != nil {
-      t.Fatal(err)
-   }
-   defer res.Body.Close()
-   fmt.Println(res.Status, name, version)
-}
-
-func TestWeb(t *testing.T) {
-   const name = "WEB"
-   version, err := newVersion("https://www.youtube.com", "")
    if err != nil {
       t.Fatal(err)
    }
