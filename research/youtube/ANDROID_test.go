@@ -11,12 +11,12 @@ func TestAndroid(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   res, err := post(name, version)
-   if err != nil {
+   if version != names[name] {
+      t.Fatal(name, version)
+   }
+   if err := post(name, version); err != nil {
       t.Fatal(err)
    }
-   defer res.Body.Close()
-   fmt.Println(res.Status, name, version)
 }
 
 func TestAndroidCreator(t *testing.T) {
@@ -25,12 +25,12 @@ func TestAndroidCreator(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   res, err := post(name, version)
-   if err != nil {
+   if version != names[name] {
+      t.Fatal(name, version)
+   }
+   if err := post(name, version); err != nil {
       t.Fatal(err)
    }
-   defer res.Body.Close()
-   fmt.Println(res.Status, name, version)
 }
 
 func TestAndroidEmbeddedPlayer(t *testing.T) {
@@ -39,12 +39,12 @@ func TestAndroidEmbeddedPlayer(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   res, err := post(name, version)
-   if err != nil {
+   if version != names[name] {
+      t.Fatal(name, version)
+   }
+   if err := post(name, version); err != nil {
       t.Fatal(err)
    }
-   defer res.Body.Close()
-   fmt.Println(res.Status, name, version)
 }
 
 func TestAndroidKids(t *testing.T) {
@@ -53,12 +53,12 @@ func TestAndroidKids(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   res, err := post(name, version)
-   if err != nil {
+   if version != names[name] {
+      t.Fatal(name, version)
+   }
+   if err := post(name, version); err != nil {
       t.Fatal(err)
    }
-   defer res.Body.Close()
-   fmt.Println(res.Status, name, version)
 }
 
 func TestAndroidLite(t *testing.T) {
@@ -67,12 +67,12 @@ func TestAndroidLite(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   res, err := post(name, version)
-   if err != nil {
+   if version != names[name] {
+      t.Fatal(name, version)
+   }
+   if err := post(name, version); err != nil {
       t.Fatal(err)
    }
-   defer res.Body.Close()
-   fmt.Println(res.Status, name, version)
 }
 
 func TestAndroidMusic(t *testing.T) {
@@ -81,25 +81,20 @@ func TestAndroidMusic(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   res, err := post(name, version)
-   if err != nil {
+   if version != names[name] {
+      t.Fatal(name, version)
+   }
+   if err := post(name, version); err != nil {
       t.Fatal(err)
    }
-   defer res.Body.Close()
-   fmt.Println(res.Status, name, version)
 }
 
 func TestAndroidTestsuite(t *testing.T) {
-   const (
-      name = "ANDROID_TESTSUITE"
-      version = "1.9"
-   )
-   res, err := post(name, version)
+   const name = "ANDROID_TESTSUITE"
+   err := post(name, names[name])
    if err != nil {
       t.Fatal(err)
    }
-   defer res.Body.Close()
-   fmt.Println(res.Status, name, version)
 }
 
 func TestAndroidTv(t *testing.T) {
@@ -108,12 +103,12 @@ func TestAndroidTv(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   res, err := post(name, version)
-   if err != nil {
+   if version != names[name] {
+      t.Fatal(name, version)
+   }
+   if err := post(name, version); err != nil {
       t.Fatal(err)
    }
-   defer res.Body.Close()
-   fmt.Println(res.Status, name, version)
 }
 
 func TestAndroidTvKids(t *testing.T) {
@@ -122,12 +117,12 @@ func TestAndroidTvKids(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   res, err := post(name, version)
-   if err != nil {
+   if version != names[name] {
+      t.Fatal(name, version)
+   }
+   if err := post(name, version); err != nil {
       t.Fatal(err)
    }
-   defer res.Body.Close()
-   fmt.Println(res.Status, name, version)
 }
 
 func TestAndroidUnplugged(t *testing.T) {
@@ -136,12 +131,12 @@ func TestAndroidUnplugged(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   res, err := post(name, version)
-   if err != nil {
+   if version != names[name] {
+      t.Fatal(name, version)
+   }
+   if err := post(name, version); err != nil {
       t.Fatal(err)
    }
-   defer res.Body.Close()
-   fmt.Println(res.Status, name, version)
 }
 
 func TestAndroidVr(t *testing.T) {
@@ -150,10 +145,10 @@ func TestAndroidVr(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   res, err := post(name, version)
-   if err != nil {
+   if version != names[name] {
+      t.Fatal(name, version)
+   }
+   if err := post(name, version); err != nil {
       t.Fatal(err)
    }
-   defer res.Body.Close()
-   fmt.Println(res.Status, name, version)
 }

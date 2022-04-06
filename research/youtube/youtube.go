@@ -10,7 +10,7 @@ import (
    stdjson "encoding/json"
 )
 
-var Names = map[string]string{
+var names = map[string]string{
    "ANDROID": "17.11.34",
    "ANDROID_CASUAL": "",
    "ANDROID_CREATOR": "22.11.100",
@@ -59,8 +59,8 @@ var Names = map[string]string{
    "TVHTML5_SIMPLY": "1.0",
    "TVHTML5_SIMPLY_EMBEDDED_PLAYER": "2.0",
    "TVHTML5_UNPLUGGED": "6.12.1",
-   "TVHTML5_VR": "",
-   "TVHTML5_YONGLE": "",
+   "TVHTML5_VR": "0.1",
+   "TVHTML5_YONGLE": "0.1",
    "TVLITE": "",
    "TV_UNPLUGGED_ANDROID": "1.13.02",
    "TV_UNPLUGGED_CAST": "",
@@ -117,25 +117,39 @@ func appVersion(app, elem string) (string, error) {
    return string(detail.VersionString), nil
 }
 
-func post(name, version string) (*http.Response, error) {
+func post(name, version string) error {
    var play player
    play.VideoID = "eZHsmb4ezEk"
    play.Context.Client.ClientName = name
    play.Context.Client.ClientVersion = version
    buf := new(bytes.Buffer)
    if err := stdjson.NewEncoder(buf).Encode(play); err != nil {
-      return nil, err
+      return err
    }
    req, err := http.NewRequest(
       "POST", "https://www.youtube.com/youtubei/v1/player", buf,
    )
    if err != nil {
-      return nil, err
+      return err
    }
    // AIzaSy
    req.Header.Set("X-Goog-Api-Key", "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8")
    logLevel.Dump(req)
-   return new(http.Transport).RoundTrip(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return errorString(res.Status)
+   }
+   return nil
+}
+
+type errorString string
+
+func (e errorString) Error() string {
+   return string(e)
 }
 
 type token struct {
