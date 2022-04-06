@@ -23,8 +23,21 @@ func TestWeb(t *testing.T) {
    fmt.Println(res.Status, name, version)
 }
 
-func TestWebUnplugged(t *testing.T) {
-   const name = "WEB_UNPLUGGED"
+func TestWebCreator(t *testing.T) {
+   const name = "WEB_CREATOR"
+   version, err := webCreator()
+   if err != nil {
+      t.Fatal(err)
+   }
+   res, err := post(name, version)
+   if err != nil {
+      t.Fatal(err)
+   }
+   defer res.Body.Close()
+   fmt.Println(res.Status, name, version)
+}
+func TestWebEmbeddedPlayer(t *testing.T) {
+   const name = "WEB_EMBEDDED_PLAYER"
    version, err := newVersion("https://www.youtube.com/embed/MIchMEqVwvg", "")
    if err != nil {
       t.Fatal(err)
@@ -37,9 +50,9 @@ func TestWebUnplugged(t *testing.T) {
    fmt.Println(res.Status, name, version)
 }
 
-func TestWebEmbeddedPlayer(t *testing.T) {
-   const name = "WEB_EMBEDDED_PLAYER"
-   version, err := newVersion("https://www.youtube.com/embed/MIchMEqVwvg", "")
+func TestWebKids(t *testing.T) {
+   const name = "WEB_KIDS"
+   version, err := newVersion("https://www.youtubekids.com", "Firefox/99")
    if err != nil {
       t.Fatal(err)
    }
@@ -65,9 +78,9 @@ func TestWebRemix(t *testing.T) {
    fmt.Println(res.Status, name, version)
 }
 
-func TestWebKids(t *testing.T) {
-   const name = "WEB_KIDS"
-   version, err := newVersion("https://www.youtubekids.com", "Firefox/99")
+func TestWebUnplugged(t *testing.T) {
+   const name = "WEB_UNPLUGGED"
+   version, err := newVersion("https://www.youtube.com/embed/MIchMEqVwvg", "")
    if err != nil {
       t.Fatal(err)
    }
@@ -107,18 +120,4 @@ func webCreator() (string, error) {
       return "", err
    }
    return client.ClientVersion, nil
-}
-
-func TestWebCreator(t *testing.T) {
-   const name = "WEB_CREATOR"
-   version, err := webCreator()
-   if err != nil {
-      t.Fatal(err)
-   }
-   res, err := post(name, version)
-   if err != nil {
-      t.Fatal(err)
-   }
-   defer res.Body.Close()
-   fmt.Println(res.Status, name, version)
 }

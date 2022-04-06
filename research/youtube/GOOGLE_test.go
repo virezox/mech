@@ -5,9 +5,9 @@ import (
    "testing"
 )
 
-func TestGoogleMedia(t *testing.T) {
+func TestGoogleAssistant(t *testing.T) {
    const (
-      name = "GOOGLE_MEDIA_ACTIONS"
+      name = "GOOGLE_ASSISTANT"
       version = "0.1"
    )
    res, err := post(name, version)
@@ -18,9 +18,9 @@ func TestGoogleMedia(t *testing.T) {
    fmt.Println(res.Status, name, version)
 }
 
-func TestGoogleAssistant(t *testing.T) {
+func TestGoogleMedia(t *testing.T) {
    const (
-      name = "GOOGLE_ASSISTANT"
+      name = "GOOGLE_MEDIA_ACTIONS"
       version = "0.1"
    )
    res, err := post(name, version)
