@@ -7,7 +7,21 @@ import (
 
 func TestTvUnplug(t *testing.T) {
    const name = "TVHTML5_UNPLUGGED"
-   version, err := appVersion("com.google.android.apps.youtube.mango", phone)
+   version, err := appVersion("com.google.android.apps.youtube.unplugged", phone)
+   if err != nil {
+      t.Fatal(err)
+   }
+   res, err := post(name, version)
+   if err != nil {
+      t.Fatal(err)
+   }
+   defer res.Body.Close()
+   fmt.Println(res.Status, name, version)
+}
+
+func TestAndroidUnplugged(t *testing.T) {
+   const name = "ANDROID_UNPLUGGED"
+   version, err := appVersion("com.google.android.apps.youtube.unplugged", phone)
    if err != nil {
       t.Fatal(err)
    }
@@ -79,20 +93,6 @@ func TestAndroidTestsuite(t *testing.T) {
       name = "ANDROID_TESTSUITE"
       version = "1.9"
    )
-   res, err := post(name, version)
-   if err != nil {
-      t.Fatal(err)
-   }
-   defer res.Body.Close()
-   fmt.Println(res.Status, name, version)
-}
-
-func TestAndroidUnplugged(t *testing.T) {
-   const name = "ANDROID_UNPLUGGED"
-   version, err := appVersion("com.google.android.apps.youtube.unplugged", phone)
-   if err != nil {
-      t.Fatal(err)
-   }
    res, err := post(name, version)
    if err != nil {
       t.Fatal(err)
