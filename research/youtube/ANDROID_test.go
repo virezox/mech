@@ -3,23 +3,34 @@ package youtube
 import (
    "fmt"
    "testing"
-   "time"
 )
 
-func TestMango(t *testing.T) {
+func TestTvUnplug(t *testing.T) {
+   const name = "TVHTML5_UNPLUGGED"
    version, err := appVersion("com.google.android.apps.youtube.mango", phone)
    if err != nil {
       t.Fatal(err)
    }
-   for _, name := range names {
-      res, err := post(name, version)
-      if err != nil {
-         t.Fatal(err)
-      }
-      defer res.Body.Close()
-      fmt.Println(res.Status, name, version)
-      time.Sleep(time.Second)
+   res, err := post(name, version)
+   if err != nil {
+      t.Fatal(err)
    }
+   defer res.Body.Close()
+   fmt.Println(res.Status, name, version)
+}
+
+func TestAndroidLite(t *testing.T) {
+   const name = "ANDROID_LITE"
+   version, err := appVersion("com.google.android.apps.youtube.mango", phone)
+   if err != nil {
+      t.Fatal(err)
+   }
+   res, err := post(name, version)
+   if err != nil {
+      t.Fatal(err)
+   }
+   defer res.Body.Close()
+   fmt.Println(res.Status, name, version)
 }
 
 func TestAndroid(t *testing.T) {
@@ -95,20 +106,6 @@ func TestAndroidCast(t *testing.T) {
    version, err := appVersion(
       "com.google.android.apps.youtube.music.pwa", tablet,
    )
-   if err != nil {
-      t.Fatal(err)
-   }
-   res, err := post(name, version)
-   if err != nil {
-      t.Fatal(err)
-   }
-   defer res.Body.Close()
-   fmt.Println(res.Status, name, version)
-}
-
-func TestAndroidLite(t *testing.T) {
-   const name = "ANDROID_LITE"
-   version, err := appVersion("com.google.android.youtube.tvmusic", tv)
    if err != nil {
       t.Fatal(err)
    }
