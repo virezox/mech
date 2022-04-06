@@ -4,16 +4,6 @@ import (
    "testing"
 )
 
-func TestPost(t *testing.T) {
-   for _, name := range names {
-      err := post(name, names[name])
-      if err != nil {
-         t.Fatal(err)
-      }
-      time.Sleep(time.Second)
-   }
-}
-
 func TestAndroid(t *testing.T) {
    const name = "ANDROID"
    version, err := appVersion("com.google.android.youtube", phone)

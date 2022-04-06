@@ -28,9 +28,6 @@ func TestWebEmbeddedPlayer(t *testing.T) {
    if version != names[name] {
       t.Fatal(name, version)
    }
-   if err := post(name, version); err != nil {
-      t.Fatal(err)
-   }
 }
 
 func TestWebKids(t *testing.T) {
@@ -41,9 +38,6 @@ func TestWebKids(t *testing.T) {
    }
    if version != names[name] {
       t.Fatal(name, version)
-   }
-   if err := post(name, version); err != nil {
-      t.Fatal(err)
    }
 }
 
@@ -56,9 +50,6 @@ func TestWebRemix(t *testing.T) {
    if version != names[name] {
       t.Fatal(name, version)
    }
-   if err := post(name, version); err != nil {
-      t.Fatal(err)
-   }
 }
 
 func TestWebUnplugged(t *testing.T) {
@@ -69,9 +60,6 @@ func TestWebUnplugged(t *testing.T) {
    }
    if version != names[name] {
       t.Fatal(name, version)
-   }
-   if err := post(name, version); err != nil {
-      t.Fatal(err)
    }
 }
 
@@ -104,6 +92,6 @@ func TestWebCreator(t *testing.T) {
       t.Fatal(err)
    }
    if client.ClientVersion != names[name] {
-      t.Fatal(name, version)
+      t.Fatal(name, client.ClientVersion)
    }
 }

@@ -2,6 +2,7 @@ package youtube
 
 import (
    "testing"
+   "time"
 )
 
 func TestMweb(t *testing.T) {
@@ -12,5 +13,17 @@ func TestMweb(t *testing.T) {
    }
    if version != names[name] {
       t.Fatal(name, version)
+   }
+}
+
+func TestPost(t *testing.T) {
+   for name, version := range names {
+      if version != "" {
+         err := post(name, version)
+         if err != nil {
+            t.Fatal(err)
+         }
+         time.Sleep(time.Second)
+      }
    }
 }
