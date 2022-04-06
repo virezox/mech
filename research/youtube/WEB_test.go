@@ -17,23 +17,6 @@ func TestWeb(t *testing.T) {
    if version != names[name] {
       t.Fatal(name, version)
    }
-   if err := post(name, version); err != nil {
-      t.Fatal(err)
-   }
-}
-
-func TestWebCreator(t *testing.T) {
-   const name = "WEB_CREATOR"
-   version, err := webCreator()
-   if err != nil {
-      t.Fatal(err)
-   }
-   if version != names[name] {
-      t.Fatal(name, version)
-   }
-   if err := post(name, version); err != nil {
-      t.Fatal(err)
-   }
 }
 
 func TestWebEmbeddedPlayer(t *testing.T) {
@@ -92,24 +75,25 @@ func TestWebUnplugged(t *testing.T) {
    }
 }
 
-func webCreator() (string, error) {
+func TestWebCreator(t *testing.T) {
+   const name = "WEB_CREATOR"
    cache, err := os.UserCacheDir()
    if err != nil {
-      return "", err
+      t.Fatal(err)
    }
    tok, err := format.Open[token](cache, "mech/youtube.json")
    if err != nil {
-      return "", err
+      t.Fatal(err)
    }
    req, err := http.NewRequest("GET", "https://studio.youtube.com", nil)
    if err != nil {
-      return "", err
+      t.Fatal(err)
    }
    req.URL.RawQuery = "approve_browser_access=true"
    req.Header.Set("Authorization", "Bearer " + tok.Access_Token)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
-      return "", err
+      t.Fatal(err)
    }
    defer res.Body.Close()
    sep := []byte(`"client":`)
@@ -117,7 +101,9 @@ func webCreator() (string, error) {
       ClientVersion string
    }
    if err := json.Decode(res.Body, sep, &client); err != nil {
-      return "", err
+      t.Fatal(err)
    }
-   return client.ClientVersion, nil
+   if client.ClientVersion != names[name] {
+      t.Fatal(name, version)
+   }
 }
