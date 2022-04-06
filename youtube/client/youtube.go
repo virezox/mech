@@ -4,9 +4,7 @@ import (
    "bytes"
    "github.com/89z/format"
    "github.com/89z/format/json"
-   "github.com/89z/googleplay"
    "net/http"
-   "os"
    stdjson "encoding/json"
 )
 
@@ -24,12 +22,23 @@ var names = map[string]string{
    "ANDROID_VR": "1.28.63",
    "GOOGLE_ASSISTANT": "0.1",
    "GOOGLE_MEDIA_ACTIONS": "0.1",
+   "IOS": "17.13.3",
+   "IOS_CREATOR": "22.12.100",
+   "IOS_EMBEDDED_PLAYER": "2.0",
+   "IOS_KIDS": "7.12.3",
+   "IOS_LIVE_CREATION_EXTENSION": "17.11.34",
+   "IOS_MESSAGES_EXTENSION": "17.11.34",
+   "IOS_MUSIC": "5.01",
+   "IOS_PRODUCER": "0.1",
+   "IOS_UNPLUGGED": "6.13",
+   "IOS_UPTIME": "1.0",
    "MUSIC_INTEGRATIONS": "0.1",
    "MWEB": "2.20220405.01.00",
    "MWEB_TIER_2": "9.20220325",
    "TVANDROID": "1.0",
    "TVAPPLE": "1.0",
    "TVHTML5": "7.20220404.09.00",
+   "TVHTML5_AUDIO": "2.0",
    "TVHTML5_CAST": "1.1.426206631",
    "TVHTML5_FOR_KIDS": "7.20220325",
    "TVHTML5_KIDS": "3.20220325",
@@ -58,47 +67,6 @@ var names = map[string]string{
    "WEB_UNPLUGGED_OPS": "0.1",
    "WEB_UNPLUGGED_PUBLIC": "0.1",
    "XBOXONEGUIDE": "1.0",
-   "TVHTML5_AUDIO": "2.0",
-   "IOS": "17.13.3",
-   "IOS_CREATOR": "22.12.100",
-   "IOS_EMBEDDED_PLAYER": "2.0",
-   "IOS_KIDS": "7.12.3",
-   "IOS_LIVE_CREATION_EXTENSION": "17.11.34",
-   "IOS_MESSAGES_EXTENSION": "17.11.34",
-   "IOS_MUSIC": "5.01",
-   "IOS_PRODUCER": "0.1",
-   "IOS_UNPLUGGED": "6.13",
-   "IOS_UPTIME": "1.0",
-}
-
-const (
-   phone = "googleplay/phone.json"
-   tablet = "googleplay/tablet.json"
-   tv = "googleplay/tv.json"
-)
-
-func appVersion(app, elem string) (string, error) {
-   cache, err := os.UserCacheDir()
-   if err != nil {
-      return "", err
-   }
-   token, err := googleplay.OpenToken(cache, "googleplay/token.json")
-   if err != nil {
-      return "", err
-   }
-   phone, err := googleplay.OpenDevice(cache, elem)
-   if err != nil {
-      return "", err
-   }
-   head, err := token.Header(phone)
-   if err != nil {
-      return "", err
-   }
-   detail, err := head.Details(app)
-   if err != nil {
-      return "", err
-   }
-   return string(detail.VersionString), nil
 }
 
 type playerRequest struct {
