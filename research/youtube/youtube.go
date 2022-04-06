@@ -10,7 +10,7 @@ import (
    stdjson "encoding/json"
 )
 
-var names = []string{
+var Names = []string{
    "ANDROID",
    "ANDROID_CASUAL",
    "ANDROID_CREATOR",
@@ -31,7 +31,6 @@ var names = []string{
    "CLIENTX",
    "GOOGLE_ASSISTANT",
    "GOOGLE_MEDIA_ACTIONS",
-   /*
    "IOS",
    "IOS_CREATOR",
    "IOS_DIRECTOR",
@@ -49,7 +48,6 @@ var names = []string{
    "IOS_UNPLUGGED",
    "IOS_UPTIME",
    "IOS_WITNESS",
-   */
    "MUSIC_INTEGRATIONS",
    "MWEB",
    "MWEB_TIER_2",

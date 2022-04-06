@@ -121,3 +121,16 @@ func TestIosUnplug(t *testing.T) {
    defer res.Body.Close()
    fmt.Println(res.Status, name, version)
 }
+
+func TestIosUptime(t *testing.T) {
+   const (
+      name = "IOS_UPTIME"
+      version = "1.0"
+   )
+   res, err := post(name, version)
+   if err != nil {
+      t.Fatal(err)
+   }
+   defer res.Body.Close()
+   fmt.Println(res.Status, name, version)
+}

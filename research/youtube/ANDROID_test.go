@@ -5,20 +5,6 @@ import (
    "testing"
 )
 
-func TestTvUnplug(t *testing.T) {
-   const name = "TVHTML5_UNPLUGGED"
-   version, err := appVersion("com.google.android.apps.youtube.unplugged", phone)
-   if err != nil {
-      t.Fatal(err)
-   }
-   res, err := post(name, version)
-   if err != nil {
-      t.Fatal(err)
-   }
-   defer res.Body.Close()
-   fmt.Println(res.Status, name, version)
-}
-
 func TestAndroidUnplugged(t *testing.T) {
    const name = "ANDROID_UNPLUGGED"
    version, err := appVersion("com.google.android.apps.youtube.unplugged", phone)
@@ -75,19 +61,6 @@ func TestAndroidTv(t *testing.T) {
    fmt.Println(res.Status, name, version)
 }
 
-func TestTvAndroid(t *testing.T) {
-   const (
-      name = "TVANDROID"
-      version = "1.0"
-   )
-   res, err := post(name, version)
-   if err != nil {
-      t.Fatal(err)
-   }
-   defer res.Body.Close()
-   fmt.Println(res.Status, name, version)
-}
-
 func TestAndroidTestsuite(t *testing.T) {
    const (
       name = "ANDROID_TESTSUITE"
@@ -101,39 +74,9 @@ func TestAndroidTestsuite(t *testing.T) {
    fmt.Println(res.Status, name, version)
 }
 
-func TestAndroidCast(t *testing.T) {
-   const name = "TVHTML5_CAST"
-   version, err := appVersion(
-      "com.google.android.apps.youtube.music.pwa", tablet,
-   )
-   if err != nil {
-      t.Fatal(err)
-   }
-   res, err := post(name, version)
-   if err != nil {
-      t.Fatal(err)
-   }
-   defer res.Body.Close()
-   fmt.Println(res.Status, name, version)
-}
-
 func TestAndroidTvKids(t *testing.T) {
    const name = "ANDROID_TV_KIDS"
    version, err := appVersion("com.google.android.youtube.tvkids", tv)
-   if err != nil {
-      t.Fatal(err)
-   }
-   res, err := post(name, version)
-   if err != nil {
-      t.Fatal(err)
-   }
-   defer res.Body.Close()
-   fmt.Println(res.Status, name, version)
-}
-
-func TestAndroidTvunplug(t *testing.T) {
-   const name = "TV_UNPLUGGED_ANDROID"
-   version, err := appVersion("com.google.android.youtube.tvunplugged", tv)
    if err != nil {
       t.Fatal(err)
    }
