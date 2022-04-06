@@ -3,7 +3,52 @@ package youtube
 import (
    "fmt"
    "testing"
+   "time"
 )
+
+func TestMango(t *testing.T) {
+   version, err := appVersion("com.google.android.apps.youtube.mango", phone)
+   if err != nil {
+      t.Fatal(err)
+   }
+   for _, name := range names {
+      res, err := post(name, version)
+      if err != nil {
+         t.Fatal(err)
+      }
+      defer res.Body.Close()
+      fmt.Println(res.Status, name, version)
+      time.Sleep(time.Second)
+   }
+}
+
+func TestAndroid(t *testing.T) {
+   const name = "ANDROID"
+   version, err := appVersion("com.google.android.youtube", phone)
+   if err != nil {
+      t.Fatal(err)
+   }
+   res, err := post(name, version)
+   if err != nil {
+      t.Fatal(err)
+   }
+   defer res.Body.Close()
+   fmt.Println(res.Status, name, version)
+}
+
+func TestAndroidTv(t *testing.T) {
+   const name = "ANDROID_TV"
+   version, err := appVersion("com.google.android.youtube.tv", tv)
+   if err != nil {
+      t.Fatal(err)
+   }
+   res, err := post(name, version)
+   if err != nil {
+      t.Fatal(err)
+   }
+   defer res.Body.Close()
+   fmt.Println(res.Status, name, version)
+}
 
 func TestTvAndroid(t *testing.T) {
    const (
@@ -75,20 +120,6 @@ func TestAndroidLite(t *testing.T) {
    fmt.Println(res.Status, name, version)
 }
 
-func TestAndroidTv(t *testing.T) {
-   const name = "ANDROID_TV"
-   version, err := appVersion("com.google.android.youtube.tv", tv)
-   if err != nil {
-      t.Fatal(err)
-   }
-   res, err := post(name, version)
-   if err != nil {
-      t.Fatal(err)
-   }
-   defer res.Body.Close()
-   fmt.Println(res.Status, name, version)
-}
-
 func TestAndroidTvKids(t *testing.T) {
    const name = "ANDROID_TV_KIDS"
    version, err := appVersion("com.google.android.youtube.tvkids", tv)
@@ -148,20 +179,6 @@ func TestAndroidKids(t *testing.T) {
 func TestAndroidMusic(t *testing.T) {
    const name = "ANDROID_MUSIC"
    version, err := appVersion("com.google.android.apps.youtube.music", phone)
-   if err != nil {
-      t.Fatal(err)
-   }
-   res, err := post(name, version)
-   if err != nil {
-      t.Fatal(err)
-   }
-   defer res.Body.Close()
-   fmt.Println(res.Status, name, version)
-}
-
-func TestAndroid(t *testing.T) {
-   const name = "ANDROID"
-   version, err := appVersion("com.google.android.youtube", phone)
    if err != nil {
       t.Fatal(err)
    }

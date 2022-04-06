@@ -39,41 +39,23 @@ ANDROID_GAMING not valid
 ## To do
 
 ~~~
-Title: YouTube Music for Chromebook
-com.google.android.apps.youtube.music.pwa
+200 OK ANDROID_LITE 3.25.54
+200 OK ANDROID_MUSIC 3.25.54
+200 OK ANDROID_UNPLUGGED 3.25.54
+200 OK TVHTML5_UNPLUGGED 3.25.54
+~~~
 
-YouTube Music (Android TV)
-com.google.android.youtube.tvmusic
+apps:
 
-YouTube Music
-Package: com.google.android.apps.youtube.music 
-
-com.google.android.youtube.tv
-Title: YouTube for Android TV
-
-Title: YouTube Kids for Android TV
-com.google.android.youtube.tvkids
-
-com.google.android.apps.youtube.vr
-Title: YouTube VR
-
-Title: YouTube TV: Live TV & more
-com.google.android.youtube.tvunplugged
-
-YouTube TV: Live TV & more
-YouTube TV: Live TV & more (Android TV)
-
-YouTube
-YouTube for Fire TV
-YouTube for Google TV
-YouTube for Google TV (Android TV)
-YouTube Gaming
+~~~
 YouTube Go
-YouTube Kids
-YouTube Kids for Fire TV
-YouTube Remote
-YouTube Studio
-YouTube TV for Fire TV
+Package: com.google.android.apps.youtube.mango
+
+YouTube for Google TV
+Package: com.google.android.youtube.googletv
+
+YouTube Gaming
+Package: com.google.android.apps.youtube.gaming
 ~~~
 
 clients:
