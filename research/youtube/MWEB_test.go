@@ -13,15 +13,4 @@ func TestMweb(t *testing.T) {
    if version != names[name] {
       t.Fatal(name, version)
    }
-   if err := post(name, version); err != nil {
-      t.Fatal(err)
-   }
-}
-
-func TestMwebTier(t *testing.T) {
-   const name = "MWEB_TIER_2"
-   err := post(name, names[name])
-   if err != nil {
-      t.Fatal(err)
-   }
 }
