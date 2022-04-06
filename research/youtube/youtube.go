@@ -12,47 +12,34 @@ import (
 
 var names = map[string]string{
    "ANDROID": "17.11.34",
-   "ANDROID_CASUAL": "",
    "ANDROID_CREATOR": "22.11.100",
    "ANDROID_EMBEDDED_PLAYER": "17.11.34",
-   "ANDROID_INSTANT": "",
    "ANDROID_KIDS": "7.10.3",
    "ANDROID_LITE": "3.25.54",
    "ANDROID_MUSIC": "4.70.50",
-   "ANDROID_PRODUCER": "",
-   "ANDROID_SPORTS": "",
    "ANDROID_TESTSUITE": "1.9",
    "ANDROID_TV": "2.16.032",
    "ANDROID_TV_KIDS": "1.15.03",
    "ANDROID_UNPLUGGED": "6.12.1",
    "ANDROID_VR": "1.28.63",
-   "ANDROID_WITNESS": "",
-   "CLIENTX": "",
    "GOOGLE_ASSISTANT": "0.1",
    "GOOGLE_MEDIA_ACTIONS": "0.1",
    "IOS": "17.11.34",
    "IOS_CREATOR": "22.11.100",
-   "IOS_DIRECTOR": "",
    "IOS_EMBEDDED_PLAYER": "2.0",
-   "IOS_INSTANT": "",
    "IOS_KIDS": "7.10.3",
    "IOS_LIVE_CREATION_EXTENSION": "17.11.34",
    "IOS_MESSAGES_EXTENSION": "17.11.34",
    "IOS_MUSIC": "4.70.50",
-   "IOS_PILOT_STUDIO": "",
    "IOS_PRODUCER": "0.1",
-   "IOS_SPORTS": "",
-   "IOS_TABLOID": "",
    "IOS_UNPLUGGED": "6.12.1",
    "IOS_UPTIME": "1.0",
-   "IOS_WITNESS": "",
    "MUSIC_INTEGRATIONS": "0.1",
    "MWEB": "2.20220405.01.00",
    "MWEB_TIER_2": "9.20220325",
    "TVANDROID": "1.0",
    "TVAPPLE": "1.0",
    "TVHTML5": "7.20220404.09.00",
-   "TVHTML5_AUDIO": "",
    "TVHTML5_CAST": "1.1.426206631",
    "TVHTML5_FOR_KIDS": "7.20220325",
    "TVHTML5_KIDS": "3.20220325",
@@ -64,7 +51,6 @@ var names = map[string]string{
    "TVLITE": "2",
    "TV_UNPLUGGED_ANDROID": "1.13.02",
    "TV_UNPLUGGED_CAST": "0.1",
-   "UNKNOWN_INTERFACE": "",
    "WEB": "2.20220405.00.00",
    "WEB_CREATOR": "1.20220405.02.00",
    "WEB_EMBEDDED_PLAYER": "1.20220403.00.00",
@@ -72,10 +58,8 @@ var names = map[string]string{
    "WEB_HEROES": "0.1",
    "WEB_INTERNAL_ANALYTICS": "0.1",
    "WEB_KIDS": "2.20220405.00.00",
-   "WEB_LIVE_STREAMING": "",
    "WEB_MUSIC": "1.0",
    "WEB_MUSIC_ANALYTICS": "0.2",
-   "WEB_MUSIC_EMBEDDED_PLAYER": "",
    "WEB_PARENT_TOOLS": "1.20220330",
    "WEB_PHONE_VERIFICATION": "1.0.0",
    "WEB_REMIX": "1.20220330.01.00",
@@ -83,8 +67,8 @@ var names = map[string]string{
    "WEB_UNPLUGGED_ONBOARDING": "0.1",
    "WEB_UNPLUGGED_OPS": "0.1",
    "WEB_UNPLUGGED_PUBLIC": "0.1",
-   "XBOX": "",
    "XBOXONEGUIDE": "1.0",
+   "TVHTML5_AUDIO": "2.0",
 }
 
 const (
@@ -117,33 +101,44 @@ func appVersion(app, elem string) (string, error) {
    return string(detail.VersionString), nil
 }
 
-func post(name, version string) error {
-   var play player
-   play.VideoID = "eZHsmb4ezEk"
-   play.Context.Client.ClientName = name
-   play.Context.Client.ClientVersion = version
+func newPlayer(name, version string) (*player, error) {
+   var body playerRequest
+   body.VideoID = "SkRSXFQerZs"
+   body.Context.Client.ClientName = name
+   body.Context.Client.ClientVersion = version
    buf := new(bytes.Buffer)
-   if err := stdjson.NewEncoder(buf).Encode(play); err != nil {
-      return err
+   if err := stdjson.NewEncoder(buf).Encode(body); err != nil {
+      return nil, err
    }
    req, err := http.NewRequest(
       "POST", "https://www.youtube.com/youtubei/v1/player", buf,
    )
    if err != nil {
-      return err
+      return nil, err
    }
    // AIzaSy
    req.Header.Set("X-Goog-Api-Key", "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8")
    logLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
-      return err
+      return nil, err
    }
    defer res.Body.Close()
    if res.StatusCode != http.StatusOK {
-      return errorString(res.Status)
+      return nil, errorString(res.Status)
    }
-   return nil
+   play := new(player)
+   if err := stdjson.NewDecoder(res.Body).Decode(play); err != nil {
+      return nil, err
+   }
+   return play, nil
+}
+
+type player struct {
+   PlayabilityStatus struct {
+      Status string
+      Reason string
+   }
 }
 
 type errorString string
@@ -158,7 +153,7 @@ type token struct {
 
 var logLevel format.LogLevel
 
-type player struct {
+type playerRequest struct {
    VideoID string `json:"videoId"`
    Context struct {
       Client struct {
