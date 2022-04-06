@@ -103,6 +103,19 @@ func TestTvSimply(t *testing.T) {
    fmt.Println(res.Status, name, version)
 }
 
+func TestTvSimplyEmbed(t *testing.T) {
+   const (
+      name = "TVHTML5_SIMPLY_EMBEDDED_PLAYER"
+      version = "2.0"
+   )
+   res, err := post(name, version)
+   if err != nil {
+      t.Fatal(err)
+   }
+   defer res.Body.Close()
+   fmt.Println(res.Status, name, version)
+}
+
 func TestTvUnplug(t *testing.T) {
    const name = "TVHTML5_UNPLUGGED"
    version, err := appVersion("com.google.android.apps.youtube.unplugged", phone)

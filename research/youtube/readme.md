@@ -9,9 +9,6 @@ other clients avoid the age restriction. To that end, I pulled the current APK,
 and I found the full list of clients.
 
 ~~~
-TVHTML5_SIMPLY_EMBEDDED_PLAYER(85),
-TVHTML5_SIMPLY_EMBEDDED_PLAYER;2.0
-
 TVHTML5_VR(72),
 TVHTML5_VR;0.1
 
