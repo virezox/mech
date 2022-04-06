@@ -9,9 +9,6 @@ other clients avoid the age restriction. To that end, I pulled the current APK,
 and I found the full list of clients.
 
 ~~~
-TVLITE(8),
-TVLITE;2
-
 TV_UNPLUGGED_CAST(58),
 TV_UNPLUGGED_CAST;0.1
 

@@ -4,6 +4,14 @@ import (
    "testing"
 )
 
+func TestTvLite(t *testing.T) {
+   const name = "TVLITE"
+   err := post(name, names[name])
+   if err != nil {
+      t.Fatal(err)
+   }
+}
+
 func TestTvAndroid(t *testing.T) {
    const name = "TVANDROID"
    err := post(name, names[name])

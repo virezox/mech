@@ -4,22 +4,6 @@ import (
    "testing"
 )
 
-func TestIos(t *testing.T) {
-   const name = "IOS"
-   err := post(name, names[name])
-   if err != nil {
-      t.Fatal(err)
-   }
-}
-
-func TestIosCreator(t *testing.T) {
-   const name = "IOS_CREATOR"
-   err := post(name, names[name])
-   if err != nil {
-      t.Fatal(err)
-   }
-}
-
 func TestIosEmbed(t *testing.T) {
    const name = "IOS_EMBEDDED_PLAYER"
    err := post(name, names[name])

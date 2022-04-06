@@ -1,7 +1,6 @@
 package youtube
 
 import (
-   "fmt"
    "github.com/89z/format"
    "github.com/89z/format/json"
    "net/http"
@@ -29,12 +28,12 @@ func TestWebCreator(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   res, err := post(name, version)
-   if err != nil {
+   if version != names[name] {
+      t.Fatal(name, version)
+   }
+   if err := post(name, version); err != nil {
       t.Fatal(err)
    }
-   defer res.Body.Close()
-   fmt.Println(res.Status, name, version)
 }
 
 func TestWebEmbeddedPlayer(t *testing.T) {
@@ -43,12 +42,12 @@ func TestWebEmbeddedPlayer(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   res, err := post(name, version)
-   if err != nil {
+   if version != names[name] {
+      t.Fatal(name, version)
+   }
+   if err := post(name, version); err != nil {
       t.Fatal(err)
    }
-   defer res.Body.Close()
-   fmt.Println(res.Status, name, version)
 }
 
 func TestWebKids(t *testing.T) {
@@ -57,12 +56,12 @@ func TestWebKids(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   res, err := post(name, version)
-   if err != nil {
+   if version != names[name] {
+      t.Fatal(name, version)
+   }
+   if err := post(name, version); err != nil {
       t.Fatal(err)
    }
-   defer res.Body.Close()
-   fmt.Println(res.Status, name, version)
 }
 
 func TestWebRemix(t *testing.T) {
@@ -71,12 +70,12 @@ func TestWebRemix(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   res, err := post(name, version)
-   if err != nil {
+   if version != names[name] {
+      t.Fatal(name, version)
+   }
+   if err := post(name, version); err != nil {
       t.Fatal(err)
    }
-   defer res.Body.Close()
-   fmt.Println(res.Status, name, version)
 }
 
 func TestWebUnplugged(t *testing.T) {
@@ -85,12 +84,12 @@ func TestWebUnplugged(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   res, err := post(name, version)
-   if err != nil {
+   if version != names[name] {
+      t.Fatal(name, version)
+   }
+   if err := post(name, version); err != nil {
       t.Fatal(err)
    }
-   defer res.Body.Close()
-   fmt.Println(res.Status, name, version)
 }
 
 func webCreator() (string, error) {

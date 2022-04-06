@@ -4,6 +4,16 @@ import (
    "testing"
 )
 
+func TestPost(t *testing.T) {
+   for _, name := range names {
+      err := post(name, names[name])
+      if err != nil {
+         t.Fatal(err)
+      }
+      time.Sleep(time.Second)
+   }
+}
+
 func TestAndroid(t *testing.T) {
    const name = "ANDROID"
    version, err := appVersion("com.google.android.youtube", phone)
@@ -12,9 +22,6 @@ func TestAndroid(t *testing.T) {
    }
    if version != names[name] {
       t.Fatal(name, version)
-   }
-   if err := post(name, version); err != nil {
-      t.Fatal(err)
    }
 }
 
@@ -27,9 +34,6 @@ func TestAndroidCreator(t *testing.T) {
    if version != names[name] {
       t.Fatal(name, version)
    }
-   if err := post(name, version); err != nil {
-      t.Fatal(err)
-   }
 }
 
 func TestAndroidEmbeddedPlayer(t *testing.T) {
@@ -40,9 +44,6 @@ func TestAndroidEmbeddedPlayer(t *testing.T) {
    }
    if version != names[name] {
       t.Fatal(name, version)
-   }
-   if err := post(name, version); err != nil {
-      t.Fatal(err)
    }
 }
 
@@ -55,9 +56,6 @@ func TestAndroidKids(t *testing.T) {
    if version != names[name] {
       t.Fatal(name, version)
    }
-   if err := post(name, version); err != nil {
-      t.Fatal(err)
-   }
 }
 
 func TestAndroidLite(t *testing.T) {
@@ -68,9 +66,6 @@ func TestAndroidLite(t *testing.T) {
    }
    if version != names[name] {
       t.Fatal(name, version)
-   }
-   if err := post(name, version); err != nil {
-      t.Fatal(err)
    }
 }
 
@@ -83,17 +78,6 @@ func TestAndroidMusic(t *testing.T) {
    if version != names[name] {
       t.Fatal(name, version)
    }
-   if err := post(name, version); err != nil {
-      t.Fatal(err)
-   }
-}
-
-func TestAndroidTestsuite(t *testing.T) {
-   const name = "ANDROID_TESTSUITE"
-   err := post(name, names[name])
-   if err != nil {
-      t.Fatal(err)
-   }
 }
 
 func TestAndroidTv(t *testing.T) {
@@ -104,9 +88,6 @@ func TestAndroidTv(t *testing.T) {
    }
    if version != names[name] {
       t.Fatal(name, version)
-   }
-   if err := post(name, version); err != nil {
-      t.Fatal(err)
    }
 }
 
@@ -119,9 +100,6 @@ func TestAndroidTvKids(t *testing.T) {
    if version != names[name] {
       t.Fatal(name, version)
    }
-   if err := post(name, version); err != nil {
-      t.Fatal(err)
-   }
 }
 
 func TestAndroidUnplugged(t *testing.T) {
@@ -133,9 +111,6 @@ func TestAndroidUnplugged(t *testing.T) {
    if version != names[name] {
       t.Fatal(name, version)
    }
-   if err := post(name, version); err != nil {
-      t.Fatal(err)
-   }
 }
 
 func TestAndroidVr(t *testing.T) {
@@ -146,8 +121,5 @@ func TestAndroidVr(t *testing.T) {
    }
    if version != names[name] {
       t.Fatal(name, version)
-   }
-   if err := post(name, version); err != nil {
-      t.Fatal(err)
    }
 }
