@@ -36,6 +36,7 @@ func TestWebCreator(t *testing.T) {
    defer res.Body.Close()
    fmt.Println(res.Status, name, version)
 }
+
 func TestWebEmbeddedPlayer(t *testing.T) {
    const name = "WEB_EMBEDDED_PLAYER"
    version, err := newVersion("https://www.youtube.com/embed/MIchMEqVwvg", "")

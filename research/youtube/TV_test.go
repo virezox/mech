@@ -18,6 +18,19 @@ func TestTvAndroid(t *testing.T) {
    fmt.Println(res.Status, name, version)
 }
 
+func TestTvApple(t *testing.T) {
+   const (
+      name = "TVAPPLE"
+      version = "1.0"
+   )
+   res, err := post(name, version)
+   if err != nil {
+      t.Fatal(err)
+   }
+   defer res.Body.Close()
+   fmt.Println(res.Status, name, version)
+}
+
 func TestTvhtml5(t *testing.T) {
    const name = "TVHTML5"
    version, err := newVersion(
@@ -43,6 +56,45 @@ func TestAndroidCast(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
+   res, err := post(name, version)
+   if err != nil {
+      t.Fatal(err)
+   }
+   defer res.Body.Close()
+   fmt.Println(res.Status, name, version)
+}
+
+func TestTvKids(t *testing.T) {
+   const (
+      name = "TVHTML5_KIDS"
+      version = "3.20220325"
+   )
+   res, err := post(name, version)
+   if err != nil {
+      t.Fatal(err)
+   }
+   defer res.Body.Close()
+   fmt.Println(res.Status, name, version)
+}
+
+func TestTvForKids(t *testing.T) {
+   const (
+      name = "TVHTML5_FOR_KIDS"
+      version = "7.20220325"
+   )
+   res, err := post(name, version)
+   if err != nil {
+      t.Fatal(err)
+   }
+   defer res.Body.Close()
+   fmt.Println(res.Status, name, version)
+}
+
+func TestTvSimply(t *testing.T) {
+   const (
+      name = "TVHTML5_SIMPLY"
+      version = "1.0"
+   )
    res, err := post(name, version)
    if err != nil {
       t.Fatal(err)
