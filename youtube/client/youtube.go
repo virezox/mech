@@ -24,16 +24,6 @@ var names = map[string]string{
    "ANDROID_VR": "1.28.63",
    "GOOGLE_ASSISTANT": "0.1",
    "GOOGLE_MEDIA_ACTIONS": "0.1",
-   "IOS": "17.11.34",
-   "IOS_CREATOR": "22.11.100",
-   "IOS_EMBEDDED_PLAYER": "2.0",
-   "IOS_KIDS": "7.10.3",
-   "IOS_LIVE_CREATION_EXTENSION": "17.11.34",
-   "IOS_MESSAGES_EXTENSION": "17.11.34",
-   "IOS_MUSIC": "4.70.50",
-   "IOS_PRODUCER": "0.1",
-   "IOS_UNPLUGGED": "6.12.1",
-   "IOS_UPTIME": "1.0",
    "MUSIC_INTEGRATIONS": "0.1",
    "MWEB": "2.20220405.01.00",
    "MWEB_TIER_2": "9.20220325",
@@ -69,6 +59,16 @@ var names = map[string]string{
    "WEB_UNPLUGGED_PUBLIC": "0.1",
    "XBOXONEGUIDE": "1.0",
    "TVHTML5_AUDIO": "2.0",
+   "IOS": "17.13.3",
+   "IOS_CREATOR": "22.12.100",
+   "IOS_EMBEDDED_PLAYER": "2.0",
+   "IOS_KIDS": "7.12.3",
+   "IOS_LIVE_CREATION_EXTENSION": "17.11.34",
+   "IOS_MESSAGES_EXTENSION": "17.11.34",
+   "IOS_MUSIC": "5.01",
+   "IOS_PRODUCER": "0.1",
+   "IOS_UNPLUGGED": "6.13",
+   "IOS_UPTIME": "1.0",
 }
 
 const (
@@ -101,8 +101,22 @@ func appVersion(app, elem string) (string, error) {
    return string(detail.VersionString), nil
 }
 
+type playerRequest struct {
+   ContentCheckOK bool `json:"contentCheckOk"`
+   RacyCheckOK bool `json:"racyCheckOk"`
+   VideoID string `json:"videoId"`
+   Context struct {
+      Client struct {
+         ClientName string `json:"clientName"`
+         ClientVersion string `json:"clientVersion"`
+      } `json:"client"`
+   } `json:"context"`
+}
+
 func newPlayer(name, version string) (*player, error) {
    var body playerRequest
+   body.ContentCheckOK = true
+   body.RacyCheckOK = true
    body.VideoID = "SkRSXFQerZs"
    body.Context.Client.ClientName = name
    body.Context.Client.ClientVersion = version
@@ -152,16 +166,6 @@ type token struct {
 }
 
 var logLevel format.LogLevel
-
-type playerRequest struct {
-   VideoID string `json:"videoId"`
-   Context struct {
-      Client struct {
-         ClientName string `json:"clientName"`
-         ClientVersion string `json:"clientVersion"`
-      } `json:"client"`
-   } `json:"context"`
-}
 
 func newVersion(addr, agent string) (string, error) {
    req, err := http.NewRequest("GET", addr, nil)
