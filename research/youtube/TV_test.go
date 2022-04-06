@@ -1,34 +1,23 @@
 package youtube
 
 import (
-   "fmt"
    "testing"
 )
 
 func TestTvAndroid(t *testing.T) {
-   const (
-      name = "TVANDROID"
-      version = "1.0"
-   )
-   res, err := post(name, version)
+   const name = "TVANDROID"
+   err := post(name, names[name])
    if err != nil {
       t.Fatal(err)
    }
-   defer res.Body.Close()
-   fmt.Println(res.Status, name, version)
 }
 
 func TestTvApple(t *testing.T) {
-   const (
-      name = "TVAPPLE"
-      version = "1.0"
-   )
-   res, err := post(name, version)
+   const name = "TVAPPLE"
+   err := post(name, names[name])
    if err != nil {
       t.Fatal(err)
    }
-   defer res.Body.Close()
-   fmt.Println(res.Status, name, version)
 }
 
 func TestTvhtml5(t *testing.T) {
@@ -40,12 +29,12 @@ func TestTvhtml5(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   res, err := post(name, version)
-   if err != nil {
+   if version != names[name] {
+      t.Fatal(name, version)
+   }
+   if err := post(name, version); err != nil {
       t.Fatal(err)
    }
-   defer res.Body.Close()
-   fmt.Println(res.Status, name, version)
 }
 
 func TestAndroidCast(t *testing.T) {
@@ -56,90 +45,60 @@ func TestAndroidCast(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   res, err := post(name, version)
-   if err != nil {
+   if version != names[name] {
+      t.Fatal(name, version)
+   }
+   if err := post(name, version); err != nil {
       t.Fatal(err)
    }
-   defer res.Body.Close()
-   fmt.Println(res.Status, name, version)
 }
 
 func TestTvKids(t *testing.T) {
-   const (
-      name = "TVHTML5_KIDS"
-      version = "3.20220325"
-   )
-   res, err := post(name, version)
+   const name = "TVHTML5_KIDS"
+   err := post(name, names[name])
    if err != nil {
       t.Fatal(err)
    }
-   defer res.Body.Close()
-   fmt.Println(res.Status, name, version)
 }
 
 func TestTvForKids(t *testing.T) {
-   const (
-      name = "TVHTML5_FOR_KIDS"
-      version = "7.20220325"
-   )
-   res, err := post(name, version)
+   const name = "TVHTML5_FOR_KIDS"
+   err := post(name, names[name])
    if err != nil {
       t.Fatal(err)
    }
-   defer res.Body.Close()
-   fmt.Println(res.Status, name, version)
 }
 
 func TestTvSimply(t *testing.T) {
-   const (
-      name = "TVHTML5_SIMPLY"
-      version = "1.0"
-   )
-   res, err := post(name, version)
+   const name = "TVHTML5_SIMPLY"
+   err := post(name, names[name])
    if err != nil {
       t.Fatal(err)
    }
-   defer res.Body.Close()
-   fmt.Println(res.Status, name, version)
 }
 
 func TestTvSimplyEmbed(t *testing.T) {
-   const (
-      name = "TVHTML5_SIMPLY_EMBEDDED_PLAYER"
-      version = "2.0"
-   )
-   res, err := post(name, version)
+   const name = "TVHTML5_SIMPLY_EMBEDDED_PLAYER"
+   err := post(name, names[name])
    if err != nil {
       t.Fatal(err)
    }
-   defer res.Body.Close()
-   fmt.Println(res.Status, name, version)
 }
 
 func TestTvVr(t *testing.T) {
-   const (
-      name = "TVHTML5_VR"
-      version = "0.1"
-   )
-   res, err := post(name, version)
+   const name = "TVHTML5_VR"
+   err := post(name, names[name])
    if err != nil {
       t.Fatal(err)
    }
-   defer res.Body.Close()
-   fmt.Println(res.Status, name, version)
 }
 
 func TestTvYongle(t *testing.T) {
-   const (
-      name = "TVHTML5_YONGLE"
-      version = "0.1"
-   )
-   res, err := post(name, version)
+   const name = "TVHTML5_YONGLE"
+   err := post(name, names[name])
    if err != nil {
       t.Fatal(err)
    }
-   defer res.Body.Close()
-   fmt.Println(res.Status, name, version)
 }
 
 func TestTvUnplug(t *testing.T) {
@@ -148,12 +107,12 @@ func TestTvUnplug(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   res, err := post(name, version)
-   if err != nil {
+   if version != names[name] {
+      t.Fatal(name, version)
+   }
+   if err := post(name, version); err != nil {
       t.Fatal(err)
    }
-   defer res.Body.Close()
-   fmt.Println(res.Status, name, version)
 }
 
 func TestAndroidTvunplug(t *testing.T) {
@@ -162,10 +121,10 @@ func TestAndroidTvunplug(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   res, err := post(name, version)
-   if err != nil {
+   if version != names[name] {
+      t.Fatal(name, version)
+   }
+   if err := post(name, version); err != nil {
       t.Fatal(err)
    }
-   defer res.Body.Close()
-   fmt.Println(res.Status, name, version)
 }

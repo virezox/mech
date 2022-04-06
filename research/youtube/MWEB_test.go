@@ -1,7 +1,6 @@
 package youtube
 
 import (
-   "fmt"
    "testing"
 )
 
@@ -11,23 +10,18 @@ func TestMweb(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   res, err := post(name, version)
-   if err != nil {
+   if version != names[name] {
+      t.Fatal(name, version)
+   }
+   if err := post(name, version); err != nil {
       t.Fatal(err)
    }
-   defer res.Body.Close()
-   fmt.Println(res.Status, name, version)
 }
 
 func TestMwebTier(t *testing.T) {
-   const (
-      name = "MWEB_TIER_2"
-      version = "9.20220325"
-   )
-   res, err := post(name, version)
+   const name = "MWEB_TIER_2"
+   err := post(name, names[name])
    if err != nil {
       t.Fatal(err)
    }
-   defer res.Body.Close()
-   fmt.Println(res.Status, name, version)
 }

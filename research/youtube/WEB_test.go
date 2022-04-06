@@ -15,12 +15,12 @@ func TestWeb(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   res, err := post(name, version)
-   if err != nil {
+   if version != names[name] {
+      t.Fatal(name, version)
+   }
+   if err := post(name, version); err != nil {
       t.Fatal(err)
    }
-   defer res.Body.Close()
-   fmt.Println(res.Status, name, version)
 }
 
 func TestWebCreator(t *testing.T) {
