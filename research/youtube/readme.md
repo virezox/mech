@@ -33,9 +33,6 @@ sadly. One addition, and several changes:
 -WEB_CREATOR;1.20220330
 +WEB_CREATOR;1.20220405.02.00
 
--WEB_EMBEDDED_PLAYER;9.20220325
-+WEB_EMBEDDED_PLAYER;1.20220403.00.00
-
 -WEB_KIDS;2.20220404
 +WEB_KIDS;2.20220405.00.00
 
@@ -63,7 +60,7 @@ IOS_SPORTS(37),
 IOS_WITNESS(35),
 ~~~
 
-I dont have a way to hack IOS or XBOS, so these are out for me:
+I dont have a way to hack IOS or XBOX, so these are out for me:
 
 ~~~
 IOS_DIRECTOR(40),
