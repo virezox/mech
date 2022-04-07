@@ -56,26 +56,34 @@ var bravos = []string{
    /* bravo */ "WaOKSUlf4TM",
 }
 
-// 18
+// 5
 var charlies = []string{
-   /* charlie */ "63RmMXCd_bQ",
-   /* charlie */ "6SJNVb0GnPI",
-   /* charlie */ "Cr381pDsSsA",
-   /* charlie */ "CsmdDsKjzN8",
-   /* charlie */ "DJztXj2GPfl",
-   /* charlie */ "HsUATh_Nc2U",
-   /* charlie */ "Ms7iBXnlUO8",
-   /* charlie */ "Q39EVAstoRM",
-   /* charlie */ "SZJvDhaSDnc",
-   /* charlie */ "Tq92D6wQ1mg",
-   /* charlie */ "V36LpHqtcDY",
-   /* charlie */ "i1Ko8UG-Tdo",
-   /* charlie */ "nGC3D_FkCmg",
-   /* charlie */ "qEJwOuvDf7I",
-   /* charlie */ "s7_qI6_mIXc",
-   /* charlie */ "sJL6WA-aGkQ",
-   /* charlie */ "yYr8q0y5Jfg",
-   /* charlie */ "yZIXLfi8CZQ",
+   "SZJvDhaSDnc", // pass
+   "Tq92D6wQ1mg", // pass
+   "i1Ko8UG-Tdo", // pass
+   "nGC3D_FkCmg", // pass
+   "yYr8q0y5Jfg", // pass
+}
+
+// 1
+var deltas = []string{
+   "HsUATh_Nc2U", // TVHTML5_SIMPLY_EMBEDDED_PLAYER
+}
+
+// 12
+var echos = []string{
+   "63RmMXCd_bQ", // This live stream recording is not available
+   "6SJNVb0GnPI", // This video has been removed for violating
+   "Cr381pDsSsA", // Sign in to confirm your age
+   "CsmdDsKjzN8", // This live stream recording is not available
+   "DJztXj2GPfl", // Video unavailable
+   "Ms7iBXnlUO8", // Video unavailable
+   "Q39EVAstoRM", // Video unavailable
+   "V36LpHqtcDY", // Private video
+   "qEJwOuvDf7I", // This live stream recording is not available
+   "s7_qI6_mIXc", // This video is DRM protected
+   "sJL6WA-aGkQ", // Video unavailable
+   "yZIXLfi8CZQ", // Private video
 }
 
 func TestBravo(t *testing.T) {
