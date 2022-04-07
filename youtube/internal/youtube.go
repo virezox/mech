@@ -52,7 +52,7 @@ var names = map[string]string{
    "TV_UNPLUGGED_CAST": "0.1",
    "WEB": "2.20220405.00.00",
    "WEB_CREATOR": "1.20220405.02.00",
-   "WEB_EMBEDDED_PLAYER": "1.20220403.00.00",
+   "WEB_EMBEDDED_PLAYER": "1.20220405.01.00",
    "WEB_EXPERIMENTS": "1",
    "WEB_HEROES": "0.1",
    "WEB_INTERNAL_ANALYTICS": "0.1",
@@ -78,6 +78,9 @@ type playerRequest struct {
          ClientName string `json:"clientName"`
          ClientVersion string `json:"clientVersion"`
       } `json:"client"`
+      ThirdParty struct {
+         EmbedURL string `json:"embedUrl"`
+      } `json:"thirdParty"`
    } `json:"context"`
 }
 
@@ -85,9 +88,10 @@ func newPlayer(name, version string) (*player, error) {
    var body playerRequest
    body.ContentCheckOK = true
    body.RacyCheckOK = true
-   body.VideoID = "SkRSXFQerZs"
+   body.VideoID = "HsUATh_Nc2U" // 2
    body.Context.Client.ClientName = name
    body.Context.Client.ClientVersion = version
+   body.Context.ThirdParty.EmbedURL = "https://www.youtube.com"
    buf := new(bytes.Buffer)
    if err := stdjson.NewEncoder(buf).Encode(body); err != nil {
       return nil, err
@@ -100,6 +104,7 @@ func newPlayer(name, version string) (*player, error) {
    }
    // AIzaSy
    req.Header.Set("X-Goog-Api-Key", "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8")
+   req.Header["X-Origin"] = []string{"https://www.youtube.com"}
    logLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
