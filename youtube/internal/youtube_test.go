@@ -1,4 +1,4 @@
-package youtube
+package internal
 
 import (
    "fmt"
@@ -11,7 +11,7 @@ import (
 )
 
 func TestPlayer(t *testing.T) {
-   for name, version := range names {
+   for name, version := range clients {
       play, err := newPlayer(name, version)
       if err != nil {
          t.Fatal(err)
@@ -27,7 +27,7 @@ func TestMweb(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   if version != names[name] {
+   if version != clients[name] {
       t.Fatal(name, version)
    }
 }
@@ -38,7 +38,7 @@ func TestWebRemix(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   if version != names[name] {
+   if version != clients[name] {
       t.Fatal(name, version)
    }
 }
@@ -71,7 +71,7 @@ func TestWebCreator(t *testing.T) {
    if err := json.Decode(res.Body, sep, &client); err != nil {
       t.Fatal(err)
    }
-   if client.ClientVersion != names[name] {
+   if client.ClientVersion != clients[name] {
       t.Fatal(name, client.ClientVersion)
    }
 }
@@ -103,7 +103,7 @@ func TestWebUnplugged(t *testing.T) {
    if err := json.Decode(res.Body, sep, &client); err != nil {
       t.Fatal(err)
    }
-   if client.ClientVersion != names[name] {
+   if client.ClientVersion != clients[name] {
       t.Fatal(name, client.ClientVersion)
    }
 }
@@ -114,7 +114,7 @@ func TestWeb(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   if version != names[name] {
+   if version != clients[name] {
       t.Fatal(name, version)
    }
 }
@@ -125,7 +125,7 @@ func TestWebEmbeddedPlayer(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   if version != names[name] {
+   if version != clients[name] {
       t.Fatal(name, version)
    }
 }
@@ -139,7 +139,7 @@ func TestTvhtml5(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   if version != names[name] {
+   if version != clients[name] {
       t.Fatal(name, version)
    }
 }
@@ -150,7 +150,7 @@ func TestWebKids(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   if version != names[name] {
+   if version != clients[name] {
       t.Fatal(name, version)
    }
 }

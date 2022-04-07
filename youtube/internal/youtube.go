@@ -1,4 +1,4 @@
-package youtube
+package internal
 
 import (
    "bytes"
@@ -8,7 +8,7 @@ import (
    stdjson "encoding/json"
 )
 
-var names = map[string]string{
+var clients = map[string]string{
    "ANDROID": "17.11.34",
    "ANDROID_CREATOR": "22.11.100",
    "ANDROID_EMBEDDED_PLAYER": "17.11.34",
