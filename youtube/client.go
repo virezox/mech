@@ -45,7 +45,7 @@ func (c Client) PlayerHeader(head http.Header, id string) (*Player, error) {
    body.Context.Client.ClientName = c.Name
    body.Context.Client.ClientVersion = c.MaxVersion
    if head.Get("Authorization") != "" {
-      body.RacyCheckOK = true // Cr381pDsSsA
+      body.RacyCheckOK = true
    }
    body.VideoID = id
    buf, err := mech.Encode(body)
