@@ -2,7 +2,6 @@ package youtube
 
 import (
    "github.com/89z/format"
-   "net/http"
    "net/url"
    "path"
    "strings"

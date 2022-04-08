@@ -30,12 +30,6 @@ type Exchange struct {
    Refresh_Token string
 }
 
-func (x Exchange) Header() http.Header {
-   head := make(http.Header)
-   head.Set("Authorization", "Bearer " + x.Access_Token)
-   return head
-}
-
 func (x *Exchange) Refresh() error {
    val := url.Values{
       "client_id": {clientID},

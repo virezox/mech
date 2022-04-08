@@ -7,58 +7,40 @@ import (
    "sort"
 )
 
-func (v video) doVideo(play *youtube.Player) error {
-   if len(play.StreamingData.AdaptiveFormats) == 0 {
-      return nil
-   }
-   form := play.StreamingData.AdaptiveFormats[0]
-   ext, err := form.Ext()
+func doRefresh() error {
+   oauth, err := youtube.NewOAuth()
    if err != nil {
       return err
    }
-   file, err := os.Create(play.Base() + ext)
+   fmt.Println(oauth)
+   fmt.Scanln()
+   change, err := oauth.Exchange()
    if err != nil {
       return err
    }
-   defer file.Close()
-   return form.Write(file)
+   cache, err := os.UserCacheDir()
+   if err != nil {
+      return err
+   }
+   return change.Create(cache, "/mech/youtube.json")
 }
 
-type video struct {
-   address string
-   audio string
-   embed bool
-   height int
-   id string
-   info bool
-   token bool
+func doAccess() error {
+   cache, err := os.UserCacheDir()
+   if err != nil {
+      return err
+   }
+   change, err := youtube.OpenExchange(cache, "/mech/youtube.json")
+   if err != nil {
+      return err
+   }
+   if err := change.Refresh(); err != nil {
+      return err
+   }
+   return change.Create(cache, "/mech/youtube.json")
 }
 
-func (v video) player() (*youtube.Player, error) {
-   client := youtube.Android
-   if v.embed {
-      client = youtube.Embed
-   }
-   if v.id == "" {
-      var err error
-      v.id, err = youtube.VideoID(v.address)
-      if err != nil {
-         return nil, err
-      }
-   }
-   if v.token {
-      cache, err := os.UserCacheDir()
-      if err != nil {
-         return nil, err
-      }
-      exc, err := youtube.OpenExchange(cache, "/mech/youtube.json")
-      if err != nil {
-         return nil, err
-      }
-      return client.PlayerHeader(exc.Header(), v.id)
-   }
-   return client.Player(v.id)
-}
+////////////////////////////////////////////////////////////////////////////////
 
 func (v video) do() error {
    play, err := v.player()
@@ -90,39 +72,48 @@ func (v video) do() error {
    return nil
 }
 
-func doRefresh() error {
-   oauth, err := youtube.NewOAuth()
+func (v video) doVideo(play *youtube.Player) error {
+   if len(play.StreamingData.AdaptiveFormats) == 0 {
+      return nil
+   }
+   form := play.StreamingData.AdaptiveFormats[0]
+   ext, err := form.Ext()
    if err != nil {
       return err
    }
-   fmt.Println(oauth)
-   fmt.Scanln()
-   exc, err := oauth.Exchange()
+   file, err := os.Create(play.Base() + ext)
    if err != nil {
       return err
    }
-   cache, err := os.UserCacheDir()
-   if err != nil {
-      return err
-   }
-   return exc.Create(cache, "/mech/youtube.json")
+   defer file.Close()
+   return form.Write(file)
 }
 
-func doAccess() error {
-   cache, err := os.UserCacheDir()
-   if err != nil {
-      return err
+func (v video) player() (*youtube.Player, error) {
+   client := youtube.Android
+   if v.embed {
+      client = youtube.AndroidEmbed
    }
-   exc, err := youtube.OpenExchange(cache, "/mech/youtube.json")
-   if err != nil {
-      return err
+   if v.id == "" {
+      var err error
+      v.id, err = youtube.VideoID(v.address)
+      if err != nil {
+         return nil, err
+      }
    }
-   if err := exc.Refresh(); err != nil {
-      return err
+   if v.token {
+      cache, err := os.UserCacheDir()
+      if err != nil {
+         return nil, err
+      }
+      change, err := youtube.OpenExchange(cache, "/mech/youtube.json")
+      if err != nil {
+         return nil, err
+      }
+      return client.Exchange(v.id, change)
    }
-   return exc.Create(cache, "/mech/youtube.json")
+   return client.Player(v.id)
 }
-
 func (v video) doAudio(play *youtube.Player) error {
    for _, form := range play.StreamingData.AdaptiveFormats {
       if form.AudioQuality == v.audio {

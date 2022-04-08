@@ -64,7 +64,7 @@ func TestAndroidRacy(t *testing.T) {
       t.Fatal(err)
    }
    for _, racy := range androidRacys {
-      play, err := Android.Header(change.Header(), racy)
+      play, err := AndroidRacy.Exchange(racy, change)
       if err != nil {
          t.Fatal(err)
       }
@@ -86,7 +86,7 @@ func TestAndroidContent(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   play, err := AndroidContent.Header(change.Header(), androidContent)
+   play, err := AndroidContent.Exchange(androidContent, change)
    if err != nil {
       t.Fatal(err)
    }
