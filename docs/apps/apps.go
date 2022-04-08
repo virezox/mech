@@ -36,11 +36,11 @@ func main() {
    if err != nil {
       panic(err)
    }
-   token, err := googleplay.OpenToken(cache, "/googleplay/token.json")
+   token, err := googleplay.OpenToken(cache, "googleplay/token.json")
    if err != nil {
       panic(err)
    }
-   phone, err := googleplay.OpenDevice(cache, "/googleplay/phone.json")
+   phone, err := googleplay.OpenDevice(cache, "googleplay/phone.json")
    if err != nil {
       panic(err)
    }

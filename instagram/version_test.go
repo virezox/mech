@@ -10,7 +10,7 @@ func TestVersionMedia(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   login, err := OpenLogin(cache, "/mech/instagram.json")
+   login, err := OpenLogin(cache, "mech/instagram.json")
    if err != nil {
       t.Fatal(err)
    }
@@ -31,7 +31,7 @@ func TestVersionLogin(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   if err := login.Create(cache, "/mech/instagram.json"); err != nil {
+   if err := login.Create(cache, "mech/instagram.json"); err != nil {
       t.Fatal(err)
    }
 }

@@ -34,7 +34,7 @@ func doItems(shortcode string, info bool) error {
    if err != nil {
       return err
    }
-   login, err := instagram.OpenLogin(cache, "/mech/instagram.json")
+   login, err := instagram.OpenLogin(cache, "mech/instagram.json")
    if err != nil {
       return err
    }
