@@ -40,19 +40,48 @@ func doAccess() error {
    return change.Create(cache, "/mech/youtube.json")
 }
 
-////////////////////////////////////////////////////////////////////////////////
+func (v video) player() (*youtube.Player, error) {
+   if v.id == "" {
+      var err error
+      v.id, err = youtube.VideoID(v.address)
+      if err != nil {
+         return nil, err
+      }
+   }
+   if v.two {
+      return youtube.AndroidEmbed.Player(v.id)
+   }
+   if v.three || v.four {
+      cache, err := os.UserCacheDir()
+      if err != nil {
+         return nil, err
+      }
+      change, err := youtube.OpenExchange(cache, "/mech/youtube.json")
+      if err != nil {
+         return nil, err
+      }
+      if v.three {
+         return youtube.AndroidRacy.Exchange(v.id, change)
+      }
+      return youtube.AndroidContent.Exchange(v.id, change)
+   }
+   return youtube.Android.Player(v.id)
+}
 
 func (v video) do() error {
    play, err := v.player()
    if err != nil {
       return err
    }
-   sort.SliceStable(play.StreamingData.AdaptiveFormats, func(int, int) bool {
-      return true
-   })
-   sort.Stable(youtube.Height{play.StreamingData.AdaptiveFormats, v.height})
+   forms := play.StreamingData.AdaptiveFormats
+   if v.height >= 1 {
+      sort.SliceStable(forms, func(int, int) bool {
+         return true
+      })
+      sort.Stable(youtube.Height{forms, v.height})
+   }
    if v.info {
-      play.StreamingData.AdaptiveFormats.MediaType()
+      forms.MediaType()
       fmt.Println(play)
    } else {
       fmt.Println(play.Status())
@@ -89,31 +118,6 @@ func (v video) doVideo(play *youtube.Player) error {
    return form.Write(file)
 }
 
-func (v video) player() (*youtube.Player, error) {
-   client := youtube.Android
-   if v.embed {
-      client = youtube.AndroidEmbed
-   }
-   if v.id == "" {
-      var err error
-      v.id, err = youtube.VideoID(v.address)
-      if err != nil {
-         return nil, err
-      }
-   }
-   if v.token {
-      cache, err := os.UserCacheDir()
-      if err != nil {
-         return nil, err
-      }
-      change, err := youtube.OpenExchange(cache, "/mech/youtube.json")
-      if err != nil {
-         return nil, err
-      }
-      return client.Exchange(v.id, change)
-   }
-   return client.Player(v.id)
-}
 func (v video) doAudio(play *youtube.Player) error {
    for _, form := range play.StreamingData.AdaptiveFormats {
       if form.AudioQuality == v.audio {
