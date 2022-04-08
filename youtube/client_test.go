@@ -1,11 +1,8 @@
 package youtube
 
 import (
-   "encoding/json"
    "fmt"
-   "net/http"
    "os"
-   "strings"
    "testing"
    "time"
 )
@@ -20,11 +17,10 @@ func TestSearch(t *testing.T) {
    }
 }
 
-// ANDROID
-const alfa = "zv9NimPx3Es"
+const android = "zv9NimPx3Es"
 
-func TestAlfa(t *testing.T) {
-   play, err := Android.Player(alfa)
+func TestAndroid(t *testing.T) {
+   play, err := Android.Player(android)
    if err != nil {
       t.Fatal(err)
    }
@@ -33,15 +29,14 @@ func TestAlfa(t *testing.T) {
    }
 }
 
-// ANDROID_EMBEDDED_PLAYER
-var bravos = []string{
+var androidEmbeds = []string{
    "HtVdAasjOgU",
    "WaOKSUlf4TM",
 }
 
-func TestBravo(t *testing.T) {
-   for _, bravo := range bravos {
-      play, err := Embed.Player(bravo)
+func TestAndroidEmbed(t *testing.T) {
+   for _, embed := range androidEmbeds {
+      play, err := AndroidEmbed.Player(embed)
       if err != nil {
          t.Fatal(err)
       }
@@ -52,15 +47,14 @@ func TestBravo(t *testing.T) {
    }
 }
 
-// racyCheckOk
-var charlies = []string{
+var androidRacys = []string{
    "Cr381pDsSsA",
    "HsUATh_Nc2U",
    "SZJvDhaSDnc",
    "Tq92D6wQ1mg",
 }
 
-func TestCharlie(t *testing.T) {
+func TestAndroidRacy(t *testing.T) {
    cache, err := os.UserCacheDir()
    if err != nil {
       t.Fatal(err)
@@ -69,8 +63,8 @@ func TestCharlie(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   for _, charlie := range charlies {
-      play, err := Android.PlayerHeader(change.Header(), charlie)
+   for _, racy := range androidRacys {
+      play, err := Android.Header(change.Header(), racy)
       if err != nil {
          t.Fatal(err)
       }
@@ -81,12 +75,9 @@ func TestCharlie(t *testing.T) {
    }
 }
 
-// contentCheckOk
-const delta = "nGC3D_FkCmg"
+const androidContent = "nGC3D_FkCmg"
 
-////////////////////////////////////////////////////////////////////////////////
-
-func TestDelta(t *testing.T) {
+func TestAndroidContent(t *testing.T) {
    cache, err := os.UserCacheDir()
    if err != nil {
       t.Fatal(err)
@@ -95,33 +86,8 @@ func TestDelta(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   body := strings.NewReader(fmt.Sprintf(`
-   {
-     "context": {
-       "client": {
-         "clientName": %q,
-         "clientVersion": %q,
-       }
-     },
-     "videoId": %q,
-   "racyCheckOk": true,
-   "contentCheckOk": true
-   }
-   `, name, version, delta))
-   req, err := http.NewRequest(
-      "POST", "https://www.youtube.com/youtubei/v1/player", body,
-   )
+   play, err := AndroidContent.Header(change.Header(), androidContent)
    if err != nil {
-      t.Fatal(err)
-   }
-   req.Header.Set("Authorization", "Bearer " + change.Access_Token)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      t.Fatal(err)
-   }
-   defer res.Body.Close()
-   var play Player
-   if err := json.NewDecoder(res.Body).Decode(&play); err != nil {
       t.Fatal(err)
    }
    if play.PlayabilityStatus.Status != "OK" {

@@ -79,10 +79,6 @@ func (i Image) Format(id string) string {
 
 const origin = "https://www.youtube.com"
 
-var googAPI = http.Header{
-   "X-Goog-Api-Key": {"AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8"},
-}
-
 // https://youtube.com/shorts/9Vsdft81Q6w
 // https://youtube.com/watch?v=XY-hOqcPGCY
 func VideoID(address string) (string, error) {
