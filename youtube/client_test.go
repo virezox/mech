@@ -49,9 +49,9 @@ func TestAndroidEmbed(t *testing.T) {
 
 var androidRacys = []string{
    "Cr381pDsSsA",
-   "HsUATh_Nc2U",
-   "SZJvDhaSDnc",
-   "Tq92D6wQ1mg",
+   "HsUATh_Nc2U", // signatureCipher
+   "SZJvDhaSDnc", // url
+   "Tq92D6wQ1mg", // url
 }
 
 func TestAndroidRacy(t *testing.T) {

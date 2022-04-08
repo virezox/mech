@@ -10,6 +10,16 @@ import (
    "time"
 )
 
+func TestContains(t *testing.T) {
+   for name, version := range clients {
+      _, err := newPlayer(name, version)
+      if err != nil {
+         t.Fatal(err)
+      }
+      time.Sleep(time.Second)
+   }
+}
+
 func TestPlayer(t *testing.T) {
    for name, version := range clients {
       play, err := newPlayer(name, version)

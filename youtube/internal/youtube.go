@@ -4,6 +4,7 @@ import (
    "bytes"
    "github.com/89z/format"
    "github.com/89z/format/json"
+   "io"
    "net/http"
    stdjson "encoding/json"
 )
@@ -85,15 +86,12 @@ type playerRequest struct {
 }
 
 func newPlayer(name, version string) (*player, error) {
-   var body playerRequest
-   body.ContentCheckOK = true
-   body.RacyCheckOK = true
-   body.VideoID = "HsUATh_Nc2U" // 2
-   body.Context.Client.ClientName = name
-   body.Context.Client.ClientVersion = version
-   body.Context.ThirdParty.EmbedURL = "https://www.youtube.com"
+   var playReq playerRequest
+   playReq.VideoID = "zv9NimPx3Es"
+   playReq.Context.Client.ClientName = name
+   playReq.Context.Client.ClientVersion = version
    buf := new(bytes.Buffer)
-   if err := stdjson.NewEncoder(buf).Encode(body); err != nil {
+   if err := stdjson.NewEncoder(buf).Encode(playReq); err != nil {
       return nil, err
    }
    req, err := http.NewRequest(
@@ -102,9 +100,7 @@ func newPlayer(name, version string) (*player, error) {
    if err != nil {
       return nil, err
    }
-   // AIzaSy
    req.Header.Set("X-Goog-Api-Key", "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8")
-   req.Header["X-Origin"] = []string{"https://www.youtube.com"}
    logLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
@@ -114,14 +110,28 @@ func newPlayer(name, version string) (*player, error) {
    if res.StatusCode != http.StatusOK {
       return nil, errorString(res.Status)
    }
+   body, err := io.ReadAll(res.Body)
+   if err != nil {
+      return nil, err
+   }
+   if bytes.Contains(body, []byte(`videoplayback?`)) {
+      println("pass", name)
+   } else {
+      println(".")
+   }
    play := new(player)
-   if err := stdjson.NewDecoder(res.Body).Decode(play); err != nil {
+   if err := stdjson.Unmarshal(body, play); err != nil {
       return nil, err
    }
    return play, nil
 }
 
 type player struct {
+   Microformat struct {
+      PlayerMicroformatRenderer struct {
+         PublishDate string // 2013-06-11
+      }
+   }
    PlayabilityStatus struct {
       Status string
       Reason string
