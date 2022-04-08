@@ -3,9 +3,7 @@ package youtube
 import (
    "encoding/json"
    "fmt"
-   "io"
    "net/http"
-   "net/url"
    "os"
    "strings"
    "testing"
@@ -42,47 +40,13 @@ var bravos = []string{
 }
 
 func TestBravo(t *testing.T) {
-   const (
-      name = "ANDROID_EMBEDDED_PLAYER"
-      version = "17.11.34"
-   )
-   var req http.Request
-   req.Header = make(http.Header)
-   req.Method = "POST"
-   req.URL = new(url.URL)
-   req.URL.Host = "www.youtube.com"
-   req.URL.Path = "/youtubei/v1/player"
-   val := make(url.Values)
-   val["key"] = []string{"AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8"}
-   req.URL.RawQuery = val.Encode()
-   req.URL.Scheme = "https"
    for _, bravo := range bravos {
-      req.Body = io.NopCloser(strings.NewReader(fmt.Sprintf(`
-      {
-        "context": {
-          "client": {
-            "clientName": %q,
-            "clientVersion": %q,
-          }
-        },
-        "videoId": %q
-      }
-      `, name, version, bravo)))
-      res, err := new(http.Transport).RoundTrip(&req)
+      play, err := Embed.Player(bravo)
       if err != nil {
          t.Fatal(err)
       }
-      var play Player
-      if err := json.NewDecoder(res.Body).Decode(&play); err != nil {
-         t.Fatal(err)
-      }
-      if play.PlayabilityStatus.Status == "OK" {
-         fmt.Printf("/* bravo */ %q,\n", bravo)
-      } else {
-         fmt.Printf("/* charlie */ %q,\n", bravo)
-      }
-      if err := res.Body.Close(); err != nil {
-         t.Fatal(err)
+      if play.PlayabilityStatus.Status != "OK" {
+         t.Fatal(play)
       }
       time.Sleep(time.Second)
    }
@@ -97,10 +61,6 @@ var charlies = []string{
 }
 
 func TestCharlie(t *testing.T) {
-   const (
-      name = "ANDROID"
-      version = "17.11.34"
-   )
    cache, err := os.UserCacheDir()
    if err != nil {
       t.Fatal(err)
@@ -110,40 +70,12 @@ func TestCharlie(t *testing.T) {
       t.Fatal(err)
    }
    for _, charlie := range charlies {
-      body := strings.NewReader(fmt.Sprintf(`
-      {
-        "context": {
-          "client": {
-            "clientName": %q,
-            "clientVersion": %q,
-          }
-        },
-        "videoId": %q,
-      "racyCheckOk": true
-      }
-      `, name, version, charlie))
-      req, err := http.NewRequest(
-         "POST", "https://www.youtube.com/youtubei/v1/player", body,
-      )
+      play, err := Android.PlayerHeader(change.Header(), charlie)
       if err != nil {
          t.Fatal(err)
       }
-      req.Header.Set("Authorization", "Bearer " + change.Access_Token)
-      res, err := new(http.Transport).RoundTrip(req)
-      if err != nil {
-         t.Fatal(err)
-      }
-      var play Player
-      if err := json.NewDecoder(res.Body).Decode(&play); err != nil {
-         t.Fatal(err)
-      }
-      if play.PlayabilityStatus.Status == "OK" {
-         fmt.Printf("/* charlie */ %q,\n", charlie)
-      } else {
-         fmt.Printf("/* delta */ %q,\n", charlie)
-      }
-      if err := res.Body.Close(); err != nil {
-         t.Fatal(err)
+      if play.PlayabilityStatus.Status != "OK" {
+         t.Fatal(play)
       }
       time.Sleep(time.Second)
    }
@@ -152,11 +84,9 @@ func TestCharlie(t *testing.T) {
 // contentCheckOk
 const delta = "nGC3D_FkCmg"
 
+////////////////////////////////////////////////////////////////////////////////
+
 func TestDelta(t *testing.T) {
-   const (
-      name = "ANDROID"
-      version = "17.11.34"
-   )
    cache, err := os.UserCacheDir()
    if err != nil {
       t.Fatal(err)

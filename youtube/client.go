@@ -6,49 +6,52 @@ import (
    "net/http"
 )
 
-type Client struct {
-   Name string
-   MinVersion string
-   MaxVersion string
-}
-
-var Android = Client{Name: "ANDROID", MaxVersion: "17.11.34"}
-
-var Mweb = Client{Name: "MWEB", MaxVersion: "2.20220322.05.00"}
-
-// HtVdAasjOgU
-var Embed = Client{Name: "ANDROID_EMBEDDED_PLAYER", MaxVersion: "17.11.34"}
-
-func (c Client) Player(id string) (*Player, error) {
-   return c.PlayerHeader(googAPI, id)
-}
-
 type errorString string
 
 func (e errorString) Error() string {
    return string(e)
 }
 
-type context struct {
-   Client struct {
-      ClientName string `json:"clientName"`
-      ClientVersion string `json:"clientVersion"`
-   } `json:"client"`
+var Mweb = YouTubeI{
+   Context: Context{
+      Client: Client{"MWEB", "2.20220322.05.00"},
+   },
 }
 
-func (c Client) PlayerHeader(head http.Header, id string) (*Player, error) {
-   var body struct {
-      Context context `json:"context"`
-      RacyCheckOK bool `json:"racyCheckOk,omitempty"`
-      VideoID string `json:"videoId"`
-   }
-   body.Context.Client.ClientName = c.Name
-   body.Context.Client.ClientVersion = c.MaxVersion
-   if head.Get("Authorization") != "" {
-      body.RacyCheckOK = true
-   }
-   body.VideoID = id
-   buf, err := mech.Encode(body)
+var Bravo = YouTubeI{
+   Context: Context{
+      Client: Client{"ANDROID_EMBEDDED_PLAYER", "17.11.34"},
+   },
+}
+
+var Alfa = YouTubeI{
+   Context: Context{
+      Client: Client{"ANDROID", "17.11.34"},
+   },
+}
+
+var Charlie = YouTubeI{
+   Context: Context{
+      Client: Client{"ANDROID", "17.11.34"},
+   },
+   RacyCheckOK: true,
+}
+
+var Delta = YouTubeI{
+   ContentCheckOK: true,
+   Context: Context{
+      Client: Client{"ANDROID", "17.11.34"},
+   },
+   RacyCheckOK: true,
+}
+
+func (y YouTubeI) Player(id string) (*Player, error) {
+   return y.Header(googAPI, id)
+}
+
+func (y YouTubeI) Header(head http.Header, id string) (*Player, error) {
+   y.VideoID = id
+   buf, err := mech.Encode(y)
    if err != nil {
       return nil, err
    }
@@ -73,21 +76,32 @@ func (c Client) PlayerHeader(head http.Header, id string) (*Player, error) {
    return play, nil
 }
 
-func (c Client) Search(query string) (*Search, error) {
-   var body struct {
-      Context context `json:"context"`
-      Params string `json:"params"`
-      Query string `json:"query"`
-   }
-   body.Context.Client.ClientName = c.Name
-   body.Context.Client.ClientVersion = c.MaxVersion
+type Client struct {
+   ClientName string `json:"clientName"`
+   ClientVersion string `json:"clientVersion"`
+}
+
+type Context struct {
+   Client Client `json:"client"`
+}
+
+type YouTubeI struct {
+   ContentCheckOK bool `json:"contentCheckOk,omitempty"`
+   Context Context `json:"context"`
+   Params string `json:"params,omitempty"`
+   Query string `json:"query,omitempty"`
+   RacyCheckOK bool `json:"racyCheckOk,omitempty"`
+   VideoID string `json:"videoId,omitempty"`
+}
+
+func (y YouTubeI) Search(query string) (*Search, error) {
+   y.Query = query
    filter := NewFilter()
    filter.Type(Type["Video"])
    param := NewParams()
    param.Filter(filter)
-   body.Params = param.Encode()
-   body.Query = query
-   buf, err := mech.Encode(body)
+   y.Params = param.Encode()
+   buf, err := mech.Encode(y)
    if err != nil {
       return nil, err
    }
