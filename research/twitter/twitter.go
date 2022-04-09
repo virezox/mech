@@ -14,34 +14,14 @@ type xauth struct {
    OAuth_Token_Secret string
 }
 
-func (x xauth) auth(method, addr string, param map[string]string) string {
-   auth := go_oauth1.OAuth1{
-      AccessSecret: x.OAuth_Token_Secret,
-      AccessToken: x.OAuth_Token,
-      ConsumerKey: "3nVuSoBZnx6U4vzUxf5w",
-      ConsumerSecret: "Bcs59EFbbsdF6Sl9Ng71smgStWEGwXXKSjYvPVt7qys",
-   }
-   return auth.BuildOAuth1Header(method, addr, param)
-}
-
-func search() (*http.Response, error) {
-   req := new(http.Request)
-   req.Header = make(http.Header)
-   req.Header["Authorization"] = []string{
-      strings.Join([]string{
-         `OAuth oauth_version=1.0`,
-         `oauth_nonce=3631287121008092069727528464482`,
-         `oauth_timestamp=1649508643`,
-         `oauth_signature=s%2FAtWUq2kmE3Th37knZIsZvxudE%3D`,
-         `oauth_consumer_key=3nVuSoBZnx6U4vzUxf5w`,
-         `oauth_signature_method=HMAC-SHA1`,
-         `oauth_token=449483305-wcH6DvQDjePDx6LsD4dVtiXvdWxYE8JOfI1KKJjS`,
-      }, ","),
-   }
-   req.URL = new(url.URL)
-   req.URL.Host = "na.glbtls.t.co"
+func (x xauth) search() (*http.Response, error) {
    //req.URL.Host = "api.twitter.com"
-   req.URL.Path = "/2/search/adaptive.json"
+   req, err := http.NewRequest(
+      "GET", "https://na.glbtls.t.co/2/search/adaptive.json", nil,
+   )
+   if err != nil {
+      return nil, err
+   }
    val := make(url.Values)
    val["cards_platform"] = []string{"Android-12"}
    val["earned"] = []string{"true"}
@@ -70,8 +50,36 @@ func search() (*http.Response, error) {
    val["spelling_corrections"] = []string{"true"}
    val["tweet_mode"] = []string{"extended"}
    val["tweet_search_mode"] = []string{"top"}
+   /*
+   []string{
+      strings.Join([]string{
+         `OAuth oauth_version=1.0`,
+         `oauth_nonce=3631287121008092069727528464482`,
+         `oauth_timestamp=1649508643`,
+         `oauth_signature=s%2FAtWUq2kmE3Th37knZIsZvxudE%3D`,
+         `oauth_consumer_key=3nVuSoBZnx6U4vzUxf5w`,
+         `oauth_signature_method=HMAC-SHA1`,
+         `oauth_token=449483305-wcH6DvQDjePDx6LsD4dVtiXvdWxYE8JOfI1KKJjS`,
+      }, ","),
+   }
+   */
+   auth := go_oauth1.OAuth1{
+      AccessSecret: x.OAuth_Token_Secret,
+      AccessToken: x.OAuth_Token,
+      ConsumerKey: "3nVuSoBZnx6U4vzUxf5w",
+      ConsumerSecret: "Bcs59EFbbsdF6Sl9Ng71smgStWEGwXXKSjYvPVt7qys",
+   }
+   param := make(map[string]string)
+   for key := range val {
+      param[key] = val.Get(key)
+   }
    req.URL.RawQuery = val.Encode()
-   req.URL.Scheme = "https"
+   
+   req.Header["Authorization"] = []string{
+      //fail
+      //auth.BuildOAuth1Header(req.Method, req.URL.String(), map[string]string{}),
+      auth.BuildOAuth1Header(req.Method, req.URL.String(), param),
+   }
    LogLevel.Dump(req)
    return new(http.Transport).RoundTrip(req)
 }
@@ -136,4 +144,3 @@ func (g Guest) xauth(identifier, password string) (*xauth, error) {
    }
    return auth, nil
 }
-

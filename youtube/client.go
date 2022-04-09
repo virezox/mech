@@ -6,41 +6,24 @@ import (
    "net/http"
 )
 
-func (y YouTubeI) Exchange(id string, ex *Exchange) (*Player, error) {
-   y.VideoID = id
-   buf, err := mech.Encode(y)
-   if err != nil {
-      return nil, err
-   }
-   req, err := http.NewRequest("POST", origin + "/youtubei/v1/player", buf)
-   if err != nil {
-      return nil, err
-   }
-   if ex != nil {
-      req.Header.Set("Authorization", "Bearer " + ex.Access_Token)
-   } else {
-      req.Header.Set("X-Goog-Api-Key", googAPI)
-   }
-   LogLevel.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return nil, errorString(res.Status)
-   }
-   play := new(Player)
-   if err := json.NewDecoder(res.Body).Decode(play); err != nil {
-      return nil, err
-   }
-   return play, nil
+const googAPI = "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8"
+
+type Client struct {
+   ClientName string `json:"clientName"`
+   ClientVersion string `json:"clientVersion"`
 }
 
-var Mweb = YouTubeI{
-   Context: Context{
-      Client: Client{"MWEB", "2.20220322.05.00"},
-   },
+type Context struct {
+   Client Client `json:"client"`
+}
+
+type YouTubeI struct {
+   ContentCheckOK bool `json:"contentCheckOk,omitempty"`
+   Context Context `json:"context"`
+   Params string `json:"params,omitempty"`
+   Query string `json:"query,omitempty"`
+   RacyCheckOK bool `json:"racyCheckOk,omitempty"`
+   VideoID string `json:"videoId,omitempty"`
 }
 
 // 1
@@ -74,24 +57,41 @@ var AndroidContent = YouTubeI{
    ContentCheckOK: true,
 }
 
-const googAPI = "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8"
-
-type Client struct {
-   ClientName string `json:"clientName"`
-   ClientVersion string `json:"clientVersion"`
+var Mweb = YouTubeI{
+   Context: Context{
+      Client: Client{"MWEB", "2.20220322.05.00"},
+   },
 }
 
-type Context struct {
-   Client Client `json:"client"`
-}
-
-type YouTubeI struct {
-   ContentCheckOK bool `json:"contentCheckOk,omitempty"`
-   Context Context `json:"context"`
-   Params string `json:"params,omitempty"`
-   Query string `json:"query,omitempty"`
-   RacyCheckOK bool `json:"racyCheckOk,omitempty"`
-   VideoID string `json:"videoId,omitempty"`
+func (y YouTubeI) Exchange(id string, ex *Exchange) (*Player, error) {
+   y.VideoID = id
+   buf, err := mech.Encode(y)
+   if err != nil {
+      return nil, err
+   }
+   req, err := http.NewRequest("POST", origin + "/youtubei/v1/player", buf)
+   if err != nil {
+      return nil, err
+   }
+   if ex != nil {
+      req.Header.Set("Authorization", "Bearer " + ex.Access_Token)
+   } else {
+      req.Header.Set("X-Goog-Api-Key", googAPI)
+   }
+   LogLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return nil, errorString(res.Status)
+   }
+   play := new(Player)
+   if err := json.NewDecoder(res.Body).Decode(play); err != nil {
+      return nil, err
+   }
+   return play, nil
 }
 
 func (y YouTubeI) Player(id string) (*Player, error) {

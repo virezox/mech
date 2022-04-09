@@ -1,11 +1,13 @@
 package twitter
 
 import (
-   "fmt"
+   "net/http/httputil"
+   "os"
    "testing"
 )
 
 func TestTwitter(t *testing.T) {
+   LogLevel = 1
    guest, err := NewGuest()
    if err != nil {
       t.Fatal(err)
@@ -14,5 +16,14 @@ func TestTwitter(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   fmt.Printf("%+v\n", auth)
+   res, err := auth.search()
+   if err != nil {
+      t.Fatal(err)
+   }
+   defer res.Body.Close()
+   buf, err := httputil.DumpResponse(res, true)
+   if err != nil {
+      t.Fatal(err)
+   }
+   os.Stdout.Write(buf)
 }
