@@ -1,15 +1,18 @@
 package twitter
 
 import (
-   "os"
+   "fmt"
    "testing"
 )
 
 func TestTwitter(t *testing.T) {
-   res, err := xauth()
+   guest, err := NewGuest()
    if err != nil {
       t.Fatal(err)
    }
-   defer res.Body.Close()
-   os.Stdout.ReadFrom(res.Body)
+   auth, err := guest.xauth(identifier, password)
+   if err != nil {
+      t.Fatal(err)
+   }
+   fmt.Printf("%+v\n", auth)
 }

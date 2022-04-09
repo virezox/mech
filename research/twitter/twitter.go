@@ -3,60 +3,26 @@ package twitter
 import (
    "encoding/json"
    "github.com/89z/format"
+   "github.com/klaidas/go-oauth1"
    "net/http"
    "net/url"
    "strings"
 )
 
-const bearer =
-   "AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs=" +
-   "1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA"
-
-func NewGuest() (*Guest, error) {
-   req, err := http.NewRequest(
-      "POST", "https://api.twitter.com/1.1/guest/activate.json", nil,
-   )
-   if err != nil {
-      return nil, err
-   }
-   req.Header.Set("Authorization", "Bearer " + bearer)
-   LogLevel.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   guest := new(Guest)
-   if err := json.NewDecoder(res.Body).Decode(guest); err != nil {
-      return nil, err
-   }
-   return guest, nil
+type xauth struct {
+   OAuth_Token string
+   OAuth_Token_Secret string
 }
 
-type Guest struct {
-   Guest_Token string
+func (x xauth) auth(method, addr string, param map[string]string) string {
+   auth := go_oauth1.OAuth1{
+      AccessSecret: x.OAuth_Token_Secret,
+      AccessToken: x.OAuth_Token,
+      ConsumerKey: "3nVuSoBZnx6U4vzUxf5w",
+      ConsumerSecret: "Bcs59EFbbsdF6Sl9Ng71smgStWEGwXXKSjYvPVt7qys",
+   }
+   return auth.BuildOAuth1Header(method, addr, param)
 }
-
-func (g Guest) xauth() (*http.Response, error) {
-   req := new(http.Request)
-   req.Header = make(http.Header)
-   req.Header["Authorization"] = []string{"Bearer " + bearer}
-   req.Header["Host"] = []string{"api.twitter.com"}
-   req.Header["X-Guest-Token"] = []string{g.Guest_Token}
-   req.Method = "POST"
-   req.URL = new(url.URL)
-   req.URL.Host = "api.twitter.com"
-   req.URL.Path = "/auth/1/xauth_password.json"
-   val := make(url.Values)
-   val["x_auth_identifier"] = []string{identifier}
-   val["x_auth_password"] = []string{password}
-   req.URL.RawQuery = val.Encode()
-   req.URL.Scheme = "https"
-   LogLevel.Dump(req)
-   return new(http.Transport).RoundTrip(req)
-}
-
-var LogLevel format.LogLevel
 
 func search() (*http.Response, error) {
    req := new(http.Request)
@@ -108,5 +74,66 @@ func search() (*http.Response, error) {
    req.URL.Scheme = "https"
    LogLevel.Dump(req)
    return new(http.Transport).RoundTrip(req)
+}
+
+const bearer =
+   "AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs=" +
+   "1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA"
+
+func NewGuest() (*Guest, error) {
+   req, err := http.NewRequest(
+      "POST", "https://api.twitter.com/1.1/guest/activate.json", nil,
+   )
+   if err != nil {
+      return nil, err
+   }
+   req.Header.Set("Authorization", "Bearer " + bearer)
+   LogLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   guest := new(Guest)
+   if err := json.NewDecoder(res.Body).Decode(guest); err != nil {
+      return nil, err
+   }
+   return guest, nil
+}
+
+type Guest struct {
+   Guest_Token string
+}
+
+var LogLevel format.LogLevel
+
+func (g Guest) xauth(identifier, password string) (*xauth, error) {
+   body := url.Values{
+      "x_auth_identifier": {identifier},
+      "x_auth_password": {password},
+   }.Encode()
+   req, err := http.NewRequest(
+      "POST", "https://api.twitter.com/auth/1/xauth_password.json",
+      strings.NewReader(body),
+   )
+   if err != nil {
+      return nil, err
+   }
+   req.Header = http.Header{
+      "Authorization": {"Bearer " + bearer},
+      "Content-Type": {"application/x-www-form-urlencoded"},
+      "X-Guest-Token": {g.Guest_Token},
+   }
+   LogLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   auth := new(xauth)
+   if err := json.NewDecoder(res.Body).Decode(auth); err != nil {
+      return nil, err
+   }
+   return auth, nil
 }
 
