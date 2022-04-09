@@ -1,11 +1,13 @@
 package youtube
 
 import (
+   "bytes"
+   "encoding/json"
+   "fmt"
+   "github.com/89z/mech/youtube"
    "io"
    "net/http"
    "net/url"
-   "fmt"
-   "bytes"
    "strings"
    "testing"
 )
@@ -25,7 +27,16 @@ func TestYouTube(t *testing.T) {
       t.Fatal(err)
    }
    defer res.Body.Close()
-   fmt.Println(res.Status)
+   var play youtube.Player
+   if err := json.NewDecoder(res.Body).Decode(&play); err != nil {
+      t.Fatal(err)
+   }
+   for _, form := range play.StreamingData.AdaptiveFormats {
+      if form.ContentLength >= 1 && form.ContentLength <= 9_999_999 {
+         fmt.Println(form)
+         break
+      }
+   }
 }
 
 type worker struct {
@@ -53,26 +64,23 @@ func (w worker) work(job int) {
    w.err <- nil
 }
 
-func WorkerGet(addr string, workers int) ([]*bytes.Buffer, error) {
-   if workers < 1 {
-      return nil, fmt.Errorf("workers out of range")
-   }
-   res, err := http.Head(addr)
-   if err != nil { return nil, err }
-   w := worker{
+func Get(addr string, length int64, workers int) ([]*bytes.Buffer, error) {
+   work := worker{
       addr,
       make(chan error),
       make([]*bytes.Buffer, workers),
-      res.ContentLength / int64(workers) + 1,
+      length / int64(workers) + 1,
    }
-   for job := range w.jobs {
-      go w.work(job)
+   for job := range work.jobs {
+      go work.work(job)
    }
-   for range w.jobs {
-      err := <-w.err
-      if err != nil { return nil, err }
+   for range work.jobs {
+      err := <-work.err
+      if err != nil {
+         return nil, err
+      }
    }
-   return w.jobs, nil
+   return work.jobs, nil
 }
 
 var body = strings.NewReader(`{

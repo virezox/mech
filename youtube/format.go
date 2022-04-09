@@ -10,6 +10,22 @@ import (
    "time"
 )
 
+func (f Format) Format(s fmt.State, verb rune) {
+   if f.QualityLabel != "" {
+      fmt.Fprint(s, "Quality:", f.QualityLabel)
+   } else {
+      fmt.Fprint(s, "Quality:", f.AudioQuality)
+   }
+   fmt.Fprint(s, " Bitrate:", f.Bitrate)
+   if f.ContentLength >= 1 { // Tq92D6wQ1mg
+      fmt.Fprint(s, " Size:", f.ContentLength)
+   }
+   fmt.Fprint(s, " Type:", f.MimeType)
+   if verb == 'a' {
+      fmt.Fprint(s, " URL:", f.URL)
+   }
+}
+
 func (f Format) Write(dst io.Writer) error {
    req, err := http.NewRequest("GET", f.URL, nil)
    if err != nil {
@@ -48,19 +64,11 @@ func (f Format) Write(dst io.Writer) error {
 
 const partLength = 10_000_000
 
-// averageBitrate is a better marker for quality than bitrate. For example, if
-// you look a video:
-// 7WTEB7Qbt4U
-// you get this:
-//
-//  itag | bitrate | averageBitrate | contentLength
-//  -----|---------|----------------|--------------
-//  136  | 1038025 | 286687         | 6891870
-//  247  | 1192816 | 513601         | 12346788
-//  398  | 1117347 | 349310         | 8397292
+// averageBitrate is not always available:
+// Tq92D6wQ1mg
 type Format struct {
    AudioQuality string
-   AverageBitrate int
+   Bitrate int
    ContentLength int64 `json:"contentLength,string"`
    Height int
    MimeType string
@@ -78,20 +86,6 @@ func (f Format) Ext() (string, error) {
       return ext, nil
    }
    return "", notFound{f.MimeType}
-}
-
-func (f Format) Format(s fmt.State, verb rune) {
-   if f.QualityLabel != "" {
-      fmt.Fprint(s, "Quality:", f.QualityLabel)
-   } else {
-      fmt.Fprint(s, "Quality:", f.AudioQuality)
-   }
-   fmt.Fprint(s, " Bitrate:", f.AverageBitrate)
-   fmt.Fprint(s, " Size:", f.ContentLength)
-   fmt.Fprint(s, " Type:", f.MimeType)
-   if verb == 'a' {
-      fmt.Fprint(s, " URL:", f.URL)
-   }
 }
 
 type Formats []Format

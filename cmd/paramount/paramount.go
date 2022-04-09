@@ -18,19 +18,21 @@ func doManifest(guid string, bandwidth int, info bool) error {
    if err != nil {
       return err
    }
-   fmt.Println("GET", video.Src)
    res, err := http.Get(video.Src)
    if err != nil {
       return err
    }
    defer res.Body.Close()
+   paramount.LogLevel.Dump(res.Request)
    master, err := hls.NewMaster(res.Request.URL, res.Body)
    if err != nil {
       return err
    }
-   sort.Sort(hls.Bandwidth{master, bandwidth})
    if info {
       fmt.Println(video.Title)
+   }
+   if bandwidth >= 1 {
+      sort.Sort(hls.Bandwidth{master, bandwidth})
    }
    for _, stream := range master.Stream {
       if info {
@@ -47,12 +49,12 @@ func download(stream hls.Stream, video *paramount.Video) error {
    if err != nil {
       return err
    }
-   fmt.Println("GET", seg.Key.URI)
    res, err := http.Get(seg.Key.URI.String())
    if err != nil {
       return err
    }
    defer res.Body.Close()
+   paramount.LogLevel.Dump(res.Request)
    block, err := hls.NewCipher(res.Body)
    if err != nil {
       return err
@@ -83,11 +85,11 @@ func download(stream hls.Stream, video *paramount.Video) error {
 }
 
 func newSegment(addr string) (*hls.Segment, error) {
-   fmt.Println("GET", addr)
    res, err := http.Get(addr)
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
+   paramount.LogLevel.Dump(res.Request)
    return hls.NewSegment(res.Request.URL, res.Body)
 }

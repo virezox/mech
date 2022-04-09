@@ -52,6 +52,7 @@ var androidRacys = []string{
    "HsUATh_Nc2U", // signatureCipher
    "SZJvDhaSDnc", // url
    "Tq92D6wQ1mg", // url
+   "dqRZDebPIGs", // signatureCipher
 }
 
 func TestAndroidRacy(t *testing.T) {

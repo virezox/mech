@@ -59,12 +59,6 @@ Host: www.youtube.com
 "grant_type":"http://oauth.net/grant_type/device/1.0"}
 ~~~
 
-Needed for videos like this:
-
-~~~
-Cr381pDsSsA
-~~~
-
 1. <https://github.com/youtube/cobalt/blob/master/src/cobalt/browser/user_agent_string.cc>
 
 ## Image
@@ -87,6 +81,6 @@ http://i.ytimg.com/vi/hq2KgzKETBw/hq1.jpg
 
 I use it myself:
 
-https://youtube.com/watch?v=Ts1Tcgj6nbc
+https://www.youtube.com/watch?v=zv9NimPx3Es
 
-March 27 2022
+April 8 2022
