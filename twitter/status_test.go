@@ -8,6 +8,7 @@ import (
 const statusID = 1470124083547418624
 
 func TestStatus(t *testing.T) {
+   LogLevel = 1
    guest, err := NewGuest()
    if err != nil {
       t.Fatal(err)
