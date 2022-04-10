@@ -2,12 +2,9 @@
 
 ## Android client
 
-I was able to get YouTube working with Android API 24, using this method [1].
-Doing that, I was able to test non-stock versions of YouTube. It seems anything
-starting with version 14.01.51 (2019) is doing this HTTP/3 or whatever voodoo.
-Anything older wont work at all, even without proxy, failing with error 400.
+Must use Android API 31 or higher.
 
-1.  https://android.stackexchange.com/a/245551
+https://android.stackexchange.com/a/245551
 
 ## Device OAuth
 
