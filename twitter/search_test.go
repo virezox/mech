@@ -1,6 +1,7 @@
 package twitter
 
 import (
+   "fmt"
    "strings"
    "testing"
 )
@@ -13,15 +14,17 @@ func TestSearch(t *testing.T) {
    if len(search.GlobalObjects.Tweets) != 20 {
       t.Fatal(search)
    }
-   for _, tweet := range search.GlobalObjects.Tweets {
+   for id, tweet := range search.GlobalObjects.Tweets {
       var ok bool
       for _, addr := range tweet.Entities.URLs {
          if strings.HasPrefix(addr.Expanded_URL, "https://twitter.com/i/spaces/") {
             ok = true
          }
       }
-      if !ok {
-         t.Fatal(tweet)
+      if ok {
+         fmt.Println(id, tweet)
+      } else {
+         t.Fatal(id, tweet)
       }
    }
 }
