@@ -2,18 +2,10 @@ package twitter
 
 import (
    "encoding/json"
-   "github.com/89z/format"
-   "io"
    "net/http"
    "net/url"
    "strconv"
 )
-
-const bearer =
-   "AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs=" +
-   "1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA"
-
-var LogLevel format.LogLevel
 
 type Search struct {
    GlobalObjects struct {
@@ -36,7 +28,11 @@ func NewSearch(q string) (*Search, error) {
       return nil, err
    }
    req.Header.Set("Authorization", "Bearer " + bearer)
-   req.URL.RawQuery = "q=" + url.QueryEscape(q)
+   req.URL.RawQuery = url.Values{
+      "q": {q},
+      // This ensures Spaces Tweets will include Spaces URL
+      "tweet_mode": {"extended"},
+   }.Encode()
    LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
@@ -64,33 +60,4 @@ func (s Search) String() string {
       }
    }
    return string(buf)
-}
-
-func pass() (*Search, error) {
-   var req http.Request
-   req.Header = make(http.Header)
-   req.URL = new(url.URL)
-   req.URL.Host = "api.twitter.com"
-   req.URL.Path = "/2/search/adaptive.json"
-   val := make(url.Values)
-   val["q"] = []string{"filter:spaces"}
-   req.Header["Authorization"] = []string{"Bearer " + bearer}
-   req.URL.RawQuery = val.Encode()
-   req.URL.Scheme = "https"
-   // This ensures Spaces Tweets will include Spaces URL
-   val["tweet_mode"] = []string{"extended"}
-   res, err := new(http.Transport).RoundTrip(&req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   buf, err := io.ReadAll(res.Body)
-   if err != nil {
-      return nil, err
-   }
-   search := new(Search)
-   if err := json.Unmarshal(buf, search); err != nil {
-      return nil, err
-   }
-   return search, nil
 }

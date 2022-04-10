@@ -1,13 +1,12 @@
 package twitter
 
 import (
-   "fmt"
    "strings"
    "testing"
 )
 
-func TestPass(t *testing.T) {
-   search, err := pass()
+func TestSearch(t *testing.T) {
+   search, err := NewSearch("filter:spaces")
    if err != nil {
       t.Fatal(err)
    }
@@ -25,15 +24,4 @@ func TestPass(t *testing.T) {
          t.Fatal(tweet)
       }
    }
-}
-
-func TestFail(t *testing.T) {
-   search, err := NewSearch("filter:spaces")
-   if err != nil {
-      t.Fatal(err)
-   }
-   if len(search.GlobalObjects.Tweets) != 20 {
-      t.Fatal(search)
-   }
-   fmt.Println(search)
 }
