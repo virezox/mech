@@ -2,6 +2,7 @@ package main
 
 import (
    "fmt"
+   "github.com/89z/format"
    "github.com/89z/format/hls"
    "github.com/89z/mech/paramount"
    "net/http"
@@ -24,7 +25,7 @@ func doManifest(guid string, bandwidth int, info bool) error {
    }
    defer res.Body.Close()
    paramount.LogLevel.Dump(res.Request)
-   master, err := hls.NewMaster(res.Request.URL, res.Body)
+   master, err := hls.NewScanner(res.Body).Master(res.Request.URL)
    if err != nil {
       return err
    }
@@ -49,23 +50,24 @@ func download(stream hls.Stream, video *paramount.Video) error {
    if err != nil {
       return err
    }
-   res, err := http.Get(seg.Key.URI.String())
+   res, err := http.Get(seg.Key.String())
    if err != nil {
       return err
    }
-   defer res.Body.Close()
    paramount.LogLevel.Dump(res.Request)
    block, err := hls.NewCipher(res.Body)
    if err != nil {
+      return err
+   }
+   if err := res.Body.Close(); err != nil {
       return err
    }
    file, err := os.Create(video.Base() + seg.Ext())
    if err != nil {
       return err
    }
-   defer file.Close()
-   for i, info := range seg.Info {
-      fmt.Print(seg.Progress(i))
+   pro := format.NewProgress(file, seg.Length(stream))
+   for _, info := range seg.Info {
       res, err := http.Get(info.URI.String())
       if err != nil {
          return err
@@ -74,14 +76,14 @@ func download(stream hls.Stream, video *paramount.Video) error {
       if err != nil {
          return err
       }
-      if _, err := file.Write(buf); err != nil {
+      if _, err := pro.Write(buf); err != nil {
          return err
       }
       if err := res.Body.Close(); err != nil {
          return err
       }
    }
-   return nil
+   return file.Close()
 }
 
 func newSegment(addr string) (*hls.Segment, error) {
@@ -91,5 +93,5 @@ func newSegment(addr string) (*hls.Segment, error) {
    }
    defer res.Body.Close()
    paramount.LogLevel.Dump(res.Request)
-   return hls.NewSegment(res.Request.URL, res.Body)
+   return hls.NewScanner(res.Body).Segment(res.Request.URL)
 }
