@@ -14,16 +14,15 @@ type Height struct {
    Target int
 }
 
-func (h Height) distance(i int) int {
-   diff := h.Download[i].Height - h.Target
-   if diff >= 0 {
-      return diff
-   }
-   return -diff
-}
-
 func (h Height) Less(i, j int) bool {
-   return h.distance(i) < h.distance(j)
+   distance := func(k int) int {
+      diff := h.Download[k].Height - h.Target
+      if diff >= 0 {
+         return diff
+      }
+      return -diff
+   }
+   return distance(i) < distance(j)
 }
 
 type Download struct {

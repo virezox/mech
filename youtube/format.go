@@ -122,15 +122,14 @@ type Height struct {
 }
 
 func (h Height) Less(i, j int) bool {
-   return h.distance(i) < h.distance(j)
-}
-
-func (h Height) distance(i int) int {
-   diff := h.Formats[i].Height - h.Target
-   if diff >= 0 {
-      return diff
+   distance := func(k int) int {
+      diff := h.Formats[k].Height - h.Target
+      if diff >= 0 {
+         return diff
+      }
+      return -diff
    }
-   return -diff
+   return distance(i) < distance(j)
 }
 
 type notFound struct {

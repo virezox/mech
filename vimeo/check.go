@@ -49,15 +49,14 @@ type ProgHeight struct {
 }
 
 func (p ProgHeight) Less(i, j int) bool {
-   return p.distance(i) < p.distance(j)
-}
-
-func (p ProgHeight) distance(i int) int {
-   diff := p.Progressives[i].Height - p.Target
-   if diff >= 0 {
-      return diff
+   distance := func(k int) int {
+      diff := p.Progressives[k].Height - p.Target
+      if diff >= 0 {
+         return diff
+      }
+      return -diff
    }
-   return -diff
+   return distance(i) < distance(j)
 }
 
 type Progressive struct {
