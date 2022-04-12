@@ -2,6 +2,7 @@ package main
 
 import (
    "fmt"
+   "github.com/89z/format"
    "github.com/89z/format/hls"
    "github.com/89z/mech/abc"
    "net/http"
@@ -28,7 +29,7 @@ func doManifest(addr string, bandwidth int, info bool) error {
       return err
    }
    defer res.Body.Close()
-   master, err := hls.NewMaster(res.Request.URL, res.Body)
+   master, err := hls.NewScanner(res.Body).Master(res.Request.URL)
    if err != nil {
       return err
    }
@@ -53,7 +54,7 @@ func newSegment(stream hls.Stream) (*hls.Segment, error) {
       return nil, err
    }
    defer res.Body.Close()
-   return hls.NewSegment(res.Request.URL, res.Body)
+   return hls.NewScanner(res.Body).Segment(res.Request.URL)
 }
 
 func download(stream hls.Stream, video *abc.Video) error {
@@ -61,8 +62,8 @@ func download(stream hls.Stream, video *abc.Video) error {
    if err != nil {
       return err
    }
-   fmt.Println("GET", seg.Key.URI)
-   res, err := http.Get(seg.Key.URI.String())
+   fmt.Println("GET", seg.Key)
+   res, err := http.Get(seg.Key.String())
    if err != nil {
       return err
    }
@@ -70,12 +71,15 @@ func download(stream hls.Stream, video *abc.Video) error {
    if err != nil {
       return err
    }
+   if err := res.Body.Close(); err != nil {
+      return err
+   }
    file, err := os.Create(video.Base() + seg.Ext())
    if err != nil {
       return err
    }
-   for i, info := range seg.Info {
-      fmt.Print(seg.Progress(i))
+   pro := format.NewProgress(file, seg.Length(stream))
+   for _, info := range seg.Info {
       res, err := http.Get(info.URI.String())
       if err != nil {
          return err
@@ -84,15 +88,12 @@ func download(stream hls.Stream, video *abc.Video) error {
       if err != nil {
          return err
       }
-      if _, err := file.Write(buf); err != nil {
+      if _, err := pro.Write(buf); err != nil {
          return err
       }
       if err := res.Body.Close(); err != nil {
          return err
       }
-   }
-   if err := res.Body.Close(); err != nil {
-      return err
    }
    return file.Close()
 }

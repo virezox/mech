@@ -26,7 +26,7 @@ func doWidget(address string, bandwidth int, info bool) error {
       return err
    }
    defer res.Body.Close()
-   master, err := hls.NewMaster(res.Request.URL, res.Body)
+   master, err := hls.NewScanner(res.Body).Master(res.Request.URL)
    if err != nil {
       return err
    }
@@ -55,7 +55,7 @@ func download(addr *url.URL, base string) error {
    if err != nil {
       return err
    }
-   seg, err := hls.NewSegment(res.Request.URL, res.Body)
+   seg, err := hls.NewScanner(res.Body).Segment(res.Request.URL)
    if err != nil {
       return err
    }
@@ -66,8 +66,7 @@ func download(addr *url.URL, base string) error {
    if err != nil {
       return err
    }
-   for i, info := range seg.Info {
-      fmt.Print(seg.Progress(i))
+   for _, info := range seg.Info {
       res, err := http.Get(info.URI.String())
       if err != nil {
          return err
