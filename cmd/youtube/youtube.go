@@ -2,6 +2,7 @@ package main
 
 import (
    "fmt"
+   "github.com/89z/mech"
    "github.com/89z/mech/youtube"
    "os"
    "sort"
@@ -106,7 +107,7 @@ func (v video) doVideo(play *youtube.Player) error {
       return nil
    }
    form := play.StreamingData.AdaptiveFormats[0]
-   ext, err := form.Ext()
+   ext, err := mech.ExtensionByType(form.MimeType)
    if err != nil {
       return err
    }
@@ -121,7 +122,7 @@ func (v video) doVideo(play *youtube.Player) error {
 func (v video) doAudio(play *youtube.Player) error {
    for _, form := range play.StreamingData.AdaptiveFormats {
       if form.AudioQuality == v.audio {
-         ext, err := form.Ext()
+         ext, err := mech.ExtensionByType(form.MimeType)
          if err != nil {
             return err
          }

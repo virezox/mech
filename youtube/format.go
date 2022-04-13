@@ -24,6 +24,22 @@ type Format struct {
    Width int
 }
 
+func (f Format) Format(s fmt.State, verb rune) {
+   if f.QualityLabel != "" {
+      fmt.Fprint(s, "Quality:", f.QualityLabel)
+   } else {
+      fmt.Fprint(s, "Quality:", f.AudioQuality)
+   }
+   fmt.Fprint(s, " Bitrate:", f.Bitrate)
+   if f.ContentLength >= 1 { // Tq92D6wQ1mg
+      fmt.Fprint(s, " Size:", f.ContentLength)
+   }
+   fmt.Fprint(s, " Type:", f.MimeType)
+   if verb == 'a' {
+      fmt.Fprint(s, " URL:", f.URL)
+   }
+}
+
 func (f Format) Write(dst io.Writer) error {
    req, err := http.NewRequest("GET", f.URL, nil)
    if err != nil {
@@ -52,33 +68,6 @@ func (f Format) Write(dst io.Writer) error {
       pos += chunk
    }
    return nil
-}
-
-func (f Format) Format(s fmt.State, verb rune) {
-   if f.QualityLabel != "" {
-      fmt.Fprint(s, "Quality:", f.QualityLabel)
-   } else {
-      fmt.Fprint(s, "Quality:", f.AudioQuality)
-   }
-   fmt.Fprint(s, " Bitrate:", f.Bitrate)
-   if f.ContentLength >= 1 { // Tq92D6wQ1mg
-      fmt.Fprint(s, " Size:", f.ContentLength)
-   }
-   fmt.Fprint(s, " Type:", f.MimeType)
-   if verb == 'a' {
-      fmt.Fprint(s, " URL:", f.URL)
-   }
-}
-
-func (f Format) Ext() (string, error) {
-   exts, err := mime.ExtensionsByType(f.MimeType)
-   if err != nil {
-      return "", err
-   }
-   for _, ext := range exts {
-      return ext, nil
-   }
-   return "", notFound{f.MimeType}
 }
 
 type Formats []Format
@@ -123,12 +112,4 @@ func (h Height) Less(i, j int) bool {
       return -diff
    }
    return distance(i) < distance(j)
-}
-
-type notFound struct {
-   value string
-}
-
-func (n notFound) Error() string {
-   return fmt.Sprintf("%q is not found", n.value)
 }

@@ -2,7 +2,6 @@ package main
 
 import (
    "flag"
-   "github.com/89z/format"
    "github.com/89z/mech/paramount"
 )
 
@@ -21,10 +20,12 @@ func main() {
    var info bool
    flag.BoolVar(&info, "i", false, "information")
    // v
-   var logLevel int
-   flag.IntVar(&logLevel, "v", 0, "log level")
+   var verbose bool
+   flag.BoolVar(&verbose, "v", false, "verbose")
    flag.Parse()
-   paramount.LogLevel = format.LogLevel(logLevel)
+   if verbose {
+      paramount.LogLevel = 1
+   }
    if guid != "" || address != "" {
       err := doManifest(guid, address, bandwidth, info)
       if err != nil {
