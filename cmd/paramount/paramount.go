@@ -66,7 +66,7 @@ func download(stream hls.Stream, video *paramount.Video) error {
    if err != nil {
       return err
    }
-   pro := format.NewProgress(file, seg.Length(stream))
+   pro := format.NewProgress(file, len(seg.Info))
    for _, info := range seg.Info {
       res, err := http.Get(info.URI.String())
       if err != nil {
