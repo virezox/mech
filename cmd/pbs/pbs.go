@@ -5,6 +5,7 @@ import (
    "github.com/89z/format"
    "github.com/89z/format/hls"
    "github.com/89z/mech/pbs"
+   "io"
    "net/http"
    "net/url"
    "os"
@@ -34,7 +35,8 @@ func download(addr *url.URL, base string) error {
       if err != nil {
          return err
       }
-      if _, err := pro.Copy(res); err != nil {
+      pro.AddChunk(res.ContentLength)
+      if _, err := io.Copy(pro, res.Body); err != nil {
          return err
       }
       if err := res.Body.Close(); err != nil {

@@ -72,6 +72,7 @@ func download(stream hls.Stream, video *paramount.Video) error {
       if err != nil {
          return err
       }
+      pro.AddChunk(res.ContentLength)
       if _, err := block.Copy(pro, res.Body, info.IV); err != nil {
          return err
       }

@@ -9,32 +9,48 @@ import (
    "strings"
 )
 
+const chunk = 10_000_000
+
+// averageBitrate is not always available:
+// Tq92D6wQ1mg
+type Format struct {
+   AudioQuality string
+   Bitrate int
+   ContentLength int `json:"contentLength,string"`
+   Height int
+   MimeType string
+   QualityLabel string
+   URL string
+   Width int
+}
+
 func (f Format) Write(dst io.Writer) error {
    req, err := http.NewRequest("GET", f.URL, nil)
    if err != nil {
       return err
    }
    LogLevel.Dump(req)
-   var (
-      content int64
-      pro = format.NewProgress(dst, 1)
-   )
-   for content < f.ContentLength {
+   var chunks int
+   for chunks*chunk < f.ContentLength {
+      chunks++
+   }
+   pro := format.NewProgress(dst, chunks)
+   for chunks = 0; chunks < f.ContentLength; chunks += chunk {
       req.Header.Set(
-         "Range", fmt.Sprintf("bytes=%v-%v", content, content+partLength-1),
+         "Range", fmt.Sprintf("bytes=%v-%v", chunks, chunks+chunk-1),
       )
       // this sometimes redirects, so cannot use http.Transport
       res, err := new(http.Client).Do(req)
       if err != nil {
          return err
       }
+      pro.AddChunk(res.ContentLength)
       if _, err := io.Copy(pro, res.Body); err != nil {
          return err
       }
       if err := res.Body.Close(); err != nil {
          return err
       }
-      content += partLength
    }
    return nil
 }
@@ -53,21 +69,6 @@ func (f Format) Format(s fmt.State, verb rune) {
    if verb == 'a' {
       fmt.Fprint(s, " URL:", f.URL)
    }
-}
-
-const partLength = 10_000_000
-
-// averageBitrate is not always available:
-// Tq92D6wQ1mg
-type Format struct {
-   AudioQuality string
-   Bitrate int
-   ContentLength int64 `json:"contentLength,string"`
-   Height int
-   MimeType string
-   QualityLabel string
-   URL string
-   Width int
 }
 
 func (f Format) Ext() (string, error) {
