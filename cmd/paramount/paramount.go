@@ -8,9 +8,13 @@ import (
    "net/http"
    "os"
    "sort"
+   "time"
 )
 
-func doManifest(guid string, bandwidth int, info bool) error {
+func doManifest(guid, address string, bandwidth int, info bool) error {
+   if guid == "" {
+      guid = paramount.GUID(address)
+   }
    media, err := paramount.NewMedia(guid)
    if err != nil {
       return err
@@ -45,6 +49,21 @@ func doManifest(guid string, bandwidth int, info bool) error {
    return nil
 }
 
+func get(addr string) (*http.Response, error) {
+   req, err := http.NewRequest("", addr, nil)
+   if err != nil {
+      return nil, err
+   }
+   // 9 seconds is too long
+   tr := &http.Transport{IdleConnTimeout: 8*time.Second}
+   res, err := tr.RoundTrip(req)
+   if err != nil {
+      fmt.Println("RETRY")
+      return tr.RoundTrip(req)
+   }
+   return res, nil
+}
+
 func download(stream hls.Stream, video *paramount.Video) error {
    seg, err := newSegment(stream.URI.String())
    if err != nil {
@@ -66,9 +85,9 @@ func download(stream hls.Stream, video *paramount.Video) error {
    if err != nil {
       return err
    }
-   pro := format.NewProgress(file, len(seg.Info))
+   pro := format.ProgressChunks(file, len(seg.Info))
    for _, info := range seg.Info {
-      res, err := http.Get(info.URI.String())
+      res, err := get(info.URI.String())
       if err != nil {
          return err
       }

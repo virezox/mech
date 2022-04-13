@@ -29,7 +29,7 @@ func download(addr *url.URL, base string) error {
    if err != nil {
       return err
    }
-   pro := format.NewProgress(file, len(seg.Info))
+   pro := format.ProgressChunks(file, len(seg.Info))
    for _, info := range seg.Info {
       res, err := http.Get(info.URI.String())
       if err != nil {

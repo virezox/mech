@@ -7,12 +7,16 @@ import (
 )
 
 func main() {
+   // a
+   var address string
+   flag.StringVar(&address, "a", "", "address")
    // b
    var guid string
    flag.StringVar(&guid, "b", "", "GUID")
    // f
+   // paramountplus.com/shows/video/186A7772-3307-4270-4FB9-D16F4DC7E08C
    var bandwidth int
-   flag.IntVar(&bandwidth, "f", 3_063_000, "target bandwidth")
+   flag.IntVar(&bandwidth, "f", 2_223_000, "target bandwidth")
    // i
    var info bool
    flag.BoolVar(&info, "i", false, "information")
@@ -21,8 +25,8 @@ func main() {
    flag.IntVar(&logLevel, "v", 0, "log level")
    flag.Parse()
    paramount.LogLevel = format.LogLevel(logLevel)
-   if guid != "" {
-      err := doManifest(guid, bandwidth, info)
+   if guid != "" || address != "" {
+      err := doManifest(guid, address, bandwidth, info)
       if err != nil {
          panic(err)
       }

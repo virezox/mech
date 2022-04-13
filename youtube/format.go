@@ -16,7 +16,7 @@ const chunk = 10_000_000
 type Format struct {
    AudioQuality string
    Bitrate int
-   ContentLength int `json:"contentLength,string"`
+   ContentLength int64 `json:"contentLength,string"`
    Height int
    MimeType string
    QualityLabel string
@@ -30,27 +30,26 @@ func (f Format) Write(dst io.Writer) error {
       return err
    }
    LogLevel.Dump(req)
-   var chunks int
-   for chunks*chunk < f.ContentLength {
-      chunks++
-   }
-   pro := format.NewProgress(dst, chunks)
-   for chunks = 0; chunks < f.ContentLength; chunks += chunk {
+   var (
+      pos int64
+      pro = format.ProgressBytes(dst, f.ContentLength)
+   )
+   for pos < f.ContentLength {
       req.Header.Set(
-         "Range", fmt.Sprintf("bytes=%v-%v", chunks, chunks+chunk-1),
+         "Range", fmt.Sprintf("bytes=%v-%v", pos, pos+chunk-1),
       )
       // this sometimes redirects, so cannot use http.Transport
       res, err := new(http.Client).Do(req)
       if err != nil {
          return err
       }
-      pro.AddChunk(res.ContentLength)
       if _, err := io.Copy(pro, res.Body); err != nil {
          return err
       }
       if err := res.Body.Close(); err != nil {
          return err
       }
+      pos += chunk
    }
    return nil
 }

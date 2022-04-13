@@ -3,26 +3,23 @@ package paramount
 import (
    "encoding/xml"
    "github.com/89z/format"
+   "github.com/89z/mech"
    "net/http"
    "net/url"
-   "github.com/89z/mech"
+   "path"
    "strconv"
    "strings"
 )
 
-func (m Media) Video() (*Video, error) {
-   for _, vid := range m.Body.Seq.Video {
-      return &vid, nil
-   }
-   return nil, notFound{".body.seq.video"}
-}
+const (
+   aid = 2198311517
+   sid = "dJ5BDC"
+)
 
-type notFound struct {
-   value string
-}
+var LogLevel format.LogLevel
 
-func (n notFound) Error() string {
-   return strconv.Quote(n.value) + " is not found"
+func GUID(addr string) string {
+   return path.Base(addr)
 }
 
 type Media struct {
@@ -32,13 +29,6 @@ type Media struct {
       } `xml:"seq"`
    } `xml:"body"`
 }
-
-const (
-   aid = 2198311517
-   sid = "dJ5BDC"
-)
-
-var LogLevel format.LogLevel
 
 func NewMedia(guid string) (*Media, error) {
    buf := []byte("https://link.theplatform.com/s/")
@@ -67,6 +57,13 @@ func NewMedia(guid string) (*Media, error) {
       return nil, err
    }
    return med, nil
+}
+
+func (m Media) Video() (*Video, error) {
+   for _, vid := range m.Body.Seq.Video {
+      return &vid, nil
+   }
+   return nil, notFound{".body.seq.video"}
 }
 
 type Video struct {
@@ -104,4 +101,12 @@ func (v Video) SeasonNumber() string {
       }
    }
    return ""
+}
+
+type notFound struct {
+   value string
+}
+
+func (n notFound) Error() string {
+   return strconv.Quote(n.value) + " is not found"
 }
