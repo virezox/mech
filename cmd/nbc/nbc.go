@@ -11,6 +11,40 @@ import (
    "sort"
 )
 
+func download(stream hls.Stream, video *nbc.Video) error {
+   fmt.Println("GET", stream.URI)
+   res, err := http.Get(stream.URI.String())
+   if err != nil {
+      return err
+   }
+   seg, err := hls.NewScanner(res.Body).Segment(res.Request.URL)
+   if err != nil {
+      return err
+   }
+   if err := res.Body.Close(); err != nil {
+      return err
+   }
+   file, err := os.Create(video.Base() + seg.Ext())
+   if err != nil {
+      return err
+   }
+   pro := format.NewProgress(file, len(seg.Info))
+   for _, info := range seg.Info {
+      res, err := http.Get(info.URI.String())
+      if err != nil {
+         return err
+      }
+      pro.AddChunk(res.ContentLength)
+      if _, err := io.Copy(pro, res.Body); err != nil {
+         return err
+      }
+      if err := res.Body.Close(); err != nil {
+         return err
+      }
+   }
+   return file.Close()
+}
+
 func doManifest(guid int64, bandwidth int, info bool) error {
    vod, err := nbc.NewAccessVOD(guid)
    if err != nil {
@@ -36,38 +70,6 @@ func doManifest(guid int64, bandwidth int, info bool) error {
             return err
          }
          return download(stream, video)
-      }
-   }
-   return nil
-}
-
-func download(stream hls.Stream, video *nbc.Video) error {
-   fmt.Println("GET", stream.URI)
-   res, err := http.Get(stream.URI.String())
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   seg, err := hls.NewScanner(res.Body).Segment(res.Request.URL)
-   if err != nil {
-      return err
-   }
-   file, err := os.Create(video.Base() + seg.Ext())
-   if err != nil {
-      return err
-   }
-   defer file.Close()
-   pro := format.NewProgress(file, seg.Length(stream))
-   for _, info := range seg.Info {
-      res, err := http.Get(info.URI.String())
-      if err != nil {
-         return err
-      }
-      if _, err := io.Copy(pro, res.Body); err != nil {
-         return err
-      }
-      if err := res.Body.Close(); err != nil {
-         return err
       }
    }
    return nil

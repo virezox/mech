@@ -78,17 +78,13 @@ func download(stream hls.Stream, video *abc.Video) error {
    if err != nil {
       return err
    }
-   pro := format.NewProgress(file, seg.Length(stream))
+   pro := format.NewProgress(file, len(seg.Info))
    for _, info := range seg.Info {
       res, err := http.Get(info.URI.String())
       if err != nil {
          return err
       }
-      buf, err := block.Decrypt(info, res.Body)
-      if err != nil {
-         return err
-      }
-      if _, err := pro.Write(buf); err != nil {
+      if _, err := block.Copy(pro, res.Body, info.IV); err != nil {
          return err
       }
       if err := res.Body.Close(); err != nil {

@@ -2,6 +2,7 @@ package main
 
 import (
    "fmt"
+   "github.com/89z/format"
    "github.com/89z/format/hls"
    "github.com/89z/mech/pbs"
    "net/http"
@@ -9,6 +10,39 @@ import (
    "os"
    "sort"
 )
+
+func download(addr *url.URL, base string) error {
+   fmt.Println("GET", addr)
+   res, err := http.Get(addr.String())
+   if err != nil {
+      return err
+   }
+   seg, err := hls.NewScanner(res.Body).Segment(res.Request.URL)
+   if err != nil {
+      return err
+   }
+   if err := res.Body.Close(); err != nil {
+      return err
+   }
+   file, err := os.Create(base + seg.Ext())
+   if err != nil {
+      return err
+   }
+   pro := format.NewProgress(file, len(seg.Info))
+   for _, info := range seg.Info {
+      res, err := http.Get(info.URI.String())
+      if err != nil {
+         return err
+      }
+      if _, err := pro.Copy(res); err != nil {
+         return err
+      }
+      if err := res.Body.Close(); err != nil {
+         return err
+      }
+   }
+   return file.Close()
+}
 
 func doWidget(address string, bandwidth int, info bool) error {
    getter, err := pbs.NewWidgeter(address)
@@ -47,36 +81,4 @@ func doWidget(address string, bandwidth int, info bool) error {
       }
    }
    return nil
-}
-
-func download(addr *url.URL, base string) error {
-   fmt.Println("GET", addr)
-   res, err := http.Get(addr.String())
-   if err != nil {
-      return err
-   }
-   seg, err := hls.NewScanner(res.Body).Segment(res.Request.URL)
-   if err != nil {
-      return err
-   }
-   if err := res.Body.Close(); err != nil {
-      return err
-   }
-   file, err := os.Create(base + seg.Ext())
-   if err != nil {
-      return err
-   }
-   for _, info := range seg.Info {
-      res, err := http.Get(info.URI.String())
-      if err != nil {
-         return err
-      }
-      if _, err := file.ReadFrom(res.Body); err != nil {
-         return err
-      }
-      if err := res.Body.Close(); err != nil {
-         return err
-      }
-   }
-   return file.Close()
 }

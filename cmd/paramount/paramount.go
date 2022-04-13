@@ -72,11 +72,7 @@ func download(stream hls.Stream, video *paramount.Video) error {
       if err != nil {
          return err
       }
-      buf, err := block.Decrypt(info, res.Body)
-      if err != nil {
-         return err
-      }
-      if _, err := pro.Write(buf); err != nil {
+      if _, err := block.Copy(pro, res.Body, info.IV); err != nil {
          return err
       }
       if err := res.Body.Close(); err != nil {
