@@ -1,0 +1,1613 @@
+{
+ "data": {
+  "audioSpace": {
+   "metadata": {
+    "conversation_controls": 0,
+    "created_at": 1649938024749,
+    "creator_results": {
+     "result": {
+      "__typename": "User",
+      "affiliates_highlighted_label": {},
+      "has_nft_avatar": false,
+      "id": "VXNlcjoxNDU5ODk1OTI1MDc0MTI4OTA4",
+      "legacy": {
+       "created_at": "Sun Nov 14 14:48:23 +0000 2021",
+       "default_profile": true,
+       "default_profile_image": false,
+       "description": "business",
+       "entities": {
+        "description": {
+         "urls": []
+        }
+       },
+       "fast_followers_count": 0,
+       "favourites_count": 223,
+       "followers_count": 3506,
+       "friends_count": 3527,
+       "has_custom_timelines": false,
+       "is_translator": false,
+       "listed_count": 0,
+       "location": "Noida, India",
+       "media_count": 1,
+       "name": "RAVI YADAV🔔",
+       "normal_followers_count": 3506,
+       "pinned_tweet_ids_str": [
+        "1513549712292384770"
+       ],
+       "profile_banner_extensions": {
+        "mediaColor": {
+         "r": {
+          "ok": {
+           "palette": [
+            {
+             "percentage": 62.46,
+             "rgb": {
+              "blue": 25,
+              "green": 140,
+              "red": 170
+             }
+            },
+            {
+             "percentage": 12.94,
+             "rgb": {
+              "blue": 10,
+              "green": 64,
+              "red": 120
+             }
+            },
+            {
+             "percentage": 8.07,
+             "rgb": {
+              "blue": 136,
+              "green": 195,
+              "red": 206
+             }
+            },
+            {
+             "percentage": 4.43,
+             "rgb": {
+              "blue": 46,
+              "green": 104,
+              "red": 134
+             }
+            },
+            {
+             "percentage": 3.09,
+             "rgb": {
+              "blue": 191,
+              "green": 213,
+              "red": 222
+             }
+            }
+           ]
+          }
+         }
+        }
+       },
+       "profile_banner_url": "https://pbs.twimg.com/profile_banners/1459895925074128908/1649443123",
+       "profile_image_extensions": {
+        "mediaColor": {
+         "r": {
+          "ok": {
+           "palette": [
+            {
+             "percentage": 39.56,
+             "rgb": {
+              "blue": 71,
+              "green": 71,
+              "red": 58
+             }
+            },
+            {
+             "percentage": 33.34,
+             "rgb": {
+              "blue": 116,
+              "green": 120,
+              "red": 124
+             }
+            },
+            {
+             "percentage": 18.6,
+             "rgb": {
+              "blue": 71,
+              "green": 137,
+              "red": 209
+             }
+            },
+            {
+             "percentage": 4.14,
+             "rgb": {
+              "blue": 100,
+              "green": 124,
+              "red": 173
+             }
+            },
+            {
+             "percentage": 1.96,
+             "rgb": {
+              "blue": 29,
+              "green": 84,
+              "red": 207
+             }
+            }
+           ]
+          }
+         }
+        }
+       },
+       "profile_image_url_https": "https://pbs.twimg.com/profile_images/1512499241494925313/yo7xlhDo_normal.jpg",
+       "profile_interstitial_type": "",
+       "protected": false,
+       "screen_name": "raviyadavindia7",
+       "statuses_count": 2366,
+       "translator_type": "none",
+       "verified": false,
+       "withheld_in_countries": []
+      },
+      "professional": {
+       "category": [
+        {
+         "id": 584,
+         "name": "Medical & Health"
+        }
+       ],
+       "professional_type": "Business",
+       "rest_id": "1470794989172973572"
+      },
+      "rest_id": "1459895925074128908"
+     }
+    },
+    "is_employee_only": false,
+    "is_locked": false,
+    "media_key": "28_1514575967494152193",
+    "rest_id": "1DXxyDEZPNdJM",
+    "started_at": 1649938029223,
+    "state": "Running",
+    "title": "Gain with Ravi Yadav 💯",
+    "total_live_listeners": 259,
+    "total_replay_watched": 0,
+    "updated_at": 1649944030368
+   },
+   "participants": {
+    "admins": [
+     {
+      "avatar_url": "https://pbs.twimg.com/profile_images/1512499241494925313/yo7xlhDo_normal.jpg",
+      "display_name": "RAVI YADAV🔔",
+      "is_muted_by_admin": false,
+      "is_muted_by_guest": true,
+      "is_verified": false,
+      "periscope_user_id": "1eRExelaaoAQw",
+      "start": 1649938024749,
+      "twitter_screen_name": "raviyadavindia7",
+      "user": {
+       "rest_id": "1459895925074128908"
+      },
+      "user_results": {
+       "result": {
+        "__typename": "User",
+        "has_nft_avatar": false
+       }
+      }
+     },
+     {
+      "avatar_url": "https://pbs.twimg.com/profile_images/1439042305130856452/szkgIIRs_normal.jpg",
+      "display_name": "Sanju Goyal",
+      "is_muted_by_admin": false,
+      "is_muted_by_guest": true,
+      "is_verified": false,
+      "periscope_user_id": "1eVQYYlzVGLQL",
+      "start": 1649938024749,
+      "twitter_screen_name": "SanjuGo88848874",
+      "user": {
+       "rest_id": "1395052052657721362"
+      },
+      "user_results": {
+       "result": {
+        "__typename": "User",
+        "has_nft_avatar": false
+       }
+      }
+     },
+     {
+      "avatar_url": "https://pbs.twimg.com/profile_images/1503719164074242048/RPFt_-r-_normal.jpg",
+      "display_name": "MUNIR",
+      "is_muted_by_admin": false,
+      "is_muted_by_guest": true,
+      "is_verified": false,
+      "periscope_user_id": "1wBKAagPvazKP",
+      "start": 1649938024749,
+      "twitter_screen_name": "MunirKhan4U",
+      "user": {
+       "rest_id": "1248343784884039680"
+      },
+      "user_results": {
+       "result": {
+        "__typename": "User",
+        "has_nft_avatar": false
+       }
+      }
+     }
+    ],
+    "listeners": [
+     {
+      "avatar_url": "https://pbs.twimg.com/profile_images/1506803578773676034/RjZy37J5_normal.jpg",
+      "display_name": "★°•💕°⚘•𝕝𝕧𝕒_𝕝𝕒𝕣𝕠𝕤𝕒🦋°•⚘",
+      "is_muted_by_admin": false,
+      "is_muted_by_guest": false,
+      "is_verified": false,
+      "periscope_user_id": "1mMEPJGprolKG",
+      "start": 1649943865000,
+      "twitter_screen_name": "Iva_LaRosa",
+      "user": {
+       "rest_id": "920720162013286411"
+      },
+      "user_results": {
+       "result": {
+        "__typename": "User",
+        "has_nft_avatar": false
+       }
+      }
+     },
+     {
+      "avatar_url": "https://pbs.twimg.com/profile_images/1389604003089092616/xPYVMnUl_normal.jpg",
+      "display_name": "shirley lo",
+      "is_muted_by_admin": false,
+      "is_muted_by_guest": false,
+      "is_verified": false,
+      "periscope_user_id": "1YLEJLBdOWOKN",
+      "start": 1649939150000,
+      "twitter_screen_name": "shirleylo",
+      "user": {
+       "rest_id": "20636313"
+      },
+      "user_results": {
+       "result": {
+        "__typename": "User",
+        "has_nft_avatar": false
+       }
+      }
+     },
+     {
+      "avatar_url": "https://pbs.twimg.com/profile_images/1509125364286636038/1A-W7Bpo_normal.jpg",
+      "display_name": "AYCA🐞56K",
+      "is_muted_by_admin": false,
+      "is_muted_by_guest": false,
+      "is_verified": false,
+      "periscope_user_id": "1ayjVVJJmkZjp",
+      "start": 1649943700000,
+      "twitter_screen_name": "ayc_133",
+      "user": {
+       "rest_id": "1446175534396936197"
+      },
+      "user_results": {
+       "result": {
+        "__typename": "User",
+        "has_nft_avatar": false
+       }
+      }
+     },
+     {
+      "avatar_url": "https://pbs.twimg.com/profile_images/1435926186107056132/W5_c7Z51_normal.jpg",
+      "display_name": "General Surgeon",
+      "is_muted_by_admin": false,
+      "is_muted_by_guest": false,
+      "is_verified": false,
+      "periscope_user_id": "1MWEwDXODZRQb",
+      "start": 1649941785000,
+      "twitter_screen_name": "alfuratyalatiqe",
+      "user": {
+       "rest_id": "1326812837252112384"
+      },
+      "user_results": {
+       "result": {
+        "__typename": "User",
+        "has_nft_avatar": false
+       }
+      }
+     },
+     {
+      "avatar_url": "https://pbs.twimg.com/profile_images/1513932445229326336/KsvT_trA_normal.jpg",
+      "display_name": "🇮🇳 सम्राट रोहित शर्मा 🚩",
+      "is_muted_by_admin": false,
+      "is_muted_by_guest": false,
+      "is_verified": false,
+      "periscope_user_id": "1DLKBeqOYwOQJ",
+      "start": 1649942175000,
+      "twitter_screen_name": "Sam2rat",
+      "user": {
+       "rest_id": "1460144687625342978"
+      },
+      "user_results": {
+       "result": {
+        "__typename": "User",
+        "has_nft_avatar": false
+       }
+      }
+     },
+     {
+      "avatar_url": "https://pbs.twimg.com/profile_images/1459760571872514049/drKQuaf8_normal.jpg",
+      "display_name": "Deejay",
+      "is_muted_by_admin": false,
+      "is_muted_by_guest": false,
+      "is_verified": false,
+      "periscope_user_id": "1YLEJLyqYVyKN",
+      "start": 1649940813000,
+      "twitter_screen_name": "Deejay79105637",
+      "user": {
+       "rest_id": "1389893800282132484"
+      },
+      "user_results": {
+       "result": {
+        "__typename": "User",
+        "has_nft_avatar": false
+       }
+      }
+     },
+     {
+      "avatar_url": "https://pbs.twimg.com/profile_images/1501571565078532102/QJ96kpci_normal.jpg",
+      "display_name": "SHIV KUMAR YADAV उ०प्र०प्रा०शि०संघ-मवई,अयोध्या",
+      "is_muted_by_admin": false,
+      "is_muted_by_guest": false,
+      "is_verified": false,
+      "periscope_user_id": "1edjnarNqvmKo",
+      "start": 1649943121000,
+      "twitter_screen_name": "shivji138",
+      "user": {
+       "rest_id": "860525311200555008"
+      },
+      "user_results": {
+       "result": {
+        "__typename": "User",
+        "has_nft_avatar": false
+       }
+      }
+     },
+     {
+      "avatar_url": "https://pbs.twimg.com/profile_images/1513825500963041280/SaXRjlL2_normal.jpg",
+      "display_name": "RAHUL SINGH",
+      "is_muted_by_admin": false,
+      "is_muted_by_guest": false,
+      "is_verified": false,
+      "periscope_user_id": "1WLKRGVVLoBjb",
+      "start": 1649939968000,
+      "twitter_screen_name": "rahul_singh720",
+      "user": {
+       "rest_id": "1415208799443374080"
+      },
+      "user_results": {
+       "result": {
+        "__typename": "User",
+        "has_nft_avatar": false
+       }
+      }
+     },
+     {
+      "avatar_url": "https://pbs.twimg.com/profile_images/1513964453045317632/CcJfrj3a_normal.jpg",
+      "display_name": "#आज़ादी_गौरव_यात्रा",
+      "is_muted_by_admin": false,
+      "is_muted_by_guest": false,
+      "is_verified": false,
+      "periscope_user_id": "1eVjYXYxVVwKL",
+      "start": 1649940785000,
+      "twitter_screen_name": "IncGeetSethi",
+      "user": {
+       "rest_id": "1615586154"
+      },
+      "user_results": {
+       "result": {
+        "__typename": "User",
+        "has_nft_avatar": false
+       }
+      }
+     },
+     {
+      "avatar_url": "https://pbs.twimg.com/profile_images/1514538111367204867/L6qfepcB_normal.jpg",
+      "display_name": "Dinesh Meena✍️🇮🇳",
+      "is_muted_by_admin": false,
+      "is_muted_by_guest": false,
+      "is_verified": false,
+      "periscope_user_id": "1DZKoGRLanYKa",
+      "start": 1649942750000,
+      "twitter_screen_name": "Dinesh_MeenaINC",
+      "user": {
+       "rest_id": "1198149653880922118"
+      },
+      "user_results": {
+       "result": {
+        "__typename": "User",
+        "has_nft_avatar": false
+       }
+      }
+     },
+     {
+      "avatar_url": "https://pbs.twimg.com/profile_images/1505808740234272770/CaHkDGIe_normal.jpg",
+      "display_name": "Naseema Fatima ✍️",
+      "is_muted_by_admin": false,
+      "is_muted_by_guest": false,
+      "is_verified": false,
+      "periscope_user_id": "1edjnVnqYzYjo",
+      "start": 1649938630000,
+      "twitter_screen_name": "__NSFat8",
+      "user": {
+       "rest_id": "1249957314787807233"
+      },
+      "user_results": {
+       "result": {
+        "__typename": "User",
+        "has_nft_avatar": false
+       }
+      }
+     },
+     {
+      "avatar_url": "https://pbs.twimg.com/profile_images/1503641631957811200/9dnfllrW_normal.jpg",
+      "display_name": "Komal Sharma",
+      "is_muted_by_admin": false,
+      "is_muted_by_guest": false,
+      "is_verified": false,
+      "periscope_user_id": "1PXEdodNBVDje",
+      "start": 1649942939000,
+      "twitter_screen_name": "KomalSharma2022",
+      "user": {
+       "rest_id": "1489645375430430723"
+      },
+      "user_results": {
+       "result": {
+        "__typename": "User",
+        "has_nft_avatar": false
+       }
+      }
+     },
+     {
+      "avatar_url": "https://pbs.twimg.com/profile_images/1467817259661889542/KpKW3YD7_normal.jpg",
+      "display_name": "NAVEEN KUMAR",
+      "is_muted_by_admin": false,
+      "is_muted_by_guest": false,
+      "is_verified": false,
+      "periscope_user_id": "1PXKdqGyPJZje",
+      "start": 1649939618000,
+      "twitter_screen_name": "Naveen_NKLP",
+      "user": {
+       "rest_id": "1430488568405782529"
+      },
+      "user_results": {
+       "result": {
+        "__typename": "User",
+        "has_nft_avatar": false
+       }
+      }
+     },
+     {
+      "avatar_url": "https://pbs.twimg.com/profile_images/1480072390801428481/UR5DqbI2_normal.jpg",
+      "display_name": "Syed Altaf Bukhari",
+      "is_muted_by_admin": false,
+      "is_muted_by_guest": false,
+      "is_verified": false,
+      "periscope_user_id": "1XJQkOZRbGZQL",
+      "start": 1649941154000,
+      "twitter_screen_name": "syedaltaf57",
+      "user": {
+       "rest_id": "1308764147274915842"
+      },
+      "user_results": {
+       "result": {
+        "__typename": "User",
+        "has_nft_avatar": false
+       }
+      }
+     },
+     {
+      "avatar_url": "https://pbs.twimg.com/profile_images/1472730649417027586/4l9TkEkr_normal.jpg",
+      "display_name": "Guddu S Gautam🇮🇳",
+      "is_muted_by_admin": false,
+      "is_muted_by_guest": false,
+      "is_verified": false,
+      "periscope_user_id": "1PmKqGBnZDNEo",
+      "start": 1649943969000,
+      "twitter_screen_name": "GudduGautam5",
+      "user": {
+       "rest_id": "2464330158"
+      },
+      "user_results": {
+       "result": {
+        "__typename": "User",
+        "has_nft_avatar": false
+       }
+      }
+     },
+     {
+      "avatar_url": "https://pbs.twimg.com/profile_images/1430627072997695491/3DlD698V_normal.jpg",
+      "display_name": "Sahanaj Parveen",
+      "is_muted_by_admin": false,
+      "is_muted_by_guest": false,
+      "is_verified": false,
+      "periscope_user_id": "1qLQGdbdAvrKJ",
+      "start": 1649942878000,
+      "twitter_screen_name": "SahanajParveen6",
+      "user": {
+       "rest_id": "1430625421910061056"
+      },
+      "user_results": {
+       "result": {
+        "__typename": "User",
+        "has_nft_avatar": false
+       }
+      }
+     },
+     {
+      "avatar_url": "https://pbs.twimg.com/profile_images/1513011319846600707/AVPkXwmc_normal.jpg",
+      "display_name": "Jaila Ram Samria Bsp",
+      "is_muted_by_admin": false,
+      "is_muted_by_guest": false,
+      "is_verified": false,
+      "periscope_user_id": "1eVjYxxagqdKL",
+      "start": 1649942598000,
+      "twitter_screen_name": "samria_ram",
+      "user": {
+       "rest_id": "1388102905077452800"
+      },
+      "user_results": {
+       "result": {
+        "__typename": "User",
+        "has_nft_avatar": false
+       }
+      }
+     },
+     {
+      "avatar_url": "https://pbs.twimg.com/profile_images/1514062915460124674/AdC7wVyR_normal.jpg",
+      "display_name": "Salam Islam Khan π",
+      "is_muted_by_admin": false,
+      "is_muted_by_guest": false,
+      "is_verified": false,
+      "periscope_user_id": "1wBEANPLorBQP",
+      "start": 1649941876000,
+      "twitter_screen_name": "salam0786786",
+      "user": {
+       "rest_id": "1469732726718676995"
+      },
+      "user_results": {
+       "result": {
+        "__typename": "User",
+        "has_nft_avatar": false
+       }
+      }
+     },
+     {
+      "avatar_url": "https://pbs.twimg.com/profile_images/1467467704143597582/Gyto46CR_normal.jpg",
+      "display_name": "SHAHID KHAN",
+      "is_muted_by_admin": false,
+      "is_muted_by_guest": false,
+      "is_verified": false,
+      "periscope_user_id": "1pzQMLlGnnmEd",
+      "start": 1649943952000,
+      "twitter_screen_name": "SHAHIDKHANDK",
+      "user": {
+       "rest_id": "1467467390531379206"
+      },
+      "user_results": {
+       "result": {
+        "__typename": "User",
+        "has_nft_avatar": false
+       }
+      }
+     },
+     {
+      "avatar_url": "https://pbs.twimg.com/profile_images/1510580616978317316/t59H_dpb_normal.jpg",
+      "display_name": "Somdutt Yadav",
+      "is_muted_by_admin": false,
+      "is_muted_by_guest": false,
+      "is_verified": false,
+      "periscope_user_id": "1eRExmlbJePQw",
+      "start": 1649939518000,
+      "twitter_screen_name": "Somdutt995311",
+      "user": {
+       "rest_id": "1486305655841783820"
+      },
+      "user_results": {
+       "result": {
+        "__typename": "User",
+        "has_nft_avatar": false
+       }
+      }
+     },
+     {
+      "avatar_url": "https://pbs.twimg.com/profile_images/1505181459279011841/f2zyAqBU_normal.jpg",
+      "display_name": "Anurag Sharma",
+      "is_muted_by_admin": false,
+      "is_muted_by_guest": false,
+      "is_verified": false,
+      "periscope_user_id": "1xeEWBzGzDPjP",
+      "start": 1649940507000,
+      "twitter_screen_name": "anurragofficial",
+      "user": {
+       "rest_id": "1477193329309728772"
+      },
+      "user_results": {
+       "result": {
+        "__typename": "User",
+        "has_nft_avatar": false
+       }
+      }
+     },
+     {
+      "avatar_url": "https://pbs.twimg.com/profile_images/1506517783164907524/MiBEkH6o_normal.jpg",
+      "display_name": "Pankaj Pal",
+      "is_muted_by_admin": false,
+      "is_muted_by_guest": false,
+      "is_verified": false,
+      "periscope_user_id": "1WgEgONBLJmEv",
+      "start": 1649942989000,
+      "twitter_screen_name": "pankajpal144",
+      "user": {
+       "rest_id": "1460465772732420097"
+      },
+      "user_results": {
+       "result": {
+        "__typename": "User",
+        "has_nft_avatar": false
+       }
+      }
+     },
+     {
+      "avatar_url": "https://pbs.twimg.com/profile_images/1497679417476542464/m_WWg3Yp_normal.jpg",
+      "display_name": "शहीदों की शौर्यगाथा, वंदेमातरम, जयश्रीराम",
+      "is_muted_by_admin": false,
+      "is_muted_by_guest": false,
+      "is_verified": false,
+      "periscope_user_id": "1eRExROwgkBKw",
+      "start": 1649943571000,
+      "twitter_screen_name": "ArunKum41302730",
+      "user": {
+       "rest_id": "1238814728891310080"
+      },
+      "user_results": {
+       "result": {
+        "__typename": "User",
+        "has_nft_avatar": false
+       }
+      }
+     },
+     {
+      "avatar_url": "https://pbs.twimg.com/profile_images/1455693610712637440/kPvfIW0a_normal.jpg",
+      "display_name": "Gograj Ghoslya",
+      "is_muted_by_admin": false,
+      "is_muted_by_guest": false,
+      "is_verified": false,
+      "periscope_user_id": "1WLKRDarNywEb",
+      "start": 1649941177000,
+      "twitter_screen_name": "ghoslya_gograj",
+      "user": {
+       "rest_id": "1449026659198267398"
+      },
+      "user_results": {
+       "result": {
+        "__typename": "User",
+        "has_nft_avatar": false
+       }
+      }
+     },
+     {
+      "avatar_url": "https://pbs.twimg.com/profile_images/1514101585999130624/M3lJ4iML_normal.jpg",
+      "display_name": "MALiK 💯",
+      "is_muted_by_admin": false,
+      "is_muted_by_guest": false,
+      "is_verified": false,
+      "periscope_user_id": "1zYEbOYoLoXQe",
+      "start": 1649943085000,
+      "twitter_screen_name": "MALIK_AF1",
+      "user": {
+       "rest_id": "1466708334963138561"
+      },
+      "user_results": {
+       "result": {
+        "__typename": "User",
+        "has_nft_avatar": false
+       }
+      }
+     },
+     {
+      "avatar_url": "https://pbs.twimg.com/profile_images/1470853367664545794/UOTM2CGS_normal.jpg",
+      "display_name": "Gufran gazi",
+      "is_muted_by_admin": false,
+      "is_muted_by_guest": false,
+      "is_verified": false,
+      "periscope_user_id": "1raQZNgVLypQz",
+      "start": 1649943648000,
+      "twitter_screen_name": "gufrangazi47",
+      "user": {
+       "rest_id": "1194532911287898112"
+      },
+      "user_results": {
+       "result": {
+        "__typename": "User",
+        "has_nft_avatar": false
+       }
+      }
+     },
+     {
+      "avatar_url": "https://pbs.twimg.com/profile_images/1513563297064579073/B0xtZ5wx_normal.jpg",
+      "display_name": "Raj K Thakur",
+      "is_muted_by_admin": false,
+      "is_muted_by_guest": false,
+      "is_verified": false,
+      "periscope_user_id": "1DZKoZdwakkQa",
+      "start": 1649942696000,
+      "twitter_screen_name": "RajKThakur8",
+      "user": {
+       "rest_id": "1485554255402799104"
+      },
+      "user_results": {
+       "result": {
+        "__typename": "User",
+        "has_nft_avatar": false
+       }
+      }
+     },
+     {
+      "avatar_url": "https://pbs.twimg.com/profile_images/1512752295766892549/5InY_NKh_normal.jpg",
+      "display_name": "हसीब खान",
+      "is_muted_by_admin": false,
+      "is_muted_by_guest": false,
+      "is_verified": false,
+      "periscope_user_id": "1xnQrJybmyLQY",
+      "start": 1649942652000,
+      "twitter_screen_name": "ChunnaKhan15",
+      "user": {
+       "rest_id": "1504658449237389313"
+      },
+      "user_results": {
+       "result": {
+        "__typename": "User",
+        "has_nft_avatar": false
+       }
+      }
+     },
+     {
+      "avatar_url": "https://pbs.twimg.com/profile_images/1485591805412339712/lqGuhmT5_normal.jpg",
+      "display_name": "Kuldeep Yadav",
+      "is_muted_by_admin": false,
+      "is_muted_by_guest": false,
+      "is_verified": false,
+      "periscope_user_id": "1ayjVByOYRljp",
+      "start": 1649943581000,
+      "twitter_screen_name": "Kuldeep82567331",
+      "user": {
+       "rest_id": "1480375957395365888"
+      },
+      "user_results": {
+       "result": {
+        "__typename": "User",
+        "has_nft_avatar": false
+       }
+      }
+     },
+     {
+      "avatar_url": "https://pbs.twimg.com/profile_images/1506977286238588928/uTvmMyjH_normal.jpg",
+      "display_name": "Kamlesh Mishra🙏🙏हिन्दू सनातनी 🙏🙏फोलो करें 100ल",
+      "is_muted_by_admin": false,
+      "is_muted_by_guest": false,
+      "is_verified": false,
+      "periscope_user_id": "1AmQzlAMpxJje",
+      "start": 1649943876000,
+      "twitter_screen_name": "Kamlesh35607678",
+      "user": {
+       "rest_id": "1506958826326568963"
+      },
+      "user_results": {
+       "result": {
+        "__typename": "User",
+        "has_nft_avatar": false
+       }
+      }
+     },
+     {
+      "avatar_url": "https://pbs.twimg.com/profile_images/1512807051793162247/sRvskIIc_normal.jpg",
+      "display_name": "ज्योति",
+      "is_muted_by_admin": false,
+      "is_muted_by_guest": false,
+      "is_verified": false,
+      "periscope_user_id": "1VGQvlRprWajO",
+      "start": 1649940334000,
+      "twitter_screen_name": "jyoty098786",
+      "user": {
+       "rest_id": "1510256874788032514"
+      },
+      "user_results": {
+       "result": {
+        "__typename": "User",
+        "has_nft_avatar": false
+       }
+      }
+     },
+     {
+      "avatar_url": "https://pbs.twimg.com/profile_images/1476965499443503111/4-ueWqyi_normal.jpg",
+      "display_name": "🚩мαηιѕн ѕαнαηι",
+      "is_muted_by_admin": false,
+      "is_muted_by_guest": false,
+      "is_verified": false,
+      "periscope_user_id": "1DLKBNeNwekKJ",
+      "start": 1649941942000,
+      "twitter_screen_name": "Manish053293",
+      "user": {
+       "rest_id": "1176439929125187584"
+      },
+      "user_results": {
+       "result": {
+        "__typename": "User",
+        "has_nft_avatar": false
+       }
+      }
+     },
+     {
+      "avatar_url": "https://pbs.twimg.com/profile_images/1501464559286063107/aXDFoEjt_normal.jpg",
+      "display_name": "चिड़ीमार चौधरी",
+      "is_muted_by_admin": false,
+      "is_muted_by_guest": false,
+      "is_verified": false,
+      "periscope_user_id": "1AmQzmRWYZNEe",
+      "start": 1649941021000,
+      "twitter_screen_name": "ChidimarC",
+      "user": {
+       "rest_id": "1501452847698767876"
+      },
+      "user_results": {
+       "result": {
+        "__typename": "User",
+        "has_nft_avatar": false
+       }
+      }
+     },
+     {
+      "avatar_url": "https://pbs.twimg.com/profile_images/1508015057560489985/oVZNqDGk_normal.jpg",
+      "display_name": "Dr.Anant Kumar Yadav",
+      "is_muted_by_admin": false,
+      "is_muted_by_guest": false,
+      "is_verified": false,
+      "periscope_user_id": "1dvKOBwJGVvQX",
+      "start": 1649943536000,
+      "twitter_screen_name": "anantKu70192642",
+      "user": {
+       "rest_id": "1107991964375502848"
+      },
+      "user_results": {
+       "result": {
+        "__typename": "User",
+        "has_nft_avatar": false
+       }
+      }
+     },
+     {
+      "avatar_url": "https://pbs.twimg.com/profile_images/1506640790990495748/MTWRyfMP_normal.jpg",
+      "display_name": "Gulam Gaus غلآم غوث انصارئ",
+      "is_muted_by_admin": false,
+      "is_muted_by_guest": false,
+      "is_verified": false,
+      "periscope_user_id": "1XJQkYMzpnwjL",
+      "start": 1649943781000,
+      "twitter_screen_name": "GulamGaus77",
+      "user": {
+       "rest_id": "1279784660390690816"
+      },
+      "user_results": {
+       "result": {
+        "__typename": "User",
+        "has_nft_avatar": false
+       }
+      }
+     },
+     {
+      "avatar_url": "https://pbs.twimg.com/profile_images/1513430260830052357/KnpsHZdO_normal.jpg",
+      "display_name": "Uttam singh",
+      "is_muted_by_admin": false,
+      "is_muted_by_guest": false,
+      "is_verified": false,
+      "periscope_user_id": "1xNQakogDlbjb",
+      "start": 1649944013000,
+      "twitter_screen_name": "Uttamsi37563922",
+      "user": {
+       "rest_id": "1495394692909105153"
+      },
+      "user_results": {
+       "result": {
+        "__typename": "User",
+        "has_nft_avatar": false
+       }
+      }
+     },
+     {
+      "avatar_url": "https://pbs.twimg.com/profile_images/1507892939552292865/6_dK0yZ8_normal.jpg",
+      "display_name": "RP3338",
+      "is_muted_by_admin": false,
+      "is_muted_by_guest": false,
+      "is_verified": false,
+      "periscope_user_id": "1pzQMAxqRkJQd",
+      "start": 1649943169000,
+      "twitter_screen_name": "RP3338",
+      "user": {
+       "rest_id": "1506652236608577542"
+      },
+      "user_results": {
+       "result": {
+        "__typename": "User",
+        "has_nft_avatar": false
+       }
+      }
+     },
+     {
+      "avatar_url": "https://pbs.twimg.com/profile_images/1513471104664629252/Ovk6t9gH_normal.jpg",
+      "display_name": "cricket memes 🤣🤣",
+      "is_muted_by_admin": false,
+      "is_muted_by_guest": false,
+      "is_verified": false,
+      "periscope_user_id": "1eRKxvezbavEw",
+      "start": 1649943745000,
+      "twitter_screen_name": "sagar360abd",
+      "user": {
+       "rest_id": "1399964584597856257"
+      },
+      "user_results": {
+       "result": {
+        "__typename": "User",
+        "has_nft_avatar": false
+       }
+      }
+     },
+     {
+      "avatar_url": "https://pbs.twimg.com/profile_images/1510947071406505985/zK57r_CD_normal.jpg",
+      "display_name": "LALAN KUMAR",
+      "is_muted_by_admin": false,
+      "is_muted_by_guest": false,
+      "is_verified": false,
+      "periscope_user_id": "1zYEbBYLDLZEe",
+      "start": 1649944008000,
+      "twitter_screen_name": "Lalansingh2010",
+      "user": {
+       "rest_id": "958550065169215490"
+      },
+      "user_results": {
+       "result": {
+        "__typename": "User",
+        "has_nft_avatar": false
+       }
+      }
+     },
+     {
+      "avatar_url": "https://pbs.twimg.com/profile_images/1508034368538882051/x4Mm6Tke_normal.jpg",
+      "display_name": "Teerath Kumar",
+      "is_muted_by_admin": false,
+      "is_muted_by_guest": false,
+      "is_verified": false,
+      "periscope_user_id": "1XJjkrldmvwKL",
+      "start": 1649944004000,
+      "twitter_screen_name": "Teerathkumarbh1",
+      "user": {
+       "rest_id": "1507274498143404037"
+      },
+      "user_results": {
+       "result": {
+        "__typename": "User",
+        "has_nft_avatar": false
+       }
+      }
+     }
+    ],
+    "speakers": [
+     {
+      "avatar_url": "https://pbs.twimg.com/profile_images/1508520916564602884/U37aWWjN_normal.jpg",
+      "display_name": "Tanvir Rangrezz",
+      "is_muted_by_admin": false,
+      "is_muted_by_guest": false,
+      "is_verified": false,
+      "periscope_user_id": "1xkjDnVLgbpQz",
+      "start": 1649939734452,
+      "twitter_screen_name": "virjust18",
+      "user": {
+       "rest_id": "2268466786"
+      },
+      "user_results": {
+       "result": {
+        "__typename": "User",
+        "has_nft_avatar": false
+       }
+      }
+     },
+     {
+      "avatar_url": "https://pbs.twimg.com/profile_images/1514271113370550275/KFzFu7zW_normal.jpg",
+      "display_name": "AMIR. 💓 🤚",
+      "is_muted_by_admin": false,
+      "is_muted_by_guest": true,
+      "is_verified": false,
+      "periscope_user_id": "1oPKLWoPPqyQd",
+      "start": 1649941154045,
+      "twitter_screen_name": "1ilj8",
+      "user": {
+       "rest_id": "1660430713"
+      },
+      "user_results": {
+       "result": {
+        "__typename": "User",
+        "has_nft_avatar": false
+       }
+      }
+     },
+     {
+      "avatar_url": "https://pbs.twimg.com/profile_images/1513819750958530566/Sq8Vww6L_normal.jpg",
+      "display_name": "Saloni Solanki / سلونی سولنکی",
+      "is_muted_by_admin": false,
+      "is_muted_by_guest": true,
+      "is_verified": false,
+      "periscope_user_id": "1zvKNvPBVLnKe",
+      "start": 1649940555972,
+      "twitter_screen_name": "SaloniS22627993",
+      "user": {
+       "rest_id": "1460281209741742085"
+      },
+      "user_results": {
+       "result": {
+        "__typename": "User",
+        "has_nft_avatar": false
+       }
+      }
+     },
+     {
+      "avatar_url": "https://pbs.twimg.com/profile_images/1476874816275861507/rG-Rxzus_normal.jpg",
+      "display_name": "Kamal Sharma INC",
+      "is_muted_by_admin": false,
+      "is_muted_by_guest": true,
+      "is_verified": false,
+      "periscope_user_id": "1edjnrVkPMzjo",
+      "start": 1649943849440,
+      "twitter_screen_name": "KamalSh72716323",
+      "user": {
+       "rest_id": "1455086803128659969"
+      },
+      "user_results": {
+       "result": {
+        "__typename": "User",
+        "has_nft_avatar": false
+       }
+      }
+     },
+     {
+      "avatar_url": "https://pbs.twimg.com/profile_images/1514320759799545856/MgvUdMCz_normal.jpg",
+      "display_name": "Adil INC ( Being Human)",
+      "is_muted_by_admin": false,
+      "is_muted_by_guest": true,
+      "is_verified": false,
+      "periscope_user_id": "1dvKOLwGmoajX",
+      "start": 1649942877140,
+      "twitter_screen_name": "Adil_INC_",
+      "user": {
+       "rest_id": "835349381318594560"
+      },
+      "user_results": {
+       "result": {
+        "__typename": "User",
+        "has_nft_avatar": false
+       }
+      }
+     },
+     {
+      "avatar_url": "https://pbs.twimg.com/profile_images/1499459890892644352/3DQ7H_u6_normal.jpg",
+      "display_name": "Aasif Gouri",
+      "is_muted_by_admin": false,
+      "is_muted_by_guest": true,
+      "is_verified": false,
+      "periscope_user_id": "1XJQkOmLdoXQL",
+      "start": 1649941091001,
+      "twitter_screen_name": "AasifGouri20",
+      "user": {
+       "rest_id": "1253187600535269377"
+      },
+      "user_results": {
+       "result": {
+        "__typename": "User",
+        "has_nft_avatar": false
+       }
+      }
+     },
+     {
+      "avatar_url": "https://pbs.twimg.com/profile_images/1502174523227275265/MKQgT8fA_normal.jpg",
+      "display_name": "Manisha Singh Jakhar",
+      "is_muted_by_admin": false,
+      "is_muted_by_guest": true,
+      "is_verified": false,
+      "periscope_user_id": "1VGjvAdxnXdKO",
+      "start": 1649943781417,
+      "twitter_screen_name": "ManiravSingh",
+      "user": {
+       "rest_id": "1411939886"
+      },
+      "user_results": {
+       "result": {
+        "__typename": "User",
+        "has_nft_avatar": false
+       }
+      }
+     }
+    ],
+    "total": 54
+   },
+   "sharings": {
+    "items": [
+     {
+      "created_at_ms": 1649943849462,
+      "shared_item": {
+       "__typename": "AudioSpaceSharedTweet",
+       "tweet_results": {
+        "result": {
+         "__typename": "Tweet",
+         "card": {
+          "legacy": {
+           "binding_values": [
+            {
+             "key": "id",
+             "value": {
+              "string_value": "1DXxyDEZPNdJM",
+              "type": "STRING"
+             }
+            },
+            {
+             "key": "narrow_cast_space_type",
+             "value": {
+              "string_value": "0",
+              "type": "STRING"
+             }
+            },
+            {
+             "key": "card_url",
+             "value": {
+              "scribe_key": "card_url",
+              "string_value": "https://t.co/KVrabc6f8A",
+              "type": "STRING"
+             }
+            }
+           ],
+           "card_platform": {
+            "platform": {
+             "audience": {
+              "name": "production"
+             },
+             "device": {
+              "name": "Swift",
+              "version": "12"
+             }
+            }
+           },
+           "name": "3691233323:audiospace",
+           "url": "https://t.co/KVrabc6f8A",
+           "user_refs": []
+          },
+          "rest_id": "https://t.co/KVrabc6f8A"
+         },
+         "core": {
+          "user_results": {
+           "result": {
+            "__typename": "User",
+            "affiliates_highlighted_label": {},
+            "has_nft_avatar": false,
+            "id": "VXNlcjoxNDYwMTQ0Njg3NjI1MzQyOTc4",
+            "legacy": {
+             "created_at": "Mon Nov 15 07:17:00 +0000 2021",
+             "default_profile": true,
+             "default_profile_image": false,
+             "description": "हरा भरा एकजुट राष्ट्रभक्त भारत निर्माण का प्रयास संस्कृति सभ्यता के रक्षक👇\nबिशेष लोगों के लिए चेतावनी हमारे साथ उतना ही करें जितना खुद सहन कर सको क्या समझे",
+             "entities": {
+              "description": {
+               "urls": []
+              }
+             },
+             "fast_followers_count": 0,
+             "favourites_count": 15503,
+             "followers_count": 19511,
+             "friends_count": 19485,
+             "has_custom_timelines": true,
+             "is_translator": false,
+             "listed_count": 3,
+             "location": "भारत हिमाचल हमीरपुर माँ ज्वाला",
+             "media_count": 200,
+             "name": "🇮🇳 सम्राट रोहित शर्मा 🚩",
+             "normal_followers_count": 19511,
+             "pinned_tweet_ids_str": [
+              "1502547128786522115"
+             ],
+             "profile_banner_extensions": {
+              "mediaColor": {
+               "r": {
+                "ok": {
+                 "palette": [
+                  {
+                   "percentage": 79.72,
+                   "rgb": {
+                    "blue": 255,
+                    "green": 255,
+                    "red": 255
+                   }
+                  },
+                  {
+                   "percentage": 16.12,
+                   "rgb": {
+                    "blue": 76,
+                    "green": 42,
+                    "red": 31
+                   }
+                  },
+                  {
+                   "percentage": 3.38,
+                   "rgb": {
+                    "blue": 153,
+                    "green": 138,
+                    "red": 132
+                   }
+                  },
+                  {
+                   "percentage": 1.47,
+                   "rgb": {
+                    "blue": 132,
+                    "green": 132,
+                    "red": 132
+                   }
+                  }
+                 ]
+                }
+               }
+              }
+             },
+             "profile_banner_url": "https://pbs.twimg.com/profile_banners/1460144687625342978/1646852963",
+             "profile_image_extensions": {
+              "mediaColor": {
+               "r": {
+                "ok": {
+                 "palette": [
+                  {
+                   "percentage": 41.39,
+                   "rgb": {
+                    "blue": 214,
+                    "green": 191,
+                    "red": 199
+                   }
+                  },
+                  {
+                   "percentage": 27.72,
+                   "rgb": {
+                    "blue": 156,
+                    "green": 176,
+                    "red": 194
+                   }
+                  },
+                  {
+                   "percentage": 18.3,
+                   "rgb": {
+                    "blue": 45,
+                    "green": 53,
+                    "red": 62
+                   }
+                  },
+                  {
+                   "percentage": 6.9,
+                   "rgb": {
+                    "blue": 109,
+                    "green": 86,
+                    "red": 84
+                   }
+                  },
+                  {
+                   "percentage": 2.1,
+                   "rgb": {
+                    "blue": 219,
+                    "green": 193,
+                    "red": 156
+                   }
+                  }
+                 ]
+                }
+               }
+              }
+             },
+             "profile_image_url_https": "https://pbs.twimg.com/profile_images/1513932445229326336/KsvT_trA_normal.jpg",
+             "profile_interstitial_type": "",
+             "protected": false,
+             "screen_name": "Sam2rat",
+             "statuses_count": 10946,
+             "translator_type": "none",
+             "verified": false,
+             "withheld_in_countries": []
+            },
+            "rest_id": "1460144687625342978"
+           }
+          }
+         },
+         "legacy": {
+          "conversation_id_str": "1514600347096199168",
+          "created_at": "Thu Apr 14 13:43:57 +0000 2022",
+          "display_text_range": [
+           0,
+           276
+          ],
+          "entities": {
+           "hashtags": [],
+           "symbols": [],
+           "urls": [
+            {
+             "display_url": "twitter.com/i/spaces/1DXxy…",
+             "expanded_url": "https://twitter.com/i/spaces/1DXxyDEZPNdJM",
+             "indices": [
+              0,
+              23
+             ],
+             "url": "https://t.co/KVrabc6f8A"
+            }
+           ],
+           "user_mentions": [
+            {
+             "id_str": "1460144687625342978",
+             "indices": [
+              128,
+              136
+             ],
+             "name": "🇮🇳 सम्राट रोहित शर्मा 🚩",
+             "screen_name": "Sam2rat"
+            },
+            {
+             "id_str": "920720162013286411",
+             "indices": [
+              137,
+              148
+             ],
+             "name": "★°•💕°⚘•𝕝𝕧𝕒_𝕝𝕒𝕣𝕠𝕤𝕒🦋°•⚘",
+             "screen_name": "Iva_LaRosa"
+            },
+            {
+             "id_str": "1211998564353638402",
+             "indices": [
+              149,
+              156
+             ],
+             "name": "NADEEM SIDDIQUI",
+             "screen_name": "MNS__5"
+            },
+            {
+             "id_str": "1439157474657853441",
+             "indices": [
+              157,
+              164
+             ],
+             "name": "Sʌɱʀɘɘŋ Nɩsʜʌ",
+             "screen_name": "SMN__5"
+            },
+            {
+             "id_str": "1249957314787807233",
+             "indices": [
+              165,
+              174
+             ],
+             "name": "Naseema Fatima ✍️",
+             "screen_name": "__NSFat8"
+            },
+            {
+             "id_str": "1485554255402799104",
+             "indices": [
+              175,
+              187
+             ],
+             "name": "Raj K Thakur",
+             "screen_name": "RajKThakur8"
+            },
+            {
+             "id_str": "1410052092069220353",
+             "indices": [
+              188,
+              200
+             ],
+             "name": "Manas Chakrawal (radhey)",
+             "screen_name": "kashi_manas"
+            },
+            {
+             "id_str": "777282679771455488",
+             "indices": [
+              201,
+              217
+             ],
+             "name": "Gautam Dhandhaliya Journalist",
+             "screen_name": "GautamDhandhal1"
+            },
+            {
+             "id_str": "3277674391",
+             "indices": [
+              218,
+              231
+             ],
+             "name": "Ruhaan Bakshi ❤️‍🔥",
+             "screen_name": "ruhan_bakshi"
+            },
+            {
+             "id_str": "1264761521579724800",
+             "indices": [
+              232,
+              246
+             ],
+             "name": "Kamlesh choudhary(Kimi)",
+             "screen_name": "kamlesh998386"
+            },
+            {
+             "id_str": "1395052052657721362",
+             "indices": [
+              247,
+              263
+             ],
+             "name": "Sanju Goyal",
+             "screen_name": "SanjuGo88848874"
+            },
+            {
+             "id_str": "2582775053",
+             "indices": [
+              264,
+              273
+             ],
+             "name": "💓👑..•🇪 🇱 🇮 .°. 👠",
+             "screen_name": "Da__Eliz"
+            }
+           ]
+          },
+          "favorite_count": 12,
+          "favorited": false,
+          "full_text": "https://t.co/KVrabc6f8A\nशानदार स्पेस शुरू RT करके आइये और मान सम्मान सहित प्रमोट करें खुद को फॉलो करें फॉलो बैक दे \n👇👇 फॉलो बैक\n@Sam2rat\n@Iva_LaRosa\n@MNS__5\n@SMN__5\n@__NSFat8\n@RajKThakur8\n@kashi_manas\n@GautamDhandhal1\n@ruhan_bakshi\n@kamlesh998386\n@SanjuGo88848874\n@Da__Eliz\n💯🔙",
+          "id_str": "1514600347096199168",
+          "is_quote_status": false,
+          "lang": "hi",
+          "possibly_sensitive": false,
+          "possibly_sensitive_editable": true,
+          "quote_count": 0,
+          "reply_count": 13,
+          "retweet_count": 32,
+          "retweeted": false,
+          "source": "<a href=\"http://twitter.com/download/android\" rel=\"nofollow\">Twitter for Android</a>",
+          "user_id_str": "1460144687625342978"
+         },
+         "rest_id": "1514600347096199168"
+        }
+       }
+      },
+      "sharing_id": "1514600398031835136",
+      "updated_at_ms": 1649943849461,
+      "user_results": {
+       "result": {
+        "__typename": "User",
+        "affiliates_highlighted_label": {},
+        "has_nft_avatar": false,
+        "id": "VXNlcjoxNDYwMTQ0Njg3NjI1MzQyOTc4",
+        "legacy": {
+         "created_at": "Mon Nov 15 07:17:00 +0000 2021",
+         "default_profile": true,
+         "default_profile_image": false,
+         "description": "हरा भरा एकजुट राष्ट्रभक्त भारत निर्माण का प्रयास संस्कृति सभ्यता के रक्षक👇\nबिशेष लोगों के लिए चेतावनी हमारे साथ उतना ही करें जितना खुद सहन कर सको क्या समझे",
+         "entities": {
+          "description": {
+           "urls": []
+          }
+         },
+         "fast_followers_count": 0,
+         "favourites_count": 15503,
+         "followers_count": 19511,
+         "friends_count": 19485,
+         "has_custom_timelines": true,
+         "is_translator": false,
+         "listed_count": 3,
+         "location": "भारत हिमाचल हमीरपुर माँ ज्वाला",
+         "media_count": 200,
+         "name": "🇮🇳 सम्राट रोहित शर्मा 🚩",
+         "normal_followers_count": 19511,
+         "pinned_tweet_ids_str": [
+          "1502547128786522115"
+         ],
+         "profile_banner_extensions": {
+          "mediaColor": {
+           "r": {
+            "ok": {
+             "palette": [
+              {
+               "percentage": 79.72,
+               "rgb": {
+                "blue": 255,
+                "green": 255,
+                "red": 255
+               }
+              },
+              {
+               "percentage": 16.12,
+               "rgb": {
+                "blue": 76,
+                "green": 42,
+                "red": 31
+               }
+              },
+              {
+               "percentage": 3.38,
+               "rgb": {
+                "blue": 153,
+                "green": 138,
+                "red": 132
+               }
+              },
+              {
+               "percentage": 1.47,
+               "rgb": {
+                "blue": 132,
+                "green": 132,
+                "red": 132
+               }
+              }
+             ]
+            }
+           }
+          }
+         },
+         "profile_banner_url": "https://pbs.twimg.com/profile_banners/1460144687625342978/1646852963",
+         "profile_image_extensions": {
+          "mediaColor": {
+           "r": {
+            "ok": {
+             "palette": [
+              {
+               "percentage": 41.39,
+               "rgb": {
+                "blue": 214,
+                "green": 191,
+                "red": 199
+               }
+              },
+              {
+               "percentage": 27.72,
+               "rgb": {
+                "blue": 156,
+                "green": 176,
+                "red": 194
+               }
+              },
+              {
+               "percentage": 18.3,
+               "rgb": {
+                "blue": 45,
+                "green": 53,
+                "red": 62
+               }
+              },
+              {
+               "percentage": 6.9,
+               "rgb": {
+                "blue": 109,
+                "green": 86,
+                "red": 84
+               }
+              },
+              {
+               "percentage": 2.1,
+               "rgb": {
+                "blue": 219,
+                "green": 193,
+                "red": 156
+               }
+              }
+             ]
+            }
+           }
+          }
+         },
+         "profile_image_url_https": "https://pbs.twimg.com/profile_images/1513932445229326336/KsvT_trA_normal.jpg",
+         "profile_interstitial_type": "",
+         "protected": false,
+         "screen_name": "Sam2rat",
+         "statuses_count": 10946,
+         "translator_type": "none",
+         "verified": false,
+         "withheld_in_countries": []
+        },
+        "rest_id": "1460144687625342978"
+       }
+      }
+     }
+    ],
+    "slice_info": {}
+   }
+  }
+ }
+}

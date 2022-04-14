@@ -1,0 +1,194 @@
+{
+ "data": {
+  "audioSpace": {
+   "metadata": {
+    "conversation_controls": 0,
+    "created_at": 1649941597133,
+    "creator_results": {
+     "result": {
+      "__typename": "User",
+      "affiliates_highlighted_label": {},
+      "has_nft_avatar": false,
+      "id": "VXNlcjoxNDI4MTk1MTY3MDIyOTgxMTI1",
+      "legacy": {
+       "created_at": "Thu Aug 19 03:20:51 +0000 2021",
+       "default_profile": true,
+       "default_profile_image": false,
+       "description": "Forget about the rules, and enjoy life while you still can.",
+       "entities": {
+        "description": {
+         "urls": []
+        }
+       },
+       "fast_followers_count": 0,
+       "favourites_count": 5,
+       "followers_count": 30,
+       "friends_count": 30,
+       "has_custom_timelines": false,
+       "is_translator": false,
+       "listed_count": 0,
+       "location": "",
+       "media_count": 2,
+       "name": "sweety •ك̲ۣو̲ۣد̲ۣ•خ̲ۣص̲ۣم̲•",
+       "normal_followers_count": 30,
+       "pinned_tweet_ids_str": [
+        "1513545985997389824"
+       ],
+       "profile_banner_extensions": {
+        "mediaColor": {
+         "r": {
+          "ok": {
+           "palette": [
+            {
+             "percentage": 35.25,
+             "rgb": {
+              "blue": 38,
+              "green": 41,
+              "red": 60
+             }
+            },
+            {
+             "percentage": 29.98,
+             "rgb": {
+              "blue": 82,
+              "green": 125,
+              "red": 174
+             }
+            },
+            {
+             "percentage": 14.39,
+             "rgb": {
+              "blue": 87,
+              "green": 69,
+              "red": 128
+             }
+            },
+            {
+             "percentage": 10.54,
+             "rgb": {
+              "blue": 57,
+              "green": 84,
+              "red": 114
+             }
+            },
+            {
+             "percentage": 2.07,
+             "rgb": {
+              "blue": 248,
+              "green": 253,
+              "red": 254
+             }
+            }
+           ]
+          }
+         }
+        }
+       },
+       "profile_banner_url": "https://pbs.twimg.com/profile_banners/1428195167022981125/1630438613",
+       "profile_image_extensions": {
+        "mediaColor": {
+         "r": {
+          "ok": {
+           "palette": [
+            {
+             "percentage": 65.21,
+             "rgb": {
+              "blue": 21,
+              "green": 21,
+              "red": 20
+             }
+            },
+            {
+             "percentage": 14.46,
+             "rgb": {
+              "blue": 55,
+              "green": 74,
+              "red": 89
+             }
+            },
+            {
+             "percentage": 10.85,
+             "rgb": {
+              "blue": 125,
+              "green": 149,
+              "red": 164
+             }
+            },
+            {
+             "percentage": 9.97,
+             "rgb": {
+              "blue": 95,
+              "green": 99,
+              "red": 119
+             }
+            },
+            {
+             "percentage": 1.38,
+             "rgb": {
+              "blue": 58,
+              "green": 38,
+              "red": 24
+             }
+            }
+           ]
+          }
+         }
+        }
+       },
+       "profile_image_url_https": "https://pbs.twimg.com/profile_images/1432789503853355009/Ilppr4ns_normal.jpg",
+       "profile_interstitial_type": "",
+       "protected": false,
+       "screen_name": "EricaJa11318821",
+       "statuses_count": 13,
+       "translator_type": "none",
+       "verified": false,
+       "withheld_in_countries": []
+      },
+      "rest_id": "1428195167022981125"
+     }
+    },
+    "ended_at": "1649941626791",
+    "is_employee_only": false,
+    "is_locked": false,
+    "media_key": "28_1514590951284617224",
+    "rest_id": "1mrGmaZzbqWGy",
+    "started_at": 1649941599601,
+    "state": "Ended",
+    "title": "كود خصم اوناس اناس كوبون باث اند بودي",
+    "total_live_listeners": 0,
+    "total_replay_watched": 0,
+    "updated_at": 1649941628380
+   },
+   "participants": {
+    "admins": [
+     {
+      "avatar_url": "https://pbs.twimg.com/profile_images/1432789503853355009/Ilppr4ns_normal.jpg",
+      "display_name": "sweety •ك̲ۣو̲ۣد̲ۣ•خ̲ۣص̲ۣم̲•",
+      "is_muted_by_admin": false,
+      "is_muted_by_guest": true,
+      "is_verified": false,
+      "periscope_user_id": "1oPKLAoxykXjd",
+      "start": 1649941597133,
+      "twitter_screen_name": "EricaJa11318821",
+      "user": {
+       "rest_id": "1428195167022981125"
+      },
+      "user_results": {
+       "result": {
+        "__typename": "User",
+        "has_nft_avatar": false
+       }
+      }
+     }
+    ],
+    "listeners": [],
+    "speakers": [],
+    "total": 0
+   },
+   "sharings": {
+    "items": [],
+    "slice_info": {}
+   }
+  }
+ }
+}
