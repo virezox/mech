@@ -5,27 +5,23 @@ import (
    "github.com/89z/mech"
    "net/http"
    "net/url"
+   "path"
    "strings"
    "time"
 )
 
-func (a AudioSpace) String() string {
-   var buf strings.Builder
-   buf.WriteString("Key: ")
-   buf.WriteString(a.Metadata.Media_Key)
-   buf.WriteString("\nTitle: ")
-   buf.WriteString(a.Metadata.Title)
-   buf.WriteString("\nState: ")
-   buf.WriteString(a.Metadata.State)
-   buf.WriteString("\nStarted: ")
-   buf.WriteString(a.Time().String())
-   if a.Metadata.Ended_At >= 1 {
-      buf.WriteString("\nDuration: ")
-      buf.WriteString(a.Duration().String())
+func (a AudioSpace) Duration() time.Duration {
+   meta := a.Metadata
+   if meta.Ended_At == 0 {
+      return 0
    }
-   buf.WriteString("\nAdmins: ")
-   buf.WriteString(a.Admins())
-   return buf.String()
+   return time.Duration(meta.Ended_At - meta.Started_At) * time.Millisecond
+}
+
+type errorString string
+
+func (e errorString) Error() string {
+   return string(e)
 }
 
 type AudioSpace struct {
@@ -43,31 +39,16 @@ type AudioSpace struct {
    }
 }
 
-const spacePersistedQuery = "lFpix9BgFDhAMjn9CrW6jQ"
-
-func (a AudioSpace) Admins() string {
-   var buf strings.Builder
-   for i, admin := range a.Participants.Admins {
-      if i >= 1 {
-         buf.WriteByte(',')
-      }
-      buf.WriteString(admin.Display_Name)
+// https://twitter.com/i/spaces/1jMJgednpreKL?s=20
+func SpaceID(addr string) (string, error) {
+   parse, err := url.Parse(addr)
+   if err != nil {
+      return "", err
    }
-   return buf.String()
+   return path.Base(parse.Path), nil
 }
 
-func (a AudioSpace) Base() string {
-   var buf strings.Builder
-   buf.WriteString(a.Admins())
-   buf.WriteByte('-')
-   buf.WriteString(a.Metadata.Title)
-   return mech.Clean(buf.String())
-}
-
-func (a AudioSpace) Duration() time.Duration {
-   dur := a.Metadata.Ended_At - a.Metadata.Started_At
-   return time.Duration(dur) * time.Millisecond
-}
+const spacePersistedQuery = "lFpix9BgFDhAMjn9CrW6jQ"
 
 func (a AudioSpace) Time() time.Time {
    return time.UnixMilli(a.Metadata.Started_At)
@@ -97,6 +78,9 @@ func (g Guest) AudioSpace(id string) (*AudioSpace, error) {
       return nil, err
    }
    defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return nil, errorString(res.Status)
+   }
    var space struct {
       Data struct {
          AudioSpace AudioSpace
@@ -126,6 +110,9 @@ func (g Guest) Source(space *AudioSpace) (*Source, error) {
       return nil, err
    }
    defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return nil, errorString(res.Status)
+   }
    var video struct {
       Source Source
    }
@@ -150,4 +137,38 @@ type spaceRequest struct {
    WithScheduledSpaces bool `json:"withScheduledSpaces"`
    WithSuperFollowsTweetFields bool `json:"withSuperFollowsTweetFields"`
    WithSuperFollowsUserFields bool `json:"withSuperFollowsUserFields"`
+}
+
+func (a AudioSpace) String() string {
+   var buf strings.Builder
+   buf.WriteString("Key: ")
+   buf.WriteString(a.Metadata.Media_Key)
+   buf.WriteString("\nTitle: ")
+   buf.WriteString(a.Metadata.Title)
+   buf.WriteString("\nState: ")
+   buf.WriteString(a.Metadata.State)
+   if a.Metadata.Started_At >= 1 {
+      buf.WriteString("\nStarted: ")
+      buf.WriteString(a.Time().String())
+   }
+   if a.Metadata.Ended_At >= 1 {
+      buf.WriteString("\nDuration: ")
+      buf.WriteString(a.Duration().String())
+   }
+   for _, admin := range a.Participants.Admins {
+      buf.WriteString("\nAdmin: ")
+      buf.WriteString(admin.Display_Name)
+   }
+   return buf.String()
+}
+
+func (a AudioSpace) Base() string {
+   var buf strings.Builder
+   for _, admin := range a.Participants.Admins {
+      buf.WriteString(admin.Display_Name)
+      break
+   }
+   buf.WriteByte('-')
+   buf.WriteString(a.Metadata.Title)
+   return mech.Clean(buf.String())
 }

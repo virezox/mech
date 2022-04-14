@@ -7,32 +7,6 @@ import (
    "strings"
 )
 
-type Tweet struct {
-   Entities struct {
-      URLs []struct {
-         Expanded_URL string
-      }
-   }
-}
-
-func (t Tweet) String() string {
-   var buf strings.Builder
-   for i, addr := range t.Entities.URLs {
-      if i >= 1 {
-         buf.WriteByte('\n')
-      }
-      buf.WriteString("URL: ")
-      buf.WriteString(addr.Expanded_URL)
-   }
-   return buf.String()
-}
-
-type Search struct {
-   GlobalObjects struct {
-      Tweets map[int64]Tweet
-   }
-}
-
 func NewSearch(q string) (*Search, error) {
    req, err := http.NewRequest(
       "GET", "https://api.twitter.com/2/search/adaptive.json", nil,
@@ -57,4 +31,30 @@ func NewSearch(q string) (*Search, error) {
       return nil, err
    }
    return search, nil
+}
+
+type Tweet struct {
+   Entities struct {
+      URLs []struct {
+         Expanded_URL string
+      }
+   }
+}
+
+func (t Tweet) String() string {
+   var buf strings.Builder
+   for i, addr := range t.Entities.URLs {
+      if i >= 1 {
+         buf.WriteByte('\n')
+      }
+      buf.WriteString("URL: ")
+      buf.WriteString(addr.Expanded_URL)
+   }
+   return buf.String()
+}
+
+type Search struct {
+   GlobalObjects struct {
+      Tweets map[int64]Tweet
+   }
 }

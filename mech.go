@@ -10,7 +10,18 @@ import (
 
 func Clean(path string) string {
    fn := func(r rune) rune {
-      if strings.ContainsRune(`"*/:<>?\|`, r) {
+      switch r {
+      case
+      '"',
+      '*',
+      '/',
+      ':',
+      '<',
+      '>',
+      '?',
+      '\\',
+      '|',
+      '’': // github.com/PowerShell/PowerShell/issues/16084
          return -1
       }
       return r
