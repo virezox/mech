@@ -9,24 +9,12 @@ import (
    "strings"
 )
 
+// 193737
 func main() {
    var req http.Request
    req.Body = io.NopCloser(body)
    req.Header = make(http.Header)
-   req.Header["Accept"] = []string{"*/*"}
-   req.Header["Accept-Encoding"] = []string{"identity"}
-   req.Header["Accept-Language"] = []string{"en-US,en;q=0.5"}
-   req.Header["Content-Length"] = []string{"1017"}
    req.Header["Content-Type"] = []string{"application/x-www-form-urlencoded"}
-   req.Header["Cookie"] = []string{"datr=TELWYW7HP4RtCGikVySUp6x-", "dpr=1.25", "fr=0eXRP555t4sF3Qm1C.AWXaLXrUjzhPadDjq-WuQdN7vsI.Bh2Mwn.wl.AAA.0.0.BiWJGF.AWXlEfWdOcM", "locale=en_US", "m_pixel_ratio=1", "sb=y2kMYljEFad1tU7CPu3dtnFa", "wd=1186x615"}
-   req.Header["Dnt"] = []string{"1"}
-   req.Header["Host"] = []string{"www.facebook.com"}
-   req.Header["Origin"] = []string{"https://www.facebook.com"}
-   req.Header["Referer"] = []string{"https://www.facebook.com/watch"}
-   req.Header["Te"] = []string{"trailers"}
-   req.Header["User-Agent"] = []string{"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:88.0) Gecko/20100101 Firefox/88.0"}
-   req.Header["X-Fb-Friendly-Name"] = []string{"CometVideoHomeLOEVideoPermalinkAuxiliaryRootQuery"}
-   req.Header["X-Fb-Lsd"] = []string{"AVpJcKogJYw"}
    req.Method = "POST"
    req.URL = new(url.URL)
    req.URL.Host = "www.facebook.com"
@@ -41,6 +29,8 @@ func main() {
    if err != nil {
       panic(err)
    }
+   println(len(buf))
+   return
    os.Stdout.Write(buf)
 }
 
