@@ -8,7 +8,14 @@ import (
    "os"
 )
 
-func detail(awemeID int64, info bool) error {
+func detail(awemeID int64, address string, info bool) error {
+   if awemeID <= 0 {
+      var err error
+      awemeID, err = tiktok.AwemeID(address)
+      if err != nil {
+         return err
+      }
+   }
    det, err := tiktok.NewDetail(awemeID)
    if err != nil {
       return err

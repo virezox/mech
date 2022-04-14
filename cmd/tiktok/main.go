@@ -6,6 +6,9 @@ import (
 )
 
 func main() {
+   // a
+   var address string
+   flag.StringVar(&address, "a", "", "address")
    // b
    var awemeID int64
    flag.Int64Var(&awemeID, "b", 0, "aweme ID")
@@ -19,8 +22,8 @@ func main() {
    if verbose {
       tiktok.LogLevel = 1
    }
-   if awemeID >= 1 {
-      err := detail(awemeID, info)
+   if awemeID >= 1 || address != "" {
+      err := detail(awemeID, address, info)
       if err != nil {
          panic(err)
       }

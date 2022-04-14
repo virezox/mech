@@ -5,13 +5,45 @@ import (
    "github.com/89z/format"
    "github.com/89z/mech"
    "net/http"
+   "net/url"
+   "path"
    "strconv"
+   "strings"
    "time"
 )
 
-const origin = "http://api2.musical.ly"
-
 var LogLevel format.LogLevel
+
+func AwemeID(addr string) (int64, error) {
+   stringID := func() (string, error) {
+      if strings.HasPrefix(addr, "https://www.tiktok.com/@") {
+         addr, err := url.Parse(addr)
+         if err != nil {
+            return "", err
+         }
+         return path.Base(addr.Path), nil
+      }
+      req, err := http.NewRequest("HEAD", addr, nil)
+      if err != nil {
+         return "", err
+      }
+      LogLevel.Dump(req)
+      res, err := new(http.Transport).RoundTrip(req)
+      if err != nil {
+         return "", err
+      }
+      addr, err := res.Location()
+      if err != nil {
+         return "", err
+      }
+      return addr.Query().Get("share_item_id"), nil
+   }
+   id, err := stringID()
+   if err != nil {
+      return 0, err
+   }
+   return strconv.ParseInt(id, 10, 64)
+}
 
 type Detail struct {
    Author struct {
@@ -34,7 +66,9 @@ func (d Detail) Base() string {
 }
 
 func NewDetail(id int64) (*Detail, error) {
-   req, err := http.NewRequest("GET", origin + "/aweme/v1/aweme/detail/", nil)
+   req, err := http.NewRequest(
+      "GET", "http://api2.musical.ly/aweme/v1/aweme/detail/", nil,
+   )
    if err != nil {
       return nil, err
    }

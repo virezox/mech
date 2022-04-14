@@ -15,3 +15,19 @@ func TestDetail(t *testing.T) {
    }
    fmt.Println(det)
 }
+
+var addrs = []string{
+   "https://vm.tiktok.com/ZMLesneqK",
+   "https://www.tiktok.com/@eddysayi/video/7054218882072055046?_d=secCgwIARCbD",
+}
+
+func TestID(t *testing.T) {
+   for _, addr := range addrs {
+      id, err := AwemeID(addr)
+      if err != nil {
+         t.Fatal(err)
+      }
+      fmt.Println(id)
+   }
+}
+
