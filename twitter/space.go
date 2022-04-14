@@ -9,12 +9,30 @@ import (
    "time"
 )
 
-const spacePersistedQuery = "lFpix9BgFDhAMjn9CrW6jQ"
+func (a AudioSpace) String() string {
+   var buf strings.Builder
+   buf.WriteString("Key: ")
+   buf.WriteString(a.Metadata.Media_Key)
+   buf.WriteString("\nTitle: ")
+   buf.WriteString(a.Metadata.Title)
+   buf.WriteString("\nState: ")
+   buf.WriteString(a.Metadata.State)
+   buf.WriteString("\nStarted: ")
+   buf.WriteString(a.Time().String())
+   if a.Metadata.Ended_At >= 1 {
+      buf.WriteString("\nDuration: ")
+      buf.WriteString(a.Duration().String())
+   }
+   buf.WriteString("\nAdmins: ")
+   buf.WriteString(a.Admins())
+   return buf.String()
+}
 
 type AudioSpace struct {
    Metadata struct {
       Media_Key string
       Title string
+      State string
       Started_At int64
       Ended_At int64 `json:"ended_at,string"`
    }
@@ -24,6 +42,8 @@ type AudioSpace struct {
       }
    }
 }
+
+const spacePersistedQuery = "lFpix9BgFDhAMjn9CrW6jQ"
 
 func (a AudioSpace) Admins() string {
    var buf strings.Builder
@@ -47,21 +67,6 @@ func (a AudioSpace) Base() string {
 func (a AudioSpace) Duration() time.Duration {
    dur := a.Metadata.Ended_At - a.Metadata.Started_At
    return time.Duration(dur) * time.Millisecond
-}
-
-func (a AudioSpace) String() string {
-   var buf strings.Builder
-   buf.WriteString("Key: ")
-   buf.WriteString(a.Metadata.Media_Key)
-   buf.WriteString("\nTitle: ")
-   buf.WriteString(a.Metadata.Title)
-   buf.WriteString("\nStarted: ")
-   buf.WriteString(a.Time().String())
-   buf.WriteString("\nDuration: ")
-   buf.WriteString(a.Duration().String())
-   buf.WriteString("\nAdmins: ")
-   buf.WriteString(a.Admins())
-   return buf.String()
 }
 
 func (a AudioSpace) Time() time.Time {

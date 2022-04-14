@@ -1,8 +1,25 @@
 # Twitter
 
 ~~~
-go run . -c 1DXxyDEZPNdJM -i
-go run . -c 1DXxyDEZPNdJM 
-~~~
+go run . -c 1BdGYwMbDDzxX -i
 
-https://twitter.com/i/spaces/1DXxyDEZPNdJM
+1mrxmaZzeZzxy
+1mrGmaZlWjvGy
+1gqxvlYMDOBGB
+1YqKDqLlDYNGV
+1OyKADdldMyxb
+1eaKbNqewNYKX
+1vOxwyNBXOqGB
+1ypJdENnNDjxW
+1mrGmaZzbqWGy
+1zqJVBMpMMlJB
+1rmxPgOpDzLJN
+1YqKDqLmAXkGV
+1LyxBoRkDVaKN
+1eaKbNqeZLrKX
+1vAGRkMmBvvJl
+1eaJbNqwdznJX
+1vOxwyNBXOqGB
+1kvJpAkZqeQxE
+1vOxwyNBXOqGB
+~~~
