@@ -9,6 +9,36 @@ import (
    "strings"
 )
 
+func (f Format) WriteTo(w io.Writer) (int64, error) {
+   req, err := http.NewRequest("GET", f.URL, nil)
+   if err != nil {
+      return 0, err
+   }
+   LogLevel.Dump(req)
+   var (
+      pos int64
+      pro = format.ProgressBytes(w, f.ContentLength)
+   )
+   for pos < f.ContentLength {
+      req.Header.Set(
+         "Range", fmt.Sprintf("bytes=%v-%v", pos, pos+chunk-1),
+      )
+      // this sometimes redirects, so cannot use http.Transport
+      res, err := new(http.Client).Do(req)
+      if err != nil {
+         return 0, err
+      }
+      if _, err := io.Copy(pro, res.Body); err != nil {
+         return 0, err
+      }
+      if err := res.Body.Close(); err != nil {
+         return 0, err
+      }
+      pos += chunk
+   }
+   return f.ContentLength, nil
+}
+
 const chunk = 10_000_000
 
 // averageBitrate is not always available:
@@ -38,36 +68,6 @@ func (f Format) Format(s fmt.State, verb rune) {
    if verb == 'a' {
       fmt.Fprint(s, " URL:", f.URL)
    }
-}
-
-func (f Format) Write(dst io.Writer) error {
-   req, err := http.NewRequest("GET", f.URL, nil)
-   if err != nil {
-      return err
-   }
-   LogLevel.Dump(req)
-   var (
-      pos int64
-      pro = format.ProgressBytes(dst, f.ContentLength)
-   )
-   for pos < f.ContentLength {
-      req.Header.Set(
-         "Range", fmt.Sprintf("bytes=%v-%v", pos, pos+chunk-1),
-      )
-      // this sometimes redirects, so cannot use http.Transport
-      res, err := new(http.Client).Do(req)
-      if err != nil {
-         return err
-      }
-      if _, err := io.Copy(pro, res.Body); err != nil {
-         return err
-      }
-      if err := res.Body.Close(); err != nil {
-         return err
-      }
-      pos += chunk
-   }
-   return nil
 }
 
 type Formats []Format

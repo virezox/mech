@@ -115,8 +115,10 @@ func (v video) doVideo(play *youtube.Player) error {
    if err != nil {
       return err
    }
-   defer file.Close()
-   return form.Write(file)
+   if _, err := form.WriteTo(file); err != nil {
+      return err
+   }
+   return file.Close()
 }
 
 func (v video) doAudio(play *youtube.Player) error {
@@ -130,8 +132,10 @@ func (v video) doAudio(play *youtube.Player) error {
          if err != nil {
             return err
          }
-         defer file.Close()
-         return form.Write(file)
+         if _, err := form.WriteTo(file); err != nil {
+            return err
+         }
+         return file.Close()
       }
    }
    return nil
