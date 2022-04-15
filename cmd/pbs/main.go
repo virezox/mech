@@ -10,8 +10,9 @@ func main() {
    var address string
    flag.StringVar(&address, "a", "", "address")
    // f
+   // pbs.org/wgbh/masterpiece/episodes/downton-abbey-s2-e1
    var bandwidth int
-   flag.IntVar(&bandwidth, "f", 3775776, "target bandwidth")
+   flag.IntVar(&bandwidth, "f", 2_572_025, "target bandwidth")
    // i
    var info bool
    flag.BoolVar(&info, "i", false, "information")
