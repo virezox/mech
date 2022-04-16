@@ -1,5 +1,7 @@
 # Widevine
 
+<https://yari-demos.prod.mdn.mozit.cloud/Web/API/MediaStream_Recording_API/Recording_a_media_element/_sample_.Example_of_recording_a_media_element.html>
+
 ## Clarify key situation
 
 - https://archive.ph/eun2m
