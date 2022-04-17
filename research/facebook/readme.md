@@ -37,7 +37,7 @@ Is the quality the same? Yes. We cannot monitor the app:
 - https://android.stackexchange.com/questions/246303/facebook-whitehat-settings
 - https://github.com/httptoolkit/frida-android-unpinning/issues/18
 
-Next we can try monitoring the page above:
+Next we can try monitoring the page above, 5242228839129775:
 
 ~~~
 POST https://www.facebook.com/api/graphql/ HTTP/2.0
@@ -84,6 +84,8 @@ That only returns HTML, no JSON. Next we can try monitoring this page:
 
 https://www.facebook.com/watch
 
+4561733853932056:
+
 ~~~
 POST https://www.facebook.com/api/graphql/ HTTP/2.0
 user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:88.0) Gecko/20100101 Firefox/88.0
@@ -121,7 +123,39 @@ av=0&__user=0&__a=1&__dyn=7xeUmwlEnwn8K2WnFw9-2i5U4e0yoW3q322aew9G2S0zU20xi3y4o0
 {"label":"VideoPlayerRelay_video$defer$InstreamVideoAdBreaksPlayer_video","path":
 ~~~
 
-and:
+5214388728679644:
+
+~~~
+POST https://www.facebook.com/api/graphql/ HTTP/2.0
+user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:88.0) Gecko/20100101 Firefox/88.0
+accept: */*
+accept-language: en-US,en;q=0.5
+accept-encoding: gzip, deflate, br
+content-type: application/x-www-form-urlencoded
+x-fb-friendly-name: CometVideoHomeLOEHomeRootQuery
+x-fb-lsd: AVqz-uQg_ak
+content-length: 935
+origin: https://www.facebook.com
+dnt: 1
+referer: https://www.facebook.com/ESPN/videos/watch-brett-phillips-hits-home-run-with-his-biggest-fan-in-attendance/501982491404746/
+cookie: datr=TELWYW7HP4RtCGikVySUp6x-
+cookie: fr=0W6VmibpnyLPd9tKK.AWVlKEWfTBue7bA9KbNc1fyBDFc.BiWv6G.wl.AAA.0.0.BiWwxw.AWW1MTA4ySM
+cookie: sb=y2kMYljEFad1tU7CPu3dtnFa
+cookie: dpr=1.25
+cookie: wd=1186x615
+cookie: locale=en_US
+cookie: m_pixel_ratio=1
+cookie: usida=eyJ2ZXIiOjEsImlkIjoiQXJhZzJxcm91YXlmMSIsInRpbWUiOjE2NTAxMzM1NDZ9
+te: trailers
+
+av=0&__user=0&__a=1&__dyn=7xeUmwlEnwn8K2WnFw9-2i5U4e0yoW3q322aew9G2S0zU20xi3y4o0B-q1ew65xOfw9q0yE465o-cwfG12wOKdwGwQw9m8wsU9k2C1FwIw9i1uwZwlo5qfK6E7e58jwGzE2swwwJK2W2K0zK5o4q3q1OBx_y8179obodEGdwda3e0Lo4qifxe&__csr=gZ8wBf4Tl99eBSQkgnSiAaGFf-nUyrVoCWwzjyo8KrV9aV4KdAx28x15UOuu4-VHDgkG22muuEkhkm9wGyUGawHyVESeWAzElyuVXwVx68DLwEw1wG0QmEhwrU1uqw1ci0Oomw1vK0jq1xg0L6ew0PNw5cw089S0H83uw1LS8Gq9nO2V9EfU0h3xS0aIg0-mU4O3qu0CV8iwn-0qS0J81oo0M-2u1DCxa2-0bUwaG0nO8w15W04wE0mEw0x9w2uVlw4Nwem682Tx62S0mN0d-7UV0BDw2GIYU1x8W0sO9w4ww&__req=m&__hs=19098.HYP%3Acomet_loggedout_pkg.2.0.0.0.&dpr=1.5&__ccg=EXCELLENT&__rev=1005366273&__s=hpahh1%3A9t1dg4%3Ahfftu1&__hsi=7087307216950888986-0&__comet_req=1&lsd=AVqz-uQg_ak&jazoest=21031&__spin_r=1005366273&__spin_b=trunk&__spin_t=1650142301&fb_api_caller_class=RelayModern&fb_api_req_friendly_name=CometVideoHomeLOEHomeRootQuery&variables=%7B%22scale%22%3A1.5%7D&server_timestamps=true&doc_id=5214388728679644
+
+{"data":{"video_home_www_logged_out_home":{"video_home_sections":{"edges":[{"node
+{"label":"CometVideoHomeLOEHomeSectionsList_query$stream$CometVideoHomeLOEHomeSec
+{"label":"CometVideoHomeLOEHomeSectionsList_query$defer$CometVideoHomeLOEHomeSect
+~~~
+
+5258095424210922:
 
 ~~~
 POST https://www.facebook.com/api/graphql/ HTTP/2.0
@@ -158,34 +192,6 @@ av=0&__user=0&__a=1&__dyn=7xeUmwlEnwn8K2WnFw9-2i5U4e0yoW3q322aew9G2S0zU20xi3y4o0
 {"label":"CometVideoHomeHeroUnitSidePane_story$defer$CometTahoeUFIChainingSection
 ~~~
 
-and:
+This works, but no metadata:
 
-~~~
-POST https://www.facebook.com/api/graphql/ HTTP/2.0
-user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:88.0) Gecko/20100101 Firefox/88.0
-accept: */*
-accept-language: en-US,en;q=0.5
-accept-encoding: identity
-content-type: application/x-www-form-urlencoded
-x-fb-friendly-name: CometTahoeUpNextEndCardQuery
-x-fb-lsd: AVqz-uQgZmM
-content-length: 1002
-origin: https://www.facebook.com
-dnt: 1
-referer: https://www.facebook.com/soulmatesdodo/videos/guy-is-so-gentle-with-the-wild-horse-he-rescued/893177214675696/
-cookie: datr=TELWYW7HP4RtCGikVySUp6x-
-cookie: fr=0W6VmibpnyLPd9tKK.AWVlKEWfTBue7bA9KbNc1fyBDFc.BiWv6G.wl.AAA.0.0.BiWwxw.AWW1MTA4ySM
-cookie: sb=y2kMYljEFad1tU7CPu3dtnFa
-cookie: dpr=1.25
-cookie: wd=1536x699
-cookie: locale=en_US
-cookie: m_pixel_ratio=1
-cookie: usida=eyJ2ZXIiOjEsImlkIjoiQXJhZzJxcm91YXlmMSIsInRpbWUiOjE2NTAxMzM1NDZ9
-te: trailers
-
-av=0&__user=0&__a=1&__dyn=7xeUmwlEnwn8K2WnFw9-2i5U4e0yoW3q322aew9G2S0zU20xi3y4o0B-q1ew65xOfw9q0yE465o-cwfG12wOKdwGwQw9m8wsU9k2C1FwIw9i1uwZwlo5qfK6E7e58jwGzE2swwwJK2W2K0zK5o4q3q1OBx_y8179obodEGdwda3e0Lo4qifxe&__csr=gZ8wBf4SJ9ahqSQkhGLAF2GGj_X-f-mFLG48Rde9g8urV9aV4K4Egy9oF5UOuu4-VHDgG9G22muuEkhkm9wGyUGawHyVESeWAzElyuVXwVx68DK2G06T6EhwrU1uqw1ci0Oomw1vK0jq1xg0L6ew0PNw5cw089S0H83uw1LS8Gq9nO2V9EfU0h3xS0aIg0-mU4O3qu0CV8iwn-0qS0J81oo0M-2u1DCxa2-0bUwaG0nO8w15W04wE0mEw0x9w2uVlw4Nwem682Tx62S0mN0d-7UV0BDw2GIYU1x8W0bTw&__req=g&__hs=19098.HYP%3Acomet_loggedout_pkg.2.0.0.0.&dpr=1.5&__ccg=EXCELLENT&__rev=1005366256&__s=jt7voe%3Anshyhl%3Au8k4e5&__hsi=7087289471768853946-0&__comet_req=1&lsd=AVqz-uQgZmM&jazoest=21008&__spin_r=1005366256&__spin_b=trunk&__spin_t=1650138169&fb_api_caller_class=RelayModern&fb_api_req_friendly_name=CometTahoeUpNextEndCardQuery&variables=%7B%22upNextVideoID%22%3A%22%22%2C%22scale%22%3A1.5%2C%22currentID%22%3A%22893177214675696%22%7D&server_timestamps=true&doc_id=5242228839129775
-
-{"data":{"upNextVideoData":null,"currentVideo":{"__typename":"Video","video_chann
-~~~
-
-https://gist.github.com/narate/06ab3c9a09b5137ab9756ef24f04590b
+<https://facebook.com/video/video_data?video_id=309868367063220>

@@ -7,7 +7,23 @@ import (
    "strings"
 )
 
+const origin = "https://www.youtube.com"
+
 var LogLevel format.LogLevel
+
+// https://youtube.com/shorts/9Vsdft81Q6w
+// https://youtube.com/watch?v=XY-hOqcPGCY
+func VideoID(address string) (string, error) {
+   parse, err := url.Parse(address)
+   if err != nil {
+      return "", err
+   }
+   v := parse.Query().Get("v")
+   if v != "" {
+      return v, nil
+   }
+   return path.Base(parse.Path), nil
+}
 
 type Image struct {
    Width int
@@ -74,22 +90,6 @@ func (i Image) Format(id string) string {
    buf.WriteByte('/')
    buf.WriteString(i.Base)
    return buf.String()
-}
-
-const origin = "https://www.youtube.com"
-
-// https://youtube.com/shorts/9Vsdft81Q6w
-// https://youtube.com/watch?v=XY-hOqcPGCY
-func VideoID(address string) (string, error) {
-   parse, err := url.Parse(address)
-   if err != nil {
-      return "", err
-   }
-   v := parse.Query().Get("v")
-   if v != "" {
-      return v, nil
-   }
-   return path.Base(parse.Path), nil
 }
 
 type Item struct {
