@@ -84,7 +84,6 @@ func download(address string) error {
    if err != nil {
       return err
    }
-   defer res.Body.Close()
    addr, err := url.Parse(address)
    if err != nil {
       return err
@@ -93,9 +92,11 @@ func download(address string) error {
    if err != nil {
       return err
    }
-   defer file.Close()
    if _, err := file.ReadFrom(res.Body); err != nil {
       return err
    }
-   return nil
+   if err := res.Body.Close(); err != nil {
+      return err
+   }
+   return file.Close()
 }

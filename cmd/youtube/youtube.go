@@ -8,6 +8,17 @@ import (
    "sort"
 )
 
+type video struct {
+   address string
+   audio string
+   height int
+   id string
+   info bool
+   two bool
+   three bool
+   four bool
+}
+
 func doRefresh() error {
    oauth, err := youtube.NewOAuth()
    if err != nil {

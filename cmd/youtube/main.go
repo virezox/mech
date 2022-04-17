@@ -5,17 +5,6 @@ import (
    "github.com/89z/mech/youtube"
 )
 
-type video struct {
-   address string
-   audio string
-   height int
-   id string
-   info bool
-   two bool
-   three bool
-   four bool
-}
-
 func main() {
    var vid video
    // 2

@@ -28,7 +28,6 @@ func doManifest(addr string, bandwidth int, info bool) error {
    if err != nil {
       return err
    }
-   defer res.Body.Close()
    master, err := hls.NewScanner(res.Body).Master(res.Request.URL)
    if err != nil {
       return err
@@ -44,7 +43,7 @@ func doManifest(addr string, bandwidth int, info bool) error {
          return download(stream, video)
       }
    }
-   return nil
+   return res.Body.Close()
 }
 
 func newSegment(stream hls.Stream) (*hls.Segment, error) {

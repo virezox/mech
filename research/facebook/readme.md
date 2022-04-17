@@ -192,6 +192,21 @@ av=0&__user=0&__a=1&__dyn=7xeUmwlEnwn8K2WnFw9-2i5U4e0yoW3q322aew9G2S0zU20xi3y4o0
 {"label":"CometVideoHomeHeroUnitSidePane_story$defer$CometTahoeUFIChainingSection
 ~~~
 
-This works, but no metadata:
+I found this:
 
 <https://facebook.com/video/video_data?video_id=309868367063220>
+
+but it only contains the media, not metadata, so its only marginally useful.
+Same for this:
+
+<https://www.facebook.com/video/video_data_async/?video_id=309868367063220&__a=1>
+
+and this:
+
+<https://www.facebook.com/pages/profile/cover_video_data/?video_id=309868367063220&__a=1>
+
+Try searching for:
+
+~~~
+facebook download pushed:>2021-04-17
+~~~

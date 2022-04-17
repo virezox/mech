@@ -27,7 +27,6 @@ func doManifest(guid, address string, bandwidth int, info bool) error {
    if err != nil {
       return err
    }
-   defer res.Body.Close()
    paramount.LogLevel.Dump(res.Request)
    master, err := hls.NewScanner(res.Body).Master(res.Request.URL)
    if err != nil {
@@ -46,7 +45,7 @@ func doManifest(guid, address string, bandwidth int, info bool) error {
          return download(stream, video)
       }
    }
-   return nil
+   return res.Body.Close()
 }
 
 func get(addr string) (*http.Response, error) {
