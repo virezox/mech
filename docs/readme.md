@@ -1,5 +1,8 @@
 # Docs
 
+- https://reddit.com/r/television
+- https://trakt.tv/shows/orphan-black/seasons/1/episodes/2
+
 ## How to add a new site?
 
 1. `--proxy 127.0.0.1:8080 --no-check-certificate`
@@ -9,4 +12,3 @@
 4. MITM Proxy Firefox
 5. MITM Proxy APK
 6. JADX
-
