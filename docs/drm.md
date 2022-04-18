@@ -90,6 +90,10 @@ content-length: 0
 
 ## Roku
 
+Android client:
+
+https://play.google.com/store/apps/details?id=com.roku.remote
+
 Web client:
 
 ~~~
