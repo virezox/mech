@@ -2,51 +2,52 @@ package facebook
 
 import (
    "github.com/89z/format"
-   "github.com/headzoo/surf"
+   "io"
    "net/http"
+   "net/http/httputil"
+   "net/url"
+   "os"
    "strings"
 )
 
-type errorString string
+var LogLevel format.LogLevel
 
-func (e errorString) Error() string {
-   return string(e)
+type Login struct {
+   Datr string
+   Lsd string
 }
 
-type verbose struct{}
-
-func (verbose) RoundTrip(req *http.Request) (*http.Response, error) {
-   format.LogLevel(1).Dump(req)
-   return new(http.Transport).RoundTrip(req)
+func NewLogin() (*Login, error) {
+   req, err := http.NewRequest("GET", "https://m.facebook.com/login.php", nil)
+   if err != nil {
+      return nil, err
+   }
+   LogLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   type Form struct {
+      Input []struct {
+         Name string `xml:"name,attr"`
+         Value string `xml:"value,attr"`
+      } `xml:"input"`
+   }
 }
 
-type facebookWebservice struct{}
-
-const endpoint = "https://m.facebook.com/login.php"
-
-func (f *facebookWebservice) login(email, password string) error {
-   bro := surf.NewBrowser()
-   var ver verbose
-   bro.SetTransport(ver)
-   err := bro.Open(endpoint)
-   if err != nil {
-      return err
+func getLogin() (*http.Response, error) {
+   var req http.Request
+   req.Header = make(http.Header)
+   req.Method = "POST"
+   req.URL = new(url.URL)
+   req.URL.Host = "m.facebook.com"
+   req.URL.Path = "/login/device-based/regular/login/"
+   req.Header["Content-Type"] = []string{"application/x-www-form-urlencoded"}
+   req.Header["Cookie"] = []string{"datr=MxJfYrG9o7FrP2k9iHQ2uhm9"}
+   req.URL.Scheme = "https"
+   body := url.Values{
+      "email":[]string{email},
+      "pass":[]string{password},
+      "lsd":[]string{"AVoiuEvJgiA"},
    }
-   fm, err := bro.Form("form[id=login_form]")
-   if err != nil {
-      return err
-   }
-   if err := fm.Input("email", email); err != nil {
-      return err
-   }
-   if err := fm.Input("pass", password); err != nil {
-      return err
-   }
-   if fm.Submit() != nil {
-      return errorString("ParseError login_form_button " + endpoint)
-   }
-   if strings.Contains(bro.Title(), "Log into Facebook") {
-      return errorString("AccountError " + email + " " + endpoint)
-   }
-   return nil
+   req.Body = io.NopCloser(strings.NewReader(body.Encode()))
+   format.LogLevel(1).Dump(&req)
+   return new(http.Transport).RoundTrip(&req)
 }
