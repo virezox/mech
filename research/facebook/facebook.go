@@ -1,46 +1,11 @@
 package facebook
 
 import (
-   "github.com/headzoo/surf/browser"
-   "net/url"
+   "github.com/89z/format"
+   "github.com/headzoo/surf"
+   "net/http"
    "strings"
 )
-
-const (
-	httpscheme       = "https"
-	facebookhost     = "facebook.com"
-	facebooklogin    = "/login.php"
-	facebookchpasswd = "/settings/security/password/"
-)
-
-type facebookWebservice struct{}
-
-func (f *facebookWebservice) login(browsr *browser.Browser, email, password string) error {
-   fUrl := buildFBUrl(facebooklogin)
-   err := browsr.Open(fUrl.String())
-   if err != nil {
-      return err
-   }
-   fm, err := browsr.Form("form[id=login_form]")
-   if err != nil {
-      return err
-   }
-   err = fm.Input("email", email)
-   if err != nil {
-      return err
-   }
-   err = fm.Input("pass", password)
-   if err != nil {
-      return err
-   }
-   if fm.Submit() != nil {
-      return errorString("ParseError login_form_button " + fUrl.String())
-   }
-   if strings.Contains(browsr.Title(), "Log into Facebook") {
-      return errorString("AccountError " + email + " " + facebookhost)
-   }
-   return nil
-}
 
 type errorString string
 
@@ -48,10 +13,40 @@ func (e errorString) Error() string {
    return string(e)
 }
 
-func buildFBUrl(path string) *url.URL {
-	return &url.URL{
-		Scheme: httpscheme,
-		Host:   "m." + facebookhost,
-		Path:   path,
-	}
+type verbose struct{}
+
+func (verbose) RoundTrip(req *http.Request) (*http.Response, error) {
+   format.LogLevel(1).Dump(req)
+   return new(http.Transport).RoundTrip(req)
+}
+
+type facebookWebservice struct{}
+
+const endpoint = "https://m.facebook.com/login.php"
+
+func (f *facebookWebservice) login(email, password string) error {
+   bro := surf.NewBrowser()
+   var ver verbose
+   bro.SetTransport(ver)
+   err := bro.Open(endpoint)
+   if err != nil {
+      return err
+   }
+   fm, err := bro.Form("form[id=login_form]")
+   if err != nil {
+      return err
+   }
+   if err := fm.Input("email", email); err != nil {
+      return err
+   }
+   if err := fm.Input("pass", password); err != nil {
+      return err
+   }
+   if fm.Submit() != nil {
+      return errorString("ParseError login_form_button " + endpoint)
+   }
+   if strings.Contains(bro.Title(), "Log into Facebook") {
+      return errorString("AccountError " + email + " " + endpoint)
+   }
+   return nil
 }
