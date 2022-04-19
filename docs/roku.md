@@ -1,10 +1,12 @@
 ## Roku
 
-Android client is just a remote control:
+## Android client
+
+just a remote control:
 
 https://play.google.com/store/apps/details?id=com.roku.remote
 
-Web client:
+## Web client
 
 ~~~
 POST https://therokuchannel.roku.com/api/v3/playback HTTP/2.0

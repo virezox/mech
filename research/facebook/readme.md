@@ -32,10 +32,7 @@ Connection: close
 content-length: 0
 ~~~
 
-Is the quality the same? Yes. We cannot monitor the app:
-
-- https://android.stackexchange.com/questions/246303/facebook-whitehat-settings
-- https://github.com/httptoolkit/frida-android-unpinning/issues/18
+Is the quality the same? Yes.
 
 Next we can try monitoring the page above, 5242228839129775:
 
@@ -208,5 +205,5 @@ and this:
 Try searching for:
 
 ~~~
-facebook download pushed:>2021-04-17
+facebook download pushed:>2021-04-18
 ~~~
