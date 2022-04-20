@@ -5,6 +5,8 @@ import (
    "testing"
 )
 
+const id = 444624393796648
+
 func TestFacebook(t *testing.T) {
    login, err := NewLogin()
    if err != nil {
@@ -14,5 +16,9 @@ func TestFacebook(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   fmt.Printf("%+v\n", reg)
+   vid, err := reg.Video(id)
+   if err != nil {
+      t.Fatal(err)
+   }
+   fmt.Printf("%+v\n", vid)
 }
