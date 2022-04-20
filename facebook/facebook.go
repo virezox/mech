@@ -10,33 +10,6 @@ import (
    "strings"
 )
 
-type Regular struct {
-   C_User *http.Cookie
-   Xs *http.Cookie
-}
-
-func (r Regular) Video(id int64) (*Video, error) {
-   buf := []byte("https://www.facebook.com/video/video_data?video_id=")
-   buf = strconv.AppendInt(buf, id, 10)
-   req, err := http.NewRequest("GET", string(buf), nil)
-   if err != nil {
-      return nil, err
-   }
-   req.AddCookie(r.C_User)
-   req.AddCookie(r.Xs)
-   LogLevel.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   vid := new(Video)
-   if err := json.NewDecoder(res.Body).Decode(vid); err != nil {
-      return nil, err
-   }
-   return vid, nil
-}
-
 var LogLevel format.LogLevel
 
 type Input struct {
@@ -112,6 +85,33 @@ func (l Login) Regular(email, password string) (*Regular, error) {
       }
    }
    return &reg, nil
+}
+
+type Regular struct {
+   C_User *http.Cookie
+   Xs *http.Cookie
+}
+
+func (r Regular) Video(id int64) (*Video, error) {
+   buf := []byte("https://www.facebook.com/video/video_data?video_id=")
+   buf = strconv.AppendInt(buf, id, 10)
+   req, err := http.NewRequest("GET", string(buf), nil)
+   if err != nil {
+      return nil, err
+   }
+   req.AddCookie(r.C_User)
+   req.AddCookie(r.Xs)
+   LogLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   vid := new(Video)
+   if err := json.NewDecoder(res.Body).Decode(vid); err != nil {
+      return nil, err
+   }
+   return vid, nil
 }
 
 type Video struct {
