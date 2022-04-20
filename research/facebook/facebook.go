@@ -2,19 +2,22 @@ package facebook
 
 import (
    "github.com/89z/format"
-   "io"
+   "github.com/89z/format/xml"
    "net/http"
-   "net/http/httputil"
    "net/url"
-   "os"
    "strings"
 )
 
 var LogLevel format.LogLevel
 
+type Input struct {
+   Name string `xml:"name,attr"`
+   Value string `xml:"value,attr"`
+}
+
 type Login struct {
-   Datr string
-   Lsd string
+   Datr *http.Cookie
+   Lsd Input
 }
 
 func NewLogin() (*Login, error) {
@@ -24,30 +27,65 @@ func NewLogin() (*Login, error) {
    }
    LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
-   type Form struct {
-      Input []struct {
-         Name string `xml:"name,attr"`
-         Value string `xml:"value,attr"`
-      } `xml:"input"`
+   if err != nil {
+      return nil, err
    }
+   defer res.Body.Close()
+   sep := []byte(`<div class="t">`)
+   var form struct {
+      Input []Input `xml:"input"`
+   }
+   if err := xml.Decode(res.Body, sep, &form); err != nil {
+      return nil, err
+   }
+   var login Login
+   for _, input := range form.Input {
+      if input.Name == "lsd" {
+         login.Lsd = input
+      }
+   }
+   for _, cook := range res.Cookies() {
+      if cook.Name == "datr" {
+         login.Datr = cook
+      }
+   }
+   return &login, nil
 }
 
-func getLogin() (*http.Response, error) {
-   var req http.Request
-   req.Header = make(http.Header)
-   req.Method = "POST"
-   req.URL = new(url.URL)
-   req.URL.Host = "m.facebook.com"
-   req.URL.Path = "/login/device-based/regular/login/"
-   req.Header["Content-Type"] = []string{"application/x-www-form-urlencoded"}
-   req.Header["Cookie"] = []string{"datr=MxJfYrG9o7FrP2k9iHQ2uhm9"}
-   req.URL.Scheme = "https"
+func (l Login) Regular(email, password string) (*Regular, error) {
    body := url.Values{
-      "email":[]string{email},
-      "pass":[]string{password},
-      "lsd":[]string{"AVoiuEvJgiA"},
+      "email": {email},
+      "lsd": {l.Lsd.Value},
+      "pass": {password},
+   }.Encode()
+   req, err := http.NewRequest(
+      "POST", "https://m.facebook.com/login/device-based/regular/login/",
+      strings.NewReader(body),
+   )
+   if err != nil {
+      return nil, err
    }
-   req.Body = io.NopCloser(strings.NewReader(body.Encode()))
-   format.LogLevel(1).Dump(&req)
-   return new(http.Transport).RoundTrip(&req)
+   req.AddCookie(l.Datr)
+   req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+   LogLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   var reg Regular
+   for _, cook := range res.Cookies() {
+      switch cook.Name {
+      case "c_user":
+         reg.C_User = cook
+      case "xs":
+         reg.Xs = cook
+      }
+   }
+   return &reg, nil
+}
+
+type Regular struct {
+   C_User *http.Cookie
+   Xs *http.Cookie
 }
