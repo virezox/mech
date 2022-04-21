@@ -1,29 +1,17 @@
 # Facebook
 
-- https://github.com/ytdl-org/youtube-dl/issues/30872
-- https://www.facebook.com/FromTheBasementPage/videos/309868367063220
+https://github.com/ytdl-org/youtube-dl/issues/30872
 
-## Android
+Metadata only:
 
-- https://android.stackexchange.com/questions/246303/facebook-whitehat-settings
-- https://play.google.com/store/apps/details?id=com.facebook.katana
+https://www.facebook.com/facebookapp/videos/309868367063220
 
-HTTP Toolkit:
+Media only:
 
-Install Facebook app. Go to Menu, Settings & Privacy, Whitehat Settings. Click
-"allow user installed certificates". FORCE STOP app. Start HTTP Toolkit. Start
-app. Notice that requests are not being captured, and Certificate rejected
-errors are occurring.
+<https://www.facebook.com/video/video_data?video_id=309868367063220>
 
-https://github.com/httptoolkit/frida-android-unpinning/issues/18
+not sure:
 
-MITM Proxy:
-
-Install user certificate. Turn off proxy. Install Facebook app. Go to Menu,
-Settings & Privacy, Whitehat Settings. Click "allow user installed
-certificates". FORCE STOP app. Turn on proxy. Start app. Notice that requests
-are not being captured. Go back to Whitehat Settings, and click "Proxy for
-Platform API requests". Enter 127.0.0.1:8080. FORCE STOP app. Start app. Notice
-that requests are not being captured.
-
-https://github.com/mitmproxy/mitmproxy/discussions/5271
+- <https://www.facebook.com/video/embed?video_id=309868367063220>
+- https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Ffacebook%2Fvideos%2F10153231379946729%2F&width=500&show_text=false&height=280&appId
+- https://www.facebook.com/video.php?v=309868367063220
