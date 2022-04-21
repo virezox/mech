@@ -21,7 +21,7 @@ func TestVideo(t *testing.T) {
       if err != nil {
          t.Fatal(err)
       }
-      fmt.Printf("%+v\n", widget)
+      fmt.Printf("%a\n", widget)
       time.Sleep(time.Second)
    }
 }
