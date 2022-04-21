@@ -10,10 +10,50 @@ import (
    "strings"
 )
 
-// year
-// title
-// image
-//https://www.facebook.com/-/videos/309868367063220
+type Meta struct {
+   Property string `xml:"property,attr"`
+   Content string `xml:"content,attr"`
+}
+
+// 1. year
+// 2. image
+func NewMeta(id int64) (*Meta, error) {
+   req, err := http.NewRequest("GET", "https://www.facebook.com/video.php", nil)
+   if err != nil {
+      return nil, err
+   }
+   req.URL.RawQuery = "v=" + strconv.FormatInt(id, 10)
+   LogLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   scan, err := xml.NewScanner(res.Body)
+   if err != nil {
+      return nil, err
+   }
+   scan.Split = []byte("<meta ")
+   for scan.Scan() {
+      var meta Meta
+      err := scan.Decode(&meta)
+      if err != nil {
+         return nil, err
+      }
+      if meta.Property == "og:title" {
+         return &meta, nil
+      }
+   }
+   return nil, notFound{"og:title"}
+}
+
+type notFound struct {
+   value string
+}
+
+func (n notFound) Error() string {
+   return strconv.Quote(n.value) + " is not found"
+}
 
 // facebook.com/video/video_data?video_id=309868367063220
 func (r Regular) Video(id int64) (*Video, error) {

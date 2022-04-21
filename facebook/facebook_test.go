@@ -5,18 +5,18 @@ import (
    "testing"
 )
 
-const addr =
-   "https://www.facebook.com/FromTheBasementPage/videos/309868367063220"
+const (
+   anon = 309868367063220
+   auth = 444624393796648
+)
 
 func TestMeta(t *testing.T) {
-   meta, err := NewMeta(addr)
+   meta, err := NewMeta(anon)
    if err != nil {
       t.Fatal(err)
    }
    fmt.Printf("%+v\n", meta)
 }
-
-const id = 444624393796648
 
 func TestRegular(t *testing.T) {
    login, err := NewLogin()
@@ -27,5 +27,9 @@ func TestRegular(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   fmt.Printf("%+v\n", reg)
+   vid, err := reg.Video(auth)
+   if err != nil {
+      t.Fatal(err)
+   }
+   fmt.Printf("%+v\n", vid)
 }
