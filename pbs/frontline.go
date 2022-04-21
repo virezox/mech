@@ -25,11 +25,14 @@ func NewFrontline(addr string) (*Frontline, error) {
       return nil, err
    }
    defer res.Body.Close()
-   var (
-      line = new(Frontline)
-      sep = []byte(`"application/ld+json">`)
-   )
-   if err := json.Decode(res.Body, sep, line); err != nil {
+   scan, err := json.NewScanner(res.Body)
+   if err != nil {
+      return nil, err
+   }
+   scan.Split = []byte(`{"@context"`)
+   scan.Scan()
+   line := new(Frontline)
+   if err := scan.Decode(line); err != nil {
       return nil, err
    }
    return line, nil

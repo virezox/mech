@@ -24,11 +24,14 @@ func NewVideo(addr string) (*Video, error) {
       return nil, err
    }
    defer res.Body.Close()
-   var (
-      vid = new(Video)
-      sep = []byte(`"application/ld+json">`)
-   )
-   if err := json.Decode(res.Body, sep, vid); err != nil {
+   scan, err := json.NewScanner(res.Body)
+   if err != nil {
+      return nil, err
+   }
+   scan.Split = []byte("{\n  \"@context\"")
+   scan.Scan()
+   vid := new(Video)
+   if err := scan.Decode(vid); err != nil {
       return nil, err
    }
    return vid, nil

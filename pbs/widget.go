@@ -10,7 +10,31 @@ import (
    "time"
 )
 
-var LogLevel format.LogLevel
+func NewWidget(addr *url.URL) (*Widget, error) {
+   req, err := http.NewRequest("GET", addr.String(), nil)
+   if err != nil {
+      return nil, err
+   }
+   req.Header.Set("Cookie", "pbsol.station=KERA")
+   LogLevel.Dump(req)
+   // this can redirect
+   res, err := new(http.Client).Do(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   scan, err := json.NewScanner(res.Body)
+   if err != nil {
+      return nil, err
+   }
+   scan.Split = []byte(`{"availability"`)
+   scan.Scan()
+   wid := new(Widget)
+   if err := scan.Decode(wid); err != nil {
+      return nil, err
+   }
+   return wid, nil
+}
 
 type Widget struct {
    Slug string
@@ -21,6 +45,8 @@ type Widget struct {
    Duration int64
    Encodings []string
 }
+
+var LogLevel format.LogLevel
 
 func (w Widget) Format(f fmt.State, verb rune) {
    fmt.Fprintln(f, "Slug:", w.Slug)
@@ -36,29 +62,6 @@ func (w Widget) Format(f fmt.State, verb rune) {
 
 func (w Widget) GetDuration() time.Duration {
    return time.Duration(w.Duration) * time.Second
-}
-
-func NewWidget(addr *url.URL) (*Widget, error) {
-   req, err := http.NewRequest("GET", addr.String(), nil)
-   if err != nil {
-      return nil, err
-   }
-   req.Header.Set("Cookie", "pbsol.station=KERA")
-   LogLevel.Dump(req)
-   // this can redirect
-   res, err := new(http.Client).Do(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   var (
-      sep = []byte("\twindow.videoBridge = ")
-      wid = new(Widget)
-   )
-   if err := json.Decode(res.Body, sep, wid); err != nil {
-      return nil, err
-   }
-   return wid, nil
 }
 
 func (w Widget) HLS() string {

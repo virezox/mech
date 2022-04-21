@@ -8,26 +8,6 @@ import (
    "strings"
 )
 
-type Asset struct {
-   Object_Type string
-   Slug string
-   Player_Code string
-}
-
-func (a Asset) Widget() (*Widget, error) {
-   for _, split := range strings.Split(a.Player_Code, "'") {
-      if strings.Contains(split, "/partnerplayer/") {
-         addr, err := url.Parse(split)
-         if err != nil {
-            return nil, err
-         }
-         addr.Scheme = "https"
-         return NewWidget(addr)
-      }
-   }
-   return nil, notFound{"/partnerplayer/"}
-}
-
 type Nova struct {
    Query struct {
       Video string
@@ -57,14 +37,37 @@ func NewNova(addr string) (*Nova, error) {
       return nil, err
    }
    defer res.Body.Close()
-   var (
-      nova = new(Nova)
-      sep = []byte(` id="__NEXT_DATA__" type="application/json">`)
-   )
-   if err := json.Decode(res.Body, sep, nova); err != nil {
+   scan, err := json.NewScanner(res.Body)
+   if err != nil {
+      return nil, err
+   }
+   scan.Split = []byte(`{"props"`)
+   scan.Scan()
+   nova := new(Nova)
+   if err := scan.Decode(nova); err != nil {
       return nil, err
    }
    return nova, nil
+}
+
+type Asset struct {
+   Object_Type string
+   Slug string
+   Player_Code string
+}
+
+func (a Asset) Widget() (*Widget, error) {
+   for _, split := range strings.Split(a.Player_Code, "'") {
+      if strings.Contains(split, "/partnerplayer/") {
+         addr, err := url.Parse(split)
+         if err != nil {
+            return nil, err
+         }
+         addr.Scheme = "https"
+         return NewWidget(addr)
+      }
+   }
+   return nil, notFound{"/partnerplayer/"}
 }
 
 func (n Nova) Asset() *Asset {
