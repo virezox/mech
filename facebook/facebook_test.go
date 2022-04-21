@@ -38,5 +38,5 @@ func TestVideo(t *testing.T) {
    if vid.Title.Text == "" {
       t.Fatal(vid)
    }
-   fmt.Printf("%+v\n", vid)
+   fmt.Println(vid)
 }

@@ -10,6 +10,36 @@ import (
    "strings"
 )
 
+func (v Video) String() string {
+   var buf strings.Builder
+   buf.WriteString("Title: ")
+   buf.WriteString(v.Title.Text)
+   buf.WriteString("\nDate: ")
+   buf.WriteString(v.Date.DateCreated)
+   buf.WriteString("\nImage: ")
+   buf.WriteString(v.Media.Preferred_Thumbnail.Image.URI)
+   buf.WriteString("\nVideo: ")
+   buf.WriteString(v.Media.Playable_URL_Quality_HD)
+   return buf.String()
+}
+
+type Video struct {
+   Title struct {
+      Text string
+   }
+   Date struct {
+      DateCreated string
+   }
+   Media struct {
+      Preferred_Thumbnail struct {
+         Image struct {
+            URI string
+         }
+      }
+      Playable_URL_Quality_HD string
+   }
+}
+
 var LogLevel format.LogLevel
 
 type Input struct {
@@ -93,23 +123,6 @@ func (l Login) Regular(email, password string) (*Regular, error) {
 type Regular struct {
    C_User *http.Cookie
    Xs *http.Cookie
-}
-
-type Video struct {
-   Date struct {
-      DateCreated string
-   }
-   Media struct {
-      Playable_URL_Quality_HD string
-      Preferred_Thumbnail struct {
-         Image struct {
-            URI string
-         }
-      }
-   }
-   Title struct {
-      Text string
-   }
 }
 
 func NewVideo(id int64) (*Video, error) {
