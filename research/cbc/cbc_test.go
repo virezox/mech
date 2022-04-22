@@ -2,26 +2,12 @@ package cbc
 
 import (
    "fmt"
-   "os"
    "testing"
 )
 
 const downton = "https://gem.cbc.ca/media/downton-abbey/s01e05"
 
 func TestMedia(t *testing.T) {
-   asset, err := NewAsset(downton)
-   if err != nil {
-      t.Fatal(err)
-   }
-   res, err := asset.Media()
-   if err != nil {
-      t.Fatal(err)
-   }
-   defer res.Body.Close()
-   os.Stdout.ReadFrom(res.Body)
-}
-
-func TestProfile(t *testing.T) {
    login := Login{Access_Token: accessToken}
    web, err := login.WebToken()
    if err != nil {
@@ -35,7 +21,15 @@ func TestProfile(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   fmt.Printf("%+v\n", pro)
+   asset, err := NewAsset(downton)
+   if err != nil {
+      t.Fatal(err)
+   }
+   media, err := pro.Media(asset)
+   if err != nil {
+      t.Fatal(err)
+   }
+   fmt.Printf("%+v\n", media)
 }
 
 func TestLogin(t *testing.T) {

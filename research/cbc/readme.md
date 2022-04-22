@@ -21,12 +21,3 @@ Install system certificate. Random IPV4:
 
 - <https://github.com/firehol/blocklist-ipsets/blob/master/geolite2_country/country_ca.netset>
 - <https://github.com/ytdl-org/youtube-dl/blob/a0068bd6/youtube_dl/utils.py#L5373-L5384>
-
-~~~
-GET /media/validation/v2?appCode=gem&idMedia=929078&manifestType=mobile&output=json&tech=hls HTTP/1.1
-Host: services.radio-canada.ca
-X-Forwarded-For: 99.246.97.250
-x-claims-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJIYXNIRCI6IkZhbHNlIiwiV...
-~~~
-
-How to get media ID?

@@ -65,23 +65,23 @@ func NewVideo(id int64) (*Video, error) {
    if err != nil {
       return nil, err
    }
-   var vid Video
+   vid := new(Video)
    scan.Split = []byte(`{"\u0040context"`)
    scan.Scan()
-   if err := scan.Decode(&vid); err != nil {
+   if err := scan.Decode(vid); err != nil {
       return nil, err
    }
    scan.Split = []byte(`{"__typename"`)
    scan.Scan()
-   if err := scan.Decode(&vid); err != nil {
+   if err := scan.Decode(vid); err != nil {
       return nil, err
    }
    scan.Split = []byte(`{"delight_ranges"`)
    scan.Scan()
-   if err := scan.Decode(&vid); err != nil {
+   if err := scan.Decode(vid); err != nil {
       return nil, err
    }
-   return &vid, nil
+   return vid, nil
 }
 
 func (v Video) String() string {
