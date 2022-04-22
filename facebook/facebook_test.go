@@ -12,26 +12,20 @@ func TestVideo(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   if vid.Date.DateCreated == "" {
+   if vid.DateCreated == "" {
       t.Fatal(vid)
    }
-   if vid.Media.Playable_URL_Quality_HD == "" {
+   if vid.Playable_URL_Quality_HD == "" {
       t.Fatal(vid)
    }
-   if vid.Media.Preferred_Thumbnail.Image.URI == "" {
+   if vid.Preferred_Thumbnail.Image.URI == "" {
       t.Fatal(vid)
    }
-   if vid.Title.Text == "" {
+   if vid.Text == "" {
       t.Fatal(vid)
    }
-   fmt.Println(vid)
-   if err := vid.Media.Preferred_Thumbnail.Parse(); err != nil {
+   if err := vid.Preferred_Thumbnail.Parse(); err != nil {
       t.Fatal(err)
    }
    fmt.Println(vid)
-   date, err := vid.Time()
-   if err != nil {
-      t.Fatal(err)
-   }
-   fmt.Println(date)
 }

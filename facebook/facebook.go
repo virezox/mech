@@ -7,7 +7,6 @@ import (
    "net/url"
    "strconv"
    "strings"
-   "time"
 )
 
 var LogLevel format.LogLevel
@@ -43,16 +42,10 @@ func (i *Image) Parse() error {
 }
 
 type Video struct {
-   Title struct {
-      Text string
-   }
-   Date struct {
-      DateCreated string
-   }
-   Media struct {
-      Preferred_Thumbnail Image
-      Playable_URL_Quality_HD string
-   }
+   DateCreated string
+   Playable_URL_Quality_HD string
+   Preferred_Thumbnail Image
+   Text string
 }
 
 func NewVideo(id int64) (*Video, error) {
@@ -75,17 +68,17 @@ func NewVideo(id int64) (*Video, error) {
    var vid Video
    scan.Split = []byte(`{"\u0040context"`)
    scan.Scan()
-   if err := scan.Decode(&vid.Date); err != nil {
+   if err := scan.Decode(&vid); err != nil {
       return nil, err
    }
    scan.Split = []byte(`{"__typename"`)
    scan.Scan()
-   if err := scan.Decode(&vid.Media); err != nil {
+   if err := scan.Decode(&vid); err != nil {
       return nil, err
    }
    scan.Split = []byte(`{"delight_ranges"`)
    scan.Scan()
-   if err := scan.Decode(&vid.Title); err != nil {
+   if err := scan.Decode(&vid); err != nil {
       return nil, err
    }
    return &vid, nil
@@ -93,18 +86,13 @@ func NewVideo(id int64) (*Video, error) {
 
 func (v Video) String() string {
    var buf strings.Builder
-   buf.WriteString("Title: ")
-   buf.WriteString(v.Title.Text)
+   buf.WriteString("Text: ")
+   buf.WriteString(v.Text)
    buf.WriteString("\nDate: ")
-   buf.WriteString(v.Date.DateCreated)
+   buf.WriteString(v.DateCreated)
    buf.WriteString("\nImage: ")
-   buf.WriteString(v.Media.Preferred_Thumbnail.Image.URI)
+   buf.WriteString(v.Preferred_Thumbnail.Image.URI)
    buf.WriteString("\nVideo: ")
-   buf.WriteString(v.Media.Playable_URL_Quality_HD)
+   buf.WriteString(v.Playable_URL_Quality_HD)
    return buf.String()
-}
-
-// 2020-07-06T01:52:24-0700
-func (v Video) Time() (time.Time, error) {
-   return time.Parse("2006-01-02T15:04:05-0700", v.Date.DateCreated)
 }

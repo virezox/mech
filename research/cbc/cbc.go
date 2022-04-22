@@ -6,7 +6,60 @@ import (
    "github.com/89z/format"
    "net/http"
    "net/url"
+   "strconv"
+   "strings"
 )
+
+func (a Asset) Media() (*http.Response, error) {
+   req, err := http.NewRequest("GET", a.PlaySession.URL, nil)
+   if err != nil {
+      return nil, err
+   }
+   LogLevel.Dump(req)
+   return new(http.Transport).RoundTrip(req)
+}
+
+type Asset struct {
+   ID string
+   PlaySession struct {
+      MediaID string
+      URL string
+   }
+}
+
+type notFound struct {
+   value string
+}
+
+func (n notFound) Error() string {
+   return strconv.Quote(n.value) + " is not found"
+}
+
+func NewAsset(addr string) (*Asset, error) {
+   _, after, found := strings.Cut(addr, "/media/")
+   if !found {
+      return nil, notFound{"/media/"}
+   }
+   req, err := http.NewRequest(
+      "GET",
+      "https://services.radio-canada.ca/ott/cbc-api/v2/assets/" + after,
+      nil,
+   )
+   if err != nil {
+      return nil, err
+   }
+   LogLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   asset := new(Asset)
+   if err := json.NewDecoder(res.Body).Decode(asset); err != nil {
+      return nil, err
+   }
+   return asset, nil
+}
 
 type Profile struct {
    Tier string
@@ -14,16 +67,24 @@ type Profile struct {
 }
 
 func (o OverTheTop) Profile() (*Profile, error) {
-   req.Header["Host"] = []string{"services.radio-canada.ca"}
-   req.Header["Ott-Access-Token"] = []string{o.AccessToken}
-   req.URL.Host = "services.radio-canada.ca"
-   req.URL.Path = "/ott/cbc-api/v2/profile"
-   req.URL.Scheme = "https"
-   res, err := new(http.Transport).RoundTrip(&req)
+   req, err := http.NewRequest(
+      "GET", "https://services.radio-canada.ca/ott/cbc-api/v2/profile", nil,
+   )
    if err != nil {
-      panic(err)
+      return nil, err
+   }
+   req.Header.Set("OTT-Access-Token", o.AccessToken)
+   LogLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
    }
    defer res.Body.Close()
+   pro := new(Profile)
+   if err := json.NewDecoder(res.Body).Decode(pro); err != nil {
+      return nil, err
+   }
+   return pro, nil
 }
 
 type OverTheTop struct {
@@ -35,6 +96,9 @@ func (w WebToken) OverTheTop() (*OverTheTop, error) {
    err := json.NewEncoder(buf).Encode(map[string]string{
       "jwt": w.Signature,
    })
+   if err != nil {
+      return nil, err
+   }
    req, err := http.NewRequest(
       "POST", "https://services.radio-canada.ca/ott/cbc-api/v2/token", buf,
    )

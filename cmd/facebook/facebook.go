@@ -17,13 +17,13 @@ func doVideo(videoID int64, info bool) error {
       return err
    }
    if info {
-      err := video.Media.Preferred_Thumbnail.Parse()
+      err := video.Preferred_Thumbnail.Parse()
       if err != nil {
          return err
       }
       fmt.Println(video)
    } else {
-      addr, err := url.Parse(video.Media.Playable_URL_Quality_HD)
+      addr, err := url.Parse(video.Playable_URL_Quality_HD)
       if err != nil {
          return err
       }
