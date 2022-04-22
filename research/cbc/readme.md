@@ -38,37 +38,3 @@ GET /ott/cbc-api/v2/profile HTTP/1.1
 Host: services.radio-canada.ca
 ott-access-token: eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6IjkzQURGMUNFNDhG...
 ~~~
-
-Get `accessToken` like this:
-
-~~~
-POST /ott/cbc-api/v2/token HTTP/1.1
-ott-device-type: android
-gem-client-version: 10.10.1
-Content-Type: application/json; charset=UTF-8
-Content-Length: 1094
-Host: services.radio-canada.ca
-Connection: Keep-Alive
-Accept-Encoding: gzip
-User-Agent: okhttp/3.14.9
-
-{"jwt":"eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJFbWFpbFZlcmlmaWVkIjpmYWxzZSw..."}
-~~~
-
-Get JWT like this:
-
-~~~
-cloud-api.loginradius.com/sso/jwt/api/token?jwtapp=jwt&
-apikey=3f4beddd-2061-49b0-ae80-6f1f2ed65b37&
-access_token=8f7e600d-70f2-42b9-9469-939e845...
-~~~
-
-API key should be hard coded in the app. Get `access_token` like this:
-
-~~~
-POST /identity/v2/auth/login?apiKey=3f4beddd-2061-49b0-ae80-6f1f2ed65b37 HTTP/1.1
-Host: api.loginradius.com
-Content-Type: application/json; charset=utf-8
-
-{"email":"YOUR_EMAIL","password":"YOUR_PASSWORD"}
-~~~
