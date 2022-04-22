@@ -29,4 +29,9 @@ func TestVideo(t *testing.T) {
       t.Fatal(err)
    }
    fmt.Println(vid)
+   date, err := vid.Time()
+   if err != nil {
+      t.Fatal(err)
+   }
+   fmt.Println(date)
 }

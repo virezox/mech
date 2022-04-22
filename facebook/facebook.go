@@ -7,6 +7,7 @@ import (
    "net/url"
    "strconv"
    "strings"
+   "time"
 )
 
 var LogLevel format.LogLevel
@@ -46,7 +47,7 @@ type Video struct {
       Text string
    }
    Date struct {
-      DateCreated string // 2020-07-06T01:52:24-0700
+      DateCreated string
    }
    Media struct {
       Preferred_Thumbnail Image
@@ -101,4 +102,9 @@ func (v Video) String() string {
    buf.WriteString("\nVideo: ")
    buf.WriteString(v.Media.Playable_URL_Quality_HD)
    return buf.String()
+}
+
+// 2020-07-06T01:52:24-0700
+func (v Video) Time() (time.Time, error) {
+   return time.Parse("2006-01-02T15:04:05-0700", v.Date.DateCreated)
 }
