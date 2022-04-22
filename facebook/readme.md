@@ -1,19 +1,5 @@
 # Facebook
 
-https://github.com/ytdl-org/youtube-dl/issues/30872
-
-## Web
-
-Media:
-
-<https://www.facebook.com/video/video_data?video_id=309868367063220>
-
-Metadata:
-
-https://www.facebook.com/video.php?v=309868367063220
-
-## Android
-
 - https://android.stackexchange.com/questions/246303/facebook-whitehat-settings
 - https://play.google.com/store/apps/details?id=com.facebook.katana
 

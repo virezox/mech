@@ -5,20 +5,6 @@ import (
    "testing"
 )
 
-// const auth = 444624393796648
-
-func TestRegular(t *testing.T) {
-   login, err := NewLogin()
-   if err != nil {
-      t.Fatal(err)
-   }
-   reg, err := login.Regular(email, password)
-   if err != nil {
-      t.Fatal(err)
-   }
-   fmt.Printf("%+v\n", reg)
-}
-
 const anon = 309868367063220
 
 func TestVideo(t *testing.T) {
@@ -37,6 +23,10 @@ func TestVideo(t *testing.T) {
    }
    if vid.Title.Text == "" {
       t.Fatal(vid)
+   }
+   fmt.Println(vid)
+   if err := vid.Media.Preferred_Thumbnail.Parse(); err != nil {
+      t.Fatal(err)
    }
    fmt.Println(vid)
 }
