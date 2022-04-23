@@ -3,15 +3,12 @@ package cbc
 import (
    "bytes"
    "encoding/json"
-   "github.com/89z/format"
    "net/http"
    "strconv"
    "strings"
 )
 
-const apiKey = "3f4beddd-2061-49b0-ae80-6f1f2ed65b37"
-
-var LogLevel format.LogLevel
+const forwardedFor = "99.224.0.0"
 
 type Asset struct {
    ID string
@@ -89,7 +86,7 @@ func (p Profile) Media(asset *Asset) (*Media, error) {
    }
    req.Header = http.Header{
       "X-Claims-Token": {p.ClaimsToken},
-      "X-Forwarded-For": {"99.246.97.250"},
+      "X-Forwarded-For": {forwardedFor},
    }
    LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)

@@ -3,9 +3,14 @@ package cbc
 import (
    "bytes"
    "encoding/json"
+   "github.com/89z/format"
    "net/http"
    "net/url"
 )
+
+const apiKey = "3f4beddd-2061-49b0-ae80-6f1f2ed65b37"
+
+var LogLevel format.LogLevel
 
 type Login struct {
    Access_Token string
