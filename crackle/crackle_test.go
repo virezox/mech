@@ -1,7 +1,7 @@
 package crackle
 
 import (
-   "os"
+   "fmt"
    "testing"
 )
 
@@ -9,10 +9,9 @@ import (
 const id = 2499348
 
 func TestMedia(t *testing.T) {
-   res, err := media(id)
+   media, err := NewMedia(id)
    if err != nil {
       t.Fatal(err)
    }
-   defer res.Body.Close()
-   os.Stdout.ReadFrom(res.Body)
+   fmt.Printf("%+v\n", media)
 }
