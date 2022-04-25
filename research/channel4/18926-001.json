@@ -1,0 +1,89 @@
+{
+  "contractId": 18926,
+  "programmeNumber": 1,
+  "brandTitle": "Frasier",
+  "webSafeBrandTitle": "frasier",
+  "episodeTitle": "The Good Son",
+  "duration": 1362,
+  "sinceBroadcast": -1,
+  "ptc": true,
+  "logging": false,
+  "ia": true,
+  "rating": 0,
+  "transcodeId": "4246624",
+  "deliveryType": "STREAM",
+  "requestType": "ARCHIVE",
+  "programmeId": "18926/001",
+  "resolution": "SD",
+  "audioDescription": {
+    "isAudioDescribed": true
+  },
+  "endCredits": {
+    "squeeze": true,
+    "squeezeIn": 1356440
+  },
+  "subtitlesAssets": [],
+  "videoProfiles": [
+    {
+      "streams": [
+        {
+          "uri": "https://cf.jos.c4assets.com/CH4_44_7_900_18926001001003_001/CH4_44_7_900_18926001001003_001_J01.ism/stream.mpd?c3.ri=13500989501201924096&mpd_segment_template=time&filter=%28type%3D%3D%22video%22%26%26%28%28DisplayHeight%3E%3D288%29%26%26%28DisplayHeight%3C%3D576%29%29%29%7C%7Ctype%21%3D%22video%22&ts=1650910396&e=600&st=wjl1G2LRuDdcvccuwsRaxpr1XDtT_fwDM8wMSCYBKaU",
+          "token": "A+p8X00U7mrXDD3ElLaqnb8FNWloEFetE6c83GB+7up0zGr2pb2A8WEvOvAapqNtU7XamqcZeRbeoKD0NutFQU5SPdmKCsU8jT8Z1mKfyh6JUOwdS+IUiXwsqQGN8oQUdtyvrJ9fN17qAoTfP+42+09eBfAUqJDEIWbWXcb0Jy02hEMA+E9frU448S7w4dyFq/eP9HFn7Gcn+ORSoyOdeA==",
+          "bitRate": 0,
+          "filesize": 6996
+        }
+      ],
+      "cdn": "cf",
+      "cdnFullName": "CLOUDFRONT",
+      "name": "dashpr-dyn-stream-1"
+    },
+    {
+      "streams": [
+        {
+          "uri": "https://cf.jos.c4assets.com/CH4_44_7_900_18926001001003_001/CH4_44_7_900_18926001001003_001_J01.ism/stream.mpd?c3.ri=13636097497744275023&mpd_segment_template=time&filter=%28type%3D%3D%22video%22%26%26%28%28DisplayHeight%3E%3D288%29%26%26%28DisplayHeight%3C%3D576%29%29%29%7C%7Ctype%21%3D%22video%22&ts=1650910396&e=600&st=wjl1G2LRuDdcvccuwsRaxpr1XDtT_fwDM8wMSCYBKaU",
+          "token": "N7gcqe+YqA2R/w4/7MirY2EPVnn9KMt7pp/tAPBCeOxPTBgnuAAKao4vYCwg6+/iesCJyiJzl9p/HftP/8PfQF6amGvVdD9qSX6erHsTigCzwxJQf/5/HB/VxjgSN/WEFa28uYpxAFIbzNve0zLR5dNqZK+9M0cjOmqu8EP6BYBQQwM5bjHj+dBBCZyvJjsshjwcgUXsZgRU/L9No7zYOuTsgZjahZcU5dMMizF2GV3JP3rtihU8ZIFTZr8bXW3WOQQM18kfxmM2IbhiPMruNTyOKNQivyuxKdDzeVqEDj9nZw6UlryWKWOkW0UR64oo",
+          "bitRate": 0,
+          "filesize": 6996
+        }
+      ],
+      "cdn": "cf",
+      "cdnFullName": "CLOUDFRONT",
+      "name": "dashwv-dyn-stream-1"
+    },
+    {
+      "streams": [
+        {
+          "uri": "https://ak-jos-c4assets-com.akamaized.net/CH4_44_7_900_18926001001003_001/CH4_44_7_900_18926001001003_001_J01.ism/stream.m3u8?c3.ri=13509152286854647563&filter=%28type%3D%3D%22video%22%26%26%28%28DisplayHeight%3E%3D288%29%26%26%28DisplayHeight%3C%3D576%29%29%29%7C%7Ctype%21%3D%22video%22&ts=1650910396&e=600&st=ciUOVDEE4nsosJRQRYbHmYBY8E7RAb8ROuLC6e0Qw0s",
+          "token": "zPiuLamLKduzMEym/4qWw649aJWXZ/edXVBI/vDlzHu1glywD9DpH0+vBEUNaXXdlZILBx2baSSSDxdlPSKgeyb5NWS63odtyJHMLsebOJATrSZSqvLMqAvDLCfAgoNgA0u6L/2CdMmIzP3Taq2JaquLkddQkPnpdC+J6b7vQDQ=",
+          "bitRate": 0,
+          "filesize": 6996
+        }
+      ],
+      "cdn": "ak",
+      "cdnFullName": "AKAMAI",
+      "name": "hls-dyn-stream-1"
+    }
+  ],
+  "adverts": {
+    "siteSectionId": "www.channel4.com/4od",
+    "fwCacheBuster": "1",
+    "fwLogLevel": "QUIET",
+    "fwAdManagerLocation": "https://adm.fwmrm.net/p/c4_live/AdManager.swf",
+    "fwProfile": "174057:c4_live",
+    "fwNetworkId": "174057",
+    "fwServer": "https://2a7e9.v.fwmrm.net/ad/p/1?",
+    "fwAssetId": "18926/001",
+    "breaks": [
+      {
+        "breakOffset": 0,
+        "resumeOffset": 0
+      },
+      {
+        "breakOffset": 595600,
+        "resumeOffset": 596000
+      }
+    ],
+    "adServer": "https://api.channel4.com/online/v1/adsproxy/advert/freewheel"
+  },
+  "contentClass": 2
+}
