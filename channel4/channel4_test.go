@@ -9,10 +9,13 @@ import (
 const frasier = "18926-001"
 
 func TestStream(t *testing.T) {
-   stream, err := NewStream(frasier)
+   video, err := NewVideo(frasier)
    if err != nil {
       t.Fatal(err)
    }
-   widevine := stream.Widevine()
-   fmt.Printf("%+v\n", widevine)
+   media, err := video.Widevine().Media()
+   if err != nil {
+      t.Fatal(err)
+   }
+   fmt.Printf("%+v\n", media)
 }
