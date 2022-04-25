@@ -7,6 +7,12 @@ import (
    "os"
 )
 
+/*
+set modify_headers '/~q & ~u vod.stream/X-Forwarded-For/25.0.0.0'
+set modify_headers '/~u vod.stream/X-Forwarded-For/25.0.0.0'
+stream reset by client (PROTOCOL_ERROR)
+https://www.channel4.com/programmes/frasier/on-demand/18926-001
+*/
 func main() {
    var req http.Request
    req.Header = make(http.Header)
