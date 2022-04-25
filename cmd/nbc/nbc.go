@@ -11,6 +11,37 @@ import (
    "sort"
 )
 
+func doManifest(guid int64, bandwidth int, info bool) error {
+   vod, err := nbc.NewAccessVOD(guid)
+   if err != nil {
+      return err
+   }
+   fmt.Println("GET", vod.ManifestPath)
+   res, err := http.Get(vod.ManifestPath)
+   if err != nil {
+      return err
+   }
+   master, err := hls.NewScanner(res.Body).Master(res.Request.URL)
+   if err != nil {
+      return err
+   }
+   if bandwidth >= 1 {
+      sort.Sort(hls.Bandwidth{master, bandwidth})
+   }
+   for _, stream := range master.Stream {
+      if info {
+         fmt.Println(stream)
+      } else {
+         video, err := nbc.NewVideo(guid)
+         if err != nil {
+            return err
+         }
+         return download(stream, video)
+      }
+   }
+   return res.Body.Close()
+}
+
 func download(stream hls.Stream, video *nbc.Video) error {
    fmt.Println("GET", stream.URI)
    res, err := http.Get(stream.URI.String())
@@ -34,6 +65,9 @@ func download(stream hls.Stream, video *nbc.Video) error {
       if err != nil {
          return err
       }
+      if res.StatusCode != http.StatusOK {
+         return errorString(res.Status)
+      }
       pro.AddChunk(res.ContentLength)
       if _, err := io.Copy(pro, res.Body); err != nil {
          return err
@@ -45,31 +79,8 @@ func download(stream hls.Stream, video *nbc.Video) error {
    return file.Close()
 }
 
-func doManifest(guid int64, bandwidth int, info bool) error {
-   vod, err := nbc.NewAccessVOD(guid)
-   if err != nil {
-      return err
-   }
-   fmt.Println("GET", vod.ManifestPath)
-   res, err := http.Get(vod.ManifestPath)
-   if err != nil {
-      return err
-   }
-   master, err := hls.NewScanner(res.Body).Master(res.Request.URL)
-   if err != nil {
-      return err
-   }
-   sort.Sort(hls.Bandwidth{master, bandwidth})
-   for _, stream := range master.Stream {
-      if info {
-         fmt.Println(stream)
-      } else {
-         video, err := nbc.NewVideo(guid)
-         if err != nil {
-            return err
-         }
-         return download(stream, video)
-      }
-   }
-   return res.Body.Close()
+type errorString string
+
+func (e errorString) Error() string {
+   return string(e)
 }

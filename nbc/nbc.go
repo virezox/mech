@@ -16,7 +16,7 @@ import (
 
 const (
    mpxAccountID = 2410887629
-   persistedQuery = "2bd26f1fee864ef6d7727c5e0a0654f665d8cf638b0023018032d0a945a67f2c"
+   persistedQuery = "872a3dffc3ae6cdb3dc69fe3d9a949b539de7b579e95b2942e68d827b1a6ec62"
 )
 
 var (
