@@ -8,13 +8,11 @@ version = "0.1.0"
 class channel4_main:
     def __init__(self, Kid) -> None:
         self.baseurl = "http://getwvkeys.cc/"
-        self.buildinfo = input("leave empty if you do not have cdm code\nCDM CODE:")
-        if self.buildinfo == "":
-            self.buildinfo = "Xiaomi/nitrogen/nitrogen:10/QKQ1.190910.002/V12.0.1.0.QEDMIXM:user/release-keys"
+         self.buildinfo = "Xiaomi/nitrogen/nitrogen:10/QKQ1.190910.002/V12.0.1.0.QEDMIXM:user/release-keys"
         self.json_payloads = {"request_id": 5322675,
-                              "token": "SUZYT1pzR2Lwpe5zgnaLGRmLia8ssXPI2ctfuiUk7t6LB0RgRqFj176E_CsNfEKbl1H5HHJPmz40yMbJnkhp2JUqXOH26WM1WokVF_O79TRfDiyTldr23HCq4rMzvlF6_5ILoqQlwIhXHba2WWniACLy5EQQ8MHB",
+                              "token": "SUZYT1pzR2Lwpe5zgnaLGRmLia8ssXPI2ctf...",
                               "video": {"type": "ondemand",
-                                        "url": "https://ak-jos-c4assets-com.akamaized.net/CH4_08_02_900_72842001001003_001/CH4_08_02_900_72842001001003_001_J01.ism/stream.mpd?c3.ri=13632150508074582993&filter=%28type%3D%3D%22video%22%26%26%28%28DisplayHeight%3E%3D288%29%26%26%28systemBitrate%3C4800000%29%29%29%7C%7Ctype%21%3D%22video%22&ts=1644862237&e=600&st=BTVgDrD_9d7DSqbVveTCPbOE9qDlO8nfdYHUgIKCOf4&mpd_segment_template=time"},
+                                        "url": "https://ak-jos-c4assets-com..."},
                               "message": "CAQ="}
         self.headers = self.header()
         self.pssh = self.createpsshfromkid(Kid)
@@ -95,15 +93,7 @@ class channel4_main:
         license_response = self.post_request(license_request)
         print("\n" + self.decrypter(self.license_url, license_response).replace("<br>", "\n"))
 
-
 if __name__ == "__main__":
-    print(f"Channel4 {version} BY NOTAGHOST")
-    kid = input("KID:")
-    # pssh = "AAAAW3Bzc2gAAAAA7e+LqXnWSs6jyCfc1R0h7QAAADsIARIQ62dqu8s0Xpa7z2FmMPGj2hoNd2lkZXZpbmVfdGVzdCIQZmtqM2xqYVNkZmFsa3IzaioCSEQyAA=="
-    try:
-        start = channel4_main(kid)
-        start.main()
-    except Exception as e:
-        print(e)
-        input()
-    input("\nDONE\n")
+   kid = input("KID:")
+   start = channel4_main(kid)
+   start.main()
