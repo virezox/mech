@@ -2,43 +2,14 @@ package channel4
 
 import (
    "encoding/json"
-   "encoding/xml"
    "github.com/89z/format"
    "net/http"
 )
 
 var LogLevel format.LogLevel
 
-type Media struct {
-   Period struct {
-      AdaptationSet []struct {
-         ContentProtection struct {
-            Default_KID string `xml:"default_KID,attr"`
-         }
-      }
-   }
-}
-
 type Stream struct {
    URI string
-}
-
-func (s Stream) Media() (*Media, error) {
-   req, err := http.NewRequest("GET", s.URI, nil)
-   if err != nil {
-      return nil, err
-   }
-   LogLevel.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   med := new(Media)
-   if err := xml.NewDecoder(res.Body).Decode(med); err != nil {
-      return nil, err
-   }
-   return med, nil
 }
 
 type Video struct {

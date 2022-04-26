@@ -38,7 +38,7 @@ POST https://manifest.prod.boltdns.net/license/v1/cenc/widevine/6240731308001/01
 bcov-auth: eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhY2NpZCI6IjYyNDA3MzEzMDgwMD...
 ~~~
 
-Now go to Get Widevine Keys [2], and enter the information from above:
+Now go to Get Widevine Keys, and enter the information from above:
 
 ~~~
 PSSH:
@@ -57,12 +57,11 @@ You should get a result like this:
 883780c4a981494cb9949e93792ff8a7:680a46ebd6cf2b9a6a0b05a24dcf944a
 ~~~
 
-Finally, you can decrypt [3] the media:
+Finally, you can decrypt [2] the media:
 
 ~~~
 mp4decrypt --key 883780c4a981494cb9949e93792ff8a7:680a46ebd6cf... enc.mp4 dec.mp4
 ~~~
 
 1. <https://dashif.org/identifiers/content_protection>
-2. https://getwvkeys.cc
-3. https://bento4.com/downloads
+2. https://bento4.com/downloads

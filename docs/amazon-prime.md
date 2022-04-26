@@ -59,7 +59,7 @@ POST /cdp/catalog/GetPlaybackResources?deviceID=92e9a8b30b18815dbbf5d10e5d62cfcf
 Host: atv-ps.amazon.com
 ~~~
 
-Now go to Get Widevine Keys [2], and enter the information from above:
+Now go to Get Widevine Keys, and enter the information from above:
 
 ~~~
 PSSH:
@@ -76,4 +76,3 @@ Error 404: {}
 ~~~
 
 1. <https://dashif.org/identifiers/content_protection>
-2. https://getwvkeys.cc
