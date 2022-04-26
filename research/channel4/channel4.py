@@ -40,10 +40,15 @@ buildinfo = "Xiaomi/nitrogen/nitrogen:10/QKQ1.190910.002/V12.0.1.0.QEDMIXM:user/
 license_url = "https://c4.eme.lp.aws.redbeemedia.com/wvlicenceproxy-service/widevine/acquire"
 
 data = {"pssh": pssh, "buildInfo": buildinfo}
+print(data)
 r = requests.post(baseurl + "/pssh", json=data)
 r.raise_for_status()
+print(r.content)
+exit()
 
-payload = {"request_id":5273616,"token":"akRCa0R4aXRs4VRCEaWoO56ylrejJNMpkhZ1OLcwLg7TtVUQPRI1hupcnQsMjLmHpv-D2dhYTfv1vbewV7IG1wy7cIjDz5vtgzFDOGta1jPVqyyinYfUmvpbmuiDMhbJWkYM8QhhYJJlrWc3j9NTk1HqtKHJdgus","video":{"type":"ondemand","url":"https://cf.jos.c4assets.com/CH4_44_7_900_18926001001003_001/CH4_44_7_900_18926001001003_001_J01.ism/stream.mpd?c3.ri=13636097515527362794&mpd_segment_template=time&filter=%28type%3D%3D%22video%22%26%26%28%28DisplayHeight%3E%3D288%29%26%26%28systemBitrate%3C4800000%29%29%29%7C%7Ctype%21%3D%22video%22&ts=1650946629&e=600&st=xqC7CpDNg6D0cJwRZt9ks1Lm8HyjUaEj5Zh77ceSP10"},"message":"CAQ="}
+payload = {"request_id":5273616,"token":"S0VlQVZQekyINeQnvRWuM2RVbaPP7YdA6dn0ga6a9Dtb-jK5-s0rig4wdD42vhiMMqdmPiDMfEuW1v49rIzGJJixXtJWP-wuG85zwOdw3NzCBCDqHc2CBokq-2Uqq8bS6LOrYFrbT1WKBiQGO-_EmcTH_wmEYunz","video":{"type":"ondemand","url":"https://cf.jos.c4assets.com/CH4_44_7_900_18926001001003_001/CH4_44_7_900_18926001001003_001_J01.ism/stream.mpd?c3.ri=13497048934936529043&mpd_segment_template=time&filter=%28type%3D%3D%22video%22%26%26%28%28DisplayHeight%3E%3D288%29%26%26%28systemBitrate%3C4800000%29%29%29%7C%7Ctype%21%3D%22video%22&ts=1650986733&e=600&st=MrG7Dd3BgSSuZh1xw1H0z9hmOch00NB1s8otLbnWWcU"},"message":"CAQ="}
+
 payload["message"] = base64.b64encode(r.content).decode()
 license_response = post_request(payload)
+
 print(decrypter(license_response))

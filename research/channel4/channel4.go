@@ -21,11 +21,12 @@ const uuid = "edef8ba9-79d6-4ace-a3c8-27dcd51d21ed"
 
 var LogLevel format.LogLevel
 
-type PSSH struct {
-   base64 string
+type Header struct {
+   BuildInfo string `json:"buildInfo"`
+   PSSH string `json:"pssh"`
 }
 
-func NewPSSH(kid string) (*PSSH, error) {
+func NewHeader(kid string) (*Header, error) {
    decode := func(s string) ([]byte, error) {
       s = strings.ReplaceAll(s, "-", "")
       return hex.DecodeString(s)
@@ -38,46 +39,64 @@ func NewPSSH(kid string) (*PSSH, error) {
    if err != nil {
       return nil, err
    }
-   var buf []byte
-   buf = append(buf, 0, 0, 0, '2', 'p', 's', 's', 'h', 0, 0, 0, 0)
-   buf = append(buf, dUUID...)
-   buf = append(buf, 0, 0, 0, 0x12, 0x12, 0x10)
-   buf = append(buf, dKID...)
-   var pssh PSSH
-   pssh.base64 = base64.StdEncoding.EncodeToString(buf)
-   return &pssh, nil
+   var pssh []byte
+   pssh = append(pssh, 0, 0, 0, '2', 'p', 's', 's', 'h', 0, 0, 0, 0)
+   pssh = append(pssh, dUUID...)
+   pssh = append(pssh, 0, 0, 0, 0x12, 0x12, 0x10)
+   pssh = append(pssh, dKID...)
+   var head Header
+   head.BuildInfo = buildInfo
+   head.PSSH = base64.StdEncoding.EncodeToString(pssh)
+   return &head, nil
 }
 
-func (p PSSH) post() ([]byte, error) {
-   buf := new(bytes.Buffer)
-   err := json.NewEncoder(buf).Encode(map[string]string{
-      "buildInfo": buildInfo,
-      "pssh": p.base64,
-   })
+func (h Header) Payload(token []byte) (*Payload, error) {
+   pssh := new(bytes.Buffer)
+   err := json.NewEncoder(pssh).Encode(h)
    if err != nil {
       return nil, err
    }
-   req, err := http.NewRequest("POST", "http://getwvkeys.cc/pssh", buf)
+   req, err := http.NewRequest("POST", "http://getwvkeys.cc/pssh", pssh)
    if err != nil {
       return nil, err
    }
+   req.Header.Set("Content-Type", "application/json")
    LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
-   return io.ReadAll(res.Body)
+   if res.StatusCode != http.StatusOK {
+      return nil, errorString(res.Status)
+   }
+   var pay Payload
+   if err := json.Unmarshal(token, &pay); err != nil {
+      return nil, err
+   }
+   message, err := io.ReadAll(res.Body)
+   if err != nil {
+      return nil, err
+   }
+   pay.Message = base64.StdEncoding.EncodeToString(message)
+   return &pay, nil
 }
 
-type Widevine struct {
-   License string
+type Payload struct {
+   Message string `json:"message"`
+   Token string `json:"token"`
+   Video struct {
+      Type string `json:"type"`
+   } `json:"video"`
 }
 
-func NewWidevine(payload string) (*Widevine, error) {
-   req, err := http.NewRequest(
-      "POST", licenseURL, strings.NewReader(payload),
-   )
+func (p Payload) Widevine() (*Widevine, error) {
+   payload := new(bytes.Buffer)
+   err := json.NewEncoder(payload).Encode(p)
+   if err != nil {
+      return nil, err
+   }
+   req, err := http.NewRequest("POST", licenseURL, payload)
    if err != nil {
       return nil, err
    }
@@ -102,9 +121,48 @@ func NewWidevine(payload string) (*Widevine, error) {
       return nil, err
    }
    defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return nil, errorString(res.Status)
+   }
    vine := new(Widevine)
    if err := json.NewDecoder(res.Body).Decode(vine); err != nil {
       return nil, err
    }
    return vine, nil
+}
+
+type errorString string
+
+func (e errorString) Error() string {
+   return string(e)
+}
+
+type Widevine struct {
+   License string
+}
+
+func (w Widevine) decrypt(h Header) ([]byte, error) {
+   buf := new(bytes.Buffer)
+   err := json.NewEncoder(buf).Encode(map[string]string{
+      "buildInfo": buildInfo,
+      "headers": "",
+      "license": licenseURL,
+      "license_response": w.License,
+      "pssh": h.PSSH,
+   })
+   if err != nil {
+      return nil, err
+   }
+   req, err := http.NewRequest("POST", "http://getwvkeys.cc/decrypter", buf)
+   if err != nil {
+      return nil, err
+   }
+   req.Header.Set("Content-Type", "application/json")
+   LogLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   return io.ReadAll(res.Body)
 }
