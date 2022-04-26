@@ -34,7 +34,7 @@ func NewPSSH(kid string) (*PSSH, error) {
    if err != nil {
       return nil, err
    }
-   dKid, err := decode(kid)
+   dKID, err := decode(kid)
    if err != nil {
       return nil, err
    }
@@ -42,7 +42,7 @@ func NewPSSH(kid string) (*PSSH, error) {
    buf = append(buf, 0, 0, 0, '2', 'p', 's', 's', 'h', 0, 0, 0, 0)
    buf = append(buf, dUUID...)
    buf = append(buf, 0, 0, 0, 0x12, 0x12, 0x10)
-   buf = append(buf, dKid...)
+   buf = append(buf, dKID...)
    var pssh PSSH
    pssh.base64 = base64.StdEncoding.EncodeToString(buf)
    return &pssh, nil
