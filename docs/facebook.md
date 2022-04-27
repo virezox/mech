@@ -1,0 +1,3 @@
+# Facebook
+
+No image permalinks
