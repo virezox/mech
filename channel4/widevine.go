@@ -91,9 +91,9 @@ type Widevine struct {
    License string
 }
 
-func (w Widevine) Decrypt() ([]byte, error) {
-   buf := new(bytes.Buffer)
-   err := json.NewEncoder(buf).Encode(map[string]string{
+func (w Widevine) Decrypt() (string, error) {
+   body := new(bytes.Buffer)
+   err := json.NewEncoder(body).Encode(map[string]string{
       "buildInfo": "",
       "headers": "",
       "license": licenseURL,
@@ -101,20 +101,29 @@ func (w Widevine) Decrypt() ([]byte, error) {
       "pssh": base64.StdEncoding.EncodeToString(pssh),
    })
    if err != nil {
-      return nil, err
+      return "", err
    }
-   req, err := http.NewRequest("POST", "http://getwvkeys.cc/decrypter", buf)
+   req, err := http.NewRequest("POST", "http://getwvkeys.cc/decrypter", body)
    if err != nil {
-      return nil, err
+      return "", err
    }
    req.Header.Set("Content-Type", "application/json")
    LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
-      return nil, err
+      return "", err
    }
    defer res.Body.Close()
-   return io.ReadAll(res.Body)
+   key, err := io.ReadAll(res.Body)
+   if err != nil {
+      return "", err
+   }
+   key = bytes.TrimSuffix(key, []byte("<br>"))
+   var mp4 bytes.Buffer
+   mp4.WriteString("mp4decrypt ")
+   mp4.Write(key)
+   mp4.WriteString(" input.mp4 output.mp4")
+   return mp4.String(), nil
 }
 
 type errorString string
