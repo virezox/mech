@@ -35,7 +35,7 @@ go build
 ## Sponsor
 
 I really need help financially, so if you are able, please donate using the
-sponsor link. If you cannot use Paypal, let me know, and I can see about adding
+sponsor link. If you cannot use PayPal, let me know, and I can see about adding
 other methods. Thank you!
 
 ## Repo

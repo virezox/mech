@@ -17,6 +17,7 @@ var names = []string{
    "tiktok",
    "twitter",
    "soundcloud",
+   "vimeo",
    "paramount",
    ///////////
    "nbc",
