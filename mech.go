@@ -3,8 +3,6 @@ package mech
 import (
    "bytes"
    "encoding/json"
-   "mime"
-   "strconv"
    "strings"
 )
 
@@ -38,30 +36,4 @@ func Encode[T any](value T) (*bytes.Buffer, error) {
       return nil, err
    }
    return buf, nil
-}
-
-func ExtensionByType(typ string) (string, error) {
-   media, _, err := mime.ParseMediaType(typ)
-   if err != nil {
-      return "", err
-   }
-   switch media {
-   case "audio/webm":
-      return ".weba", nil
-   case "video/webm":
-      return ".webm", nil
-   case "audio/mp4":
-      return ".m4a", nil
-   case "video/mp4":
-      return ".m4v", nil
-   }
-   return "", notFound{typ}
-}
-
-type notFound struct {
-   value string
-}
-
-func (n notFound) Error() string {
-   return strconv.Quote(n.value) + " is not found"
 }
