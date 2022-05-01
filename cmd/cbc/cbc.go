@@ -1,36 +1,48 @@
 package main
 
 import (
-   "flag"
    "fmt"
-   "github.com/89z/format"
    "github.com/89z/format/hls"
    "github.com/89z/mech/cbc"
-   "io"
    "net/http"
    "os"
    "sort"
 )
 
-func doLogin(email, password string) error {
-   login, err := cbc.Login(email, password)
-   if err != nil {
-      return err
+func doManifest(id, address string, bandwidth int, info bool) error {
+   if id == "" {
+      id = cbc.GetID(address)
    }
    cache, err := os.UserCacheDir()
    if err != nil {
       return err
    }
-   return login.Create(cache, "mech/cbc.json")
-}
-
-func doManifest(guid int64, bandwidth int, info bool) error {
-   vod, err := cbc.NewAccessVOD(guid)
+   login, err := cbc.OpenLogin(cache, "mech/cbc.json")
    if err != nil {
       return err
    }
-   fmt.Println("GET", vod.ManifestPath)
-   res, err := http.Get(vod.ManifestPath)
+   web, err := login.WebToken()
+   if err != nil {
+      return err
+   }
+   top, err := web.OverTheTop()
+   if err != nil {
+      return err
+   }
+   profile, err := top.Profile()
+   if err != nil {
+      return err
+   }
+   asset, err := cbc.NewAsset(id)
+   if err != nil {
+      return err
+   }
+   media, err := profile.Media(asset)
+   if err != nil {
+      return err
+   }
+   fmt.Println("GET", media.URL)
+   res, err := http.Get(media.URL)
    if err != nil {
       return err
    }
@@ -46,16 +58,31 @@ func doManifest(guid int64, bandwidth int, info bool) error {
       if info {
          fmt.Println(stream)
       } else {
+         /*
          video, err := cbc.NewVideo(guid)
          if err != nil {
             return err
          }
          return download(stream, video)
+         */
       }
    }
    return nil
 }
 
+func doLogin(email, password string) error {
+   login, err := cbc.NewLogin(email, password)
+   if err != nil {
+      return err
+   }
+   cache, err := os.UserCacheDir()
+   if err != nil {
+      return err
+   }
+   return login.Create(cache, "mech/cbc.json")
+}
+
+/*
 func download(stream hls.Stream, video *cbc.Video) error {
    fmt.Println("GET", stream.URI)
    res, err := http.Get(stream.URI.String())
@@ -88,3 +115,4 @@ func download(stream hls.Stream, video *cbc.Video) error {
    }
    return nil
 }
+*/

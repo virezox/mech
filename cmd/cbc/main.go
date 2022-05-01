@@ -2,20 +2,16 @@ package main
 
 import (
    "flag"
-   "fmt"
-   "github.com/89z/format"
-   "github.com/89z/format/hls"
    "github.com/89z/mech/cbc"
-   "io"
-   "net/http"
-   "os"
-   "sort"
 )
 
 func main() {
+   // a
+   var address string
+   flag.StringVar(&address, "a", "", "address")
    // b
-   var guid int64
-   flag.Int64Var(&guid, "b", 0, "GUID")
+   var id string
+   flag.StringVar(&id, "b", "", "ID")
    // e
    var email string
    flag.StringVar(&email, "e", "", "email")
@@ -40,8 +36,8 @@ func main() {
       if err != nil {
          panic(err)
       }
-   } else if guid >= 1 {
-      err := doManifest(guid, bandwidth, info)
+   } else if id != "" || address != "" {
+      err := doManifest(id, address, bandwidth, info)
       if err != nil {
          panic(err)
       }

@@ -3,8 +3,8 @@ package cbc
 import (
    "bytes"
    "encoding/json"
+   "github.com/89z/format"
    "net/http"
-   "strconv"
    "strings"
 )
 
@@ -46,11 +46,6 @@ func (o OverTheTop) Profile() (*Profile, error) {
       return nil, err
    }
    return pro, nil
-}
-
-type Profile struct {
-   Tier string
-   ClaimsToken string
 }
 
 func (p Profile) Media(asset *Asset) (*Media, error) {
@@ -106,24 +101,16 @@ func (w WebToken) OverTheTop() (*OverTheTop, error) {
    return top, nil
 }
 
-type notFound struct {
-   value string
+// gem.cbc.ca/media/downton-abbey/s01e05
+func GetID(addr string) string {
+   _, after, _ := strings.Cut(addr, "/media/")
+   return after
 }
 
-func (n notFound) Error() string {
-   return strconv.Quote(n.value) + " is not found"
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-func NewAsset(addr string) (*Asset, error) {
-   _, after, found := strings.Cut(addr, "/media/")
-   if !found {
-      return nil, notFound{"/media/"}
-   }
+func NewAsset(id string) (*Asset, error) {
    req, err := http.NewRequest(
       "GET",
-      "https://services.radio-canada.ca/ott/cbc-api/v2/assets/" + after,
+      "https://services.radio-canada.ca/ott/cbc-api/v2/assets/" + id,
       nil,
    )
    if err != nil {
@@ -140,4 +127,17 @@ func NewAsset(addr string) (*Asset, error) {
       return nil, err
    }
    return asset, nil
+}
+
+type Profile struct {
+   Tier string
+   ClaimsToken string
+}
+
+func (p Profile) Create(elem ...string) error {
+   return format.Create(p, elem...)
+}
+
+func OpenProfile(elem ...string) (*Profile, error) {
+   return format.Open[Profile](elem...)
 }
