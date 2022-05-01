@@ -67,11 +67,9 @@ func download(stream hls.Stream, video *abc.Video) error {
    if err != nil {
       return err
    }
+   defer res.Body.Close()
    block, err := hls.NewCipher(res.Body)
    if err != nil {
-      return err
-   }
-   if err := res.Body.Close(); err != nil {
       return err
    }
    file, err := os.Create(video.Base() + seg.Ext())

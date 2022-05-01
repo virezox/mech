@@ -69,16 +69,14 @@ func download(stream hls.Stream, video *paramount.Video) error {
    if err != nil {
       return err
    }
+   fmt.Println("GET", seg.Key)
    res, err := http.Get(seg.Key.String())
    if err != nil {
       return err
    }
-   paramount.LogLevel.Dump(res.Request)
+   defer res.Body.Close()
    block, err := hls.NewCipher(res.Body)
    if err != nil {
-      return err
-   }
-   if err := res.Body.Close(); err != nil {
       return err
    }
    file, err := os.Create(video.Base() + seg.Ext())

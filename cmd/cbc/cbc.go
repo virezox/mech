@@ -1,10 +1,11 @@
 package main
 
 import (
+   "flag"
    "fmt"
    "github.com/89z/format"
    "github.com/89z/format/hls"
-   "github.com/89z/mech/nbc"
+   "github.com/89z/mech/cbc"
    "io"
    "net/http"
    "os"
@@ -12,7 +13,7 @@ import (
 )
 
 func doManifest(guid int64, bandwidth int, info bool) error {
-   vod, err := nbc.NewAccessVOD(guid)
+   vod, err := cbc.NewAccessVOD(guid)
    if err != nil {
       return err
    }
@@ -33,7 +34,7 @@ func doManifest(guid int64, bandwidth int, info bool) error {
       if info {
          fmt.Println(stream)
       } else {
-         video, err := nbc.NewVideo(guid)
+         video, err := cbc.NewVideo(guid)
          if err != nil {
             return err
          }
@@ -43,7 +44,7 @@ func doManifest(guid int64, bandwidth int, info bool) error {
    return nil
 }
 
-func download(stream hls.Stream, video *nbc.Video) error {
+func download(stream hls.Stream, video *cbc.Video) error {
    fmt.Println("GET", stream.URI)
    res, err := http.Get(stream.URI.String())
    if err != nil {
@@ -83,4 +84,31 @@ type errorString string
 
 func (e errorString) Error() string {
    return string(e)
+}
+
+func main() {
+   // b
+   var guid int64
+   flag.Int64Var(&guid, "b", 0, "GUID")
+   // f
+   var bandwidth int
+   flag.IntVar(&bandwidth, "f", 3_000_000, "target bandwidth")
+   // i
+   var info bool
+   flag.BoolVar(&info, "i", false, "information")
+   // v
+   var verbose bool
+   flag.BoolVar(&verbose, "v", false, "verbose")
+   flag.Parse()
+   if verbose {
+      cbc.LogLevel = 1
+   }
+   if guid >= 1 {
+      err := doManifest(guid, bandwidth, info)
+      if err != nil {
+         panic(err)
+      }
+   } else {
+      flag.Usage()
+   }
 }

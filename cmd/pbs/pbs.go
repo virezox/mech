@@ -18,11 +18,9 @@ func download(addr *url.URL, base string) error {
    if err != nil {
       return err
    }
+   defer res.Body.Close()
    seg, err := hls.NewScanner(res.Body).Segment(res.Request.URL)
    if err != nil {
-      return err
-   }
-   if err := res.Body.Close(); err != nil {
       return err
    }
    file, err := os.Create(base + seg.Ext())
