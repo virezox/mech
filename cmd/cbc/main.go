@@ -32,7 +32,7 @@ func main() {
       cbc.LogLevel = 1
    }
    if email != "" {
-      err := doLogin(email, password)
+      err := doProfile(email, password)
       if err != nil {
          panic(err)
       }

@@ -10,28 +10,16 @@ import (
 )
 
 func doManifest(id, address string, bandwidth int, info bool) error {
-   if id == "" {
-      id = cbc.GetID(address)
-   }
    cache, err := os.UserCacheDir()
    if err != nil {
       return err
    }
-   login, err := cbc.OpenLogin(cache, "mech/cbc.json")
+   profile, err := cbc.OpenProfile(cache, "mech/cbc.json")
    if err != nil {
       return err
    }
-   web, err := login.WebToken()
-   if err != nil {
-      return err
-   }
-   top, err := web.OverTheTop()
-   if err != nil {
-      return err
-   }
-   profile, err := top.Profile()
-   if err != nil {
-      return err
+   if id == "" {
+      id = cbc.GetID(address)
    }
    asset, err := cbc.NewAsset(id)
    if err != nil {
@@ -70,16 +58,28 @@ func doManifest(id, address string, bandwidth int, info bool) error {
    return nil
 }
 
-func doLogin(email, password string) error {
-   login, err := cbc.NewLogin(email, password)
-   if err != nil {
-      return err
-   }
+func doProfile(email, password string) error {
    cache, err := os.UserCacheDir()
    if err != nil {
       return err
    }
-   return login.Create(cache, "mech/cbc.json")
+   login, err := cbc.NewLogin(email, password)
+   if err != nil {
+      return err
+   }
+   web, err := login.WebToken()
+   if err != nil {
+      return err
+   }
+   top, err := web.OverTheTop()
+   if err != nil {
+      return err
+   }
+   profile, err := top.Profile()
+   if err != nil {
+      return err
+   }
+   return profile.Create(cache, "mech/cbc.json")
 }
 
 /*
