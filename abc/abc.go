@@ -116,6 +116,7 @@ func (v *Video) Authorize() error {
    if err != nil {
       return err
    }
+   defer res.Body.Close()
    var auth struct {
       UplynkData struct {
          SessionKey string
@@ -132,7 +133,7 @@ func (v *Video) Authorize() error {
       addr.RawQuery = auth.UplynkData.SessionKey
       v.Assets[i].Value = addr.String()
    }
-   return res.Body.Close()
+   return nil
 }
 
 func (v Video) Base() string {
