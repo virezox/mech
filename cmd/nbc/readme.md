@@ -1,16 +1,7 @@
 # NBC
 
-Get stream information:
-
 ~~~
-nbc -i 9000199366
-~~~
-
-Download stream:
-
-~~~
-nbc 9000199366
-nbc -f 2 9000199366
+go run . -b 9000199358
 ~~~
 
 - https://github.com/ytdl-org/youtube-dl/issues/29191

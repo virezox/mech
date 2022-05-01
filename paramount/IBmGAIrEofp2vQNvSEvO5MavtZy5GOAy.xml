@@ -1,0 +1,166 @@
+<smil xmlns="http://www.w3.org/2005/SMIL21/Language">
+<head>
+	<meta name="refreshToken" content="017f7206a102fe9127233d23da2db9414be40d9d1a806b77716cd9f9a7f0a1e5c5aceaee2118"/>
+</head>
+<body>
+<seq>
+	<ref src="https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&amp;iu=/8264/vaw-can/desktop/test&amp;ciu_szs=300x60,728x90&amp;impl=s&amp;gdfp_req=1&amp;env=vp&amp;output=xml_vmap1&amp;unviewed_position_start=1&amp;url=[referrer_url]&amp;correlator=[timestamp]&amp;cust_params=vid%3DIBmGAIrEofp2vQNvSEvO5MavtZy5GOAy%26partner%3DPARTNER&amp;vid=IBmGAIrEofp2vQNvSEvO5MavtZy5GOAy&amp;cmsid=2289" no-skip="true" tags="preroll">
+	</ref>
+	<video src="https://cbsios-vh.akamaihd.net/i/temp_hd_gallery_video/CBS_Production_Outlet_VMS/video_robot/CBS_Production_Entertainment/2020/06/08/1747974723554/MTV_AEONFLUX_108_206219_,503,4628,3128,2228,1628,848,000.mp4.csmil/master.m3u8?hdnea=acl=/i/temp_hd_gallery_video/CBS_Production_Outlet_VMS/video_robot/CBS_Production_Entertainment/2020/06/08/1747974723554/MTV_AEONFLUX_108_206219_*~exp=1646883173~hmac=7dd5996aa644f8959f27a6b7f217bd8d6a348bc3d8f2db6a640aa892f0b99196" title="Aeon Flux - Isthmus Crypticus" abstract="Trevor Goodchild&apos;s latest obsession is a female exquisite being which he keeps locked away in a secret chamber.  Will Aeon foil Trevor&apos;s plans once again? (TV-14 V)" copyright="CBS, Inc." dur="1229000ms" guid="IBmGAIrEofp2vQNvSEvO5MavtZy5GOAy" ratings="urn%3Av-chip:tv-14%20v" provider="CBS Production Entertainment VMS" type="application/x-mpegURL" height="480" width="640" clipBegin="0:00" clipEnd="4:38">
+		<param name="Aired" value="false"/>
+		<param name="CBSGenre" value="Drama"/>
+		<param name="ClosedCaptionURL" value="https://cc.cbs.com/closedcaption/CBS_Production_Entertainment_VMS/951/614/IBmGAIrEofp2vQNvSEvO5MavtZy5GOAy_1596103405310.tt"/>
+		<param name="DynamicStreaming" value="false"/>
+		<param name="Embeddable" value="false"/>
+		<param name="EpisodeFlag" value="true"/>
+		<param name="EpisodeNumber" value="2"/>
+		<param name="Internal" value="false"/>
+		<param name="IsLive" value="false"/>
+		<param name="IsLiveCDN" value=""/>
+		<param name="NoAd" value="false"/>
+		<param name="PrimaryCategory" value="1740838979749"/>
+		<param name="PrimaryCategoryName" value="Syndicated/Viacom/MTV/Aeon Flux/Full Episodes"/>
+		<param name="RepeatFlag" value="false"/>
+		<param name="SeasonNumber" value="1"/>
+		<param name="SeriesTitle" value="Aeon Flux"/>
+		<param name="SourcePartner" value="MTV"/>
+		<param name="TVRating" value="false"/>
+		<param name="VTAG" value="dpart=cable_classic;show=aeon_flux;feat=full_episodes;site=mtv"/>
+		<param name="artist" value=""/>
+		<param name="contentType" value="Promo Full Episode"/>
+		<param name="dPRAired" value="false"/>
+		<param name="endCreditsChapterTime" value="19:48"/>
+		<param name="excludeNielsenTracking" value="false"/>
+		<param name="isLiveCaptioned" value="false"/>
+		<param name="sMPTE-TTCCURL" value="https://cc.cbs.com/closedcaption/CBS_Production_Entertainment_VMS/951/614/IBmGAIrEofp2vQNvSEvO5MavtZy5GOAy_1596103403541.xml"/>
+		<param name="webVTTCaptionURL" value="https://cc.cbs.com/closedcaption/CBS_Production_Entertainment_VMS/951/614/IBmGAIrEofp2vQNvSEvO5MavtZy5GOAy_1596103404370.vtt"/>
+	</video>
+	<ref src="https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&amp;iu=/8264/vaw-can/desktop/test&amp;ciu_szs=300x60,728x90&amp;impl=s&amp;gdfp_req=1&amp;env=vp&amp;output=xml_vmap1&amp;unviewed_position_start=1&amp;url=[referrer_url]&amp;correlator=[timestamp]&amp;cust_params=vid%3DIBmGAIrEofp2vQNvSEvO5MavtZy5GOAy%26partner%3DPARTNER&amp;vid=IBmGAIrEofp2vQNvSEvO5MavtZy5GOAy&amp;cmsid=2289" no-skip="true" tags="midroll">
+	</ref>
+	<video src="https://cbsios-vh.akamaihd.net/i/temp_hd_gallery_video/CBS_Production_Outlet_VMS/video_robot/CBS_Production_Entertainment/2020/06/08/1747974723554/MTV_AEONFLUX_108_206219_,503,4628,3128,2228,1628,848,000.mp4.csmil/master.m3u8?hdnea=acl=/i/temp_hd_gallery_video/CBS_Production_Outlet_VMS/video_robot/CBS_Production_Entertainment/2020/06/08/1747974723554/MTV_AEONFLUX_108_206219_*~exp=1646883173~hmac=7dd5996aa644f8959f27a6b7f217bd8d6a348bc3d8f2db6a640aa892f0b99196" title="Aeon Flux - Isthmus Crypticus" abstract="Trevor Goodchild&apos;s latest obsession is a female exquisite being which he keeps locked away in a secret chamber.  Will Aeon foil Trevor&apos;s plans once again? (TV-14 V)" copyright="CBS, Inc." dur="1229000ms" guid="IBmGAIrEofp2vQNvSEvO5MavtZy5GOAy" ratings="urn%3Av-chip:tv-14%20v" provider="CBS Production Entertainment VMS" type="application/x-mpegURL" height="480" width="640" clipBegin="4:38" clipEnd="9:35">
+		<param name="Aired" value="false"/>
+		<param name="CBSGenre" value="Drama"/>
+		<param name="ClosedCaptionURL" value="https://cc.cbs.com/closedcaption/CBS_Production_Entertainment_VMS/951/614/IBmGAIrEofp2vQNvSEvO5MavtZy5GOAy_1596103405310.tt"/>
+		<param name="DynamicStreaming" value="false"/>
+		<param name="Embeddable" value="false"/>
+		<param name="EpisodeFlag" value="true"/>
+		<param name="EpisodeNumber" value="2"/>
+		<param name="Internal" value="false"/>
+		<param name="IsLive" value="false"/>
+		<param name="IsLiveCDN" value=""/>
+		<param name="NoAd" value="false"/>
+		<param name="PrimaryCategory" value="1740838979749"/>
+		<param name="PrimaryCategoryName" value="Syndicated/Viacom/MTV/Aeon Flux/Full Episodes"/>
+		<param name="RepeatFlag" value="false"/>
+		<param name="SeasonNumber" value="1"/>
+		<param name="SeriesTitle" value="Aeon Flux"/>
+		<param name="SourcePartner" value="MTV"/>
+		<param name="TVRating" value="false"/>
+		<param name="VTAG" value="dpart=cable_classic;show=aeon_flux;feat=full_episodes;site=mtv"/>
+		<param name="artist" value=""/>
+		<param name="contentType" value="Promo Full Episode"/>
+		<param name="dPRAired" value="false"/>
+		<param name="endCreditsChapterTime" value="19:48"/>
+		<param name="excludeNielsenTracking" value="false"/>
+		<param name="isLiveCaptioned" value="false"/>
+		<param name="sMPTE-TTCCURL" value="https://cc.cbs.com/closedcaption/CBS_Production_Entertainment_VMS/951/614/IBmGAIrEofp2vQNvSEvO5MavtZy5GOAy_1596103403541.xml"/>
+		<param name="webVTTCaptionURL" value="https://cc.cbs.com/closedcaption/CBS_Production_Entertainment_VMS/951/614/IBmGAIrEofp2vQNvSEvO5MavtZy5GOAy_1596103404370.vtt"/>
+	</video>
+	<ref src="https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&amp;iu=/8264/vaw-can/desktop/test&amp;ciu_szs=300x60,728x90&amp;impl=s&amp;gdfp_req=1&amp;env=vp&amp;output=xml_vmap1&amp;unviewed_position_start=1&amp;url=[referrer_url]&amp;correlator=[timestamp]&amp;cust_params=vid%3DIBmGAIrEofp2vQNvSEvO5MavtZy5GOAy%26partner%3DPARTNER&amp;vid=IBmGAIrEofp2vQNvSEvO5MavtZy5GOAy&amp;cmsid=2289" no-skip="true" tags="midroll">
+	</ref>
+	<video src="https://cbsios-vh.akamaihd.net/i/temp_hd_gallery_video/CBS_Production_Outlet_VMS/video_robot/CBS_Production_Entertainment/2020/06/08/1747974723554/MTV_AEONFLUX_108_206219_,503,4628,3128,2228,1628,848,000.mp4.csmil/master.m3u8?hdnea=acl=/i/temp_hd_gallery_video/CBS_Production_Outlet_VMS/video_robot/CBS_Production_Entertainment/2020/06/08/1747974723554/MTV_AEONFLUX_108_206219_*~exp=1646883173~hmac=7dd5996aa644f8959f27a6b7f217bd8d6a348bc3d8f2db6a640aa892f0b99196" title="Aeon Flux - Isthmus Crypticus" abstract="Trevor Goodchild&apos;s latest obsession is a female exquisite being which he keeps locked away in a secret chamber.  Will Aeon foil Trevor&apos;s plans once again? (TV-14 V)" copyright="CBS, Inc." dur="1229000ms" guid="IBmGAIrEofp2vQNvSEvO5MavtZy5GOAy" ratings="urn%3Av-chip:tv-14%20v" provider="CBS Production Entertainment VMS" type="application/x-mpegURL" height="480" width="640" clipBegin="9:35" clipEnd="15:04">
+		<param name="Aired" value="false"/>
+		<param name="CBSGenre" value="Drama"/>
+		<param name="ClosedCaptionURL" value="https://cc.cbs.com/closedcaption/CBS_Production_Entertainment_VMS/951/614/IBmGAIrEofp2vQNvSEvO5MavtZy5GOAy_1596103405310.tt"/>
+		<param name="DynamicStreaming" value="false"/>
+		<param name="Embeddable" value="false"/>
+		<param name="EpisodeFlag" value="true"/>
+		<param name="EpisodeNumber" value="2"/>
+		<param name="Internal" value="false"/>
+		<param name="IsLive" value="false"/>
+		<param name="IsLiveCDN" value=""/>
+		<param name="NoAd" value="false"/>
+		<param name="PrimaryCategory" value="1740838979749"/>
+		<param name="PrimaryCategoryName" value="Syndicated/Viacom/MTV/Aeon Flux/Full Episodes"/>
+		<param name="RepeatFlag" value="false"/>
+		<param name="SeasonNumber" value="1"/>
+		<param name="SeriesTitle" value="Aeon Flux"/>
+		<param name="SourcePartner" value="MTV"/>
+		<param name="TVRating" value="false"/>
+		<param name="VTAG" value="dpart=cable_classic;show=aeon_flux;feat=full_episodes;site=mtv"/>
+		<param name="artist" value=""/>
+		<param name="contentType" value="Promo Full Episode"/>
+		<param name="dPRAired" value="false"/>
+		<param name="endCreditsChapterTime" value="19:48"/>
+		<param name="excludeNielsenTracking" value="false"/>
+		<param name="isLiveCaptioned" value="false"/>
+		<param name="sMPTE-TTCCURL" value="https://cc.cbs.com/closedcaption/CBS_Production_Entertainment_VMS/951/614/IBmGAIrEofp2vQNvSEvO5MavtZy5GOAy_1596103403541.xml"/>
+		<param name="webVTTCaptionURL" value="https://cc.cbs.com/closedcaption/CBS_Production_Entertainment_VMS/951/614/IBmGAIrEofp2vQNvSEvO5MavtZy5GOAy_1596103404370.vtt"/>
+	</video>
+	<ref src="https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&amp;iu=/8264/vaw-can/desktop/test&amp;ciu_szs=300x60,728x90&amp;impl=s&amp;gdfp_req=1&amp;env=vp&amp;output=xml_vmap1&amp;unviewed_position_start=1&amp;url=[referrer_url]&amp;correlator=[timestamp]&amp;cust_params=vid%3DIBmGAIrEofp2vQNvSEvO5MavtZy5GOAy%26partner%3DPARTNER&amp;vid=IBmGAIrEofp2vQNvSEvO5MavtZy5GOAy&amp;cmsid=2289" no-skip="true" tags="midroll">
+	</ref>
+	<video src="https://cbsios-vh.akamaihd.net/i/temp_hd_gallery_video/CBS_Production_Outlet_VMS/video_robot/CBS_Production_Entertainment/2020/06/08/1747974723554/MTV_AEONFLUX_108_206219_,503,4628,3128,2228,1628,848,000.mp4.csmil/master.m3u8?hdnea=acl=/i/temp_hd_gallery_video/CBS_Production_Outlet_VMS/video_robot/CBS_Production_Entertainment/2020/06/08/1747974723554/MTV_AEONFLUX_108_206219_*~exp=1646883173~hmac=7dd5996aa644f8959f27a6b7f217bd8d6a348bc3d8f2db6a640aa892f0b99196" title="Aeon Flux - Isthmus Crypticus" abstract="Trevor Goodchild&apos;s latest obsession is a female exquisite being which he keeps locked away in a secret chamber.  Will Aeon foil Trevor&apos;s plans once again? (TV-14 V)" copyright="CBS, Inc." dur="1229000ms" guid="IBmGAIrEofp2vQNvSEvO5MavtZy5GOAy" ratings="urn%3Av-chip:tv-14%20v" provider="CBS Production Entertainment VMS" type="application/x-mpegURL" height="480" width="640" clipBegin="15:04" clipEnd="19:45">
+		<param name="Aired" value="false"/>
+		<param name="CBSGenre" value="Drama"/>
+		<param name="ClosedCaptionURL" value="https://cc.cbs.com/closedcaption/CBS_Production_Entertainment_VMS/951/614/IBmGAIrEofp2vQNvSEvO5MavtZy5GOAy_1596103405310.tt"/>
+		<param name="DynamicStreaming" value="false"/>
+		<param name="Embeddable" value="false"/>
+		<param name="EpisodeFlag" value="true"/>
+		<param name="EpisodeNumber" value="2"/>
+		<param name="Internal" value="false"/>
+		<param name="IsLive" value="false"/>
+		<param name="IsLiveCDN" value=""/>
+		<param name="NoAd" value="false"/>
+		<param name="PrimaryCategory" value="1740838979749"/>
+		<param name="PrimaryCategoryName" value="Syndicated/Viacom/MTV/Aeon Flux/Full Episodes"/>
+		<param name="RepeatFlag" value="false"/>
+		<param name="SeasonNumber" value="1"/>
+		<param name="SeriesTitle" value="Aeon Flux"/>
+		<param name="SourcePartner" value="MTV"/>
+		<param name="TVRating" value="false"/>
+		<param name="VTAG" value="dpart=cable_classic;show=aeon_flux;feat=full_episodes;site=mtv"/>
+		<param name="artist" value=""/>
+		<param name="contentType" value="Promo Full Episode"/>
+		<param name="dPRAired" value="false"/>
+		<param name="endCreditsChapterTime" value="19:48"/>
+		<param name="excludeNielsenTracking" value="false"/>
+		<param name="isLiveCaptioned" value="false"/>
+		<param name="sMPTE-TTCCURL" value="https://cc.cbs.com/closedcaption/CBS_Production_Entertainment_VMS/951/614/IBmGAIrEofp2vQNvSEvO5MavtZy5GOAy_1596103403541.xml"/>
+		<param name="webVTTCaptionURL" value="https://cc.cbs.com/closedcaption/CBS_Production_Entertainment_VMS/951/614/IBmGAIrEofp2vQNvSEvO5MavtZy5GOAy_1596103404370.vtt"/>
+	</video>
+	<ref src="https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&amp;iu=/8264/vaw-can/desktop/test&amp;ciu_szs=300x60,728x90&amp;impl=s&amp;gdfp_req=1&amp;env=vp&amp;output=xml_vmap1&amp;unviewed_position_start=1&amp;url=[referrer_url]&amp;correlator=[timestamp]&amp;cust_params=vid%3DIBmGAIrEofp2vQNvSEvO5MavtZy5GOAy%26partner%3DPARTNER&amp;vid=IBmGAIrEofp2vQNvSEvO5MavtZy5GOAy&amp;cmsid=2289" no-skip="true" tags="midroll">
+	</ref>
+	<video src="https://cbsios-vh.akamaihd.net/i/temp_hd_gallery_video/CBS_Production_Outlet_VMS/video_robot/CBS_Production_Entertainment/2020/06/08/1747974723554/MTV_AEONFLUX_108_206219_,503,4628,3128,2228,1628,848,000.mp4.csmil/master.m3u8?hdnea=acl=/i/temp_hd_gallery_video/CBS_Production_Outlet_VMS/video_robot/CBS_Production_Entertainment/2020/06/08/1747974723554/MTV_AEONFLUX_108_206219_*~exp=1646883173~hmac=7dd5996aa644f8959f27a6b7f217bd8d6a348bc3d8f2db6a640aa892f0b99196" title="Aeon Flux - Isthmus Crypticus" abstract="Trevor Goodchild&apos;s latest obsession is a female exquisite being which he keeps locked away in a secret chamber.  Will Aeon foil Trevor&apos;s plans once again? (TV-14 V)" copyright="CBS, Inc." dur="1229000ms" guid="IBmGAIrEofp2vQNvSEvO5MavtZy5GOAy" ratings="urn%3Av-chip:tv-14%20v" provider="CBS Production Entertainment VMS" type="application/x-mpegURL" height="480" width="640" clipBegin="19:45">
+		<param name="Aired" value="false"/>
+		<param name="CBSGenre" value="Drama"/>
+		<param name="ClosedCaptionURL" value="https://cc.cbs.com/closedcaption/CBS_Production_Entertainment_VMS/951/614/IBmGAIrEofp2vQNvSEvO5MavtZy5GOAy_1596103405310.tt"/>
+		<param name="DynamicStreaming" value="false"/>
+		<param name="Embeddable" value="false"/>
+		<param name="EpisodeFlag" value="true"/>
+		<param name="EpisodeNumber" value="2"/>
+		<param name="Internal" value="false"/>
+		<param name="IsLive" value="false"/>
+		<param name="IsLiveCDN" value=""/>
+		<param name="NoAd" value="false"/>
+		<param name="PrimaryCategory" value="1740838979749"/>
+		<param name="PrimaryCategoryName" value="Syndicated/Viacom/MTV/Aeon Flux/Full Episodes"/>
+		<param name="RepeatFlag" value="false"/>
+		<param name="SeasonNumber" value="1"/>
+		<param name="SeriesTitle" value="Aeon Flux"/>
+		<param name="SourcePartner" value="MTV"/>
+		<param name="TVRating" value="false"/>
+		<param name="VTAG" value="dpart=cable_classic;show=aeon_flux;feat=full_episodes;site=mtv"/>
+		<param name="artist" value=""/>
+		<param name="contentType" value="Promo Full Episode"/>
+		<param name="dPRAired" value="false"/>
+		<param name="endCreditsChapterTime" value="19:48"/>
+		<param name="excludeNielsenTracking" value="false"/>
+		<param name="isLiveCaptioned" value="false"/>
+		<param name="sMPTE-TTCCURL" value="https://cc.cbs.com/closedcaption/CBS_Production_Entertainment_VMS/951/614/IBmGAIrEofp2vQNvSEvO5MavtZy5GOAy_1596103403541.xml"/>
+		<param name="webVTTCaptionURL" value="https://cc.cbs.com/closedcaption/CBS_Production_Entertainment_VMS/951/614/IBmGAIrEofp2vQNvSEvO5MavtZy5GOAy_1596103404370.vtt"/>
+	</video>
+	<ref src="https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&amp;iu=/8264/vaw-can/desktop/test&amp;ciu_szs=300x60,728x90&amp;impl=s&amp;gdfp_req=1&amp;env=vp&amp;output=xml_vmap1&amp;unviewed_position_start=1&amp;url=[referrer_url]&amp;correlator=[timestamp]&amp;cust_params=vid%3DIBmGAIrEofp2vQNvSEvO5MavtZy5GOAy%26partner%3DPARTNER&amp;vid=IBmGAIrEofp2vQNvSEvO5MavtZy5GOAy&amp;cmsid=2289" no-skip="true" tags="postroll">
+	</ref>
+</seq>
+</body>
+</smil>
