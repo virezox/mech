@@ -21,6 +21,7 @@ func doManifest(guid int64, bandwidth int, info bool) error {
    if err != nil {
       return err
    }
+   defer res.Body.Close()
    master, err := hls.NewScanner(res.Body).Master(res.Request.URL)
    if err != nil {
       return err
@@ -39,7 +40,7 @@ func doManifest(guid int64, bandwidth int, info bool) error {
          return download(stream, video)
       }
    }
-   return res.Body.Close()
+   return nil
 }
 
 func download(stream hls.Stream, video *nbc.Video) error {
@@ -59,6 +60,7 @@ func download(stream hls.Stream, video *nbc.Video) error {
    if err != nil {
       return err
    }
+   defer file.Close()
    pro := format.ProgressChunks(file, len(seg.Info))
    for _, info := range seg.Info {
       res, err := http.Get(info.URI.String())
@@ -76,7 +78,7 @@ func download(stream hls.Stream, video *nbc.Video) error {
          return err
       }
    }
-   return file.Close()
+   return nil
 }
 
 type errorString string

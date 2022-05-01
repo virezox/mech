@@ -29,6 +29,7 @@ func download(addr *url.URL, base string) error {
    if err != nil {
       return err
    }
+   defer file.Close()
    pro := format.ProgressChunks(file, len(seg.Info))
    for _, info := range seg.Info {
       res, err := http.Get(info.URI.String())
@@ -43,7 +44,7 @@ func download(addr *url.URL, base string) error {
          return err
       }
    }
-   return file.Close()
+   return nil
 }
 
 func doWidget(address string, bandwidth int, info bool) error {
@@ -61,6 +62,7 @@ func doWidget(address string, bandwidth int, info bool) error {
    if err != nil {
       return err
    }
+   defer res.Body.Close()
    master, err := hls.NewScanner(res.Body).Master(res.Request.URL)
    if err != nil {
       return err
@@ -81,5 +83,5 @@ func doWidget(address string, bandwidth int, info bool) error {
          return download(stream.URI, widget.Slug)
       }
    }
-   return res.Body.Close()
+   return nil
 }

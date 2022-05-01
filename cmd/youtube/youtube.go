@@ -126,28 +126,34 @@ func (v video) doVideo(play *youtube.Player) error {
    if err != nil {
       return err
    }
+   defer file.Close()
    if _, err := form.WriteTo(file); err != nil {
       return err
    }
-   return file.Close()
+   return nil
 }
 
 func (v video) doAudio(play *youtube.Player) error {
-   for _, form := range play.StreamingData.AdaptiveFormats {
-      if form.AudioQuality == v.audio {
-         ext, err := mech.ExtensionByType(form.MimeType)
-         if err != nil {
-            return err
+   getForm := func() *youtube.Format {
+      for _, form := range play.StreamingData.AdaptiveFormats {
+         if form.AudioQuality == v.audio {
+            return &form
          }
-         file, err := os.Create(play.Base() + ext)
-         if err != nil {
-            return err
-         }
-         if _, err := form.WriteTo(file); err != nil {
-            return err
-         }
-         return file.Close()
       }
+      return nil
+   }
+   form := getForm()
+   ext, err := mech.ExtensionByType(form.MimeType)
+   if err != nil {
+      return err
+   }
+   file, err := os.Create(play.Base() + ext)
+   if err != nil {
+      return err
+   }
+   defer file.Close()
+   if _, err := form.WriteTo(file); err != nil {
+      return err
    }
    return nil
 }
