@@ -1,5 +1,5 @@
-github.com/89z/format v1.31.4 h1:eLMLYy/r+KPWpc7Ukj3+UUQEkkMZRYEKNpq6mGsAxJI=
-github.com/89z/format v1.31.4/go.mod h1:7qV8Xr3heoz8ImgN71jB8mUzoI6SwjOLRT3MyxzDIeo=
+github.com/89z/format v1.31.6 h1:l7e45/zXZQ3/xi03ItvcJavl1X32kpggA7gxtQHWiTw=
+github.com/89z/format v1.31.6/go.mod h1:7qV8Xr3heoz8ImgN71jB8mUzoI6SwjOLRT3MyxzDIeo=
 github.com/golang/protobuf v1.5.0/go.mod h1:FsONVRAS9T7sI+LIUmWTfcYkHO4aIWwzhcaSAoJOfIk=
 github.com/google/go-cmp v0.5.5/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/gNBxE=
 golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=

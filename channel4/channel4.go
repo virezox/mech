@@ -4,22 +4,37 @@ import (
    "encoding/json"
    "github.com/89z/format"
    "net/http"
+   "path"
 )
 
 var LogLevel format.LogLevel
 
-type Stream struct {
-   URI string
+// channel4.com/programmes/frasier/on-demand/18926-001
+func ProgramID(addr string) string {
+   return path.Base(addr)
 }
 
-type Video struct {
+func (s Stream) Widevine() string {
+   for _, profile := range s.VideoProfiles {
+      if profile.Name == "dashwv-dyn-stream-1" {
+         for _, stream := range profile.Streams {
+            return stream.URI
+         }
+      }
+   }
+   return ""
+}
+
+type Stream struct {
    VideoProfiles []struct {
       Name string
-      Streams []Stream
+      Streams []struct {
+         URI string
+      }
    }
 }
 
-func NewVideo(id string) (*Video, error) {
+func NewStream(id string) (*Stream, error) {
    req, err := http.NewRequest(
       "GET", "https://www.channel4.com/vod/stream/" + id, nil,
    )
@@ -33,20 +48,9 @@ func NewVideo(id string) (*Video, error) {
       return nil, err
    }
    defer res.Body.Close()
-   vid := new(Video)
-   if err := json.NewDecoder(res.Body).Decode(vid); err != nil {
+   str := new(Stream)
+   if err := json.NewDecoder(res.Body).Decode(str); err != nil {
       return nil, err
    }
-   return vid, nil
-}
-
-func (v Video) Widevine() *Stream {
-   for _, profile := range v.VideoProfiles {
-      if profile.Name == "dashwv-dyn-stream-1" {
-         for _, stream := range profile.Streams {
-            return &stream
-         }
-      }
-   }
-   return nil
+   return str, nil
 }
