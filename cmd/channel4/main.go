@@ -18,6 +18,9 @@ func main() {
    // i
    var info bool
    flag.BoolVar(&info, "i", false, "information")
+   // t
+   var token string
+   flag.StringVar(&token, "t", "", "token")
    // v
    var verbose bool
    flag.BoolVar(&verbose, "v", false, "verbose")
@@ -27,6 +30,11 @@ func main() {
    }
    if id != "" || address != "" {
       err := doManifest(id, address, bandwidth, info)
+      if err != nil {
+         panic(err)
+      }
+   } else if token != "" {
+      err := doToken(token)
       if err != nil {
          panic(err)
       }
