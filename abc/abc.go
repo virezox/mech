@@ -143,7 +143,7 @@ func (v *Video) Authorize() error {
    }
    defer res.Body.Close()
    if res.StatusCode != http.StatusOK {
-      return nil, errorString(res.Status)
+      return errorString(res.Status)
    }
    var auth struct {
       UplynkData struct {
