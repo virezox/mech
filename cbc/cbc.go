@@ -18,32 +18,6 @@ type Asset struct {
    }
 }
 
-func NewAsset(addr string) (*Asset, error) {
-   _, after, found := strings.Cut(addr, "/media/")
-   if !found {
-      return nil, notFound{"/media/"}
-   }
-   req, err := http.NewRequest(
-      "GET",
-      "https://services.radio-canada.ca/ott/cbc-api/v2/assets/" + after,
-      nil,
-   )
-   if err != nil {
-      return nil, err
-   }
-   LogLevel.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   asset := new(Asset)
-   if err := json.NewDecoder(res.Body).Decode(asset); err != nil {
-      return nil, err
-   }
-   return asset, nil
-}
-
 type Media struct {
    Message string
    URL string
@@ -138,4 +112,32 @@ type notFound struct {
 
 func (n notFound) Error() string {
    return strconv.Quote(n.value) + " is not found"
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+func NewAsset(addr string) (*Asset, error) {
+   _, after, found := strings.Cut(addr, "/media/")
+   if !found {
+      return nil, notFound{"/media/"}
+   }
+   req, err := http.NewRequest(
+      "GET",
+      "https://services.radio-canada.ca/ott/cbc-api/v2/assets/" + after,
+      nil,
+   )
+   if err != nil {
+      return nil, err
+   }
+   LogLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   asset := new(Asset)
+   if err := json.NewDecoder(res.Body).Decode(asset); err != nil {
+      return nil, err
+   }
+   return asset, nil
 }

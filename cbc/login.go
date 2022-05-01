@@ -47,6 +47,14 @@ func NewLogin(email, password string) (*Login, error) {
    return login, nil
 }
 
+func OpenLogin(elem ...string) (*Login, error) {
+   return format.Open[Login](elem...)
+}
+
+func (l Login) Create(elem ...string) error {
+   return format.Create(l, elem...)
+}
+
 func (l Login) WebToken() (*WebToken, error) {
    req, err := http.NewRequest(
       "GET", "https://cloud-api.loginradius.com/sso/jwt/api/token", nil,
