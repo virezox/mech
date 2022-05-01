@@ -21,6 +21,7 @@ func TestMedia(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
+   fmt.Printf("%a\n", asset)
    media, err := profile.Media(asset)
    if err != nil {
       t.Fatal(err)

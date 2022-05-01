@@ -2,9 +2,11 @@ package main
 
 import (
    "fmt"
+   "github.com/89z/format"
    "github.com/89z/format/hls"
    "github.com/89z/mech/cbc"
    "net/http"
+   "net/url"
    "os"
    "sort"
 )
@@ -42,20 +44,69 @@ func doManifest(id, address string, bandwidth int, info bool) error {
    if bandwidth >= 1 {
       sort.Sort(hls.Bandwidth{master, bandwidth})
    }
-   for _, stream := range master.Stream {
+   if info {
+      fmt.Println(asset)
+   }
+   for _, video := range master.Stream {
       if info {
-         fmt.Println(stream)
+         fmt.Println(video)
       } else {
-         /*
-         video, err := cbc.NewVideo(guid)
+         err := download(video.URI, asset.AppleContentID)
          if err != nil {
             return err
          }
-         return download(stream, video)
-         */
+         audio := master.Audio(video)
+         return download(audio.URI, asset.AppleContentID)
       }
    }
    return nil
+}
+
+func download(addr *url.URL, base string) error {
+   seg, err := newSegment(addr.String())
+   if err != nil {
+      return err
+   }
+   fmt.Println("GET", seg.Key)
+   res, err := http.Get(seg.Key.String())
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   block, err := hls.NewCipher(res.Body)
+   if err != nil {
+      return err
+   }
+   file, err := os.Create(base + seg.Ext())
+   if err != nil {
+      return err
+   }
+   defer file.Close()
+   pro := format.ProgressChunks(file, len(seg.Info))
+   for _, info := range seg.Info {
+      res, err := http.Get(info.URI.String())
+      if err != nil {
+         return err
+      }
+      pro.AddChunk(res.ContentLength)
+      if _, err := block.Copy(pro, res.Body, info.IV); err != nil {
+         return err
+      }
+      if err := res.Body.Close(); err != nil {
+         return err
+      }
+   }
+   return nil
+}
+
+func newSegment(addr string) (*hls.Segment, error) {
+   fmt.Println("GET", addr)
+   res, err := http.Get(addr)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   return hls.NewScanner(res.Body).Segment(res.Request.URL)
 }
 
 func doProfile(email, password string) error {
@@ -81,38 +132,3 @@ func doProfile(email, password string) error {
    }
    return profile.Create(cache, "mech/cbc.json")
 }
-
-/*
-func download(stream hls.Stream, video *cbc.Video) error {
-   fmt.Println("GET", stream.URI)
-   res, err := http.Get(stream.URI.String())
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   seg, err := hls.NewScanner(res.Body).Segment(res.Request.URL)
-   if err != nil {
-      return err
-   }
-   file, err := os.Create(video.Base() + seg.Ext())
-   if err != nil {
-      return err
-   }
-   defer file.Close()
-   pro := format.ProgressChunks(file, len(seg.Info))
-   for _, info := range seg.Info {
-      res, err := http.Get(info.URI.String())
-      if err != nil {
-         return err
-      }
-      pro.AddChunk(res.ContentLength)
-      if _, err := io.Copy(pro, res.Body); err != nil {
-         return err
-      }
-      if err := res.Body.Close(); err != nil {
-         return err
-      }
-   }
-   return nil
-}
-*/

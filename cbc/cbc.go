@@ -2,9 +2,11 @@ package cbc
 
 import (
    "encoding/json"
+   "fmt"
    "github.com/89z/format"
    "net/http"
    "strings"
+   "time"
 )
 
 const forwardedFor = "99.224.0.0"
@@ -18,15 +20,14 @@ func GetID(addr string) string {
 }
 
 type Asset struct {
-   AirDate int64
-   Duration int64
-   ID string
-   PlaySession struct {
-      MediaID string
-      URL string
-   }
+   AppleContentID string
    Series string
    Title string
+   AirDate int64
+   Duration int64
+   PlaySession struct {
+      URL string
+   }
 }
 
 func NewAsset(id string) (*Asset, error) {
@@ -49,6 +50,25 @@ func NewAsset(id string) (*Asset, error) {
       return nil, err
    }
    return asset, nil
+}
+
+func (a Asset) Format(f fmt.State, verb rune) {
+   fmt.Fprintln(f, "ID:", a.AppleContentID)
+   fmt.Fprintln(f, "Series:", a.Series)
+   fmt.Fprintln(f, "Title:", a.Title)
+   fmt.Fprintln(f, "Date:", a.GetTime())
+   fmt.Fprint(f, "Duration: ", a.GetDuration())
+   if verb == 'a' {
+      fmt.Fprint(f, "\nURL: ", a.PlaySession.URL)
+   }
+}
+
+func (a Asset) GetDuration() time.Duration {
+   return time.Duration(a.Duration) * time.Second
+}
+
+func (a Asset) GetTime() time.Time {
+   return time.UnixMilli(a.AirDate)
 }
 
 type Media struct {

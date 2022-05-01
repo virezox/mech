@@ -4,10 +4,29 @@ import (
    "encoding/json"
    "fmt"
    "github.com/89z/format"
+   "github.com/89z/mech"
    "net/http"
    "net/url"
    "strings"
 )
+
+type errorString string
+
+func (e errorString) Error() string {
+   return string(e)
+}
+
+func (v Video) Base() string {
+   var buf strings.Builder
+   buf.WriteString(mech.Clean(v.Show.Title))
+   buf.WriteByte('-')
+   buf.WriteString(v.Title)
+   buf.WriteByte('-')
+   buf.WriteString(v.SeasonNumber)
+   buf.WriteByte('-')
+   buf.WriteString(v.EpisodeNumber)
+   return buf.String()
+}
 
 const (
    MaxAppVersion = "99.99.9"
@@ -49,6 +68,9 @@ func NewRoute(addr string) (*Route, error) {
       return nil, err
    }
    defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return nil, errorString(res.Status)
+   }
    route := new(Route)
    if err := json.NewDecoder(res.Body).Decode(route); err != nil {
       return nil, err
@@ -70,6 +92,9 @@ func (r Route) Video() (*Video, error) {
       return nil, err
    }
    defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return nil, errorString(res.Status)
+   }
    var play struct {
       Video Video
    }
@@ -117,6 +142,9 @@ func (v *Video) Authorize() error {
       return err
    }
    defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return nil, errorString(res.Status)
+   }
    var auth struct {
       UplynkData struct {
          SessionKey string
@@ -134,18 +162,6 @@ func (v *Video) Authorize() error {
       v.Assets[i].Value = addr.String()
    }
    return nil
-}
-
-func (v Video) Base() string {
-   var buf strings.Builder
-   buf.WriteString(v.Show.Title)
-   buf.WriteByte('-')
-   buf.WriteString(v.Title)
-   buf.WriteByte('-')
-   buf.WriteString(v.SeasonNumber)
-   buf.WriteByte('-')
-   buf.WriteString(v.EpisodeNumber)
-   return buf.String()
 }
 
 func (v Video) Format(f fmt.State, verb rune) {
