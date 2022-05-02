@@ -8,7 +8,44 @@ import (
    "net/http"
    "net/url"
    "strings"
+   "time"
 )
+
+type Video struct {
+   ID string
+   Show struct {
+      Title string
+   }
+   Title string
+   SeasonNumber string
+   EpisodeNumber string
+   Airtime string
+   Duration int64
+   Assets []struct {
+      Format string
+      Value string
+   }
+}
+
+func (v Video) Format(f fmt.State, verb rune) {
+   fmt.Fprintln(f, "ID:", v.ID)
+   fmt.Fprintln(f, "Show:", v.Show.Title)
+   fmt.Fprintln(f, "Title:", v.Title)
+   fmt.Fprintln(f, "Season:", v.SeasonNumber)
+   fmt.Fprintln(f, "Episode:", v.EpisodeNumber)
+   fmt.Fprintln(f, "Airtime:", v.Airtime)
+   fmt.Fprint(f, "Duration: ", v.GetDuration())
+   if verb == 'a' {
+      for _, asset := range v.Assets {
+         fmt.Fprint(f, "\nFormat:", asset.Format)
+         fmt.Fprint(f, " Value:", asset.Value)
+      }
+   }
+}
+
+func (v Video) GetDuration() time.Duration {
+   return time.Duration(v.Duration) * time.Millisecond
+}
 
 type errorString string
 
@@ -104,20 +141,6 @@ func (r Route) Video() (*Video, error) {
    return &play.Video, nil
 }
 
-type Video struct {
-   ID string
-   Show struct {
-      Title string
-   }
-   Title string
-   SeasonNumber string
-   EpisodeNumber string
-   Assets []struct {
-      Format string
-      Value string
-   }
-}
-
 func (v *Video) Authorize() error {
    var addr strings.Builder
    addr.WriteString("http://api.entitlement.watchabc.go.com")
@@ -162,20 +185,6 @@ func (v *Video) Authorize() error {
       v.Assets[i].Value = addr.String()
    }
    return nil
-}
-
-func (v Video) Format(f fmt.State, verb rune) {
-   fmt.Fprintln(f, "ID:", v.ID)
-   fmt.Fprintln(f, "Show:", v.Show.Title)
-   fmt.Fprintln(f, "Title:", v.Title)
-   fmt.Fprintln(f, "Season:", v.SeasonNumber)
-   fmt.Fprint(f, "Episode: ", v.EpisodeNumber)
-   if verb == 'a' {
-      for _, asset := range v.Assets {
-         fmt.Fprint(f, "\nFormat:", asset.Format)
-         fmt.Fprint(f, " Value:", asset.Value)
-      }
-   }
 }
 
 func (v Video) ULNK() string {

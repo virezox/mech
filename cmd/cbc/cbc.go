@@ -51,18 +51,18 @@ func doManifest(id, address string, bandwidth int, info bool) error {
       if info {
          fmt.Println(video)
       } else {
-         err := download(video.URI, asset.AppleContentID)
+         err := download(video.URI, asset.AppleContentID + ".video")
          if err != nil {
             return err
          }
          audio := master.Audio(video)
-         return download(audio.URI, asset.AppleContentID)
+         return download(audio.URI, asset.AppleContentID + ".audio")
       }
    }
    return nil
 }
 
-func download(addr *url.URL, base string) error {
+func download(addr *url.URL, name string) error {
    seg, err := newSegment(addr.String())
    if err != nil {
       return err
@@ -77,7 +77,7 @@ func download(addr *url.URL, base string) error {
    if err != nil {
       return err
    }
-   file, err := os.Create(base + seg.Ext())
+   file, err := os.Create(name)
    if err != nil {
       return err
    }
