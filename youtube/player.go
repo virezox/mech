@@ -37,8 +37,6 @@ func (p Player) Base() string {
    buf.WriteString(p.VideoDetails.Author)
    buf.WriteByte('-')
    buf.WriteString(p.VideoDetails.Title)
-   buf.WriteByte('-')
-   buf.WriteString(p.VideoDetails.VideoID)
    return mech.Clean(buf.String())
 }
 
