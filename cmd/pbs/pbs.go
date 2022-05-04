@@ -32,20 +32,35 @@ func doWidget(address string, bandwidth int, info bool) error {
    if err != nil {
       return err
    }
-   fmt.Println(widget)
-   sort.Sort(hls.Bandwidth{master, bandwidth})
-   for _, video := range master.Stream {
+   if bandwidth >= 1 {
+      sort.Sort(hls.Bandwidth{master, bandwidth})
+   }
+   if info {
+      fmt.Println(widget)
+   }
+   if err := audio(master, info, widget.Slug); err != nil {
+      return err
+   }
+   return video(master, info, widget.Slug)
+}
+
+func audio(master *hls.Master, info bool, base string) error {
+   for _, media := range master.Media {
       if info {
-         fmt.Println(video)
+         fmt.Println(media)
       } else {
-         audio := master.Audio(video)
-         if audio != nil {
-            err := download(audio.URI, widget.Slug + hls.AAC)
-            if err != nil {
-               return err
-            }
-         }
-         return download(video.URI, widget.Slug + hls.TS)
+         return download(media.URI, base + hls.AAC)
+      }
+   }
+   return nil
+}
+
+func video(master *hls.Master, info bool, base string) error {
+   for _, stream := range master.Stream {
+      if info {
+         fmt.Println(stream)
+      } else {
+         return download(stream.URI, base + hls.TS)
       }
    }
    return nil
