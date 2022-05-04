@@ -12,6 +12,10 @@ Install system certificate.
 
 https://www.pbs.org/wgbh/frontline/film/inside-italys-covid-war/
 
+## Masterpiece
+
+https://www.pbs.org/wgbh/masterpiece/episodes/downton-abbey-s6-e1/
+
 ## Nature
 
 https://www.pbs.org/wnet/nature/about-american-horses/
@@ -30,28 +34,3 @@ https://www.pbs.org/wnet/nature/about-american-horses/
 ## Widget
 
 https://player.pbs.org/widget/partnerplayer/3016754074/
-
-## Masterpiece
-
-CBC:
-
-https://gem.cbc.ca/media/downton-abbey
-
-PBS:
-
-~~~
-Title: Episode 1
-Duration: 1h21m22s
-
-Title: Episode 2
-Duration: 1h21m27s
-
-Title: Episode 3
-Duration: 1h21m17s
-
-Title: Episode 4
-Duration: 1h21m20s
-~~~
-
-- https://pbs.org/wgbh/masterpiece/shows/downton-abbey/episodes
-- https://reddit.com/r/television/comments/ufxr7x/downton/i6x9py9

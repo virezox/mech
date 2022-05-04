@@ -12,39 +12,6 @@ import (
    "sort"
 )
 
-func download(addr *url.URL, base string) error {
-   fmt.Println("GET", addr)
-   res, err := http.Get(addr.String())
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   seg, err := hls.NewScanner(res.Body).Segment(res.Request.URL)
-   if err != nil {
-      return err
-   }
-   file, err := os.Create(base + seg.Ext())
-   if err != nil {
-      return err
-   }
-   defer file.Close()
-   pro := format.ProgressChunks(file, len(seg.Info))
-   for _, info := range seg.Info {
-      res, err := http.Get(info.URI.String())
-      if err != nil {
-         return err
-      }
-      pro.AddChunk(res.ContentLength)
-      if _, err := io.Copy(pro, res.Body); err != nil {
-         return err
-      }
-      if err := res.Body.Close(); err != nil {
-         return err
-      }
-   }
-   return nil
-}
-
 func doWidget(address string, bandwidth int, info bool) error {
    getter, err := pbs.NewWidgeter(address)
    if err != nil {
@@ -73,12 +40,45 @@ func doWidget(address string, bandwidth int, info bool) error {
       } else {
          audio := master.Audio(video)
          if audio != nil {
-            err := download(audio.URI, widget.Slug)
+            err := download(audio.URI, widget.Slug + hls.AAC)
             if err != nil {
                return err
             }
          }
-         return download(video.URI, widget.Slug)
+         return download(video.URI, widget.Slug + hls.TS)
+      }
+   }
+   return nil
+}
+
+func download(addr *url.URL, name string) error {
+   fmt.Println("GET", addr)
+   res, err := http.Get(addr.String())
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   seg, err := hls.NewScanner(res.Body).Segment(res.Request.URL)
+   if err != nil {
+      return err
+   }
+   file, err := os.Create(name)
+   if err != nil {
+      return err
+   }
+   defer file.Close()
+   pro := format.ProgressChunks(file, len(seg.Info))
+   for _, info := range seg.Info {
+      res, err := http.Get(info.URI.String())
+      if err != nil {
+         return err
+      }
+      pro.AddChunk(res.ContentLength)
+      if _, err := io.Copy(pro, res.Body); err != nil {
+         return err
+      }
+      if err := res.Body.Close(); err != nil {
+         return err
       }
    }
    return nil

@@ -8,6 +8,26 @@ import (
    "sort"
 )
 
+func (v video) doAudio(play *youtube.Player) error {
+   for _, form := range play.StreamingData.AdaptiveFormats {
+      if form.AudioQuality == v.audio {
+         ext, err := mech.ExtensionByType(form.MimeType)
+         if err != nil {
+            return err
+         }
+         file, err := os.Create(play.Base() + ext)
+         if err != nil {
+            return err
+         }
+         defer file.Close()
+         if _, err := form.WriteTo(file); err != nil {
+            return err
+         }
+      }
+   }
+   return nil
+}
+
 type video struct {
    address string
    audio string
@@ -118,31 +138,6 @@ func (v video) doVideo(play *youtube.Player) error {
       return nil
    }
    form := play.StreamingData.AdaptiveFormats[0]
-   ext, err := mech.ExtensionByType(form.MimeType)
-   if err != nil {
-      return err
-   }
-   file, err := os.Create(play.Base() + ext)
-   if err != nil {
-      return err
-   }
-   defer file.Close()
-   if _, err := form.WriteTo(file); err != nil {
-      return err
-   }
-   return nil
-}
-
-func (v video) doAudio(play *youtube.Player) error {
-   getForm := func() *youtube.Format {
-      for _, form := range play.StreamingData.AdaptiveFormats {
-         if form.AudioQuality == v.audio {
-            return &form
-         }
-      }
-      return nil
-   }
-   form := getForm()
    ext, err := mech.ExtensionByType(form.MimeType)
    if err != nil {
       return err
