@@ -9,10 +9,9 @@ import (
    "net/http"
    "net/url"
    "os"
-   "sort"
 )
 
-func doWidget(address string, bandwidth int, info bool) error {
+func doWidget(address, audio string, video int, info bool) error {
    getter, err := pbs.NewWidgeter(address)
    if err != nil {
       return err
@@ -32,36 +31,24 @@ func doWidget(address string, bandwidth int, info bool) error {
    if err != nil {
       return err
    }
-   if bandwidth >= 1 {
-      sort.Sort(hls.Bandwidth{master, bandwidth})
-   }
    if info {
       fmt.Println(widget)
-   }
-   if err := audio(master, info, widget.Slug); err != nil {
-      return err
-   }
-   return video(master, info, widget.Slug)
-}
-
-func audio(master *hls.Master, info bool, base string) error {
-   for _, media := range master.Media {
-      if info {
-         fmt.Println(media)
-      } else {
-         return download(media.URI, base + hls.AAC)
-      }
-   }
-   return nil
-}
-
-func video(master *hls.Master, info bool, base string) error {
-   for _, stream := range master.Stream {
-      if info {
+      for _, stream := range master.Streams {
          fmt.Println(stream)
-      } else {
-         return download(stream.URI, base + hls.TS)
       }
+      for _, media := range master.Media {
+         fmt.Println(media)
+      }
+   } else {
+      media := master.Audio(audio)
+      if media != nil {
+         err := download(media.URI, widget.Slug + hls.AAC)
+         if err != nil {
+            return err
+         }
+      }
+      stream := master.Stream(video)
+      return download(stream.URI, widget.Slug + hls.TS)
    }
    return nil
 }

@@ -7,7 +7,6 @@ import (
    "github.com/89z/mech/paramount"
    "net/http"
    "os"
-   "sort"
    "time"
 )
 
@@ -23,28 +22,24 @@ func doManifest(guid, address string, bandwidth int, info bool) error {
    if err != nil {
       return err
    }
+   fmt.Println("GET", video.Src)
    res, err := http.Get(video.Src)
    if err != nil {
       return err
    }
    defer res.Body.Close()
-   paramount.LogLevel.Dump(res.Request)
    master, err := hls.NewScanner(res.Body).Master(res.Request.URL)
    if err != nil {
       return err
    }
    if info {
       fmt.Println(video.Title)
-   }
-   if bandwidth >= 1 {
-      sort.Sort(hls.Bandwidth{master, bandwidth})
-   }
-   for _, stream := range master.Stream {
-      if info {
+      for _, stream := range master.Streams {
          fmt.Println(stream)
-      } else {
-         return download(stream, video)
       }
+   } else {
+      stream := master.Stream(bandwidth)
+      return download(stream, video)
    }
    return nil
 }
@@ -64,7 +59,7 @@ func get(addr string) (*http.Response, error) {
    return res, nil
 }
 
-func download(stream hls.Stream, video *paramount.Video) error {
+func download(stream *hls.Stream, video *paramount.Video) error {
    seg, err := newSegment(stream.URI.String())
    if err != nil {
       return err
@@ -102,11 +97,11 @@ func download(stream hls.Stream, video *paramount.Video) error {
 }
 
 func newSegment(addr string) (*hls.Segment, error) {
+   fmt.Println("GET", addr)
    res, err := http.Get(addr)
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
-   paramount.LogLevel.Dump(res.Request)
    return hls.NewScanner(res.Body).Segment(res.Request.URL)
 }

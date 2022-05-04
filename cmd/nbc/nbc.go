@@ -8,7 +8,6 @@ import (
    "io"
    "net/http"
    "os"
-   "sort"
 )
 
 func doManifest(guid int64, bandwidth int, info bool) error {
@@ -26,24 +25,22 @@ func doManifest(guid int64, bandwidth int, info bool) error {
    if err != nil {
       return err
    }
-   if bandwidth >= 1 {
-      sort.Sort(hls.Bandwidth{master, bandwidth})
-   }
-   for _, stream := range master.Stream {
-      if info {
+   if info {
+      for _, stream := range master.Streams {
          fmt.Println(stream)
-      } else {
-         video, err := nbc.NewVideo(guid)
-         if err != nil {
-            return err
-         }
-         return download(stream, video)
       }
+   } else {
+      stream := master.Stream(bandwidth)
+      video, err := nbc.NewVideo(guid)
+      if err != nil {
+         return err
+      }
+      return download(stream, video)
    }
    return nil
 }
 
-func download(stream hls.Stream, video *nbc.Video) error {
+func download(stream *hls.Stream, video *nbc.Video) error {
    fmt.Println("GET", stream.URI)
    res, err := http.Get(stream.URI.String())
    if err != nil {

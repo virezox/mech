@@ -7,7 +7,6 @@ import (
    "github.com/89z/mech/abc"
    "net/http"
    "os"
-   "sort"
 )
 
 func doManifest(addr string, bandwidth int, info bool) error {
@@ -33,21 +32,19 @@ func doManifest(addr string, bandwidth int, info bool) error {
    if err != nil {
       return err
    }
-   sort.Sort(hls.Bandwidth{master, bandwidth})
    if info {
       fmt.Println(video)
-   }
-   for _, stream := range master.Stream {
-      if info {
+      for _, stream := range master.Streams {
          fmt.Println(stream)
-      } else {
-         return download(stream, video)
       }
+   } else {
+      stream := master.Stream(bandwidth)
+      return download(stream, video)
    }
    return nil
 }
 
-func newSegment(stream hls.Stream) (*hls.Segment, error) {
+func newSegment(stream *hls.Stream) (*hls.Segment, error) {
    fmt.Println("GET", stream.URI)
    res, err := http.Get(stream.URI.String())
    if err != nil {
@@ -57,7 +54,7 @@ func newSegment(stream hls.Stream) (*hls.Segment, error) {
    return hls.NewScanner(res.Body).Segment(res.Request.URL)
 }
 
-func download(stream hls.Stream, video *abc.Video) error {
+func download(stream *hls.Stream, video *abc.Video) error {
    seg, err := newSegment(stream)
    if err != nil {
       return err

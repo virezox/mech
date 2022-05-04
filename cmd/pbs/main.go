@@ -10,9 +10,13 @@ func main() {
    var address string
    flag.StringVar(&address, "a", "", "address")
    // f
-   // pbs.org/wgbh/masterpiece/episodes/downton-abbey-s2-e1
-   var bandwidth int
-   flag.IntVar(&bandwidth, "f", 2_572_025, "target bandwidth")
+   // http://pbs.org/wnet/nature/about-portugal-wild-land-edge
+   var video int
+   flag.IntVar(&video, "f", 2588259, "video bandwidth")
+   // g
+   // http://pbs.org/wnet/nature/about-portugal-wild-land-edge
+   var audio string
+   flag.StringVar(&audio, "g", "English", "audio name")
    // i
    var info bool
    flag.BoolVar(&info, "i", false, "information")
@@ -24,7 +28,7 @@ func main() {
       pbs.LogLevel = 1
    }
    if address != "" {
-      err := doWidget(address, bandwidth, info)
+      err := doWidget(address, audio, video, info)
       if err != nil {
          panic(err)
       }

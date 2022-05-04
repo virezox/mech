@@ -8,10 +8,9 @@ import (
    "net/http"
    "net/url"
    "os"
-   "sort"
 )
 
-func doManifest(id, address string, bandwidth int, info bool) error {
+func doManifest(id, address string, audio, video int, info bool) error {
    cache, err := os.UserCacheDir()
    if err != nil {
       return err
@@ -41,23 +40,19 @@ func doManifest(id, address string, bandwidth int, info bool) error {
    if err != nil {
       return err
    }
-   if bandwidth >= 1 {
-      sort.Sort(hls.Bandwidth{master, bandwidth})
-   }
    if info {
       fmt.Println(asset)
-   }
-   for _, video := range master.Stream {
-      if info {
-         fmt.Println(video)
-      } else {
-         err := download(video.URI, asset.AppleContentID + hls.TS)
-         if err != nil {
-            return err
-         }
-         audio := master.Audio(video)
-         return download(audio.URI, asset.AppleContentID + hls.AAC)
+      for _, stream := range master.Streams {
+         fmt.Println(stream)
       }
+   } else {
+      stream := master.Stream(audio)
+      err := download(stream.URI, asset.AppleContentID + hls.AAC)
+      if err != nil {
+         return err
+      }
+      stream = master.Stream(video)
+      return download(stream.URI, asset.AppleContentID + hls.TS)
    }
    return nil
 }
