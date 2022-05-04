@@ -9,7 +9,7 @@ import (
 const frasier = "18926-001"
 
 func TestVideo(t *testing.T) {
-   video, err := NewVideo(frasier)
+   video, err := NewStream(frasier)
    if err != nil {
       t.Fatal(err)
    }

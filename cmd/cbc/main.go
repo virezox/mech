@@ -18,11 +18,11 @@ func main() {
    // f
    // gem.cbc.ca/media/downton-abbey/s01e05
    var video int
-   flag.IntVar(&video, "f", 2767625, "video bandwidth")
+   flag.IntVar(&video, "f", 2767506, "video bandwidth")
    // g
    // gem.cbc.ca/media/downton-abbey/s01e05
-   var audio int
-   flag.IntVar(&audio, "g", 204384, "audio bandwidth")
+   var audio string
+   flag.StringVar(&audio, "g", "English", "audio name")
    // i
    var info bool
    flag.BoolVar(&info, "i", false, "information")
