@@ -55,20 +55,20 @@ func doManifest(id, address, audio string, video int, info bool) error {
    } else {
       if audio != "" {
          media := master.Audio(audio)
-         err := get(media.URI, asset.AppleContentID + hls.AAC)
+         err := download(media.URI, asset.AppleContentID + hls.AAC)
          if err != nil {
             return err
          }
       }
       if video >= 1 {
          stream := master.Stream(video)
-         return get(stream.URI, asset.AppleContentID + hls.TS)
+         return download(stream.URI, asset.AppleContentID + hls.TS)
       }
    }
    return nil
 }
 
-func get(addr *url.URL, name string) error {
+func download(addr *url.URL, name string) error {
    seg, err := newSegment(addr.String())
    if err != nil {
       return err

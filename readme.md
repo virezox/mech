@@ -9,7 +9,20 @@
 
 Download media or send API requests
 
-[1]://f002.backblazeb2.com/file/ql8mlh/Paint.It.Black.2016.mp4
+## Why use this module?
+
+It is small. The only third party import is:
+
+~~~
+github.com/89z/format
+~~~
+
+which in turn only has these third party imports:
+
+~~~
+github.com/refraction-networking/utls
+google.golang.org/protobuf
+~~~
 
 ## How to install?
 
@@ -28,9 +41,6 @@ and enter:
 go build
 ~~~
 
-[2]://github.com/89z/mech/releases
-[3]://go.dev/dl
-[4]://github.com/89z/mech/archive/refs/heads/master.zip
 
 ## Sponsor
 
@@ -41,3 +51,8 @@ other methods. Thank you!
 ## Repo
 
 https://github.com/89z/mech
+
+[1]://f002.backblazeb2.com/file/ql8mlh/Paint.It.Black.2016.mp4
+[2]://github.com/89z/mech/releases
+[3]://go.dev/dl
+[4]://github.com/89z/mech/archive/refs/heads/master.zip

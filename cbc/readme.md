@@ -27,8 +27,6 @@ The largest Canada block is:
 
 ## How to get `apiKey`?
 
-JADX:
-
 ~~~
 sources\vd\g.java
 private static final String loginRadiusProdKey =
