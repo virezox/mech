@@ -7,27 +7,16 @@ import (
    "time"
 )
 
-type Player struct {
-   PlayabilityStatus struct {
-      Status string
-      Reason string
-   }
-   VideoDetails struct {
-      VideoID string
-      LengthSeconds int64 `json:"lengthSeconds,string"`
-      ViewCount int64 `json:"viewCount,string"`
-      Author string
-      Title string
-      ShortDescription string
-   }
-   Microformat struct {
-      PlayerMicroformatRenderer struct {
-         PublishDate string // 2013-06-11
-      }
-   }
-   StreamingData struct {
-      AdaptiveFormats Formats
-   }
+func (p Player) Duration() time.Duration {
+   return time.Duration(p.VideoDetails.LengthSeconds) * time.Second
+}
+
+func (p Player) Date() string {
+   return p.Microformat.PlayerMicroformatRenderer.PublishDate
+}
+
+func (p Player) Time() (time.Time, error) {
+   return time.Parse("2006-01-02", p.Date())
 }
 
 func (p Player) Base() string {
@@ -38,35 +27,54 @@ func (p Player) Base() string {
    return mech.Clean(buf.String())
 }
 
-func (p Player) Date() (time.Time, error) {
-   value := p.Microformat.PlayerMicroformatRenderer.PublishDate
-   return time.Parse("2006-01-02", value)
+type Player struct {
+   VideoDetails struct {
+      VideoID string
+      LengthSeconds int64 `json:"lengthSeconds,string"`
+      ViewCount int64 `json:"viewCount,string"`
+      Author string
+      Title string
+      ShortDescription string
+   }
+   Microformat struct {
+      PlayerMicroformatRenderer struct {
+         PublishDate string
+      }
+   }
+   StreamingData struct {
+      AdaptiveFormats Formats
+   }
+   PlayabilityStatus Status
+}
+
+type Status struct {
+   Status string
+   Reason string
+}
+
+func (s Status) String() string {
+   var buf strings.Builder
+   buf.WriteString("Status: ")
+   buf.WriteString(s.Status)
+   if s.Reason != "" {
+      buf.WriteString("\nReason: ")
+      buf.WriteString(s.Reason)
+   }
+   return buf.String()
 }
 
 func (p Player) Format(f fmt.State, verb rune) {
-   fmt.Fprintln(f, p.Status())
+   fmt.Fprintln(f, p.PlayabilityStatus)
    fmt.Fprintln(f, "VideoID:", p.VideoDetails.VideoID)
-   fmt.Fprintln(f, "Length:", p.VideoDetails.LengthSeconds)
+   fmt.Fprintln(f, "Duration:", p.Duration())
    fmt.Fprintln(f, "ViewCount:", p.VideoDetails.ViewCount)
    fmt.Fprintln(f, "Author:", p.VideoDetails.Author)
    fmt.Fprintln(f, "Title:", p.VideoDetails.Title)
-   date := p.Microformat.PlayerMicroformatRenderer.PublishDate
-   if date != "" {
-      fmt.Fprintln(f, "Date:", date)
+   if p.Date() != "" {
+      fmt.Fprintln(f, "Date:", p.Date())
    }
    for _, form := range p.StreamingData.AdaptiveFormats {
       fmt.Fprintln(f)
       form.Format(f, verb)
    }
-}
-
-func (p Player) Status() string {
-   var buf strings.Builder
-   buf.WriteString("Status: ")
-   buf.WriteString(p.PlayabilityStatus.Status)
-   if p.PlayabilityStatus.Reason != "" {
-      buf.WriteString("\nReason: ")
-      buf.WriteString(p.PlayabilityStatus.Reason)
-   }
-   return buf.String()
 }

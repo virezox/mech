@@ -42,7 +42,7 @@ func main() {
          panic(err)
       }
    } else if id != "" || address != "" {
-      err := doManifest(id, address, audio, video, info)
+      err := newMaster(id, address, audio, video, info)
       if err != nil {
          panic(err)
       }

@@ -2,16 +2,22 @@ package main
 
 import (
    "flag"
-   "github.com/89z/mech/abc"
+   "fmt"
+   "github.com/89z/format"
+   "github.com/89z/format/hls"
+   "github.com/89z/mech/roku"
+   "io"
+   "net/http"
+   "os"
 )
 
 func main() {
-   // a
-   var address string
-   flag.StringVar(&address, "a", "", "address")
+   // b
+   var id string
+   flag.StringVar(&id, "b", "", "ID")
    // f
    var bandwidth int
-   flag.IntVar(&bandwidth, "f", 2_895_476, "target bandwidth")
+   flag.IntVar(&bandwidth, "f", 3_000_000, "target bandwidth")
    // i
    var info bool
    flag.BoolVar(&info, "i", false, "information")
@@ -20,10 +26,10 @@ func main() {
    flag.BoolVar(&verbose, "v", false, "verbose")
    flag.Parse()
    if verbose {
-      abc.LogLevel = 1
+      roku.LogLevel = 1
    }
-   if address != "" {
-      err := newMaster(address, bandwidth, info)
+   if id != "" {
+      err := doManifest(guid, bandwidth, info)
       if err != nil {
          panic(err)
       }

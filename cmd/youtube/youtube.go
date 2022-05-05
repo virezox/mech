@@ -104,7 +104,7 @@ func (v video) do() error {
       play.StreamingData.AdaptiveFormats.MediaType()
       fmt.Println(play)
    } else {
-      fmt.Println(play.Status())
+      fmt.Println(play.PlayabilityStatus)
       if v.height >= 1 {
          form := play.StreamingData.AdaptiveFormats.Video(v.height)
          err := download(form, play.Base())

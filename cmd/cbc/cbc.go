@@ -10,7 +10,7 @@ import (
    "os"
 )
 
-func doManifest(id, address, audio string, video int, info bool) error {
+func newMaster(id, address, audio string, video int, info bool) error {
    cache, err := os.UserCacheDir()
    if err != nil {
       return err
