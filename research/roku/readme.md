@@ -21,18 +21,6 @@ te: trailers
 content-length: 0
 ~~~
 
-Example:
-
-~~~
-runTimeSeconds	2685
-title	"Coming Home"
-episodeNumber	"1"
-seasonNumber	"1"
-releaseDate	"2007-10-14T00:00:00Z"
-.series.title Heartland
-.viewOptions[0].media.videos[0].url = "https://s4b3b9a4.ssl.hwcdn.net/files/a8wn4hw/vi/04/07/10427421/s10427421.m3u8";
-~~~
-
 ## Android client
 
 just a remote control:
