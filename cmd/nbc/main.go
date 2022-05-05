@@ -25,7 +25,7 @@ func main() {
       nbc.LogLevel = 1
    }
    if guid >= 1 {
-      err := doManifest(guid, bandwidth, info)
+      err := newMaster(guid, bandwidth, info)
       if err != nil {
          panic(err)
       }

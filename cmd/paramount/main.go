@@ -27,7 +27,7 @@ func main() {
       paramount.LogLevel = 1
    }
    if guid != "" || address != "" {
-      err := doManifest(guid, address, bandwidth, info)
+      err := newMaster(guid, address, bandwidth, info)
       if err != nil {
          panic(err)
       }

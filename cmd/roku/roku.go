@@ -1,7 +1,6 @@
 package main
 
 import (
-   "flag"
    "fmt"
    "github.com/89z/format"
    "github.com/89z/format/hls"
@@ -11,13 +10,14 @@ import (
    "os"
 )
 
-func doManifest(guid int64, bandwidth int, info bool) error {
-   vod, err := roku.NewAccessVOD(guid)
+func newMaster(id string, bandwidth int, info bool) error {
+   content, err := roku.NewContent(id)
    if err != nil {
       return err
    }
-   fmt.Println("GET", vod.ManifestPath)
-   res, err := http.Get(vod.ManifestPath)
+   video := content.Video()
+   fmt.Println("GET", video.URL)
+   res, err := http.Get(video.URL)
    if err != nil {
       return err
    }
@@ -27,21 +27,22 @@ func doManifest(guid int64, bandwidth int, info bool) error {
       return err
    }
    if info {
+      fmt.Println(content)
+      video := master.Stream(bandwidth)
       for _, stream := range master.Streams {
+         if stream.Bandwidth == video.Bandwidth {
+            fmt.Print("!")
+         }
          fmt.Println(stream)
       }
    } else {
       stream := master.Stream(bandwidth)
-      video, err := roku.NewVideo(guid)
-      if err != nil {
-         return err
-      }
-      return download(stream, video)
+      return download(stream, content.Base())
    }
    return nil
 }
 
-func download(stream *hls.Stream, video *roku.Video) error {
+func download(stream *hls.Stream, base string) error {
    fmt.Println("GET", stream.URI)
    res, err := http.Get(stream.URI.String())
    if err != nil {
@@ -52,7 +53,7 @@ func download(stream *hls.Stream, video *roku.Video) error {
    if err != nil {
       return err
    }
-   file, err := os.Create(video.Base() + hls.TS)
+   file, err := os.Create(base + hls.TS)
    if err != nil {
       return err
    }

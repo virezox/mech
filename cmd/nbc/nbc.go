@@ -10,7 +10,7 @@ import (
    "os"
 )
 
-func doManifest(guid int64, bandwidth int, info bool) error {
+func newMaster(guid int64, bandwidth int, info bool) error {
    vod, err := nbc.NewAccessVOD(guid)
    if err != nil {
       return err
@@ -35,12 +35,12 @@ func doManifest(guid int64, bandwidth int, info bool) error {
       if err != nil {
          return err
       }
-      return download(stream, video)
+      return download(stream, video.Base())
    }
    return nil
 }
 
-func download(stream *hls.Stream, video *nbc.Video) error {
+func download(stream *hls.Stream, base string) error {
    fmt.Println("GET", stream.URI)
    res, err := http.Get(stream.URI.String())
    if err != nil {
@@ -51,7 +51,7 @@ func download(stream *hls.Stream, video *nbc.Video) error {
    if err != nil {
       return err
    }
-   file, err := os.Create(video.Base() + hls.TS)
+   file, err := os.Create(base + hls.TS)
    if err != nil {
       return err
    }

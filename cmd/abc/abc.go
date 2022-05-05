@@ -39,7 +39,7 @@ func newMaster(addr string, bandwidth int, info bool) error {
       }
    } else {
       stream := master.Stream(bandwidth)
-      return download(stream, video)
+      return download(stream, video.Base())
    }
    return nil
 }
@@ -54,7 +54,7 @@ func newSegment(stream *hls.Stream) (*hls.Segment, error) {
    return hls.NewScanner(res.Body).Segment(res.Request.URL)
 }
 
-func download(stream *hls.Stream, video *abc.Video) error {
+func download(stream *hls.Stream, base string) error {
    seg, err := newSegment(stream)
    if err != nil {
       return err
@@ -69,7 +69,7 @@ func download(stream *hls.Stream, video *abc.Video) error {
    if err != nil {
       return err
    }
-   file, err := os.Create(video.Base() + hls.TS)
+   file, err := os.Create(base + hls.TS)
    if err != nil {
       return err
    }

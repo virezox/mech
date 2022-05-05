@@ -10,7 +10,7 @@ import (
    "time"
 )
 
-func doManifest(guid, address string, bandwidth int, info bool) error {
+func newMaster(guid, address string, bandwidth int, info bool) error {
    if guid == "" {
       guid = paramount.GUID(address)
    }
@@ -39,7 +39,7 @@ func doManifest(guid, address string, bandwidth int, info bool) error {
       }
    } else {
       stream := master.Stream(bandwidth)
-      return download(stream, video)
+      return download(stream, video.Base())
    }
    return nil
 }
@@ -59,7 +59,7 @@ func get(addr string) (*http.Response, error) {
    return res, nil
 }
 
-func download(stream *hls.Stream, video *paramount.Video) error {
+func download(stream *hls.Stream, base string) error {
    seg, err := newSegment(stream.URI.String())
    if err != nil {
       return err
@@ -74,7 +74,7 @@ func download(stream *hls.Stream, video *paramount.Video) error {
    if err != nil {
       return err
    }
-   file, err := os.Create(video.Base() + hls.TS)
+   file, err := os.Create(base + hls.TS)
    if err != nil {
       return err
    }

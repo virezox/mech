@@ -2,13 +2,7 @@ package main
 
 import (
    "flag"
-   "fmt"
-   "github.com/89z/format"
-   "github.com/89z/format/hls"
    "github.com/89z/mech/roku"
-   "io"
-   "net/http"
-   "os"
 )
 
 func main() {
@@ -29,7 +23,7 @@ func main() {
       roku.LogLevel = 1
    }
    if id != "" {
-      err := doManifest(guid, bandwidth, info)
+      err := newMaster(id, bandwidth, info)
       if err != nil {
          panic(err)
       }

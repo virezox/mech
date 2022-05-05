@@ -35,7 +35,7 @@ func NewContent(id string) (*Content, error) {
    addr.Host = "content.sr.roku.com"
    addr.Path = "/content/v1/roku-trc/" + id
    addr.RawQuery = url.Values{
-      "expand": {"series.seasons.episodes"},
+      "expand": {"series"},
       "include": {strings.Join([]string{
          "episodeNumber",
          "releaseDate",
@@ -69,6 +69,18 @@ func NewContent(id string) (*Content, error) {
       return nil, err
    }
    return con, nil
+}
+
+func (c Content) Base() string {
+   var buf strings.Builder
+   buf.WriteString(c.Series.Title)
+   buf.WriteByte('-')
+   buf.WriteString(c.Title)
+   buf.WriteByte('-')
+   buf.WriteString(c.SeasonNumber)
+   buf.WriteByte('-')
+   buf.WriteString(c.EpisodeNumber)
+   return buf.String()
 }
 
 func (c Content) Duration() time.Duration {
