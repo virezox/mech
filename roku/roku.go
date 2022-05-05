@@ -10,13 +10,34 @@ import (
    "time"
 )
 
-var LogLevel format.LogLevel
+func (c Content) Format(f fmt.State, verb rune) {
+   fmt.Fprintln(f, "Type:", c.Meta.MediaType)
+   fmt.Fprintln(f, "Title:", c.Title)
+   if c.Meta.MediaType == "episode" {
+      fmt.Fprintln(f, "Series:", c.Series.Title)
+      fmt.Fprintln(f, "Season:", c.SeasonNumber)
+      fmt.Fprintln(f, "Episode:", c.EpisodeNumber)
+   }
+   fmt.Fprintln(f, "Date:", c.ReleaseDate)
+   fmt.Fprint(f, "Duration: ", c.Duration())
+   if verb == 'a' {
+      for _, opt := range c.ViewOptions {
+         fmt.Fprint(f, "\nLicense: ", opt.License)
+         for _, vid := range opt.Media.Videos {
+            fmt.Fprint(f, "\nURL: ", vid.URL)
+         }
+      }
+   }
+}
 
 type Content struct {
+   Meta struct {
+      MediaType string
+   }
+   Title string
    Series struct {
       Title string
    }
-   Title string
    SeasonNumber string
    EpisodeNumber string
    ReleaseDate string
@@ -28,6 +49,8 @@ type Content struct {
       }
    }
 }
+
+var LogLevel format.LogLevel
 
 func NewContent(id string) (*Content, error) {
    var addr url.URL
@@ -85,23 +108,6 @@ func (c Content) Base() string {
 
 func (c Content) Duration() time.Duration {
    return time.Duration(c.RunTimeSeconds) * time.Second
-}
-
-func (c Content) Format(f fmt.State, verb rune) {
-   fmt.Fprintln(f, "Series:", c.Series.Title)
-   fmt.Fprintln(f, "Title:", c.Title)
-   fmt.Fprintln(f, "Season:", c.SeasonNumber)
-   fmt.Fprintln(f, "Episode:", c.EpisodeNumber)
-   fmt.Fprintln(f, "Date:", c.ReleaseDate)
-   fmt.Fprint(f, "Duration: ", c.Duration())
-   if verb == 'a' {
-      for _, opt := range c.ViewOptions {
-         fmt.Fprint(f, "\nLicense: ", opt.License)
-         for _, vid := range opt.Media.Videos {
-            fmt.Fprint(f, "\nURL: ", vid.URL)
-         }
-      }
-   }
 }
 
 func (c Content) Video() *Video {
