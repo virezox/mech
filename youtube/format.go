@@ -11,35 +11,6 @@ import (
 
 const chunk = 10_000_000
 
-// averageBitrate is not always available:
-// Tq92D6wQ1mg
-type Format struct {
-   AudioQuality string
-   Bitrate int
-   ContentLength int64 `json:"contentLength,string"`
-   Height int
-   MimeType string
-   QualityLabel string
-   URL string
-   Width int
-}
-
-func (f Format) Format(s fmt.State, verb rune) {
-   if f.QualityLabel != "" {
-      fmt.Fprint(s, "Quality:", f.QualityLabel)
-   } else {
-      fmt.Fprint(s, "Quality:", f.AudioQuality)
-   }
-   fmt.Fprint(s, " Bitrate:", f.Bitrate)
-   if f.ContentLength >= 1 { // Tq92D6wQ1mg
-      fmt.Fprint(s, " Size:", f.ContentLength)
-   }
-   fmt.Fprint(s, " Type:", f.MimeType)
-   if verb == 'a' {
-      fmt.Fprint(s, " URL:", f.URL)
-   }
-}
-
 func (f Format) WriteTo(w io.Writer) (int64, error) {
    req, err := http.NewRequest("GET", f.URL, nil)
    if err != nil {
@@ -72,10 +43,6 @@ func (f Format) WriteTo(w io.Writer) (int64, error) {
 
 type Formats []Format
 
-func (f Formats) Len() int {
-   return len(f)
-}
-
 func (f Formats) MediaType() error {
    for i, form := range f {
       typ, param, err := mime.ParseMediaType(form.MimeType)
@@ -88,28 +55,56 @@ func (f Formats) MediaType() error {
    return nil
 }
 
-func (f Formats) Swap(i, j int) {
-   f[i], f[j] = f[j], f[i]
-}
-
-// We cannot use bitrate to sort, as you end up with different heights:
-//
-// ID          | 480    | 720 low | 720 high | 1080
-// ------------|--------|---------|----------|-----
-// 7WTEB7Qbt4U | 285106 | 286687  | 513601   | 513675
-// RPjE9riEhtA | 584072 | 1169166 | 1693812  | 2151670
-type Height struct {
-   Formats
-   Target int
-}
-
-func (h Height) Less(i, j int) bool {
-   distance := func(k int) int {
-      diff := h.Formats[k].Height - h.Target
-      if diff >= 0 {
-         return diff
-      }
-      return -diff
+func (f Format) Format(s fmt.State, verb rune) {
+   if f.QualityLabel != "" {
+      fmt.Fprint(s, "Quality:", f.QualityLabel)
+   } else {
+      fmt.Fprint(s, "Quality:", f.AudioQuality)
    }
-   return distance(i) < distance(j)
+   fmt.Fprint(s, " Bitrate:", f.Bitrate)
+   if f.ContentLength >= 1 { // Tq92D6wQ1mg
+      fmt.Fprint(s, " Size:", f.ContentLength)
+   }
+   fmt.Fprint(s, " Type:", f.MimeType)
+   if verb == 'a' {
+      fmt.Fprint(s, " URL:", f.URL)
+   }
+}
+
+// averageBitrate is not always available:
+// Tq92D6wQ1mg
+type Format struct {
+   AudioQuality string
+   Bitrate int
+   ContentLength int64 `json:"contentLength,string"`
+   Height int
+   MimeType string
+   QualityLabel string
+   URL string
+   Width int
+}
+
+func (f Formats) Audio(quality string) *Format {
+   for _, form := range f {
+      if form.AudioQuality == quality {
+         return &form
+      }
+   }
+   return nil
+}
+
+func (f Formats) Video(height int) *Format {
+   distance := func(f *Format) int {
+      if f.Height > height {
+         return f.Height - height
+      }
+      return height - f.Height
+   }
+   var dst *Format
+   for i, src := range f {
+      if i == 0 || distance(&src) < distance(dst) {
+         dst = &f[i]
+      }
+   }
+   return dst
 }

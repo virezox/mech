@@ -5,39 +5,7 @@ import (
    "github.com/89z/mech"
    "github.com/89z/mech/youtube"
    "os"
-   "sort"
 )
-
-func (v video) doAudio(play *youtube.Player) error {
-   for _, form := range play.StreamingData.AdaptiveFormats {
-      if form.AudioQuality == v.audio {
-         ext, err := mech.ExtensionByType(form.MimeType)
-         if err != nil {
-            return err
-         }
-         file, err := os.Create(play.Base() + ext)
-         if err != nil {
-            return err
-         }
-         defer file.Close()
-         if _, err := form.WriteTo(file); err != nil {
-            return err
-         }
-      }
-   }
-   return nil
-}
-
-type video struct {
-   address string
-   audio string
-   height int
-   id string
-   info bool
-   two bool
-   three bool
-   four bool
-}
 
 func doRefresh() error {
    oauth, err := youtube.NewOAuth()
@@ -100,55 +68,57 @@ func (v video) player() (*youtube.Player, error) {
    return youtube.Android.Player(v.id)
 }
 
-func (v video) do() error {
-   play, err := v.player()
-   if err != nil {
-      return err
-   }
-   forms := play.StreamingData.AdaptiveFormats
-   if v.height >= 1 {
-      sort.SliceStable(forms, func(int, int) bool {
-         return true
-      })
-      sort.Stable(youtube.Height{forms, v.height})
-   }
-   if v.info {
-      forms.MediaType()
-      fmt.Println(play)
-   } else {
-      fmt.Println(play.Status())
-      if v.height >= 1 {
-         err := v.doVideo(play)
-         if err != nil {
-            return err
-         }
-      }
-      if v.audio != "" {
-         err := v.doAudio(play)
-         if err != nil {
-            return err
-         }
-      }
-   }
-   return nil
-}
-
-func (v video) doVideo(play *youtube.Player) error {
-   if len(play.StreamingData.AdaptiveFormats) == 0 {
-      return nil
-   }
-   form := play.StreamingData.AdaptiveFormats[0]
+func download(form *youtube.Format, base string) error {
    ext, err := mech.ExtensionByType(form.MimeType)
    if err != nil {
       return err
    }
-   file, err := os.Create(play.Base() + ext)
+   file, err := os.Create(base + ext)
    if err != nil {
       return err
    }
    defer file.Close()
    if _, err := form.WriteTo(file); err != nil {
       return err
+   }
+   return nil
+}
+
+type video struct {
+   address string
+   audio string
+   height int
+   id string
+   info bool
+   two bool
+   three bool
+   four bool
+}
+
+func (v video) do() error {
+   play, err := v.player()
+   if err != nil {
+      return err
+   }
+   if v.info {
+      play.StreamingData.AdaptiveFormats.MediaType()
+      fmt.Println(play)
+   } else {
+      fmt.Println(play.Status())
+      if v.height >= 1 {
+         form := play.StreamingData.AdaptiveFormats.Video(v.height)
+         err := download(form, play.Base())
+         if err != nil {
+            return err
+         }
+      }
+      if v.audio != "" {
+         form := play.StreamingData.AdaptiveFormats.Audio(v.audio)
+         err := download(form, play.Base())
+         if err != nil {
+            return err
+         }
+      }
    }
    return nil
 }

@@ -27,8 +27,6 @@ type Player struct {
    }
    StreamingData struct {
       AdaptiveFormats Formats
-      Formats Formats
-      HlsManifestURL string
    }
 }
 
