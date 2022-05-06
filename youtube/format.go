@@ -6,8 +6,34 @@ import (
    "io"
    "mime"
    "net/http"
-   "strings"
 )
+
+func (f Format) Format(s fmt.State, verb rune) {
+   if f.QualityLabel != "" {
+      fmt.Fprint(s, "Quality:", f.QualityLabel)
+   } else {
+      fmt.Fprint(s, "Quality:", f.AudioQuality)
+   }
+   fmt.Fprint(s, " Bitrate:", f.Bitrate)
+   if f.ContentLength >= 1 { // Tq92D6wQ1mg
+      fmt.Fprint(s, " Size:", f.ContentLength)
+   }
+   fmt.Fprint(s, " Codec:", f.MimeType)
+   if verb == 'a' {
+      fmt.Fprint(s, " URL:", f.URL)
+   }
+}
+
+func (f Formats) MediaType() error {
+   for i, form := range f {
+      _, param, err := mime.ParseMediaType(form.MimeType)
+      if err != nil {
+         return err
+      }
+      f[i].MimeType = param["codecs"]
+   }
+   return nil
+}
 
 const chunk = 10_000_000
 
@@ -20,22 +46,6 @@ type Format struct {
    QualityLabel string
    URL string
    Width int
-}
-
-func (f Format) Format(s fmt.State, verb rune) {
-   if f.QualityLabel != "" {
-      fmt.Fprint(s, "Quality:", f.QualityLabel)
-   } else {
-      fmt.Fprint(s, "Quality:", f.AudioQuality)
-   }
-   fmt.Fprint(s, " Bitrate:", f.Bitrate)
-   if f.ContentLength >= 1 { // Tq92D6wQ1mg
-      fmt.Fprint(s, " Size:", f.ContentLength)
-   }
-   fmt.Fprint(s, " Type:", f.MimeType)
-   if verb == 'a' {
-      fmt.Fprint(s, " URL:", f.URL)
-   }
 }
 
 func (f Format) WriteTo(w io.Writer) (int64, error) {
@@ -79,18 +89,6 @@ func (f Formats) Audio(quality string) *Format {
    return nil
 }
 
-func (f Formats) MediaType() error {
-   for i, form := range f {
-      typ, param, err := mime.ParseMediaType(form.MimeType)
-      if err != nil {
-         return err
-      }
-      param["codecs"], _, _ = strings.Cut(param["codecs"], ".")
-      f[i].MimeType = mime.FormatMediaType(typ, param)
-   }
-   return nil
-}
-
 func (f Formats) Video(height int) *Format {
    distance := func(f *Format) int {
       if f.Height > height {
@@ -100,7 +98,12 @@ func (f Formats) Video(height int) *Format {
    }
    var dst *Format
    for i, src := range f {
-      if i == 0 || distance(&src) < distance(dst) {
+      // since codecs are in this order
+      // 1. avc1
+      // 2. vp9
+      // 3. av01
+      // do "<=" so we can get last one
+      if i == 0 || distance(&src) <= distance(dst) {
          dst = &f[i]
       }
    }

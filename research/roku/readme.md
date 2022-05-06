@@ -27,16 +27,6 @@ Now go back to the video page, and you should see a request like this:
 
 ~~~
 POST https://wv.service.expressplay.com/hms/wv/rights/?ExpressPlayToken=BQA1P5QRKZgAJDIzN2U4NTE4LTQwN2QtNDI3Zi05NTkyLWFmMTJiMzRkMmU0NwAAAIBW-ZfZBFLrJdKgAFVJXA35OSjy4wtym39JdDx2a5QSebndwcLe7ji0mb8cxO4B0cWin3BPPiq_Xb1X1siMd9EnP4FhzcZu4yaWkM7q0kmgnRY5IcY1oZmiYYDWaNE7wKnDQWhrZKK_wmTDca9xwL19y3M4WASKwsnYr5WEj-dEeYihJ9RhCRmHZS-YKusGmLTEWghg HTTP/2.0
-user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:88.0) Gecko/20100101 Firefox/88.0
-accept: */*
-accept-language: en-US,en;q=0.5
-accept-encoding: gzip, deflate, br
-content-type: application/octet-stream
-content-length: 2
-origin: https://therokuchannel.roku.com
-dnt: 1
-referer: https://therokuchannel.roku.com/
-te: trailers
 ~~~
 
 Now go to Get Widevine Keys, and enter the information from above:

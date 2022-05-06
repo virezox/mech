@@ -7,6 +7,50 @@ import (
    "os"
 )
 
+func (v video) do() error {
+   play, err := v.player()
+   if err != nil {
+      return err
+   }
+   if v.info {
+      play.StreamingData.AdaptiveFormats.MediaType()
+      fmt.Println(play)
+   } else {
+      fmt.Println(play.PlayabilityStatus)
+      if v.height >= 1 {
+         form := play.StreamingData.AdaptiveFormats.Video(v.height)
+         err := download(form, play.Base())
+         if err != nil {
+            return err
+         }
+      }
+      if v.audio != "" {
+         form := play.StreamingData.AdaptiveFormats.Audio(v.audio)
+         err := download(form, play.Base())
+         if err != nil {
+            return err
+         }
+      }
+   }
+   return nil
+}
+
+func download(form *youtube.Format, base string) error {
+   ext, err := mech.ExtensionByType(form.MimeType)
+   if err != nil {
+      return err
+   }
+   file, err := os.Create(base + ext)
+   if err != nil {
+      return err
+   }
+   defer file.Close()
+   if _, err := form.WriteTo(file); err != nil {
+      return err
+   }
+   return nil
+}
+
 func doRefresh() error {
    oauth, err := youtube.NewOAuth()
    if err != nil {
@@ -68,22 +112,6 @@ func (v video) player() (*youtube.Player, error) {
    return youtube.Android.Player(v.id)
 }
 
-func download(form *youtube.Format, base string) error {
-   ext, err := mech.ExtensionByType(form.MimeType)
-   if err != nil {
-      return err
-   }
-   file, err := os.Create(base + ext)
-   if err != nil {
-      return err
-   }
-   defer file.Close()
-   if _, err := form.WriteTo(file); err != nil {
-      return err
-   }
-   return nil
-}
-
 type video struct {
    address string
    audio string
@@ -95,30 +123,3 @@ type video struct {
    four bool
 }
 
-func (v video) do() error {
-   play, err := v.player()
-   if err != nil {
-      return err
-   }
-   if v.info {
-      play.StreamingData.AdaptiveFormats.MediaType()
-      fmt.Println(play)
-   } else {
-      fmt.Println(play.PlayabilityStatus)
-      if v.height >= 1 {
-         form := play.StreamingData.AdaptiveFormats.Video(v.height)
-         err := download(form, play.Base())
-         if err != nil {
-            return err
-         }
-      }
-      if v.audio != "" {
-         form := play.StreamingData.AdaptiveFormats.Audio(v.audio)
-         err := download(form, play.Base())
-         if err != nil {
-            return err
-         }
-      }
-   }
-   return nil
-}
