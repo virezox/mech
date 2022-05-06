@@ -9,6 +9,9 @@ func main() {
    // b
    var id string
    flag.StringVar(&id, "b", "", "ID")
+   // dash
+   var dash bool
+   flag.BoolVar(&dash, "dash", false, "DASH")
    // f
    var bandwidth int
    flag.IntVar(&bandwidth, "f", 3_000_000, "target bandwidth")
@@ -23,9 +26,20 @@ func main() {
       roku.LogLevel = 1
    }
    if id != "" {
-      err := newMaster(id, bandwidth, info)
+      content, err := roku.NewContent(id)
       if err != nil {
          panic(err)
+      }
+      if dash {
+         err := doDASH(content, bandwidth, info)
+         if err != nil {
+            panic(err)
+         }
+      } else {
+         err := doHLS(content, bandwidth, info)
+         if err != nil {
+            panic(err)
+         }
       }
    } else {
       flag.Usage()

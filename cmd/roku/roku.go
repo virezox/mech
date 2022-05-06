@@ -3,6 +3,7 @@ package main
 import (
    "fmt"
    "github.com/89z/format"
+   "github.com/89z/format/dash"
    "github.com/89z/format/hls"
    "github.com/89z/mech/roku"
    "io"
@@ -10,12 +11,24 @@ import (
    "os"
 )
 
-func newMaster(id string, bandwidth int, info bool) error {
-   content, err := roku.NewContent(id)
+func doDASH(con *roku.Content, bandwidth int, info bool) error {
+   video := con.DASH()
+   fmt.Println("GET", video.URL)
+   res, err := http.Get(video.URL)
    if err != nil {
       return err
    }
-   video, err := content.Video()
+   defer res.Body.Close()
+   period, err := dash.NewPeriod(res.Body)
+   if err != nil {
+      return err
+   }
+   fmt.Printf("%+v\n", period)
+   return nil
+}
+
+func doHLS(con *roku.Content, bandwidth int, info bool) error {
+   video, err := con.HLS()
    if err != nil {
       return err
    }
@@ -31,7 +44,7 @@ func newMaster(id string, bandwidth int, info bool) error {
    }
    stream := master.Stream(bandwidth)
    if info {
-      fmt.Println(content)
+      fmt.Println(con)
       for _, each := range master.Streams {
          if each.Bandwidth == stream.Bandwidth {
             fmt.Print("!")
@@ -39,7 +52,7 @@ func newMaster(id string, bandwidth int, info bool) error {
          fmt.Println(each)
       }
    } else {
-      return download(stream, content.Base())
+      return download(stream, con.Base())
    }
    return nil
 }

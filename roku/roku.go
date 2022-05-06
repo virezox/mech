@@ -110,21 +110,9 @@ func (c Content) Format(f fmt.State, verb rune) {
    }
 }
 
-func (c Content) Video() (*Video, error) {
-   for _, opt := range c.ViewOptions {
-      if opt.License == "Free" {
-         for _, vid := range opt.Media.Videos {
-            if vid.DrmAuthentication == nil {
-               return &vid, nil
-            }
-         }
-      }
-   }
-   return nil, errorString("drmAuthentication")
-}
-
 type Video struct {
    DrmAuthentication *struct{}
+   VideoType string
    URL string
 }
 
@@ -132,4 +120,28 @@ type errorString string
 
 func (e errorString) Error() string {
    return string(e)
+}
+
+func (c Content) DASH() *Video {
+   for _, opt := range c.ViewOptions {
+      for _, vid := range opt.Media.Videos {
+         if vid.VideoType == "DASH" {
+            return &vid
+         }
+      }
+   }
+   return nil
+}
+
+func (c Content) HLS() (*Video, error) {
+   for _, opt := range c.ViewOptions {
+      for _, vid := range opt.Media.Videos {
+         if vid.DrmAuthentication == nil {
+            if vid.VideoType == "HLS" {
+               return &vid, nil
+            }
+         }
+      }
+   }
+   return nil, errorString("drmAuthentication")
 }
