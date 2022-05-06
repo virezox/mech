@@ -15,7 +15,10 @@ func newMaster(id string, bandwidth int, info bool) error {
    if err != nil {
       return err
    }
-   video := content.Video()
+   video, err := content.Video()
+   if err != nil {
+      return err
+   }
    fmt.Println("GET", video.URL)
    res, err := http.Get(video.URL)
    if err != nil {

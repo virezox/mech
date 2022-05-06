@@ -10,25 +10,7 @@ import (
    "time"
 )
 
-func (c Content) Format(f fmt.State, verb rune) {
-   fmt.Fprintln(f, "Type:", c.Meta.MediaType)
-   fmt.Fprintln(f, "Title:", c.Title)
-   if c.Meta.MediaType == "episode" {
-      fmt.Fprintln(f, "Series:", c.Series.Title)
-      fmt.Fprintln(f, "Season:", c.SeasonNumber)
-      fmt.Fprintln(f, "Episode:", c.EpisodeNumber)
-   }
-   fmt.Fprintln(f, "Date:", c.ReleaseDate)
-   fmt.Fprint(f, "Duration: ", c.Duration())
-   if verb == 'a' {
-      for _, opt := range c.ViewOptions {
-         fmt.Fprint(f, "\nLicense: ", opt.License)
-         for _, vid := range opt.Media.Videos {
-            fmt.Fprint(f, "\nURL: ", vid.URL)
-         }
-      }
-   }
-}
+var LogLevel format.LogLevel
 
 type Content struct {
    Meta struct {
@@ -49,8 +31,6 @@ type Content struct {
       }
    }
 }
-
-var LogLevel format.LogLevel
 
 func NewContent(id string) (*Content, error) {
    var addr url.URL
@@ -110,18 +90,41 @@ func (c Content) Duration() time.Duration {
    return time.Duration(c.RunTimeSeconds) * time.Second
 }
 
-func (c Content) Video() *Video {
-   for _, opt := range c.ViewOptions {
-      if opt.License == "Free" {
+func (c Content) Format(f fmt.State, verb rune) {
+   fmt.Fprintln(f, "Type:", c.Meta.MediaType)
+   fmt.Fprintln(f, "Title:", c.Title)
+   if c.Meta.MediaType == "episode" {
+      fmt.Fprintln(f, "Series:", c.Series.Title)
+      fmt.Fprintln(f, "Season:", c.SeasonNumber)
+      fmt.Fprintln(f, "Episode:", c.EpisodeNumber)
+   }
+   fmt.Fprintln(f, "Date:", c.ReleaseDate)
+   fmt.Fprint(f, "Duration: ", c.Duration())
+   if verb == 'a' {
+      for _, opt := range c.ViewOptions {
+         fmt.Fprint(f, "\nLicense: ", opt.License)
          for _, vid := range opt.Media.Videos {
-            return &vid
+            fmt.Fprint(f, "\nURL: ", vid.URL)
          }
       }
    }
-   return nil
+}
+
+func (c Content) Video() (*Video, error) {
+   for _, opt := range c.ViewOptions {
+      if opt.License == "Free" {
+         for _, vid := range opt.Media.Videos {
+            if vid.DrmAuthentication == nil {
+               return &vid, nil
+            }
+         }
+      }
+   }
+   return nil, errorString("drmAuthentication")
 }
 
 type Video struct {
+   DrmAuthentication *struct{}
    URL string
 }
 
