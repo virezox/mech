@@ -3,6 +3,7 @@ package bandcamp
 import (
    "fmt"
    "testing"
+   "time"
 )
 
 const artID = 3809045440
@@ -19,9 +20,9 @@ type tokenTest struct {
 }
 
 var tests = []tokenTest{
-   {"a", "https://schnaussandmunk.bandcamp.com/album/passage-2"},
+   //{"a", "https://schnaussandmunk.bandcamp.com/album/passage-2"},
    {"i", "https://schnaussandmunk.bandcamp.com/music"},
-   {"t", "https://schnaussandmunk.bandcamp.com/track/amaris-2"},
+   //{"t", "https://schnaussandmunk.bandcamp.com/track/amaris-2"},
 }
 
 func TestItem(t *testing.T) {

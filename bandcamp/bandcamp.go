@@ -12,57 +12,6 @@ import (
 
 var LogLevel format.LogLevel
 
-func (i Item) Band() (*Band, error) {
-   req, err := http.NewRequest(
-      "GET", "http://bandcamp.com/api/mobile/24/band_details", nil,
-   )
-   if err != nil {
-      return nil, err
-   }
-   req.URL.RawQuery = "band_id=" + strconv.Itoa(i.Item_ID)
-   LogLevel.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   band := new(Band)
-   if err := json.NewDecoder(res.Body).Decode(band); err != nil {
-      return nil, err
-   }
-   return band, nil
-}
-
-func (i Item) Tralbum() (*Tralbum, error) {
-   req, err := http.NewRequest(
-      "GET", "http://bandcamp.com/api/mobile/24/tralbum_details", nil,
-   )
-   if err != nil {
-      return nil, err
-   }
-   req.URL.RawQuery = url.Values{
-      "band_id": {"1"},
-      "tralbum_id": {strconv.Itoa(i.Item_ID)},
-      "tralbum_type": {i.Type()},
-   }.Encode()
-   LogLevel.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   tralb := new(Tralbum)
-   if err := json.NewDecoder(res.Body).Decode(tralb); err != nil {
-      return nil, err
-   }
-   return tralb, nil
-}
-
-type Item struct {
-   Item_Type string
-   Item_ID int
-}
-
 type Band struct {
    Name string
    Bio string
@@ -70,42 +19,6 @@ type Band struct {
       URL string
    }
    Discography []Item
-}
-
-type Tralbum struct {
-   Art_ID int64
-   Release_Date int64
-   Title string
-   Tracks []Track
-   Tralbum_Artist string
-}
-
-type Track struct {
-   Track_Num int64
-   Title string
-   Band_Name string
-   Streaming_URL *struct {
-      MP3_128 string `json:"mp3-128"`
-   }
-}
-
-func (t Track) Base() string {
-   return mech.Clean(t.Band_Name + "-" + t.Title)
-}
-
-func (t Track) String() string {
-   var buf []byte
-   buf = append(buf, "Num:"...)
-   buf = strconv.AppendInt(buf, t.Track_Num, 10)
-   buf = append(buf, " Title:"...)
-   buf = append(buf, t.Title...)
-   buf = append(buf, " Band:"...)
-   buf = append(buf, t.Band_Name...)
-   if t.Streaming_URL != nil {
-      buf = append(buf, " URL:"...)
-      buf = append(buf, t.Streaming_URL.MP3_128...)
-   }
-   return string(buf)
 }
 
 type Image struct {
@@ -171,13 +84,97 @@ func (i Image) URL(artID int64) string {
    return string(buf)
 }
 
-func (i Item) Type() string {
-   for _, char := range i.Item_Type {
-      return string(char)
+func (i Item) Band() (*Band, error) {
+   req, err := http.NewRequest(
+      "GET", "http://bandcamp.com/api/mobile/24/band_details", nil,
+   )
+   if err != nil {
+      return nil, err
    }
-   return ""
+   req.URL.RawQuery = "band_id=" + strconv.Itoa(i.Item_ID)
+   LogLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   band := new(Band)
+   if err := json.NewDecoder(res.Body).Decode(band); err != nil {
+      return nil, err
+   }
+   return band, nil
+}
+
+type Track struct {
+   Track_Num int64
+   Title string
+   Band_Name string
+   Streaming_URL *struct {
+      MP3_128 string `json:"mp3-128"`
+   }
+}
+
+func (t Track) Base() string {
+   return mech.Clean(t.Band_Name + "-" + t.Title)
+}
+
+func (t Track) String() string {
+   var buf []byte
+   buf = append(buf, "Num:"...)
+   buf = strconv.AppendInt(buf, t.Track_Num, 10)
+   buf = append(buf, " Title:"...)
+   buf = append(buf, t.Title...)
+   buf = append(buf, " Band:"...)
+   buf = append(buf, t.Band_Name...)
+   if t.Streaming_URL != nil {
+      buf = append(buf, " URL:"...)
+      buf = append(buf, t.Streaming_URL.MP3_128...)
+   }
+   return string(buf)
+}
+
+type Tralbum struct {
+   Art_ID int64
+   Release_Date int64
+   Title string
+   Tracks []Track
+   Tralbum_Artist string
 }
 
 func (t Tralbum) Date() time.Time {
    return time.Unix(t.Release_Date, 0)
+}
+
+type Item struct {
+   Item_Type string
+   Item_ID int
+}
+
+func (i Item) String() string {
+   val := make(url.Values)
+   val.Set("band_id", "1")
+   val.Set("tralbum_id", strconv.Itoa(i.Item_ID))
+   // FIXME add tralbum_type
+   return val.Encode()
+}
+
+func (i Item) Tralbum() (*Tralbum, error) {
+   req, err := http.NewRequest(
+      "GET", "http://bandcamp.com/api/mobile/24/tralbum_details", nil,
+   )
+   if err != nil {
+      return nil, err
+   }
+   req.URL.RawQuery = i.String()
+   LogLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   tralb := new(Tralbum)
+   if err := json.NewDecoder(res.Body).Decode(tralb); err != nil {
+      return nil, err
+   }
+   return tralb, nil
 }
