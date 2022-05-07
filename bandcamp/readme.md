@@ -2,27 +2,33 @@
 
 ## Android client
 
+2022-05-07
+
 ~~~
 com.bandcamp.android
 ~~~
 
-https://github.com/httptoolkit/frida-android-unpinning
+Bandcamp app as of the date above, does not monitor Bandcamp URLs:
 
-2022-04-03
-
-Bandcamp app as of the date above, does not monitor Bandcamp URLs, so deep
-linking is not possible. They do have their own scheme, but the only two URLs I
-could find are not helpful:
-
+~~~xml
+<intent-filter>
+   <action android:name="android.intent.action.VIEW"/>
+   <category android:name="android.intent.category.DEFAULT"/>
+   <category android:name="android.intent.category.BROWSABLE"/>
+   <data android:scheme="x-bandcamp" android:host="open"/>
+   <data android:scheme="x-bandcamp" android:host="messages"/>
+   <data android:scheme="x-bandcamp" android:host="feed"/>
+   <data android:scheme="x-bandcamp" android:host="linked_paypal_email"/>
+   <data android:scheme="x-bandcamp" android:host="show_merch"/>
+   <data android:scheme="x-bandcamp" android:host="show_tralbum"/>
+   <data android:scheme="x-bandcamp" android:host="show_fan"/>
+   <data android:scheme="x-bandcamp" android:host="login"/>
+   <data android:scheme="x-bandcamp" android:host="signup"/>
+</intent-filter>
 ~~~
-x-bandcamp://open
-x-bandcamp://show_tralbum?tralbum_type=a&tralbum_id=531538254&play
-~~~
 
-https://hisaac.net/2016/10/09/deep-linking-in-the-bandcamp-ios-app.html
-
-The API used with Bandcamp Android requires IDs for everything. This is the case
-going back to 2016 at least.
+so deep linking is not possible. The API used with Bandcamp Android requires
+IDs for everything. This is the case going back to 2016 at least.
 
 ## Why does this exist?
 
