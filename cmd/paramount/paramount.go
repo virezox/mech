@@ -36,7 +36,7 @@ func newMaster(guid, address string, bandwidth int, info bool) error {
    if info {
       fmt.Println(video.Title)
       for _, each := range master.Streams {
-         if each.Bandwidth == bandwidth {
+         if each.Bandwidth == stream.Bandwidth {
             fmt.Print("!")
          }
          fmt.Println(each)
