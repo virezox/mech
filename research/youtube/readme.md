@@ -10,21 +10,36 @@ either need to use a different YouTube-DL command, or use a different post
 processing tool
 
 ~~~
-ffmpeg -i audio.opus `
+ffmpeg -i ignore.opus `
 -i https://i.ytimg.com/vi/GhJNXlMsPG4/mqdefault.jpg `
 -c:a copy `
 -c:v mjpeg `
 -disposition:v attached_pic `
 out.mp4
+
+ffmpeg -i ignore.opus `
+-i image.png `
+-c:a copy `
+-c:v png `
+-disposition:v attached_pic `
+1.mp4
+
+ffmpeg -i audio.ogg `
+-i Cover.jpg `
+-c:a copy `
+-c:v mjpeg `
+-disposition:v attached_pic `
+2.mp4
 ~~~
 
 ## done
 
-https://trac.ffmpeg.org/ticket/9770
+- https://askubuntu.com
+- https://superuser.com
+- https://trac.ffmpeg.org/ticket/9770
+- https://unix.stackexchange.com
+- https://video.stackexchange.com
 
 ## to do
 
-- https://askubuntu.com
-- https://superuser.com
-- https://unix.stackexchange.com
-- https://video.stackexchange.com
+https://github.com/ytdl-org/youtube-dl

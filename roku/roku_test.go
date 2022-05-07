@@ -14,5 +14,9 @@ func TestRoku(t *testing.T) {
       t.Fatal(err)
    }
    fmt.Printf("%a\n", con)
-   fmt.Printf("%+v\n", con.Video())
+   video, err := con.HLS()
+   if err != nil {
+      t.Fatal(err)
+   }
+   fmt.Printf("%+v\n", video)
 }
