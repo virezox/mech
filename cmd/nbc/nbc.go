@@ -25,12 +25,15 @@ func newMaster(guid int64, bandwidth int, info bool) error {
    if err != nil {
       return err
    }
+   stream := master.Stream(bandwidth)
    if info {
-      for _, stream := range master.Streams {
-         fmt.Println(stream)
+      for _, each := range master.Streams {
+         if each.Bandwidth == stream.Bandwidth {
+            fmt.Print("!")
+         }
+         fmt.Println(each)
       }
    } else {
-      stream := master.Stream(bandwidth)
       video, err := nbc.NewVideo(guid)
       if err != nil {
          return err
