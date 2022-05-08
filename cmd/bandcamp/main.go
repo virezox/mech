@@ -14,6 +14,7 @@ func main() {
    var info bool
    flag.BoolVar(&info, "i", false, "information")
    // s
+   var sleep time.Duration
    flag.DurationVar(&sleep, "s", time.Second, "sleep")
    // v
    var verbose bool
@@ -23,18 +24,20 @@ func main() {
       bandcamp.LogLevel = 1
    }
    if address != "" {
-      data, err := bandcamp.NewData(address)
+      param, err := bandcamp.NewParams(address)
       if err != nil {
          panic(err)
       }
-      switch item.Item_Type {
-      case "t", "a":
-         err := arg.tralbum(item)
+      if param.I_Type != "" {
+         tralb, err := param.Tralbum()
          if err != nil {
             panic(err)
          }
-      case "i":
-         err := arg.band(item)
+         if err := doTralbum(tralb, info, sleep); err != nil {
+            panic(err)
+         }
+      } else {
+         err := doBand(param, info, sleep)
          if err != nil {
             panic(err)
          }
