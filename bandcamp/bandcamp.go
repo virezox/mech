@@ -188,17 +188,3 @@ type Track struct {
       MP3_128 string `json:"mp3-128"`
    }
 }
-
-type Data struct {
-   Art_ID int64
-   Album_Release_Date string
-   Current struct {
-      Title string
-   }
-   Artist string
-   TrackInfo []struct {
-      File struct {
-         MP3_128 string `json:"mp3-128"`
-      }
-   }
-}
