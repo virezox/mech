@@ -3,6 +3,7 @@ package bandcamp
 import (
    "encoding/json"
    "github.com/89z/format"
+   "github.com/89z/format/xml"
    "github.com/89z/mech"
    "net/http"
    "net/url"
@@ -16,11 +17,6 @@ const (
 )
 
 var LogLevel format.LogLevel
-
-type Band struct {
-   Name string
-   Discography []Item
-}
 
 type Image struct {
    Crop bool
@@ -85,66 +81,6 @@ func (i Image) URL(artID int64) string {
    return string(buf)
 }
 
-type Item struct {
-   Item_Type string
-   Item_ID int
-}
-
-func (i Item) Band() (*Band, error) {
-   req, err := http.NewRequest(
-      "GET", "http://bandcamp.com/api/mobile/24/band_details", nil,
-   )
-   if err != nil {
-      return nil, err
-   }
-   req.URL.RawQuery = "band_id=" + strconv.Itoa(i.Item_ID)
-   LogLevel.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   band := new(Band)
-   if err := json.NewDecoder(res.Body).Decode(band); err != nil {
-      return nil, err
-   }
-   return band, nil
-}
-
-func (i Item) String() string {
-   val := make(url.Values)
-   val.Set("band_id", "1")
-   val.Set("tralbum_id", strconv.Itoa(i.Item_ID))
-   switch i.Item_Type {
-   case "album":
-      val.Set("tralbum_type", "a")
-   case "track":
-      val.Set("tralbum_type", "t")
-   }
-   return val.Encode()
-}
-
-func (i Item) Tralbum() (*Tralbum, error) {
-   req, err := http.NewRequest(
-      "GET", "http://bandcamp.com/api/mobile/24/tralbum_details", nil,
-   )
-   if err != nil {
-      return nil, err
-   }
-   req.URL.RawQuery = i.String()
-   LogLevel.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   tralb := new(Tralbum)
-   if err := json.NewDecoder(res.Body).Decode(tralb); err != nil {
-      return nil, err
-   }
-   return tralb, nil
-}
-
 func (t Track) Base() string {
    return mech.Clean(t.Band_Name + "-" + t.Title)
 }
@@ -183,4 +119,124 @@ type Track struct {
    Streaming_URL *struct {
       MP3_128 string `json:"mp3-128"`
    }
+}
+
+type Band struct {
+   Name string
+   Discography []Item
+}
+
+type invalidType struct {
+   value string
+}
+
+func (i invalidType) Error() string {
+   return "invalid type " + strconv.Quote(i.value)
+}
+
+func (i Item) Tralbum() (*Tralbum, error) {
+   switch i.Item_Type {
+   case "album":
+      return newTralbum('a', i.Item_ID)
+   case "track":
+      return newTralbum('t', i.Item_ID)
+   }
+   return nil, invalidType{i.Item_Type}
+}
+
+func newTralbum(typ byte, id int) (*Tralbum, error) {
+   req, err := http.NewRequest(
+      "GET", "http://bandcamp.com/api/mobile/24/tralbum_details", nil,
+   )
+   if err != nil {
+      return nil, err
+   }
+   req.URL.RawQuery = url.Values{
+      "band_id": {"1"},
+      "tralbum_id": {strconv.Itoa(id)},
+      "tralbum_type": {string(typ)},
+   }.Encode()
+   LogLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   tralb := new(Tralbum)
+   if err := json.NewDecoder(res.Body).Decode(tralb); err != nil {
+      return nil, err
+   }
+   return tralb, nil
+}
+
+type Item struct {
+   Item_ID int
+   Item_Type string
+}
+
+func NewBand(id int) (*Band, error) {
+   req, err := http.NewRequest(
+      "GET", "http://bandcamp.com/api/mobile/24/band_details", nil,
+   )
+   if err != nil {
+      return nil, err
+   }
+   req.URL.RawQuery = "band_id=" + strconv.Itoa(id)
+   LogLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   band := new(Band)
+   if err := json.NewDecoder(res.Body).Decode(band); err != nil {
+      return nil, err
+   }
+   return band, nil
+}
+
+type Params struct {
+   A_ID int
+   I_ID int
+   I_Type string
+}
+
+func (p Params) Tralbum() (*Tralbum, error) {
+   switch p.I_Type {
+   case "a":
+      return newTralbum('a', p.I_ID)
+   case "t":
+      return newTralbum('t', p.I_ID)
+   }
+   return nil, invalidType{p.I_Type}
+}
+
+func NewParams(addr string) (*Params, error) {
+   req, err := http.NewRequest("GET", addr, nil)
+   if err != nil {
+      return nil, err
+   }
+   LogLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   scan, err := xml.NewScanner(res.Body)
+   if err != nil {
+      return nil, err
+   }
+   scan.Split = []byte(`<p id="report-account-vm"`)
+   scan.Scan()
+   var p struct {
+      DataTouReportParams []byte `xml:"data-tou-report-params,attr"`
+   }
+   if err := scan.Decode(&p); err != nil {
+      return nil, err
+   }
+   param := new(Params)
+   if err := json.Unmarshal(p.DataTouReportParams, param); err != nil {
+      return nil, err
+   }
+   return param, nil
 }
