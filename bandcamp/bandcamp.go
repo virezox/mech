@@ -19,10 +19,6 @@ var LogLevel format.LogLevel
 
 type Band struct {
    Name string
-   Bio string
-   Sites []struct {
-      URL string
-   }
    Discography []Item
 }
 
