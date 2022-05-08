@@ -1,0 +1,1840 @@
+{
+ "@context": "https://schema.org",
+ "@id": "https://schnaussandmunk.bandcamp.com/album/passage-2",
+ "@type": "MusicAlbum",
+ "additionalProperty": [
+  {
+   "@type": "PropertyValue",
+   "name": "art_id",
+   "value": 3809045440
+  },
+  {
+   "@type": "PropertyValue",
+   "name": "featured_track_num",
+   "value": 1
+  },
+  {
+   "@type": "PropertyValue",
+   "name": "license_name",
+   "value": "all_rights_reserved"
+  }
+ ],
+ "albumRelease": [
+  {
+   "@id": "https://schnaussandmunk.bandcamp.com/album/passage-2",
+   "@type": [
+    "MusicRelease",
+    "Product"
+   ],
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "item_id",
+     "value": 1670971920
+    },
+    {
+     "@type": "PropertyValue",
+     "name": "item_type",
+     "value": "a"
+    },
+    {
+     "@type": "PropertyValue",
+     "name": "selling_band_id",
+     "value": 2241322701
+    },
+    {
+     "@type": "PropertyValue",
+     "name": "type_name",
+     "value": "Digital"
+    },
+    {
+     "@type": "PropertyValue",
+     "name": "art_id",
+     "value": 3809045440
+    }
+   ],
+   "description": "Includes high-quality download in MP3, FLAC and more. Paying supporters also get unlimited streaming via the free Bandcamp app.",
+   "image": [
+    "https://f4.bcbits.com/img/a3809045440_10.jpg"
+   ],
+   "musicReleaseFormat": "DigitalFormat",
+   "name": "PASSAGE",
+   "offers": {
+    "@type": "Offer",
+    "additionalProperty": [
+     {
+      "@type": "PropertyValue",
+      "name": "is_set_price",
+      "value": 1
+     },
+     {
+      "@type": "PropertyValue",
+      "name": "max_price",
+      "value": 1000
+     }
+    ],
+    "availability": "OnlineOnly",
+    "price": 6,
+    "priceCurrency": "EUR",
+    "priceSpecification": {
+     "price": 6
+    },
+    "url": "https://schnaussandmunk.bandcamp.com/album/passage-2#a1670971920-buy"
+   },
+   "recordLabel": {
+    "@id": "https://azurevistarecords.bandcamp.com",
+    "@type": "MusicGroup",
+    "additionalProperty": [
+     {
+      "@type": "PropertyValue",
+      "name": "url_suffix",
+      "value": "?from=btl"
+     }
+    ],
+    "name": "Azure Vista Records"
+   }
+  },
+  {
+   "@id": "https://schnaussandmunk.bandcamp.com/album/passage-2#p513414282",
+   "@type": [
+    "MusicRelease",
+    "Product"
+   ],
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "item_id",
+     "value": 513414282
+    },
+    {
+     "@type": "PropertyValue",
+     "name": "item_type",
+     "value": "p"
+    },
+    {
+     "@type": "PropertyValue",
+     "name": "selling_band_id",
+     "value": 2241322701
+    },
+    {
+     "@type": "PropertyValue",
+     "name": "type_name",
+     "value": "Compact Disc (CD)"
+    },
+    {
+     "@type": "PropertyValue",
+     "name": "image_ids",
+     "value": [
+      8919678,
+      8920416,
+      8920418,
+      8920423,
+      8920422
+     ]
+    },
+    {
+     "@type": "PropertyValue",
+     "name": "is_music_merch",
+     "value": true
+    },
+    {
+     "@type": "PropertyValue",
+     "name": "type_id",
+     "value": 1
+    }
+   ],
+   "description": "CD in high quality gatefolded eco-file, layoutet by Jakob Skøtt. Cover Photo by Jason Kolb.",
+   "image": [
+    "https://f4.bcbits.com/img/0008919678_10.jpg",
+    "https://f4.bcbits.com/img/0008920416_10.jpg",
+    "https://f4.bcbits.com/img/0008920418_10.jpg",
+    "https://f4.bcbits.com/img/0008920423_10.jpg",
+    "https://f4.bcbits.com/img/0008920422_10.jpg"
+   ],
+   "musicReleaseFormat": "CDFormat",
+   "name": "CD",
+   "offers": {
+    "@type": "Offer",
+    "additionalProperty": [
+     {
+      "@type": "PropertyValue",
+      "name": "includes_digital_download",
+      "value": true
+     },
+     {
+      "@type": "PropertyValue",
+      "name": "is_set_price",
+      "value": 1
+     }
+    ],
+    "availability": "InStock",
+    "price": 12,
+    "priceCurrency": "EUR",
+    "priceSpecification": {
+     "price": 12
+    },
+    "url": "https://schnaussandmunk.bandcamp.com/album/passage-2#p513414282-buy"
+   }
+  },
+  {
+   "@id": "https://schnaussandmunk.bandcamp.com/album/passage-2#p3030243874",
+   "@type": [
+    "MusicRelease",
+    "Product"
+   ],
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "item_id",
+     "value": 3030243874
+    },
+    {
+     "@type": "PropertyValue",
+     "name": "item_type",
+     "value": "p"
+    },
+    {
+     "@type": "PropertyValue",
+     "name": "selling_band_id",
+     "value": 2241322701
+    },
+    {
+     "@type": "PropertyValue",
+     "name": "type_name",
+     "value": "Vinyl LP"
+    },
+    {
+     "@type": "PropertyValue",
+     "name": "image_ids",
+     "value": [
+      9250446,
+      9250442,
+      9250443,
+      9250445
+     ]
+    },
+    {
+     "@type": "PropertyValue",
+     "name": "is_music_merch",
+     "value": true
+    },
+    {
+     "@type": "PropertyValue",
+     "name": "type_id",
+     "value": 2
+    }
+   ],
+   "description": "140 gram Black vinyl in high quality durable sleeve with obi-strip and shrink wrap. Comes with download card for mp3, wav or FLAC download. Limitied to 500 copies worldwide!!!",
+   "image": [
+    "https://f4.bcbits.com/img/0009250446_10.jpg",
+    "https://f4.bcbits.com/img/0009250442_10.jpg",
+    "https://f4.bcbits.com/img/0009250443_10.jpg",
+    "https://f4.bcbits.com/img/0009250445_10.jpg"
+   ],
+   "musicReleaseFormat": "VinylFormat",
+   "name": "First pressing, black vinyl",
+   "offers": {
+    "@type": "Offer",
+    "additionalProperty": [
+     {
+      "@type": "PropertyValue",
+      "name": "includes_digital_download",
+      "value": true
+     },
+     {
+      "@type": "PropertyValue",
+      "name": "is_set_price",
+      "value": 1
+     }
+    ],
+    "availability": "SoldOut",
+    "price": 16,
+    "priceCurrency": "EUR",
+    "priceSpecification": {
+     "price": 16
+    },
+    "url": "https://schnaussandmunk.bandcamp.com/album/passage-2#p3030243874-buy"
+   }
+  },
+  {
+   "@id": "https://schnaussandmunk.bandcamp.com/album/passage-2#p885645241",
+   "@type": [
+    "MusicRelease",
+    "Product"
+   ],
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "item_id",
+     "value": 885645241
+    },
+    {
+     "@type": "PropertyValue",
+     "name": "item_type",
+     "value": "p"
+    },
+    {
+     "@type": "PropertyValue",
+     "name": "selling_band_id",
+     "value": 2241322701
+    },
+    {
+     "@type": "PropertyValue",
+     "name": "type_name",
+     "value": "Vinyl LP"
+    },
+    {
+     "@type": "PropertyValue",
+     "name": "image_ids",
+     "value": [
+      12946807,
+      12946810,
+      12946811,
+      12946812,
+      12946813
+     ]
+    },
+    {
+     "@type": "PropertyValue",
+     "name": "is_music_merch",
+     "value": true
+    },
+    {
+     "@type": "PropertyValue",
+     "name": "type_id",
+     "value": 2
+    }
+   ],
+   "description": "Ultra limited yellow reprint, with new, yellow obi-strip. Design by Jakob Skøtt. Comes with download card. 300 copies Worldwide!",
+   "image": [
+    "https://f4.bcbits.com/img/0012946807_10.jpg",
+    "https://f4.bcbits.com/img/0012946810_10.jpg",
+    "https://f4.bcbits.com/img/0012946811_10.jpg",
+    "https://f4.bcbits.com/img/0012946812_10.jpg",
+    "https://f4.bcbits.com/img/0012946813_10.jpg"
+   ],
+   "musicReleaseFormat": "VinylFormat",
+   "name": "2018 edition, transparent yellow vinyl",
+   "offers": {
+    "@type": "Offer",
+    "additionalProperty": [
+     {
+      "@type": "PropertyValue",
+      "name": "edition_size",
+      "value": 300
+     },
+     {
+      "@type": "PropertyValue",
+      "name": "includes_digital_download",
+      "value": true
+     },
+     {
+      "@type": "PropertyValue",
+      "name": "is_set_price",
+      "value": 1
+     }
+    ],
+    "availability": "SoldOut",
+    "price": 18,
+    "priceCurrency": "EUR",
+    "priceSpecification": {
+     "price": 18
+    },
+    "url": "https://schnaussandmunk.bandcamp.com/album/passage-2#p885645241-buy"
+   }
+  },
+  {
+   "@id": "https://schnaussandmunk.bandcamp.com/track/amaris-2",
+   "@type": "MusicRelease"
+  },
+  {
+   "@id": "https://schnaussandmunk.bandcamp.com/track/genau-wie-damals-2",
+   "@type": "MusicRelease"
+  },
+  {
+   "@id": "https://schnaussandmunk.bandcamp.com/track/anywhere-but-here-2",
+   "@type": "MusicRelease"
+  },
+  {
+   "@id": "https://schnaussandmunk.bandcamp.com/track/intervention-sol-2",
+   "@type": "MusicRelease"
+  },
+  {
+   "@id": "https://schnaussandmunk.bandcamp.com/track/mst-2",
+   "@type": "MusicRelease"
+  },
+  {
+   "@id": "https://schnaussandmunk.bandcamp.com/track/ao-hinode-3",
+   "@type": "MusicRelease"
+  },
+  {
+   "@id": "https://schnaussandmunk.bandcamp.com/track/spellbreaker-3",
+   "@type": "MusicRelease"
+  },
+  {
+   "@id": "https://schnaussandmunk.bandcamp.com/track/intervention-stjerner-3",
+   "@type": "MusicRelease"
+  },
+  {
+   "@id": "https://schnaussandmunk.bandcamp.com/track/caffeine-blues-3",
+   "@type": "MusicRelease"
+  },
+  {
+   "@id": "https://schnaussandmunk.bandcamp.com/track/intervention-m-ne-3",
+   "@type": "MusicRelease"
+  },
+  {
+   "@id": "https://schnaussandmunk.bandcamp.com/track/coastal-path-2",
+   "@type": "MusicRelease"
+  }
+ ],
+ "albumReleaseType": "AlbumRelease",
+ "byArtist": {
+  "@id": "https://schnaussandmunk.bandcamp.com",
+  "@type": "MusicGroup",
+  "name": "Ulrich Schnauss & Jonas Munk"
+ },
+ "comment": [
+  {
+   "@type": "Comment",
+   "author": {
+    "@type": "Person",
+    "additionalProperty": [
+     {
+      "@type": "PropertyValue",
+      "name": "image_id",
+      "value": 12752875
+     }
+    ],
+    "image": "https://f4.bcbits.com/img/0012752875_50.jpg",
+    "name": "Room633",
+    "url": "https://bandcamp.com/room633"
+   },
+   "text": [
+    "Music from Surprise of future"
+   ]
+  },
+  {
+   "@type": "Comment",
+   "author": {
+    "@type": "Person",
+    "additionalProperty": [
+     {
+      "@type": "PropertyValue",
+      "name": "image_id",
+      "value": 21200597
+     }
+    ],
+    "image": "https://f4.bcbits.com/img/0021200597_50.jpg",
+    "name": "lkalloi",
+    "url": "https://bandcamp.com/lkalloi"
+   },
+   "text": [
+    "Chasing Rainbows is the best song to start a day! "
+   ]
+  }
+ ],
+ "copyrightNotice": "All Rights Reserved",
+ "dateModified": "26 Jan 2021 15:59:16 GMT",
+ "datePublished": "20 Jan 2017 00:00:00 GMT",
+ "description": "”Passage” is the second collaborative album from London-based synth-wizard Ulrich Schnauss and Danish producer Jonas Munk. 11 tracks of breezy, blissed-out electronica and multi-coloured ambient. \r\n\r\nAs the album title denotes, there's a sense of movement in the music these two producers create together: a Schnauss & Munk composition starts one place and ends up someplace very different – something that can only rarely be said about electronic music, which traditionally has focused it's energy on texture rather than composition. Sometimes their vivid, expansive soundscapes feels like the sonic equivalent of gliding towards the horizon through a panoramic landscape on a train. One's perspective changes slightly when in motion from one place to another – continously approaching new things and leaving others behind. Listening to the album in it's entirety feels like an emotional passage, or one that plays out via a series of dreams.\r\n\r\nThere's a prismatic, multi-dimensional quality to these 11 tracks, likely stemming from the fact that these two producers each have worked with a wide range of styles and musicians throughout their 15+ year career. Both Ulrich and Jonas, however, have the skills of seasoned producers to weave the multitude of influences together in a well-defined sonic aesthetic. The result is a compelling set of melodic electronic music that echoes the past, yet feels fresh.",
+ "image": "https://f4.bcbits.com/img/a3809045440_10.jpg",
+ "keywords": [
+  "Azure Vista Records",
+  "Electronic",
+  "alternative",
+  "ambient",
+  "bliss",
+  "shoegaze",
+  "London"
+ ],
+ "name": "PASSAGE",
+ "numTracks": 11,
+ "publisher": {
+  "@id": "https://schnaussandmunk.bandcamp.com",
+  "@type": "MusicGroup",
+  "additionalProperty": [
+   {
+    "@type": "PropertyValue",
+    "name": "band_id",
+    "value": 3454424886
+   },
+   {
+    "@type": "PropertyValue",
+    "name": "currency",
+    "value": "EUR"
+   },
+   {
+    "@type": "PropertyValue",
+    "name": "has_any_downloads",
+    "value": true
+   },
+   {
+    "@type": "PropertyValue",
+    "name": "has_download_codes",
+    "value": true
+   },
+   {
+    "@type": "PropertyValue",
+    "name": "image_height",
+    "value": 500
+   },
+   {
+    "@type": "PropertyValue",
+    "name": "image_id",
+    "value": 8579411
+   },
+   {
+    "@type": "PropertyValue",
+    "name": "image_width",
+    "value": 500
+   }
+  ],
+  "foundingLocation": {
+   "@type": "Place",
+   "name": "London, UK"
+  },
+  "genre": "https://bandcamp.com/tag/electronic",
+  "image": "https://f4.bcbits.com/img/0008579411_10.jpg",
+  "name": "Ulrich Schnauss & Jonas Munk",
+  "subjectOf": [
+   {
+    "@type": "WebPage",
+    "additionalProperty": [
+     {
+      "@type": "PropertyValue",
+      "name": "nav_type",
+      "value": "m"
+     }
+    ],
+    "name": "music",
+    "url": "https://schnaussandmunk.bandcamp.com/music"
+   },
+   {
+    "@type": "WebPage",
+    "additionalProperty": [
+     {
+      "@type": "PropertyValue",
+      "name": "nav_type",
+      "value": "p"
+     }
+    ],
+    "name": "merch",
+    "url": "https://schnaussandmunk.bandcamp.com/merch"
+   },
+   {
+    "@type": "WebPage",
+    "additionalProperty": [
+     {
+      "@type": "PropertyValue",
+      "name": "nav_type",
+      "value": "c"
+     }
+    ],
+    "name": "community",
+    "url": "https://schnaussandmunk.bandcamp.com/community"
+   }
+  ]
+ },
+ "sponsor": [
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 23675947
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0023675947_50.jpg",
+   "name": "Marcella",
+   "url": "https://bandcamp.com/quirkess"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 19935213
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0019935213_50.jpg",
+   "name": "Marcomé ",
+   "url": "https://bandcamp.com/marcomemusic"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 7562647
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0007562647_50.jpg",
+   "name": "Andrew Emery",
+   "url": "https://bandcamp.com/roebuck"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 28373398
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0028373398_50.jpg",
+   "name": "!sLanD",
+   "url": "https://bandcamp.com/kfmusic5fan"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 26637193
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0026637193_50.jpg",
+   "name": "Strange Daze Radio",
+   "url": "https://bandcamp.com/strangedaze_radio"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 4665367
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0004665367_50.jpg",
+   "name": "Roger M",
+   "url": "https://bandcamp.com/rogerm"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 21753125
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0021753125_50.jpg",
+   "name": "Scott Werley",
+   "url": "https://bandcamp.com/swerley"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 9695257
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0009695257_50.jpg",
+   "name": "BIGsonic~~~Jim",
+   "url": "https://bandcamp.com/blubelknol"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 3468933
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0003468933_50.jpg",
+   "name": "BAB",
+   "url": "https://bandcamp.com/spyrogyra"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 25402685
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0025402685_50.jpg",
+   "name": "pirx69",
+   "url": "https://bandcamp.com/pirx69"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 11203523
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0011203523_50.jpg",
+   "name": "Gibdeck",
+   "url": "https://bandcamp.com/gibdeck"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 18484694
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0018484694_50.jpg",
+   "name": "Dismal Nitch",
+   "url": "https://bandcamp.com/dismalnitch"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 25290932
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0025290932_50.jpg",
+   "name": "Rainer Kaufmann",
+   "url": "https://bandcamp.com/rainerkaufmann"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 1876216
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0001876216_50.jpg",
+   "name": "Voices In The Net",
+   "url": "https://bandcamp.com/voices-in-the-net"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 27576048
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0027576048_50.jpg",
+   "name": "Richard Barnett",
+   "url": "https://bandcamp.com/richard-barnett"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 828716
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0000828716_50.jpg",
+   "name": "yves",
+   "url": "https://bandcamp.com/yves"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 21553549
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0021553549_50.jpg",
+   "name": "Aten Link",
+   "url": "https://bandcamp.com/atenlink"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 3887332
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0003887332_50.jpg",
+   "name": "Matteo P",
+   "url": "https://bandcamp.com/mpicarelli"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 10779704
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0010779704_50.jpg",
+   "name": "armadillo",
+   "url": "https://bandcamp.com/armadillo"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 9651835
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0009651835_50.jpg",
+   "name": "Rod Dalager",
+   "url": "https://bandcamp.com/roddalager"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 9833453
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0009833453_50.jpg",
+   "name": "sandypower89",
+   "url": "https://bandcamp.com/sandypower89"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 19493609
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0019493609_50.jpg",
+   "name": "gshawisme",
+   "url": "https://bandcamp.com/gshawisme"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 8324131
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0008324131_50.jpg",
+   "name": "Ignoreradio Shoegaze",
+   "url": "https://bandcamp.com/Beciv"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 24493640
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0024493640_50.jpg",
+   "name": "Ian Badcock",
+   "url": "https://bandcamp.com/ianbadcock"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 19596002
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0019596002_50.jpg",
+   "name": "Emphasizer",
+   "url": "https://bandcamp.com/emphasizer"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 7605230
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0007605230_50.jpg",
+   "name": "Tim Johnson",
+   "url": "https://bandcamp.com/timjohnson9"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 18177647
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0018177647_50.jpg",
+   "name": "progrokker",
+   "url": "https://bandcamp.com/progrokker"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 23785723
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0023785723_50.jpg",
+   "name": "acolite",
+   "url": "https://bandcamp.com/acolite"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 26707870
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0026707870_50.jpg",
+   "name": "Spee",
+   "url": "https://bandcamp.com/spilios"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 27196769
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0027196769_50.jpg",
+   "name": "Koli",
+   "url": "https://bandcamp.com/purplescroll"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 8762327
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0008762327_50.jpg",
+   "name": "Jon Holden-Dye",
+   "url": "https://bandcamp.com/jonhd"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 5832172
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0005832172_50.jpg",
+   "name": "Nick Allison",
+   "url": "https://bandcamp.com/nicholasallison"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 28064784
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0028064784_50.jpg",
+   "name": "bruce nicholson",
+   "url": "https://bandcamp.com/brucenicholson"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 4918820
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0004918820_50.jpg",
+   "name": "Brandon Bogajeiwcz",
+   "url": "https://bandcamp.com/theburningear"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 2248182
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0002248182_50.jpg",
+   "name": "Dan Waldman",
+   "url": "https://bandcamp.com/danwaldman"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 4950911
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0004950911_50.jpg",
+   "name": "eyespark",
+   "url": "https://bandcamp.com/eyespark"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 18003870
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0018003870_50.jpg",
+   "name": "Karen Trottier",
+   "url": "https://bandcamp.com/karentrottier"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 24542314
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0024542314_50.jpg",
+   "name": "hungarian_rhapsody",
+   "url": "https://bandcamp.com/hungarian_rhapsody"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 5830886
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0005830886_50.jpg",
+   "name": "Stephen King",
+   "url": "https://bandcamp.com/sking83212"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 23040336
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0023040336_50.jpg",
+   "name": "Michal Sowa",
+   "url": "https://bandcamp.com/sowaelobreko"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 10561355
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0010561355_50.jpg",
+   "name": "jcfromparis",
+   "url": "https://bandcamp.com/jcfromparis"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 12972751
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0012972751_50.jpg",
+   "name": "Dano Williams",
+   "url": "https://bandcamp.com/thisisdano"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 21594326
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0021594326_50.jpg",
+   "name": "jwmulholland",
+   "url": "https://bandcamp.com/jwmulholland"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 16312536
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0016312536_50.jpg",
+   "name": "Torbjorn Sedin",
+   "url": "https://bandcamp.com/tsedin"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 24342232
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0024342232_50.jpg",
+   "name": "glynrichards",
+   "url": "https://bandcamp.com/glynrichards"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 19930429
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0019930429_50.jpg",
+   "name": "mike nicholas",
+   "url": "https://bandcamp.com/invisiblemaz"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 1544348
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0001544348_50.jpg",
+   "name": "Zeroy",
+   "url": "https://bandcamp.com/Zeroy"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 24085339
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0024085339_50.jpg",
+   "name": "townbully",
+   "url": "https://bandcamp.com/townbully"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 23686555
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0023686555_50.jpg",
+   "name": "austinjoy13",
+   "url": "https://bandcamp.com/austinjoy13"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 17966941
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0017966941_50.jpg",
+   "name": "scooterbaga",
+   "url": "https://bandcamp.com/scooterbaga"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 5813769
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0005813769_50.jpg",
+   "name": "sBASS ",
+   "url": "https://bandcamp.com/netto"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 10639064
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0010639064_50.jpg",
+   "name": "millarbob",
+   "url": "https://bandcamp.com/millarbob"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 10577699
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0010577699_50.jpg",
+   "name": "Prairie Wombat",
+   "url": "https://bandcamp.com/PrairieWombat"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 24376471
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0024376471_50.jpg",
+   "name": "padvinder",
+   "url": "https://bandcamp.com/padvinder"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 5381762
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0005381762_50.jpg",
+   "name": "Nico Verwer",
+   "url": "https://bandcamp.com/nicoverwer"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 16786392
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0016786392_50.jpg",
+   "name": "mli422",
+   "url": "https://bandcamp.com/mli422"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 20808976
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0020808976_50.jpg",
+   "name": "GodIsNoLongerADj",
+   "url": "https://bandcamp.com/godisnolongeradj"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 11765895
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0011765895_50.jpg",
+   "name": "Perry Glorioso",
+   "url": "https://bandcamp.com/perryglorioso"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 5127803
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0005127803_50.jpg",
+   "name": "Charlie Mayer",
+   "url": "https://bandcamp.com/charlesmayer"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 9137101
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0009137101_50.jpg",
+   "name": "Jesse Easton",
+   "url": "https://bandcamp.com/jesterabi"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 6948033
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0006948033_50.jpg",
+   "name": "Thomas A. Barantani",
+   "url": "https://bandcamp.com/klangwelt"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 12737744
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0012737744_50.jpg",
+   "name": "aprmike",
+   "url": "https://bandcamp.com/aprmike"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 18978433
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0018978433_50.jpg",
+   "name": "M A R X E N",
+   "url": "https://bandcamp.com/ljmarxen"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 26072909
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0026072909_50.jpg",
+   "name": "gullyfoyle33",
+   "url": "https://bandcamp.com/gullyfoyle33"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 23842450
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0023842450_50.jpg",
+   "name": "neilburkdoll",
+   "url": "https://bandcamp.com/neilburkdoll"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 21896735
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0021896735_50.jpg",
+   "name": "Brian Gruidl",
+   "url": "https://bandcamp.com/gruidl"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 10627378
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0010627378_50.jpg",
+   "name": "rmutter",
+   "url": "https://bandcamp.com/rmutter"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 5014482
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0005014482_50.jpg",
+   "name": "sleepwalkersguide",
+   "url": "https://bandcamp.com/sleepwalkersguide"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 22143691
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0022143691_50.jpg",
+   "name": "Christopher Rogers",
+   "url": "https://bandcamp.com/ChristopherRogers"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 21548790
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0021548790_50.jpg",
+   "name": "Bingoboots",
+   "url": "https://bandcamp.com/bingoboots"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 23579510
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0023579510_50.jpg",
+   "name": "Sylvia Yang",
+   "url": "https://bandcamp.com/sylvia24"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 14572466
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0014572466_50.jpg",
+   "name": "Sevan Janiyan",
+   "url": "https://bandcamp.com/sevan"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 23364273
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0023364273_50.jpg",
+   "name": "simonmonkeygray",
+   "url": "https://bandcamp.com/simonmonkeygray"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 1901597
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0001901597_50.jpg",
+   "name": "Syclick",
+   "url": "https://bandcamp.com/syclick"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 19080400
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0019080400_50.jpg",
+   "name": "grey",
+   "url": "https://bandcamp.com/dranore"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 6166780
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0006166780_50.jpg",
+   "name": "DJ WarpT",
+   "url": "https://bandcamp.com/djwarpt"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 21705430
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0021705430_50.jpg",
+   "name": "karl endreson",
+   "url": "https://bandcamp.com/karl79"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 1217937
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0001217937_50.jpg",
+   "name": "Daron Gardner",
+   "url": "https://bandcamp.com/darongardner"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 8888266
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0008888266_50.jpg",
+   "name": "Richard Neal",
+   "url": "https://bandcamp.com/wayfarer1969"
+  },
+  {
+   "@type": "Person",
+   "additionalProperty": [
+    {
+     "@type": "PropertyValue",
+     "name": "image_id",
+     "value": 22890234
+    }
+   ],
+   "image": "https://f4.bcbits.com/img/0022890234_50.jpg",
+   "name": "Hans-Juergen Mueller",
+   "url": "https://bandcamp.com/hans-juergenmueller"
+  }
+ ],
+ "track": {
+  "@type": "ItemList",
+  "itemListElement": [
+   {
+    "@type": "ListItem",
+    "item": {
+     "@id": "https://schnaussandmunk.bandcamp.com/track/amaris-2",
+     "@type": "MusicRecording",
+     "additionalProperty": [
+      {
+       "@type": "PropertyValue",
+       "name": "track_id",
+       "value": 2809477874
+      },
+      {
+       "@type": "PropertyValue",
+       "name": "license_name",
+       "value": "all_rights_reserved"
+      }
+     ],
+     "copyrightNotice": "All Rights Reserved",
+     "duration": "P00H05M20S",
+     "name": "Amaris"
+    },
+    "position": 1
+   },
+   {
+    "@type": "ListItem",
+    "item": {
+     "@id": "https://schnaussandmunk.bandcamp.com/track/genau-wie-damals-2",
+     "@type": "MusicRecording",
+     "additionalProperty": [
+      {
+       "@type": "PropertyValue",
+       "name": "track_id",
+       "value": 3912039757
+      },
+      {
+       "@type": "PropertyValue",
+       "name": "license_name",
+       "value": "all_rights_reserved"
+      }
+     ],
+     "copyrightNotice": "All Rights Reserved",
+     "duration": "P00H05M36S",
+     "name": "Genau Wie Damals"
+    },
+    "position": 2
+   },
+   {
+    "@type": "ListItem",
+    "item": {
+     "@id": "https://schnaussandmunk.bandcamp.com/track/anywhere-but-here-2",
+     "@type": "MusicRecording",
+     "additionalProperty": [
+      {
+       "@type": "PropertyValue",
+       "name": "track_id",
+       "value": 424931237
+      },
+      {
+       "@type": "PropertyValue",
+       "name": "license_name",
+       "value": "all_rights_reserved"
+      }
+     ],
+     "copyrightNotice": "All Rights Reserved",
+     "duration": "P00H04M35S",
+     "name": "Anywhere But Here"
+    },
+    "position": 3
+   },
+   {
+    "@type": "ListItem",
+    "item": {
+     "@id": "https://schnaussandmunk.bandcamp.com/track/intervention-sol-2",
+     "@type": "MusicRecording",
+     "additionalProperty": [
+      {
+       "@type": "PropertyValue",
+       "name": "track_id",
+       "value": 944400612
+      },
+      {
+       "@type": "PropertyValue",
+       "name": "license_name",
+       "value": "all_rights_reserved"
+      }
+     ],
+     "copyrightNotice": "All Rights Reserved",
+     "duration": "P00H01M50S",
+     "name": "Intervention: Sol"
+    },
+    "position": 4
+   },
+   {
+    "@type": "ListItem",
+    "item": {
+     "@id": "https://schnaussandmunk.bandcamp.com/track/mst-2",
+     "@type": "MusicRecording",
+     "additionalProperty": [
+      {
+       "@type": "PropertyValue",
+       "name": "track_id",
+       "value": 2413476191
+      },
+      {
+       "@type": "PropertyValue",
+       "name": "license_name",
+       "value": "all_rights_reserved"
+      }
+     ],
+     "copyrightNotice": "All Rights Reserved",
+     "duration": "P00H05M01S",
+     "name": "MST"
+    },
+    "position": 5
+   },
+   {
+    "@type": "ListItem",
+    "item": {
+     "@id": "https://schnaussandmunk.bandcamp.com/track/ao-hinode-3",
+     "@type": "MusicRecording",
+     "additionalProperty": [
+      {
+       "@type": "PropertyValue",
+       "name": "track_id",
+       "value": 3596488597
+      },
+      {
+       "@type": "PropertyValue",
+       "name": "license_name",
+       "value": "all_rights_reserved"
+      }
+     ],
+     "copyrightNotice": "All Rights Reserved",
+     "duration": "P00H06M02S",
+     "name": "Ao Hinode"
+    },
+    "position": 6
+   },
+   {
+    "@type": "ListItem",
+    "item": {
+     "@id": "https://schnaussandmunk.bandcamp.com/track/spellbreaker-3",
+     "@type": "MusicRecording",
+     "additionalProperty": [
+      {
+       "@type": "PropertyValue",
+       "name": "track_id",
+       "value": 3607418583
+      },
+      {
+       "@type": "PropertyValue",
+       "name": "license_name",
+       "value": "all_rights_reserved"
+      }
+     ],
+     "copyrightNotice": "All Rights Reserved",
+     "duration": "P00H04M15S",
+     "name": "Spellbreaker"
+    },
+    "position": 7
+   },
+   {
+    "@type": "ListItem",
+    "item": {
+     "@id": "https://schnaussandmunk.bandcamp.com/track/intervention-stjerner-3",
+     "@type": "MusicRecording",
+     "additionalProperty": [
+      {
+       "@type": "PropertyValue",
+       "name": "track_id",
+       "value": 338855836
+      },
+      {
+       "@type": "PropertyValue",
+       "name": "license_name",
+       "value": "all_rights_reserved"
+      }
+     ],
+     "copyrightNotice": "All Rights Reserved",
+     "duration": "P00H02M46S",
+     "name": "Intervention: Stjerner"
+    },
+    "position": 8
+   },
+   {
+    "@type": "ListItem",
+    "item": {
+     "@id": "https://schnaussandmunk.bandcamp.com/track/caffeine-blues-3",
+     "@type": "MusicRecording",
+     "additionalProperty": [
+      {
+       "@type": "PropertyValue",
+       "name": "track_id",
+       "value": 3677414470
+      },
+      {
+       "@type": "PropertyValue",
+       "name": "license_name",
+       "value": "all_rights_reserved"
+      }
+     ],
+     "copyrightNotice": "All Rights Reserved",
+     "duration": "P00H05M24S",
+     "name": "Caffeine Blues"
+    },
+    "position": 9
+   },
+   {
+    "@type": "ListItem",
+    "item": {
+     "@id": "https://schnaussandmunk.bandcamp.com/track/intervention-m-ne-3",
+     "@type": "MusicRecording",
+     "additionalProperty": [
+      {
+       "@type": "PropertyValue",
+       "name": "track_id",
+       "value": 2148164096
+      },
+      {
+       "@type": "PropertyValue",
+       "name": "license_name",
+       "value": "all_rights_reserved"
+      }
+     ],
+     "copyrightNotice": "All Rights Reserved",
+     "duration": "P00H01M51S",
+     "name": "Intervention: Måne"
+    },
+    "position": 10
+   },
+   {
+    "@type": "ListItem",
+    "item": {
+     "@id": "https://schnaussandmunk.bandcamp.com/track/coastal-path-2",
+     "@type": "MusicRecording",
+     "additionalProperty": [
+      {
+       "@type": "PropertyValue",
+       "name": "track_id",
+       "value": 2720266218
+      },
+      {
+       "@type": "PropertyValue",
+       "name": "license_name",
+       "value": "all_rights_reserved"
+      }
+     ],
+     "copyrightNotice": "All Rights Reserved",
+     "duration": "P00H07M35S",
+     "name": "Coastal Path"
+    },
+    "position": 11
+   }
+  ],
+  "numberOfItems": 11
+ }
+}

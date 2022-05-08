@@ -8,6 +8,7 @@ import (
    "io"
    "net/http"
    "os"
+   "sort"
 )
 
 func newMaster(guid int64, bandwidth int, info bool) error {
@@ -25,6 +26,9 @@ func newMaster(guid int64, bandwidth int, info bool) error {
    if err != nil {
       return err
    }
+   sort.Slice(master.Streams, func(a, b int) bool {
+      return master.Streams[a].Bandwidth < master.Streams[b].Bandwidth
+   })
    stream := master.Stream(bandwidth)
    if info {
       for _, each := range master.Streams {
