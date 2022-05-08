@@ -7,14 +7,21 @@ import (
 )
 
 /*
-https://schnaussandmunk.bandcamp.com/track/amaris-2
 2809477874
+https://schnaussandmunk.bandcamp.com/track/amaris-2
+{"i_id":2809477874,"a_id":3454424886,"i_type":"t"}
 
-https://schnaussandmunk.bandcamp.com/album/passage-2
 1670971920
+https://schnaussandmunk.bandcamp.com/album/passage-2
+{"i_id":1670971920,"a_id":3454424886,"i_type":"a"}
 
-https://schnaussandmunk.bandcamp.com
 3454424886
+https://schnaussandmunk.bandcamp.com
+{"i_id":3596433032,"a_id":3454424886,"i_type":"a"}
+
+3454424886
+https://schnaussandmunk.bandcamp.com/music
+{"a_id":3454424886}
 */
 
 type DataBand struct {

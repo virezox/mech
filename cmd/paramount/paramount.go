@@ -7,6 +7,7 @@ import (
    "github.com/89z/mech/paramount"
    "net/http"
    "os"
+   "sort"
    "time"
 )
 
@@ -32,6 +33,9 @@ func newMaster(guid, address string, bandwidth int, info bool) error {
    if err != nil {
       return err
    }
+   sort.Slice(master.Streams, func(a, b int) bool {
+      return master.Streams[a].Bandwidth < master.Streams[b].Bandwidth
+   })
    stream := master.Stream(bandwidth)
    if info {
       fmt.Println(video.Title)
