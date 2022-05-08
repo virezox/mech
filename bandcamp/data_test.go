@@ -7,9 +7,9 @@ import (
 )
 
 var tests = []string{
-   "https://schnaussandmunk.bandcamp.com/album/passage-2",
-   //"https://schnaussandmunk.bandcamp.com/music",
    //"https://schnaussandmunk.bandcamp.com/track/amaris-2",
+   //"https://schnaussandmunk.bandcamp.com/album/passage-2",
+   "https://schnaussandmunk.bandcamp.com/music",
 }
 
 func TestData(t *testing.T) {

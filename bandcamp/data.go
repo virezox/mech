@@ -6,7 +6,10 @@ import (
    "net/http"
 )
 
-type Data struct {
+type DataBand struct {
+}
+
+type DataTralbum struct {
    Art_ID int64
    Album_Release_Date string
    Current struct {
@@ -22,7 +25,7 @@ type Data struct {
    }
 }
 
-func NewData(addr string) (*Data, error) {
+func NewDataTralbum(addr string) (*DataTralbum, error) {
    req, err := http.NewRequest("GET", addr, nil)
    if err != nil {
       return nil, err
@@ -46,7 +49,7 @@ func NewData(addr string) (*Data, error) {
    if err := scan.Decode(&script); err != nil {
       return nil, err
    }
-   data := new(Data)
+   data := new(DataTralbum)
    if err := json.Unmarshal(script.DataTralbum, data); err != nil {
       return nil, err
    }

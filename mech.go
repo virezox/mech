@@ -14,14 +14,16 @@ func ExtensionByType(typ string) (string, error) {
       return "", err
    }
    switch media {
-   case "audio/webm":
-      return ".weba", nil
-   case "video/webm":
-      return ".webm", nil
+   case "audio/mpeg":
+      return ".mp3", nil
    case "audio/mp4":
       return ".m4a", nil
+   case "audio/webm":
+      return ".weba", nil
    case "video/mp4":
       return ".m4v", nil
+   case "video/webm":
+      return ".webm", nil
    }
    return "", notFound{typ}
 }

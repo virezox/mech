@@ -7,16 +7,14 @@ import (
 )
 
 func main() {
-   var arg argument
    // a
    var address string
    flag.StringVar(&address, "a", "", "address")
-   // e
-   flag.StringVar(&arg.ext, "e", ".mp3", "extension")
    // i
-   flag.BoolVar(&arg.info, "i", false, "information")
+   var info bool
+   flag.BoolVar(&info, "i", false, "information")
    // s
-   flag.DurationVar(&arg.sleep, "s", time.Second, "sleep")
+   flag.DurationVar(&sleep, "s", time.Second, "sleep")
    // v
    var verbose bool
    flag.BoolVar(&verbose, "v", false, "verbose")
@@ -25,7 +23,7 @@ func main() {
       bandcamp.LogLevel = 1
    }
    if address != "" {
-      item, err := bandcamp.NewItem(address)
+      data, err := bandcamp.NewData(address)
       if err != nil {
          panic(err)
       }
