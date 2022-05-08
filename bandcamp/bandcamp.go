@@ -28,56 +28,56 @@ type Band struct {
 
 type Image struct {
    Crop bool
-   Ext int
+   Format int
    Height int
    ID int64
    Width int
 }
 
 var Images = []Image{
-   {ID:0, Width:1500, Height:1500, Ext:JPEG},
-   {ID:1, Width:1500, Height:1500, Ext:PNG},
-   {ID:2, Width:350, Height:350, Ext:JPEG},
-   {ID:3, Width:100, Height:100, Ext:JPEG},
-   {ID:4, Width:300, Height:300, Ext:JPEG},
-   {ID:5, Width:700, Height:700, Ext:JPEG},
-   {ID:6, Width:100, Height:100, Ext:JPEG},
-   {ID:7, Width:150, Height:150, Ext:JPEG},
-   {ID:8, Width:124, Height:124, Ext:JPEG},
-   {ID:9, Width:210, Height:210, Ext:JPEG},
-   {ID:10, Width:1200, Height:1200, Ext:JPEG},
-   {ID:11, Width:172, Height:172, Ext:JPEG},
-   {ID:12, Width:138, Height:138, Ext:JPEG},
-   {ID:13, Width:380, Height:380, Ext:JPEG},
-   {ID:14, Width:368, Height:368, Ext:JPEG},
-   {ID:15, Width:135, Height:135, Ext:JPEG},
-   {ID:16, Width:700, Height:700, Ext:JPEG},
-   {ID:20, Width:1024, Height:1024, Ext:JPEG},
-   {ID:21, Width:120, Height:120, Ext:JPEG},
-   {ID:22, Width:25, Height:25, Ext:JPEG},
-   {ID:23, Width:300, Height:300, Ext:JPEG},
-   {ID:24, Width:300, Height:300, Ext:JPEG},
-   {ID:25, Width:700, Height:700, Ext:JPEG},
-   {ID:26, Width:800, Height:600, Ext:JPEG, Crop:true},
-   {ID:27, Width:715, Height:402, Ext:JPEG, Crop:true},
-   {ID:28, Width:768, Height:432, Ext:JPEG, Crop:true},
-   {ID:29, Width:100, Height:75, Ext:JPEG, Crop:true},
-   {ID:31, Width:1024, Height:1024, Ext:PNG},
-   {ID:32, Width:380, Height:285, Ext:JPEG, Crop:true},
-   {ID:33, Width:368, Height:276, Ext:JPEG, Crop:true},
-   {ID:36, Width:400, Height:300, Ext:JPEG, Crop:true},
-   {ID:37, Width:168, Height:126, Ext:JPEG, Crop:true},
-   {ID:38, Width:144, Height:108, Ext:JPEG, Crop:true},
-   {ID:41, Width:210, Height:210, Ext:JPEG},
-   {ID:42, Width:50, Height:50, Ext:JPEG},
-   {ID:43, Width:100, Height:100, Ext:JPEG},
-   {ID:44, Width:200, Height:200, Ext:JPEG},
-   {ID:50, Width:140, Height:140, Ext:JPEG},
-   {ID:65, Width:700, Height:700, Ext:JPEG},
-   {ID:66, Width:1200, Height:1200, Ext:JPEG},
-   {ID:67, Width:350, Height:350, Ext:JPEG},
-   {ID:68, Width:210, Height:210, Ext:JPEG},
-   {ID:69, Width:700, Height:700, Ext:JPEG},
+   {ID:0, Width:1500, Height:1500, Format:JPEG},
+   {ID:1, Width:1500, Height:1500, Format:PNG},
+   {ID:2, Width:350, Height:350, Format:JPEG},
+   {ID:3, Width:100, Height:100, Format:JPEG},
+   {ID:4, Width:300, Height:300, Format:JPEG},
+   {ID:5, Width:700, Height:700, Format:JPEG},
+   {ID:6, Width:100, Height:100, Format:JPEG},
+   {ID:7, Width:150, Height:150, Format:JPEG},
+   {ID:8, Width:124, Height:124, Format:JPEG},
+   {ID:9, Width:210, Height:210, Format:JPEG},
+   {ID:10, Width:1200, Height:1200, Format:JPEG},
+   {ID:11, Width:172, Height:172, Format:JPEG},
+   {ID:12, Width:138, Height:138, Format:JPEG},
+   {ID:13, Width:380, Height:380, Format:JPEG},
+   {ID:14, Width:368, Height:368, Format:JPEG},
+   {ID:15, Width:135, Height:135, Format:JPEG},
+   {ID:16, Width:700, Height:700, Format:JPEG},
+   {ID:20, Width:1024, Height:1024, Format:JPEG},
+   {ID:21, Width:120, Height:120, Format:JPEG},
+   {ID:22, Width:25, Height:25, Format:JPEG},
+   {ID:23, Width:300, Height:300, Format:JPEG},
+   {ID:24, Width:300, Height:300, Format:JPEG},
+   {ID:25, Width:700, Height:700, Format:JPEG},
+   {ID:26, Width:800, Height:600, Format:JPEG, Crop:true},
+   {ID:27, Width:715, Height:402, Format:JPEG, Crop:true},
+   {ID:28, Width:768, Height:432, Format:JPEG, Crop:true},
+   {ID:29, Width:100, Height:75, Format:JPEG, Crop:true},
+   {ID:31, Width:1024, Height:1024, Format:PNG},
+   {ID:32, Width:380, Height:285, Format:JPEG, Crop:true},
+   {ID:33, Width:368, Height:276, Format:JPEG, Crop:true},
+   {ID:36, Width:400, Height:300, Format:JPEG, Crop:true},
+   {ID:37, Width:168, Height:126, Format:JPEG, Crop:true},
+   {ID:38, Width:144, Height:108, Format:JPEG, Crop:true},
+   {ID:41, Width:210, Height:210, Format:JPEG},
+   {ID:42, Width:50, Height:50, Format:JPEG},
+   {ID:43, Width:100, Height:100, Format:JPEG},
+   {ID:44, Width:200, Height:200, Format:JPEG},
+   {ID:50, Width:140, Height:140, Format:JPEG},
+   {ID:65, Width:700, Height:700, Format:JPEG},
+   {ID:66, Width:1200, Height:1200, Format:JPEG},
+   {ID:67, Width:350, Height:350, Format:JPEG},
+   {ID:68, Width:210, Height:210, Format:JPEG},
+   {ID:69, Width:700, Height:700, Format:JPEG},
 }
 
 // Extension is optional.
@@ -149,15 +149,6 @@ func (i Item) Tralbum() (*Tralbum, error) {
    return tralb, nil
 }
 
-type Track struct {
-   Track_Num int64
-   Title string
-   Band_Name string
-   Streaming_URL *struct {
-      MP3_128 string `json:"mp3-128"`
-   }
-}
-
 func (t Track) Base() string {
    return mech.Clean(t.Band_Name + "-" + t.Title)
 }
@@ -177,14 +168,37 @@ func (t Track) String() string {
    return string(buf)
 }
 
+func (t Tralbum) Date() time.Time {
+   return time.Unix(t.Release_Date, 0)
+}
+
 type Tralbum struct {
    Art_ID int64
    Release_Date int64
    Title string
-   Tracks []Track
    Tralbum_Artist string
+   Tracks []Track
 }
 
-func (t Tralbum) Date() time.Time {
-   return time.Unix(t.Release_Date, 0)
+type Track struct {
+   Track_Num int64
+   Title string
+   Band_Name string
+   Streaming_URL *struct {
+      MP3_128 string `json:"mp3-128"`
+   }
+}
+
+type Data struct {
+   Art_ID int64
+   Album_Release_Date string
+   Current struct {
+      Title string
+   }
+   Artist string
+   TrackInfo []struct {
+      File struct {
+         MP3_128 string `json:"mp3-128"`
+      }
+   }
 }
