@@ -9,6 +9,8 @@ import (
    "time"
 )
 
+var LogLevel format.LogLevel
+
 type TalkResponse struct {
    SpeakerName string
    Title string
@@ -17,33 +19,6 @@ type TalkResponse struct {
       Video []Video
    }
 }
-
-func (t TalkResponse) Time() time.Time {
-   return time.UnixMilli(t.FilmedTimestamp)
-}
-
-func (t TalkResponse) Format(f fmt.State, verb rune) {
-   fmt.Fprintln(f, "Speaker:", t.SpeakerName)
-   fmt.Fprintln(f, "Title:", t.Title)
-   fmt.Fprint(f, "Time: ", t.Time())
-   for _, v := range t.Downloads.Video {
-      fmt.Fprint(f, "\nBitrate:", v.Bitrate)
-      fmt.Fprint(f, " Size:", v.Size)
-      fmt.Fprint(f, " Format:", v.Format)
-      if verb == 'a' {
-         fmt.Fprint(f, " URL:", v.URL)
-      }
-   }
-}
-
-type Video struct {
-   Bitrate int64
-   Size int64
-   Format string
-   URL string
-}
-
-var LogLevel format.LogLevel
 
 func NewTalkResponse(slug string) (*TalkResponse, error) {
    var buf strings.Builder
@@ -70,10 +45,22 @@ func NewTalkResponse(slug string) (*TalkResponse, error) {
    return talk, nil
 }
 
-type errorString string
+func (t TalkResponse) Format(f fmt.State, verb rune) {
+   fmt.Fprintln(f, "Speaker:", t.SpeakerName)
+   fmt.Fprintln(f, "Title:", t.Title)
+   fmt.Fprint(f, "Time: ", t.Time())
+   for _, v := range t.Downloads.Video {
+      fmt.Fprint(f, "\nBitrate:", v.Bitrate)
+      fmt.Fprint(f, " Size:", v.Size)
+      fmt.Fprint(f, " Format:", v.Format)
+      if verb == 'a' {
+         fmt.Fprint(f, " URL:", v.URL)
+      }
+   }
+}
 
-func (e errorString) Error() string {
-   return string(e)
+func (t TalkResponse) Time() time.Time {
+   return time.UnixMilli(t.FilmedTimestamp)
 }
 
 func (t TalkResponse) Video(bitrate int64) *Video {
@@ -90,4 +77,17 @@ func (t TalkResponse) Video(bitrate int64) *Video {
       }
    }
    return dst
+}
+
+type Video struct {
+   Bitrate int64
+   Size int64
+   Format string
+   URL string
+}
+
+type errorString string
+
+func (e errorString) Error() string {
+   return string(e)
 }
