@@ -11,7 +11,7 @@ import (
    "time"
 )
 
-func newMaster(guid, address string, bandwidth int, info bool) error {
+func newMaster(guid, address string, bandwidth int64, info bool) error {
    if guid == "" {
       guid = paramount.GUID(address)
    }

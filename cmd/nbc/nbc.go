@@ -11,7 +11,7 @@ import (
    "sort"
 )
 
-func newMaster(guid int64, bandwidth int, info bool) error {
+func newMaster(guid, bandwidth int64, info bool) error {
    vod, err := nbc.NewAccessVOD(guid)
    if err != nil {
       return err

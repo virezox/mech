@@ -49,32 +49,30 @@ func (e errorString) Error() string {
    return string(e)
 }
 
-type TalkResponse struct {
-   Downloads struct {
-      Video []Video
-   }
-}
-
 type Video struct {
    Bitrate int64
    Size int64
    URL string
 }
 
-/*
-func (f Formats) Video(height int) *Format {
-   distance := func(f *Format) int {
-      if f.Height > height {
-         return f.Height - height
-      }
-      return height - f.Height
+type TalkResponse struct {
+   Downloads struct {
+      Video []Video
    }
-   var dst *Format
-   for i, src := range f {
-      if i == 0 || distance(&src) < distance(dst) {
-         dst = &f[i]
+}
+
+func (t TalkResponse) Video(bitrate int64) *Video {
+   distance := func(v *Video) int64 {
+      if v.Bitrate > bitrate {
+         return v.Bitrate - bitrate
+      }
+      return bitrate - v.Bitrate
+   }
+   var dst *Video
+   for i, src := range t.Downloads.Video {
+      if dst == nil || distance(&src) < distance(dst) {
+         dst = &t.Downloads.Video[i]
       }
    }
    return dst
 }
-*/

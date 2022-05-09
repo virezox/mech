@@ -11,8 +11,8 @@ func main() {
    flag.StringVar(&address, "a", "", "address")
    // f
    // http://pbs.org/wnet/nature/about-portugal-wild-land-edge
-   var video int
-   flag.IntVar(&video, "f", 2588259, "video bandwidth")
+   var video int64
+   flag.Int64Var(&video, "f", 2588259, "video bandwidth")
    // g
    // http://pbs.org/wnet/nature/about-portugal-wild-land-edge
    var audio string

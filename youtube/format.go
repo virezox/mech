@@ -103,7 +103,7 @@ func (f Formats) Video(height int) *Format {
       // 2. vp9
       // 3. av01
       // do "<=" so we can get last one
-      if i == 0 || distance(&src) <= distance(dst) {
+      if dst == nil || distance(&src) <= distance(dst) {
          dst = &f[i]
       }
    }

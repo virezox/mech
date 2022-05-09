@@ -10,8 +10,8 @@ func main() {
    var address string
    flag.StringVar(&address, "a", "", "address")
    // f
-   var bandwidth int
-   flag.IntVar(&bandwidth, "f", 2_895_476, "target bandwidth")
+   var bandwidth int64
+   flag.Int64Var(&bandwidth, "f", 2_895_476, "target bandwidth")
    // i
    var info bool
    flag.BoolVar(&info, "i", false, "information")

@@ -11,7 +11,7 @@ import (
    "os"
 )
 
-func doWidget(address, audio string, video int, info bool) error {
+func doWidget(address, audio string, video int64, info bool) error {
    getter, err := pbs.NewWidgeter(address)
    if err != nil {
       return err

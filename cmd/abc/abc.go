@@ -9,7 +9,7 @@ import (
    "os"
 )
 
-func newMaster(addr string, bandwidth int, info bool) error {
+func newMaster(addr string, bandwidth int64, info bool) error {
    route, err := abc.NewRoute(addr)
    if err != nil {
       return err

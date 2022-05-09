@@ -17,8 +17,8 @@ func main() {
    flag.StringVar(&email, "e", "", "email")
    // f
    // gem.cbc.ca/media/downton-abbey/s01e05
-   var video int
-   flag.IntVar(&video, "f", 2767506, "video bandwidth")
+   var video int64
+   flag.Int64Var(&video, "f", 2767506, "video bandwidth")
    // g
    // gem.cbc.ca/media/downton-abbey/s01e05
    var audio string
