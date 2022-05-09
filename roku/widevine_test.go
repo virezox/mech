@@ -17,5 +17,9 @@ func TestPlayback(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   fmt.Printf("%+v\n", play)
+   vine, err := play.Widevine()
+   if err != nil {
+      t.Fatal(err)
+   }
+   fmt.Printf("%+v\n", vine)
 }
