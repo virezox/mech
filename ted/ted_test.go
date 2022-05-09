@@ -13,6 +13,6 @@ func TestSlug(t *testing.T) {
       t.Fatal(err)
    }
    for _, vid := range talk.Downloads.Video {
-      fmt.Println(vid)
+      fmt.Printf("%a\n", vid)
    }
 }

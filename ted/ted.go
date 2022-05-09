@@ -2,20 +2,21 @@ package ted
 
 import (
    "encoding/json"
+   "fmt"
    "github.com/89z/format"
    "net/http"
-   "net/url"
-   "strconv"
    "strings"
 )
 
-var LogLevel format.LogLevel
-
-type TalkResponse struct {
-   Downloads struct {
-      Video []Video
+func (v Video) Format(f fmt.State, verb rune) {
+   fmt.Fprint(f, "Bitrate:", v.Bitrate)
+   fmt.Fprint(f, " Size:", v.Size)
+   if verb == 'a' {
+      fmt.Fprint(f, " URL:", v.URL)
    }
 }
+
+var LogLevel format.LogLevel
 
 func NewTalkResponse(slug string) (*TalkResponse, error) {
    var buf strings.Builder
@@ -32,11 +33,26 @@ func NewTalkResponse(slug string) (*TalkResponse, error) {
       return nil, err
    }
    defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return nil, errorString(res.Status)
+   }
    talk := new(TalkResponse)
    if err := json.NewDecoder(res.Body).Decode(talk); err != nil {
       return nil, err
    }
    return talk, nil
+}
+
+type errorString string
+
+func (e errorString) Error() string {
+   return string(e)
+}
+
+type TalkResponse struct {
+   Downloads struct {
+      Video []Video
+   }
 }
 
 type Video struct {
@@ -45,21 +61,20 @@ type Video struct {
    URL string
 }
 
-func (v Video) String() string {
-   buf := []byte("Bitrate:")
-   buf = strconv.AppendInt(buf, v.Bitrate, 10)
-   buf = append(buf, " Size:"...)
-   buf = append(buf, format.Size.GetInt64(v.Size)...)
-   buf = append(buf, " URL:"...)
-   buf = append(buf, v.GetURL()...)
-   return string(buf)
-}
-
-func (v Video) GetURL() string {
-   addr, err := url.Parse(v.URL)
-   if err != nil {
-      return v.URL
+/*
+func (f Formats) Video(height int) *Format {
+   distance := func(f *Format) int {
+      if f.Height > height {
+         return f.Height - height
+      }
+      return height - f.Height
    }
-   addr.RawQuery = ""
-   return addr.String()
+   var dst *Format
+   for i, src := range f {
+      if i == 0 || distance(&src) < distance(dst) {
+         dst = &f[i]
+      }
+   }
+   return dst
 }
+*/
