@@ -2,16 +2,16 @@ package main
 
 import (
    "flag"
-   "github.com/89z/mech/tiktok"
+   "github.com/89z/mech/ted"
 )
 
 func main() {
-   // a
-   var address string
-   flag.StringVar(&address, "a", "", "address")
    // b
-   var awemeID int64
-   flag.Int64Var(&awemeID, "b", 0, "aweme ID")
+   var slug string
+   flag.StringVar(&slug, "b", "", "slug")
+   // f
+   var bitrate int64
+   flag.Int64Var(&bitrate, "f", 180, "bitrate")
    // i
    var info bool
    flag.BoolVar(&info, "i", false, "info only")
@@ -20,10 +20,10 @@ func main() {
    flag.BoolVar(&verbose, "v", false, "verbose")
    flag.Parse()
    if verbose {
-      tiktok.LogLevel = 1
+      ted.LogLevel = 1
    }
-   if awemeID >= 1 || address != "" {
-      err := detail(awemeID, address, info)
+   if slug != "" {
+      err := process(slug, info, bitrate)
       if err != nil {
          panic(err)
       }

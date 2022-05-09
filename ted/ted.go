@@ -6,14 +6,41 @@ import (
    "github.com/89z/format"
    "net/http"
    "strings"
+   "time"
 )
 
-func (v Video) Format(f fmt.State, verb rune) {
-   fmt.Fprint(f, "Bitrate:", v.Bitrate)
-   fmt.Fprint(f, " Size:", v.Size)
-   if verb == 'a' {
-      fmt.Fprint(f, " URL:", v.URL)
+type TalkResponse struct {
+   SpeakerName string
+   Title string
+   FilmedTimestamp int64
+   Downloads struct {
+      Video []Video
    }
+}
+
+func (t TalkResponse) Time() time.Time {
+   return time.UnixMilli(t.FilmedTimestamp)
+}
+
+func (t TalkResponse) Format(f fmt.State, verb rune) {
+   fmt.Fprintln(f, "Speaker:", t.SpeakerName)
+   fmt.Fprintln(f, "Title:", t.Title)
+   fmt.Fprint(f, "Time: ", t.Time())
+   for _, v := range t.Downloads.Video {
+      fmt.Fprint(f, "\nBitrate:", v.Bitrate)
+      fmt.Fprint(f, " Size:", v.Size)
+      fmt.Fprint(f, " Format:", v.Format)
+      if verb == 'a' {
+         fmt.Fprint(f, " URL:", v.URL)
+      }
+   }
+}
+
+type Video struct {
+   Bitrate int64
+   Size int64
+   Format string
+   URL string
 }
 
 var LogLevel format.LogLevel
@@ -47,18 +74,6 @@ type errorString string
 
 func (e errorString) Error() string {
    return string(e)
-}
-
-type Video struct {
-   Bitrate int64
-   Size int64
-   URL string
-}
-
-type TalkResponse struct {
-   Downloads struct {
-      Video []Video
-   }
 }
 
 func (t TalkResponse) Video(bitrate int64) *Video {
