@@ -1,87 +1,38 @@
-package roku
+package main
 
 import (
-   "github.com/89z/format"
-   "github.com/89z/format/json"
    "io"
    "net/http"
+   "net/http/httputil"
    "net/url"
+   "os"
    "strings"
 )
 
-type playback struct {
-   DRM struct {
-      Widevine struct {
-         LicenseServer string
-      }
-   }
-}
-
-func (c crossSite) playback() (*playback, error) {
-   body := strings.NewReader(`
-   {
-      "mediaFormat": "mpeg-dash",
-      "rokuId": "597a64a4a25c5bf6af4a8c7053049a6f"
-   }
-   `)
-   req := new(http.Request)
+func main() {
+   var req http.Request
    req.Body = io.NopCloser(body)
    req.Header = make(http.Header)
    req.Method = "POST"
    req.URL = new(url.URL)
-   req.URL.Host = "therokuchannel.roku.com"
-   req.URL.Path = "/api/v3/playback"
+   req.URL.Host = "getwvkeys.cc"
+   req.URL.Path = "/api"
    req.URL.Scheme = "https"
-   req.Header["Content-Type"] = []string{"application/json"}
-   req.Header.Set("CSRF-Token", c.token)
-   req.AddCookie(c.cookie)
-   LogLevel.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
+   res, err := new(http.Transport).RoundTrip(&req)
    if err != nil {
-      return nil, err
+      panic(err)
    }
    defer res.Body.Close()
-   play := new(playback)
-   if err := json.NewDecoder(res.Body).Decode(play); err != nil {
-      return nil, err
+   buf, err := httputil.DumpResponse(res, true)
+   if err != nil {
+      panic(err)
    }
-   return play, nil
+   os.Stdout.Write(buf)
 }
 
-func newCrossSite() (*crossSite, error) {
-   // this has smaller body than www.roku.com
-   req, err := http.NewRequest("GET", "https://therokuchannel.roku.com", nil)
-   if err != nil {
-      return nil, err
-   }
-   LogLevel.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   var site crossSite
-   for _, cook := range res.Cookies() {
-      if cook.Name == "_csrf" {
-         site.cookie = cook
-      }
-   }
-   scan, err := json.NewScanner(res.Body)
-   if err != nil {
-      return nil, err
-   }
-   scan.Split = []byte("\tcsrf:")
-   scan.Scan()
-   scan.Split = nil
-   if err := scan.Decode(&site.token); err != nil {
-      return nil, err
-   }
-   return &site, nil
+var body = strings.NewReader(`{
+   "buildInfo": "",
+   "license": "https://wv.service.expressplay.com/hms/wv/rights/?ExpressPlayToken=BQA1P5QRKZ0AJDIzN2U4NTE4LTQwN2QtNDI3Zi05NTkyLWFmMTJiMzRkMmU0NwAAAIC63N2hKChJVVAEieJRdasQTDLxWpWxGIczvZHdpGu2FYj9dY5Yu2Nm148TQigP5OYYg3VYpZ6k7nbLR7UhYB28CRzzr57UkY7uV42YIpil7OqAWD_8dfW5l99IdN8QuYr0bHjwIizxMJOASXIqdBZuRXv85GlPGeIMX2wHu9YKHyZ7_wD4bU1WO3aymDA1vlZx5oqQ",
+   "pssh": "AAAAW3Bzc2gAAAAA7e+LqXnWSs6jyCfc1R0h7QAAADsIARIQ62dqu8s0Xpa7z2FmMPGj2hoNd2lkZXZpbmVfdGVzdCIQZmtqM2xqYVNkZmFsa3IzaioCSEQyAA=="
 }
-
-type crossSite struct {
-   cookie *http.Cookie // has own String method
-   token string
-}
-
-var LogLevel format.LogLevel
+`)
