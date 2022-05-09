@@ -11,7 +11,7 @@ import (
    "os"
 )
 
-func doDASH(con *roku.Content, bandwidth int, info bool) error {
+func doDASH(con *roku.Content, bandwidth int64, info bool) error {
    video := con.DASH()
    fmt.Println("GET", video.URL)
    res, err := http.Get(video.URL)
@@ -30,7 +30,7 @@ func doDASH(con *roku.Content, bandwidth int, info bool) error {
          }
       }
    } else {
-      video := adas.MimeType(dash.Video).Represent(0)
+      video := adas.MimeType(dash.Video).Represent(bandwidth)
       addrs, err := video.URL(res.Request.URL)
       if err != nil {
          return err

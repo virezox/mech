@@ -11,6 +11,9 @@ import (
 )
 
 func (c Content) Base() string {
+   if c.Meta.MediaType == "movie" {
+      return c.Title
+   }
    var buf strings.Builder
    buf.WriteString(c.Series.Title)
    buf.WriteByte('-')

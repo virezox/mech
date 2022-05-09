@@ -13,8 +13,8 @@ func main() {
    var dash bool
    flag.BoolVar(&dash, "dash", false, "DASH")
    // f
-   var bandwidth int
-   flag.IntVar(&bandwidth, "f", 3_000_000, "target bandwidth")
+   var bandwidth int64
+   flag.Int64Var(&bandwidth, "f", 3_000_000, "target bandwidth")
    // i
    var info bool
    flag.BoolVar(&info, "i", false, "information")

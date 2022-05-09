@@ -10,7 +10,7 @@ import (
    "os"
 )
 
-func doHLS(con *roku.Content, bandwidth int, info bool) error {
+func doHLS(con *roku.Content, bandwidth int64, info bool) error {
    video, err := con.HLS()
    if err != nil {
       return err
