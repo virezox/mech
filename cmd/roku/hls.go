@@ -3,29 +3,12 @@ package main
 import (
    "fmt"
    "github.com/89z/format"
-   "github.com/89z/format/dash"
    "github.com/89z/format/hls"
    "github.com/89z/mech/roku"
    "io"
    "net/http"
    "os"
 )
-
-func doDASH(con *roku.Content, bandwidth int, info bool) error {
-   video := con.DASH()
-   fmt.Println("GET", video.URL)
-   res, err := http.Get(video.URL)
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   period, err := dash.NewPeriod(res.Body)
-   if err != nil {
-      return err
-   }
-   fmt.Printf("%+v\n", period)
-   return nil
-}
 
 func doHLS(con *roku.Content, bandwidth int, info bool) error {
    video, err := con.HLS()
@@ -43,21 +26,20 @@ func doHLS(con *roku.Content, bandwidth int, info bool) error {
       return err
    }
    stream := master.Stream(bandwidth)
-   if info {
-      fmt.Println(con)
-      for _, each := range master.Streams {
-         if each.Bandwidth == stream.Bandwidth {
-            fmt.Print("!")
-         }
-         fmt.Println(each)
+   if !info {
+      return downloadHLS(stream, con.Base())
+   }
+   fmt.Println(con)
+   for _, each := range master.Streams {
+      if each.Bandwidth == stream.Bandwidth {
+         fmt.Print("!")
       }
-   } else {
-      return download(stream, con.Base())
+      fmt.Println(each)
    }
    return nil
 }
 
-func download(stream *hls.Stream, base string) error {
+func downloadHLS(stream *hls.Stream, base string) error {
    fmt.Println("GET", stream.URI)
    res, err := http.Get(stream.URI.String())
    if err != nil {

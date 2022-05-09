@@ -41,7 +41,6 @@ and enter:
 go build
 ~~~
 
-
 ## Sponsor
 
 I really need help financially, so if you are able, please donate using the
