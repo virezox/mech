@@ -40,7 +40,3 @@ enc.mp4 dec.mp4
 ~~~
 
 1. https://bento4.com/downloads
-
-## CSRF
-
-https://www.roku.com
