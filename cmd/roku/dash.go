@@ -11,23 +11,6 @@ import (
    "os"
 )
 
-func doKey(id string) error {
-   site, err := roku.NewCrossSite()
-   if err != nil {
-      return err
-   }
-   play, err := site.Playback(id)
-   if err != nil {
-      return err
-   }
-   vine, err := play.Widevine()
-   if err != nil {
-      return err
-   }
-   fmt.Println(vine)
-   return nil
-}
-
 func doDASH(con *roku.Content, bandwidth int64, info bool) error {
    video := con.DASH()
    fmt.Println("GET", video.URL)
@@ -76,5 +59,22 @@ func doDASH(con *roku.Content, bandwidth int64, info bool) error {
          }
       }
    }
+   return nil
+}
+
+func doKey(id string) error {
+   site, err := roku.NewCrossSite()
+   if err != nil {
+      return err
+   }
+   play, err := site.Playback(id)
+   if err != nil {
+      return err
+   }
+   vine, err := play.Widevine()
+   if err != nil {
+      return err
+   }
+   fmt.Println(vine)
    return nil
 }

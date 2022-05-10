@@ -11,10 +11,11 @@ func main() {
    flag.StringVar(&id, "b", "", "ID")
    // dash
    var dash bool
-   flag.BoolVar(&dash, "dash", false, "DASH")
+   flag.BoolVar(&dash, "dash", false, "DASH download")
    // f
+   // therokuchannel.roku.com/watch/597a64a4a25c5bf6af4a8c7053049a6f
    var bandwidth int64
-   flag.Int64Var(&bandwidth, "f", 3_000_000, "target bandwidth")
+   flag.Int64Var(&bandwidth, "f", 1920832, "target bandwidth")
    // i
    var info bool
    flag.BoolVar(&info, "i", false, "information")
