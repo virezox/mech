@@ -3,26 +3,26 @@ package roku
 import (
    "bytes"
    "encoding/base64"
+   "encoding/hex"
    "github.com/89z/format/json"
    "net/http"
    "strings"
 )
 
+func (w Widevine) Key() ([]byte, error) {
+   for _, each := range w.Keys {
+      _, key, ok := strings.Cut(each.Key, ":")
+      if ok {
+         return hex.DecodeString(key)
+      }
+   }
+   return nil, errorString(`":" not found`)
+}
+
 type Widevine struct {
    Keys []struct {
       Key string
    }
-}
-
-func (w Widevine) String() string {
-   var buf strings.Builder
-   buf.WriteString("mp4decrypt")
-   for _, each := range w.Keys {
-      buf.WriteString(" --key ")
-      buf.WriteString(each.Key)
-   }
-   buf.WriteString(" input.mp4 output.mp4")
-   return buf.String()
 }
 
 var pssh = []byte{

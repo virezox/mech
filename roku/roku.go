@@ -10,22 +10,29 @@ import (
    "time"
 )
 
-func (c Content) Base() string {
-   if c.Meta.MediaType == "movie" {
-      return c.Title
+type Content struct {
+   Meta struct {
+      ID string
+      MediaType string
    }
-   var buf strings.Builder
-   buf.WriteString(c.Series.Title)
-   buf.WriteByte('-')
-   buf.WriteString(c.Title)
-   buf.WriteByte('-')
-   buf.WriteString(c.SeasonNumber)
-   buf.WriteByte('-')
-   buf.WriteString(c.EpisodeNumber)
-   return buf.String()
+   Title string
+   Series struct {
+      Title string
+   }
+   SeasonNumber string
+   EpisodeNumber string
+   ReleaseDate string
+   RunTimeSeconds int64
+   ViewOptions []struct {
+      License string
+      Media struct {
+         Videos []Video
+      }
+   }
 }
 
 func (c Content) Format(f fmt.State, verb rune) {
+   fmt.Fprintln(f, "ID:", c.Meta.ID)
    fmt.Fprintln(f, "Type:", c.Meta.MediaType)
    fmt.Fprintln(f, "Title:", c.Title)
    if c.Meta.MediaType == "episode" {
@@ -45,27 +52,22 @@ func (c Content) Format(f fmt.State, verb rune) {
    }
 }
 
-var LogLevel format.LogLevel
-
-type Content struct {
-   Meta struct {
-      MediaType string
+func (c Content) Base() string {
+   if c.Meta.MediaType == "movie" {
+      return c.Title
    }
-   Title string
-   Series struct {
-      Title string
-   }
-   SeasonNumber string
-   EpisodeNumber string
-   ReleaseDate string
-   RunTimeSeconds int64
-   ViewOptions []struct {
-      License string
-      Media struct {
-         Videos []Video
-      }
-   }
+   var buf strings.Builder
+   buf.WriteString(c.Series.Title)
+   buf.WriteByte('-')
+   buf.WriteString(c.Title)
+   buf.WriteByte('-')
+   buf.WriteString(c.SeasonNumber)
+   buf.WriteByte('-')
+   buf.WriteString(c.EpisodeNumber)
+   return buf.String()
 }
+
+var LogLevel format.LogLevel
 
 func NewContent(id string) (*Content, error) {
    var addr url.URL

@@ -19,9 +19,6 @@ func main() {
    // i
    var info bool
    flag.BoolVar(&info, "i", false, "information")
-   // k
-   var key bool
-   flag.BoolVar(&key, "key", false, "mp4decrypt key")
    // v
    var verbose bool
    flag.BoolVar(&verbose, "v", false, "verbose")
@@ -29,12 +26,7 @@ func main() {
    if verbose {
       roku.LogLevel = 1
    }
-   if key {
-      err := doKey(id)
-      if err != nil {
-         panic(err)
-      }
-   } else if id != "" {
+   if id != "" {
       content, err := roku.NewContent(id)
       if err != nil {
          panic(err)
