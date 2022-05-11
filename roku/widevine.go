@@ -9,22 +9,6 @@ import (
    "strings"
 )
 
-func (w Widevine) Key() ([]byte, error) {
-   for _, each := range w.Keys {
-      _, key, ok := strings.Cut(each.Key, ":")
-      if ok {
-         return hex.DecodeString(key)
-      }
-   }
-   return nil, errorString(`":" not found`)
-}
-
-type Widevine struct {
-   Keys []struct {
-      Key string
-   }
-}
-
 var pssh = []byte{
    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
    // Widevine UUID:
@@ -139,4 +123,20 @@ func (p Playback) Widevine() (*Widevine, error) {
       return nil, err
    }
    return vine, nil
+}
+
+type Widevine struct {
+   Keys []struct {
+      Key string
+   }
+}
+
+func (w Widevine) Key() ([]byte, error) {
+   for _, each := range w.Keys {
+      _, key, ok := strings.Cut(each.Key, ":")
+      if ok {
+         return hex.DecodeString(key)
+      }
+   }
+   return nil, errorString(`":" not found`)
 }

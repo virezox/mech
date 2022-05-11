@@ -20,7 +20,9 @@ type downloader struct {
 }
 
 func (d downloader) DASH(bAudio, bVideo int64) error {
-   if !d.info {
+   if d.info {
+      fmt.Println(d.Content)
+   } else {
       site, err := roku.NewCrossSite()
       if err != nil {
          return err
@@ -60,10 +62,14 @@ func (d downloader) download(typ string, bandwidth int64) error {
    if bandwidth == 0 {
       return nil
    }
+   rep := d.MimeType(typ).Represent(bandwidth)
    if d.info {
       for _, ada := range d.MimeType(typ) {
-         for _, rep := range ada.Representation {
-            fmt.Println(rep)
+         for _, each := range ada.Representation {
+            if each.Bandwidth == rep.Bandwidth {
+               fmt.Print("!")
+            }
+            fmt.Println(each)
          }
       }
    } else {
@@ -76,7 +82,6 @@ func (d downloader) download(typ string, bandwidth int64) error {
          return err
       }
       defer file.Close()
-      rep := d.MimeType(typ).Represent(bandwidth)
       init, err := rep.Initialization(d.URL)
       if err != nil {
          return err
