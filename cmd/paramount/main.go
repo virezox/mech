@@ -13,9 +13,9 @@ func main() {
    var guid string
    flag.StringVar(&guid, "b", "", "GUID")
    // f
-   // paramountplus.com/shows/video/186A7772-3307-4270-4FB9-D16F4DC7E08C
+   // paramountplus.com/shows/video/622678414
    var bandwidth int64
-   flag.Int64Var(&bandwidth, "f", 2_223_000, "target bandwidth")
+   flag.Int64Var(&bandwidth, "f", 1622000, "target bandwidth")
    // i
    var info bool
    flag.BoolVar(&info, "i", false, "information")
