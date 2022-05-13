@@ -1,8 +1,16 @@
 # Paramount+
 
-## DRM
+## WKS-KEY
 
-Need proxy to use with Get Widevine Keys:
+~~~
+unable to parse license - check protobufs
+~~~
+
+https://github.com/weapon121/WKS-KEY
+
+## Get Widevine Keys
+
+Need proxy:
 
 ~~~
 Error 404: {"code":130301,"message":"Content is not available in this
