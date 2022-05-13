@@ -12,23 +12,28 @@ func (v video) do() error {
    if err != nil {
       return err
    }
+   forms := play.StreamingData.AdaptiveFormats
    if v.info {
-      play.StreamingData.AdaptiveFormats.MediaType()
+      forms.MediaType()
       fmt.Println(play)
    } else {
       fmt.Println(play.PlayabilityStatus)
-      if v.height >= 1 {
-         form := play.StreamingData.AdaptiveFormats.Video(v.height)
-         err := download(form, play.Base())
-         if err != nil {
-            return err
+      if v.audio != "" {
+         form, ok := forms.Audio(v.audio)
+         if ok {
+            err := download(form, play.Base())
+            if err != nil {
+               return err
+            }
          }
       }
-      if v.audio != "" {
-         form := play.StreamingData.AdaptiveFormats.Audio(v.audio)
-         err := download(form, play.Base())
-         if err != nil {
-            return err
+      if v.height >= 1 {
+         form, ok := forms.Video(v.height)
+         if ok {
+            err := download(form, play.Base())
+            if err != nil {
+               return err
+            }
          }
       }
    }

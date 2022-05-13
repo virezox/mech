@@ -8,6 +8,37 @@ import (
    "net/http"
 )
 
+func (f Formats) Audio(quality string) (*Format, bool) {
+   for _, form := range f {
+      if form.AudioQuality == quality {
+         return &form, true
+      }
+   }
+   return nil, false
+}
+
+func (f Formats) Video(height int) (*Format, bool) {
+   distance := func(f *Format) int {
+      if f.Height > height {
+         return f.Height - height
+      }
+      return height - f.Height
+   }
+   var (
+      dst *Format
+      ok bool
+   )
+   for i, src := range f {
+      // since codecs are in this order avc1,vp9,av01,
+      // do "<=" so we can get last one
+      if dst == nil || distance(&src) <= distance(dst) {
+         dst = &f[i]
+         ok = true
+      }
+   }
+   return dst, ok
+}
+
 func (f Format) Format(s fmt.State, verb rune) {
    if f.QualityLabel != "" {
       fmt.Fprint(s, "Quality:", f.QualityLabel)
@@ -79,33 +110,3 @@ func (f Format) WriteTo(w io.Writer) (int64, error) {
 }
 
 type Formats []Format
-
-func (f Formats) Audio(quality string) *Format {
-   for _, form := range f {
-      if form.AudioQuality == quality {
-         return &form
-      }
-   }
-   return nil
-}
-
-func (f Formats) Video(height int) *Format {
-   distance := func(f *Format) int {
-      if f.Height > height {
-         return f.Height - height
-      }
-      return height - f.Height
-   }
-   var dst *Format
-   for i, src := range f {
-      // since codecs are in this order
-      // 1. avc1
-      // 2. vp9
-      // 3. av01
-      // do "<=" so we can get last one
-      if dst == nil || distance(&src) <= distance(dst) {
-         dst = &f[i]
-      }
-   }
-   return dst
-}

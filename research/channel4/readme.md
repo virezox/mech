@@ -1,5 +1,7 @@
 # Channel 4
 
+In VineTrimmer they have reversed the JavaScript
+
 ## Android client
 
 ~~~
