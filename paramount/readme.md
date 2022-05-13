@@ -1,5 +1,14 @@
 # Paramount+
 
+## DRM
+
+Need proxy to use with Get Widevine Keys:
+
+~~~
+Error 404: {"code":130301,"message":"Content is not available in this
+location."}
+~~~
+
 ## How to get sid?
 
 https://play.google.com/store/apps/details?id=com.cbs.app
