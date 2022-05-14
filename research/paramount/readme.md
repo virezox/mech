@@ -40,3 +40,5 @@ authorization: Bearer eyJhbGciOiJIUzI1NiIsImtpZCI6IjNkNjg4NGJmLWViMDktNDA1Zi1hOW
 referer: https://www.paramountplus.com/
 te: trailers
 ~~~
+
+<https://github.com/Jnzzi/4464_L3-CDM>
