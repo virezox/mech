@@ -7,15 +7,10 @@ import (
    "io"
    "net/http"
    "os"
-   "research/hulu/widevine"
-   "strings"
+   "research/paramount/widevine"
 )
 
-var (
-   LogLevel format.LogLevel
-   _ = bytes.NewReader
-   _ = strings.NewReader
-)
+var LogLevel format.LogLevel
 
 func main() {
    file, err := os.Open("ignore/stream.mpd")

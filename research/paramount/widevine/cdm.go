@@ -18,72 +18,60 @@ import (
 )
 
 type CDM struct {
-	privateKey *rsa.PrivateKey
-	clientID   []byte
-	sessionID  [32]byte
-
-	widevineCencHeader      WidevineCencHeader
-	signedDeviceCertificate SignedDeviceCertificate
-	privacyMode             bool
+   clientID   []byte
+   privacyMode             bool
+   privateKey *rsa.PrivateKey
+   sessionID  [32]byte
+   signedDeviceCertificate SignedDeviceCertificate
+   widevineCencHeader      WidevineCencHeader
 }
 
 type Key struct {
-	ID    []byte
-	Type  License_KeyContainer_KeyType
-	Value []byte
+   ID    []byte
+   Type  License_KeyContainer_KeyType
+   Value []byte
 }
 
 // Creates a new CDM object with the specified device information.
 func NewCDM(privateKey, clientID, initData []byte) (CDM, error) {
-	block, _ := pem.Decode(privateKey)
-	if block == nil || (block.Type != "PRIVATE KEY" && block.Type != "RSA PRIVATE KEY") {
-		return CDM{}, errors.New("failed to decode device private key")
-	}
-
-	keyParsed, err := x509.ParsePKCS1PrivateKey(block.Bytes)
-	if err != nil {
-		// if PCKS1 doesn't work, try PCKS8
-		pcks8Key, err := x509.ParsePKCS8PrivateKey(block.Bytes)
-		if err != nil {
-			return CDM{}, err
-		}
-		keyParsed = pcks8Key.(*rsa.PrivateKey)
-	}
-
-	var widevineCencHeader WidevineCencHeader
-	if len(initData) < 32 {
-		return CDM{}, errors.New("initData not long enough")
-	}
-	if err := proto.Unmarshal(initData[32:], &widevineCencHeader); err != nil {
-		return CDM{}, err
-	}
-
-	sessionID := func() (s [32]byte) {
-		c := []byte("ABCDEF0123456789")
-		for i := 0; i < 16; i++ {
-			s[i] = c[frand.Intn(len(c))]
-		}
-		s[16] = '0'
-		s[17] = '1'
-		for i := 18; i < 32; i++ {
-			s[i] = '0'
-		}
-		return s
-	}()
-
-	return CDM{
-		privateKey: keyParsed,
-		clientID:   clientID,
-
-		widevineCencHeader: widevineCencHeader,
-
-		sessionID: sessionID,
-	}, nil
-}
-
-// Creates a new CDM object using the default device configuration.
-func NewDefaultCDM(initData []byte) (CDM, error) {
-	return NewCDM(DefaultPrivateKey, DefaultClientID, initData)
+   block, _ := pem.Decode(privateKey)
+   if block == nil || (block.Type != "PRIVATE KEY" && block.Type != "RSA PRIVATE KEY") {
+      return CDM{}, errors.New("failed to decode device private key")
+   }
+   keyParsed, err := x509.ParsePKCS1PrivateKey(block.Bytes)
+   if err != nil {
+      // if PCKS1 doesn't work, try PCKS8
+      pcks8Key, err := x509.ParsePKCS8PrivateKey(block.Bytes)
+      if err != nil {
+         return CDM{}, err
+      }
+      keyParsed = pcks8Key.(*rsa.PrivateKey)
+   }
+   var widevineCencHeader WidevineCencHeader
+   if len(initData) < 32 {
+      return CDM{}, errors.New("initData not long enough")
+   }
+   if err := proto.Unmarshal(initData[32:], &widevineCencHeader); err != nil {
+      return CDM{}, err
+   }
+   sessionID := func() (s [32]byte) {
+      c := []byte("ABCDEF0123456789")
+      for i := 0; i < 16; i++ {
+         s[i] = c[frand.Intn(len(c))]
+      }
+      s[16] = '0'
+      s[17] = '1'
+      for i := 18; i < 32; i++ {
+         s[i] = '0'
+      }
+      return s
+   }()
+   return CDM{
+      clientID:   clientID,
+      privateKey: keyParsed,
+      sessionID: sessionID,
+      widevineCencHeader: widevineCencHeader,
+   }, nil
 }
 
 // Sets a device certificate.  This is makes generating the license request
