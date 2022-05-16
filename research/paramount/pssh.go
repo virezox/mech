@@ -1,4 +1,4 @@
-package widevine
+package paramount
 
 import (
    "encoding/base64"
@@ -76,26 +76,26 @@ type mpd struct {
 // This function retrieves the PSSH/Init Data from a given MPD file reader.
 // Example file: https://bitmovin-a.akamaihd.net/content/art-of-motion_drm/mpds/11331.mpd
 func InitDataFromMPD(r io.Reader) ([]byte, error) {
-	var mpdPlaylist mpd
-	if err := xml.NewDecoder(r).Decode(&mpdPlaylist); err != nil {
-		return nil, err
-	}
-	const widevineSchemeIdURI = "urn:uuid:edef8ba9-79d6-4ace-a3c8-27dcd51d21ed"
-	for _, adaptionSet := range mpdPlaylist.Period.AdaptationSet {
-		for _, protection := range adaptionSet.ContentProtection {
-			if protection.SchemeIdUri == widevineSchemeIdURI && len(protection.Pssh) > 0 {
-				return base64.StdEncoding.DecodeString(protection.Pssh)
-			}
-		}
-	}
-	for _, adaptionSet := range mpdPlaylist.Period.AdaptationSet {
-		for _, representation := range adaptionSet.Representation {
-			for _, protection := range representation.ContentProtection {
-				if protection.SchemeIdUri == widevineSchemeIdURI && len(protection.Pssh.Text) > 0 {
-					return base64.StdEncoding.DecodeString(protection.Pssh.Text)
-				}
-			}
-		}
-	}
-	return nil, errors.New("no init data found")
+   var mpdPlaylist mpd
+   if err := xml.NewDecoder(r).Decode(&mpdPlaylist); err != nil {
+      return nil, err
+   }
+   const widevineSchemeIdURI = "urn:uuid:edef8ba9-79d6-4ace-a3c8-27dcd51d21ed"
+   for _, adaptionSet := range mpdPlaylist.Period.AdaptationSet {
+      for _, protection := range adaptionSet.ContentProtection {
+         if protection.SchemeIdUri == widevineSchemeIdURI && len(protection.Pssh) > 0 {
+            return base64.StdEncoding.DecodeString(protection.Pssh)
+         }
+      }
+   }
+   for _, adaptionSet := range mpdPlaylist.Period.AdaptationSet {
+      for _, representation := range adaptionSet.Representation {
+         for _, protection := range representation.ContentProtection {
+            if protection.SchemeIdUri == widevineSchemeIdURI && len(protection.Pssh.Text) > 0 {
+               return base64.StdEncoding.DecodeString(protection.Pssh.Text)
+            }
+         }
+      }
+   }
+   return nil, errors.New("no init data found")
 }

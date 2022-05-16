@@ -1,4 +1,4 @@
-package widevine
+package paramount
 
 import (
    "bytes"
@@ -15,6 +15,7 @@ import (
    "lukechampine.com/frand"
    "math"
    "time"
+   wv "research/paramount/widevine"
 )
 
 type CDM struct {
@@ -22,13 +23,13 @@ type CDM struct {
    privacyMode             bool
    privateKey *rsa.PrivateKey
    sessionID  [32]byte
-   signedDeviceCertificate SignedDeviceCertificate
-   widevineCencHeader      WidevineCencHeader
+   signedDeviceCertificate wv.SignedDeviceCertificate
+   widevineCencHeader      wv.WidevineCencHeader
 }
 
 type Key struct {
    ID    []byte
-   Type  License_KeyContainer_KeyType
+   Type  wv.License_KeyContainer_KeyType
    Value []byte
 }
 
@@ -47,7 +48,7 @@ func NewCDM(privateKey, clientID, initData []byte) (CDM, error) {
       }
       keyParsed = pcks8Key.(*rsa.PrivateKey)
    }
-   var widevineCencHeader WidevineCencHeader
+   var widevineCencHeader wv.WidevineCencHeader
    if len(initData) < 32 {
       return CDM{}, errors.New("initData not long enough")
    }
@@ -78,7 +79,7 @@ func NewCDM(privateKey, clientID, initData []byte) (CDM, error) {
 // more complicated but is supported.  This is usually not necessary for most
 // Widevine applications.
 func (c *CDM) SetServiceCertificate(certData []byte) error {
-   var message SignedMessage
+   var message wv.SignedMessage
    if err := proto.Unmarshal(certData, &message); err != nil {
       return err
    }
@@ -92,24 +93,24 @@ func (c *CDM) SetServiceCertificate(certData []byte) error {
 // Generates the license request data.  This is sent to the license server via
 // HTTP POST and the server in turn returns the license response.
 func (c *CDM) GetLicenseRequest() ([]byte, error) {
-   var licenseRequest SignedLicenseRequest
-   licenseRequest.Msg = new(LicenseRequest)
-   licenseRequest.Msg.ContentId = new(LicenseRequest_ContentIdentification)
-   licenseRequest.Msg.ContentId.CencId = new(LicenseRequest_ContentIdentification_CENC)
+   var licenseRequest wv.SignedLicenseRequest
+   licenseRequest.Msg = new(wv.LicenseRequest)
+   licenseRequest.Msg.ContentId = new(wv.LicenseRequest_ContentIdentification)
+   licenseRequest.Msg.ContentId.CencId = new(wv.LicenseRequest_ContentIdentification_CENC)
    // this is probably really bad for the GC but protobuf uses pointers for optional
    // fields so it is necessary and this is not a long running program
    {
-      v := SignedLicenseRequest_LICENSE_REQUEST
+      v := wv.SignedLicenseRequest_LICENSE_REQUEST
       licenseRequest.Type = &v
    }
    licenseRequest.Msg.ContentId.CencId.Pssh = &c.widevineCencHeader
    {
-      v := LicenseType_DEFAULT
+      v := wv.LicenseType_DEFAULT
       licenseRequest.Msg.ContentId.CencId.LicenseType = &v
    }
    licenseRequest.Msg.ContentId.CencId.RequestId = c.sessionID[:]
    {
-      v := LicenseRequest_NEW
+      v := wv.LicenseRequest_NEW
       licenseRequest.Msg.Type = &v
    }
    {
@@ -117,7 +118,7 @@ func (c *CDM) GetLicenseRequest() ([]byte, error) {
       licenseRequest.Msg.RequestTime = &v
    }
    {
-      v := ProtocolVersion_CURRENT
+      v := wv.ProtocolVersion_CURRENT
       licenseRequest.Msg.ProtocolVersion = &v
    }
    {
@@ -151,7 +152,7 @@ func (c *CDM) GetLicenseRequest() ([]byte, error) {
       if err != nil {
          return nil, err
       }
-      licenseRequest.Msg.EncryptedClientId = new(EncryptedClientIdentification)
+      licenseRequest.Msg.EncryptedClientId = new(wv.EncryptedClientIdentification)
       {
          v := string(c.signedDeviceCertificate.XDeviceCertificate.ServiceId)
          licenseRequest.Msg.EncryptedClientId.ServiceId = &v
@@ -161,7 +162,7 @@ func (c *CDM) GetLicenseRequest() ([]byte, error) {
       licenseRequest.Msg.EncryptedClientId.EncryptedClientIdIv = cidIV[:]
       licenseRequest.Msg.EncryptedClientId.EncryptedPrivacyKey = encryptedCIDKey
    } else {
-      licenseRequest.Msg.ClientId = new(ClientIdentification)
+      licenseRequest.Msg.ClientId = new(wv.ClientIdentification)
       if err := proto.Unmarshal(c.clientID, licenseRequest.Msg.ClientId); err != nil {
          return nil, err
       }
@@ -182,11 +183,11 @@ func (c *CDM) GetLicenseRequest() ([]byte, error) {
 // Retrieves the keys from the license response data.  These keys can be
 // used to decrypt the DASH-MP4.
 func (c *CDM) GetLicenseKeys(licenseRequest []byte, licenseResponse []byte) (keys []Key, err error) {
-   var license SignedLicense
+   var license wv.SignedLicense
    if err = proto.Unmarshal(licenseResponse, &license); err != nil {
       return
    }
-   var licenseRequestParsed SignedLicenseRequest
+   var licenseRequestParsed wv.SignedLicenseRequest
    if err = proto.Unmarshal(licenseRequest, &licenseRequestParsed); err != nil {
       return
    }

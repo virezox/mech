@@ -29,16 +29,7 @@ Now go back to the video page, and you should see a request like this:
 
 ~~~
 POST https://cbsi.live.ott.irdeto.com/widevine/getlicense?CrmId=cbsi&AccountId=cbsi&SubContentType=Default&ContentId=eyT_RYkqNuH_6ZYrepLtxkiPO1HA7dIU HTTP/2.0
-user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:88.0) Gecko/20100101 Firefox/88.0
-accept: */*
-accept-language: en-US,en;q=0.5
-accept-encoding: gzip, deflate, br
-content-length: 2
-origin: https://www.paramountplus.com
-dnt: 1
 authorization: Bearer eyJhbGciOiJIUzI1NiIsImtpZCI6IjNkNjg4NGJmLWViMDktNDA1Zi1hOWZjLWU0NGE1NmY3NjZiNiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhbm9ueW1vdXNfVVMiLCJlbnQiOlt7ImJpZCI6IkFsbEFjY2Vzc01haW4iLCJlcGlkIjo3fV0sImlhdCI6MTY1MjQ4NzM3NSwiZXhwIjoxNjUyNDk0NTc1LCJpc3MiOiJjYnMiLCJhaWQiOiJjYnNpIiwiaXNlIjp0cnVlLCJqdGkiOiI1MjA2NGJhYS03MDAwLTRjYjQtYjRjNS1iNDUyYzE5NzQ3OTMifQ.g3g52ntnnRKrcCYX_2bJMCzljWnUrQujD1YGvQbeSzQ
-referer: https://www.paramountplus.com/
-te: trailers
 ~~~
 
 <https://github.com/Jnzzi/4464_L3-CDM>
