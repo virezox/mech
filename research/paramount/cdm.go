@@ -10,13 +10,107 @@ import (
    "crypto/x509"
    "encoding/pem"
    "errors"
+   "github.com/aead/cmac"
    "google.golang.org/protobuf/proto"
-   "lukechampine.com/frand"
-   "math"
    "time"
    wv "research/paramount/widevine"
-   "github.com/aead/cmac"
 )
+
+// Generates the license request data.  This is sent to the license server via
+// HTTP POST and the server in turn returns the license response.
+func (c *decryptionModule) getLicenseRequest() ([]byte, error) {
+   var licenseRequest wv.SignedLicenseRequest
+   licenseRequest.Msg = new(wv.LicenseRequest)
+   {
+      var v uint32
+      licenseRequest.Msg.KeyControlNonce = &v
+   }
+   licenseRequest.Msg.ContentId = new(wv.LicenseRequest_ContentIdentification)
+   licenseRequest.Msg.ContentId.CencId = new(wv.LicenseRequest_ContentIdentification_CENC)
+   // this is probably really bad for the GC but protobuf uses pointers for optional
+   // fields so it is necessary and this is not a long running program
+   {
+      v := wv.SignedLicenseRequest_LICENSE_REQUEST
+      licenseRequest.Type = &v
+   }
+   licenseRequest.Msg.ContentId.CencId.Pssh = &c.widevineCencHeader
+   {
+      v := wv.LicenseType_DEFAULT
+      licenseRequest.Msg.ContentId.CencId.LicenseType = &v
+   }
+   licenseRequest.Msg.ContentId.CencId.RequestId = c.sessionID[:]
+   {
+      v := wv.LicenseRequest_NEW
+      licenseRequest.Msg.Type = &v
+   }
+   {
+      v := uint32(time.Now().Unix())
+      licenseRequest.Msg.RequestTime = &v
+   }
+   {
+      v := wv.ProtocolVersion_CURRENT
+      licenseRequest.Msg.ProtocolVersion = &v
+   }
+   if c.privacyMode {
+      pad := func(data []byte, blockSize int) []byte {
+         padlen := blockSize - (len(data) % blockSize)
+         if padlen == 0 {
+            padlen = blockSize
+         }
+         return append(data, bytes.Repeat([]byte{byte(padlen)}, padlen)...)
+      }
+      const blockSize = 16
+      var (
+         cidIV [blockSize]byte
+         cidKey [blockSize]byte
+      )
+      block, err := aes.NewCipher(cidKey[:])
+      if err != nil {
+         return nil, err
+      }
+      paddedClientID := pad(c.clientID, blockSize)
+      encryptedClientID := make([]byte, len(paddedClientID))
+      cipher.NewCBCEncrypter(block, cidIV[:]).CryptBlocks(encryptedClientID, paddedClientID)
+      servicePublicKey, err := x509.ParsePKCS1PublicKey(c.signedDeviceCertificate.XDeviceCertificate.PublicKey)
+      if err != nil {
+         return nil, err
+      }
+      encryptedCIDKey, err := rsa.EncryptOAEP(
+         sha1.New(), nil, servicePublicKey, cidKey[:], nil,
+      )
+      if err != nil {
+         return nil, err
+      }
+      licenseRequest.Msg.EncryptedClientId = new(wv.EncryptedClientIdentification)
+      {
+         v := string(c.signedDeviceCertificate.XDeviceCertificate.ServiceId)
+         licenseRequest.Msg.EncryptedClientId.ServiceId = &v
+      }
+      licenseRequest.Msg.EncryptedClientId.ServiceCertificateSerialNumber = c.signedDeviceCertificate.XDeviceCertificate.SerialNumber
+      licenseRequest.Msg.EncryptedClientId.EncryptedClientId = encryptedClientID
+      licenseRequest.Msg.EncryptedClientId.EncryptedClientIdIv = cidIV[:]
+      licenseRequest.Msg.EncryptedClientId.EncryptedPrivacyKey = encryptedCIDKey
+   } else {
+      licenseRequest.Msg.ClientId = new(wv.ClientIdentification)
+      if err := proto.Unmarshal(c.clientID, licenseRequest.Msg.ClientId); err != nil {
+         return nil, err
+      }
+   }
+   {
+      data, err := proto.Marshal(licenseRequest.Msg)
+      if err != nil {
+         return nil, err
+      }
+      hash := sha1.Sum(data)
+      if licenseRequest.Signature, err = rsa.SignPSS(
+         nopSource{}, c.privateKey, crypto.SHA1, hash[:],
+         &rsa.PSSOptions{SaltLength: rsa.PSSSaltLengthEqualsHash},
+      ); err != nil {
+         return nil, err
+      }
+   }
+   return proto.Marshal(&licenseRequest)
+}
 
 type decryptionModule struct {
    clientID   []byte
@@ -56,9 +150,8 @@ func newCDM(privateKey, clientID, initData []byte) (decryptionModule, error) {
       return decryptionModule{}, err
    }
    sessionID := func() (s [32]byte) {
-      c := []byte("ABCDEF0123456789")
       for i := 0; i < 16; i++ {
-         s[i] = c[frand.Intn(len(c))]
+         s[i] = '0'
       }
       s[16] = '0'
       s[17] = '1'
@@ -75,94 +168,10 @@ func newCDM(privateKey, clientID, initData []byte) (decryptionModule, error) {
    }, nil
 }
 
-// Generates the license request data.  This is sent to the license server via
-// HTTP POST and the server in turn returns the license response.
-func (c *decryptionModule) getLicenseRequest() ([]byte, error) {
-   var licenseRequest wv.SignedLicenseRequest
-   licenseRequest.Msg = new(wv.LicenseRequest)
-   licenseRequest.Msg.ContentId = new(wv.LicenseRequest_ContentIdentification)
-   licenseRequest.Msg.ContentId.CencId = new(wv.LicenseRequest_ContentIdentification_CENC)
-   // this is probably really bad for the GC but protobuf uses pointers for optional
-   // fields so it is necessary and this is not a long running program
-   {
-      v := wv.SignedLicenseRequest_LICENSE_REQUEST
-      licenseRequest.Type = &v
-   }
-   licenseRequest.Msg.ContentId.CencId.Pssh = &c.widevineCencHeader
-   {
-      v := wv.LicenseType_DEFAULT
-      licenseRequest.Msg.ContentId.CencId.LicenseType = &v
-   }
-   licenseRequest.Msg.ContentId.CencId.RequestId = c.sessionID[:]
-   {
-      v := wv.LicenseRequest_NEW
-      licenseRequest.Msg.Type = &v
-   }
-   {
-      v := uint32(time.Now().Unix())
-      licenseRequest.Msg.RequestTime = &v
-   }
-   {
-      v := wv.ProtocolVersion_CURRENT
-      licenseRequest.Msg.ProtocolVersion = &v
-   }
-   {
-      v := uint32(frand.Uint64n(math.MaxUint32))
-      licenseRequest.Msg.KeyControlNonce = &v
-   }
-   if c.privacyMode {
-      pad := func(data []byte, blockSize int) []byte {
-         padlen := blockSize - (len(data) % blockSize)
-         if padlen == 0 {
-            padlen = blockSize
-         }
-         return append(data, bytes.Repeat([]byte{byte(padlen)}, padlen)...)
-      }
-      const blockSize = 16
-      var cidKey, cidIV [blockSize]byte
-      frand.Read(cidKey[:])
-      frand.Read(cidIV[:])
-      block, err := aes.NewCipher(cidKey[:])
-      if err != nil {
-         return nil, err
-      }
-      paddedClientID := pad(c.clientID, blockSize)
-      encryptedClientID := make([]byte, len(paddedClientID))
-      cipher.NewCBCEncrypter(block, cidIV[:]).CryptBlocks(encryptedClientID, paddedClientID)
-      servicePublicKey, err := x509.ParsePKCS1PublicKey(c.signedDeviceCertificate.XDeviceCertificate.PublicKey)
-      if err != nil {
-         return nil, err
-      }
-      encryptedCIDKey, err := rsa.EncryptOAEP(sha1.New(), frand.Reader, servicePublicKey, cidKey[:], nil)
-      if err != nil {
-         return nil, err
-      }
-      licenseRequest.Msg.EncryptedClientId = new(wv.EncryptedClientIdentification)
-      {
-         v := string(c.signedDeviceCertificate.XDeviceCertificate.ServiceId)
-         licenseRequest.Msg.EncryptedClientId.ServiceId = &v
-      }
-      licenseRequest.Msg.EncryptedClientId.ServiceCertificateSerialNumber = c.signedDeviceCertificate.XDeviceCertificate.SerialNumber
-      licenseRequest.Msg.EncryptedClientId.EncryptedClientId = encryptedClientID
-      licenseRequest.Msg.EncryptedClientId.EncryptedClientIdIv = cidIV[:]
-      licenseRequest.Msg.EncryptedClientId.EncryptedPrivacyKey = encryptedCIDKey
-   } else {
-      licenseRequest.Msg.ClientId = new(wv.ClientIdentification)
-      if err := proto.Unmarshal(c.clientID, licenseRequest.Msg.ClientId); err != nil {
-         return nil, err
-      }
-   }
-   {
-      data, err := proto.Marshal(licenseRequest.Msg)
-      if err != nil {
-         return nil, err
-      }
-      hash := sha1.Sum(data)
-      if licenseRequest.Signature, err = rsa.SignPSS(frand.Reader, c.privateKey, crypto.SHA1, hash[:], &rsa.PSSOptions{SaltLength: rsa.PSSSaltLengthEqualsHash}); err != nil {
-         return nil, err
-      }
-   }
-   return proto.Marshal(&licenseRequest)
+type nopSource struct{}
+
+func (nopSource) Read(buf []byte) (int, error) {
+   return len(buf), nil
 }
 
 // Retrieves the keys from the license response data.  These keys can be
@@ -180,7 +189,9 @@ func (c *decryptionModule) getLicenseKeys(licenseRequest []byte, licenseResponse
    if err != nil {
       return
    }
-   sessionKey, err := rsa.DecryptOAEP(sha1.New(), frand.Reader, c.privateKey, license.SessionKey, nil)
+   sessionKey, err := rsa.DecryptOAEP(
+      sha1.New(), nil, c.privateKey, license.SessionKey, nil,
+   )
    if err != nil {
       return
    }

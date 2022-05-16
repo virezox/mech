@@ -73,11 +73,20 @@ func newKeys(contentID, bearer string) ([]licenseKey, error) {
       return nil, err
    }
    defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return nil, errorString(res.Status)
+   }
    licenseResponse, err := io.ReadAll(res.Body)
    if err != nil {
       return nil, err
    }
    return cdm.getLicenseKeys(licenseRequest, licenseResponse)
+}
+
+type errorString string
+
+func (e errorString) Error() string {
+   return string(e)
 }
 
 // This function retrieves the PSSH/Init Data from a given MPD file reader.
