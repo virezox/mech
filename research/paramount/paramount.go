@@ -2,41 +2,57 @@ package paramount
 
 import (
    "bytes"
+   "crypto/rsa"
+   "crypto/x509"
    "encoding/base64"
+   "encoding/pem"
    "encoding/xml"
    "errors"
    "github.com/89z/format"
    "io"
+   "github.com/89z/format/protobuf"
    "net/http"
    "os"
 )
 
-type nopSource struct{}
-
-func (nopSource) Read(buf []byte) (int, error) {
-   return len(buf), nil
+// Creates a new CDM object with the specified device information.
+func newCDM(privateKey, clientID, initData []byte) (*decryptionModule, error) {
+   if len(initData) < 32 {
+      return nil, errors.New("initData not long enough")
+   }
+   block, _ := pem.Decode(privateKey)
+   if block == nil || (block.Type != "PRIVATE KEY" && block.Type != "RSA PRIVATE KEY") {
+      return nil, errors.New("failed to decode device private key")
+   }
+   keyParsed, err := x509.ParsePKCS1PrivateKey(block.Bytes)
+   if err != nil {
+      // if PCKS1 doesn't work, try PCKS8
+      pcks8Key, err := x509.ParsePKCS8PrivateKey(block.Bytes)
+      if err != nil {
+         return nil, err
+      }
+      keyParsed = pcks8Key.(*rsa.PrivateKey)
+   }
+   var dec decryptionModule
+   dec.clientID = clientID
+   dec.privateKey = keyParsed
+   for i := range dec.sessionID {
+      if i == 17 {
+         dec.sessionID[i] = '1'
+      } else {
+         dec.sessionID[i] = '0'
+      }
+   }
+   mes, err := protobuf.Unmarshal(initData[32:])
+   if err != nil {
+      return nil, err
+   }
+   dec.cencHeader.KeyId, err = mes.GetBytes(2)
+   if err != nil {
+      return nil, err
+   }
+   return &dec, nil
 }
-
-type mpd struct {
-   Period                    struct {
-      AdaptationSet []struct {
-         ContentProtection []struct {
-            SchemeIdUri string `xml:"schemeIdUri,attr"`
-            Pssh        string `xml:"pssh"`
-         } `xml:"ContentProtection"`
-         Representation []struct {
-            ContentProtection []struct {
-               SchemeIdUri string `xml:"schemeIdUri,attr"`
-               Pssh        struct {
-                  Text string `xml:",chardata"`
-               } `xml:"pssh"`
-            } `xml:"ContentProtection"`
-         } `xml:"Representation"`
-      } `xml:"AdaptationSet"`
-   } `xml:"Period"`
-}
-
-var LogLevel format.LogLevel
 
 func newKeys(contentID, bearer string) ([]licenseKey, error) {
    file, err := os.Open("ignore/stream.mpd")
@@ -88,6 +104,45 @@ func newKeys(contentID, bearer string) ([]licenseKey, error) {
    }
    return cdm.getLicenseKeys(licenseRequest, licenseResponse)
 }
+
+// pks padding is designed so that the value of all the padding bytes is the
+// number of padding bytes repeated so to figure out how many padding bytes
+// there are we can just look at the value of the last byte. i.e if there are 6
+// padding bytes then it will look at like <data> 0x6 0x6 0x6 0x6 0x6 0x6
+func unpad(b []byte) []byte {
+   if len(b) == 0 {
+      return b
+   }
+   count := int(b[len(b)-1])
+   return b[0 : len(b)-count]
+}
+
+type nopSource struct{}
+
+func (nopSource) Read(buf []byte) (int, error) {
+   return len(buf), nil
+}
+
+type mpd struct {
+   Period                    struct {
+      AdaptationSet []struct {
+         ContentProtection []struct {
+            SchemeIdUri string `xml:"schemeIdUri,attr"`
+            Pssh        string `xml:"pssh"`
+         } `xml:"ContentProtection"`
+         Representation []struct {
+            ContentProtection []struct {
+               SchemeIdUri string `xml:"schemeIdUri,attr"`
+               Pssh        struct {
+                  Text string `xml:",chardata"`
+               } `xml:"pssh"`
+            } `xml:"ContentProtection"`
+         } `xml:"Representation"`
+      } `xml:"AdaptationSet"`
+   } `xml:"Period"`
+}
+
+var LogLevel format.LogLevel
 
 type errorString string
 
