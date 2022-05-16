@@ -11,6 +11,12 @@ import (
    "os"
 )
 
+type nopSource struct{}
+
+func (nopSource) Read(buf []byte) (int, error) {
+   return len(buf), nil
+}
+
 type mpd struct {
    Period                    struct {
       AdaptationSet []struct {

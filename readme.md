@@ -9,21 +9,6 @@
 
 Download media or send API requests
 
-## Why use this module?
-
-It is small. The only third party import is:
-
-~~~
-github.com/89z/format
-~~~
-
-which in turn only has these third party imports:
-
-~~~
-github.com/refraction-networking/utls
-google.golang.org/protobuf
-~~~
-
 ## How to install?
 
 This module works with Windows, macOS or Linux. Check [the releases][2] first.
