@@ -10,11 +10,76 @@ import (
    "crypto/x509"
    "encoding/pem"
    "errors"
-   "github.com/aead/cmac"
+   "github.com/dchest/cmac"
    "google.golang.org/protobuf/proto"
    "time"
-   wv "research/paramount/widevine"
+   wv "github.com/89z/mech/research/paramount/widevine"
 )
+
+// Retrieves the keys from the license response data.  These keys can be
+// used to decrypt the DASH-MP4.
+func (c *decryptionModule) getLicenseKeys(licenseRequest, licenseResponse []byte) ([]licenseKey, error) {
+   var license wv.SignedLicense
+   err := proto.Unmarshal(licenseResponse, &license)
+   if err != nil {
+      return nil, err
+   }
+   var licenseRequestParsed wv.SignedLicenseRequest
+   if err := proto.Unmarshal(licenseRequest, &licenseRequestParsed); err != nil {
+      return nil, err
+   }
+   licenseRequestMsg, err := proto.Marshal(licenseRequestParsed.Msg)
+   if err != nil {
+      return nil, err
+   }
+   sessionKey, err := rsa.DecryptOAEP(
+      sha1.New(), nil, c.privateKey, license.SessionKey, nil,
+   )
+   if err != nil {
+      return nil, err
+   }
+   sessionKeyBlock, err := aes.NewCipher(sessionKey)
+   if err != nil {
+      return nil, err
+   }
+   encryptionKey := []byte{
+      1, 'E', 'N', 'C', 'R', 'Y', 'P', 'T', 'I', 'O', 'N', 0,
+   }
+   encryptionKey = append(encryptionKey, licenseRequestMsg...)
+   encryptionKey = append(encryptionKey, []byte{0, 0, 0, 0x80}...)
+   mac, err := cmac.New(sessionKeyBlock)
+   if err != nil {
+      return nil, err
+   }
+   mac.Write(encryptionKey)
+   encryptionKeyCipher, err := aes.NewCipher(mac.Sum(nil))
+   if err != nil {
+      return nil, err
+   }
+   // pks padding is designed so that the value of all the padding bytes is the
+   // number of padding bytes repeated so to figure out how many padding bytes
+   // there are we can just look at the value of the last byte. i.e if there are
+   // 6 padding bytes then it will look at like <data> 0x6 0x6 0x6 0x6 0x6 0x6
+   unpad := func(b []byte) []byte {
+      if len(b) == 0 {
+         return b
+      }
+      count := int(b[len(b)-1])
+      return b[0 : len(b)-count]
+   }
+   var keys []licenseKey
+   for _, key := range license.Msg.Key {
+      decrypter := cipher.NewCBCDecrypter(encryptionKeyCipher, key.Iv)
+      decryptedKey := make([]byte, len(key.Key))
+      decrypter.CryptBlocks(decryptedKey, key.Key)
+      keys = append(keys, licenseKey{
+         ID:    key.Id,
+         Type:  *key.Type,
+         Value: unpad(decryptedKey),
+      })
+   }
+   return keys, nil
+}
 
 // Generates the license request data.  This is sent to the license server via
 // HTTP POST and the server in turn returns the license response.
@@ -172,68 +237,4 @@ type nopSource struct{}
 
 func (nopSource) Read(buf []byte) (int, error) {
    return len(buf), nil
-}
-
-// Retrieves the keys from the license response data.  These keys can be
-// used to decrypt the DASH-MP4.
-func (c *decryptionModule) getLicenseKeys(licenseRequest []byte, licenseResponse []byte) (keys []licenseKey, err error) {
-   var license wv.SignedLicense
-   if err = proto.Unmarshal(licenseResponse, &license); err != nil {
-      return
-   }
-   var licenseRequestParsed wv.SignedLicenseRequest
-   if err = proto.Unmarshal(licenseRequest, &licenseRequestParsed); err != nil {
-      return
-   }
-   licenseRequestMsg, err := proto.Marshal(licenseRequestParsed.Msg)
-   if err != nil {
-      return
-   }
-   sessionKey, err := rsa.DecryptOAEP(
-      sha1.New(), nil, c.privateKey, license.SessionKey, nil,
-   )
-   if err != nil {
-      return
-   }
-   sessionKeyBlock, err := aes.NewCipher(sessionKey)
-   if err != nil {
-      return
-   }
-   encryptionKey := []byte{1, 'E', 'N', 'C', 'R', 'Y', 'P', 'T', 'I', 'O', 'N', 0}
-   encryptionKey = append(encryptionKey, licenseRequestMsg...)
-   encryptionKey = append(encryptionKey, []byte{0, 0, 0, 0x80}...)
-   encryptionKeyCmac, err := cmac.Sum(
-      encryptionKey, sessionKeyBlock, sessionKeyBlock.BlockSize(),
-   )
-   if err != nil {
-      return
-   }
-   encryptionKeyCipher, err := aes.NewCipher(encryptionKeyCmac)
-   if err != nil {
-      return
-   }
-   unpad := func(b []byte) []byte {
-      if len(b) == 0 {
-         return b
-      }
-      // pks padding is designed so that the value of all the padding bytes is
-      // the number of padding bytes repeated so to figure out how many
-      // padding bytes there are we can just look at the value of the last
-      // byte
-      // i.e if there are 6 padding bytes then it will look at like
-      // <data> 0x6 0x6 0x6 0x6 0x6 0x6
-      count := int(b[len(b)-1])
-      return b[0 : len(b)-count]
-   }
-   for _, key := range license.Msg.Key {
-      decrypter := cipher.NewCBCDecrypter(encryptionKeyCipher, key.Iv)
-      decryptedKey := make([]byte, len(key.Key))
-      decrypter.CryptBlocks(decryptedKey, key.Key)
-      keys = append(keys, licenseKey{
-         ID:    key.Id,
-         Type:  *key.Type,
-         Value: unpad(decryptedKey),
-      })
-   }
-   return
 }
