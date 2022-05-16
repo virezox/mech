@@ -78,15 +78,15 @@ func NewCDM(privateKey, clientID, initData []byte) (CDM, error) {
 // more complicated but is supported.  This is usually not necessary for most
 // Widevine applications.
 func (c *CDM) SetServiceCertificate(certData []byte) error {
-	var message SignedMessage
-	if err := proto.Unmarshal(certData, &message); err != nil {
-		return err
-	}
-	if err := proto.Unmarshal(message.Msg, &c.signedDeviceCertificate); err != nil {
-		return err
-	}
-	c.privacyMode = true
-	return nil
+   var message SignedMessage
+   if err := proto.Unmarshal(certData, &message); err != nil {
+      return err
+   }
+   if err := proto.Unmarshal(message.Msg, &c.signedDeviceCertificate); err != nil {
+      return err
+   }
+   c.privacyMode = true
+   return nil
 }
 
 // Generates the license request data.  This is sent to the license server via
