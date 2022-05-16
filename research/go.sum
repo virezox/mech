@@ -1,5 +1,5 @@
-github.com/89z/format v1.33.7 h1:uFQtS5lrjCrxpwrQMpUWNRD2V93/iNx9PbeH4F2Hzao=
-github.com/89z/format v1.33.7/go.mod h1:fAaCl94NvcSnk64AF3yghdrvbfypTlMeHsdNihPWJww=
+github.com/89z/format v1.34.1 h1:Ls+oZdB1NEVzJE9Da1ZZWj5QC+dJJKHxx9qXmq9VbIM=
+github.com/89z/format v1.34.1/go.mod h1:ut0gxvf9KLjgsZ8Fum1AqlGfKcilADnX6OGNPO3V4mM=
 github.com/aead/chacha20 v0.0.0-20180709150244-8b13a72661da h1:KjTM2ks9d14ZYCvmHS9iAKVt9AyzRSqNU1qabPih5BY=
 github.com/aead/chacha20 v0.0.0-20180709150244-8b13a72661da/go.mod h1:eHEWzANqSiWQsof+nXEI9bUVUyV6F53Fp89EuCh2EAA=
 github.com/aead/cmac v0.0.0-20160719120800-7af84192f0b1 h1:+JkXLHME8vLJafGhOH4aoV2Iu8bR55nU6iKMVfYVLjY=
