@@ -1,5 +1,11 @@
 # Paramount
 
+> Theatricality and deception, powerful agents to the uninitiated.
+>
+> But we are initiated, aren’t we, Bruce?
+>
+> The Dark Knight Rises (2012)
+
 https://github.com/ytdl-org/youtube-dl/issues/29038
 
 Using this video:

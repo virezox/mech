@@ -10,15 +10,15 @@ import (
    "crypto/x509"
    "encoding/pem"
    "errors"
-   "github.com/aead/cmac"
    "google.golang.org/protobuf/proto"
    "lukechampine.com/frand"
    "math"
    "time"
    wv "research/paramount/widevine"
+   "github.com/aead/cmac"
 )
 
-type CDM struct {
+type decryptionModule struct {
    clientID   []byte
    privacyMode             bool
    privateKey *rsa.PrivateKey
@@ -27,33 +27,33 @@ type CDM struct {
    widevineCencHeader      wv.WidevineCencHeader
 }
 
-type Key struct {
+type licenseKey struct {
    ID    []byte
    Type  wv.License_KeyContainer_KeyType
    Value []byte
 }
 
 // Creates a new CDM object with the specified device information.
-func NewCDM(privateKey, clientID, initData []byte) (CDM, error) {
+func newCDM(privateKey, clientID, initData []byte) (decryptionModule, error) {
    block, _ := pem.Decode(privateKey)
    if block == nil || (block.Type != "PRIVATE KEY" && block.Type != "RSA PRIVATE KEY") {
-      return CDM{}, errors.New("failed to decode device private key")
+      return decryptionModule{}, errors.New("failed to decode device private key")
    }
    keyParsed, err := x509.ParsePKCS1PrivateKey(block.Bytes)
    if err != nil {
       // if PCKS1 doesn't work, try PCKS8
       pcks8Key, err := x509.ParsePKCS8PrivateKey(block.Bytes)
       if err != nil {
-         return CDM{}, err
+         return decryptionModule{}, err
       }
       keyParsed = pcks8Key.(*rsa.PrivateKey)
    }
    var widevineCencHeader wv.WidevineCencHeader
    if len(initData) < 32 {
-      return CDM{}, errors.New("initData not long enough")
+      return decryptionModule{}, errors.New("initData not long enough")
    }
    if err := proto.Unmarshal(initData[32:], &widevineCencHeader); err != nil {
-      return CDM{}, err
+      return decryptionModule{}, err
    }
    sessionID := func() (s [32]byte) {
       c := []byte("ABCDEF0123456789")
@@ -67,7 +67,7 @@ func NewCDM(privateKey, clientID, initData []byte) (CDM, error) {
       }
       return s
    }()
-   return CDM{
+   return decryptionModule{
       clientID:   clientID,
       privateKey: keyParsed,
       sessionID: sessionID,
@@ -75,24 +75,9 @@ func NewCDM(privateKey, clientID, initData []byte) (CDM, error) {
    }, nil
 }
 
-// Sets a device certificate.  This is makes generating the license request
-// more complicated but is supported.  This is usually not necessary for most
-// Widevine applications.
-func (c *CDM) SetServiceCertificate(certData []byte) error {
-   var message wv.SignedMessage
-   if err := proto.Unmarshal(certData, &message); err != nil {
-      return err
-   }
-   if err := proto.Unmarshal(message.Msg, &c.signedDeviceCertificate); err != nil {
-      return err
-   }
-   c.privacyMode = true
-   return nil
-}
-
 // Generates the license request data.  This is sent to the license server via
 // HTTP POST and the server in turn returns the license response.
-func (c *CDM) GetLicenseRequest() ([]byte, error) {
+func (c *decryptionModule) getLicenseRequest() ([]byte, error) {
    var licenseRequest wv.SignedLicenseRequest
    licenseRequest.Msg = new(wv.LicenseRequest)
    licenseRequest.Msg.ContentId = new(wv.LicenseRequest_ContentIdentification)
@@ -182,7 +167,7 @@ func (c *CDM) GetLicenseRequest() ([]byte, error) {
 
 // Retrieves the keys from the license response data.  These keys can be
 // used to decrypt the DASH-MP4.
-func (c *CDM) GetLicenseKeys(licenseRequest []byte, licenseResponse []byte) (keys []Key, err error) {
+func (c *decryptionModule) getLicenseKeys(licenseRequest []byte, licenseResponse []byte) (keys []licenseKey, err error) {
    var license wv.SignedLicense
    if err = proto.Unmarshal(licenseResponse, &license); err != nil {
       return
@@ -206,7 +191,9 @@ func (c *CDM) GetLicenseKeys(licenseRequest []byte, licenseResponse []byte) (key
    encryptionKey := []byte{1, 'E', 'N', 'C', 'R', 'Y', 'P', 'T', 'I', 'O', 'N', 0}
    encryptionKey = append(encryptionKey, licenseRequestMsg...)
    encryptionKey = append(encryptionKey, []byte{0, 0, 0, 0x80}...)
-   encryptionKeyCmac, err := cmac.Sum(encryptionKey, sessionKeyBlock, sessionKeyBlock.BlockSize())
+   encryptionKeyCmac, err := cmac.Sum(
+      encryptionKey, sessionKeyBlock, sessionKeyBlock.BlockSize(),
+   )
    if err != nil {
       return
    }
@@ -231,7 +218,7 @@ func (c *CDM) GetLicenseKeys(licenseRequest []byte, licenseResponse []byte) (key
       decrypter := cipher.NewCBCDecrypter(encryptionKeyCipher, key.Iv)
       decryptedKey := make([]byte, len(key.Key))
       decrypter.CryptBlocks(decryptedKey, key.Key)
-      keys = append(keys, Key{
+      keys = append(keys, licenseKey{
          ID:    key.Id,
          Type:  *key.Type,
          Value: unpad(decryptedKey),
