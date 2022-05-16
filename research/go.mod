@@ -3,11 +3,10 @@ module research
 go 1.18
 
 require (
+	github.com/89z/format v1.34.1
 	github.com/aead/cmac v0.0.0-20160719120800-7af84192f0b1
 	github.com/chris124567/hulu v0.0.0-20220101232151-8c095fc96aa9
-	github.com/google/uuid v1.3.0
 	google.golang.org/protobuf v1.28.0
-	lukechampine.com/flagg v1.1.1
 	lukechampine.com/frand v1.4.2
 )
 

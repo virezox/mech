@@ -1,12 +1,10 @@
 package widevine
 
 import (
-	"bytes"
-	"encoding/base64"
-	"encoding/xml"
-	"errors"
-	"io"
-	"net/http"
+   "encoding/base64"
+   "encoding/xml"
+   "errors"
+   "io"
 )
 
 // This function retrieves the PSSH/Init Data from a given MPD file reader.
@@ -102,14 +100,4 @@ func InitDataFromMPD(r io.Reader) ([]byte, error) {
 	}
 
 	return nil, errors.New("no init data found")
-}
-
-// This function retrieves certificate data from a given license server.
-func GetCertData(client *http.Client, licenseURL string) ([]byte, error) {
-	response, err := client.Post(licenseURL, "application/x-www-form-urlencoded", bytes.NewReader([]byte{0x08, 0x04}))
-	if err != nil {
-		return nil, err
-	}
-	defer response.Body.Close()
-	return io.ReadAll(response.Body)
 }

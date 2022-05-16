@@ -1,21 +1,20 @@
 package widevine
 
 import (
-	"bytes"
-	"crypto"
-	"crypto/aes"
-	"crypto/cipher"
-	"crypto/rsa"
-	"crypto/sha1"
-	"crypto/x509"
-	"encoding/pem"
-	"errors"
-	"math"
-	"time"
-
-	"github.com/aead/cmac"
-	"google.golang.org/protobuf/proto"
-	"lukechampine.com/frand"
+   "bytes"
+   "crypto"
+   "crypto/aes"
+   "crypto/cipher"
+   "crypto/rsa"
+   "crypto/sha1"
+   "crypto/x509"
+   "encoding/pem"
+   "errors"
+   "github.com/aead/cmac"
+   "google.golang.org/protobuf/proto"
+   "lukechampine.com/frand"
+   "math"
+   "time"
 )
 
 type CDM struct {
