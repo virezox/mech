@@ -267,7 +267,7 @@ message ProvisionedDeviceInfo {
   WvSecurityLevel SecurityLevel = 7;
   uint32 TestDevice = 8; // bool?
 }
- 
+
 message RemoteAttestation {
   EncryptedClientIdentification Certificate = 1;
   string Salt = 2;
