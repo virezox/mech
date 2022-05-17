@@ -39,3 +39,8 @@ authorization: Bearer eyJhbGciOiJIUzI1NiIsImtpZCI6IjNkNjg4NGJmLWViMDktNDA1Zi1hOW
 ~~~
 
 <https://github.com/Jnzzi/4464_L3-CDM>
+
+## Where did proto file come from?
+
+- https://github.com/TDenisM/widevinedump/tree/main/pywidevine/cdm/formats
+- https://github.com/cryptonek/widevine-l3-decryptor
