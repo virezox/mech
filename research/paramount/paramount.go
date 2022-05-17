@@ -6,7 +6,9 @@ import (
    "crypto/cipher"
    "crypto/rsa"
    "crypto/sha1"
+   "crypto/x509"
    "encoding/base64"
+   "encoding/pem"
    "encoding/xml"
    "errors"
    "github.com/89z/format"
@@ -18,9 +20,31 @@ import (
 )
 
 type module struct {
-   KeyId []byte
-   clientID   []byte
-   privateKey *rsa.PrivateKey
+   *rsa.PrivateKey
+   clientID []byte
+   keyID []byte
+}
+
+func newModule(privateKey, clientID, initData []byte) (*module, error) {
+   var mod module
+   // clientID
+   mod.clientID = clientID
+   // keyID
+   widevineCencHeader, err := protobuf.Unmarshal(initData[32:])
+   if err != nil {
+      return nil, err
+   }
+   mod.keyID, err = widevineCencHeader.GetBytes(2)
+   if err != nil {
+      return nil, err
+   }
+   // PrivateKey
+   block, _ := pem.Decode(privateKey)
+   mod.PrivateKey, err = x509.ParsePKCS1PrivateKey(block.Bytes)
+   if err != nil {
+      return nil, err
+   }
+   return &mod, nil
 }
 
 func (c *module) keyContainers(bRequest, bResponse []byte) ([]keyContainer, error) {
@@ -45,7 +69,7 @@ func (c *module) keyContainers(bRequest, bResponse []byte) ([]keyContainer, erro
    if err != nil {
       return nil, err
    }
-   key, err := rsa.DecryptOAEP(sha1.New(), nil, c.privateKey, sessionKey, nil)
+   key, err := rsa.DecryptOAEP(sha1.New(), nil, c.PrivateKey, sessionKey, nil)
    if err != nil {
       return nil, err
    }

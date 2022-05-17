@@ -3,6 +3,21 @@
 // I added:
 syntax = "proto3";
 
+// todo: fill (for this top-level type, it might be impossible/difficult)
+enum LicenseType {
+   ZERO = 0;
+   // do not know what this is either, but should be 1; on recent versions may
+   // go up to 3 (latest x86)
+   DEFAULT = 1;
+}
+
+// todo: fill (for this top-level type, it might be impossible/difficult) this
+// is just a guess because these globals got lost, but really, do we need more? 
+enum ProtocolVersion {
+  DUMMY = 0;
+  CURRENT = 21; // don't have symbols for this
+}
+
 // from x86 (partial), most of it from the ARM version:
 message ClientIdentification {
    enum TokenType {
@@ -84,30 +99,6 @@ message EncryptedClientIdentification {
   bytes EncryptedClientId = 3;
   bytes EncryptedClientIdIv = 4;
   bytes EncryptedPrivacyKey = 5;
-}
-
-// todo: fill (for this top-level type, it might be impossible/difficult)
-enum LicenseType {
-   ZERO = 0;
-   // do not know what this is either, but should be 1; on recent versions may
-   // go up to 3 (latest x86)
-   DEFAULT = 1;
-}
-
-// todo: fill (for this top-level type, it might be impossible/difficult) this
-// is just a guess because these globals got lost, but really, do we need more? 
-enum ProtocolVersion {
-  DUMMY = 0;
-  CURRENT = 21; // don't have symbols for this
-}
-
-message LicenseIdentification {
-  bytes RequestId = 1;
-  bytes SessionId = 2;
-  bytes PurchaseId = 3;
-  LicenseType Type = 4;
-  uint32 Version = 5;
-  bytes ProviderSessionToken = 6;
 }
 
 message License {
@@ -206,6 +197,15 @@ message LicenseError {
   Error ErrorCode = 1;
 }
 
+message LicenseIdentification {
+  bytes RequestId = 1;
+  bytes SessionId = 2;
+  bytes PurchaseId = 3;
+  LicenseType Type = 4;
+  uint32 Version = 5;
+  bytes ProviderSessionToken = 6;
+}
+
 message LicenseRequest {
   message ContentIdentification {
     message CENC {
@@ -266,8 +266,8 @@ message ProvisionedDeviceInfo {
   uint32 ModelYear = 6;
   WvSecurityLevel SecurityLevel = 7;
   uint32 TestDevice = 8; // bool?
-} 
-
+}
+ 
 message RemoteAttestation {
   EncryptedClientIdentification Certificate = 1;
   string Salt = 2;
@@ -282,6 +282,56 @@ message SignedDeviceCertificate {
    DeviceCertificate _DeviceCertificate = 1;
    bytes Signature = 2;
    SignedDeviceCertificate Signer = 3;
+}
+
+// this message does not exist in the binaries, I'm adding it to avoid
+// detecting type programmatically
+message SignedLicense {
+   enum MessageType {
+      DUMMY_MSG_TYPE = 0; // dummy, added to satisfy proto3
+      LICENSE_REQUEST = 1;
+      LICENSE = 2;
+      ERROR_RESPONSE = 3;
+      SERVICE_CERTIFICATE_REQUEST = 4;
+      SERVICE_CERTIFICATE = 5;
+   }
+   // has in incorrect overlap with License_KeyContainer_SecurityLevel
+   MessageType Type = 1;
+   // this has to be casted dynamically, to LicenseRequest, License or
+   // LicenseError (? unconfirmed), for Request, no other fields but Type need
+   // to be present for SERVICE_CERTIFICATE, only Type and Msg are present, and
+   // it's just a DeviceCertificate with CertificateType set to SERVICE
+   License Msg = 2;
+   // might be different type of signatures (ex. RSA vs AES CMAC(??),
+   // unconfirmed for now)
+   bytes Signature = 3;
+   bytes SessionKey = 4; // often RSA wrapped for licenses
+   RemoteAttestation RemoteAttestation = 5;
+}
+
+// this message does not exist in the binaries, I'm adding it to avoid
+// detecting type programmatically
+message SignedLicenseRequest {
+   enum MessageType {
+      DUMMY_MSG_TYPE = 0; // dummy, added to satisfy proto3
+      LICENSE_REQUEST = 1;
+      LICENSE = 2;
+      ERROR_RESPONSE = 3;
+      SERVICE_CERTIFICATE_REQUEST = 4;
+      SERVICE_CERTIFICATE = 5;
+   }
+   // has in incorrect overlap with License_KeyContainer_SecurityLevel
+   MessageType Type = 1;
+   // this has to be casted dynamically, to LicenseRequest, License or
+   // LicenseError (? unconfirmed), for Request, no other fields but Type need
+   // to be present for SERVICE_CERTIFICATE, only Type and Msg are present, and
+   // it's just a DeviceCertificate with CertificateType set to SERVICE
+   LicenseRequest Msg = 2;
+   // might be different type of signatures (ex. RSA vs AES CMAC(??),
+   // unconfirmed for now)
+   bytes Signature = 3;
+   bytes SessionKey = 4; // often RSA wrapped for licenses
+   RemoteAttestation RemoteAttestation = 5;
 }
 
 // the root of all messages, from either server or client
@@ -310,88 +360,32 @@ message SignedMessage {
 
 // This message is copied from google's docs, not reversed:
 message WidevineCencHeader {
-  enum Algorithm {
-    UNENCRYPTED = 0;
-    AESCTR = 1;
-  };
-  Algorithm algorithm = 1;
-  repeated bytes key_id = 2;
-
-  // Content provider name.
-  string provider = 3;
-
-  // A content identifier, specified by content provider.
-  bytes content_id = 4;
-
-  // Track type. Acceptable values are SD, HD and AUDIO. Used to
-  // differentiate content keys used by an asset.
-  string track_type_deprecated = 5;
-
-  // The name of a registered policy to be used for this asset.
-  string policy = 6;
-
-  // Crypto period index, for media using key rotation.
-  uint32 crypto_period_index = 7;
-
-  // Optional protected context for group content. The grouped_license is a
-  // serialized SignedMessage.
-  bytes grouped_license = 8;
-
-  // Protection scheme identifying the encryption algorithm.
-  // Represented as one of the following 4CC values:
-  // 'cenc' (AESCTR), 'cbc1' (AESCBC),
-  // 'cens' (AESCTR subsample), 'cbcs' (AESCBC subsample).
-  uint32 protection_scheme = 9;
-
-  // Optional. For media using key rotation, this represents the duration
-  // of each crypto period in seconds.
-  uint32 crypto_period_seconds = 10;
-}
-
-// from here on, it's just for testing, these messages don't exist in the
-// binaries, I'm adding them to avoid detecting type programmatically
-message SignedLicenseRequest {
-   enum MessageType {
-      DUMMY_MSG_TYPE = 0; // dummy, added to satisfy proto3
-      LICENSE_REQUEST = 1;
-      LICENSE = 2;
-      ERROR_RESPONSE = 3;
-      SERVICE_CERTIFICATE_REQUEST = 4;
-      SERVICE_CERTIFICATE = 5;
-   }
-   // has in incorrect overlap with License_KeyContainer_SecurityLevel
-   MessageType Type = 1;
-   // this has to be casted dynamically, to LicenseRequest, License or
-   // LicenseError (? unconfirmed), for Request, no other fields but Type need
-   // to be present for SERVICE_CERTIFICATE, only Type and Msg are present, and
-   // it's just a DeviceCertificate with CertificateType set to SERVICE
-   LicenseRequest Msg = 2;
-   // might be different type of signatures (ex. RSA vs AES CMAC(??),
-   // unconfirmed for now)
-   bytes Signature = 3;
-   bytes SessionKey = 4; // often RSA wrapped for licenses
-   RemoteAttestation RemoteAttestation = 5;
-}
-
-message SignedLicense {
-   enum MessageType {
-      DUMMY_MSG_TYPE = 0; // dummy, added to satisfy proto3
-      LICENSE_REQUEST = 1;
-      LICENSE = 2;
-      ERROR_RESPONSE = 3;
-      SERVICE_CERTIFICATE_REQUEST = 4;
-      SERVICE_CERTIFICATE = 5;
-   }
-   // has in incorrect overlap with License_KeyContainer_SecurityLevel
-   MessageType Type = 1;
-   // this has to be casted dynamically, to LicenseRequest, License or
-   // LicenseError (? unconfirmed), for Request, no other fields but Type need
-   // to be present for SERVICE_CERTIFICATE, only Type and Msg are present, and
-   // it's just a DeviceCertificate with CertificateType set to SERVICE
-   License Msg = 2;
-   // might be different type of signatures (ex. RSA vs AES CMAC(??),
-   // unconfirmed for now)
-   bytes Signature = 3;
-   bytes SessionKey = 4; // often RSA wrapped for licenses
-   RemoteAttestation RemoteAttestation = 5;
+   enum Algorithm {
+      UNENCRYPTED = 0;
+      AESCTR = 1;
+   };
+   Algorithm algorithm = 1;
+   repeated bytes key_id = 2;
+   // Content provider name.
+   string provider = 3;
+   // A content identifier, specified by content provider.
+   bytes content_id = 4;
+   // Track type. Acceptable values are SD, HD and AUDIO. Used to differentiate
+   // content keys used by an asset.
+   string track_type_deprecated = 5;
+   // The name of a registered policy to be used for this asset.
+   string policy = 6;
+   // Crypto period index, for media using key rotation.
+   uint32 crypto_period_index = 7;
+   // Optional protected context for group content. The grouped_license is a
+   // serialized SignedMessage.
+   bytes grouped_license = 8;
+   // Protection scheme identifying the encryption algorithm. Represented as
+   // one of the following 4CC values:
+   // 'cenc' (AESCTR), 'cbc1' (AESCBC),
+   // 'cens' (AESCTR subsample), 'cbcs' (AESCBC subsample).
+   uint32 protection_scheme = 9;
+   // Optional. For media using key rotation, this represents the duration of
+   // each crypto period in seconds.
+   uint32 crypto_period_seconds = 10;
 }
