@@ -12,45 +12,44 @@ import (
    "github.com/chmike/cmac-go"
 )
 
-func (c *decryptionModule) getLicenseKeys(licenseRequest, licenseResponse []byte) ([]licenseKey, error) {
+func (c *decryptionModule) getLicenseKeys(bRequest, bResponse []byte) ([]licenseKey, error) {
+   // message
+   signedLicenseRequest, err := protobuf.Unmarshal(bRequest)
+   if err != nil {
+      return nil, err
+   }
+   licenseRequest := signedLicenseRequest.Get(2).Marshal()
+   var message []byte
+   message = append(message, 1)
+   message = append(message, "ENCRYPTION"...)
+   message = append(message, 0)
+   message = append(message, licenseRequest...)
+   message = append(message, 0, 0, 0, 0x80)
    // key
-   signedLicenseRequest, err := protobuf.Unmarshal(licenseRequest)
+   signedLicense, err := protobuf.Unmarshal(bResponse)
    if err != nil {
       return nil, err
    }
-   requestMsg := signedLicenseRequest.Get(2).Marshal()
-   var key []byte
-   key = append(key, 1)
-   key = append(key, "ENCRYPTION"...)
-   key = append(key, 0)
-   key = append(key, requestMsg...)
-   key = append(key, 0, 0, 0, 0x80)
-   // sessionKey
-   signedLicense, err := protobuf.Unmarshal(licenseResponse)
+   sessionKey, err := signedLicense.GetBytes(4)
    if err != nil {
       return nil, err
    }
-   cipherText, err := signedLicense.GetBytes(4)
+   key, err := rsa.DecryptOAEP(sha1.New(), nil, c.privateKey, sessionKey, nil)
    if err != nil {
       return nil, err
    }
-   sessionKey, err := rsa.DecryptOAEP(
-      sha1.New(), nil, c.privateKey, cipherText, nil,
-   )
+   // CMAC
+   mac, err := cmac.New(aes.NewCipher, key)
    if err != nil {
       return nil, err
    }
-   // Write
-   hash, err := cmac.New(aes.NewCipher, sessionKey)
-   if err != nil {
-      return nil, err
-   }
-   hash.Write(key)
-   block, err := aes.NewCipher(hash.Sum(nil))
+   mac.Write(message)
+   block, err := aes.NewCipher(mac.Sum(nil))
    if err != nil {
       return nil, err
    }
    var keys []licenseKey
+   // .Msg
    for _, con := range signedLicense.Get(2).GetMessages(3) {
       iv, err := con.GetBytes(2)
       if err != nil {

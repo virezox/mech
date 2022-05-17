@@ -1,38 +1,45 @@
-// beware proto3 won't show missing fields it seems, need to change to "proto2" and add "optional" before every field, and remove all the dummy enum members I added:
+// beware proto3 won't show missing fields it seems, need to change to "proto2"
+// and add "optional" before every field, and remove all the dummy enum members
+// I added:
 syntax = "proto3";
 
 // from x86 (partial), most of it from the ARM version:
 message ClientIdentification {
-  enum TokenType {
-    KEYBOX = 0;
-    DEVICE_CERTIFICATE = 1;
-    REMOTE_ATTESTATION_CERTIFICATE = 2;
-  }
-  message NameValue {
-    string Name = 1;
-    string Value = 2;
-  }
-  message ClientCapabilities {
-    enum HdcpVersion {
-      HDCP_NONE = 0;
-      HDCP_V1 = 1;
-      HDCP_V2 = 2;
-      HDCP_V2_1 = 3;
-      HDCP_V2_2 = 4;
-    }
-    uint32 ClientToken = 1;
-    uint32 SessionToken = 2;
-    uint32 VideoResolutionConstraints = 3;
-    HdcpVersion MaxHdcpVersion = 4;
-    uint32 OemCryptoApiVersion = 5;
-  }
-  TokenType Type = 1;
-  //bytes Token = 2; // by default the client treats this as blob, but it's usually a DeviceCertificate, so for usefulness sake, I'm replacing it with this one:
-  SignedDeviceCertificate Token = 2; 
-  repeated NameValue ClientInfo = 3;
-  bytes ProviderClientToken = 4;
-  uint32 LicenseCounter = 5;
-  ClientCapabilities _ClientCapabilities = 6; // how should we deal with duped names? will have to look at proto docs later
+   enum TokenType {
+      KEYBOX = 0;
+      DEVICE_CERTIFICATE = 1;
+      REMOTE_ATTESTATION_CERTIFICATE = 2;
+   }
+   message NameValue {
+      string Name = 1;
+      string Value = 2;
+   }
+   message ClientCapabilities {
+      enum HdcpVersion {
+         HDCP_NONE = 0;
+         HDCP_V1 = 1;
+         HDCP_V2 = 2;
+         HDCP_V2_1 = 3;
+         HDCP_V2_2 = 4;
+      }
+      uint32 ClientToken = 1;
+      uint32 SessionToken = 2;
+      uint32 VideoResolutionConstraints = 3;
+      HdcpVersion MaxHdcpVersion = 4;
+      uint32 OemCryptoApiVersion = 5;
+   }
+   TokenType Type = 1;
+   // bytes Token = 2;
+   // by default the client treats this as blob, but it's usually a
+   // DeviceCertificate, so for usefulness sake, I'm replacing it with this
+   // one:
+   SignedDeviceCertificate Token = 2; 
+   repeated NameValue ClientInfo = 3;
+   bytes ProviderClientToken = 4;
+   uint32 LicenseCounter = 5;
+   // how should we deal with duped names? will have to look at proto docs
+   // later
+   ClientCapabilities _ClientCapabilities = 6;
 }
 
 message DeviceCertificate {
@@ -265,50 +272,39 @@ message RemoteAttestation {
   string Signature = 3;
 }
 
-// todo: fill
-message SessionInit {
-}
-
-// todo: fill
-message SessionState {
-}
-
-// todo: fill
-message SignedCertificateStatusList {
-}
-
 message SignedDeviceCertificate {
-  
-  //bytes DeviceCertificate = 1; // again, they use a buffer where it's supposed to be a message, so we'll replace it with what it really is:
-  DeviceCertificate _DeviceCertificate = 1; // how should we deal with duped names? will have to look at proto docs later
-  bytes Signature = 2;
-  SignedDeviceCertificate Signer = 3;
-}
-
-
-// todo: fill
-message SignedProvisioningMessage {
+   // bytes DeviceCertificate = 1;
+   // again, they use a buffer where it's supposed to be a message, so we'll
+   // replace it with what it really is. how should we deal with duped names?
+   // will have to look at proto docs later
+   DeviceCertificate _DeviceCertificate = 1;
+   bytes Signature = 2;
+   SignedDeviceCertificate Signer = 3;
 }
 
 // the root of all messages, from either server or client
 message SignedMessage {
-  enum MessageType {
-    DUMMY_MSG_TYPE = 0; // dummy, added to satisfy proto3
-    LICENSE_REQUEST = 1;
-    LICENSE = 2;
-    ERROR_RESPONSE = 3;
-    SERVICE_CERTIFICATE_REQUEST = 4;
-    SERVICE_CERTIFICATE = 5;
-  }
-  MessageType Type = 1; // has in incorrect overlap with License_KeyContainer_SecurityLevel
-  bytes Msg = 2; // this has to be casted dynamically, to LicenseRequest, License or LicenseError (? unconfirmed), for Request, no other fields but Type need to be present
-                 // for SERVICE_CERTIFICATE, only Type and Msg are present, and it's just a DeviceCertificate with CertificateType set to SERVICE
-  bytes Signature = 3; // might be different type of signatures (ex. RSA vs AES CMAC(??), unconfirmed for now)
-  bytes SessionKey = 4; // often RSA wrapped for licenses
-  RemoteAttestation RemoteAttestation = 5;
+   enum MessageType {
+      DUMMY_MSG_TYPE = 0; // dummy, added to satisfy proto3
+      LICENSE_REQUEST = 1;
+      LICENSE = 2;
+      ERROR_RESPONSE = 3;
+      SERVICE_CERTIFICATE_REQUEST = 4;
+      SERVICE_CERTIFICATE = 5;
+   }
+   // has in incorrect overlap with License_KeyContainer_SecurityLevel
+   MessageType Type = 1;
+   // this has to be casted dynamically, to LicenseRequest, License or
+   // LicenseError (? unconfirmed), for Request, no other fields but Type need
+   // to be present for SERVICE_CERTIFICATE, only Type and Msg are present, and
+   // it's just a DeviceCertificate with CertificateType set to SERVICE
+   bytes Msg = 2;
+   // might be different type of signatures (ex. RSA vs AES CMAC(??),
+   // unconfirmed for now)
+   bytes Signature = 3;
+   bytes SessionKey = 4; // often RSA wrapped for licenses
+   RemoteAttestation RemoteAttestation = 5;
 }
-
-
 
 // This message is copied from google's docs, not reversed:
 message WidevineCencHeader {
@@ -350,40 +346,50 @@ message WidevineCencHeader {
   uint32 crypto_period_seconds = 10;
 }
 
-
-
-
-// from here on, it's just for testing, these messages don't exist in the binaries, I'm adding them to avoid detecting type programmatically
+// from here on, it's just for testing, these messages don't exist in the
+// binaries, I'm adding them to avoid detecting type programmatically
 message SignedLicenseRequest {
-  enum MessageType {
-    DUMMY_MSG_TYPE = 0; // dummy, added to satisfy proto3
-    LICENSE_REQUEST = 1;
-    LICENSE = 2;
-    ERROR_RESPONSE = 3;
-    SERVICE_CERTIFICATE_REQUEST = 4;
-    SERVICE_CERTIFICATE = 5;
-  }
-  MessageType Type = 1; // has in incorrect overlap with License_KeyContainer_SecurityLevel
-  LicenseRequest Msg = 2; // this has to be casted dynamically, to LicenseRequest, License or LicenseError (? unconfirmed), for Request, no other fields but Type need to be present
-                 // for SERVICE_CERTIFICATE, only Type and Msg are present, and it's just a DeviceCertificate with CertificateType set to SERVICE
-  bytes Signature = 3; // might be different type of signatures (ex. RSA vs AES CMAC(??), unconfirmed for now)
-  bytes SessionKey = 4; // often RSA wrapped for licenses
-  RemoteAttestation RemoteAttestation = 5;
+   enum MessageType {
+      DUMMY_MSG_TYPE = 0; // dummy, added to satisfy proto3
+      LICENSE_REQUEST = 1;
+      LICENSE = 2;
+      ERROR_RESPONSE = 3;
+      SERVICE_CERTIFICATE_REQUEST = 4;
+      SERVICE_CERTIFICATE = 5;
+   }
+   // has in incorrect overlap with License_KeyContainer_SecurityLevel
+   MessageType Type = 1;
+   // this has to be casted dynamically, to LicenseRequest, License or
+   // LicenseError (? unconfirmed), for Request, no other fields but Type need
+   // to be present for SERVICE_CERTIFICATE, only Type and Msg are present, and
+   // it's just a DeviceCertificate with CertificateType set to SERVICE
+   LicenseRequest Msg = 2;
+   // might be different type of signatures (ex. RSA vs AES CMAC(??),
+   // unconfirmed for now)
+   bytes Signature = 3;
+   bytes SessionKey = 4; // often RSA wrapped for licenses
+   RemoteAttestation RemoteAttestation = 5;
 }
 
 message SignedLicense {
-  enum MessageType {
-    DUMMY_MSG_TYPE = 0; // dummy, added to satisfy proto3
-    LICENSE_REQUEST = 1;
-    LICENSE = 2;
-    ERROR_RESPONSE = 3;
-    SERVICE_CERTIFICATE_REQUEST = 4;
-    SERVICE_CERTIFICATE = 5;
-  }
-  MessageType Type = 1; // has in incorrect overlap with License_KeyContainer_SecurityLevel
-  License Msg = 2; // this has to be casted dynamically, to LicenseRequest, License or LicenseError (? unconfirmed), for Request, no other fields but Type need to be present
-                 // for SERVICE_CERTIFICATE, only Type and Msg are present, and it's just a DeviceCertificate with CertificateType set to SERVICE
-  bytes Signature = 3; // might be different type of signatures (ex. RSA vs AES CMAC(??), unconfirmed for now)
-  bytes SessionKey = 4; // often RSA wrapped for licenses
-  RemoteAttestation RemoteAttestation = 5;
+   enum MessageType {
+      DUMMY_MSG_TYPE = 0; // dummy, added to satisfy proto3
+      LICENSE_REQUEST = 1;
+      LICENSE = 2;
+      ERROR_RESPONSE = 3;
+      SERVICE_CERTIFICATE_REQUEST = 4;
+      SERVICE_CERTIFICATE = 5;
+   }
+   // has in incorrect overlap with License_KeyContainer_SecurityLevel
+   MessageType Type = 1;
+   // this has to be casted dynamically, to LicenseRequest, License or
+   // LicenseError (? unconfirmed), for Request, no other fields but Type need
+   // to be present for SERVICE_CERTIFICATE, only Type and Msg are present, and
+   // it's just a DeviceCertificate with CertificateType set to SERVICE
+   License Msg = 2;
+   // might be different type of signatures (ex. RSA vs AES CMAC(??),
+   // unconfirmed for now)
+   bytes Signature = 3;
+   bytes SessionKey = 4; // often RSA wrapped for licenses
+   RemoteAttestation RemoteAttestation = 5;
 }
