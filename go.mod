@@ -4,7 +4,7 @@ go 1.18
 
 require (
 	github.com/89z/format v1.34.2
-	github.com/chmike/cmac-go v1.0.0
+	github.com/chmike/cmac-go v1.1.0
 )
 
 require (

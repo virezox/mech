@@ -2,32 +2,95 @@ package paramount
 
 import (
    "bytes"
+   "crypto/aes"
+   "crypto/cipher"
    "crypto/rsa"
+   "crypto/sha1"
    "encoding/base64"
    "encoding/xml"
    "errors"
    "github.com/89z/format"
+   "github.com/89z/format/protobuf"
+   "github.com/chmike/cmac-go"
    "io"
    "net/http"
    "os"
 )
 
-var LogLevel format.LogLevel
-
-type licenseKey struct {
-   Type  uint64
-   Value []byte
-}
-
-type decryptionModule struct {
+type module struct {
+   KeyId []byte
    clientID   []byte
    privateKey *rsa.PrivateKey
-   cencHeader struct {
-      KeyId []byte "2"
-   }
 }
 
-func newKeys(contentID, bearer string) ([]licenseKey, error) {
+func (c *module) keyContainers(bRequest, bResponse []byte) ([]keyContainer, error) {
+   // message
+   signedLicenseRequest, err := protobuf.Unmarshal(bRequest)
+   if err != nil {
+      return nil, err
+   }
+   licenseRequest := signedLicenseRequest.Get(2).Marshal()
+   var message []byte
+   message = append(message, 1)
+   message = append(message, "ENCRYPTION"...)
+   message = append(message, 0)
+   message = append(message, licenseRequest...)
+   message = append(message, 0, 0, 0, 0x80)
+   // key
+   signedLicense, err := protobuf.Unmarshal(bResponse)
+   if err != nil {
+      return nil, err
+   }
+   sessionKey, err := signedLicense.GetBytes(4)
+   if err != nil {
+      return nil, err
+   }
+   key, err := rsa.DecryptOAEP(sha1.New(), nil, c.privateKey, sessionKey, nil)
+   if err != nil {
+      return nil, err
+   }
+   // CMAC
+   mac, err := cmac.New(aes.NewCipher, key)
+   if err != nil {
+      return nil, err
+   }
+   mac.Write(message)
+   block, err := aes.NewCipher(mac.Sum(nil))
+   if err != nil {
+      return nil, err
+   }
+   var containers []keyContainer
+   // .Msg.Key
+   for _, message := range signedLicense.Get(2).GetMessages(3) {
+      iv, err := message.GetBytes(2)
+      if err != nil {
+         return nil, err
+      }
+      key, err := message.GetBytes(3)
+      if err != nil {
+         return nil, err
+      }
+      typ, err := message.GetVarint(4)
+      if err != nil {
+         return nil, err
+      }
+      cipher.NewCBCDecrypter(block, iv).CryptBlocks(key, key)
+      var container keyContainer
+      container.Key = unpad(key)
+      container.Type = uint64(typ)
+      containers = append(containers, container)
+   }
+   return containers, nil
+}
+
+type keyContainer struct {
+   Key []byte
+   Type  uint64
+}
+
+var LogLevel format.LogLevel
+
+func newKeys(contentID, bearer string) ([]keyContainer, error) {
    file, err := os.Open("ignore/stream.mpd")
    if err != nil {
       return nil, err
@@ -45,7 +108,7 @@ func newKeys(contentID, bearer string) ([]licenseKey, error) {
    if err != nil {
       return nil, err
    }
-   cdm, err := newCDM(privateKey, clientID, initData)
+   cdm, err := newModule(privateKey, clientID, initData)
    if err != nil {
       return nil, err
    }
@@ -75,7 +138,7 @@ func newKeys(contentID, bearer string) ([]licenseKey, error) {
    if err != nil {
       return nil, err
    }
-   return cdm.getLicenseKeys(licenseRequest, licenseResponse)
+   return cdm.keyContainers(licenseRequest, licenseResponse)
 }
 
 // pks padding is designed so that the value of all the padding bytes is the
