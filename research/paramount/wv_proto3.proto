@@ -43,20 +43,23 @@ message ClientIdentification {
 }
 
 message DeviceCertificate {
-  enum CertificateType {
-    ROOT = 0;
-    INTERMEDIATE = 1;
-    USER_DEVICE = 2;
-    SERVICE = 3;
-  }
-  //ProvisionedDeviceInfo.WvSecurityLevel Type = 1; // is this how one is supposed to call it? (it's an enum) there might be a bug here, with CertificateType getting confused with WvSecurityLevel, for now renaming it (verify against other binaries)
-  CertificateType Type = 1;
-  bytes SerialNumber = 2; 
-  uint32 CreationTimeSeconds = 3;
-  bytes PublicKey = 4;
-  uint32 SystemId = 5;
-  uint32 TestDeviceDeprecated = 6; // is it bool or int?
-  bytes ServiceId = 7; // service URL for service certificates
+   enum CertificateType {
+      ROOT = 0;
+      INTERMEDIATE = 1;
+      USER_DEVICE = 2;
+      SERVICE = 3;
+   }
+   // ProvisionedDeviceInfo.WvSecurityLevel Type = 1;
+   // is this how one is supposed to call it? (it's an enum) there might be a
+   // bug here, with CertificateType getting confused with WvSecurityLevel, for
+   // now renaming it (verify against other binaries)
+   CertificateType Type = 1;
+   bytes SerialNumber = 2; 
+   uint32 CreationTimeSeconds = 3;
+   bytes PublicKey = 4;
+   uint32 SystemId = 5;
+   uint32 TestDeviceDeprecated = 6; // is it bool or int?
+   bytes ServiceId = 7; // service URL for service certificates
 }
 
 // missing some references, 
@@ -85,17 +88,18 @@ message EncryptedClientIdentification {
 
 // todo: fill (for this top-level type, it might be impossible/difficult)
 enum LicenseType {
-  ZERO = 0;
-  DEFAULT = 1; // do not know what this is either, but should be 1; on recent versions may go up to 3 (latest x86)
+   ZERO = 0;
+   // do not know what this is either, but should be 1; on recent versions may
+   // go up to 3 (latest x86)
+   DEFAULT = 1;
 }
 
-// todo: fill (for this top-level type, it might be impossible/difficult)
-// this is just a guess because these globals got lost, but really, do we need more? 
+// todo: fill (for this top-level type, it might be impossible/difficult) this
+// is just a guess because these globals got lost, but really, do we need more? 
 enum ProtocolVersion {
   DUMMY = 0;
   CURRENT = 21; // don't have symbols for this
 }
-
 
 message LicenseIdentification {
   bytes RequestId = 1;
@@ -106,84 +110,89 @@ message LicenseIdentification {
   bytes ProviderSessionToken = 6;
 }
 
-
 message License {
-  message Policy {
-    uint32 CanPlay = 1;
-    uint32 CanPersist = 2;
-    uint32 CanRenew = 3;
-    uint32 RentalDurationSeconds = 4;
-    uint32 PlaybackDurationSeconds = 5;
-    uint32 LicenseDurationSeconds = 6;
-    uint32 RenewalRecoveryDurationSeconds = 7;
-    string RenewalServerUrl = 8;
-    uint32 RenewalDelaySeconds = 9;
-    uint32 RenewalRetryIntervalSeconds = 10;
-    uint32 RenewWithUsage = 11;
-	uint32 UnknownPolicy12 = 12;
-  }
-  message KeyContainer {
-    enum KeyType {
-      _NOKEYTYPE = 0; // dummy, added to satisfy proto3, not present in original
-      SIGNING = 1;
-      CONTENT = 2;
-      KEY_CONTROL = 3;
-      OPERATOR_SESSION = 4;
-    }
-    enum SecurityLevel {
-      _NOSECLEVEL = 0; // dummy, added to satisfy proto3, not present in original
-      SW_SECURE_CRYPTO = 1;
-      SW_SECURE_DECODE = 2;
-      HW_SECURE_CRYPTO = 3;
-      HW_SECURE_DECODE = 4;
-      HW_SECURE_ALL = 5;
-    }
-    message OutputProtection {
-      enum CGMS {
-        COPY_FREE = 0;
-        COPY_ONCE = 2;
-        COPY_NEVER = 3;
-        CGMS_NONE = 0x2A; // PC default!
+   message Policy {
+      uint32 CanPlay = 1;
+      uint32 CanPersist = 2;
+      uint32 CanRenew = 3;
+      uint32 RentalDurationSeconds = 4;
+      uint32 PlaybackDurationSeconds = 5;
+      uint32 LicenseDurationSeconds = 6;
+      uint32 RenewalRecoveryDurationSeconds = 7;
+      string RenewalServerUrl = 8;
+      uint32 RenewalDelaySeconds = 9;
+      uint32 RenewalRetryIntervalSeconds = 10;
+      uint32 RenewWithUsage = 11;
+      uint32 UnknownPolicy12 = 12;
+   }
+   message KeyContainer {
+      enum KeyType {
+         // dummy, added to satisfy proto3, not present in original
+         _NOKEYTYPE = 0;
+         SIGNING = 1;
+         CONTENT = 2;
+         KEY_CONTROL = 3;
+         OPERATOR_SESSION = 4;
       }
-      ClientIdentification.ClientCapabilities.HdcpVersion Hdcp = 1; // it's most likely a copy of Hdcp version available here, but compiler optimized it away
-      CGMS CgmsFlags = 2;
-    }
-    message KeyControl {
-      bytes KeyControlBlock = 1; // what is this?
+      enum SecurityLevel {
+         // dummy, added to satisfy proto3, not present in original
+         _NOSECLEVEL = 0;
+         SW_SECURE_CRYPTO = 1;
+         SW_SECURE_DECODE = 2;
+         HW_SECURE_CRYPTO = 3;
+         HW_SECURE_DECODE = 4;
+         HW_SECURE_ALL = 5;
+      }
+      message OutputProtection {
+         enum CGMS {
+            COPY_FREE = 0;
+            COPY_ONCE = 2;
+            COPY_NEVER = 3;
+            CGMS_NONE = 0x2A; // PC default!
+         }
+         // it's most likely a copy of Hdcp version available here, but
+         // compiler optimized it away
+         ClientIdentification.ClientCapabilities.HdcpVersion Hdcp = 1;
+         CGMS CgmsFlags = 2;
+      }
+      message KeyControl {
+         bytes KeyControlBlock = 1; // what is this?
+         bytes Iv = 2;
+      }
+      message OperatorSessionKeyPermissions {
+         uint32 AllowEncrypt = 1;
+         uint32 AllowDecrypt = 2;
+         uint32 AllowSign = 3;
+         uint32 AllowSignatureVerify = 4;
+      }
+      message VideoResolutionConstraint {
+         uint32 MinResolutionPixels = 1;
+         uint32 MaxResolutionPixels = 2;
+         OutputProtection RequiredProtection = 3;
+      }
+      bytes Id = 1;
       bytes Iv = 2;
-    }
-    message OperatorSessionKeyPermissions {
-      uint32 AllowEncrypt = 1;
-      uint32 AllowDecrypt = 2;
-      uint32 AllowSign = 3;
-      uint32 AllowSignatureVerify = 4;
-    }
-    message VideoResolutionConstraint {
-      uint32 MinResolutionPixels = 1;
-      uint32 MaxResolutionPixels = 2;
-      OutputProtection RequiredProtection = 3;
-    }
-    bytes Id = 1;
-    bytes Iv = 2;
-    bytes Key = 3;
-    KeyType Type = 4;
-    SecurityLevel Level = 5;
-    OutputProtection RequiredProtection = 6;
-    OutputProtection RequestedProtection = 7;
-    KeyControl _KeyControl = 8; // duped names, etc
-    OperatorSessionKeyPermissions _OperatorSessionKeyPermissions = 9; // duped names, etc
-    repeated VideoResolutionConstraint VideoResolutionConstraints = 10;
-  }
-  LicenseIdentification Id = 1;
-  Policy _Policy = 2; // duped names, etc
-  repeated KeyContainer Key = 3;
-  uint32 LicenseStartTime = 4;
-  uint32 RemoteAttestationVerified = 5; // bool?
-  bytes ProviderClientToken = 6;
-  // there might be more, check with newer versions (I see field 7-8 in a lic)
-  // this appeared in latest x86:
-  uint32 ProtectionScheme = 7; // type unconfirmed fully, but it's likely as WidevineCencHeader describesit (fourcc)
-  bytes UnknownHdcpDataField = 8;
+      bytes Key = 3;
+      KeyType Type = 4;
+      SecurityLevel Level = 5;
+      OutputProtection RequiredProtection = 6;
+      OutputProtection RequestedProtection = 7;
+      KeyControl _KeyControl = 8; // duped names, etc
+      // duped names, etc
+      OperatorSessionKeyPermissions _OperatorSessionKeyPermissions = 9;
+      repeated VideoResolutionConstraint VideoResolutionConstraints = 10;
+   }
+   LicenseIdentification Id = 1;
+   Policy _Policy = 2; // duped names, etc
+   repeated KeyContainer Key = 3;
+   uint32 LicenseStartTime = 4;
+   uint32 RemoteAttestationVerified = 5; // bool?
+   bytes ProviderClientToken = 6;
+   // there might be more, check with newer versions (I see field 7-8 in a lic)
+   // this appeared in latest x86. type unconfirmed fully, but it's likely as
+   // WidevineCencHeader describesit (fourcc)
+   uint32 ProtectionScheme = 7;
+   bytes UnknownHdcpDataField = 8;
 }
 
 message LicenseError {
@@ -200,13 +209,19 @@ message LicenseError {
 message LicenseRequest {
   message ContentIdentification {
     message CENC {
-      // bytes Pssh = 1; // the client's definition is opaque, it doesn't care about the contents, but the PSSH has a clear definition that is understood and requested by the server, thus I'll replace it with:
+      // bytes Pssh = 1;
+      // the client's definition is opaque, it doesn't care about the contents,
+      // but the PSSH has a clear definition that is understood and requested
+      // by the server, thus I'll replace it with:
       WidevineCencHeader Pssh = 1;
-      LicenseType LicenseType = 2; // unfortunately the LicenseType symbols are not present, acceptable value seems to only be 1
+      // unfortunately the LicenseType symbols are not present, acceptable
+      // value seems to only be 1
+      LicenseType LicenseType = 2;
       bytes RequestId = 3;
     }
     message WebM {
-      bytes Header = 1; // identical to CENC, aside from PSSH and the parent field number used
+      // identical to CENC, aside from PSSH and the parent field number used
+      bytes Header = 1;
       LicenseType LicenseType = 2;
       bytes RequestId = 3;
     }
@@ -252,19 +267,6 @@ message ProvisionedDeviceInfo {
   WvSecurityLevel SecurityLevel = 7;
   uint32 TestDevice = 8; // bool?
 } 
-
-
-// todo: fill
-message ProvisioningOptions {
-}
-
-// todo: fill
-message ProvisioningRequest {
-}
-
-// todo: fill
-message ProvisioningResponse {
-}
 
 message RemoteAttestation {
   EncryptedClientIdentification Certificate = 1;
