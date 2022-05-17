@@ -2,8 +2,10 @@ package paramount
 
 import (
    "bytes"
+   "crypto"
    "crypto/rsa"
    "crypto/x509"
+   "crypto/sha1"
    "encoding/base64"
    "encoding/pem"
    "encoding/xml"
@@ -14,6 +16,37 @@ import (
    "net/http"
    "os"
 )
+
+// Generates the license request data.  This is sent to the license server via
+// HTTP POST and the server in turn returns the license response.
+func (c *decryptionModule) getLicenseRequest() ([]byte, error) {
+   msg := protobuf.Message{
+      1: protobuf.Bytes(c.clientID),
+      2: protobuf.Message{ // ContentId
+         1: protobuf.Message{ // CencId
+            1: protobuf.Message{ // Pssh
+               2: protobuf.Bytes(c.cencHeader.KeyId),
+            },
+         },
+      },
+   }
+   hash := sha1.Sum(msg.Marshal())
+   signature, err := rsa.SignPSS(
+      nopSource{},
+      c.privateKey,
+      crypto.SHA1,
+      hash[:],
+      &rsa.PSSOptions{SaltLength: rsa.PSSSaltLengthEqualsHash},
+   )
+   if err != nil {
+      return nil, err
+   }
+   licenseRequest := protobuf.Message{
+      2: msg,
+      3: protobuf.Bytes(signature),
+   }
+   return licenseRequest.Marshal(), nil
+}
 
 // Creates a new CDM object with the specified device information.
 func newCDM(privateKey, clientID, initData []byte) (*decryptionModule, error) {
@@ -36,13 +69,6 @@ func newCDM(privateKey, clientID, initData []byte) (*decryptionModule, error) {
    var dec decryptionModule
    dec.clientID = clientID
    dec.privateKey = keyParsed
-   for i := range dec.sessionID {
-      if i == 17 {
-         dec.sessionID[i] = '1'
-      } else {
-         dec.sessionID[i] = '0'
-      }
-   }
    mes, err := protobuf.Unmarshal(initData[32:])
    if err != nil {
       return nil, err
