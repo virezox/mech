@@ -12,3 +12,12 @@
 4. MITM Proxy Firefox
 5. MITM Proxy APK
 6. JADX
+
+## Will you add another site?
+
+If you want to add a new site, just post a new issue. If its a site I am
+interested in, I will probably add it for free.
+
+However if I am not interested in the site, then I will need a minimum donation
+of 99 USD. I have a PayPal sponsor link, or if you need to use another method,
+let me know.
