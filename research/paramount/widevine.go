@@ -7,85 +7,12 @@ import (
    "crypto/rsa"
    "crypto/sha1"
    "crypto/x509"
-   "encoding/base64"
    "encoding/pem"
-   "encoding/xml"
-   "errors"
    "github.com/89z/format/protobuf"
    "github.com/chmike/cmac-go"
-   "io"
 )
 
-func initDataFromMPD(src io.Reader) ([]byte, error) {
-   var mpdPlaylist mpd
-   err := xml.NewDecoder(src).Decode(&mpdPlaylist)
-   if err != nil {
-      return nil, err
-   }
-   const widevineSchemeIdURI = "urn:uuid:edef8ba9-79d6-4ace-a3c8-27dcd51d21ed"
-   for _, adaptionSet := range mpdPlaylist.Period.AdaptationSet {
-      for _, protection := range adaptionSet.ContentProtection {
-         if protection.SchemeIdUri == widevineSchemeIdURI && len(protection.Pssh) > 0 {
-            return base64.StdEncoding.DecodeString(protection.Pssh)
-         }
-      }
-   }
-   for _, adaptionSet := range mpdPlaylist.Period.AdaptationSet {
-      for _, representation := range adaptionSet.Representation {
-         for _, protection := range representation.ContentProtection {
-            if protection.SchemeIdUri == widevineSchemeIdURI && len(protection.Pssh.Text) > 0 {
-               return base64.StdEncoding.DecodeString(protection.Pssh.Text)
-            }
-         }
-      }
-   }
-   return nil, errors.New("no init data found")
-}
-
-func unpad(buf []byte) []byte {
-   if len(buf) >= 1 {
-      pad := buf[len(buf)-1]
-      if len(buf) >= int(pad) {
-         buf = buf[:len(buf)-int(pad)]
-      }
-   }
-   return buf
-}
-
-type KeyContainer struct {
-   Key []byte
-   Type uint64
-}
-
-type Module struct {
-   *rsa.PrivateKey
-   clientID []byte
-   keyID []byte
-}
-
-func NewModule(privateKey, clientID, initData []byte) (*Module, error) {
-   var mod Module
-   // clientID
-   mod.clientID = clientID
-   // keyID
-   widevineCencHeader, err := protobuf.Unmarshal(initData[32:])
-   if err != nil {
-      return nil, err
-   }
-   mod.keyID, err = widevineCencHeader.GetBytes(2)
-   if err != nil {
-      return nil, err
-   }
-   // PrivateKey
-   block, _ := pem.Decode(privateKey)
-   mod.PrivateKey, err = x509.ParsePKCS1PrivateKey(block.Bytes)
-   if err != nil {
-      return nil, err
-   }
-   return &mod, nil
-}
-
-func (c *Module) KeyContainers(bRequest, bResponse []byte) ([]KeyContainer, error) {
+func (c *Module) Keys(bRequest, bResponse []byte) ([]KeyContainer, error) {
    // message
    signedLicenseRequest, err := protobuf.Unmarshal(bRequest)
    if err != nil {
@@ -145,23 +72,58 @@ func (c *Module) KeyContainers(bRequest, bResponse []byte) ([]KeyContainer, erro
    return containers, nil
 }
 
-func (c *Module) LicenseRequest() ([]byte, error) {
+func unpad(buf []byte) []byte {
+   if len(buf) >= 1 {
+      pad := buf[len(buf)-1]
+      if len(buf) >= int(pad) {
+         buf = buf[:len(buf)-int(pad)]
+      }
+   }
+   return buf
+}
+
+type KeyContainer struct {
+   Key []byte
+   Type uint64
+}
+
+type Module struct {
+   *rsa.PrivateKey
+   signedLicenseRequest []byte
+}
+
+func NewModule(privateKey, clientID, initData []byte) (*Module, error) {
+   var mod Module
    // licenseRequest
+   widevineCencHeader, err := protobuf.Unmarshal(initData[32:])
+   if err != nil {
+      return nil, err
+   }
+   keyID, err := widevineCencHeader.GetBytes(2)
+   if err != nil {
+      return nil, err
+   }
    licenseRequest := protobuf.Message{
-      1: protobuf.Bytes(c.clientID),
+      1: protobuf.Bytes(clientID),
       2: protobuf.Message{ // ContentId
          1: protobuf.Message{ // CencId
             1: protobuf.Message{ // Pssh
-               2: protobuf.Bytes(c.keyID),
+               2: protobuf.Bytes(keyID),
             },
          },
       },
    }
-   // signature
+   // PrivateKey
+   block, _ := pem.Decode(privateKey)
+   mod.PrivateKey, err = x509.ParsePKCS1PrivateKey(block.Bytes)
+   if err != nil {
+      return nil, err
+   }
+   // signedLicenseRequest
    digest := sha1.Sum(licenseRequest.Marshal())
    signature, err := rsa.SignPSS(
       nopSource{},
-      c.PrivateKey,
+      mod.PrivateKey,
       crypto.SHA1,
       digest[:],
       &rsa.PSSOptions{SaltLength: rsa.PSSSaltLengthEqualsHash},
@@ -169,30 +131,11 @@ func (c *Module) LicenseRequest() ([]byte, error) {
    if err != nil {
       return nil, err
    }
-   signedLicenseRequest := protobuf.Message{
+   mod.signedLicenseRequest = protobuf.Message{
       2: licenseRequest,
       3: protobuf.Bytes(signature),
-   }
-   return signedLicenseRequest.Marshal(), nil
-}
-
-type mpd struct {
-   Period                    struct {
-      AdaptationSet []struct {
-         ContentProtection []struct {
-            SchemeIdUri string `xml:"schemeIdUri,attr"`
-            Pssh        string `xml:"pssh"`
-         } `xml:"ContentProtection"`
-         Representation []struct {
-            ContentProtection []struct {
-               SchemeIdUri string `xml:"schemeIdUri,attr"`
-               Pssh        struct {
-                  Text string `xml:",chardata"`
-               } `xml:"pssh"`
-            } `xml:"ContentProtection"`
-         } `xml:"Representation"`
-      } `xml:"AdaptationSet"`
-   } `xml:"Period"`
+   }.Marshal()
+   return &mod, nil
 }
 
 type nopSource struct{}

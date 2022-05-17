@@ -11,7 +11,7 @@ const (
 )
 
 func TestParamount(t *testing.T) {
-   keys, err := newKeys(contentID, bearer)
+   keys, err := KeyContainers(contentID, bearer)
    if err != nil {
       t.Fatal(err)
    }
