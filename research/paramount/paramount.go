@@ -3,19 +3,97 @@ package paramount
 import (
    "bytes"
    "crypto"
+   "crypto/aes"
+   "crypto/cipher"
    "crypto/rsa"
-   "crypto/x509"
    "crypto/sha1"
+   "crypto/x509"
    "encoding/base64"
    "encoding/pem"
    "encoding/xml"
    "errors"
    "github.com/89z/format"
-   "io"
    "github.com/89z/format/protobuf"
+   "github.com/chmike/cmac-go"
+   "io"
    "net/http"
    "os"
 )
+
+var LogLevel format.LogLevel
+
+func (c *decryptionModule) getLicenseKeys(licenseRequest, licenseResponse []byte) ([]licenseKey, error) {
+   license, err := protobuf.Unmarshal(licenseResponse)
+   if err != nil {
+      return nil, err
+   }
+   requestParsed, err := protobuf.Unmarshal(licenseRequest)
+   if err != nil {
+      return nil, err
+   }
+   requestMsg := requestParsed.Get(2).Marshal()
+   cipherText, err := license.GetBytes(4)
+   if err != nil {
+      return nil, err
+   }
+   sessionKey, err := rsa.DecryptOAEP(
+      sha1.New(), nil, c.privateKey, cipherText, nil,
+   )
+   if err != nil {
+      return nil, err
+   }
+   hash, err := cmac.New(aes.NewCipher, sessionKey)
+   if err != nil {
+      return nil, err
+   }
+   var key []byte
+   key = append(key, 1)
+   key = append(key, "ENCRYPTION"...)
+   key = append(key, 0)
+   key = append(key, requestMsg...)
+   key = append(key, 0, 0, 0, 0x80)
+   hash.Write(key)
+   block, err := aes.NewCipher(hash.Sum(nil))
+   if err != nil {
+      return nil, err
+   }
+   var keys []licenseKey
+   for _, con := range license.Get(2).GetMessages(3) {
+      iv, err := con.GetBytes(2)
+      if err != nil {
+         return nil, err
+      }
+      key, err := con.GetBytes(3)
+      if err != nil {
+         return nil, err
+      }
+      typ, err := con.GetVarint(4)
+      if err != nil {
+         return nil, err
+      }
+      decrypter := cipher.NewCBCDecrypter(block, iv)
+      decryptedKey := make([]byte, len(key))
+      decrypter.CryptBlocks(decryptedKey, key)
+      keys = append(keys, licenseKey{
+         Type2: uint64(typ),
+         Value: unpad(decryptedKey),
+      })
+   }
+   return keys, nil
+}
+
+type licenseKey struct {
+   Type2  uint64
+   Value []byte
+}
+
+type decryptionModule struct {
+   clientID   []byte
+   privateKey *rsa.PrivateKey
+   cencHeader struct {
+      KeyId []byte "2"
+   }
+}
 
 // Generates the license request data.  This is sent to the license server via
 // HTTP POST and the server in turn returns the license response.
@@ -50,13 +128,7 @@ func (c *decryptionModule) getLicenseRequest() ([]byte, error) {
 
 // Creates a new CDM object with the specified device information.
 func newCDM(privateKey, clientID, initData []byte) (*decryptionModule, error) {
-   if len(initData) < 32 {
-      return nil, errors.New("initData not long enough")
-   }
    block, _ := pem.Decode(privateKey)
-   if block == nil || (block.Type != "PRIVATE KEY" && block.Type != "RSA PRIVATE KEY") {
-      return nil, errors.New("failed to decode device private key")
-   }
    keyParsed, err := x509.ParsePKCS1PrivateKey(block.Bytes)
    if err != nil {
       // if PCKS1 doesn't work, try PCKS8
@@ -122,7 +194,7 @@ func newKeys(contentID, bearer string) ([]licenseKey, error) {
    }
    defer res.Body.Close()
    if res.StatusCode != http.StatusOK {
-      return nil, errorString(res.Status)
+      return nil, errors.New(res.Status)
    }
    licenseResponse, err := io.ReadAll(res.Body)
    if err != nil {
@@ -166,14 +238,6 @@ type mpd struct {
          } `xml:"Representation"`
       } `xml:"AdaptationSet"`
    } `xml:"Period"`
-}
-
-var LogLevel format.LogLevel
-
-type errorString string
-
-func (e errorString) Error() string {
-   return string(e)
 }
 
 // This function retrieves the PSSH/Init Data from a given MPD file reader.
