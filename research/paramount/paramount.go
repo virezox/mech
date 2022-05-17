@@ -15,7 +15,7 @@ import (
 var LogLevel format.LogLevel
 
 type licenseKey struct {
-   Type2  uint64
+   Type  uint64
    Value []byte
 }
 

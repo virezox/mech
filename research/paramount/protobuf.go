@@ -13,16 +13,24 @@ import (
 )
 
 func (c *decryptionModule) getLicenseKeys(licenseRequest, licenseResponse []byte) ([]licenseKey, error) {
-   license, err := protobuf.Unmarshal(licenseResponse)
+   // key
+   signedLicenseRequest, err := protobuf.Unmarshal(licenseRequest)
    if err != nil {
       return nil, err
    }
-   requestParsed, err := protobuf.Unmarshal(licenseRequest)
+   requestMsg := signedLicenseRequest.Get(2).Marshal()
+   var key []byte
+   key = append(key, 1)
+   key = append(key, "ENCRYPTION"...)
+   key = append(key, 0)
+   key = append(key, requestMsg...)
+   key = append(key, 0, 0, 0, 0x80)
+   // sessionKey
+   signedLicense, err := protobuf.Unmarshal(licenseResponse)
    if err != nil {
       return nil, err
    }
-   requestMsg := requestParsed.Get(2).Marshal()
-   cipherText, err := license.GetBytes(4)
+   cipherText, err := signedLicense.GetBytes(4)
    if err != nil {
       return nil, err
    }
@@ -32,23 +40,18 @@ func (c *decryptionModule) getLicenseKeys(licenseRequest, licenseResponse []byte
    if err != nil {
       return nil, err
    }
+   // Write
    hash, err := cmac.New(aes.NewCipher, sessionKey)
    if err != nil {
       return nil, err
    }
-   var key []byte
-   key = append(key, 1)
-   key = append(key, "ENCRYPTION"...)
-   key = append(key, 0)
-   key = append(key, requestMsg...)
-   key = append(key, 0, 0, 0, 0x80)
    hash.Write(key)
    block, err := aes.NewCipher(hash.Sum(nil))
    if err != nil {
       return nil, err
    }
    var keys []licenseKey
-   for _, con := range license.Get(2).GetMessages(3) {
+   for _, con := range signedLicense.Get(2).GetMessages(3) {
       iv, err := con.GetBytes(2)
       if err != nil {
          return nil, err
@@ -65,7 +68,7 @@ func (c *decryptionModule) getLicenseKeys(licenseRequest, licenseResponse []byte
       decryptedKey := make([]byte, len(key))
       decrypter.CryptBlocks(decryptedKey, key)
       keys = append(keys, licenseKey{
-         Type2: uint64(typ),
+         Type: uint64(typ),
          Value: unpad(decryptedKey),
       })
    }
