@@ -2,6 +2,7 @@ package paramount
 
 import (
    "encoding/hex"
+   "os"
    "testing"
 )
 
@@ -28,4 +29,13 @@ func TestParamount(t *testing.T) {
    if !pass {
       t.Fatal(keys)
    }
+}
+
+func TestBearer(t *testing.T) {
+   res, err := newBearer()
+   if err != nil {
+      t.Fatal(err)
+   }
+   defer res.Body.Close()
+   os.Stdout.ReadFrom(res.Body)
 }

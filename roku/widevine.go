@@ -5,13 +5,13 @@ import (
    "encoding/hex"
    "errors"
    "github.com/89z/format/json"
+   "github.com/89z/mech"
    "net/http"
    "strings"
 )
 
 func (p Playback) Widevine(pssh string) (*Widevine, error) {
-   buf := new(bytes.Buffer)
-   err := json.NewEncoder(buf).Encode(map[string]string{
+   buf, err := mech.Encode(map[string]string{
       "buildInfo": "",
       "license": p.DRM.Widevine.LicenseServer,
       "pssh": pssh,

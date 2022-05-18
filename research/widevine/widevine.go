@@ -1,4 +1,4 @@
-package paramount
+package widevine
 
 import (
    "crypto"
