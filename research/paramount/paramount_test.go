@@ -11,7 +11,11 @@ const (
 )
 
 func TestParamount(t *testing.T) {
-   keys, err := KeyContainers(contentID, bearer)
+   media, err := NewMedia("ignore/stream.mpd")
+   if err != nil {
+      t.Fatal(err)
+   }
+   keys, err := media.Keys(contentID, bearer)
    if err != nil {
       t.Fatal(err)
    }

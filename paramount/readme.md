@@ -1,22 +1,5 @@
 # Paramount+
 
-## WKS-KEY
-
-~~~
-unable to parse license - check protobufs
-~~~
-
-https://github.com/weapon121/WKS-KEY
-
-## Get Widevine Keys
-
-Need proxy:
-
-~~~
-Error 404: {"code":130301,"message":"Content is not available in this
-location."}
-~~~
-
 ## How to get sid?
 
 https://play.google.com/store/apps/details?id=com.cbs.app

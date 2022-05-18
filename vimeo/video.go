@@ -9,22 +9,6 @@ import (
    "strings"
 )
 
-type Height struct {
-   *Video
-   Target int
-}
-
-func (h Height) Less(i, j int) bool {
-   distance := func(k int) int {
-      diff := h.Download[k].Height - h.Target
-      if diff >= 0 {
-         return diff
-      }
-      return -diff
-   }
-   return distance(i) < distance(j)
-}
-
 type Download struct {
    Width int
    Height int
@@ -44,14 +28,6 @@ type Video struct {
       Base_Link string
    }
    Download []Download
-}
-
-func (v Video) Swap(i, j int) {
-   v.Download[i], v.Download[j] = v.Download[j], v.Download[i]
-}
-
-func (v Video) Len() int {
-   return len(v.Download)
 }
 
 func (d Download) Format(f fmt.State, verb rune) {
