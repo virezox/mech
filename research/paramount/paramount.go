@@ -2,21 +2,52 @@ package paramount
 
 import (
    "bytes"
-   "encoding/base64"
+   "encoding/hex"
    "encoding/xml"
    "errors"
    "github.com/89z/format"
-   "io"
    "net/http"
    "net/url"
    "os"
+   "strings"
 )
-
-const widevineSchemeIdURI = "urn:uuid:edef8ba9-79d6-4ace-a3c8-27dcd51d21ed"
 
 var LogLevel format.LogLevel
 
-func KeyContainers(contentID, bearer string) ([]KeyContainer, error) {
+func (m Media) kID() ([]byte, error) {
+   for _, ada := range m.Period.AdaptationSet {
+      for _, con := range ada.ContentProtection {
+         con.Default_KID = strings.ReplaceAll(con.Default_KID, "-", "")
+         return hex.DecodeString(con.Default_KID)
+      }
+   }
+   return nil, errors.New("no init data found")
+}
+
+type Media struct {
+   Period struct {
+      AdaptationSet []struct {
+         ContentProtection []struct {
+            Default_KID string `xml:"default_KID,attr"`
+         }
+      }
+   }
+}
+
+func NewMedia(name string) (*Media, error) {
+   file, err := os.Open(name)
+   if err != nil {
+      return nil, err
+   }
+   defer file.Close()
+   med := new(Media)
+   if err := xml.NewDecoder(file).Decode(med); err != nil {
+      return nil, err
+   }
+   return med, nil
+}
+
+func (m Media) Keys(contentID, bearer string) ([]KeyContainer, error) {
    privateKey, err := os.ReadFile("ignore/device_private_key")
    if err != nil {
       return nil, err
@@ -25,15 +56,11 @@ func KeyContainers(contentID, bearer string) ([]KeyContainer, error) {
    if err != nil {
       return nil, err
    }
-   media, err := NewMedia("ignore/stream.mpd")
+   kID, err := m.kID()
    if err != nil {
       return nil, err
    }
-   pssh, err := media.PSSH()
-   if err != nil {
-      return nil, err
-   }
-   mod, err := NewModule(privateKey, clientID, pssh)
+   mod, err := NewModule(privateKey, clientID, kID)
    if err != nil {
       return nil, err
    }
@@ -62,61 +89,6 @@ func KeyContainers(contentID, bearer string) ([]KeyContainer, error) {
    if res.StatusCode != http.StatusOK {
       return nil, errors.New(res.Status)
    }
-   licenseResponse, err := io.ReadAll(res.Body)
-   if err != nil {
-      return nil, err
-   }
-   return mod.Keys(licenseResponse)
+   return mod.Keys(res.Body)
 }
 
-type Media struct {
-   Period struct {
-      AdaptationSet []struct {
-         ContentProtection []struct {
-            SchemeIdUri string `xml:"schemeIdUri,attr"`
-            Pssh        string `xml:"pssh"`
-         } `xml:"ContentProtection"`
-         Representation []struct {
-            ContentProtection []struct {
-               SchemeIdUri string `xml:"schemeIdUri,attr"`
-               Pssh        struct {
-                  Text string `xml:",chardata"`
-               } `xml:"pssh"`
-            }
-         }
-      }
-   }
-}
-
-func NewMedia(name string) (*Media, error) {
-   file, err := os.Open("ignore/stream.mpd")
-   if err != nil {
-      return nil, err
-   }
-   defer file.Close()
-   med := new(Media)
-   if err := xml.NewDecoder(file).Decode(med); err != nil {
-      return nil, err
-   }
-   return med, nil
-}
-
-func (m Media) PSSH() ([]byte, error) {
-   for _, adaptionSet := range m.Period.AdaptationSet {
-      for _, protection := range adaptionSet.ContentProtection {
-         if protection.SchemeIdUri == widevineSchemeIdURI {
-            return base64.StdEncoding.DecodeString(protection.Pssh)
-         }
-      }
-   }
-   for _, adaptionSet := range m.Period.AdaptationSet {
-      for _, representation := range adaptionSet.Representation {
-         for _, protection := range representation.ContentProtection {
-            if protection.SchemeIdUri == widevineSchemeIdURI {
-               return base64.StdEncoding.DecodeString(protection.Pssh.Text)
-            }
-         }
-      }
-   }
-   return nil, errors.New("no init data found")
-}

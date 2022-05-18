@@ -10,9 +10,55 @@ import (
    "encoding/pem"
    "github.com/89z/format/protobuf"
    "github.com/chmike/cmac-go"
+   "io"
 )
 
-func (m *Module) Keys(licenseResponse []byte) ([]KeyContainer, error) {
+func unpad(buf []byte) []byte {
+   if len(buf) >= 1 {
+      pad := buf[len(buf)-1]
+      if len(buf) >= int(pad) {
+         buf = buf[:len(buf)-int(pad)]
+      }
+   }
+   return buf
+}
+
+type KeyContainer struct {
+   Key []byte
+   Type uint64
+}
+
+type Module struct {
+   *rsa.PrivateKey
+   licenseRequest []byte
+}
+
+func NewModule(privateKey, clientID, kID []byte) (*Module, error) {
+   var (
+      err error
+      mod Module
+   )
+   // PrivateKey
+   block, _ := pem.Decode(privateKey)
+   mod.PrivateKey, err = x509.ParsePKCS1PrivateKey(block.Bytes)
+   if err != nil {
+      return nil, err
+   }
+   // licenseRequest
+   mod.licenseRequest = protobuf.Message{
+      1: protobuf.Bytes(clientID),
+      2: protobuf.Message{ // ContentId
+         1: protobuf.Message{ // CencId
+            1: protobuf.Message{ // Pssh
+               2: protobuf.Bytes(kID),
+            },
+         },
+      },
+   }.Marshal()
+   return &mod, nil
+}
+
+func (m *Module) Keys(licenseResponse io.Reader) ([]KeyContainer, error) {
    // message
    var message []byte
    message = append(message, 1)
@@ -21,7 +67,7 @@ func (m *Module) Keys(licenseResponse []byte) ([]KeyContainer, error) {
    message = append(message, m.licenseRequest...)
    message = append(message, 0, 0, 0, 0x80)
    // key
-   signedLicense, err := protobuf.Unmarshal(licenseResponse)
+   signedLicense, err := protobuf.Decode(licenseResponse)
    if err != nil {
       return nil, err
    }
@@ -65,56 +111,6 @@ func (m *Module) Keys(licenseResponse []byte) ([]KeyContainer, error) {
       containers = append(containers, container)
    }
    return containers, nil
-}
-
-func NewModule(privateKey, clientID, pssh []byte) (*Module, error) {
-   var mod Module
-   // licenseRequest
-   widevineCencHeader, err := protobuf.Unmarshal(pssh[32:])
-   if err != nil {
-      return nil, err
-   }
-   keyID, err := widevineCencHeader.GetBytes(2)
-   if err != nil {
-      return nil, err
-   }
-   mod.licenseRequest = protobuf.Message{
-      1: protobuf.Bytes(clientID),
-      2: protobuf.Message{ // ContentId
-         1: protobuf.Message{ // CencId
-            1: protobuf.Message{ // Pssh
-               2: protobuf.Bytes(keyID),
-            },
-         },
-      },
-   }.Marshal()
-   // PrivateKey
-   block, _ := pem.Decode(privateKey)
-   mod.PrivateKey, err = x509.ParsePKCS1PrivateKey(block.Bytes)
-   if err != nil {
-      return nil, err
-   }
-   return &mod, nil
-}
-
-func unpad(buf []byte) []byte {
-   if len(buf) >= 1 {
-      pad := buf[len(buf)-1]
-      if len(buf) >= int(pad) {
-         buf = buf[:len(buf)-int(pad)]
-      }
-   }
-   return buf
-}
-
-type KeyContainer struct {
-   Key []byte
-   Type uint64
-}
-
-type Module struct {
-   *rsa.PrivateKey
-   licenseRequest []byte
 }
 
 func (c *Module) SignedLicenseRequest() ([]byte, error) {
