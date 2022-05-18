@@ -11,34 +11,9 @@ import (
    "os"
 )
 
-type downloader struct {
-   *roku.Content
-   *url.URL
-   dash.AdaptationSet
-   info bool
-   key []byte
-}
-
 func (d downloader) DASH(bAudio, bVideo int64) error {
    if d.info {
       fmt.Println(d.Content)
-   } else {
-      site, err := roku.NewCrossSite()
-      if err != nil {
-         return err
-      }
-      play, err := site.Playback(d.Meta.ID)
-      if err != nil {
-         return err
-      }
-      vine, err := play.Widevine()
-      if err != nil {
-         return err
-      }
-      d.key, err = vine.Key()
-      if err != nil {
-         return err
-      }
    }
    video := d.Content.DASH()
    fmt.Println("GET", video.URL)
@@ -58,6 +33,14 @@ func (d downloader) DASH(bAudio, bVideo int64) error {
    return d.download(dash.Video, bVideo)
 }
 
+type downloader struct {
+   *roku.Content
+   *url.URL
+   dash.AdaptationSet
+   info bool
+   key []byte
+}
+
 func (d downloader) download(typ string, bandwidth int64) error {
    if bandwidth == 0 {
       return nil
@@ -73,6 +56,24 @@ func (d downloader) download(typ string, bandwidth int64) error {
          }
       }
    } else {
+      if d.key == nil {
+         site, err := roku.NewCrossSite()
+         if err != nil {
+            return err
+         }
+         play, err := site.Playback(d.Meta.ID)
+         if err != nil {
+            return err
+         }
+         vine, err := play.Widevine(rep.ContentProtection.Default_KID)
+         if err != nil {
+            return err
+         }
+         d.key, err = vine.Key()
+         if err != nil {
+            return err
+         }
+      }
       ext, err := mech.ExtensionByType(typ)
       if err != nil {
          return err

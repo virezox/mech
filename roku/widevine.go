@@ -2,7 +2,6 @@ package roku
 
 import (
    "bytes"
-   "encoding/base64"
    "encoding/hex"
    "errors"
    "github.com/89z/format/json"
@@ -10,13 +9,34 @@ import (
    "strings"
 )
 
-var pssh = []byte{
-   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-   // Widevine UUID:
-   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-   0, 0, 0, 0,
-   // length + KID:
-   8, 0, 0, 0, 0, 0, 0, 0,
+func (p Playback) Widevine(pssh string) (*Widevine, error) {
+   buf := new(bytes.Buffer)
+   err := json.NewEncoder(buf).Encode(map[string]string{
+      "buildInfo": "",
+      "license": p.DRM.Widevine.LicenseServer,
+      "pssh": pssh,
+   })
+   if err != nil {
+      return nil, err
+   }
+   req, err := http.NewRequest("POST", "https://getwvkeys.cc/api", buf)
+   if err != nil {
+      return nil, err
+   }
+   LogLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return nil, errors.New(res.Status)
+   }
+   vine := new(Widevine)
+   if err := json.NewDecoder(res.Body).Decode(vine); err != nil {
+      return nil, err
+   }
+   return vine, nil
 }
 
 type CrossSite struct {
@@ -97,33 +117,6 @@ type Playback struct {
          LicenseServer string
       }
    }
-}
-
-func (p Playback) Widevine() (*Widevine, error) {
-   buf := new(bytes.Buffer)
-   err := json.NewEncoder(buf).Encode(map[string]string{
-      "buildInfo": "",
-      "license": p.DRM.Widevine.LicenseServer,
-      "pssh": base64.StdEncoding.EncodeToString(pssh),
-   })
-   if err != nil {
-      return nil, err
-   }
-   req, err := http.NewRequest("POST", "https://getwvkeys.cc/api", buf)
-   if err != nil {
-      return nil, err
-   }
-   LogLevel.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   vine := new(Widevine)
-   if err := json.NewDecoder(res.Body).Decode(vine); err != nil {
-      return nil, err
-   }
-   return vine, nil
 }
 
 type Widevine struct {
