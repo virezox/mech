@@ -13,14 +13,13 @@ const addr = "https://api.github.com/repos/89z/mech/topics"
 
 var names = []string{
    "youtube",
-   "twitter",
    "soundcloud",
    "roku",
    "vimeo",
    "paramount",
    "nbc",
-   ///////////
    "abc",
+   ///////////
    "bandcamp",
    "pbs",
    "cbc-gem",

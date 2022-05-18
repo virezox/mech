@@ -60,7 +60,7 @@ You should get a result like this:
 Finally, you can decrypt [2] the media:
 
 ~~~
-mp4decrypt --key 883780c4a981494cb9949e93792ff8a7:680a46ebd6cf... enc.mp4 dec.mp4
+mp4decrypt --key 1:680a46ebd6cf2b9a6a0b05a24dcf944a enc.mp4 dec.mp4
 ~~~
 
 1. <https://dashif.org/identifiers/content_protection>

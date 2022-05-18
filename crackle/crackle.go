@@ -2,6 +2,7 @@ package crackle
 
 import (
    "encoding/json"
+   "errors"
    "github.com/89z/format"
    "net/http"
    "strconv"
@@ -36,7 +37,7 @@ func NewMedia(id int64) (*Media, error) {
    }
    defer res.Body.Close()
    if res.StatusCode != http.StatusOK {
-      return nil, errorString(res.Status)
+      return nil, errors.New(res.Status)
    }
    med := new(Media)
    if err := json.NewDecoder(res.Body).Decode(med); err != nil {
@@ -65,10 +66,4 @@ func (a authorization) String() string {
    buf = append(buf, '|')
    buf = strconv.AppendInt(buf, a.partnerID, 10)
    return string(buf)
-}
-
-type errorString string
-
-func (e errorString) Error() string {
-   return string(e)
 }

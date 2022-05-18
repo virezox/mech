@@ -1,6 +1,7 @@
 package main
 
 import (
+   "errors"
    "fmt"
    "github.com/89z/format"
    "github.com/89z/format/hls"
@@ -70,7 +71,7 @@ func download(stream *hls.Stream, base string) error {
          return err
       }
       if res.StatusCode != http.StatusOK {
-         return errorString(res.Status)
+         return errors.New(res.Status)
       }
       pro.AddChunk(res.ContentLength)
       if _, err := io.Copy(pro, res.Body); err != nil {
@@ -81,10 +82,4 @@ func download(stream *hls.Stream, base string) error {
       }
    }
    return nil
-}
-
-type errorString string
-
-func (e errorString) Error() string {
-   return string(e)
 }

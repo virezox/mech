@@ -4,6 +4,7 @@ import (
    "bytes"
    "encoding/base64"
    "encoding/hex"
+   "errors"
    "github.com/89z/format/json"
    "net/http"
    "strings"
@@ -81,7 +82,7 @@ func (c CrossSite) Playback(id string) (*Playback, error) {
    }
    defer res.Body.Close()
    if res.StatusCode != http.StatusOK {
-      return nil, errorString(res.Status)
+      return nil, errors.New(res.Status)
    }
    play := new(Playback)
    if err := json.NewDecoder(res.Body).Decode(play); err != nil {
@@ -138,5 +139,5 @@ func (w Widevine) Key() ([]byte, error) {
          return hex.DecodeString(key)
       }
    }
-   return nil, errorString(`":" not found`)
+   return nil, errors.New(`":" not found`)
 }

@@ -2,6 +2,7 @@ package abc
 
 import (
    "encoding/json"
+   "errors"
    "fmt"
    "github.com/89z/format"
    "github.com/89z/mech"
@@ -45,12 +46,6 @@ func (v Video) Format(f fmt.State, verb rune) {
 
 func (v Video) GetDuration() time.Duration {
    return time.Duration(v.Duration) * time.Millisecond
-}
-
-type errorString string
-
-func (e errorString) Error() string {
-   return string(e)
 }
 
 func (v Video) Base() string {
@@ -106,7 +101,7 @@ func NewRoute(addr string) (*Route, error) {
    }
    defer res.Body.Close()
    if res.StatusCode != http.StatusOK {
-      return nil, errorString(res.Status)
+      return nil, errors.New(res.Status)
    }
    route := new(Route)
    if err := json.NewDecoder(res.Body).Decode(route); err != nil {
@@ -130,7 +125,7 @@ func (r Route) Video() (*Video, error) {
    }
    defer res.Body.Close()
    if res.StatusCode != http.StatusOK {
-      return nil, errorString(res.Status)
+      return nil, errors.New(res.Status)
    }
    var play struct {
       Video Video
@@ -166,7 +161,7 @@ func (v *Video) Authorize() error {
    }
    defer res.Body.Close()
    if res.StatusCode != http.StatusOK {
-      return errorString(res.Status)
+      return errors.New(res.Status)
    }
    var auth struct {
       UplynkData struct {

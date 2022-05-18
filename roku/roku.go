@@ -2,6 +2,7 @@ package roku
 
 import (
    "encoding/json"
+   "errors"
    "fmt"
    "github.com/89z/format"
    "net/http"
@@ -102,7 +103,7 @@ func NewContent(id string) (*Content, error) {
    }
    defer res.Body.Close()
    if res.StatusCode != http.StatusOK {
-      return nil, errorString(res.Status)
+      return nil, errors.New(res.Status)
    }
    con := new(Content)
    if err := json.NewDecoder(res.Body).Decode(con); err != nil {
@@ -119,12 +120,6 @@ type Video struct {
    DrmAuthentication *struct{}
    VideoType string
    URL string
-}
-
-type errorString string
-
-func (e errorString) Error() string {
-   return string(e)
 }
 
 func (c Content) DASH() *Video {
@@ -148,5 +143,5 @@ func (c Content) HLS() (*Video, error) {
          }
       }
    }
-   return nil, errorString("drmAuthentication")
+   return nil, errors.New("drmAuthentication")
 }

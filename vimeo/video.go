@@ -2,6 +2,7 @@ package vimeo
 
 import (
    "encoding/json"
+   "errors"
    "fmt"
    "github.com/89z/format"
    "net/http"
@@ -130,17 +131,11 @@ func (w JsonWeb) Video(clip *Clip) (*Video, error) {
    }
    defer res.Body.Close()
    if res.StatusCode != http.StatusOK {
-      return nil, errorString(res.Status)
+      return nil, errors.New(res.Status)
    }
    vid := new(Video)
    if err := json.NewDecoder(res.Body).Decode(vid); err != nil {
       return nil, err
    }
    return vid, nil
-}
-
-type errorString string
-
-func (e errorString) Error() string {
-   return string(e)
 }

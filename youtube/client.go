@@ -2,6 +2,7 @@ package youtube
 
 import (
    "encoding/json"
+   "errors"
    "github.com/89z/mech"
    "net/http"
 )
@@ -85,7 +86,7 @@ func (y YouTubeI) Exchange(id string, ex *Exchange) (*Player, error) {
    }
    defer res.Body.Close()
    if res.StatusCode != http.StatusOK {
-      return nil, errorString(res.Status)
+      return nil, errors.New(res.Status)
    }
    play := new(Player)
    if err := json.NewDecoder(res.Body).Decode(play); err != nil {
@@ -125,10 +126,4 @@ func (y YouTubeI) Search(query string) (*Search, error) {
       return nil, err
    }
    return search, nil
-}
-
-type errorString string
-
-func (e errorString) Error() string {
-   return string(e)
 }
