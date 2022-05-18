@@ -113,11 +113,11 @@ func (m *Module) Keys(licenseResponse io.Reader) ([]KeyContainer, error) {
    return containers, nil
 }
 
-func (c *Module) SignedLicenseRequest() ([]byte, error) {
-   digest := sha1.Sum(c.licenseRequest)
+func (m *Module) SignedLicenseRequest() ([]byte, error) {
+   digest := sha1.Sum(m.licenseRequest)
    signature, err := rsa.SignPSS(
       nopSource{},
-      c.PrivateKey,
+      m.PrivateKey,
       crypto.SHA1,
       digest[:],
       &rsa.PSSOptions{SaltLength: rsa.PSSSaltLengthEqualsHash},
@@ -126,7 +126,7 @@ func (c *Module) SignedLicenseRequest() ([]byte, error) {
       return nil, err
    }
    signedLicenseRequest := protobuf.Message{
-      2: protobuf.Bytes(c.licenseRequest),
+      2: protobuf.Bytes(m.licenseRequest),
       3: protobuf.Bytes(signature),
    }
    return signedLicenseRequest.Marshal(), nil
