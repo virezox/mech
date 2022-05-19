@@ -8,11 +8,13 @@ import (
    "crypto/rsa"
    "crypto/sha1"
    "crypto/x509"
+   "encoding/hex"
    "encoding/pem"
    "errors"
    "github.com/89z/format"
    "github.com/89z/format/protobuf"
    "github.com/chmike/cmac-go"
+   "io"
    "net/http"
 )
 
@@ -31,6 +33,21 @@ func unpad(buf []byte) []byte {
 type Container struct {
    Key []byte
    Type uint64
+}
+
+func (c Container) String() string {
+   return hex.EncodeToString(c.Key)
+}
+
+type Containers []Container
+
+func (c Containers) Content() *Container {
+   for _, con := range c {
+      if con.Type == 2 {
+         return &con
+      }
+   }
+   return nil
 }
 
 type Module struct {
@@ -63,7 +80,62 @@ func NewModule(privateKey, clientID, kID []byte) (*Module, error) {
    return &mod, nil
 }
 
-func (m Module) Keys(addr string, head http.Header) ([]Container, error) {
+func (m Module) Keys(body io.Reader) (Containers, error) {
+   // key
+   signedResponse, err := protobuf.Decode(body)
+   if err != nil {
+      return nil, err
+   }
+   sessionKey, err := signedResponse.GetBytes(4)
+   if err != nil {
+      return nil, err
+   }
+   key, err := rsa.DecryptOAEP(sha1.New(), nil, m.PrivateKey, sessionKey, nil)
+   if err != nil {
+      return nil, err
+   }
+   // message
+   var message []byte
+   message = append(message, 1)
+   message = append(message, "ENCRYPTION"...)
+   message = append(message, 0)
+   message = append(message, m.licenseRequest...)
+   message = append(message, 0, 0, 0, 0x80)
+   // CMAC
+   mac, err := cmac.New(aes.NewCipher, key)
+   if err != nil {
+      return nil, err
+   }
+   mac.Write(message)
+   block, err := aes.NewCipher(mac.Sum(nil))
+   if err != nil {
+      return nil, err
+   }
+   var cons Containers
+   // .Msg.Key
+   for _, message := range signedResponse.Get(2).GetMessages(3) {
+      iv, err := message.GetBytes(2)
+      if err != nil {
+         return nil, err
+      }
+      key, err := message.GetBytes(3)
+      if err != nil {
+         return nil, err
+      }
+      typ, err := message.GetVarint(4)
+      if err != nil {
+         return nil, err
+      }
+      cipher.NewCBCDecrypter(block, iv).CryptBlocks(key, key)
+      var con Container
+      con.Key = unpad(key)
+      con.Type = uint64(typ)
+      cons = append(cons, con)
+   }
+   return cons, nil
+}
+
+func (m Module) Post(addr string, head http.Header) (Containers, error) {
    digest := sha1.Sum(m.licenseRequest)
    signature, err := rsa.SignPSS(
       nopSource{},
@@ -95,58 +167,7 @@ func (m Module) Keys(addr string, head http.Header) ([]Container, error) {
    if res.StatusCode != http.StatusOK {
       return nil, errors.New(res.Status)
    }
-   // key
-   signedResponse, err := protobuf.Decode(res.Body)
-   if err != nil {
-      return nil, err
-   }
-   sessionKey, err := signedResponse.GetBytes(4)
-   if err != nil {
-      return nil, err
-   }
-   key, err := rsa.DecryptOAEP(sha1.New(), nil, m.PrivateKey, sessionKey, nil)
-   if err != nil {
-      return nil, err
-   }
-   // message
-   var message []byte
-   message = append(message, 1)
-   message = append(message, "ENCRYPTION"...)
-   message = append(message, 0)
-   message = append(message, m.licenseRequest...)
-   message = append(message, 0, 0, 0, 0x80)
-   // CMAC
-   mac, err := cmac.New(aes.NewCipher, key)
-   if err != nil {
-      return nil, err
-   }
-   mac.Write(message)
-   block, err := aes.NewCipher(mac.Sum(nil))
-   if err != nil {
-      return nil, err
-   }
-   var cons []Container
-   // .Msg.Key
-   for _, message := range signedResponse.Get(2).GetMessages(3) {
-      iv, err := message.GetBytes(2)
-      if err != nil {
-         return nil, err
-      }
-      key, err := message.GetBytes(3)
-      if err != nil {
-         return nil, err
-      }
-      typ, err := message.GetVarint(4)
-      if err != nil {
-         return nil, err
-      }
-      cipher.NewCBCDecrypter(block, iv).CryptBlocks(key, key)
-      var con Container
-      con.Key = unpad(key)
-      con.Type = uint64(typ)
-      cons = append(cons, con)
-   }
-   return cons, nil
+   return m.Keys(res.Body)
 }
 
 type nopSource struct{}

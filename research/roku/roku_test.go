@@ -1,15 +1,18 @@
-package paramount
+package roku
 
 import (
+   "fmt"
    "github.com/89z/format/dash"
    "github.com/89z/mech/research/widevine"
+   "github.com/89z/mech/roku"
    "os"
    "testing"
 )
 
-const contentID = "eyT_RYkqNuH_6ZYrepLtxkiPO1HA7dIU"
+// therokuchannel.roku.com/watch/597a64a4a25c5bf6af4a8c7053049a6f
+const playbackID = "597a64a4a25c5bf6af4a8c7053049a6f"
 
-func TestParamount(t *testing.T) {
+func TestPlayback(t *testing.T) {
    privateKey, err := os.ReadFile("../widevine/ignore/device_private_key")
    if err != nil {
       t.Fatal(err)
@@ -35,15 +38,17 @@ func TestParamount(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   sess, err := NewSession(contentID)
+   site, err := roku.NewCrossSite()
    if err != nil {
       t.Fatal(err)
    }
-   keys, err := mod.Post(sess.URL, sess.Header())
+   play, err := site.Playback(playbackID)
    if err != nil {
       t.Fatal(err)
    }
-   if keys.Content().String() != "44f12639c9c4a5a432338aca92e38920" {
-      t.Fatal(keys)
+   keys, err := mod.Post(play.DRM.Widevine.LicenseServer, nil)
+   if err != nil {
+      t.Fatal(err)
    }
+   fmt.Println(keys.Content())
 }
