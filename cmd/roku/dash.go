@@ -45,9 +45,10 @@ func (d downloader) download(typ string, bandwidth int64) error {
    if bandwidth == 0 {
       return nil
    }
-   rep := d.MimeType(typ).Represent(bandwidth)
+   adas := d.MimeType(typ)
+   rep := adas.Represent(bandwidth)
    if d.info {
-      for _, ada := range d.MimeType(typ) {
+      for _, ada := range adas {
          for _, each := range ada.Representation {
             if each.Bandwidth == rep.Bandwidth {
                fmt.Print("!")
@@ -65,7 +66,7 @@ func (d downloader) download(typ string, bandwidth int64) error {
          if err != nil {
             return err
          }
-         vine, err := play.Widevine(rep.ContentProtection.Default_KID)
+         vine, err := play.Widevine(adas.Protection().Default_KID)
          if err != nil {
             return err
          }

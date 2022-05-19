@@ -1,19 +1,14 @@
 package paramount
 
 import (
-   "bytes"
    "crypto/aes"
    "crypto/cipher"
    "encoding/base64"
    "encoding/hex"
    "encoding/json"
-   "encoding/xml"
-   "errors"
    "github.com/89z/format"
-   "github.com/89z/mech/research/widevine"
    "net/http"
    "net/url"
-   "os"
    "strings"
 )
 
@@ -21,6 +16,8 @@ const (
    aes_key = "302a6a0d70a7e9b967f91d39fef3e387816e3095925ae4537bce96063311f9c5"
    tv_secret = "6c70b33080758409"
 )
+
+var LogLevel format.LogLevel
 
 func newToken() (string, error) {
    key, err := hex.DecodeString(aes_key)
@@ -54,9 +51,12 @@ func pad(b []byte) []byte {
    return b
 }
 
-var LogLevel format.LogLevel
+type Session struct {
+   URL string
+   LS_Session string
+}
 
-func NewSession() (*Session, error) {
+func NewSession(contentID string) (*Session, error) {
    token, err := newToken()
    if err != nil {
       return nil, err
@@ -79,66 +79,12 @@ func NewSession() (*Session, error) {
    if err := json.NewDecoder(res.Body).Decode(sess); err != nil {
       return nil, err
    }
+   sess.URL += contentID
    return sess, nil
 }
 
-type Media struct {
-   Period struct {
-      AdaptationSet []struct {
-         ContentProtection []struct {
-            Default_KID string `xml:"default_KID,attr"`
-         }
-      }
-   }
-}
-
-func NewMedia(name string) (*Media, error) {
-   file, err := os.Open(name)
-   if err != nil {
-      return nil, err
-   }
-   defer file.Close()
-   med := new(Media)
-   if err := xml.NewDecoder(file).Decode(med); err != nil {
-      return nil, err
-   }
-   return med, nil
-}
-
-func (m Media) KID() string {
-   for _, ada := range m.Period.AdaptationSet {
-      for _, con := range ada.ContentProtection {
-         return strings.ReplaceAll(con.Default_KID, "-", "")
-      }
-   }
-   return ""
-}
-
-type Session struct {
-   URL string
-   LS_Session string
-}
-
-func (s Session) Keys(contentID string, mod *widevine.Module) ([]widevine.Container, error) {
-   signedLicense, err := mod.SignedLicenseRequest()
-   if err != nil {
-      return nil, err
-   }
-   req, err := http.NewRequest(
-      "POST", s.URL + contentID, bytes.NewReader(signedLicense),
-   )
-   if err != nil {
-      return nil, err
-   }
-   req.Header.Set("Authorization", "Bearer " + s.LS_Session)
-   LogLevel.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return nil, errors.New(res.Status)
-   }
-   return mod.Keys(res.Body)
+func (s Session) Header() http.Header {
+   head := make(http.Header)
+   head.Set("Authorization", "Bearer " + s.LS_Session)
+   return head
 }

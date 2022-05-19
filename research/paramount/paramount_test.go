@@ -2,6 +2,7 @@ package paramount
 
 import (
    "encoding/hex"
+   "github.com/89z/format/dash"
    "github.com/89z/mech/research/widevine"
    "os"
    "testing"
@@ -10,10 +11,6 @@ import (
 const contentID = "eyT_RYkqNuH_6ZYrepLtxkiPO1HA7dIU"
 
 func TestParamount(t *testing.T) {
-   media, err := NewMedia("ignore.mpd")
-   if err != nil {
-      t.Fatal(err)
-   }
    privateKey, err := os.ReadFile("../widevine/ignore/device_private_key")
    if err != nil {
       t.Fatal(err)
@@ -22,19 +19,28 @@ func TestParamount(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   keyID, err := hex.DecodeString(media.KID())
+   file, err := os.Open("ignore.mpd")
    if err != nil {
       t.Fatal(err)
    }
-   mod, err := widevine.NewModule(privateKey, clientID, keyID)
+   defer file.Close()
+   adas, err := dash.NewAdaptationSet(file)
    if err != nil {
       t.Fatal(err)
    }
-   session, err := NewSession()
+   kID, err := adas.Protection().KID()
    if err != nil {
       t.Fatal(err)
    }
-   keys, err := session.Keys(contentID, mod)
+   mod, err := widevine.NewModule(privateKey, clientID, kID)
+   if err != nil {
+      t.Fatal(err)
+   }
+   sess, err := NewSession(contentID)
+   if err != nil {
+      t.Fatal(err)
+   }
+   keys, err := mod.Keys(sess.URL, sess.Header())
    if err != nil {
       t.Fatal(err)
    }

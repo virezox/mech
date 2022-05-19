@@ -18,12 +18,70 @@ import (
 
 var LogLevel format.LogLevel
 
-func (m Module) Keys(addr string, head http.Header) ([]Container, error) {
-   signedRequest, err := m.SignedLicenseRequest()
+func unpad(buf []byte) []byte {
+   if len(buf) >= 1 {
+      pad := buf[len(buf)-1]
+      if len(buf) >= int(pad) {
+         buf = buf[:len(buf)-int(pad)]
+      }
+   }
+   return buf
+}
+
+type Container struct {
+   Key []byte
+   Type uint64
+}
+
+type Module struct {
+   *rsa.PrivateKey
+   licenseRequest []byte
+}
+
+func NewModule(privateKey, clientID, kID []byte) (*Module, error) {
+   var (
+      err error
+      mod Module
+   )
+   // PrivateKey
+   block, _ := pem.Decode(privateKey)
+   mod.PrivateKey, err = x509.ParsePKCS1PrivateKey(block.Bytes)
    if err != nil {
       return nil, err
    }
-   req, err := http.NewRequest("POST", addr, bytes.NewReader(signedRequest))
+   // licenseRequest
+   mod.licenseRequest = protobuf.Message{
+      1: protobuf.Bytes(clientID),
+      2: protobuf.Message{ // ContentId
+         1: protobuf.Message{ // CencId
+            1: protobuf.Message{ // Pssh
+               2: protobuf.Bytes(kID),
+            },
+         },
+      },
+   }.Marshal()
+   return &mod, nil
+}
+
+func (m Module) Keys(addr string, head http.Header) ([]Container, error) {
+   digest := sha1.Sum(m.licenseRequest)
+   signature, err := rsa.SignPSS(
+      nopSource{},
+      m.PrivateKey,
+      crypto.SHA1,
+      digest[:],
+      &rsa.PSSOptions{SaltLength: rsa.PSSSaltLengthEqualsHash},
+   )
+   if err != nil {
+      return nil, err
+   }
+   signedRequest := protobuf.Message{
+      2: protobuf.Bytes(m.licenseRequest),
+      3: protobuf.Bytes(signature),
+   }
+   req, err := http.NewRequest(
+      "POST", addr, bytes.NewReader(signedRequest.Marshal()),
+   )
    if err != nil {
       return nil, err
    }
@@ -91,72 +149,8 @@ func (m Module) Keys(addr string, head http.Header) ([]Container, error) {
    return cons, nil
 }
 
-func unpad(buf []byte) []byte {
-   if len(buf) >= 1 {
-      pad := buf[len(buf)-1]
-      if len(buf) >= int(pad) {
-         buf = buf[:len(buf)-int(pad)]
-      }
-   }
-   return buf
-}
-
-type Module struct {
-   *rsa.PrivateKey
-   licenseRequest []byte
-}
-
-func NewModule(privateKey, clientID, kID []byte) (*Module, error) {
-   var (
-      err error
-      mod Module
-   )
-   // PrivateKey
-   block, _ := pem.Decode(privateKey)
-   mod.PrivateKey, err = x509.ParsePKCS1PrivateKey(block.Bytes)
-   if err != nil {
-      return nil, err
-   }
-   // licenseRequest
-   mod.licenseRequest = protobuf.Message{
-      1: protobuf.Bytes(clientID),
-      2: protobuf.Message{ // ContentId
-         1: protobuf.Message{ // CencId
-            1: protobuf.Message{ // Pssh
-               2: protobuf.Bytes(kID),
-            },
-         },
-      },
-   }.Marshal()
-   return &mod, nil
-}
-
-func (m *Module) SignedLicenseRequest() ([]byte, error) {
-   digest := sha1.Sum(m.licenseRequest)
-   signature, err := rsa.SignPSS(
-      nopSource{},
-      m.PrivateKey,
-      crypto.SHA1,
-      digest[:],
-      &rsa.PSSOptions{SaltLength: rsa.PSSSaltLengthEqualsHash},
-   )
-   if err != nil {
-      return nil, err
-   }
-   signedLicenseRequest := protobuf.Message{
-      2: protobuf.Bytes(m.licenseRequest),
-      3: protobuf.Bytes(signature),
-   }
-   return signedLicenseRequest.Marshal(), nil
-}
-
 type nopSource struct{}
 
 func (nopSource) Read(buf []byte) (int, error) {
    return len(buf), nil
-}
-
-type Container struct {
-   Key []byte
-   Type uint64
 }
