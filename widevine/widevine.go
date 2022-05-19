@@ -157,7 +157,9 @@ func (m Module) Post(addr string, head http.Header) (Containers, error) {
    if err != nil {
       return nil, err
    }
-   req.Header = head
+   if head != nil {
+      req.Header = head
+   }
    LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {

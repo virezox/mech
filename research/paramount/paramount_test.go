@@ -2,7 +2,7 @@ package paramount
 
 import (
    "github.com/89z/format/dash"
-   "github.com/89z/mech/research/widevine"
+   "github.com/89z/mech/widevine"
    "os"
    "testing"
 )
@@ -10,11 +10,15 @@ import (
 const contentID = "eyT_RYkqNuH_6ZYrepLtxkiPO1HA7dIU"
 
 func TestParamount(t *testing.T) {
-   privateKey, err := os.ReadFile("../widevine/ignore/device_private_key")
+   cache, err := os.UserCacheDir()
    if err != nil {
       t.Fatal(err)
    }
-   clientID, err := os.ReadFile("../widevine/ignore/device_client_id_blob")
+   privateKey, err := os.ReadFile(cache + "/mech/device_private_key")
+   if err != nil {
+      t.Fatal(err)
+   }
+   clientID, err := os.ReadFile(cache + "/mech/device_client_id_blob")
    if err != nil {
       t.Fatal(err)
    }
