@@ -2,21 +2,39 @@ package paramount
 
 import (
    "encoding/hex"
+   "github.com/89z/mech/research/widevine"
    "os"
    "testing"
 )
 
-const (
-   contentID = "eyT_RYkqNuH_6ZYrepLtxkiPO1HA7dIU"
-   bearer = "eyJhbGciOiJIUzI1NiIsImtpZCI6IjNkNjg4NGJmLWViMDktNDA1Zi1hOWZjLWU0NGE1NmY3NjZiNiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhbm9ueW1vdXNfVVMiLCJlbnQiOlt7ImJpZCI6IkFsbEFjY2Vzc01haW4iLCJlcGlkIjo3fV0sImlhdCI6MTY1MjgyODQyMSwiZXhwIjoxNjUyODM1NjIxLCJpc3MiOiJjYnMiLCJhaWQiOiJjYnNpIiwiaXNlIjp0cnVlLCJqdGkiOiI1ODIwMGJmOC0yM2QyLTQwM2MtOThiYy1hNWM2YWRmOTU1NGEifQ.LAs9MvgyZDX3M2KxuhWuliVu_lb5TZA0hLGRGvrf4n8"
-)
+const contentID = "eyT_RYkqNuH_6ZYrepLtxkiPO1HA7dIU"
 
 func TestParamount(t *testing.T) {
-   media, err := NewMedia("ignore/stream.mpd")
+   media, err := NewMedia("ignore.mpd")
    if err != nil {
       t.Fatal(err)
    }
-   keys, err := media.Keys(contentID, bearer)
+   privateKey, err := os.ReadFile("../widevine/ignore/device_private_key")
+   if err != nil {
+      t.Fatal(err)
+   }
+   clientID, err := os.ReadFile("../widevine/ignore/device_client_id_blob")
+   if err != nil {
+      t.Fatal(err)
+   }
+   keyID, err := hex.DecodeString(media.KID())
+   if err != nil {
+      t.Fatal(err)
+   }
+   mod, err := widevine.NewModule(privateKey, clientID, keyID)
+   if err != nil {
+      t.Fatal(err)
+   }
+   session, err := NewSession()
+   if err != nil {
+      t.Fatal(err)
+   }
+   keys, err := session.Keys(contentID, mod)
    if err != nil {
       t.Fatal(err)
    }
@@ -29,13 +47,4 @@ func TestParamount(t *testing.T) {
    if !pass {
       t.Fatal(keys)
    }
-}
-
-func TestBearer(t *testing.T) {
-   res, err := newBearer()
-   if err != nil {
-      t.Fatal(err)
-   }
-   defer res.Body.Close()
-   os.Stdout.ReadFrom(res.Body)
 }

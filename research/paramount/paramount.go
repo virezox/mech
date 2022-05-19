@@ -56,11 +56,6 @@ func pad(b []byte) []byte {
 
 var LogLevel format.LogLevel
 
-type Session struct {
-   URL string
-   Ls_Session string
-}
-
 func NewSession() (*Session, error) {
    token, err := newToken()
    if err != nil {
@@ -86,15 +81,6 @@ func NewSession() (*Session, error) {
    }
    return sess, nil
 }
-func (m Media) kID() ([]byte, error) {
-   for _, ada := range m.Period.AdaptationSet {
-      for _, con := range ada.ContentProtection {
-         con.Default_KID = strings.ReplaceAll(con.Default_KID, "-", "")
-         return hex.DecodeString(con.Default_KID)
-      }
-   }
-   return nil, errors.New("no init data found")
-}
 
 type Media struct {
    Period struct {
@@ -119,39 +105,32 @@ func NewMedia(name string) (*Media, error) {
    return med, nil
 }
 
-func (m Media) Keys(contentID, bearer string) ([]widevine.KeyContainer, error) {
-   privateKey, err := os.ReadFile("ignore/device_private_key")
-   if err != nil {
-      return nil, err
+func (m Media) KID() string {
+   for _, ada := range m.Period.AdaptationSet {
+      for _, con := range ada.ContentProtection {
+         return strings.ReplaceAll(con.Default_KID, "-", "")
+      }
    }
-   clientID, err := os.ReadFile("ignore/device_client_id_blob")
-   if err != nil {
-      return nil, err
-   }
-   kID, err := m.kID()
-   if err != nil {
-      return nil, err
-   }
-   mod, err := widevine.NewModule(privateKey, clientID, kID)
-   if err != nil {
-      return nil, err
-   }
+   return ""
+}
+
+type Session struct {
+   URL string
+   LS_Session string
+}
+
+func (s Session) Keys(contentID string, mod *widevine.Module) ([]widevine.Container, error) {
    signedLicense, err := mod.SignedLicenseRequest()
    if err != nil {
       return nil, err
    }
    req, err := http.NewRequest(
-      "POST", "https://cbsi.live.ott.irdeto.com/widevine/getlicense",
-      bytes.NewReader(signedLicense),
+      "POST", s.URL + contentID, bytes.NewReader(signedLicense),
    )
    if err != nil {
       return nil, err
    }
-   req.Header.Set("Authorization", "Bearer " + bearer)
-   req.URL.RawQuery = url.Values{
-      "AccountId": {"cbsi"},
-      "ContentId": {contentID},
-   }.Encode()
+   req.Header.Set("Authorization", "Bearer " + s.LS_Session)
    LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
@@ -163,4 +142,3 @@ func (m Media) Keys(contentID, bearer string) ([]widevine.KeyContainer, error) {
    }
    return mod.Keys(res.Body)
 }
-
