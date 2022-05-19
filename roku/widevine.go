@@ -10,8 +10,8 @@ import (
    "strings"
 )
 
-// https://getwvkeys.cc
-const getWidevine = "http://87.98.244.34:5001"
+// const getWidevine = "http://87.98.244.34:5001"
+const getWidevine = "http://getwvkeys.cc"
 
 func (p Playback) Widevine(pssh string) (*Widevine, error) {
    buf, err := mech.Encode(map[string]string{
