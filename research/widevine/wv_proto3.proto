@@ -14,8 +14,8 @@ enum LicenseType {
 // todo: fill (for this top-level type, it might be impossible/difficult) this
 // is just a guess because these globals got lost, but really, do we need more? 
 enum ProtocolVersion {
-  DUMMY = 0;
-  CURRENT = 21; // don't have symbols for this
+   DUMMY = 0;
+   CURRENT = 21; // don't have symbols for this
 }
 
 // from x86 (partial), most of it from the ARM version:
