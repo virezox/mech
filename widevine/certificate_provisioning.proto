@@ -1,0 +1,49 @@
+// ProvisioningOptions specifies the type of certificate to specify and
+// in the case of X509 certificates, the certificate authority to use.
+message ProvisioningOptions {
+  enum CertificateType {
+    WIDEVINE_DRM = 0; // Default.  The original certificate type.
+    X509 = 1; // X.509 certificate.
+  }
+
+  optional CertificateType certificate_type = 1;
+
+  // It is recommended that the certificate_authority specify the X.509
+  // Subject of the signing certificate.
+  optional string certificate_authority = 2;
+}
+
+// Provisioning request sent by client devices to provisioning service.
+message ProvisioningRequest {
+  // Device root of trust and other client identification. Required.
+  optional ClientIdentification client_id = 1;
+  // Nonce value used to prevent replay attacks. Required.
+  optional bytes nonce = 2;
+  // Options for type of certificate to generate.  Optional.
+  optional ProvisioningOptions options = 3;
+  // Stable identifier, unique for each device + application (or origin).
+  // Required if doing per-origin provisioning.
+  optional bytes stable_id = 4;
+}
+
+// Provisioning response sent by the provisioning server to client devices.
+message ProvisioningResponse {
+  // AES-128 encrypted device private RSA key. PKCS#1 ASN.1 DER-encoded.
+  // Required.
+  optional bytes device_rsa_key = 1;
+  // Initialization vector used to encrypt device_rsa_key. Required.
+  optional bytes device_rsa_key_iv = 2;
+  // Serialized SignedDeviceCertificate. Required.
+  optional bytes device_certificate = 3;
+  // Nonce value matching nonce in ProvisioningRequest. Required.
+  optional bytes nonce = 4;
+}
+
+// Serialized ProvisioningRequest or ProvisioningResponse signed with
+// The message authentication key.
+message SignedProvisioningMessage {
+  // Serialized ProvisioningRequest or ProvisioningResponse. Required.
+  optional bytes message = 1;
+  // HMAC-SHA256 signature of message. Required.
+  optional bytes signature = 2;
+}
