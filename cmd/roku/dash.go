@@ -41,7 +41,7 @@ type downloader struct {
    key []byte
 }
 
-func (d downloader) download(typ string, bandwidth int64) error {
+func (d *downloader) download(typ string, bandwidth int64) error {
    if bandwidth == 0 {
       return nil
    }

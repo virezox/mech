@@ -88,5 +88,8 @@ type notFound struct {
 }
 
 func (n notFound) Error() string {
-   return strconv.Quote(n.value) + " is not found"
+   var buf []byte
+   buf = strconv.AppendQuote(buf, n.value)
+   buf = append(buf, " is not found"...)
+   return string(buf)
 }

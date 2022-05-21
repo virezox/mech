@@ -18,6 +18,10 @@ func TestParamount(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
+   clientID, err := os.ReadFile(cache + "/mech/device_client_id_blob")
+   if err != nil {
+      t.Fatal(err)
+   }
    file, err := os.Open("ignore.mpd")
    if err != nil {
       t.Fatal(err)
@@ -31,7 +35,7 @@ func TestParamount(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   mod, err := widevine.NewModule(privateKey, mes.Marshal(), kID)
+   mod, err := widevine.NewModule(privateKey, clientID, kID)
    if err != nil {
       t.Fatal(err)
    }

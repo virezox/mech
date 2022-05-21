@@ -193,5 +193,8 @@ type invalidType struct {
 }
 
 func (i invalidType) Error() string {
-   return "invalid type " + strconv.Quote(i.value)
+   var buf []byte
+   buf = append(buf, "invalid type "...)
+   buf = strconv.AppendQuote(buf, i.value)
+   return string(buf)
 }
