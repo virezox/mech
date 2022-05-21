@@ -3,16 +3,11 @@ package main
 import (
    "flag"
    "github.com/89z/mech/youtube"
+   "strings"
 )
 
 func main() {
    var vid video
-   // 2
-   flag.BoolVar(&vid.two, "2", false, "request type two")
-   // 3
-   flag.BoolVar(&vid.three, "3", false, "request type three")
-   // 4
-   flag.BoolVar(&vid.four, "4", false, "request type four")
    // a
    flag.StringVar(&vid.address, "a", "", "address")
    // access
@@ -26,6 +21,13 @@ func main() {
    flag.StringVar(&vid.audio, "g", "AUDIO_QUALITY_MEDIUM", "target audio")
    // i
    flag.BoolVar(&vid.info, "i", false, "information")
+   // r
+   var buf strings.Builder
+   buf.WriteString("0: Android\n")
+   buf.WriteString("1: Android embed\n")
+   buf.WriteString("2: Android racy\n")
+   buf.WriteString("3: Android content")
+   flag.IntVar(&vid.request, "r", 0, buf.String())
    // refresh
    var refresh bool
    flag.BoolVar(&refresh, "refresh", false, "create OAuth refresh token")

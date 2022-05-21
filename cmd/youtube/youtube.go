@@ -7,6 +7,42 @@ import (
    "os"
 )
 
+func (v video) player() (*youtube.Player, error) {
+   if v.id == "" {
+      var err error
+      v.id, err = youtube.VideoID(v.address)
+      if err != nil {
+         return nil, err
+      }
+   }
+   if v.request == 1 {
+      return youtube.AndroidEmbed.Player(v.id)
+   }
+   if v.request >= 2 {
+      cache, err := os.UserCacheDir()
+      if err != nil {
+         return nil, err
+      }
+      change, err := youtube.OpenExchange(cache, "mech/youtube.json")
+      if err != nil {
+         return nil, err
+      }
+      if v.request == 2 {
+         return youtube.AndroidRacy.Exchange(v.id, change)
+      }
+      return youtube.AndroidContent.Exchange(v.id, change)
+   }
+   return youtube.Android.Player(v.id)
+}
+
+type video struct {
+   address string
+   audio string
+   height int
+   id string
+   info bool
+   request int
+}
 func (v video) do() error {
    play, err := v.player()
    if err != nil {
@@ -88,43 +124,3 @@ func doAccess() error {
    }
    return change.Create(cache, "mech/youtube.json")
 }
-
-func (v video) player() (*youtube.Player, error) {
-   if v.id == "" {
-      var err error
-      v.id, err = youtube.VideoID(v.address)
-      if err != nil {
-         return nil, err
-      }
-   }
-   if v.two {
-      return youtube.AndroidEmbed.Player(v.id)
-   }
-   if v.three || v.four {
-      cache, err := os.UserCacheDir()
-      if err != nil {
-         return nil, err
-      }
-      change, err := youtube.OpenExchange(cache, "mech/youtube.json")
-      if err != nil {
-         return nil, err
-      }
-      if v.three {
-         return youtube.AndroidRacy.Exchange(v.id, change)
-      }
-      return youtube.AndroidContent.Exchange(v.id, change)
-   }
-   return youtube.Android.Player(v.id)
-}
-
-type video struct {
-   address string
-   audio string
-   height int
-   id string
-   info bool
-   two bool
-   three bool
-   four bool
-}
-

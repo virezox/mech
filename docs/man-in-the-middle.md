@@ -13,6 +13,10 @@ the app, and if you are monitoring, you should see the request.
 set modify_headers '/~u vod.stream/X-Forwarded-For/25.0.0.0'
 ~~~
 
+## iOS
+
+https://github.com/TrungNguyen1909/qemu-t8030/issues/52
+
 ## MITM Proxy
 
 First download [1], then start `mitmproxy.exe`. Address and port should be in
