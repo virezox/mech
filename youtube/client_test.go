@@ -56,7 +56,7 @@ var androidRacys = []string{
 }
 
 func TestAndroidRacy(t *testing.T) {
-   cache, err := os.UserCacheDir()
+   cache, err := os.UserHomeDir()
    if err != nil {
       t.Fatal(err)
    }
@@ -79,7 +79,7 @@ func TestAndroidRacy(t *testing.T) {
 const androidContent = "nGC3D_FkCmg"
 
 func TestAndroidContent(t *testing.T) {
-   cache, err := os.UserCacheDir()
+   cache, err := os.UserHomeDir()
    if err != nil {
       t.Fatal(err)
    }

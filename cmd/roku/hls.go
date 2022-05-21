@@ -4,14 +4,13 @@ import (
    "fmt"
    "github.com/89z/format"
    "github.com/89z/format/hls"
-   "github.com/89z/mech/roku"
    "io"
    "net/http"
    "os"
 )
 
-func doHLS(con *roku.Content, bandwidth int64, info bool) error {
-   video, err := con.HLS()
+func (d downloader) HLS(bandwidth int64) error {
+   video, err := d.Content.HLS()
    if err != nil {
       return err
    }
@@ -26,10 +25,10 @@ func doHLS(con *roku.Content, bandwidth int64, info bool) error {
       return err
    }
    stream := master.Stream(bandwidth)
-   if !info {
-      return downloadHLS(stream, con.Base())
+   if !d.info {
+      return downloadHLS(stream, d.Base())
    }
-   fmt.Println(con)
+   fmt.Println(d.Content)
    for _, each := range master.Streams {
       if each.Bandwidth == stream.Bandwidth {
          fmt.Print("!")

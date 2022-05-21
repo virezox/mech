@@ -9,7 +9,7 @@ import (
 const downton = "downton-abbey/s01e05"
 
 func TestMedia(t *testing.T) {
-   cache, err := os.UserCacheDir()
+   cache, err := os.UserHomeDir()
    if err != nil {
       t.Fatal(err)
    }

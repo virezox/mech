@@ -2,16 +2,38 @@ package main
 
 import (
    "flag"
+   "github.com/89z/format/dash"
    "github.com/89z/mech/roku"
+   "net/url"
+   "os"
+   "path/filepath"
 )
 
+type downloader struct {
+   *roku.Content
+   *url.URL
+   client string
+   dash.AdaptationSet
+   info bool
+   key []byte
+   pem string
+}
+
 func main() {
+   cache, err := os.UserHomeDir()
+   if err != nil {
+      panic(err)
+   }
+   var down downloader
    // b
    var id string
    flag.StringVar(&id, "b", "", "ID")
-   // dash
+   // c
+   down.client = filepath.Join(cache, "mech/client_id.bin")
+   flag.StringVar(&down.client, "c", down.client, "client ID")
+   // d
    var isDASH bool
-   flag.BoolVar(&isDASH, "dash", false, "DASH download")
+   flag.BoolVar(&isDASH, "d", false, "DASH download")
    // f
    // therokuchannel.roku.com/watch/597a64a4a25c5bf6af4a8c7053049a6f
    var video int64
@@ -21,8 +43,10 @@ func main() {
    var audio int64
    flag.Int64Var(&audio, "g", 128000, "audio bandwidth")
    // i
-   var info bool
-   flag.BoolVar(&info, "i", false, "information")
+   flag.BoolVar(&down.info, "i", false, "information")
+   // k
+   down.pem = filepath.Join(cache, "mech/private_key.pem")
+   flag.StringVar(&down.pem, "k", down.pem, "private key")
    // v
    var verbose bool
    flag.BoolVar(&verbose, "v", false, "verbose")
@@ -31,18 +55,17 @@ func main() {
       roku.LogLevel = 1
    }
    if id != "" {
-      content, err := roku.NewContent(id)
+      down.Content, err = roku.NewContent(id)
       if err != nil {
          panic(err)
       }
       if isDASH {
-         down := downloader{Content: content, info: info}
          err := down.DASH(audio, video)
          if err != nil {
             panic(err)
          }
       } else {
-         err := doHLS(content, video, info)
+         err := down.HLS(video)
          if err != nil {
             panic(err)
          }

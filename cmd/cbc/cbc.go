@@ -11,7 +11,7 @@ import (
 )
 
 func newMaster(id, address, audio string, video int64, info bool) error {
-   cache, err := os.UserCacheDir()
+   cache, err := os.UserHomeDir()
    if err != nil {
       return err
    }
@@ -116,7 +116,7 @@ func newSegment(addr string) (*hls.Segment, error) {
 }
 
 func doProfile(email, password string) error {
-   cache, err := os.UserCacheDir()
+   cache, err := os.UserHomeDir()
    if err != nil {
       return err
    }

@@ -19,7 +19,7 @@ func (v video) player() (*youtube.Player, error) {
       return youtube.AndroidEmbed.Player(v.id)
    }
    if v.request >= 2 {
-      cache, err := os.UserCacheDir()
+      cache, err := os.UserHomeDir()
       if err != nil {
          return nil, err
       }
@@ -103,7 +103,7 @@ func doRefresh() error {
    if err != nil {
       return err
    }
-   cache, err := os.UserCacheDir()
+   cache, err := os.UserHomeDir()
    if err != nil {
       return err
    }
@@ -111,7 +111,7 @@ func doRefresh() error {
 }
 
 func doAccess() error {
-   cache, err := os.UserCacheDir()
+   cache, err := os.UserHomeDir()
    if err != nil {
       return err
    }

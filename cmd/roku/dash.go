@@ -6,10 +6,43 @@ import (
    "github.com/89z/format/dash"
    "github.com/89z/mech"
    "github.com/89z/mech/roku"
+   "github.com/89z/mech/widevine"
    "net/http"
-   "net/url"
    "os"
 )
+
+func (d *downloader) setKey() error {
+   privateKey, err := os.ReadFile(d.pem)
+   if err != nil {
+      return err
+   }
+   clientID, err := os.ReadFile(d.client)
+   if err != nil {
+      return err
+   }
+   kID, err := d.Protection().KID()
+   if err != nil {
+      return err
+   }
+   mod, err := widevine.NewModule(privateKey, clientID, kID)
+   if err != nil {
+      return err
+   }
+   site, err := roku.NewCrossSite()
+   if err != nil {
+      return err
+   }
+   play, err := site.Playback(d.Meta.ID)
+   if err != nil {
+      return err
+   }
+   keys, err := mod.Post(play.DRM.Widevine.LicenseServer, nil)
+   if err != nil {
+      return err
+   }
+   d.key = keys.Content().Key
+   return nil
+}
 
 func (d downloader) DASH(bAudio, bVideo int64) error {
    if d.info {
@@ -33,14 +66,6 @@ func (d downloader) DASH(bAudio, bVideo int64) error {
    return d.download(dash.Video, bVideo)
 }
 
-type downloader struct {
-   *roku.Content
-   *url.URL
-   dash.AdaptationSet
-   info bool
-   key []byte
-}
-
 func (d *downloader) download(typ string, bandwidth int64) error {
    if bandwidth == 0 {
       return nil
@@ -58,19 +83,7 @@ func (d *downloader) download(typ string, bandwidth int64) error {
       }
    } else {
       if d.key == nil {
-         site, err := roku.NewCrossSite()
-         if err != nil {
-            return err
-         }
-         play, err := site.Playback(d.Meta.ID)
-         if err != nil {
-            return err
-         }
-         vine, err := play.Widevine(adas.Protection().Default_KID)
-         if err != nil {
-            return err
-         }
-         d.key, err = vine.Key()
+         err := d.setKey()
          if err != nil {
             return err
          }

@@ -10,7 +10,7 @@ import (
 const contentID = "eyT_RYkqNuH_6ZYrepLtxkiPO1HA7dIU"
 
 func TestParamount(t *testing.T) {
-   cache, err := os.UserCacheDir()
+   cache, err := os.UserHomeDir()
    if err != nil {
       t.Fatal(err)
    }

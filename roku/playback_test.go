@@ -2,7 +2,6 @@ package roku
 
 import (
    "github.com/89z/format/dash"
-   "github.com/89z/mech/roku"
    "github.com/89z/mech/widevine"
    "os"
    "testing"
@@ -11,16 +10,16 @@ import (
 // therokuchannel.roku.com/watch/597a64a4a25c5bf6af4a8c7053049a6f
 const playbackID = "597a64a4a25c5bf6af4a8c7053049a6f"
 
-func TestPlayback(t *testing.T) {
-   cache, err := os.UserCacheDir()
+func TestWidevine(t *testing.T) {
+   cache, err := os.UserHomeDir()
    if err != nil {
       t.Fatal(err)
    }
-   privateKey, err := os.ReadFile(cache + "/mech/device_private_key")
+   privateKey, err := os.ReadFile(cache + "/mech/private_key.pem")
    if err != nil {
       t.Fatal(err)
    }
-   clientID, err := os.ReadFile(cache + "/mech/device_client_id_blob")
+   clientID, err := os.ReadFile(cache + "/mech/client_id.bin")
    if err != nil {
       t.Fatal(err)
    }
@@ -41,7 +40,7 @@ func TestPlayback(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   site, err := roku.NewCrossSite()
+   site, err := NewCrossSite()
    if err != nil {
       t.Fatal(err)
    }

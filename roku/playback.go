@@ -2,45 +2,10 @@ package roku
 
 import (
    "bytes"
-   "encoding/hex"
    "errors"
    "github.com/89z/format/json"
-   "github.com/89z/mech"
    "net/http"
-   "strings"
 )
-
-// const getWidevine = "http://87.98.244.34:5001"
-const getWidevine = "http://getwvkeys.cc"
-
-func (p Playback) Widevine(pssh string) (*Widevine, error) {
-   buf, err := mech.Encode(map[string]string{
-      "buildInfo": "",
-      "license": p.DRM.Widevine.LicenseServer,
-      "pssh": pssh,
-   })
-   if err != nil {
-      return nil, err
-   }
-   req, err := http.NewRequest("POST", getWidevine + "/api", buf)
-   if err != nil {
-      return nil, err
-   }
-   LogLevel.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return nil, errors.New(res.Status)
-   }
-   vine := new(Widevine)
-   if err := json.NewDecoder(res.Body).Decode(vine); err != nil {
-      return nil, err
-   }
-   return vine, nil
-}
 
 type CrossSite struct {
    cookie *http.Cookie // has own String method
@@ -120,20 +85,4 @@ type Playback struct {
          LicenseServer string
       }
    }
-}
-
-type Widevine struct {
-   Keys []struct {
-      Key string
-   }
-}
-
-func (w Widevine) Key() ([]byte, error) {
-   for _, each := range w.Keys {
-      _, key, ok := strings.Cut(each.Key, ":")
-      if ok {
-         return hex.DecodeString(key)
-      }
-   }
-   return nil, errors.New(`":" not found`)
 }
