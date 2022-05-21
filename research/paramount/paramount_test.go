@@ -14,11 +14,11 @@ func TestParamount(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   privateKey, err := os.ReadFile(cache + "/mech/device_private_key")
+   privateKey, err := os.ReadFile(cache + "/mech/private_key.pem")
    if err != nil {
       t.Fatal(err)
    }
-   clientID, err := os.ReadFile(cache + "/mech/device_client_id_blob")
+   clientID, err := os.ReadFile(cache + "/mech/client_id.bin")
    if err != nil {
       t.Fatal(err)
    }
