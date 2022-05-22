@@ -14,98 +14,12 @@ import (
    "strings"
 )
 
-type Address struct {
-   sid string
-   aid int64
-   guid string
-}
-
-func NewAddress(guid string) Address {
-   return Address{sid: "dJ5BDC", aid: 2198311517, guid: guid}
-}
-
-func (a Address) String() string {
-   var buf []byte
-   buf = append(buf, "http://link.theplatform.com/s/"...)
-   buf = append(buf, a.sid...)
-   buf = append(buf, "/media/guid/"...)
-   buf = strconv.AppendInt(buf, a.aid, 10)
-   buf = append(buf, '/')
-   buf = append(buf, a.guid...)
-   return string(buf)
-}
-
-func (p Preview) Base() string {
-   var buf []byte
-   buf = append(buf, p.Title...)
-   buf = append(buf, '-')
-   buf = strconv.AppendInt(buf, p.SeasonNumber, 10)
-   buf = append(buf, '-')
-   buf = append(buf, p.EpisodeNumber...)
-   return mech.Clean(string(buf))
-}
-
-type Preview struct {
-   Title string
-   SeasonNumber int64 `json:"cbs$SeasonNumber"`
-   EpisodeNumber string `json:"cbs$EpisodeNumber"`
-}
-
-func (a Address) Preview() (*Preview, error) {
-   req, err := http.NewRequest("GET", a.String(), nil)
-   if err != nil {
-      return nil, err
-   }
-   req.URL.RawQuery = "format=preview"
-   LogLevel.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   prev := new(Preview)
-   if err := json.NewDecoder(res.Body).Decode(prev); err != nil {
-      return nil, err
-   }
-   return prev, nil
-}
-
-func (a Address) HLS(guid string) (*url.URL, error) {
-   return a.location("MPEG4,M3U", "StreamPack")
-}
-
-func (a Address) DASH(guid string) (*url.URL, error) {
-   return a.location("MPEG-DASH", "DASH_CENC")
-}
-
-func (a Address) location(formats, asset string) (*url.URL, error) {
-   req, err := http.NewRequest("HEAD", a.String(), nil)
-   if err != nil {
-      return nil, err
-   }
-   req.URL.RawQuery = url.Values{
-      "assetTypes": {asset},
-      "formats": {formats},
-   }.Encode()
-   LogLevel.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   return res.Location()
-}
-
-const (
-   aid = 2198311517
-   sid = "dJ5BDC"
-)
-
-var LogLevel format.LogLevel
-
 const (
    aes_key = "302a6a0d70a7e9b967f91d39fef3e387816e3095925ae4537bce96063311f9c5"
    tv_secret = "6c70b33080758409"
 )
+
+var LogLevel format.LogLevel
 
 func newToken() (string, error) {
    key, err := hex.DecodeString(aes_key)
@@ -139,6 +53,92 @@ func pad(b []byte) []byte {
    return b
 }
 
+type Media struct {
+   sid string
+   aid int64
+   guid string
+}
+
+func NewMedia(guid string) Media {
+   return Media{sid: "dJ5BDC", aid: 2198311517, guid: guid}
+}
+
+func (m Media) DASH() (*url.URL, error) {
+   return m.location("MPEG-DASH", "DASH_CENC")
+}
+
+func (m Media) HLS() (*url.URL, error) {
+   return m.location("MPEG4,M3U", "StreamPack")
+}
+
+func (m Media) String() string {
+   var buf []byte
+   buf = append(buf, "http://link.theplatform.com/s/"...)
+   buf = append(buf, m.sid...)
+   buf = append(buf, "/media/guid/"...)
+   buf = strconv.AppendInt(buf, m.aid, 10)
+   buf = append(buf, '/')
+   buf = append(buf, m.guid...)
+   return string(buf)
+}
+
+func (m Media) Preview() (*Preview, error) {
+   req, err := http.NewRequest("GET", m.String(), nil)
+   if err != nil {
+      return nil, err
+   }
+   req.URL.RawQuery = "format=preview"
+   LogLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   prev := new(Preview)
+   if err := json.NewDecoder(res.Body).Decode(prev); err != nil {
+      return nil, err
+   }
+   return prev, nil
+}
+
+func (m Media) location(formats, asset string) (*url.URL, error) {
+   req, err := http.NewRequest("HEAD", m.String(), nil)
+   if err != nil {
+      return nil, err
+   }
+   req.URL.RawQuery = url.Values{
+      "assetTypes": {asset},
+      "formats": {formats},
+   }.Encode()
+   LogLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   return res.Location()
+}
+
+type Preview struct {
+   Title string
+   SeasonNumber int64 `json:"cbs$SeasonNumber"`
+   EpisodeNumber string `json:"cbs$EpisodeNumber"`
+}
+
+func (p Preview) Base() string {
+   var buf []byte
+   buf = append(buf, p.Title...)
+   buf = append(buf, '-')
+   buf = strconv.AppendInt(buf, p.SeasonNumber, 10)
+   buf = append(buf, '-')
+   buf = append(buf, p.EpisodeNumber...)
+   return mech.Clean(string(buf))
+}
+
+type Session struct {
+   URL string
+   LS_Session string
+}
+
 func NewSession(contentID string) (*Session, error) {
    token, err := newToken()
    if err != nil {
@@ -170,9 +170,4 @@ func (s Session) Header() http.Header {
    head := make(http.Header)
    head.Set("Authorization", "Bearer " + s.LS_Session)
    return head
-}
-
-type Session struct {
-   URL string
-   LS_Session string
 }

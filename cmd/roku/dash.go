@@ -11,6 +11,28 @@ import (
    "os"
 )
 
+func (d downloader) DASH(bAudio, bVideo int64) error {
+   if d.info {
+      fmt.Println(d.Content)
+   }
+   video := d.Content.DASH()
+   fmt.Println("GET", video.URL)
+   res, err := http.Get(video.URL)
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   d.URL = res.Request.URL
+   d.AdaptationSet, err = dash.NewAdaptationSet(res.Body)
+   if err != nil {
+      return err
+   }
+   if err := d.download(dash.Audio, bAudio); err != nil {
+      return err
+   }
+   return d.download(dash.Video, bVideo)
+}
+
 func (d *downloader) setKey() error {
    privateKey, err := os.ReadFile(d.pem)
    if err != nil {
@@ -42,28 +64,6 @@ func (d *downloader) setKey() error {
    }
    d.key = keys.Content().Key
    return nil
-}
-
-func (d downloader) DASH(bAudio, bVideo int64) error {
-   if d.info {
-      fmt.Println(d.Content)
-   }
-   video := d.Content.DASH()
-   fmt.Println("GET", video.URL)
-   res, err := http.Get(video.URL)
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   d.URL = res.Request.URL
-   d.AdaptationSet, err = dash.NewAdaptationSet(res.Body)
-   if err != nil {
-      return err
-   }
-   if err := d.download(dash.Audio, bAudio); err != nil {
-      return err
-   }
-   return d.download(dash.Video, bVideo)
 }
 
 func (d *downloader) download(typ string, bandwidth int64) error {

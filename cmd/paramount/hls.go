@@ -11,16 +11,13 @@ import (
 )
 
 func doHLS(guid string, bandwidth int64, info bool) error {
-   media, err := paramount.HLS(guid)
+   media := paramount.NewMedia(guid)
+   addr, err := media.HLS()
    if err != nil {
       return err
    }
-   video, err := media.Video()
-   if err != nil {
-      return err
-   }
-   fmt.Println("GET", video.Src)
-   res, err := http.Get(video.Src)
+   fmt.Println("GET", addr)
+   res, err := http.Get(addr.String())
    if err != nil {
       return err
    }
@@ -33,8 +30,12 @@ func doHLS(guid string, bandwidth int64, info bool) error {
       return master.Streams[a].Bandwidth < master.Streams[b].Bandwidth
    })
    stream := master.Stream(bandwidth)
+   preview, err := media.Preview()
+   if err != nil {
+      return err
+   }
    if info {
-      fmt.Println(video.Title)
+      fmt.Println(preview.Title)
       for _, each := range master.Streams {
          if each.Bandwidth == stream.Bandwidth {
             fmt.Print("!")
@@ -42,7 +43,7 @@ func doHLS(guid string, bandwidth int64, info bool) error {
          fmt.Println(each)
       }
    } else {
-      return download(stream, video.Base())
+      return download(stream, preview.Base())
    }
    return nil
 }
