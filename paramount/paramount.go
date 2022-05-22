@@ -14,6 +14,29 @@ import (
    "strings"
 )
 
+type Preview struct {
+   Title string
+   SeasonNumber int64 `json:"cbs$SeasonNumber"`
+   EpisodeNumber string `json:"cbs$EpisodeNumber"`
+   GUID string
+}
+
+type Media struct {
+   GUID string
+   aid int64
+   sid string
+}
+
+func (p Preview) Base() string {
+   var buf []byte
+   buf = append(buf, p.Title...)
+   buf = append(buf, '-')
+   buf = strconv.AppendInt(buf, p.SeasonNumber, 10)
+   buf = append(buf, '-')
+   buf = append(buf, p.EpisodeNumber...)
+   return mech.Clean(string(buf))
+}
+
 const (
    aes_key = "302a6a0d70a7e9b967f91d39fef3e387816e3095925ae4537bce96063311f9c5"
    tv_secret = "6c70b33080758409"
@@ -53,14 +76,8 @@ func pad(b []byte) []byte {
    return b
 }
 
-type Media struct {
-   sid string
-   aid int64
-   guid string
-}
-
 func NewMedia(guid string) Media {
-   return Media{sid: "dJ5BDC", aid: 2198311517, guid: guid}
+   return Media{sid: "dJ5BDC", aid: 2198311517, GUID: guid}
 }
 
 func (m Media) DASH() (*url.URL, error) {
@@ -78,7 +95,7 @@ func (m Media) String() string {
    buf = append(buf, "/media/guid/"...)
    buf = strconv.AppendInt(buf, m.aid, 10)
    buf = append(buf, '/')
-   buf = append(buf, m.guid...)
+   buf = append(buf, m.GUID...)
    return string(buf)
 }
 
@@ -116,22 +133,6 @@ func (m Media) location(formats, asset string) (*url.URL, error) {
       return nil, err
    }
    return res.Location()
-}
-
-type Preview struct {
-   Title string
-   SeasonNumber int64 `json:"cbs$SeasonNumber"`
-   EpisodeNumber string `json:"cbs$EpisodeNumber"`
-}
-
-func (p Preview) Base() string {
-   var buf []byte
-   buf = append(buf, p.Title...)
-   buf = append(buf, '-')
-   buf = strconv.AppendInt(buf, p.SeasonNumber, 10)
-   buf = append(buf, '-')
-   buf = append(buf, p.EpisodeNumber...)
-   return mech.Clean(string(buf))
 }
 
 type Session struct {

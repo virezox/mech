@@ -2,13 +2,17 @@ package main
 
 import (
    "fmt"
+   "github.com/89z/format"
    "github.com/89z/format/dash"
+   "github.com/89z/mech"
+   "github.com/89z/mech/paramount"
+   "github.com/89z/mech/widevine"
    "net/http"
    "os"
 )
 
 func (d downloader) DASH(bandwidth int64) error {
-   addr, err := d.Media.DASH()
+   addr, err := paramount.NewMedia(d.GUID).DASH()
    if err != nil {
       return err
    }
@@ -18,6 +22,7 @@ func (d downloader) DASH(bandwidth int64) error {
       return err
    }
    defer res.Body.Close()
+   d.URL = addr
    d.AdaptationSet, err = dash.NewAdaptationSet(res.Body)
    if err != nil {
       return err
@@ -25,39 +30,11 @@ func (d downloader) DASH(bandwidth int64) error {
    return d.download(dash.Video, bandwidth)
 }
 
-func (d *downloader) setKey() error {
-   privateKey, err := os.ReadFile(d.pem)
-   if err != nil {
-      return err
-   }
-   clientID, err := os.ReadFile(d.client)
-   if err != nil {
-      return err
-   }
-   kID, err := d.Protection().KID()
-   if err != nil {
-      return err
-   }
-   mod, err := widevine.NewModule(privateKey, clientID, kID)
-   if err != nil {
-      return err
-   }
-   sess, err := NewSession(contentID)
-   if err != nil {
-      t.Fatal(err)
-   }
-   keys, err := mod.Post(sess.URL, sess.Header())
-   if err != nil {
-      t.Fatal(err)
-   }
-   d.key = keys.Content().Key
-   return nil
-}
-
 func (d *downloader) download(typ string, bandwidth int64) error {
    if bandwidth == 0 {
       return nil
    }
+   // FAIL
    adas := d.MimeType(typ)
    rep := adas.Represent(bandwidth)
    if d.info {
@@ -117,5 +94,34 @@ func (d *downloader) download(typ string, bandwidth int64) error {
          }
       }
    }
+   return nil
+}
+
+func (d *downloader) setKey() error {
+   privateKey, err := os.ReadFile(d.pem)
+   if err != nil {
+      return err
+   }
+   clientID, err := os.ReadFile(d.client)
+   if err != nil {
+      return err
+   }
+   kID, err := d.Protection().KID()
+   if err != nil {
+      return err
+   }
+   mod, err := widevine.NewModule(privateKey, clientID, kID)
+   if err != nil {
+      return err
+   }
+   sess, err := paramount.NewSession(d.GUID)
+   if err != nil {
+      return err
+   }
+   keys, err := mod.Post(sess.URL, sess.Header())
+   if err != nil {
+      return err
+   }
+   d.key = keys.Content().Key
    return nil
 }

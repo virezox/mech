@@ -10,10 +10,10 @@ import (
 )
 
 type downloader struct {
+   *dash.Period
    *roku.Content
    *url.URL
    client string
-   dash.AdaptationSet
    info bool
    key []byte
    pem string

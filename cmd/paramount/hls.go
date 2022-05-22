@@ -4,13 +4,14 @@ import (
    "fmt"
    "github.com/89z/format"
    "github.com/89z/format/hls"
+   "github.com/89z/mech/paramount"
    "net/http"
    "os"
    "sort"
 )
 
 func (d downloader) HLS(bandwidth int64) error {
-   addr, err := d.Media.HLS()
+   addr, err := paramount.NewMedia(d.GUID).HLS()
    if err != nil {
       return err
    }
@@ -28,12 +29,8 @@ func (d downloader) HLS(bandwidth int64) error {
       return master.Streams[a].Bandwidth < master.Streams[b].Bandwidth
    })
    stream := master.Stream(bandwidth)
-   preview, err := d.Media.Preview()
-   if err != nil {
-      return err
-   }
    if d.info {
-      fmt.Println(preview.Title)
+      fmt.Println(d.Title)
       for _, each := range master.Streams {
          if each.Bandwidth == stream.Bandwidth {
             fmt.Print("!")
@@ -41,7 +38,7 @@ func (d downloader) HLS(bandwidth int64) error {
          fmt.Println(each)
       }
    } else {
-      return download(stream, preview.Base())
+      return download(stream, d.Base())
    }
    return nil
 }
