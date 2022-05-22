@@ -25,6 +25,9 @@ func main() {
       panic(err)
    }
    var down downloader
+   // a
+   var address string
+   flag.StringVar(&address, "a", "", "address")
    // b
    var id string
    flag.StringVar(&id, "b", "", "ID")
@@ -54,7 +57,10 @@ func main() {
    if verbose {
       roku.LogLevel = 1
    }
-   if id != "" {
+   if id != "" || address != "" {
+      if id == "" {
+         id = roku.ContentID(address)
+      }
       down.Content, err = roku.NewContent(id)
       if err != nil {
          panic(err)
