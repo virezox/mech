@@ -1,0 +1,96 @@
+{
+  "$xmlns": {
+    "cbs": "http://xml.cbs.com/field"
+  },
+  "adPolicy": null,
+  "author": "",
+  "captions": [],
+  "categories": [],
+  "chapters": [
+    {
+      "startTime": 0,
+      "endTime": 602000
+    },
+    {
+      "startTime": 602000,
+      "endTime": 1174000
+    },
+    {
+      "startTime": 1174000,
+      "endTime": 1443000
+    },
+    {
+      "startTime": 1443000
+    }
+  ],
+  "copyright": "CBS, Inc.",
+  "defaultThumbnailUrl": "https://thumbnails.cbsig.net/CBS_Production_Entertainment_VMS/2021/08/31/1940767811923/CBS_THE_HARPER_HOUSE_101_NO_LOGO_813509_640x360.jpg",
+  "description": "Series Premiere. After being let go from her high-paying job, Debbie Harper (Rhea Seehorn), her husband Freddie (Jason Lee), and their twins, Todd (Ryan Flynn) and Ollie (Tatiana Maslany), move into a Victorian fixer-upper on the poorer side of town and attempt to win over their new neighbors by hosting a WrestleMonium watch party. (TV -MA L)",
+  "duration": 0,
+  "expression": "full",
+  "guid": "eyT_RYkqNuH_6ZYrepLtxkiPO1HA7dIU",
+  "keywords": "cartoon",
+  "id": "http://data.media.theplatform.com/media/data/Media/1940783171717",
+  "mediaPid": "0_F0xzSDRyW0",
+  "ownerId": "http://access.auth.theplatform.com/data/Account/2198311517",
+  "billingCode": "CBSI-NEW",
+  "pid": "QqofwoCXmQIE",
+  "provider": "CBS Production Entertainment VMS",
+  "pubDate": 1631772000000,
+  "ratings": [
+    {
+      "scheme": "urn:www.mj.gov.br",
+      "rating": "12",
+      "subRatings": [
+        "li"
+      ]
+    },
+    {
+      "scheme": "urn:www.ccnr.ca",
+      "rating": "14+",
+      "subRatings": []
+    },
+    {
+      "scheme": "urn:www.acma.gov.au:tv",
+      "rating": "m",
+      "subRatings": [
+        "v"
+      ]
+    },
+    {
+      "scheme": "urn:v-chip",
+      "rating": "tv-14",
+      "subRatings": [
+        "v"
+      ]
+    }
+  ],
+  "title": "The Harper House - The Harper House",
+  "cbs$NoAd": false,
+  "cbs$EpisodeNumber": "1",
+  "cbs$contentType": "Full Episode",
+  "cbs$PrimaryCategory": 1935586371946,
+  "cbs$isLiveCaptioned": false,
+  "cbs$EpisodeFlag": true,
+  "cbs$endCreditsChapterTime": "24:08",
+  "cbs$VTAG": "/ent/orig/the_harper_house/s1/fe;site=entertainment;dpart=primetime;dpart=originals;show=the_harper_house;seas=1;feat=full_episodes;",
+  "cbs$Aired": false,
+  "cbs$artist": "",
+  "cbs$SourcePartner": "CBS",
+  "cbs$excludeNielsenTracking": false,
+  "cbs$IsLiveCDN": "",
+  "cbs$CBSGenre": "Comedy",
+  "cbs$ClosedCaptionURL": "https://cc.cbs.com/closedcaption/CBS_Production_Entertainment_VMS/493/427/eyT_RYkqNuH_6ZYrepLtxkiPO1HA7dIU_1631675371489.tt",
+  "cbs$PrimaryCategoryName": "AA Originals/The Harper House/Full Episodes",
+  "cbs$SeriesTitle": "The Harper House",
+  "cbs$dPRAired": false,
+  "cbs$sMPTE-TTCCURL": "https://cc.cbs.com/closedcaption/CBS_Production_Entertainment_VMS/493/427/eyT_RYkqNuH_6ZYrepLtxkiPO1HA7dIU_1631675369899.xml",
+  "cbs$DynamicStreaming": false,
+  "cbs$webVTTCaptionURL": "https://cc.cbs.com/closedcaption/CBS_Production_Entertainment_VMS/493/427/eyT_RYkqNuH_6ZYrepLtxkiPO1HA7dIU_1631675370722.vtt",
+  "cbs$IsLive": false,
+  "cbs$SeasonNumber": 1,
+  "cbs$RepeatFlag": false,
+  "cbs$Embeddable": false,
+  "cbs$Internal": false,
+  "cbs$TVRating": true
+}
