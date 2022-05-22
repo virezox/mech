@@ -8,14 +8,10 @@ import (
    "net/http"
    "os"
    "sort"
-   "time"
 )
 
-func newMaster(guid, address string, bandwidth int64, info bool) error {
-   if guid == "" {
-      guid = paramount.GUID(address)
-   }
-   media, err := paramount.NewMedia(guid)
+func doHLS(guid string, bandwidth int64, info bool) error {
+   media, err := paramount.HLS(guid)
    if err != nil {
       return err
    }
@@ -51,21 +47,6 @@ func newMaster(guid, address string, bandwidth int64, info bool) error {
    return nil
 }
 
-func get(addr string) (*http.Response, error) {
-   req, err := http.NewRequest("", addr, nil)
-   if err != nil {
-      return nil, err
-   }
-   // 9 seconds is too long
-   tr := &http.Transport{IdleConnTimeout: 8*time.Second}
-   res, err := tr.RoundTrip(req)
-   if err != nil {
-      fmt.Println("RETRY")
-      return tr.RoundTrip(req)
-   }
-   return res, nil
-}
-
 func download(stream *hls.Stream, base string) error {
    seg, err := newSegment(stream.URI.String())
    if err != nil {
@@ -88,7 +69,7 @@ func download(stream *hls.Stream, base string) error {
    defer file.Close()
    pro := format.ProgressChunks(file, len(seg.Info))
    for _, info := range seg.Info {
-      res, err := get(info.URI.String())
+      res, err := http.Get(info.URI.String())
       if err != nil {
          return err
       }

@@ -6,12 +6,12 @@ import (
 )
 
 func main() {
-   // a
-   var address string
-   flag.StringVar(&address, "a", "", "address")
    // b
    var guid string
    flag.StringVar(&guid, "b", "", "GUID")
+   // d
+   var isDASH bool
+   flag.BoolVar(&isDASH, "d", false, "DASH download")
    // f
    // paramountplus.com/shows/video/622678414
    var bandwidth int64
@@ -26,10 +26,17 @@ func main() {
    if verbose {
       paramount.LogLevel = 1
    }
-   if guid != "" || address != "" {
-      err := newMaster(guid, address, bandwidth, info)
-      if err != nil {
-         panic(err)
+   if guid != "" {
+      if isDASH {
+         err := doDASH(guid, bandwidth, info)
+         if err != nil {
+            panic(err)
+         }
+      } else {
+         err := doHLS(guid, bandwidth, info)
+         if err != nil {
+            panic(err)
+         }
       }
    } else {
       flag.Usage()
