@@ -6,6 +6,7 @@ import (
    "encoding/base64"
    "encoding/hex"
    "encoding/json"
+   "errors"
    "github.com/89z/format"
    "github.com/89z/mech"
    "net/http"
@@ -113,6 +114,9 @@ func (m Media) Preview() (*Preview, error) {
       return nil, err
    }
    defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return nil, errors.New(res.Status)
+   }
    prev := new(Preview)
    if err := json.NewDecoder(res.Body).Decode(prev); err != nil {
       return nil, err
@@ -161,6 +165,9 @@ func NewSession(contentID string) (*Session, error) {
       return nil, err
    }
    defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return nil, errors.New(res.Status)
+   }
    sess := new(Session)
    if err := json.NewDecoder(res.Body).Decode(sess); err != nil {
       return nil, err

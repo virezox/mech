@@ -11,13 +11,13 @@ import (
    "os"
 )
 
-func (d downloader) DASH(bVideo, bAudio int64) error {
+func (d downloader) DASH(video, audio int64) error {
    if d.info {
       fmt.Println(d.Content)
    }
-   video := d.Content.DASH()
-   fmt.Println("GET", video.URL)
-   res, err := http.Get(video.URL)
+   videoDASH := d.Content.DASH()
+   fmt.Println("GET", videoDASH.URL)
+   res, err := http.Get(videoDASH.URL)
    if err != nil {
       return err
    }
@@ -27,18 +27,18 @@ func (d downloader) DASH(bVideo, bAudio int64) error {
    if err != nil {
       return err
    }
-   if err := d.download(dash.Audio, bAudio); err != nil {
+   if err := d.download(audio, dash.TypeAudio, dash.Audio); err != nil {
       return err
    }
-   return d.download(dash.Video, bVideo)
+   return d.download(video, dash.TypeVideo, dash.Video)
 }
 
-func (d *downloader) download(typ string, bandwidth int64) error {
-   if bandwidth == 0 {
+func (d *downloader) download(band int64, typ string, dash.PeriodFunc) error {
+   if band == 0 {
       return nil
    }
    reps := d.MimeType(typ)
-   rep := reps.Represent(bandwidth)
+   rep := reps.Represent(band)
    if d.info {
       for _, each := range reps {
          if each.Bandwidth == rep.Bandwidth {
