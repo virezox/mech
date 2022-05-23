@@ -8,13 +8,13 @@
 
 ## L1
 
-Amzn needs AndroidCDM L1 for 720P/1080P/4K, Disney+ needs Android L1 for
-1080P+, and NetFlix I think needs L1 for Main Profile & UHD.
+- Amzn needs AndroidCDM L1 for 720P/1080P/4K
+- Disney+ needs Android L1 for 1080P+
+- NetFlix I think needs L1 for Main Profile & UHD
 
-## Where did proto files come from?
+## Where did proto file come from?
 
-- <https://github.com/cryptonek/widevine-l3-decryptor/blob/master/license_protocol.proto>
-- https://github.com/TDenisM/widevinedump/tree/main/pywidevine/cdm/formats
+https://github.com/TDenisM/widevinedump/tree/main/pywidevine/cdm/formats
 
 ## Where to download L3 CDM?
 

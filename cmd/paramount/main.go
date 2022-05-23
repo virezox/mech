@@ -10,13 +10,13 @@ import (
 )
 
 type downloader struct {
+   *dash.Period
    *paramount.Preview
-   dash.AdaptationSet
+   *url.URL
+   client string
    info bool
    key []byte
-   client string
    pem string
-   *url.URL
 }
 
 func main() {
@@ -35,9 +35,13 @@ func main() {
    var isDASH bool
    flag.BoolVar(&isDASH, "d", false, "DASH download")
    // f
-   // paramountplus.com/shows/video/622678414
-   var bandwidth int64
-   flag.Int64Var(&bandwidth, "f", 1622000, "target bandwidth")
+   // paramountplus.com/movies/video/tQk_Qooh5wUlxQqzj_4LiBO2m4iMrcPD
+   var video int64
+   flag.Int64Var(&video, "f", 2098819, "video bandwidth")
+   // g
+   // paramountplus.com/movies/video/tQk_Qooh5wUlxQqzj_4LiBO2m4iMrcPD
+   var audio int64
+   flag.Int64Var(&audio, "g", 131282, "audio bandwidth")
    // i
    flag.BoolVar(&down.info, "i", false, "information")
    // k
@@ -57,12 +61,12 @@ func main() {
          panic(err)
       }
       if isDASH {
-         err := down.DASH(bandwidth)
+         err := down.DASH(video, audio)
          if err != nil {
             panic(err)
          }
       } else {
-         err := down.HLS(bandwidth)
+         err := down.HLS(video)
          if err != nil {
             panic(err)
          }

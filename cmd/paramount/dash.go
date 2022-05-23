@@ -9,9 +9,10 @@ import (
    "github.com/89z/mech/widevine"
    "net/http"
    "os"
+   "sort"
 )
 
-func (d downloader) DASH(bandwidth int64) error {
+func (d downloader) DASH(video, audio int64) error {
    addr, err := paramount.NewMedia(d.GUID).DASH()
    if err != nil {
       return err
@@ -23,28 +24,31 @@ func (d downloader) DASH(bandwidth int64) error {
    }
    defer res.Body.Close()
    d.URL = addr
-   d.AdaptationSet, err = dash.NewAdaptationSet(res.Body)
+   d.Period, err = dash.NewPeriod(res.Body)
    if err != nil {
       return err
    }
-   return d.download(dash.Video, bandwidth)
+   if err := d.download(dash.Audio, audio); err != nil {
+      return err
+   }
+   return d.download(dash.Video, video)
 }
 
 func (d *downloader) download(typ string, bandwidth int64) error {
    if bandwidth == 0 {
       return nil
    }
-   // FAIL
-   adas := d.MimeType(typ)
-   rep := adas.Represent(bandwidth)
+   reps := d.MimeType(typ)
+   sort.Slice(reps, func(a, b int) bool {
+      return reps[a].Bandwidth < reps[b].Bandwidth
+   })
+   rep := reps.Represent(bandwidth)
    if d.info {
-      for _, ada := range adas {
-         for _, each := range ada.Representation {
-            if each.Bandwidth == rep.Bandwidth {
-               fmt.Print("!")
-            }
-            fmt.Println(each)
+      for _, each := range reps {
+         if each.Bandwidth == rep.Bandwidth {
+            fmt.Print("!")
          }
+         fmt.Println(each)
       }
    } else {
       if d.key == nil {

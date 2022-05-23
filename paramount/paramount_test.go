@@ -18,17 +18,11 @@ var guids = []string{
 
 func TestParamount(t *testing.T) {
    for _, guid := range guids {
-      media, err := NewMedia(guid)
+      preview, err := NewMedia(guid).Preview()
       if err != nil {
          t.Fatal(err)
       }
-      video, err := media.Video()
-      if err != nil {
-         t.Fatal(err)
-      }
-      for _, param := range video.Param {
-         fmt.Printf("%+v\n", param)
-      }
+      fmt.Printf("%+v\n", preview)
       time.Sleep(time.Second)
    }
 }
@@ -53,11 +47,11 @@ func TestSession(t *testing.T) {
       t.Fatal(err)
    }
    defer file.Close()
-   adas, err := dash.NewAdaptationSet(file)
+   period, err := dash.NewPeriod(file)
    if err != nil {
       t.Fatal(err)
    }
-   kID, err := adas.Protection().KID()
+   kID, err := period.Protection().KID()
    if err != nil {
       t.Fatal(err)
    }

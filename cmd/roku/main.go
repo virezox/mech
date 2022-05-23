@@ -66,7 +66,7 @@ func main() {
          panic(err)
       }
       if isDASH {
-         err := down.DASH(audio, video)
+         err := down.DASH(video, audio)
          if err != nil {
             panic(err)
          }

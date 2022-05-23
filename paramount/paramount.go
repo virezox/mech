@@ -14,27 +14,29 @@ import (
    "strings"
 )
 
+func (p Preview) Base() string {
+   var buf []byte
+   buf = append(buf, p.Title...)
+   if p.SeasonNumber >= 1 {
+      buf = append(buf, '-')
+      buf = strconv.AppendInt(buf, p.SeasonNumber, 10)
+      buf = append(buf, '-')
+      buf = append(buf, p.EpisodeNumber...)
+   }
+   return mech.Clean(string(buf))
+}
+
 type Preview struct {
+   GUID string
    Title string
    SeasonNumber int64 `json:"cbs$SeasonNumber"`
    EpisodeNumber string `json:"cbs$EpisodeNumber"`
-   GUID string
 }
 
 type Media struct {
    GUID string
    aid int64
    sid string
-}
-
-func (p Preview) Base() string {
-   var buf []byte
-   buf = append(buf, p.Title...)
-   buf = append(buf, '-')
-   buf = strconv.AppendInt(buf, p.SeasonNumber, 10)
-   buf = append(buf, '-')
-   buf = append(buf, p.EpisodeNumber...)
-   return mech.Clean(string(buf))
 }
 
 const (
