@@ -12,37 +12,15 @@ import (
    "sort"
 )
 
-func (d downloader) DASH(video, audio int64) error {
-   addr, err := paramount.NewMedia(d.GUID).DASH()
-   if err != nil {
-      return err
-   }
-   fmt.Println("GET", addr)
-   res, err := http.Get(addr.String())
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   d.URL = addr
-   d.Period, err = dash.NewPeriod(res.Body)
-   if err != nil {
-      return err
-   }
-   if err := d.download(dash.Audio, audio); err != nil {
-      return err
-   }
-   return d.download(dash.Video, video)
-}
-
-func (d *downloader) download(typ string, bandwidth int64) error {
-   if bandwidth == 0 {
+func (d *downloader) download(band int64, fn dash.PeriodFunc) error {
+   if band == 0 {
       return nil
    }
-   reps := d.MimeType(typ)
+   reps := d.Represents(fn)
    sort.Slice(reps, func(a, b int) bool {
       return reps[a].Bandwidth < reps[b].Bandwidth
    })
-   rep := reps.Represent(bandwidth)
+   rep := reps.Represent(band)
    if d.info {
       for _, each := range reps {
          if each.Bandwidth == rep.Bandwidth {
@@ -57,7 +35,7 @@ func (d *downloader) download(typ string, bandwidth int64) error {
             return err
          }
       }
-      ext, err := mech.ExtensionByType(typ)
+      ext, err := mech.ExtensionByType(rep.MimeType)
       if err != nil {
          return err
       }
@@ -99,6 +77,28 @@ func (d *downloader) download(typ string, bandwidth int64) error {
       }
    }
    return nil
+}
+
+func (d downloader) DASH(video, audio int64) error {
+   addr, err := paramount.NewMedia(d.GUID).DASH()
+   if err != nil {
+      return err
+   }
+   fmt.Println("GET", addr)
+   res, err := http.Get(addr.String())
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   d.URL = addr
+   d.Period, err = dash.NewPeriod(res.Body)
+   if err != nil {
+      return err
+   }
+   if err := d.download(audio, dash.Audio); err != nil {
+      return err
+   }
+   return d.download(video, dash.Video)
 }
 
 func (d *downloader) setKey() error {

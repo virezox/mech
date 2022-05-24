@@ -27,17 +27,17 @@ func (d downloader) DASH(video, audio int64) error {
    if err != nil {
       return err
    }
-   if err := d.download(audio, dash.TypeAudio, dash.Audio); err != nil {
+   if err := d.download(audio, dash.Audio); err != nil {
       return err
    }
-   return d.download(video, dash.TypeVideo, dash.Video)
+   return d.download(video, dash.Video)
 }
 
-func (d *downloader) download(band int64, typ string, dash.PeriodFunc) error {
+func (d *downloader) download(band int64, fn dash.PeriodFunc) error {
    if band == 0 {
       return nil
    }
-   reps := d.MimeType(typ)
+   reps := d.Represents(fn)
    rep := reps.Represent(band)
    if d.info {
       for _, each := range reps {
@@ -53,7 +53,7 @@ func (d *downloader) download(band int64, typ string, dash.PeriodFunc) error {
             return err
          }
       }
-      ext, err := mech.ExtensionByType(typ)
+      ext, err := mech.ExtensionByType(rep.MimeType)
       if err != nil {
          return err
       }

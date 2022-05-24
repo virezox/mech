@@ -34,11 +34,11 @@ func NewModule(privateKey, clientID, kID []byte) (*Module, error) {
    }
    // licenseRequest
    mod.licenseRequest = protobuf.Message{
-      1: protobuf.Bytes(clientID),
+      1: protobuf.Bytes{Raw: clientID},
       2: protobuf.Message{ // ContentId
          1: protobuf.Message{ // CencId
             1: protobuf.Message{ // Pssh
-               2: protobuf.Bytes(kID),
+               2: protobuf.Bytes{Raw: kID},
             },
          },
       },
@@ -114,8 +114,8 @@ func (m Module) Post(addr string, head http.Header) (Containers, error) {
       return nil, err
    }
    signedRequest := protobuf.Message{
-      2: protobuf.Bytes(m.licenseRequest),
-      3: protobuf.Bytes(signature),
+      2: protobuf.Bytes{Raw: m.licenseRequest},
+      3: protobuf.Bytes{Raw: signature},
    }
    req, err := http.NewRequest(
       "POST", addr, bytes.NewReader(signedRequest.Marshal()),
