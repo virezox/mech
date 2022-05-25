@@ -56,11 +56,11 @@ var androidRacys = []string{
 }
 
 func TestAndroidRacy(t *testing.T) {
-   cache, err := os.UserHomeDir()
+   home, err := os.UserHomeDir()
    if err != nil {
       t.Fatal(err)
    }
-   change, err := OpenExchange(cache, "mech/youtube.json")
+   change, err := OpenExchange(home, "mech/youtube.json")
    if err != nil {
       t.Fatal(err)
    }
@@ -79,11 +79,11 @@ func TestAndroidRacy(t *testing.T) {
 const androidContent = "nGC3D_FkCmg"
 
 func TestAndroidContent(t *testing.T) {
-   cache, err := os.UserHomeDir()
+   home, err := os.UserHomeDir()
    if err != nil {
       t.Fatal(err)
    }
-   change, err := OpenExchange(cache, "mech/youtube.json")
+   change, err := OpenExchange(home, "mech/youtube.json")
    if err != nil {
       t.Fatal(err)
    }

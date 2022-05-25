@@ -20,7 +20,7 @@ type downloader struct {
 }
 
 func main() {
-   cache, err := os.UserHomeDir()
+   home, err := os.UserHomeDir()
    if err != nil {
       panic(err)
    }
@@ -29,7 +29,7 @@ func main() {
    var guid string
    flag.StringVar(&guid, "b", "", "GUID")
    // c
-   down.client = filepath.Join(cache, "mech/client_id.bin")
+   down.client = filepath.Join(home, "mech/client_id.bin")
    flag.StringVar(&down.client, "c", down.client, "client ID")
    // d
    var isDASH bool
@@ -45,7 +45,7 @@ func main() {
    // i
    flag.BoolVar(&down.info, "i", false, "information")
    // k
-   down.pem = filepath.Join(cache, "mech/private_key.pem")
+   down.pem = filepath.Join(home, "mech/private_key.pem")
    flag.StringVar(&down.pem, "k", down.pem, "private key")
    // v
    var verbose bool

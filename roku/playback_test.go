@@ -11,15 +11,15 @@ import (
 const playbackID = "597a64a4a25c5bf6af4a8c7053049a6f"
 
 func TestWidevine(t *testing.T) {
-   cache, err := os.UserHomeDir()
+   home, err := os.UserHomeDir()
    if err != nil {
       t.Fatal(err)
    }
-   privateKey, err := os.ReadFile(cache + "/mech/private_key.pem")
+   privateKey, err := os.ReadFile(home + "/mech/private_key.pem")
    if err != nil {
       t.Fatal(err)
    }
-   clientID, err := os.ReadFile(cache + "/mech/client_id.bin")
+   clientID, err := os.ReadFile(home + "/mech/client_id.bin")
    if err != nil {
       t.Fatal(err)
    }

@@ -11,11 +11,11 @@ import (
 )
 
 func newMaster(id, address, audio string, video int64, info bool) error {
-   cache, err := os.UserHomeDir()
+   home, err := os.UserHomeDir()
    if err != nil {
       return err
    }
-   profile, err := cbc.OpenProfile(cache, "mech/cbc.json")
+   profile, err := cbc.OpenProfile(home, "mech/cbc.json")
    if err != nil {
       return err
    }
@@ -116,7 +116,7 @@ func newSegment(addr string) (*hls.Segment, error) {
 }
 
 func doProfile(email, password string) error {
-   cache, err := os.UserHomeDir()
+   home, err := os.UserHomeDir()
    if err != nil {
       return err
    }
@@ -136,5 +136,5 @@ func doProfile(email, password string) error {
    if err != nil {
       return err
    }
-   return profile.Create(cache, "mech/cbc.json")
+   return profile.Create(home, "mech/cbc.json")
 }

@@ -9,11 +9,11 @@ import (
 const downton = "downton-abbey/s01e05"
 
 func TestMedia(t *testing.T) {
-   cache, err := os.UserHomeDir()
+   home, err := os.UserHomeDir()
    if err != nil {
       t.Fatal(err)
    }
-   profile, err := OpenProfile(cache, "mech/cbc.json")
+   profile, err := OpenProfile(home, "mech/cbc.json")
    if err != nil {
       t.Fatal(err)
    }

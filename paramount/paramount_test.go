@@ -30,15 +30,15 @@ func TestParamount(t *testing.T) {
 const contentID = "eyT_RYkqNuH_6ZYrepLtxkiPO1HA7dIU"
 
 func TestSession(t *testing.T) {
-   cache, err := os.UserHomeDir()
+   home, err := os.UserHomeDir()
    if err != nil {
       t.Fatal(err)
    }
-   privateKey, err := os.ReadFile(cache + "/mech/private_key.pem")
+   privateKey, err := os.ReadFile(home + "/mech/private_key.pem")
    if err != nil {
       t.Fatal(err)
    }
-   clientID, err := os.ReadFile(cache + "/mech/client_id.bin")
+   clientID, err := os.ReadFile(home + "/mech/client_id.bin")
    if err != nil {
       t.Fatal(err)
    }
