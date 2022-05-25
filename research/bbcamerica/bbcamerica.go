@@ -1,41 +1,66 @@
 package bbcamerica
 
 import (
+   "bytes"
    "encoding/json"
    "github.com/89z/format"
    "net/http"
-   "strings"
+   "strconv"
 )
+
+func (u Unauth) Header() http.Header {
+   head := make(http.Header)
+   head.Set("bcov-auth", u.Data.Access_Token)
+   return head
+}
+
+type Unauth struct {
+   Data struct {
+      Access_Token string
+   }
+}
+
+type Source struct {
+   Key_Systems struct {
+      Widevine struct {
+         License_URL string
+      } `json:"com.widevine.alpha"`
+   }
+   Src string
+   Type string
+}
+
+func (p Playback) DASH() *Source {
+   for _, source := range p.Data.PlaybackJsonData.Sources {
+      if source.Type == "application/dash+xml" {
+         return &source
+      }
+   }
+   return nil
+}
 
 type Playback struct {
    Data struct {
       PlaybackJsonData struct {
-         Sources []struct {
-            Type string
-            Src string
-         }
+         Sources []Source
       }
    }
 }
 
-func (u Unauth) Playback() (*Playback, error) {
-   body := strings.NewReader(`
-   {
-      "adtags": {
-         "lat": 0,
-         "url": "https://www.bbcamerica.com/shows/killing-eve/episodes/season-4-just-dunk-me--1052529",
-         "playerWidth": 1920,
-         "playerHeight": 1080,
-         "ppid": 1,
-         "mode": "on-demand"
-      }
-   }
-   `)
-   req, err := http.NewRequest(
-      "POST",
-      "https://gw.cds.amcn.com/playback-id/api/v1/playback/1052529",
-      body,
+func (u Unauth) Playback(nid int64) (*Playback, error) {
+   var (
+      addr []byte
+      body playbackRequest
    )
+   addr = append(addr, "https://gw.cds.amcn.com/playback-id/api/v1/playback/"...)
+   addr = strconv.AppendInt(addr, nid, 10)
+   body.AdTags.Mode = "on-demand"
+   body.AdTags.URL = "!"
+   buf := new(bytes.Buffer)
+   if err := json.NewEncoder(buf).Encode(body); err != nil {
+      return nil, err
+   }
+   req, err := http.NewRequest("POST", string(addr), buf)
    if err != nil {
       return nil, err
    }
@@ -61,6 +86,17 @@ func (u Unauth) Playback() (*Playback, error) {
       return nil, err
    }
    return play, nil
+}
+
+type playbackRequest struct {
+   AdTags struct {
+      Lat int `json:"lat"`
+      Mode string `json:"mode"`
+      PPID int `json:"ppid"`
+      PlayerHeight int `json:"playerHeight"`
+      PlayerWidth int `json:"playerWidth"`
+      URL string `json:"url"`
+   } `json:"adtags"`
 }
 
 var LogLevel format.LogLevel
@@ -90,10 +126,4 @@ func NewUnauth() (*Unauth, error) {
       return nil, err
    }
    return auth, nil
-}
-
-type Unauth struct {
-   Data struct {
-      Access_Token string
-   }
 }
