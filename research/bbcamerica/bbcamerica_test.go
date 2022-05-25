@@ -6,7 +6,11 @@ import (
 )
 
 func TestUnauth(t *testing.T) {
-   res, err := unauth()
+   auth, err := NewUnauth()
+   if err != nil {
+      t.Fatal(err)
+   }
+   res, err := auth.Playback()
    if err != nil {
       t.Fatal(err)
    }
