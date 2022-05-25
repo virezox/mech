@@ -2,7 +2,7 @@
 
 Using this video:
 
-https://bbcamerica.com/shows/killing-eve/episodes/season-4-just-dunk-me--1052529
+https://www.bbcamerica.com/shows/killing-eve/episodes/season-4-just-dunk-me--1052529
 
 ## Web client
 
