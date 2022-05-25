@@ -85,7 +85,7 @@ func (m Module) Keys(body io.Reader) (Containers, error) {
       if err != nil {
          return nil, err
       }
-      key, err := message.GetBytes(3)
+      con.Key, err = message.GetBytes(3)
       if err != nil {
          return nil, err
       }
@@ -93,8 +93,8 @@ func (m Module) Keys(body io.Reader) (Containers, error) {
       if err != nil {
          return nil, err
       }
-      cipher.NewCBCDecrypter(block, iv).CryptBlocks(key, key)
-      con.Key = unpad(key)
+      cipher.NewCBCDecrypter(block, iv).CryptBlocks(con.Key, con.Key)
+      con.Key = unpad(con.Key)
       cons = append(cons, con)
    }
    return cons, nil
