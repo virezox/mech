@@ -49,8 +49,11 @@ func TestUnauth(t *testing.T) {
       t.Fatal(err)
    }
    addr := play.DASH().Key_Systems.Widevine.License_URL
-   widevine.LogLevel = 1
-   if _, err := mod.Post(addr, auth.Header()); err != nil {
+   keys, err := mod.Post(addr, play.Header())
+   if err != nil {
       t.Fatal(err)
+   }
+   if keys.Content().String() != "680a46ebd6cf2b9a6a0b05a24dcf944a" {
+      t.Fatal(keys)
    }
 }

@@ -8,16 +8,32 @@ import (
    "strconv"
 )
 
-func (u Unauth) Header() http.Header {
-   head := make(http.Header)
-   head.Set("bcov-auth", u.Data.Access_Token)
-   return head
+var LogLevel format.LogLevel
+
+type Playback struct {
+   BcJWT string
+   Body struct {
+      Data struct {
+         PlaybackJsonData struct {
+            Sources []Source
+         }
+      }
+   }
 }
 
-type Unauth struct {
-   Data struct {
-      Access_Token string
+func (p Playback) DASH() *Source {
+   for _, source := range p.Body.Data.PlaybackJsonData.Sources {
+      if source.Type == "application/dash+xml" {
+         return &source
+      }
    }
+   return nil
+}
+
+func (p Playback) Header() http.Header {
+   head := make(http.Header)
+   head.Set("bcov-auth", p.BcJWT)
+   return head
 }
 
 type Source struct {
@@ -30,21 +46,37 @@ type Source struct {
    Type string
 }
 
-func (p Playback) DASH() *Source {
-   for _, source := range p.Data.PlaybackJsonData.Sources {
-      if source.Type == "application/dash+xml" {
-         return &source
-      }
+type Unauth struct {
+   Data struct {
+      Access_Token string
    }
-   return nil
 }
 
-type Playback struct {
-   Data struct {
-      PlaybackJsonData struct {
-         Sources []Source
-      }
+func NewUnauth() (*Unauth, error) {
+   req, err := http.NewRequest(
+      "POST", "https://gw.cds.amcn.com/auth-orchestration-id/api/v1/unauth", nil,
+   )
+   if err != nil {
+      return nil, err
    }
+   req.Header = http.Header{
+      "X-Amcn-Device-Id": {"!"},
+      "X-Amcn-Language": {"en"},
+      "X-Amcn-Network": {"bbca"},
+      "X-Amcn-Platform": {"web"},
+      "X-Amcn-Tenant": {"amcn"},
+   }
+   LogLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   auth := new(Unauth)
+   if err := json.NewDecoder(res.Body).Decode(auth); err != nil {
+      return nil, err
+   }
+   return auth, nil
 }
 
 func (u Unauth) Playback(nid int64) (*Playback, error) {
@@ -81,11 +113,12 @@ func (u Unauth) Playback(nid int64) (*Playback, error) {
       return nil, err
    }
    defer res.Body.Close()
-   play := new(Playback)
-   if err := json.NewDecoder(res.Body).Decode(play); err != nil {
+   var play Playback
+   play.BcJWT = res.Header.Get("x-amcn-bc-jwt")
+   if err := json.NewDecoder(res.Body).Decode(&play.Body); err != nil {
       return nil, err
    }
-   return play, nil
+   return &play, nil
 }
 
 type playbackRequest struct {
@@ -97,33 +130,4 @@ type playbackRequest struct {
       PlayerWidth int `json:"playerWidth"`
       URL string `json:"url"`
    } `json:"adtags"`
-}
-
-var LogLevel format.LogLevel
-
-func NewUnauth() (*Unauth, error) {
-   req, err := http.NewRequest(
-      "POST", "https://gw.cds.amcn.com/auth-orchestration-id/api/v1/unauth", nil,
-   )
-   if err != nil {
-      return nil, err
-   }
-   req.Header = http.Header{
-      "X-Amcn-Device-Id": {"!"},
-      "X-Amcn-Language": {"en"},
-      "X-Amcn-Network": {"bbca"},
-      "X-Amcn-Platform": {"web"},
-      "X-Amcn-Tenant": {"amcn"},
-   }
-   LogLevel.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   auth := new(Unauth)
-   if err := json.NewDecoder(res.Body).Decode(auth); err != nil {
-      return nil, err
-   }
-   return auth, nil
 }
