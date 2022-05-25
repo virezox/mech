@@ -1,7 +1,7 @@
 package bbcamerica
 
 import (
-   "os"
+   "fmt"
    "testing"
 )
 
@@ -10,10 +10,9 @@ func TestUnauth(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   res, err := auth.Playback()
+   play, err := auth.Playback()
    if err != nil {
       t.Fatal(err)
    }
-   defer res.Body.Close()
-   os.Stdout.ReadFrom(res.Body)
+   fmt.Printf("%+v\n", play)
 }

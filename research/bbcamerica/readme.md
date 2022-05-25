@@ -1,69 +1,67 @@
 # BBC America
 
-Using this video:
+https://github.com/ytdl-org/youtube-dl/issues/30182
 
-https://www.bbcamerica.com/shows/killing-eve/episodes/season-4-just-dunk-me--1052529
+## Android client
+
+https://play.google.com/store/apps/details?id=com.bbca.bbcafullepisodes
 
 ## Web client
 
-This is it:
+Using this video:
+
+https://bbcamerica.com/shows/killing-eve/episodes/season-4-just-dunk-me--1052529
+
+Download the MPD:
 
 ~~~
-GET https://ssaimanifest.prod.boltdns.net/us-east-1/playback/once/v1/dash/live-timeline/bccenc/6240731308001/8ebcf878-2abe-4ca8-8edc-9e46cdb0e6b8/01af0a57-214d-4fdd-86fd-f792135ce46f/19ec62cf-9c55-45c6-a8b5-6e7e639bae85/content.mpd?bc_token=NjI4ZTkwYThfMTViZDkwMzM2ZGM1OTMxNmNmMjE4Mzk3ZGU1ODU0YjE1MzFiMmMwNjQyMGEzZWYyNDIyMjk0YzVkYWEwMGMzMw%3D%3D&rule=discos-enabled HTTP/2.0
-user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:88.0) Gecko/20100101 Firefox/88.0
-accept: */*
-accept-language: en-US,en;q=0.5
-accept-encoding: gzip, deflate, br
-origin: https://www.bbcamerica.com
-dnt: 1
-referer: https://www.bbcamerica.com/
-te: trailers
-content-length: 0
+yt-dlp -o enc.mp4 --allow-unplayable-formats `
+-f cdbdaf53-d750-457b-93fc-0090aabbbe3e-0 `
+'https://ssaimanifest.prod.boltdns.net/us-east-1/playback/once/v1/dash/live-timeline/bccenc/6240731308001/8ebcf878-2abe-4ca8-8edc-9e46cdb0e6b8/01af0a57-214d-4fdd-86fd-f792135ce46f/c84cd254-2a7d-42ab-ae7a-665ca19239e3/content.mpd?bc_token=NjI2NDBhZGFfNGY2MDc0ZTA2NmIyYTJmY2Q5MDM3NTVlNDBlNGJhMWU2ODE5ODM2ZmExYzdjOWU2YmIyNmE2ZTI4MzI1ODk1Yg%3D%3D&rule=discos-enabled'
 ~~~
 
-From:
+Next we need the Widevine [1] PSSH from the MPD file:
 
-~~~
-GET https://ssaimanifest.prod.boltdns.net/playback/once/v1/vmap/dash/live-timeline/bccenc/6240731308001/8ebcf878-2abe-4ca8-8edc-9e46cdb0e6b8/01af0a57-214d-4fdd-86fd-f792135ce46f/content.vmap?bc_token=NjI4ZWViNDNfMWJmM2QzYzM1YWEzMWY2ZDcwMjUyYTZkMzg5NzhkNjA2N2ZjZDI2NWM4YjYzY2RhNTZmOWEyZjgwMGQyOTA2OA%3D%3D&behavior_id=17308414-5636-4b1c-8c21-a168289f0440&csid=bbca_web&fw_did=f4b9e72e-2ec3-47a1-a8a6-5f2115ee6da3&idtype=gauid&prof=bbca_bc_web&mode=on-demand&caid=AMCNVR0000040191&islat=0&width=1920&height=1080&usprivacy=1YN-&ae=-1&ipaddress=72.181.23.38&rule=discos-enabled HTTP/2.0
-user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:88.0) Gecko/20100101 Firefox/88.0
-accept: */*
-accept-language: en-US,en;q=0.5
-accept-encoding: gzip, deflate, br
-origin: https://www.bbcamerica.com
-dnt: 1
-referer: https://www.bbcamerica.com/
-te: trailers
-content-length: 0
+~~~xml
+<ContentProtection schemeIdUri="urn:uuid:edef8ba9-79d6-4ace-a3c8-27dcd51d21ed"
+bc:licenseAcquisitionUrl="https://manifest.prod.boltdns.net/license/v1/cenc/widevine/6240731308001/01af0a57-214d-4fdd-86fd-f792135ce46f/883780c4-a981-494c-b994-9e93792ff8a7?fastly_token=NjI2NDZiMzVfNGUxMDY1MjI4ZWJkYmFlMzc5YjVlZjVkZTM0MjlmZDE1YTEyNjc3NWJkNmIwOWNhNGEwZjg3MmM1ZmEzZTEyOQ%3D%3D">
+   <cenc:pssh>
+   AAAAVnBzc2gAAAAA7e+LqXnWSs6jyCfc1R0h7QAAADYIARIQiDeAxKmBSUy5lJ6TeS/4pxoNd2lkZXZpbmVfdGVzdCIIMTIzNDU2NzgyB2RlZmF1bHQ=
+   </cenc:pssh>
+</ContentProtection>
 ~~~
 
-From:
+Now go back to the video page, and you should see a request like this:
 
 ~~~
-POST https://gw.cds.amcn.com/playback-id/api/v1/playback/1052529 HTTP/2.0
-user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:88.0) Gecko/20100101 Firefox/88.0
-accept: */*
-accept-language: en-US,en;q=0.5
-accept-encoding: gzip, deflate, br
-referer: https://www.bbcamerica.com/
-authorization: Bearer eyJraWQiOiJwcm9kLTEiLCJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJlbnRpdGxlbWVudHMiOiJ1bmF1dGgiLCJhdWQiOiJyZXNvdXJjZV9zZXJ2ZXIiLCJhdXRoX3R5cGUiOiJiZWFyZXIiLCJyb2xlcyI6WyJ1bmF1dGgiXSwiaXNzIjoiaXAtMTAtMi0xMTEtNjcuZWMyLmludGVybmFsIiwidG9rZW5fdHlwZSI6ImF1dGgiLCJleHAiOjE2NTM1MDczMDcsImRldmljZS1pZCI6IjAzMWE3ZWQ0LTQ0NTUtNDZkNS05YjJhLTBmMTVkODRkNzVlYyIsImlhdCI6MTY1MzUwNjcwNywianRpIjoiNzU0NDU1MmEtNzcwYy00OGM1LWI1ZTgtMzY0MzkwMjgyOGExIn0.otEDejVgDHnkKuo-Ya5hm5b46ZENk1BC0S7964JV7fG9d-NB1Pnu_k6eQyLxmZ5BCErlcPIABbG6couXZ1C4cxRjn0R9N5XBRCs585SNo2C7XrjkN3ScxnTmv_5axocapKkSfm3QkDKv9BRHhUBuLeE7HTC61WuN4DZWFwVYJ_ro2b_o1cKtceXNo7PaP_krgBjq61c0InqB5Vxr4fnIQ_L3-yOLgLbkXlI7ficsmTrrAaKHEFSSK6HmiVEoF3qpM2ciZ76i4PkSBCg5n73TjbahybAPNstbRMMnVk8lEUlTeR3t92KbIk5iWWArDJ8YODOn6hiPxIFy8cd3Rm1REw
-content-type: application/json
-x-amcn-device-id: f4b9e72e-2ec3-47a1-a8a6-5f2115ee6da3
-x-amcn-device-ad-id: f4b9e72e-2ec3-47a1-a8a6-5f2115ee6da3
-x-amcn-service-id: bbca
-x-amcn-service-group-id: 6
-x-amcn-tenant: amcn
-x-amcn-network: bbca
-x-amcn-platform: web
-x-amcn-mvpd: 
-x-amcn-adobe-id: 
-x-amcn-audience-id: 
-x-ccpa-do-not-sell: passData
-x-amcn-cache-hash: 8679a33532b1f9b3310c9af5f95e855ed49159900277aeb54aa8da1e5a5c445e
-x-amcn-language: en
-origin: https://www.bbcamerica.com
-content-length: 241
-dnt: 1
-te: trailers
-
-{"adobeShortMediaToken":"","hba":false,"adtags":{"lat":0,"url":"https://www.bbcamerica.com/shows/killing-eve/episodes/season-4-just-dunk-me--1052529","playerWidth":1920,"playerHeight":1080,"ppid":1,"mode":"on-demand"},"useLowResVideo":false}
+POST https://manifest.prod.boltdns.net/license/v1/cenc/widevine/6240731308001/01af0a57-214d-4fdd-86fd-f792135ce46f/883780c4-a981-494c-b994-9e93792ff8a7?fastly_token=NjI2NDY2ZDJfYmUxYTFkYWFlMjgwNWNkNjVkODdjNDZkOGIxZTQyNjIwZGRlNWQ5ZDIyMGJmMDcwYTc5NTRjOGM3M2IzZjNlYg%3D%3D HTTP/2.0
+bcov-auth: eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhY2NpZCI6IjYyNDA3MzEzMDgwMD...
 ~~~
+
+Now go to Get Widevine Keys, and enter the information from above:
+
+~~~
+PSSH:
+AAAAVnBzc2gAAAAA7e+LqXnWSs6jyCfc1R0h7QAAADYIARIQiDeAxKmBSUy5lJ6TeS/4pxoNd2lkZXZpbmVfdGVzdCIIMTIzNDU2NzgyB2RlZmF1bHQ=
+
+License:
+https://manifest.prod.boltdns.net/license/v1/cenc/widevine/6240731308001/01af0a57-214d-4fdd-86fd-f792135ce46f/883780c4-a981-494c-b994-9e93792ff8a7?fastly_token=NjI2NDY2ZDJfYmUxYTFkYWFlMjgwNWNkNjVkODdjNDZkOGIxZTQyNjIwZGRlNWQ5ZDIyMGJmMDcwYTc5NTRjOGM3M2IzZjNlYg%3D%3D
+
+Headers:
+bcov-auth: eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhY2NpZCI6IjYyNDA3MzEzMDgwMD...
+~~~
+
+You should get a result like this:
+
+~~~
+883780c4a981494cb9949e93792ff8a7:680a46ebd6cf2b9a6a0b05a24dcf944a
+~~~
+
+Finally, you can decrypt [2] the media:
+
+~~~
+mp4decrypt --key 1:680a46ebd6cf2b9a6a0b05a24dcf944a enc.mp4 dec.mp4
+~~~
+
+1. <https://dashif.org/identifiers/content_protection>
+2. https://bento4.com/downloads

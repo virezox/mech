@@ -7,7 +7,18 @@ import (
    "strings"
 )
 
-func (u Unauth) Playback() (*http.Response, error) {
+type Playback struct {
+   Data struct {
+      PlaybackJsonData struct {
+         Sources []struct {
+            Type string
+            Src string
+         }
+      }
+   }
+}
+
+func (u Unauth) Playback() (*Playback, error) {
    body := strings.NewReader(`
    {
       "adtags": {
@@ -40,7 +51,16 @@ func (u Unauth) Playback() (*http.Response, error) {
       "X-Ccpa-Do-Not-Sell": {"passData"},
    }
    LogLevel.Dump(req)
-   return new(http.Transport).RoundTrip(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   play := new(Playback)
+   if err := json.NewDecoder(res.Body).Decode(play); err != nil {
+      return nil, err
+   }
+   return play, nil
 }
 
 var LogLevel format.LogLevel
