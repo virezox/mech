@@ -80,6 +80,7 @@ func (m Module) Keys(body io.Reader) (Containers, error) {
    var cons Containers
    // .Msg.Key
    for _, message := range signedResponse.Get(2).GetMessages(3) {
+      var con Container
       iv, err := message.GetBytes(2)
       if err != nil {
          return nil, err
@@ -88,14 +89,12 @@ func (m Module) Keys(body io.Reader) (Containers, error) {
       if err != nil {
          return nil, err
       }
-      typ, err := message.GetVarint(4)
+      con.Type, err = message.GetVarint(4)
       if err != nil {
          return nil, err
       }
       cipher.NewCBCDecrypter(block, iv).CryptBlocks(key, key)
-      var con Container
       con.Key = unpad(key)
-      con.Type = uint64(typ)
       cons = append(cons, con)
    }
    return cons, nil
