@@ -7,20 +7,48 @@ import (
    "strings"
 )
 
-var body = strings.NewReader(`
-{
-   "adtags": {
-      "lat": 0,
-      "mode": "on-demand",
-      "ppid": 1,
-      "playerWidth": 1920,
-      "playerHeight": 1080,
-      "url": "https://www.amcplus.com/shows/orphan-black/episodes/season-1-instinct--1011152"
-   }
-}
-`)
-
 func main() {
+   req, err := http.NewRequest(
+      "POST", "https://gw.cds.amcn.com/auth-orchestration-id/api/v1/login", body,
+   )
+   if err != nil {
+      panic(err)
+   }
+   req.Header["Content-Type"] = []string{"application/json"}
+   req.Header["X-Amcn-Device-Ad-Id"] = []string{"2ad65b5c-271b-45e2-bec0-7023f9558b2b"}
+   req.Header["X-Amcn-Language"] = []string{"en"}
+   req.Header["X-Amcn-Network"] = []string{"amcplus"}
+   req.Header["X-Amcn-Platform"] = []string{"web"}
+   req.Header["X-Amcn-Service-Id"] = []string{"amcplus"}
+   req.Header["X-Amcn-Tenant"] = []string{"amcn"}
+   req.Header["X-Ccpa-Do-Not-Sell"] = []string{"doNotPassData"}
+   req.Header["X-Amcn-Service-Group-Id"] = []string{"10"}
+   req.Header["Authorization"] = []string{"Bearer eyJraWQiOiJwcm9kLTEiLCJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJlbnRpdGxlbWVudHMiOiJ1bmF1dGgiLCJhdWQiOiJyZXNvdXJjZV9zZXJ2ZXIiLCJhdXRoX3R5cGUiOiJiZWFyZXIiLCJyb2xlcyI6WyJ1bmF1dGgiXSwiaXNzIjoiaXAtMTAtMi0xMjUtMTE0LmVjMi5pbnRlcm5hbCIsInRva2VuX3R5cGUiOiJhdXRoIiwiZXhwIjoxNjUzNTk4MDM2LCJkZXZpY2UtaWQiOiIyYWQ2NWI1Yy0yNzFiLTQ1ZTItYmVjMC03MDIzZjk1NThiMmIiLCJpYXQiOjE2NTM1OTc0MzYsImp0aSI6ImEyMTEzYTEyLTYxZDAtNGJhYy1hZmUyLWFlYjU1YjFiY2FmNiJ9.BFp2BkmSkm7vluXYd72wErzGU5R6Gginy5bTXhiiM_O8yPLKdPG9ASSOOEMgdWJyaIdW8w1GcC99fWj4OtRbTlnbbPme8AR9_R_OA5d5sOmdTL3-xX289C9DasMEDe46vF7ceWFNygCLF5YBcXNeR93jwh7E0mTTcI4czkyId9ZdBjpuMg15yknnczBwgIrNJqHFyLgAe1mXVpQLByGuYawCys83HeRIgcxwJSqdCKb1tM9LgKp68TzaMnhOvUiiDNcXe4bR5LiAE_hWveZsdgUFGoqyC6CewC5O_wno0yIExWW3L576F0XrZWVpiTgLpghuBToUjOyJl5oSBAW9oA"}
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      panic(err)
+   }
+   defer res.Body.Close()
+   buf, err := httputil.DumpResponse(res, true)
+   if err != nil {
+      panic(err)
+   }
+   os.Stdout.Write(buf)
+}
+
+func playback() {
+   var body = strings.NewReader(`
+   {
+      "adtags": {
+         "lat": 0,
+         "mode": "on-demand",
+         "ppid": 1,
+         "playerWidth": 1920,
+         "playerHeight": 1080,
+         "url": "https://www.amcplus.com/shows/orphan-black/episodes/season-1-instinct--1011152"
+      }
+   }
+   `)
    req, err := http.NewRequest(
       "POST", "https://gw.cds.amcn.com/playback-id/api/v1/playback/1011152", body,
    )
