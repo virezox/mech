@@ -8,10 +8,41 @@ import (
    "github.com/89z/mech"
    "github.com/89z/mech/bbcamerica"
    "github.com/89z/mech/widevine"
+   "io"
    "net/http"
    "net/url"
    "os"
 )
+
+func (d downloader) doDASH(nid, video, audio int64) error {
+   auth, err := bbcamerica.NewUnauth()
+   if err != nil {
+      return err
+   }
+   d.Playback, err = auth.Playback(nid)
+   if err != nil {
+      return err
+   }
+   source := d.Playback.DASH()
+   fmt.Println("GET", source.Src)
+   res, err := http.Get(source.Src)
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return errors.New(res.Status)
+   }
+   d.URL = res.Request.URL
+   d.Period, err = dash.NewPeriod(res.Body)
+   if err != nil {
+      return err
+   }
+   if err := d.download(audio, dash.Audio); err != nil {
+      return err
+   }
+   return d.download(video, dash.Video)
+}
 
 func (d *downloader) download(band int64, fn dash.PeriodFunc) error {
    if band == 0 {
@@ -19,6 +50,10 @@ func (d *downloader) download(band int64, fn dash.PeriodFunc) error {
    }
    reps := d.Represents(fn)
    rep := reps.Represent(band)
+   ext, err := mech.ExtensionByType(rep.MimeType)
+   if err != nil {
+      return err
+   }
    if d.info {
       for _, each := range reps {
          if each.Bandwidth == rep.Bandwidth {
@@ -26,18 +61,16 @@ func (d *downloader) download(band int64, fn dash.PeriodFunc) error {
          }
          fmt.Println(each)
       }
-   } else {
-      if d.key == nil {
+      if d.key == "" {
          err := d.setKey()
          if err != nil {
             return err
          }
       }
-      ext, err := mech.ExtensionByType(rep.MimeType)
-      if err != nil {
-         return err
-      }
-      file, err := os.Create(d.Body.Data.PlaybackJsonData.Name + ext)
+      // github.com/edgeware/mp4ff/issues/146
+      fmt.Printf("mp4decrypt --key 1:%v enc%v dec%v\n", d.key, ext, ext)
+   } else {
+      file, err := os.Create("enc" + ext)
       if err != nil {
          return err
       }
@@ -72,7 +105,7 @@ func (d *downloader) download(band int64, fn dash.PeriodFunc) error {
             return errors.New(res.Status)
          }
          pro.AddChunk(res.ContentLength)
-         if err := dash.Decrypt(pro, res.Body, d.key); err != nil {
+         if _, err := io.Copy(pro, res.Body); err != nil {
             return err
          }
          if err := res.Body.Close(); err != nil {
@@ -105,7 +138,7 @@ func (d *downloader) setKey() error {
    if err != nil {
       return err
    }
-   d.key = keys.Content().Key
+   d.key = keys.Content().String()
    return nil
 }
 
@@ -115,35 +148,6 @@ type downloader struct {
    *url.URL
    client string
    info bool
-   key []byte
+   key string
    pem string
 }
-
-func (d downloader) doDASH(nid, video int64) error {
-   auth, err := bbcamerica.NewUnauth()
-   if err != nil {
-      return err
-   }
-   d.Playback, err = auth.Playback(nid)
-   if err != nil {
-      return err
-   }
-   source := d.Playback.DASH()
-   fmt.Println("GET", source.Src)
-   res, err := http.Get(source.Src)
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return errors.New(res.Status)
-   }
-   d.URL = res.Request.URL
-   d.Period, err = dash.NewPeriod(res.Body)
-   if err != nil {
-      return err
-   }
-   return d.download(video, dash.Video)
-}
-
-
