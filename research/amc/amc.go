@@ -1,18 +1,64 @@
-package main
+package amc
 
 import (
+   "bytes"
+   "encoding/json"
+   "github.com/89z/format"
    "net/http"
    "net/http/httputil"
    "os"
    "strings"
 )
 
-func main() {
+var LogLevel format.LogLevel
+
+type Unauth struct {
+   Data struct {
+      Access_Token string
+   }
+}
+
+func NewUnauth() (*Unauth, error) {
    req, err := http.NewRequest(
-      "POST", "https://gw.cds.amcn.com/auth-orchestration-id/api/v1/login", body,
+      "POST", "https://gw.cds.amcn.com/auth-orchestration-id/api/v1/unauth", nil,
    )
    if err != nil {
-      panic(err)
+      return nil, err
+   }
+   req.Header = http.Header{
+      "X-Amcn-Device-Id": {"!"},
+      "X-Amcn-Language": {"en"},
+      "X-Amcn-Network": {"amcplus"},
+      "X-Amcn-Platform": {"web"},
+      "X-Amcn-Tenant": {"amcn"},
+   }
+   LogLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   auth := new(Unauth)
+   if err := json.NewDecoder(res.Body).Decode(auth); err != nil {
+      return nil, err
+   }
+   return auth, nil
+}
+
+func login(email, password string) (*http.Response, error) {
+   buf := new(bytes.Buffer)
+   err := json.NewEncoder(buf).Encode(map[string]string{
+      "email": email,
+      "password": password,
+   })
+   if err != nil {
+      return nil, err
+   }
+   req, err := http.NewRequest(
+      "POST", "https://gw.cds.amcn.com/auth-orchestration-id/api/v1/login", buf,
+   )
+   if err != nil {
+      return nil, err
    }
    req.Header["Content-Type"] = []string{"application/json"}
    req.Header["X-Amcn-Device-Ad-Id"] = []string{"2ad65b5c-271b-45e2-bec0-7023f9558b2b"}
@@ -24,16 +70,7 @@ func main() {
    req.Header["X-Ccpa-Do-Not-Sell"] = []string{"doNotPassData"}
    req.Header["X-Amcn-Service-Group-Id"] = []string{"10"}
    req.Header["Authorization"] = []string{"Bearer eyJraWQiOiJwcm9kLTEiLCJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJlbnRpdGxlbWVudHMiOiJ1bmF1dGgiLCJhdWQiOiJyZXNvdXJjZV9zZXJ2ZXIiLCJhdXRoX3R5cGUiOiJiZWFyZXIiLCJyb2xlcyI6WyJ1bmF1dGgiXSwiaXNzIjoiaXAtMTAtMi0xMjUtMTE0LmVjMi5pbnRlcm5hbCIsInRva2VuX3R5cGUiOiJhdXRoIiwiZXhwIjoxNjUzNTk4MDM2LCJkZXZpY2UtaWQiOiIyYWQ2NWI1Yy0yNzFiLTQ1ZTItYmVjMC03MDIzZjk1NThiMmIiLCJpYXQiOjE2NTM1OTc0MzYsImp0aSI6ImEyMTEzYTEyLTYxZDAtNGJhYy1hZmUyLWFlYjU1YjFiY2FmNiJ9.BFp2BkmSkm7vluXYd72wErzGU5R6Gginy5bTXhiiM_O8yPLKdPG9ASSOOEMgdWJyaIdW8w1GcC99fWj4OtRbTlnbbPme8AR9_R_OA5d5sOmdTL3-xX289C9DasMEDe46vF7ceWFNygCLF5YBcXNeR93jwh7E0mTTcI4czkyId9ZdBjpuMg15yknnczBwgIrNJqHFyLgAe1mXVpQLByGuYawCys83HeRIgcxwJSqdCKb1tM9LgKp68TzaMnhOvUiiDNcXe4bR5LiAE_hWveZsdgUFGoqyC6CewC5O_wno0yIExWW3L576F0XrZWVpiTgLpghuBToUjOyJl5oSBAW9oA"}
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      panic(err)
-   }
-   defer res.Body.Close()
-   buf, err := httputil.DumpResponse(res, true)
-   if err != nil {
-      panic(err)
-   }
-   os.Stdout.Write(buf)
+   return new(http.Transport).RoundTrip(req)
 }
 
 func playback() {
