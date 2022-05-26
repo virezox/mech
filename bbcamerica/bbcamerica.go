@@ -15,6 +15,7 @@ type Playback struct {
    Body struct {
       Data struct {
          PlaybackJsonData struct {
+            Name string
             Sources []Source
          }
       }
