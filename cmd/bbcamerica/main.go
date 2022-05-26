@@ -35,7 +35,7 @@ func main() {
       bbcamerica.LogLevel = 1
    }
    if nid >= 1 {
-      err := down.DASH(nid, video)
+      err := down.doDASH(nid, video)
       if err != nil {
          panic(err)
       }

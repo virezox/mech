@@ -5,12 +5,28 @@ import (
    "errors"
    "fmt"
    "github.com/89z/format"
+   "github.com/89z/mech"
    "net/http"
    "net/url"
    "path"
    "strings"
    "time"
 )
+
+func (c Content) Base() string {
+   if c.Meta.MediaType == "movie" {
+      return c.Title
+   }
+   var buf strings.Builder
+   buf.WriteString(c.Series.Title)
+   buf.WriteByte('-')
+   buf.WriteString(mech.Clean(c.Title))
+   buf.WriteByte('-')
+   buf.WriteString(c.SeasonNumber)
+   buf.WriteByte('-')
+   buf.WriteString(c.EpisodeNumber)
+   return buf.String()
+}
 
 type Content struct {
    Meta struct {
@@ -98,21 +114,6 @@ func (c Content) Format(f fmt.State, verb rune) {
          }
       }
    }
-}
-
-func (c Content) Base() string {
-   if c.Meta.MediaType == "movie" {
-      return c.Title
-   }
-   var buf strings.Builder
-   buf.WriteString(c.Series.Title)
-   buf.WriteByte('-')
-   buf.WriteString(c.Title)
-   buf.WriteByte('-')
-   buf.WriteString(c.SeasonNumber)
-   buf.WriteByte('-')
-   buf.WriteString(c.EpisodeNumber)
-   return buf.String()
 }
 
 var LogLevel format.LogLevel

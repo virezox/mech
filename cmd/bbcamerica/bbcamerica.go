@@ -1,6 +1,7 @@
 package main
 
 import (
+   "errors"
    "fmt"
    "github.com/89z/format"
    "github.com/89z/format/dash"
@@ -11,74 +12,6 @@ import (
    "net/url"
    "os"
 )
-
-func (d *downloader) setKey() error {
-   privateKey, err := os.ReadFile(d.pem)
-   if err != nil {
-      return err
-   }
-   clientID, err := os.ReadFile(d.client)
-   if err != nil {
-      return err
-   }
-   kID, err := d.Protection().KID()
-   if err != nil {
-      return err
-   }
-   mod, err := widevine.NewModule(privateKey, clientID, kID)
-   if err != nil {
-      return err
-   }
-   site, err := bbcamerica.NewCrossSite()
-   if err != nil {
-      return err
-   }
-   play, err := site.Playback(d.Meta.ID)
-   if err != nil {
-      return err
-   }
-   keys, err := mod.Post(play.DRM.Widevine.LicenseServer, nil)
-   if err != nil {
-      return err
-   }
-   d.key = keys.Content().Key
-   return nil
-}
-
-type downloader struct {
-   *dash.Period
-   *url.URL
-   base string
-   client string
-   info bool
-   key []byte
-   pem string
-}
-
-func (d downloader) DASH(nid, video int64) error {
-   auth, err := bbcamerica.NewUnauth()
-   if err != nil {
-      return err
-   }
-   play, err := auth.Playback(nid)
-   if err != nil {
-      return err
-   }
-   source := play.DASH()
-   fmt.Println("GET", source.Src)
-   res, err := http.Get(source.Src)
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   d.URL = res.Request.URL
-   d.Period, err = dash.NewPeriod(res.Body)
-   if err != nil {
-      return err
-   }
-   d.base = play.Body.Data.PlaybackJsonData.Name
-   return d.download(video, dash.Video)
-}
 
 func (d *downloader) download(band int64, fn dash.PeriodFunc) error {
    if band == 0 {
@@ -104,7 +37,7 @@ func (d *downloader) download(band int64, fn dash.PeriodFunc) error {
       if err != nil {
          return err
       }
-      file, err := os.Create(d.base + ext)
+      file, err := os.Create(d.Body.Data.PlaybackJsonData.Name + ext)
       if err != nil {
          return err
       }
@@ -119,6 +52,9 @@ func (d *downloader) download(band int64, fn dash.PeriodFunc) error {
          return err
       }
       defer res.Body.Close()
+      if res.StatusCode != http.StatusOK {
+         return errors.New(res.Status)
+      }
       if _, err := file.ReadFrom(res.Body); err != nil {
          return err
       }
@@ -132,6 +68,9 @@ func (d *downloader) download(band int64, fn dash.PeriodFunc) error {
          if err != nil {
             return err
          }
+         if res.StatusCode != http.StatusOK {
+            return errors.New(res.Status)
+         }
          pro.AddChunk(res.ContentLength)
          if err := dash.Decrypt(pro, res.Body, d.key); err != nil {
             return err
@@ -143,3 +82,68 @@ func (d *downloader) download(band int64, fn dash.PeriodFunc) error {
    }
    return nil
 }
+
+func (d *downloader) setKey() error {
+   privateKey, err := os.ReadFile(d.pem)
+   if err != nil {
+      return err
+   }
+   clientID, err := os.ReadFile(d.client)
+   if err != nil {
+      return err
+   }
+   kID, err := d.Protection().KID()
+   if err != nil {
+      return err
+   }
+   mod, err := widevine.NewModule(privateKey, clientID, kID)
+   if err != nil {
+      return err
+   }
+   addr := d.DASH().Key_Systems.Widevine.License_URL
+   keys, err := mod.Post(addr, d.Header())
+   if err != nil {
+      return err
+   }
+   d.key = keys.Content().Key
+   return nil
+}
+
+type downloader struct {
+   *bbcamerica.Playback
+   *dash.Period
+   *url.URL
+   client string
+   info bool
+   key []byte
+   pem string
+}
+
+func (d downloader) doDASH(nid, video int64) error {
+   auth, err := bbcamerica.NewUnauth()
+   if err != nil {
+      return err
+   }
+   d.Playback, err = auth.Playback(nid)
+   if err != nil {
+      return err
+   }
+   source := d.Playback.DASH()
+   fmt.Println("GET", source.Src)
+   res, err := http.Get(source.Src)
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return errors.New(res.Status)
+   }
+   d.URL = res.Request.URL
+   d.Period, err = dash.NewPeriod(res.Body)
+   if err != nil {
+      return err
+   }
+   return d.download(video, dash.Video)
+}
+
+

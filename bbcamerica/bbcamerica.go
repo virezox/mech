@@ -3,6 +3,7 @@ package bbcamerica
 import (
    "bytes"
    "encoding/json"
+   "errors"
    "github.com/89z/format"
    "net/http"
    "strconv"
@@ -73,6 +74,9 @@ func NewUnauth() (*Unauth, error) {
       return nil, err
    }
    defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return nil, errors.New(res.Status)
+   }
    auth := new(Unauth)
    if err := json.NewDecoder(res.Body).Decode(auth); err != nil {
       return nil, err
@@ -114,6 +118,9 @@ func (u Unauth) Playback(nid int64) (*Playback, error) {
       return nil, err
    }
    defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return nil, errors.New(res.Status)
+   }
    var play Playback
    play.BcJWT = res.Header.Get("x-amcn-bc-jwt")
    if err := json.NewDecoder(res.Body).Decode(&play.Body); err != nil {
