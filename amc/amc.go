@@ -1,3 +1,4 @@
+// github.com/89z
 package amc
 
 import (
@@ -7,6 +8,28 @@ import (
    "strings"
 )
 
+func (p Playback) Base() string {
+   var buf strings.Builder
+   buf.WriteString(p.PlaybackJsonData.Custom_Fields.Season)
+   buf.WriteByte('-')
+   buf.WriteString(p.PlaybackJsonData.Custom_Fields.Episode)
+   return buf.String()
+}
+
+type Playback struct {
+   PlaybackJsonData PlaybackJsonData
+   BcJWT string
+}
+
+type PlaybackJsonData struct {
+   Custom_Fields struct {
+      Season string
+      Episode string
+   }
+   Name string
+   Sources []Source
+}
+
 var LogLevel format.LogLevel
 
 func GetNID(addr string) (int64, error) {
@@ -15,27 +38,6 @@ func GetNID(addr string) (int64, error) {
       return 0, notFound{"--"}
    }
    return strconv.ParseInt(nid, 10, 64)
-}
-
-type Playback struct {
-   BcJWT string
-   Body struct {
-      Data struct {
-         PlaybackJsonData struct {
-            Name string
-            Sources []Source
-         }
-      }
-   }
-}
-
-func (p Playback) DASH() *Source {
-   for _, source := range p.Body.Data.PlaybackJsonData.Sources {
-      if source.Type == "application/dash+xml" {
-         return &source
-      }
-   }
-   return nil
 }
 
 func (p Playback) Header() http.Header {
@@ -74,4 +76,19 @@ type playbackRequest struct {
       PlayerWidth int `json:"playerWidth"`
       URL string `json:"url"`
    } `json:"adtags"`
+}
+
+type playbackResponse struct {
+   Data struct {
+      PlaybackJsonData PlaybackJsonData
+   }
+}
+
+func (p Playback) DASH() *Source {
+   for _, source := range p.PlaybackJsonData.Sources {
+      if source.Type == "application/dash+xml" {
+         return &source
+      }
+   }
+   return nil
 }

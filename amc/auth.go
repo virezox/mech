@@ -1,3 +1,4 @@
+// github.com/89z
 package amc
 
 import (
@@ -93,17 +94,39 @@ func (a *Auth) Login(email, password string) error {
    return json.NewDecoder(res.Body).Decode(a)
 }
 
+func (a *Auth) Refresh() error {
+   req, err := http.NewRequest(
+      "POST",
+      "https://gw.cds.amcn.com/auth-orchestration-id/api/v1/refresh",
+      nil,
+   )
+   if err != nil {
+      return err
+   }
+   req.Header.Set("Authorization", "Bearer " + a.Data.Refresh_Token)
+   LogLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return errors.New(res.Status)
+   }
+   return json.NewDecoder(res.Body).Decode(a)
+}
+
 func (a Auth) Playback(nid int64) (*Playback, error) {
    var (
       addr []byte
-      body playbackRequest
+      src playbackRequest
    )
    addr = append(addr, "https://gw.cds.amcn.com/playback-id/api/v1/playback/"...)
    addr = strconv.AppendInt(addr, nid, 10)
-   body.AdTags.Mode = "on-demand"
-   body.AdTags.URL = "!"
+   src.AdTags.Mode = "on-demand"
+   src.AdTags.URL = "!"
    buf := new(bytes.Buffer)
-   err := json.NewEncoder(buf).Encode(body)
+   err := json.NewEncoder(buf).Encode(src)
    if err != nil {
       return nil, err
    }
@@ -131,32 +154,14 @@ func (a Auth) Playback(nid int64) (*Playback, error) {
    if res.StatusCode != http.StatusOK {
       return nil, errors.New(res.Status)
    }
-   var play Playback
-   play.BcJWT = res.Header.Get("X-AMCN-BC-JWT")
-   if err := json.NewDecoder(res.Body).Decode(&play.Body); err != nil {
+   var (
+      dst playbackResponse
+      play Playback
+   )
+   if err := json.NewDecoder(res.Body).Decode(&dst); err != nil {
       return nil, err
    }
+   play.PlaybackJsonData = dst.Data.PlaybackJsonData
+   play.BcJWT = res.Header.Get("X-AMCN-BC-JWT")
    return &play, nil
-}
-
-func (a *Auth) Refresh() error {
-   req, err := http.NewRequest(
-      "POST",
-      "https://gw.cds.amcn.com/auth-orchestration-id/api/v1/refresh",
-      nil,
-   )
-   if err != nil {
-      return err
-   }
-   req.Header.Set("Authorization", "Bearer " + a.Data.Refresh_Token)
-   LogLevel.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return errors.New(res.Status)
-   }
-   return json.NewDecoder(res.Body).Decode(a)
 }
