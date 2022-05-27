@@ -1,7 +1,6 @@
 package amc
 
 import (
-   "fmt"
    "github.com/89z/format/dash"
    "github.com/89z/mech/widevine"
    "os"
@@ -54,9 +53,7 @@ func TestPlayback(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   fmt.Printf("%+v\n", keys)
-   return
-   if keys.Content().String() != "680a46ebd6cf2b9a6a0b05a24dcf944a" {
+   if keys.Content().String() != "a66a5603545ad206c1a78e160a6710b1" {
       t.Fatal(keys)
    }
 }

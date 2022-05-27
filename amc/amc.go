@@ -9,8 +9,14 @@ import (
    "strconv"
 )
 
+func (p Playback) Header() http.Header {
+   head := make(http.Header)
+   head.Set("bcov-auth", p.BcJWT)
+   return head
+}
+
 func (p Playback) DASH() *Source {
-   for _, source := range p.Data.PlaybackJsonData.Sources {
+   for _, source := range p.Body.Data.PlaybackJsonData.Sources {
       if source.Type == "application/dash+xml" {
          return &source
       }
@@ -29,10 +35,13 @@ type Source struct {
 }
 
 type Playback struct {
-   Data struct {
-      PlaybackJsonData struct {
-         Name string
-         Sources []Source
+   BcJWT string
+   Body struct {
+      Data struct {
+         PlaybackJsonData struct {
+            Name string
+            Sources []Source
+         }
       }
    }
 }
@@ -75,11 +84,12 @@ func (a Auth) Playback(nid int64) (*Playback, error) {
    if res.StatusCode != http.StatusOK {
       return nil, errors.New(res.Status)
    }
-   play := new(Playback)
-   if err := json.NewDecoder(res.Body).Decode(play); err != nil {
+   var play Playback
+   play.BcJWT = res.Header.Get("X-AMCN-BC-JWT")
+   if err := json.NewDecoder(res.Body).Decode(&play.Body); err != nil {
       return nil, err
    }
-   return play, nil
+   return &play, nil
 }
 
 var LogLevel format.LogLevel
