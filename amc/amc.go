@@ -3,31 +3,18 @@ package amc
 import (
    "github.com/89z/format"
    "net/http"
+   "strconv"
+   "strings"
 )
 
-func (p Playback) Header() http.Header {
-   head := make(http.Header)
-   head.Set("bcov-auth", p.BcJWT)
-   return head
-}
+var LogLevel format.LogLevel
 
-func (p Playback) DASH() *Source {
-   for _, source := range p.Body.Data.PlaybackJsonData.Sources {
-      if source.Type == "application/dash+xml" {
-         return &source
-      }
+func GetNID(addr string) (int64, error) {
+   _, nid, ok := strings.Cut(addr, "--")
+   if !ok {
+      return 0, notFound{"--"}
    }
-   return nil
-}
-
-type Source struct {
-   Key_Systems struct {
-      Widevine struct {
-         License_URL string
-      } `json:"com.widevine.alpha"`
-   }
-   Src string
-   Type string
+   return strconv.ParseInt(nid, 10, 64)
 }
 
 type Playback struct {
@@ -42,7 +29,41 @@ type Playback struct {
    }
 }
 
-var LogLevel format.LogLevel
+func (p Playback) DASH() *Source {
+   for _, source := range p.Body.Data.PlaybackJsonData.Sources {
+      if source.Type == "application/dash+xml" {
+         return &source
+      }
+   }
+   return nil
+}
+
+func (p Playback) Header() http.Header {
+   head := make(http.Header)
+   head.Set("bcov-auth", p.BcJWT)
+   return head
+}
+
+type Source struct {
+   Key_Systems struct {
+      Widevine struct {
+         License_URL string
+      } `json:"com.widevine.alpha"`
+   }
+   Src string
+   Type string
+}
+
+type notFound struct {
+   value string
+}
+
+func (n notFound) Error() string {
+   var buf []byte
+   buf = strconv.AppendQuote(buf, n.value)
+   buf = append(buf, " is not found"...)
+   return string(buf)
+}
 
 type playbackRequest struct {
    AdTags struct {

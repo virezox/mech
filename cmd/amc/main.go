@@ -13,6 +13,9 @@ func main() {
       panic(err)
    }
    var down downloader
+   // a
+   var address string
+   flag.StringVar(&address, "a", "", "address")
    // b
    var nid int64
    flag.Int64Var(&nid, "b", 0, "NID")
@@ -23,11 +26,13 @@ func main() {
    var email string
    flag.StringVar(&email, "e", "", "email")
    // f
+   // amcplus.com/shows/orphan-black/episodes/season-1-natural-selection--1011153
    var video int64
-   flag.Int64Var(&video, "f", 1662000, "video bandwidth")
+   flag.Int64Var(&video, "f", 1_999_999, "video bandwidth")
    // g
+   // amcplus.com/shows/orphan-black/episodes/season-1-natural-selection--1011153
    var audio int64
-   flag.Int64Var(&audio, "g", 126000, "audio bandwidth")
+   flag.Int64Var(&audio, "g", 127_000, "audio bandwidth")
    // i
    flag.BoolVar(&down.info, "i", false, "information")
    // k
@@ -48,8 +53,8 @@ func main() {
       if err != nil {
          panic(err)
       }
-   } else if nid >= 1 {
-      err := down.doDASH(nid, video, audio)
+   } else if nid >= 1 || address != "" {
+      err := down.doDASH(address, nid, video, audio)
       if err != nil {
          panic(err)
       }

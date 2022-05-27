@@ -14,22 +14,7 @@ import (
    "os"
 )
 
-func doLogin(email, password string) error {
-   auth, err := amc.Unauth()
-   if err != nil {
-      return err
-   }
-   if err := auth.Login(email, password); err != nil {
-      return err
-   }
-   home, err := os.UserHomeDir()
-   if err != nil {
-      return err
-   }
-   return auth.Create(home, "mech/amc.json")
-}
-
-func (d downloader) doDASH(nid, video, audio int64) error {
+func (d downloader) doDASH(address string, nid, video, audio int64) error {
    home, err := os.UserHomeDir()
    if err != nil {
       return err
@@ -43,6 +28,12 @@ func (d downloader) doDASH(nid, video, audio int64) error {
    }
    if err := auth.Create(home, "mech/amc.json"); err != nil {
       return err
+   }
+   if nid == 0 {
+      nid, err = amc.GetNID(address)
+      if err != nil {
+         return err
+      }
    }
    d.Playback, err = auth.Playback(nid)
    if err != nil {
@@ -175,4 +166,19 @@ type downloader struct {
    info bool
    key string
    pem string
+}
+
+func doLogin(email, password string) error {
+   auth, err := amc.Unauth()
+   if err != nil {
+      return err
+   }
+   if err := auth.Login(email, password); err != nil {
+      return err
+   }
+   home, err := os.UserHomeDir()
+   if err != nil {
+      return err
+   }
+   return auth.Create(home, "mech/amc.json")
 }
