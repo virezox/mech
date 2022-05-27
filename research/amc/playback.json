@@ -1,0 +1,176 @@
+{
+  "success": true,
+  "status": 200,
+  "data": {
+    "playbackJsonData": {
+      "poster": "https://cf-images.us-east-1.prod.boltdns.net/v1/jit/6245817279001/aff72f30-a546-4e44-99bf-d630f41c1adf/main/1280x720/22m25s365ms/match/image.jpg",
+      "thumbnail": "https://cf-images.us-east-1.prod.boltdns.net/v1/jit/6245817279001/aff72f30-a546-4e44-99bf-d630f41c1adf/main/160x90/22m25s365ms/match/image.jpg",
+      "poster_sources": [
+        {
+          "src": "https://cf-images.us-east-1.prod.boltdns.net/v1/jit/6245817279001/aff72f30-a546-4e44-99bf-d630f41c1adf/main/1280x720/22m25s365ms/match/image.jpg"
+        }
+      ],
+      "thumbnail_sources": [
+        {
+          "src": "https://cf-images.us-east-1.prod.boltdns.net/v1/jit/6245817279001/aff72f30-a546-4e44-99bf-d630f41c1adf/main/160x90/22m25s365ms/match/image.jpg"
+        }
+      ],
+      "description": "Sarah continues her con, earning \"Beth.\"",
+      "tags": [],
+      "cue_points": [],
+      "custom_fields": {
+        "active": "YES",
+        "advertising_type": "DAI",
+        "downloadable": "NO",
+        "episode": "2",
+        "exclude_from_sync": "NO",
+        "genre": "Drama",
+        "parent_network": "BBCA",
+        "rating_tv": "TV-14",
+        "restricted_ads": "NO",
+        "season": "1",
+        "share_s_and_p_exclude": "YES",
+        "show": "Orphan Black",
+        "tms_episode_id": "EP016349650002",
+        "tms_series_id": "SH016349650000",
+        "video_category": "TVE-Auth"
+      },
+      "account_id": "6245817279001",
+      "sources": [
+        {
+          "codecs": "avc1,mp4a",
+          "ext_x_version": "5",
+          "key_systems": {
+            "com.apple.fps.1_0": {
+              "certificate_url": "https://manifest.prod.boltdns.net/license/v1/fairplay_app_cert/6245817279001",
+              "key_request_url": "https://manifest.prod.boltdns.net/license/v1/fairplay/6245817279001/aff72f30-a546-4e44-99bf-d630f41c1adf/e464db80-ad39-43e9-b69f-d17668680e7c?fastly_token=NjI5MDdmNWVfMzNiYzRlZTVhY2NmOTg2ODRlN2QwNjdiYTRhYWRhMWIwZmNlOTQ3ZjdmNTY3YzBlYjM5ZmYwMjEwM2YwOGU5MA%3D%3D"
+            }
+          },
+          "src": "http://ssaimanifest.prod.boltdns.net/playback/once/v1/hls/v5/fairplay/6245817279001/74263065-1285-4d00-842d-73a66554716a/aff72f30-a546-4e44-99bf-d630f41c1adf/master.m3u8?bc_token=NjI5MDdmNWVfMzhjZmYwMDliMzIxYTViMTg1ZjVmY2Y5NjRhZWJhMWEzZDllMmI0Mzc4ODkxYmI2MDM0MmExNzE3ZGNlMzgyOA%3D%3D",
+          "type": "application/x-mpegURL",
+          "vmap": "http://ssaimanifest.prod.boltdns.net/playback/once/v1/vmap/hls/v5/fairplay/6245817279001/74263065-1285-4d00-842d-73a66554716a/aff72f30-a546-4e44-99bf-d630f41c1adf/content.vmap?bc_token=NjI5MDdmNWVfNzUwMzE1OTcyZjY4N2YwZjYwZGQ3OTY2YWY0ZWJiZDQ4MTc3YWQwNTU5ZTNiMmQ2OTQwZTMxMGIwZGFjNDJiNg%3D%3D&csid=svod_amcplus_web&fw_did=!&idtype=gauid&prof=amcplus_bc_web&mode=on-demand&caid=OOAMCNEP0000009850&islat=0&width=0&height=0&usprivacy=1YY-&ae=-1&ipaddress=72.181.23.38"
+        },
+        {
+          "codecs": "avc1,mp4a",
+          "ext_x_version": "5",
+          "key_systems": {
+            "com.apple.fps.1_0": {
+              "certificate_url": "https://manifest.prod.boltdns.net/license/v1/fairplay_app_cert/6245817279001",
+              "key_request_url": "https://manifest.prod.boltdns.net/license/v1/fairplay/6245817279001/aff72f30-a546-4e44-99bf-d630f41c1adf/e464db80-ad39-43e9-b69f-d17668680e7c?fastly_token=NjI5MDdmNWVfMzNiYzRlZTVhY2NmOTg2ODRlN2QwNjdiYTRhYWRhMWIwZmNlOTQ3ZjdmNTY3YzBlYjM5ZmYwMjEwM2YwOGU5MA%3D%3D"
+            }
+          },
+          "src": "https://ssaimanifest.prod.boltdns.net/playback/once/v1/hls/v5/fairplay/6245817279001/74263065-1285-4d00-842d-73a66554716a/aff72f30-a546-4e44-99bf-d630f41c1adf/master.m3u8?bc_token=NjI5MDdmNWVfMzhjZmYwMDliMzIxYTViMTg1ZjVmY2Y5NjRhZWJhMWEzZDllMmI0Mzc4ODkxYmI2MDM0MmExNzE3ZGNlMzgyOA%3D%3D",
+          "type": "application/x-mpegURL",
+          "vmap": "https://ssaimanifest.prod.boltdns.net/playback/once/v1/vmap/hls/v5/fairplay/6245817279001/74263065-1285-4d00-842d-73a66554716a/aff72f30-a546-4e44-99bf-d630f41c1adf/content.vmap?bc_token=NjI5MDdmNWVfNzUwMzE1OTcyZjY4N2YwZjYwZGQ3OTY2YWY0ZWJiZDQ4MTc3YWQwNTU5ZTNiMmQ2OTQwZTMxMGIwZGFjNDJiNg%3D%3D&csid=svod_amcplus_web&fw_did=!&idtype=gauid&prof=amcplus_bc_web&mode=on-demand&caid=OOAMCNEP0000009850&islat=0&width=0&height=0&usprivacy=1YY-&ae=-1&ipaddress=72.181.23.38"
+        },
+        {
+          "codecs": "avc1,mp4a",
+          "key_systems": {
+            "com.microsoft.playready": {
+              "license_url": "https://manifest.prod.boltdns.net/license/v1/cenc/playready/6245817279001/aff72f30-a546-4e44-99bf-d630f41c1adf/c0e598b2-47fa-4435-9029-9d5ef47da32c?fastly_token=NjI5MDdmNWVfMTRkM2VkYWE3OTM0MTU3YjA1YTNmZmU1OGIxZTQzNmRlMTNmMzIzYzE4YTczY2ViNDczZDAzODExZmE0NjdmYQ%3D%3D"
+            },
+            "com.widevine.alpha": {
+              "license_url": "https://manifest.prod.boltdns.net/license/v1/cenc/widevine/6245817279001/aff72f30-a546-4e44-99bf-d630f41c1adf/c0e598b2-47fa-4435-9029-9d5ef47da32c?fastly_token=NjI5MDdmNWVfZDRiMWQ0NzE2NzFjZTExNDQyMDA4OGUzYmJjMGRiMjk1MzhiMzljNmIwNWIyMGFkMjc5NDNiZjFkMDgwNjJkMw%3D%3D"
+            }
+          },
+          "profiles": "urn:mpeg:dash:profile:isoff-live:2011",
+          "src": "http://ssaimanifest.prod.boltdns.net/playback/once/v1/dash/live-timeline/bccenc/6245817279001/74263065-1285-4d00-842d-73a66554716a/aff72f30-a546-4e44-99bf-d630f41c1adf/manifest.mpd?bc_token=NjI5MDdmNWVfNjY0ZWJhMzc1YWZlNjQ5YjYyZmJlZTRkOTJkZTIzMmExY2MwNWIzZDk0NTNmYjhmMmE0MzA3ZTIxNWRhM2Y2Mw%3D%3D",
+          "type": "application/dash+xml",
+          "vmap": "http://ssaimanifest.prod.boltdns.net/playback/once/v1/vmap/dash/live-timeline/bccenc/6245817279001/74263065-1285-4d00-842d-73a66554716a/aff72f30-a546-4e44-99bf-d630f41c1adf/content.vmap?bc_token=NjI5MDdmNWVfZDVhNDkxMzc4MjdmZjQ3NTkxZDA5MmYyYjQ2MGVmMjczOWM1MzU1MjhmN2FkYzBlZThkM2JkMzcwOTAxZDFmNA%3D%3D&csid=svod_amcplus_web&fw_did=!&idtype=gauid&prof=amcplus_bc_web&mode=on-demand&caid=OOAMCNEP0000009850&islat=0&width=0&height=0&usprivacy=1YY-&ae=-1&ipaddress=72.181.23.38"
+        },
+        {
+          "codecs": "avc1,mp4a",
+          "key_systems": {
+            "com.microsoft.playready": {
+              "license_url": "https://manifest.prod.boltdns.net/license/v1/cenc/playready/6245817279001/aff72f30-a546-4e44-99bf-d630f41c1adf/c0e598b2-47fa-4435-9029-9d5ef47da32c?fastly_token=NjI5MDdmNWVfMTRkM2VkYWE3OTM0MTU3YjA1YTNmZmU1OGIxZTQzNmRlMTNmMzIzYzE4YTczY2ViNDczZDAzODExZmE0NjdmYQ%3D%3D"
+            },
+            "com.widevine.alpha": {
+              "license_url": "https://manifest.prod.boltdns.net/license/v1/cenc/widevine/6245817279001/aff72f30-a546-4e44-99bf-d630f41c1adf/c0e598b2-47fa-4435-9029-9d5ef47da32c?fastly_token=NjI5MDdmNWVfZDRiMWQ0NzE2NzFjZTExNDQyMDA4OGUzYmJjMGRiMjk1MzhiMzljNmIwNWIyMGFkMjc5NDNiZjFkMDgwNjJkMw%3D%3D"
+            }
+          },
+          "profiles": "urn:mpeg:dash:profile:isoff-live:2011",
+          "src": "https://ssaimanifest.prod.boltdns.net/playback/once/v1/dash/live-timeline/bccenc/6245817279001/74263065-1285-4d00-842d-73a66554716a/aff72f30-a546-4e44-99bf-d630f41c1adf/manifest.mpd?bc_token=NjI5MDdmNWVfNjY0ZWJhMzc1YWZlNjQ5YjYyZmJlZTRkOTJkZTIzMmExY2MwNWIzZDk0NTNmYjhmMmE0MzA3ZTIxNWRhM2Y2Mw%3D%3D",
+          "type": "application/dash+xml",
+          "vmap": "https://ssaimanifest.prod.boltdns.net/playback/once/v1/vmap/dash/live-timeline/bccenc/6245817279001/74263065-1285-4d00-842d-73a66554716a/aff72f30-a546-4e44-99bf-d630f41c1adf/content.vmap?bc_token=NjI5MDdmNWVfZDVhNDkxMzc4MjdmZjQ3NTkxZDA5MmYyYjQ2MGVmMjczOWM1MzU1MjhmN2FkYzBlZThkM2JkMzcwOTAxZDFmNA%3D%3D&csid=svod_amcplus_web&fw_did=!&idtype=gauid&prof=amcplus_bc_web&mode=on-demand&caid=OOAMCNEP0000009850&islat=0&width=0&height=0&usprivacy=1YY-&ae=-1&ipaddress=72.181.23.38"
+        }
+      ],
+      "name": "Instinct",
+      "reference_id": "OOAMCNEP0000009850",
+      "long_description": "Sarah continues her con, earning \"Beth\" a second chance on the force; Alison may have answers.",
+      "duration": 2690731,
+      "economics": "AD_SUPPORTED",
+      "text_tracks": [],
+      "published_at": "2021-07-12T21:46:09.065Z",
+      "created_at": "2021-07-12T21:46:09.053Z",
+      "updated_at": "2022-04-27T15:14:43.794Z",
+      "offline_enabled": true,
+      "id": "6263435108001"
+    },
+    "adTag": {
+      "params": [
+        {
+          "key": "csid",
+          "value": "svod_amcplus_web",
+          "macro": "{csid}"
+        },
+        {
+          "key": "_fw_did",
+          "value": "!",
+          "macro": "{fw_did}"
+        },
+        {
+          "key": "ad_id_type",
+          "value": "gauid",
+          "macro": "{idtype}"
+        },
+        {
+          "key": "prof",
+          "value": "amcplus_bc_web",
+          "macro": "{prof}"
+        },
+        {
+          "key": "mode",
+          "value": "on-demand",
+          "macro": "{mode}"
+        },
+        {
+          "key": "caid",
+          "value": "OOAMCNEP0000009850",
+          "macro": "{caid}"
+        },
+        {
+          "key": "_fw_is_lat",
+          "value": "0",
+          "macro": "{islat}"
+        },
+        {
+          "key": "_fw_player_width",
+          "value": "0",
+          "macro": "{width}"
+        },
+        {
+          "key": "_fw_player_height",
+          "value": "0",
+          "macro": "{height}"
+        },
+        {
+          "key": "_fw_us_privacy",
+          "value": "1YY-",
+          "macro": "{usprivacy}"
+        },
+        {
+          "key": "_fw_ae",
+          "value": "-1",
+          "macro": "{ae}"
+        },
+        {
+          "key": "vip",
+          "value": "72.181.23.38",
+          "macro": "{ipaddress}"
+        }
+      ],
+      "macro_params_string": "csid=svod_amcplus_web&fw_did=!&idtype=gauid&prof=amcplus_bc_web&mode=on-demand&caid=OOAMCNEP0000009850&islat=0&width=0&height=0&usprivacy=1YY-&ae=-1&ipaddress=72.181.23.38",
+      "key_params_string": "csid=svod_amcplus_web&_fw_did=!&ad_id_type=gauid&prof=amcplus_bc_web&mode=on-demand&caid=OOAMCNEP0000009850&_fw_is_lat=0&_fw_player_width=0&_fw_player_height=0&_fw_us_privacy=1YY-&_fw_ae=-1&vip=72.181.23.38"
+    }
+  }
+}
