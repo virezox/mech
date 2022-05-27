@@ -117,6 +117,7 @@ type playbackRequest struct {
       URL string `json:"url"`
    } `json:"adtags"`
 }
+
 func (a *Auth) Refresh() error {
    req, err := http.NewRequest(
       "POST",
