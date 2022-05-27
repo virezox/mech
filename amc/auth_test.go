@@ -10,6 +10,23 @@ import (
 // amcplus.com/shows/orphan-black/episodes/season-1-instinct--1011152
 const nid = 1011152
 
+func TestLogin(t *testing.T) {
+   auth, err := Unauth()
+   if err != nil {
+      t.Fatal(err)
+   }
+   if err := auth.Login(email, password); err != nil {
+      t.Fatal(err)
+   }
+   home, err := os.UserHomeDir()
+   if err != nil {
+      t.Fatal(err)
+   }
+   if err := auth.Create(home, "mech/amc.json"); err != nil {
+      t.Fatal(err)
+   }
+}
+
 func TestPlayback(t *testing.T) {
    home, err := os.UserHomeDir()
    if err != nil {
@@ -68,23 +85,6 @@ func TestRefresh(t *testing.T) {
       t.Fatal(err)
    }
    if err := auth.Refresh(); err != nil {
-      t.Fatal(err)
-   }
-   if err := auth.Create(home, "mech/amc.json"); err != nil {
-      t.Fatal(err)
-   }
-}
-
-func TestLogin(t *testing.T) {
-   auth, err := Unauth()
-   if err != nil {
-      t.Fatal(err)
-   }
-   if err := auth.Login(email, password); err != nil {
-      t.Fatal(err)
-   }
-   home, err := os.UserHomeDir()
-   if err != nil {
       t.Fatal(err)
    }
    if err := auth.Create(home, "mech/amc.json"); err != nil {

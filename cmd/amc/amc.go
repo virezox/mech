@@ -2,7 +2,6 @@ package main
 
 import (
    "errors"
-   "flag"
    "fmt"
    "github.com/89z/format"
    "github.com/89z/format/dash"
@@ -13,12 +12,36 @@ import (
    "net/http"
    "net/url"
    "os"
-   "path/filepath"
 )
 
-func (d downloader) doDASH(nid, video, audio int64) error {
-   auth, err := amc.NewUnauth()
+func doLogin(email, password string) error {
+   auth, err := amc.Unauth()
    if err != nil {
+      return err
+   }
+   if err := auth.Login(email, password); err != nil {
+      return err
+   }
+   home, err := os.UserHomeDir()
+   if err != nil {
+      return err
+   }
+   return auth.Create(home, "mech/amc.json")
+}
+
+func (d downloader) doDASH(nid, video, audio int64) error {
+   home, err := os.UserHomeDir()
+   if err != nil {
+      return err
+   }
+   auth, err := amc.OpenAuth(home, "mech/amc.json")
+   if err != nil {
+      return err
+   }
+   if err := auth.Refresh(); err != nil {
+      return err
+   }
+   if err := auth.Create(home, "mech/amc.json"); err != nil {
       return err
    }
    d.Playback, err = auth.Playback(nid)
@@ -152,44 +175,4 @@ type downloader struct {
    info bool
    key string
    pem string
-}
-
-func main() {
-   home, err := os.UserHomeDir()
-   if err != nil {
-      panic(err)
-   }
-   var down downloader
-   // b
-   var nid int64
-   flag.Int64Var(&nid, "b", 0, "NID")
-   // c
-   down.client = filepath.Join(home, "mech/client_id.bin")
-   flag.StringVar(&down.client, "c", down.client, "client ID")
-   // f
-   var video int64
-   flag.Int64Var(&video, "f", 1662000, "video bandwidth")
-   // g
-   var audio int64
-   flag.Int64Var(&audio, "g", 126000, "audio bandwidth")
-   // i
-   flag.BoolVar(&down.info, "i", false, "information")
-   // k
-   down.pem = filepath.Join(home, "mech/private_key.pem")
-   flag.StringVar(&down.pem, "k", down.pem, "private key")
-   // v
-   var verbose bool
-   flag.BoolVar(&verbose, "v", false, "verbose")
-   flag.Parse()
-   if verbose {
-      amc.LogLevel = 1
-   }
-   if nid >= 1 {
-      err := down.doDASH(nid, video, audio)
-      if err != nil {
-         panic(err)
-      }
-   } else {
-      flag.Usage()
-   }
 }
