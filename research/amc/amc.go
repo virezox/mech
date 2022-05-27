@@ -3,6 +3,7 @@ package amc
 import (
    "bytes"
    "encoding/json"
+   "errors"
    "github.com/89z/format"
    "net/http"
    "strconv"
@@ -71,6 +72,9 @@ func (a Auth) Playback(nid int64) (*Playback, error) {
       return nil, err
    }
    defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return nil, errors.New(res.Status)
+   }
    play := new(Playback)
    if err := json.NewDecoder(res.Body).Decode(play); err != nil {
       return nil, err
@@ -100,6 +104,9 @@ func Unauth() (*Auth, error) {
       return nil, err
    }
    defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return nil, errors.New(res.Status)
+   }
    auth := new(Auth)
    if err := json.NewDecoder(res.Body).Decode(auth); err != nil {
       return nil, err
@@ -134,6 +141,9 @@ func (a *Auth) Refresh() error {
       return err
    }
    defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return errors.New(res.Status)
+   }
    return json.NewDecoder(res.Body).Decode(a)
 }
 
@@ -177,6 +187,9 @@ func (a *Auth) Login(email, password string) error {
       return err
    }
    defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return errors.New(res.Status)
+   }
    return json.NewDecoder(res.Body).Decode(a)
 }
 
