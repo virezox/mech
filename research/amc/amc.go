@@ -8,7 +8,35 @@ import (
    "strconv"
 )
 
-func (a Auth) Playback(nid int64) (*http.Response, error) {
+func (p Playback) DASH() *Source {
+   for _, source := range p.Data.PlaybackJsonData.Sources {
+      if source.Type == "application/dash+xml" {
+         return &source
+      }
+   }
+   return nil
+}
+
+type Source struct {
+   Key_Systems struct {
+      Widevine struct {
+         License_URL string
+      } `json:"com.widevine.alpha"`
+   }
+   Src string
+   Type string
+}
+
+type Playback struct {
+   Data struct {
+      PlaybackJsonData struct {
+         Name string
+         Sources []Source
+      }
+   }
+}
+
+func (a Auth) Playback(nid int64) (*Playback, error) {
    var (
       addr []byte
       body playbackRequest
@@ -38,16 +66,19 @@ func (a Auth) Playback(nid int64) (*http.Response, error) {
       "X-Ccpa-Do-Not-Sell": {"doNotPassData"},
    }
    LogLevel.Dump(req)
-   return new(http.Transport).RoundTrip(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   play := new(Playback)
+   if err := json.NewDecoder(res.Body).Decode(play); err != nil {
+      return nil, err
+   }
+   return play, nil
 }
 
 var LogLevel format.LogLevel
-
-type Auth struct {
-   Data struct {
-      Access_Token string
-   }
-}
 
 func Unauth() (*Auth, error) {
    req, err := http.NewRequest(
@@ -74,6 +105,42 @@ func Unauth() (*Auth, error) {
       return nil, err
    }
    return auth, nil
+}
+
+type playbackRequest struct {
+   AdTags struct {
+      Lat int `json:"lat"`
+      Mode string `json:"mode"`
+      PPID int `json:"ppid"`
+      PlayerHeight int `json:"playerHeight"`
+      PlayerWidth int `json:"playerWidth"`
+      URL string `json:"url"`
+   } `json:"adtags"`
+}
+func (a *Auth) Refresh() error {
+   req, err := http.NewRequest(
+      "POST",
+      "https://gw.cds.amcn.com/auth-orchestration-id/api/v1/refresh",
+      nil,
+   )
+   if err != nil {
+      return err
+   }
+   req.Header.Set("Authorization", "Bearer " + a.Data.Refresh_Token)
+   LogLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   return json.NewDecoder(res.Body).Decode(a)
+}
+
+type Auth struct {
+   Data struct {
+      Access_Token string
+      Refresh_Token string
+   }
 }
 
 func (a *Auth) Login(email, password string) error {
@@ -112,13 +179,10 @@ func (a *Auth) Login(email, password string) error {
    return json.NewDecoder(res.Body).Decode(a)
 }
 
-type playbackRequest struct {
-   AdTags struct {
-      Lat int `json:"lat"`
-      Mode string `json:"mode"`
-      PPID int `json:"ppid"`
-      PlayerHeight int `json:"playerHeight"`
-      PlayerWidth int `json:"playerWidth"`
-      URL string `json:"url"`
-   } `json:"adtags"`
+func OpenAuth(elem ...string) (*Auth, error) {
+   return format.Open[Auth](elem...)
+}
+
+func (a Auth) Create(elem ...string) error {
+   return format.Create(a, elem...)
 }

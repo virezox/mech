@@ -1,6 +1,7 @@
 package amc
 
 import (
+   "fmt"
    "os"
    "testing"
 )
@@ -8,7 +9,23 @@ import (
 // amcplus.com/shows/orphan-black/episodes/season-1-instinct--1011152
 const nid = 1011152
 
-func TestAMC(t *testing.T) {
+func TestPlayback(t *testing.T) {
+   home, err := os.UserHomeDir()
+   if err != nil {
+      t.Fatal(err)
+   }
+   auth, err := OpenAuth(home, "mech/amc.json")
+   if err != nil {
+      t.Fatal(err)
+   }
+   play, err := auth.Playback(nid)
+   if err != nil {
+      t.Fatal(err)
+   }
+   fmt.Printf("%+v\n", play)
+}
+
+func TestCreate(t *testing.T) {
    auth, err := Unauth()
    if err != nil {
       t.Fatal(err)
@@ -16,10 +33,11 @@ func TestAMC(t *testing.T) {
    if err := auth.Login(email, password); err != nil {
       t.Fatal(err)
    }
-   res, err := auth.Playback(nid)
+   home, err := os.UserHomeDir()
    if err != nil {
       t.Fatal(err)
    }
-   defer res.Body.Close()
-   os.Stdout.ReadFrom(res.Body)
+   if err := auth.Create(home, "mech/amc.json"); err != nil {
+      t.Fatal(err)
+   }
 }
