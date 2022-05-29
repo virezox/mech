@@ -6,6 +6,7 @@ import (
    "crypto/sha256"
    "encoding/hex"
    "encoding/json"
+   "errors"
    "github.com/89z/format"
    "github.com/89z/mech"
    "io"
@@ -69,6 +70,9 @@ func NewAccessVOD(guid int64) (*AccessVOD, error) {
       return nil, err
    }
    defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return nil, errors.New(res.Status)
+   }
    vod := new(AccessVOD)
    if err := json.NewDecoder(res.Body).Decode(vod); err != nil {
       return nil, err
@@ -110,6 +114,9 @@ func NewVideo(guid int64) (*Video, error) {
       return nil, err
    }
    defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return nil, errors.New(res.Status)
+   }
    vid := new(Video)
    if err := json.NewDecoder(res.Body).Decode(vid); err != nil {
       return nil, err

@@ -13,6 +13,14 @@ the app, and if you are monitoring, you should see the request.
 set modify_headers '/~u vod.stream/X-Forwarded-For/25.0.0.0'
 ~~~
 
+or for all:
+
+~~~
+set modify_headers '/~q/X-Forwarded-For/25.0.0.0'
+~~~
+
+https://docs.mitmproxy.org/stable/overview-features
+
 ## iOS
 
 https://github.com/TrungNguyen1909/qemu-t8030/issues/52
