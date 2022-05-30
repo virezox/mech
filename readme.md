@@ -30,7 +30,10 @@ go build
 
 I really need help financially, so if you are able, please donate using the
 sponsor link. If you cannot use PayPal, let me know, and I can see about adding
-other methods. Thank you!
+other methods. Contact me with any business opportunities:
+
+- Email srpen6@gmail.com
+- Discord 89z#4149
 
 ## Repo
 
