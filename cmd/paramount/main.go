@@ -35,13 +35,13 @@ func main() {
    var isDASH bool
    flag.BoolVar(&isDASH, "d", false, "DASH download")
    // f
-   // paramountplus.com/movies/video/tQk_Qooh5wUlxQqzj_4LiBO2m4iMrcPD
+   // paramountplus.com/shows/video/x6XrF8A_tiSDRwc4Rt349KFKnCZ8QmtY
    var video int64
-   flag.Int64Var(&video, "f", 2098819, "video bandwidth")
+   flag.Int64Var(&video, "f", 1611000, "video bandwidth")
    // g
-   // paramountplus.com/movies/video/tQk_Qooh5wUlxQqzj_4LiBO2m4iMrcPD
+   // paramountplus.com/shows/video/x6XrF8A_tiSDRwc4Rt349KFKnCZ8QmtY
    var audio int64
-   flag.Int64Var(&audio, "g", 131282, "audio bandwidth")
+   flag.Int64Var(&audio, "g", 999999, "audio bandwidth")
    // i
    flag.BoolVar(&down.info, "i", false, "information")
    // k

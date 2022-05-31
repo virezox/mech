@@ -81,6 +81,7 @@ func (d *downloader) download(band int64, fn dash.PeriodFunc) error {
       }
       pro := format.ProgressChunks(file, len(media))
       for _, addr := range media {
+         fmt.Println(addr)
          res, err := http.Get(addr.String())
          if err != nil {
             return err
