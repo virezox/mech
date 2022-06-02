@@ -2,6 +2,7 @@
 package pbs
 
 import (
+   "errors"
    "github.com/89z/format/json"
    "net/http"
    "net/url"
@@ -25,6 +26,9 @@ func NewVideo(addr string) (*Video, error) {
       return nil, err
    }
    defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return nil, errors.New(res.Status)
+   }
    scan, err := json.NewScanner(res.Body)
    if err != nil {
       return nil, err
