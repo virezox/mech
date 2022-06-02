@@ -1,18 +1,40 @@
 package main
 
 import (
-   "errors"
+   "flag"
    "fmt"
    "github.com/89z/format"
    "github.com/89z/format/dash"
    "github.com/89z/mech"
    "github.com/89z/mech/amc"
    "github.com/89z/mech/widevine"
-   "io"
    "net/http"
    "net/url"
    "os"
+   "path/filepath"
 )
+
+func (d downloader) DASH(video, audio int64) error {
+   if d.info {
+      fmt.Println(d.Content)
+   }
+   videoDASH := d.Content.DASH()
+   fmt.Println("GET", videoDASH.URL)
+   res, err := http.Get(videoDASH.URL)
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   d.URL = res.Request.URL
+   d.Period, err = dash.NewPeriod(res.Body)
+   if err != nil {
+      return err
+   }
+   if err := d.download(audio, dash.Audio); err != nil {
+      return err
+   }
+   return d.download(video, dash.Video)
+}
 
 func (d *downloader) download(band int64, fn dash.PeriodFunc) error {
    if band == 0 {
@@ -20,10 +42,6 @@ func (d *downloader) download(band int64, fn dash.PeriodFunc) error {
    }
    reps := d.Represents(fn)
    rep := reps.Represent(band)
-   ext, err := mech.ExtensionByType(rep.MimeType)
-   if err != nil {
-      return err
-   }
    if d.info {
       for _, each := range reps {
          if each.Bandwidth == rep.Bandwidth {
@@ -31,16 +49,18 @@ func (d *downloader) download(band int64, fn dash.PeriodFunc) error {
          }
          fmt.Println(each)
       }
-      if d.key == "" {
+   } else {
+      if d.key == nil {
          err := d.setKey()
          if err != nil {
             return err
          }
       }
-      // github.com/edgeware/mp4ff/issues/146
-      fmt.Printf("mp4decrypt --key 1:%v enc%v dec%v\n", d.key, ext, ext)
-   } else {
-      file, err := os.Create("enc" + ext)
+      ext, err := mech.ExtensionByType(rep.MimeType)
+      if err != nil {
+         return err
+      }
+      file, err := os.Create(d.Content.Base()+ext)
       if err != nil {
          return err
       }
@@ -55,9 +75,6 @@ func (d *downloader) download(band int64, fn dash.PeriodFunc) error {
          return err
       }
       defer res.Body.Close()
-      if res.StatusCode != http.StatusOK {
-         return errors.New(res.Status)
-      }
       if _, err := file.ReadFrom(res.Body); err != nil {
          return err
       }
@@ -72,11 +89,8 @@ func (d *downloader) download(band int64, fn dash.PeriodFunc) error {
          if err != nil {
             return err
          }
-         if res.StatusCode != http.StatusOK {
-            return errors.New(res.Status)
-         }
          pro.AddChunk(res.ContentLength)
-         if _, err := io.Copy(pro, res.Body); err != nil {
+         if err := dash.Decrypt(pro, res.Body, d.key); err != nil {
             return err
          }
          if err := res.Body.Close(); err != nil {
@@ -85,52 +99,6 @@ func (d *downloader) download(band int64, fn dash.PeriodFunc) error {
       }
    }
    return nil
-}
-
-func (d downloader) doDASH(address string, nid, video, audio int64) error {
-   home, err := os.UserHomeDir()
-   if err != nil {
-      return err
-   }
-   auth, err := amc.OpenAuth(home, "mech/amc.json")
-   if err != nil {
-      return err
-   }
-   if err := auth.Refresh(); err != nil {
-      return err
-   }
-   if err := auth.Create(home, "mech/amc.json"); err != nil {
-      return err
-   }
-   if nid == 0 {
-      nid, err = amc.GetNID(address)
-      if err != nil {
-         return err
-      }
-   }
-   d.Playback, err = auth.Playback(nid)
-   if err != nil {
-      return err
-   }
-   source := d.Playback.DASH()
-   fmt.Println("GET", source.Src)
-   res, err := http.Get(source.Src)
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return errors.New(res.Status)
-   }
-   d.URL = res.Request.URL
-   d.Period, err = dash.NewPeriod(res.Body)
-   if err != nil {
-      return err
-   }
-   if err := d.download(audio, dash.Audio); err != nil {
-      return err
-   }
-   return d.download(video, dash.Video)
 }
 
 func (d *downloader) setKey() error {
@@ -150,36 +118,89 @@ func (d *downloader) setKey() error {
    if err != nil {
       return err
    }
-   addr := d.DASH().Key_Systems.Widevine.License_URL
-   keys, err := mod.Post(addr, d.Header())
+   site, err := amc.NewCrossSite()
    if err != nil {
       return err
    }
-   d.key = keys.Content().String()
+   play, err := site.Playback(d.Meta.ID)
+   if err != nil {
+      return err
+   }
+   keys, err := mod.Post(play.DRM.Widevine.LicenseServer, nil)
+   if err != nil {
+      return err
+   }
+   d.key = keys.Content().Key
    return nil
 }
 
 type downloader struct {
-   *amc.Playback
    *dash.Period
+   *amc.Content
    *url.URL
    client string
    info bool
-   key string
+   key []byte
    pem string
 }
 
-func doLogin(email, password string) error {
-   auth, err := amc.Unauth()
-   if err != nil {
-      return err
-   }
-   if err := auth.Login(email, password); err != nil {
-      return err
-   }
+func main() {
    home, err := os.UserHomeDir()
    if err != nil {
-      return err
+      panic(err)
    }
-   return auth.Create(home, "mech/amc.json")
+   var down downloader
+   // a
+   var address string
+   flag.StringVar(&address, "a", "", "address")
+   // b
+   var id string
+   flag.StringVar(&id, "b", "", "ID")
+   // c
+   down.client = filepath.Join(home, "mech/client_id.bin")
+   flag.StringVar(&down.client, "c", down.client, "client ID")
+   // d
+   var isDASH bool
+   flag.BoolVar(&isDASH, "d", false, "DASH download")
+   // f
+   var video int64
+   flag.Int64Var(&video, "f", 1920832, "video bandwidth")
+   // g
+   var audio int64
+   flag.Int64Var(&audio, "g", 128000, "audio bandwidth")
+   // i
+   flag.BoolVar(&down.info, "i", false, "information")
+   // k
+   down.pem = filepath.Join(home, "mech/private_key.pem")
+   flag.StringVar(&down.pem, "k", down.pem, "private key")
+   // v
+   var verbose bool
+   flag.BoolVar(&verbose, "v", false, "verbose")
+   flag.Parse()
+   if verbose {
+      amc.LogLevel = 1
+      widevine.LogLevel = 1
+   }
+   if id != "" || address != "" {
+      if id == "" {
+         id = amc.ContentID(address)
+      }
+      down.Content, err = amc.NewContent(id)
+      if err != nil {
+         panic(err)
+      }
+      if isDASH {
+         err := down.DASH(video, audio)
+         if err != nil {
+            panic(err)
+         }
+      } else {
+         err := down.HLS(video)
+         if err != nil {
+            panic(err)
+         }
+      }
+   } else {
+      flag.Usage()
+   }
 }
