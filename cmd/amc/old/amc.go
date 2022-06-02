@@ -1,21 +1,53 @@
-package main
+func (d *downloader) setKey() error {
+   privateKey, err := os.ReadFile(d.pem)
+   if err != nil {
+      return err
+   }
+   clientID, err := os.ReadFile(d.client)
+   if err != nil {
+      return err
+   }
+   kID, err := d.Protection().KID()
+   if err != nil {
+      return err
+   }
+   mod, err := widevine.NewModule(privateKey, clientID, kID)
+   if err != nil {
+      return err
+   }
+   addr := d.DASH().Key_Systems.Widevine.License_URL
+   keys, err := mod.Post(addr, d.Header())
+   if err != nil {
+      return err
+   }
+   d.key = keys.Content().String()
+   return nil
+}
 
-import (
-   "errors"
-   "flag"
-   "fmt"
-   "github.com/89z/format"
-   "github.com/89z/format/dash"
-   "github.com/89z/mech"
-   "github.com/89z/mech/amc"
-   "github.com/89z/mech/widevine"
-   "io"
-   "net/http"
-   "net/url"
-   "os"
-   "path/filepath"
-)
+type downloader struct {
+   *amc.Playback
+   *dash.Period
+   *url.URL
+   client string
+   info bool
+   key string
+   pem string
+}
 
+func doLogin(email, password string) error {
+   auth, err := amc.Unauth()
+   if err != nil {
+      return err
+   }
+   if err := auth.Login(email, password); err != nil {
+      return err
+   }
+   home, err := os.UserHomeDir()
+   if err != nil {
+      return err
+   }
+   return auth.Create(home, "mech/amc.json")
+}
 func (d *downloader) download(band int64, fn dash.PeriodFunc) error {
    if band == 0 {
       return nil
@@ -89,99 +121,4 @@ func (d *downloader) download(band int64, fn dash.PeriodFunc) error {
    return nil
 }
 
-func (d downloader) doDASH(address string, nid, video, audio int64) error {
-   home, err := os.UserHomeDir()
-   if err != nil {
-      return err
-   }
-   auth, err := amc.OpenAuth(home, "mech/amc.json")
-   if err != nil {
-      return err
-   }
-   if err := auth.Refresh(); err != nil {
-      return err
-   }
-   if err := auth.Create(home, "mech/amc.json"); err != nil {
-      return err
-   }
-   if nid == 0 {
-      nid, err = amc.GetNID(address)
-      if err != nil {
-         return err
-      }
-   }
-   d.Playback, err = auth.Playback(nid)
-   if err != nil {
-      return err
-   }
-   source := d.Playback.DASH()
-   fmt.Println("GET", source.Src)
-   res, err := http.Get(source.Src)
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return errors.New(res.Status)
-   }
-   d.URL = res.Request.URL
-   d.Period, err = dash.NewPeriod(res.Body)
-   if err != nil {
-      return err
-   }
-   if err := d.download(audio, dash.Audio); err != nil {
-      return err
-   }
-   return d.download(video, dash.Video)
-}
 
-func (d *downloader) setKey() error {
-   privateKey, err := os.ReadFile(d.pem)
-   if err != nil {
-      return err
-   }
-   clientID, err := os.ReadFile(d.client)
-   if err != nil {
-      return err
-   }
-   kID, err := d.Protection().KID()
-   if err != nil {
-      return err
-   }
-   mod, err := widevine.NewModule(privateKey, clientID, kID)
-   if err != nil {
-      return err
-   }
-   addr := d.DASH().Key_Systems.Widevine.License_URL
-   keys, err := mod.Post(addr, d.Header())
-   if err != nil {
-      return err
-   }
-   d.key = keys.Content().String()
-   return nil
-}
-
-type downloader struct {
-   *amc.Playback
-   *dash.Period
-   *url.URL
-   client string
-   info bool
-   key string
-   pem string
-}
-
-func doLogin(email, password string) error {
-   auth, err := amc.Unauth()
-   if err != nil {
-      return err
-   }
-   if err := auth.Login(email, password); err != nil {
-      return err
-   }
-   home, err := os.UserHomeDir()
-   if err != nil {
-      return err
-   }
-   return auth.Create(home, "mech/amc.json")
-}

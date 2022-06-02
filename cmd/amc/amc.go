@@ -14,17 +14,41 @@ import (
    "path/filepath"
 )
 
-func (d downloader) DASH(video, audio int64) error {
-   if d.info {
-      fmt.Println(d.Content)
+func (d downloader) doDASH(address string, nid, video, audio int64) error {
+   home, err := os.UserHomeDir()
+   if err != nil {
+      return err
    }
-   videoDASH := d.Content.DASH()
-   fmt.Println("GET", videoDASH.URL)
-   res, err := http.Get(videoDASH.URL)
+   auth, err := amc.OpenAuth(home, "mech/amc.json")
+   if err != nil {
+      return err
+   }
+   if err := auth.Refresh(); err != nil {
+      return err
+   }
+   if err := auth.Create(home, "mech/amc.json"); err != nil {
+      return err
+   }
+   if nid == 0 {
+      nid, err = amc.GetNID(address)
+      if err != nil {
+         return err
+      }
+   }
+   d.Playback, err = auth.Playback(nid)
+   if err != nil {
+      return err
+   }
+   source := d.Playback.DASH()
+   fmt.Println("GET", source.Src)
+   res, err := http.Get(source.Src)
    if err != nil {
       return err
    }
    defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return errors.New(res.Status)
+   }
    d.URL = res.Request.URL
    d.Period, err = dash.NewPeriod(res.Body)
    if err != nil {
