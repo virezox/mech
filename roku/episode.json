@@ -1,0 +1,158 @@
+{
+  "title": "Guardian Angels",
+  "releaseDate": "2007-10-23T00:00:00Z",
+  "runTimeSeconds": 2640,
+  "episodeNumber": "4",
+  "seasonNumber": "4",
+  "series": {
+    "meta": {
+      "id": "c670d76bd2be57acaa8f145f53ccef38",
+      "mediaType": "series",
+      "source": "roku",
+      "href": "https://content.sr.roku.com/content/v1/roku-trc/c670d76bd2be57acaa8f145f53ccef38",
+      "sid": "c670d76bd2be57acaa8f145f53ccef38"
+    },
+    "title": "House",
+    "seasons": []
+  },
+  "viewOptions": [
+    {
+      "isPrivate": false,
+      "installedOnly": false,
+      "playId": "s-nbcu_tv.en.YzFiYzlkOTAtZWE2Yi00MGY4LTljYzgtMzMwOTlmYTY2MTY3",
+      "media": {
+        "validityStartTime": "2022-01-01T00:00:00",
+        "validityEndTime": "2022-12-31T23:59:59",
+        "duration": 2634,
+        "trickPlayFiles": [
+          {
+            "url": "https://static-delivery.sr.roku.com/c1bc9d90-ea6b-40f8-9cc8-33099fa66167/images/c1bc9d90-ea6b-40f8-9cc8-33099fa66167-sd.bif",
+            "quality": "sd"
+          },
+          {
+            "url": "https://static-delivery.sr.roku.com/c1bc9d90-ea6b-40f8-9cc8-33099fa66167/images/c1bc9d90-ea6b-40f8-9cc8-33099fa66167-hd.bif",
+            "quality": "hd"
+          },
+          {
+            "url": "https://static-delivery.sr.roku.com/c1bc9d90-ea6b-40f8-9cc8-33099fa66167/images/c1bc9d90-ea6b-40f8-9cc8-33099fa66167-fhd.bif",
+            "quality": "fhd"
+          }
+        ],
+        "captions": [
+          {
+            "url": "https://static-delivery.sr.roku.com/c1bc9d90-ea6b-40f8-9cc8-33099fa66167/captions/House_E7304_324775_ENG_NBCU_20211103T020234_cc_en.vtt",
+            "language": "en",
+            "captionType": "CLOSED_CAPTION",
+            "label": "English [Closed caption]",
+            "iso639Part1": "en"
+          }
+        ],
+        "adBreaks": [
+          "00:07:51.555",
+          "00:15:54.719",
+          "00:23:54.051",
+          "00:32:05.663"
+        ],
+        "videos": [
+          {
+            "url": "https://ovp-selector.sr.roku.com/v1/c1bc9d90-ea6b-40f8-9cc8-33099fa66167?format=hls",
+            "videoType": "HLS",
+            "quality": "hd",
+            "drmAuthentication": {
+              "drmContentProvider": "roku",
+              "data": {
+                "pid": "A1D8EDECF4EEAFDF95DCEC4CE25909EA"
+              }
+            }
+          },
+          {
+            "url": "https://ovp-selector.sr.roku.com/v1/c1bc9d90-ea6b-40f8-9cc8-33099fa66167?format=mss",
+            "videoType": "SMOOTH",
+            "quality": "hd",
+            "drmAuthentication": {
+              "drmContentProvider": "roku",
+              "data": {
+                "pid": "A1D8EDECF4EEAFDF95DCEC4CE25909EA"
+              }
+            }
+          },
+          {
+            "url": "https://ovp-selector.sr.roku.com/v1/c1bc9d90-ea6b-40f8-9cc8-33099fa66167?format=dash",
+            "videoType": "DASH",
+            "quality": "hd",
+            "drmAuthentication": {
+              "drmContentProvider": "roku",
+              "data": {
+                "pid": "A1D8EDECF4EEAFDF95DCEC4CE25909EA"
+              }
+            }
+          }
+        ],
+        "audioAppropriate": false,
+        "originalAudioLanguage": "en",
+        "audioTracks": [
+          {
+            "label": "English (Original)",
+            "language": "en",
+            "iso639Part1": "en",
+            "type": "original"
+          }
+        ]
+      },
+      "viewOptionSourceId": "c1bc9d90-ea6b-40f8-9cc8-33099fa66167",
+      "license": "Free",
+      "higherPrice": false,
+      "price": 0,
+      "inHd": true,
+      "in4k": false,
+      "priceDisplay": "Free",
+      "currency": "USD",
+      "providerId": "rokuavod",
+      "adsProviderId": "nbcu_tv",
+      "seriesTags": [
+        "drama",
+        "licensed"
+      ],
+      "feedId": "nbcu_tv",
+      "providerDetails": {
+        "meta": {
+          "hasViewOptions": false,
+          "id": "rokuavod",
+          "mediaType": "provider",
+          "source": "roku",
+          "href": "https://content.sr.roku.com/content/v1/roku-trc/rokuavod"
+        }
+      },
+      "adsContentId": "acb52480b5c3973747b43c50a893f56982942666",
+      "validityStartTime": "2022-01-01T00:00:00",
+      "validityEndTime": "2022-12-31T23:59:59",
+      "dateAdded": "2021-11-03T01:54:43Z",
+      "isTrcInGlobal": false,
+      "providerName": "nbcu",
+      "providerType": "ovp",
+      "creditCuePoints": [
+        {
+          "creditType": "end",
+          "start": 2589956,
+          "end": 2634298,
+          "skippable": true
+        },
+        {
+          "creditType": "intro",
+          "start": 114988,
+          "end": 144314,
+          "skippable": true
+        }
+      ],
+      "businessModel": "bm2",
+      "hasMedia": true
+    }
+  ],
+  "meta": {
+    "id": "252ece19e74153d890e9ad1ac49283a6",
+    "mediaType": "episode",
+    "source": "roku",
+    "href": "https://content.sr.roku.com/content/v1/roku-trc/252ece19e74153d890e9ad1ac49283a6",
+    "sid": "252ece19e74153d890e9ad1ac49283a6"
+  }
+}

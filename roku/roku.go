@@ -15,17 +15,16 @@ import (
 )
 
 func (c Content) Base() string {
-   if c.Meta.MediaType == "movie" {
-      return c.Title
-   }
    var buf strings.Builder
-   buf.WriteString(c.Series.Title)
-   buf.WriteByte('-')
+   if c.Meta.MediaType == "episode" {
+      buf.WriteString(c.Series.Title)
+      buf.WriteByte('-')
+      buf.WriteString(c.SeasonNumber)
+      buf.WriteByte('-')
+      buf.WriteString(c.EpisodeNumber)
+      buf.WriteByte('-')
+   }
    buf.WriteString(mech.Clean(c.Title))
-   buf.WriteByte('-')
-   buf.WriteString(c.SeasonNumber)
-   buf.WriteByte('-')
-   buf.WriteString(c.EpisodeNumber)
    return buf.String()
 }
 
