@@ -1,8 +1,5 @@
 # ABC
 
-- https://abc.com/shows/greys-anatomy/episode-guide/season-18/12-the-makings-of-you
-- https://github.com/ytdl-org/youtube-dl/issues/29544
-
 ## Android client
 
 ~~~
@@ -25,3 +22,9 @@ http://api.entitlement.watchabc.go.com/vp2/ws-secure/entitlement/2020/authorize.
 Comes from here:
 
 <https://api.config.watchabc.go.com/appsconfig/prod/abcv3/031_04/10.23.0/config.json>
+
+## Why does this exist?
+
+June 2 2022
+
+https://github.com/89z/mech/issues/58

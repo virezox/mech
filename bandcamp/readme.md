@@ -32,10 +32,14 @@ IDs for everything. This is the case going back to 2016 at least.
 
 ## Why does this exist?
 
-2022-02-28
+2022-06-02
 
-https://jessylanza.bandcamp.com/album/pull-my-hair-back
+https://solarfields.bandcamp.com/track/sol-remix-remastered
 
-Pandora has this too, so we might be able to drop Bandcamp:
+Solar Fields hasn’t created any albums yet:
 
-https://pandora.com/artist/jessy-lanza/pull-my-hair-back/ALlfwpXzvcrVK59
+https://soundcloud.com/solarfields/albums
+
+20 unavailable videos are hidden:
+
+https://youtube.com/playlist?list=PLem8ejSphCJI6MybaQTuqIUIiWq75vCHg

@@ -43,3 +43,9 @@ In the response to the same request, you should see something like this:
 ~~~xml
 <param name="trackingData" value="aid=2198311517|b=1000|bc=CBSI-NEW|ci=1|cid=1...
 ~~~
+
+## Why does this exist?
+
+June 2 2022
+
+<https://paramountplus.com/shows/melrose_place>

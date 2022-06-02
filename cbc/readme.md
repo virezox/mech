@@ -1,8 +1,5 @@
 # CBC
 
-- https://gem.cbc.ca/media/downton-abbey/s01e05
-- https://github.com/ytdl-org/youtube-dl/issues/30043
-
 ## Android client
 
 https://play.google.com/store/apps/details?id=ca.cbc.android.cbctv
@@ -34,3 +31,9 @@ private static final String loginRadiusProdKey =
 ~~~
 
 https://github.com/skylot/jadx
+
+## Why does this exist?
+
+June 2 2022
+
+https://gem.cbc.ca/media/downton-abbey/s01e05

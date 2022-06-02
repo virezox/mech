@@ -22,13 +22,11 @@ https://nbcapp.nbc.co/config/android/player/v10/prod/mobile.json
 
 ## Why am I not getting 720p?
 
-It seems new locked episodes dont offer HD anymore. Once they are unlocked
-(usually after one week), HD is available.
+It seems new locked episodes do not offer HD in some cases. Once they are
+unlocked (usually after one week), HD is available.
 
 ## Why does this exist?
 
-January 28 2022.
-
-I use the site myself.
+June 2 2022
 
 https://nbc.com/saturday-night-live/video/december-18-paul-rudd/9000199366
