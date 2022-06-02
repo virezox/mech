@@ -3,6 +3,7 @@ package amc
 
 import (
    "github.com/89z/format"
+   "github.com/89z/mech"
    "net/http"
    "strconv"
    "strings"
@@ -10,24 +11,29 @@ import (
 
 func (p Playback) Base() string {
    var buf strings.Builder
+   buf.WriteString(p.PlaybackJsonData.Custom_Fields.Show)
+   buf.WriteByte('-')
    buf.WriteString(p.PlaybackJsonData.Custom_Fields.Season)
    buf.WriteByte('-')
    buf.WriteString(p.PlaybackJsonData.Custom_Fields.Episode)
+   buf.WriteByte('-')
+   buf.WriteString(mech.Clean(p.PlaybackJsonData.Name))
    return buf.String()
+}
+
+type PlaybackJsonData struct {
+   Sources []Source
+   Custom_Fields struct {
+      Show string // 1
+      Season string // 2
+      Episode string // 3
+   }
+   Name string // 4
 }
 
 type Playback struct {
    PlaybackJsonData PlaybackJsonData
    BcJWT string
-}
-
-type PlaybackJsonData struct {
-   Custom_Fields struct {
-      Season string
-      Episode string
-   }
-   Name string
-   Sources []Source
 }
 
 var LogLevel format.LogLevel
