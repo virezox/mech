@@ -2,13 +2,7 @@ package main
 
 import (
    "flag"
-   "fmt"
-   "github.com/89z/format"
-   "github.com/89z/format/dash"
-   "github.com/89z/mech"
    "github.com/89z/mech/amc"
-   "net/http"
-   "net/url"
    "os"
    "path/filepath"
 )

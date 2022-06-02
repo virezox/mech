@@ -1,7 +1,7 @@
 package main
 
 import (
-   "flag"
+   "errors"
    "fmt"
    "github.com/89z/format"
    "github.com/89z/format/dash"
@@ -11,8 +11,86 @@ import (
    "net/http"
    "net/url"
    "os"
-   "path/filepath"
 )
+
+func (d *downloader) download(band int64, fn dash.PeriodFunc) error {
+   if band == 0 {
+      return nil
+   }
+   reps := d.Represents(fn)
+   rep := reps.Represent(band)
+   if d.info {
+      for _, each := range reps {
+         if each.Bandwidth == rep.Bandwidth {
+            fmt.Print("!")
+         }
+         fmt.Println(each)
+      }
+   } else {
+      if d.key == nil {
+         err := d.setKey()
+         if err != nil {
+            return err
+         }
+      }
+      ext, err := mech.ExtensionByType(rep.MimeType)
+      if err != nil {
+         return err
+      }
+      file, err := os.Create(d.Base()+ext)
+      if err != nil {
+         return err
+      }
+      defer file.Close()
+      init, err := rep.Initialization(d.URL)
+      if err != nil {
+         return err
+      }
+      fmt.Println("GET", init)
+      res, err := http.Get(init.String())
+      if err != nil {
+         return err
+      }
+      defer res.Body.Close()
+      if _, err := file.ReadFrom(res.Body); err != nil {
+         return err
+      }
+      media, err := rep.Media(d.URL)
+      if err != nil {
+         return err
+      }
+      pro := format.ProgressChunks(file, len(media))
+      for _, addr := range media {
+         res, err := http.Get(addr.String())
+         if err != nil {
+            return err
+         }
+         pro.AddChunk(res.ContentLength)
+         if err := dash.Decrypt(pro, res.Body, d.key); err != nil {
+            return err
+         }
+         if err := res.Body.Close(); err != nil {
+            return err
+         }
+      }
+   }
+   return nil
+}
+
+func doLogin(email, password string) error {
+   auth, err := amc.Unauth()
+   if err != nil {
+      return err
+   }
+   if err := auth.Login(email, password); err != nil {
+      return err
+   }
+   home, err := os.UserHomeDir()
+   if err != nil {
+      return err
+   }
+   return auth.Create(home, "mech/amc.json")
+}
 
 func (d downloader) doDASH(address string, nid, video, audio int64) error {
    home, err := os.UserHomeDir()
@@ -60,71 +138,6 @@ func (d downloader) doDASH(address string, nid, video, audio int64) error {
    return d.download(video, dash.Video)
 }
 
-func (d *downloader) download(band int64, fn dash.PeriodFunc) error {
-   if band == 0 {
-      return nil
-   }
-   reps := d.Represents(fn)
-   rep := reps.Represent(band)
-   if d.info {
-      for _, each := range reps {
-         if each.Bandwidth == rep.Bandwidth {
-            fmt.Print("!")
-         }
-         fmt.Println(each)
-      }
-   } else {
-      if d.key == nil {
-         err := d.setKey()
-         if err != nil {
-            return err
-         }
-      }
-      ext, err := mech.ExtensionByType(rep.MimeType)
-      if err != nil {
-         return err
-      }
-      file, err := os.Create(d.Content.Base()+ext)
-      if err != nil {
-         return err
-      }
-      defer file.Close()
-      init, err := rep.Initialization(d.URL)
-      if err != nil {
-         return err
-      }
-      fmt.Println("GET", init)
-      res, err := http.Get(init.String())
-      if err != nil {
-         return err
-      }
-      defer res.Body.Close()
-      if _, err := file.ReadFrom(res.Body); err != nil {
-         return err
-      }
-      media, err := rep.Media(d.URL)
-      if err != nil {
-         return err
-      }
-      pro := format.ProgressChunks(file, len(media))
-      for _, addr := range media {
-         fmt.Println(addr)
-         res, err := http.Get(addr.String())
-         if err != nil {
-            return err
-         }
-         pro.AddChunk(res.ContentLength)
-         if err := dash.Decrypt(pro, res.Body, d.key); err != nil {
-            return err
-         }
-         if err := res.Body.Close(); err != nil {
-            return err
-         }
-      }
-   }
-   return nil
-}
-
 func (d *downloader) setKey() error {
    privateKey, err := os.ReadFile(d.pem)
    if err != nil {
@@ -142,15 +155,8 @@ func (d *downloader) setKey() error {
    if err != nil {
       return err
    }
-   site, err := amc.NewCrossSite()
-   if err != nil {
-      return err
-   }
-   play, err := site.Playback(d.Meta.ID)
-   if err != nil {
-      return err
-   }
-   keys, err := mod.Post(play.DRM.Widevine.LicenseServer, nil)
+   addr := d.DASH().Key_Systems.Widevine.License_URL
+   keys, err := mod.Post(addr, d.Header())
    if err != nil {
       return err
    }
@@ -159,8 +165,8 @@ func (d *downloader) setKey() error {
 }
 
 type downloader struct {
+   *amc.Playback
    *dash.Period
-   *amc.Content
    *url.URL
    client string
    info bool
