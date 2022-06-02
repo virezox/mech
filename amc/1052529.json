@@ -1,0 +1,161 @@
+{
+  "success": true,
+  "status": 200,
+  "data": {
+    "playbackJsonData": {
+      "poster": "https://cf-images.us-east-1.prod.boltdns.net/v1/jit/6245817279001/1ba594b5-aadd-42fd-9ba8-87da817125e5/main/1280x720/21m22s784ms/match/image.jpg",
+      "thumbnail": "https://cf-images.us-east-1.prod.boltdns.net/v1/jit/6245817279001/1ba594b5-aadd-42fd-9ba8-87da817125e5/main/160x90/21m22s784ms/match/image.jpg",
+      "poster_sources": [
+        {
+          "src": "https://cf-images.us-east-1.prod.boltdns.net/v1/jit/6245817279001/1ba594b5-aadd-42fd-9ba8-87da817125e5/main/1280x720/21m22s784ms/match/image.jpg"
+        }
+      ],
+      "thumbnail_sources": [
+        {
+          "src": "https://cf-images.us-east-1.prod.boltdns.net/v1/jit/6245817279001/1ba594b5-aadd-42fd-9ba8-87da817125e5/main/160x90/21m22s784ms/match/image.jpg"
+        }
+      ],
+      "description": "Eve wants revenge. Villanelle strives to change.",
+      "tags": [],
+      "cue_points": [
+        {
+          "id": "6308282189001",
+          "type": "AD",
+          "time": 0,
+          "force_stop": false
+        }
+      ],
+      "custom_fields": {
+        "advertising_type": "DAI",
+        "credits_start": "00:42:14",
+        "episode": "1",
+        "exclude_from_sync": "NO",
+        "genre": "Drama",
+        "intro_end": "00:05:38",
+        "intro_start": "00:05:32",
+        "parent_network": "BBCA",
+        "rating_tv": "TV-14",
+        "recap_end": "00:01:06",
+        "recap_start": "00:00:06",
+        "restricted_ads": "NO",
+        "s3_captions_url": "s3://amcn-eve-parkinglot/EVE-STORE/2022-Q1/Killing_Eve_401.scc",
+        "s3_video_url": "s3://amcn-eve-parkinglot/EVE-STORE/2022-Q1/Killing_Eve_401.mp4",
+        "season": "4",
+        "share_s_and_p_status": "SHARE_SUCCESSFUL",
+        "show": "Killing Eve",
+        "tms_episode_id": "EP028831620069",
+        "tms_series_id": "SH028831620000",
+        "video_category": "TVE-Auth",
+        "video_type": "Full Episode"
+      },
+      "account_id": "6245817279001",
+      "sources": [
+        {
+          "codecs": "avc1,mp4a",
+          "ext_x_version": "4",
+          "src": "http://ssaimanifest.prod.boltdns.net/playback/once/v1/hls/v4/clear/6245817279001/74263065-1285-4d00-842d-73a66554716a/1ba594b5-aadd-42fd-9ba8-87da817125e5/master.m3u8?bc_token=NjI5OTVjMGZfMGU5NDMxNGM3YzMxOGQyMjA1MWQ1MzA1MDQ5N2E0NDFkMjhmZDdjN2NmMDdmM2M5ZGYxMzA1NzUwMTRhNzA1ZQ%3D%3D",
+          "type": "application/x-mpegURL",
+          "vmap": "http://ssaimanifest.prod.boltdns.net/playback/once/v1/vmap/hls/v4/clear/6245817279001/74263065-1285-4d00-842d-73a66554716a/1ba594b5-aadd-42fd-9ba8-87da817125e5/content.vmap?bc_token=NjI5OTVjMGZfZTZjMjkwOGMxOGYxOTRmOGU3YTI0YTVlODYyMDYzZjljMmRlYmNjNTMzNzc0NGU4ODI1ZTY4YzI5MDQwYjIwMg%3D%3D&csid=svod_amcplus_web&fw_did=!&idtype=gauid&prof=amcplus_bc_web&mode=on-demand&caid=PR1427908188668&islat=0&width=0&height=0&usprivacy=1YY-&ae=-1&ipaddress=72.181.23.38"
+        },
+        {
+          "codecs": "avc1,mp4a",
+          "ext_x_version": "4",
+          "src": "https://ssaimanifest.prod.boltdns.net/playback/once/v1/hls/v4/clear/6245817279001/74263065-1285-4d00-842d-73a66554716a/1ba594b5-aadd-42fd-9ba8-87da817125e5/master.m3u8?bc_token=NjI5OTVjMGZfMGU5NDMxNGM3YzMxOGQyMjA1MWQ1MzA1MDQ5N2E0NDFkMjhmZDdjN2NmMDdmM2M5ZGYxMzA1NzUwMTRhNzA1ZQ%3D%3D",
+          "type": "application/x-mpegURL",
+          "vmap": "https://ssaimanifest.prod.boltdns.net/playback/once/v1/vmap/hls/v4/clear/6245817279001/74263065-1285-4d00-842d-73a66554716a/1ba594b5-aadd-42fd-9ba8-87da817125e5/content.vmap?bc_token=NjI5OTVjMGZfZTZjMjkwOGMxOGYxOTRmOGU3YTI0YTVlODYyMDYzZjljMmRlYmNjNTMzNzc0NGU4ODI1ZTY4YzI5MDQwYjIwMg%3D%3D&csid=svod_amcplus_web&fw_did=!&idtype=gauid&prof=amcplus_bc_web&mode=on-demand&caid=PR1427908188668&islat=0&width=0&height=0&usprivacy=1YY-&ae=-1&ipaddress=72.181.23.38"
+        },
+        {
+          "codecs": "avc1,mp4a",
+          "profiles": "urn:mpeg:dash:profile:isoff-live:2011",
+          "src": "http://ssaimanifest.prod.boltdns.net/playback/once/v1/dash/live-timeline/clear/6245817279001/74263065-1285-4d00-842d-73a66554716a/1ba594b5-aadd-42fd-9ba8-87da817125e5/manifest.mpd?bc_token=NjI5OTVjMGZfM2IxMGRiNjgzOWI0MjZkYjg0NDljZWIzMTU3OTVlOGZlNWE0ZWQ5MGI3M2JkYTM3YTc5YWFmOGE4MDUwYzAyNQ%3D%3D",
+          "type": "application/dash+xml",
+          "vmap": "http://ssaimanifest.prod.boltdns.net/playback/once/v1/vmap/dash/live-timeline/clear/6245817279001/74263065-1285-4d00-842d-73a66554716a/1ba594b5-aadd-42fd-9ba8-87da817125e5/content.vmap?bc_token=NjI5OTVjMGZfMTZiMjQwMTk0NTVhMDkwOWM1MThkZjkzZjYxOGE4MDI5MGYxMDAzODJlMzc1MzM3NWRmOTNmZjc0NDkxZDIyMQ%3D%3D&csid=svod_amcplus_web&fw_did=!&idtype=gauid&prof=amcplus_bc_web&mode=on-demand&caid=PR1427908188668&islat=0&width=0&height=0&usprivacy=1YY-&ae=-1&ipaddress=72.181.23.38"
+        },
+        {
+          "codecs": "avc1,mp4a",
+          "profiles": "urn:mpeg:dash:profile:isoff-live:2011",
+          "src": "https://ssaimanifest.prod.boltdns.net/playback/once/v1/dash/live-timeline/clear/6245817279001/74263065-1285-4d00-842d-73a66554716a/1ba594b5-aadd-42fd-9ba8-87da817125e5/manifest.mpd?bc_token=NjI5OTVjMGZfM2IxMGRiNjgzOWI0MjZkYjg0NDljZWIzMTU3OTVlOGZlNWE0ZWQ5MGI3M2JkYTM3YTc5YWFmOGE4MDUwYzAyNQ%3D%3D",
+          "type": "application/dash+xml",
+          "vmap": "https://ssaimanifest.prod.boltdns.net/playback/once/v1/vmap/dash/live-timeline/clear/6245817279001/74263065-1285-4d00-842d-73a66554716a/1ba594b5-aadd-42fd-9ba8-87da817125e5/content.vmap?bc_token=NjI5OTVjMGZfMTZiMjQwMTk0NTVhMDkwOWM1MThkZjkzZjYxOGE4MDI5MGYxMDAzODJlMzc1MzM3NWRmOTNmZjc0NDkxZDIyMQ%3D%3D&csid=svod_amcplus_web&fw_did=!&idtype=gauid&prof=amcplus_bc_web&mode=on-demand&caid=PR1427908188668&islat=0&width=0&height=0&usprivacy=1YY-&ae=-1&ipaddress=72.181.23.38"
+        }
+      ],
+      "name": "Episode 1",
+      "reference_id": "PR1427908188668",
+      "long_description": "Eve is on a revenge mission against The Twelve. She has a lead and needs to track her down via one of her assassins. Villanelle wants to change; so endears herself to a church community. Carolyn is focused on getting back in the game.",
+      "duration": 2565568,
+      "economics": "AD_SUPPORTED",
+      "text_tracks": [],
+      "published_at": "2022-02-24T21:48:12.131Z",
+      "created_at": "2022-02-24T21:48:12.106Z",
+      "updated_at": "2022-05-30T08:31:49.065Z",
+      "offline_enabled": true,
+      "id": "6298753084001"
+    },
+    "adTag": {
+      "params": [
+        {
+          "key": "csid",
+          "value": "svod_amcplus_web",
+          "macro": "{csid}"
+        },
+        {
+          "key": "_fw_did",
+          "value": "!",
+          "macro": "{fw_did}"
+        },
+        {
+          "key": "ad_id_type",
+          "value": "gauid",
+          "macro": "{idtype}"
+        },
+        {
+          "key": "prof",
+          "value": "amcplus_bc_web",
+          "macro": "{prof}"
+        },
+        {
+          "key": "mode",
+          "value": "on-demand",
+          "macro": "{mode}"
+        },
+        {
+          "key": "caid",
+          "value": "PR1427908188668",
+          "macro": "{caid}"
+        },
+        {
+          "key": "_fw_is_lat",
+          "value": "0",
+          "macro": "{islat}"
+        },
+        {
+          "key": "_fw_player_width",
+          "value": "0",
+          "macro": "{width}"
+        },
+        {
+          "key": "_fw_player_height",
+          "value": "0",
+          "macro": "{height}"
+        },
+        {
+          "key": "_fw_us_privacy",
+          "value": "1YY-",
+          "macro": "{usprivacy}"
+        },
+        {
+          "key": "_fw_ae",
+          "value": "-1",
+          "macro": "{ae}"
+        },
+        {
+          "key": "vip",
+          "value": "72.181.23.38",
+          "macro": "{ipaddress}"
+        }
+      ],
+      "macro_params_string": "csid=svod_amcplus_web&fw_did=!&idtype=gauid&prof=amcplus_bc_web&mode=on-demand&caid=PR1427908188668&islat=0&width=0&height=0&usprivacy=1YY-&ae=-1&ipaddress=72.181.23.38",
+      "key_params_string": "csid=svod_amcplus_web&_fw_did=!&ad_id_type=gauid&prof=amcplus_bc_web&mode=on-demand&caid=PR1427908188668&_fw_is_lat=0&_fw_player_width=0&_fw_player_height=0&_fw_us_privacy=1YY-&_fw_ae=-1&vip=72.181.23.38"
+    }
+  }
+}

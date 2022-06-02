@@ -52,16 +52,6 @@ func (p Playback) Header() http.Header {
    return head
 }
 
-type Source struct {
-   Key_Systems struct {
-      Widevine struct {
-         License_URL string
-      } `json:"com.widevine.alpha"`
-   }
-   Src string
-   Type string
-}
-
 type notFound struct {
    value string
 }
@@ -97,4 +87,14 @@ func (p Playback) DASH() *Source {
       }
    }
    return nil
+}
+
+type Source struct {
+   Key_Systems *struct {
+      Widevine struct {
+         License_URL string
+      } `json:"com.widevine.alpha"`
+   }
+   Src string
+   Type string
 }
