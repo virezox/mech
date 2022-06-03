@@ -73,21 +73,3 @@ Cookie: geo=US; dslang=US-EN; site=USA; myacinfo=DAWTKNV323952cf8084a204fb20ab25
 
 {"webAuthorizationFlowContext":"tv"}
 ~~~
-
-How to get `myacinfo`? Like this:
-
-~~~
-POST /appleauth/auth/signin?isRememberMeEnabled=false HTTP/1.1
-Host: idmsa.apple.com
-Content-Type: application/json
-X-Apple-Widget-Key: 06f8d74b71c73757a2f82158d5e948ae7bae11ec45fda9a58690f55e35945c51
-
-{
-  "accountName": "EMAIL",
-  "password": "PASSWORD"
-}
-~~~
-
-How to get `X-Apple-Widget-Key`? Like this:
-
-https://amp-account.tv.apple.com/account/web/config
