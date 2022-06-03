@@ -1,0 +1,16 @@
+{
+  "webStorefrontEligibility": {
+    "create": true,
+    "auth": true,
+    "commerce": true
+  },
+  "webBag": {
+    "idmsBaseUrl": "https://idmsa.apple.com/IDMSWebAuth/signin",
+    "webLogoutUrl": "https://buy.itunes.apple.com/account/web/logout",
+    "idmsAuthWidgetServiceURL": "https://idmsa.apple.com/appleauth",
+    "webAuthUrl": "https://buy.itunes.apple.com/account/web/auth",
+    "idmsAuthWidgetJSURL": "https://appleid.cdn-apple.com/appleauth/static/jsapi/authService.latest.min.js",
+    "appIdKey": "06f8d74b71c73757a2f82158d5e948ae7bae11ec45fda9a58690f55e35945c51",
+    "webLogoutAllUrl": "https://buy.itunes.apple.com/account/web/logout/all"
+  }
+}

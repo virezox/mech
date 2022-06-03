@@ -1,6 +1,7 @@
 # Apple TV
 
-https://github.com/TDenisM/APPLE-TV-4K-Downloader/blob/main/appletv.py
+- https://github.com/TDenisM/APPLE-TV-4K-Downloader/blob/main/appletv.py
+- https://github.com/ytdl-org/youtube-dl/issues/30808
 
 Using this video:
 
@@ -87,4 +88,6 @@ X-Apple-Widget-Key: 06f8d74b71c73757a2f82158d5e948ae7bae11ec45fda9a58690f55e3594
 }
 ~~~
 
-How to get `X-Apple-Widget-Key`?
+How to get `X-Apple-Widget-Key`? Like this:
+
+https://amp-account.tv.apple.com/account/web/config
