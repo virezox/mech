@@ -3,41 +3,50 @@ package apple
 import (
    "bytes"
    "encoding/json"
+   "errors"
    "github.com/89z/format"
    "net/http"
    "net/url"
    "strconv"
-   "strings"
 )
 
-func (s Signin) Auth() (*http.Response, error) {
+func (s Signin) Auth() (*Auth, error) {
    req, err := http.NewRequest(
-      "POST", "http://buy.tv.apple.com/account/web/auth",
-      strings.NewReader(`{"webAuthorizationFlowContext":"tv"}`),
+      "POST", "https://buy.tv.apple.com/account/web/auth", nil,
    )
    if err != nil {
       return nil, err
    }
    req.AddCookie(s.Cookie)
-   req.Header["Accept"] = []string{"*/*"}
-   req.Header["Accept-Language"] = []string{"en-US,en;q=0.5"}
-   req.Header["Connection"] = []string{"keep-alive"}
-   req.Header["Content-Type"] = []string{"application/json"}
-   req.Header["Dnt"] = []string{"1"}
-   req.Header["Host"] = []string{"buy.tv.apple.com"}
-   req.Header["Origin"] = []string{"https://tv.apple.com"}
-   req.Header["Referer"] = []string{"https://tv.apple.com/"}
-   req.Header["User-Agent"] = []string{"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:88.0) Gecko/20100101 Firefox/88.0"}
+   req.Header.Set("Origin", "https://tv.apple.com")
    LogLevel.Dump(req)
-   return new(http.Transport).RoundTrip(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return nil, errors.New(res.Status)
+   }
+   var auth Auth
+   for _, cook := range res.Cookies() {
+      if cook.Name == "media-user-token" {
+         auth.Cookie = cook
+      }
+   }
+   return &auth, nil
 }
 
-func (s Signin) Create(elem ...string) error {
-   return format.Create(s, elem...)
+func (a Auth) Create(elem ...string) error {
+   return format.Create(a, elem...)
 }
 
-func OpenSignin(elem ...string) (*Signin, error) {
-   return format.Open[Signin](elem...)
+func OpenAuth(elem ...string) (*Auth, error) {
+   return format.Open[Auth](elem...)
+}
+
+type Auth struct {
+   *http.Cookie
 }
 
 type Signin struct {
@@ -69,6 +78,9 @@ func (c Config) Signin(email, password string) (*Signin, error) {
       return nil, err
    }
    defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return nil, errors.New(res.Status)
+   }
    var sign Signin
    for _, cook := range res.Cookies() {
       if cook.Name == "myacinfo" {
@@ -99,6 +111,9 @@ func NewConfig() (*Config, error) {
       return nil, err
    }
    defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return nil, errors.New(res.Status)
+   }
    con := new(Config)
    if err := json.NewDecoder(res.Body).Decode(con); err != nil {
       return nil, err

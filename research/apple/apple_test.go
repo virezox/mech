@@ -10,23 +10,6 @@ import (
 )
 
 func TestAuth(t *testing.T) {
-   home, err := os.UserHomeDir()
-   if err != nil {
-      t.Fatal(err)
-   }
-   sign, err := OpenSignin(home, "mech/apple.json")
-   if err != nil {
-      t.Fatal(err)
-   }
-   res, err := sign.Auth()
-   if err != nil {
-      t.Fatal(err)
-   }
-   defer res.Body.Close()
-   fmt.Printf("%+v\n", res)
-}
-
-func TestSignin(t *testing.T) {
    con, err := NewConfig()
    if err != nil {
       t.Fatal(err)
@@ -35,11 +18,15 @@ func TestSignin(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
+   auth, err := sign.Auth()
+   if err != nil {
+      t.Fatal(err)
+   }
    home, err := os.UserHomeDir()
    if err != nil {
       t.Fatal(err)
    }
-   if err := sign.Create(home, "mech/apple.json"); err != nil {
+   if err := auth.Create(home, "mech/apple.json"); err != nil {
       t.Fatal(err)
    }
 }
