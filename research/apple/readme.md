@@ -78,32 +78,13 @@ How to get `myacinfo`? Like this:
 ~~~
 POST /appleauth/auth/signin?isRememberMeEnabled=false HTTP/1.1
 Host: idmsa.apple.com
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:88.0) Gecko/20100101 Firefox/88.0
-Accept: application/json, text/javascript, */*; q=0.01
-Accept-Language: en-US,en;q=0.5
-Accept-Encoding: gzip, deflate, br
-Referer: https://idmsa.apple.com/
 Content-Type: application/json
-X-APPLE-HC: 1:10:20220603160843:b120f6f14f30b87af12d64b2c0d63942::2151
-scnt: AAAA+jNFMDM0Nzk0MDQ3RkM1RUYwMUU4Mjg2QkNCNEVCREVGRDc5RUQ1NjYxODdFRUREMERFOTU5MTI0MDA2RTQ0QjA2OTE4OERERDBFRjQ1MDI4NDM4OEQ5REM0RTlCMzg3MTEzM0M1RURGNzFCNEE2ODhDNDJCQzM4QjlCNDkzOERGNjczMzBDNTUxRUJBMUFGMzE2M0ZGRTQ5N0I3NUVFN0FENkI3QzBGMDgyQzBCMDY2RDQwMjA4QzU5ODMwNDdFNEE4MzA4ODU3MEM2OEQyMDIxN0E4Q0I1QTIzMDhGQTFEOEJGNUJENDlBQzUzMDU1Q3wyAAABgSphSm3HxZg8kv1if1QymZn0j6zbFmpR4faNI7am0A9w4x7xAs/tKz80s6PIAA3OukmZY6jTUxeQfY9HAgysyFIgGR3OYF8TJqqaJF1rYg0l3Wrj9Q==
 X-Apple-Widget-Key: 06f8d74b71c73757a2f82158d5e948ae7bae11ec45fda9a58690f55e35945c51
-X-Apple-I-FD-Client-Info: {"U":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:88.0) Gecko/20100101 Firefox/88.0","L":"en-US","Z":"GMT-05:00","V":"1.1","F":"sla44j1e3NlY5BNlY5BSs5uQ32SCVc20K9cmOHdIU.1s2dI_AIQjvEodUW2vqBBNmrH0WBA.2Zb9WJfStHjsTfwojl7klY5BNleBBNlYCa1nkBMfs..zI"}
-X-Apple-Auth-Attributes: X+fiQYyoKndEUct3CWjXcAVKcBdrXQoPC5JXFylRtCuGaJ3+NKfV/2LaTjcgog782Q4/YQPH9x2oT+m4saavDgOoEBWHv+FvOkR4xG/dp4R4hmARV3ZX7zN7e6CipvZgOqd+cc0Eoi91jjQPKcbTtekln31jJl3PFN0r3vkuk5900pY3j2Kg2UwLTRpJkz679tY3bRM/iPUJgOfYcQEpTh9X2Qz7NciXhfDheNLoRXlEwgvGZwANzrjH5rb2
-X-Apple-Frame-Id: auth-t1q8gzvb-ebpw-52vm-q9dy-q4z8axoe
-X-Apple-OAuth-Client-Id: 06f8d74b71c73757a2f82158d5e948ae7bae11ec45fda9a58690f55e35945c51
-X-Apple-OAuth-State: auth-t1q8gzvb-ebpw-52vm-q9dy-q4z8axoe
-X-Apple-OAuth-Redirect-URI: https://tv.apple.com
-X-Apple-OAuth-Response-Type: code
-X-Apple-OAuth-Response-Mode: web_message
-X-Apple-OAuth-Client-Type: firstPartyAuth
-X-Apple-Domain-Id: 2
-X-Apple-Locale: en_us
-X-Requested-With: XMLHttpRequest
-Content-Length: 77
-Origin: https://idmsa.apple.com
-DNT: 1
-Connection: keep-alive
-Cookie: geo=US; dslang=US-EN; site=USA; aasp=3E034794047FC5EF01E8286BCB4EBDEFD79ED566187EEDD0DE959124006E44B069188DDD0EF450284388D9DC4E9B3871133C5EDF71B4A688C42BC38B9B4938DF67330C551EBA1AF3163FFE497B75EE7AD6B7C0F082C0B066D40208C5983047E4A83088570C68D20217A8CB5A2308FA1D8BF5BD49AC53055C; aa=56A11F6A827CF2920BC8396E0900672E
 
-{"accountName":"EMAIL","rememberMe":false,"password":"PASSWORD"}
+{
+  "accountName": "EMAIL",
+  "password": "PASSWORD"
+}
 ~~~
+
+How to get `X-Apple-Widget-Key`?
