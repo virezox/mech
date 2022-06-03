@@ -2,7 +2,8 @@
 
 ## Locked videos
 
-With locked videos, it seems you can only FairPlay.
+The HLS URL always works, either with StreamPack or FairPlay. The DASH URL only
+works for unlocked items.
 
 ## Android client
 
