@@ -1,5 +1,9 @@
 # ABC
 
+## Locked videos
+
+With locked videos, it seems you can only FairPlay.
+
 ## Android client
 
 ~~~

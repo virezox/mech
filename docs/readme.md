@@ -1,7 +1,6 @@
 # Docs
 
-- https://reddit.com/r/television
-- https://trakt.tv/shows/orphan-black/seasons/1/episodes/2
+https://reddit.com/r/television
 
 ## How to add a new site?
 

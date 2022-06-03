@@ -21,8 +21,8 @@ var names = []string{
    "abc",
    ///////////
    "bandcamp",
-   "pbs",
    "cbc-gem",
+   "amc",
 }
 
 func userinfo() (*url.Userinfo, error) {
