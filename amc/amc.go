@@ -9,6 +9,21 @@ import (
    "strings"
 )
 
+var LogLevel format.LogLevel
+
+func GetNID(addr string) (int64, error) {
+   _, nid, ok := strings.Cut(addr, "--")
+   if !ok {
+      return 0, notFound{"--"}
+   }
+   return strconv.ParseInt(nid, 10, 64)
+}
+
+type Playback struct {
+   PlaybackJsonData PlaybackJsonData
+   BcJWT string
+}
+
 func (p Playback) Base() string {
    var buf strings.Builder
    buf.WriteString(p.PlaybackJsonData.Custom_Fields.Show)
@@ -21,35 +36,39 @@ func (p Playback) Base() string {
    return buf.String()
 }
 
-type PlaybackJsonData struct {
-   Sources []Source
-   Custom_Fields struct {
-      Show string // 1
-      Season string // 2
-      Episode string // 3
+func (p Playback) DASH() *Source {
+   for _, source := range p.PlaybackJsonData.Sources {
+      if source.Type == "application/dash+xml" {
+         return &source
+      }
    }
-   Name string // 4
-}
-
-type Playback struct {
-   PlaybackJsonData PlaybackJsonData
-   BcJWT string
-}
-
-var LogLevel format.LogLevel
-
-func GetNID(addr string) (int64, error) {
-   _, nid, ok := strings.Cut(addr, "--")
-   if !ok {
-      return 0, notFound{"--"}
-   }
-   return strconv.ParseInt(nid, 10, 64)
+   return nil
 }
 
 func (p Playback) Header() http.Header {
    head := make(http.Header)
    head.Set("bcov-auth", p.BcJWT)
    return head
+}
+
+type PlaybackJsonData struct {
+   Custom_Fields struct {
+      Show string // 1
+      Season string // 2
+      Episode string // 3
+   }
+   Name string // 4
+   Sources []Source
+}
+
+type Source struct {
+   Key_Systems *struct {
+      Widevine struct {
+         License_URL string
+      } `json:"com.widevine.alpha"`
+   }
+   Src string
+   Type string
 }
 
 type notFound struct {
@@ -78,23 +97,4 @@ type playbackResponse struct {
    Data struct {
       PlaybackJsonData PlaybackJsonData
    }
-}
-
-func (p Playback) DASH() *Source {
-   for _, source := range p.PlaybackJsonData.Sources {
-      if source.Type == "application/dash+xml" {
-         return &source
-      }
-   }
-   return nil
-}
-
-type Source struct {
-   Key_Systems *struct {
-      Widevine struct {
-         License_URL string
-      } `json:"com.widevine.alpha"`
-   }
-   Src string
-   Type string
 }
