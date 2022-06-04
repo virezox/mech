@@ -44,7 +44,3 @@ authorization: Bearer eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IldlYlBsYXlLaW
    "uri": "data:text/plain;base64,AAAAOHBzc2gAAAAA7e+LqXnWSs6jyCfc1R0h7QAAABgSEAAAAAAWgu8rYzAgICAgICBI88aJmwY="
 }
 ~~~
-
-Authorization comes from response HTML:
-
-https://tv.apple.com

@@ -9,6 +9,24 @@ import (
    "testing"
 )
 
+const contentID = "umc.cmc.45cu44369hb2qfuwr3fihnr8e"
+
+func TestEpisode(t *testing.T) {
+   episode, err := NewEpisode(contentID)
+   if err != nil {
+      t.Fatal(err)
+   }
+   fmt.Printf("%+v\n", episode)
+}
+
+func TestEnvironment(t *testing.T) {
+   env, err := NewEnvironment()
+   if err != nil {
+      t.Fatal(err)
+   }
+   fmt.Printf("%+v\n", env)
+}
+
 func TestAuth(t *testing.T) {
    con, err := NewConfig()
    if err != nil {

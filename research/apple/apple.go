@@ -5,10 +5,95 @@ import (
    "encoding/json"
    "errors"
    "github.com/89z/format"
+   "github.com/89z/format/xml"
    "net/http"
    "net/url"
    "strconv"
 )
+
+type Episode struct {
+   Data struct {
+      Playables map[string]struct {
+         Assets struct {
+            FpsKeyServerQueryParameters struct {
+               AdamID string
+               SvcID string
+            }
+         }
+      }
+   }
+}
+
+func NewEpisode(contentID string) (*Episode, error) {
+   req, err := http.NewRequest(
+      "GET", "https://tv.apple.com/api/uts/v3/episodes/" + contentID, nil,
+   )
+   if err != nil {
+      return nil, err
+   }
+   req.URL.RawQuery = url.Values{
+      "caller": {"web"},
+      "locale": {"en-US"},
+      "pfm": {"web"},
+      "sf": {strconv.Itoa(sf_max)},
+      "v": {strconv.Itoa(v_max)},
+   }.Encode()
+   LogLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   epi := new(Episode)
+   if err := json.NewDecoder(res.Body).Decode(epi); err != nil {
+      return nil, err
+   }
+   return epi, nil
+}
+
+type Environment struct {
+   Media_API struct {
+      Token string
+   }
+}
+
+func NewEnvironment() (*Environment, error) {
+   req, err := http.NewRequest("GET", "https://tv.apple.com", nil)
+   if err != nil {
+      return nil, err
+   }
+   LogLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return nil, errors.New(res.Status)
+   }
+   scan, err := xml.NewScanner(res.Body)
+   if err != nil {
+      return nil, err
+   }
+   scan.Split = []byte(`"web-tv-app/config/environment"`)
+   scan.Scan()
+   scan.Split = []byte("<meta")
+   var meta struct {
+      Content string `xml:"content,attr"`
+   }
+   if err := scan.Decode(&meta); err != nil {
+      return nil, err
+   }
+   content, err := url.PathUnescape(meta.Content)
+   if err != nil {
+      return nil, err
+   }
+   env := new(Environment)
+   if err := json.Unmarshal([]byte(content), env); err != nil {
+      return nil, err
+   }
+   return env, nil
+}
 
 func (s Signin) Auth() (*Auth, error) {
    req, err := http.NewRequest(
@@ -127,22 +212,3 @@ const (
    v_max = 58
    v_min = 50
 )
-
-func Episodes() (*http.Response, error) {
-   req := new(http.Request)
-   req.Header = make(http.Header)
-   req.URL = new(url.URL)
-   req.URL.Host = "tv.apple.com"
-   req.URL.Path = "/api/uts/v3/episodes/umc.cmc.45cu44369hb2qfuwr3fihnr8e"
-   req.URL.Scheme = "https"
-   val := make(url.Values)
-   val["caller"] = []string{"web"}
-   val["locale"] = []string{"en-US"}
-   val["pfm"] = []string{"web"}
-   val["sf"] = []string{strconv.Itoa(sf_max)}
-   val["v"] = []string{strconv.Itoa(v_max)}
-   req.URL.RawQuery = val.Encode()
-   LogLevel.Dump(req)
-   // "adamId"
-   return new(http.Transport).RoundTrip(req)
-}
