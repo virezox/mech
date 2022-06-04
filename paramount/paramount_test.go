@@ -9,16 +9,27 @@ import (
    "time"
 )
 
-var guids = []string{
-   // paramountplus.com/movies/building-star-trek/wQH9yE_y_Dt4ekDYm3yelhhY2KXvOra_
-   "wQH9yE_y_Dt4ekDYm3yelhhY2KXvOra_",
-   // paramountplus.com/shows/melrose_place/video/622520382/melrose-place-pilot
-   "622520382",
+var tests = map[testType]string{
+   {episode, dashCenc}: "eyT_RYkqNuH_6ZYrepLtxkiPO1HA7dIU",
+   {episode, streamPack}: "622520382",
+   {movie, streamPack}: "wQH9yE_y_Dt4ekDYm3yelhhY2KXvOra_",
 }
 
-func TestParamount(t *testing.T) {
-   for _, guid := range guids {
-      preview, err := NewMedia(guid).Preview()
+const (
+   dashCenc = iota
+   episode
+   movie
+   streamPack
+)
+
+type testType struct {
+   contentType int
+   asset int
+}
+
+func TestPreview(t *testing.T) {
+   for _, test := range tests {
+      preview, err := NewMedia(test).Preview()
       if err != nil {
          t.Fatal(err)
       }
@@ -26,8 +37,6 @@ func TestParamount(t *testing.T) {
       time.Sleep(time.Second)
    }
 }
-
-const contentID = "eyT_RYkqNuH_6ZYrepLtxkiPO1HA7dIU"
 
 func TestSession(t *testing.T) {
    home, err := os.UserHomeDir()
@@ -59,7 +68,7 @@ func TestSession(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   sess, err := NewSession(contentID)
+   sess, err := NewSession(tests[testType{episode, dashCenc}])
    if err != nil {
       t.Fatal(err)
    }

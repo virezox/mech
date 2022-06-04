@@ -16,9 +16,11 @@ type Episode struct {
       Playables map[string]struct {
          Assets struct {
             FpsKeyServerQueryParameters struct {
-               AdamID string
-               SvcID string
+               AdamId string
+               SvcId string
             }
+            FpsKeyServerUrl string
+            HlsUrl string
          }
       }
    }
