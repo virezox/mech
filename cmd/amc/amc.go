@@ -7,28 +7,13 @@ import (
    "github.com/89z/format/dash"
    "github.com/89z/mech"
    "github.com/89z/mech/amc"
-   "github.com/89z/mech/widevine"
    "io"
    "net/http"
    "net/url"
    "os"
 )
 
-type downloader struct {
-   *amc.Playback
-   *dash.Period
-   *url.URL
-   client string
-   info bool
-   key []byte
-   pem string
-}
-
 func (d *downloader) setKey() error {
-   key := d.DASH().Key_Systems
-   if key == nil {
-      return nil
-   }
    privateKey, err := os.ReadFile(d.pem)
    if err != nil {
       return err
@@ -41,16 +26,21 @@ func (d *downloader) setKey() error {
    if err != nil {
       return err
    }
-   mod, err := widevine.NewModule(privateKey, clientID, kID)
+   d.key, err = d.Playback.Key(privateKey, clientID, kID)
    if err != nil {
       return err
    }
-   keys, err := mod.Post(key.Widevine.License_URL, d.Playback.Header())
-   if err != nil {
-      return err
-   }
-   d.key = keys.Content().Key
    return nil
+}
+
+type downloader struct {
+   *amc.Playback
+   *dash.Period
+   *url.URL
+   client string
+   info bool
+   key []byte
+   pem string
 }
 
 func (d *downloader) download(band int64, fn dash.PeriodFunc) error {

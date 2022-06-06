@@ -4,20 +4,16 @@ package roku
 import (
    "bytes"
    "errors"
+   "github.com/89z/mech/widevine"
    "io"
    "net/http"
-   wv "github.com/89z/mech/widevine"
 )
 
-type Playback struct {
-   DRM struct {
-      Widevine struct {
-         LicenseServer string
-      }
+func (p Playback) Key(privateKey, clientID, kID []byte) ([]byte, error) {
+   mod, err := widevine.NewModule(privateKey, clientID, kID)
+   if err != nil {
+      return nil, err
    }
-}
-
-func (p Playback) Containers(mod *wv.Module) (wv.Containers, error) {
    in, err := mod.Marshal()
    if err != nil {
       return nil, err
@@ -41,5 +37,17 @@ func (p Playback) Containers(mod *wv.Module) (wv.Containers, error) {
    if err != nil {
       return nil, err
    }
-   return mod.Unmarshal(out)
+   keys, err := mod.Unmarshal(out)
+   if err != nil {
+      return nil, err
+   }
+   return keys.Content().Key, nil
+}
+
+type Playback struct {
+   DRM struct {
+      Widevine struct {
+         LicenseServer string
+      }
+   }
 }

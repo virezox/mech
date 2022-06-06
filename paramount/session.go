@@ -5,14 +5,18 @@ import (
    "bytes"
    "encoding/json"
    "errors"
+   "github.com/89z/mech/widevine"
    "io"
    "net/http"
    "net/url"
    "strings"
-   wv "github.com/89z/mech/widevine"
 )
 
-func (s Session) Containers(mod *wv.Module) (wv.Containers, error) {
+func (s Session) Key(privateKey, clientID, kID []byte) ([]byte, error) {
+   mod, err := widevine.NewModule(privateKey, clientID, kID)
+   if err != nil {
+      return nil, err
+   }
    in, err := mod.Marshal()
    if err != nil {
       return nil, err
@@ -37,7 +41,11 @@ func (s Session) Containers(mod *wv.Module) (wv.Containers, error) {
    if err != nil {
       return nil, err
    }
-   return mod.Unmarshal(out)
+   keys, err := mod.Unmarshal(out)
+   if err != nil {
+      return nil, err
+   }
+   return keys.Content().Key, nil
 }
 
 type Session struct {

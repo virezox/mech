@@ -6,13 +6,16 @@ import (
    "github.com/89z/format/dash"
    "github.com/89z/mech"
    "github.com/89z/mech/paramount"
-   "github.com/89z/mech/widevine"
    "net/http"
    "os"
    "sort"
 )
 
 func (d *downloader) setKey() error {
+   sess, err := paramount.NewSession(d.Preview.GUID)
+   if err != nil {
+      return err
+   }
    privateKey, err := os.ReadFile(d.pem)
    if err != nil {
       return err
@@ -25,19 +28,10 @@ func (d *downloader) setKey() error {
    if err != nil {
       return err
    }
-   mod, err := widevine.NewModule(privateKey, clientID, kID)
+   d.key, err = sess.Key(privateKey, clientID, kID)
    if err != nil {
       return err
    }
-   sess, err := paramount.NewSession(d.GUID)
-   if err != nil {
-      return err
-   }
-   keys, err := sess.Containers(mod)
-   if err != nil {
-      return err
-   }
-   d.key = keys.Content().Key
    return nil
 }
 

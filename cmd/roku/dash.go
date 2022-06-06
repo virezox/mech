@@ -6,12 +6,19 @@ import (
    "github.com/89z/format/dash"
    "github.com/89z/mech"
    "github.com/89z/mech/roku"
-   "github.com/89z/mech/widevine"
    "net/http"
    "os"
 )
 
 func (d *downloader) setKey() error {
+   site, err := roku.NewCrossSite()
+   if err != nil {
+      return err
+   }
+   play, err := site.Playback(d.Meta.ID)
+   if err != nil {
+      return err
+   }
    privateKey, err := os.ReadFile(d.pem)
    if err != nil {
       return err
@@ -24,23 +31,10 @@ func (d *downloader) setKey() error {
    if err != nil {
       return err
    }
-   mod, err := widevine.NewModule(privateKey, clientID, kID)
+   d.key, err = play.Key(privateKey, clientID, kID)
    if err != nil {
       return err
    }
-   site, err := roku.NewCrossSite()
-   if err != nil {
-      return err
-   }
-   play, err := site.Playback(d.Meta.ID)
-   if err != nil {
-      return err
-   }
-   keys, err := play.Containers(mod)
-   if err != nil {
-      return err
-   }
-   d.key = keys.Content().Key
    return nil
 }
 
