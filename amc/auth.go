@@ -6,6 +6,7 @@ import (
    "encoding/json"
    "errors"
    "github.com/89z/format"
+   "github.com/89z/mech"
    "net/http"
    "strconv"
 )
@@ -125,8 +126,7 @@ func (a Auth) Playback(nid int64) (*Playback, error) {
    addr = strconv.AppendInt(addr, nid, 10)
    src.AdTags.Mode = "on-demand"
    src.AdTags.URL = "!"
-   buf := new(bytes.Buffer)
-   err := json.NewEncoder(buf).Encode(src)
+   buf, err := mech.Encode(src)
    if err != nil {
       return nil, err
    }
