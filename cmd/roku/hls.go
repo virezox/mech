@@ -6,6 +6,7 @@ import (
    "github.com/89z/format/hls"
    "io"
    "net/http"
+   "net/url"
    "os"
 )
 
@@ -20,13 +21,17 @@ func (d downloader) HLS(bandwidth int64) error {
       return err
    }
    defer res.Body.Close()
-   master, err := hls.NewScanner(res.Body).Master(res.Request.URL)
+   master, err := hls.NewScanner(res.Body).Master()
    if err != nil {
       return err
    }
-   stream := master.Stream(bandwidth)
+   stream := master.Streams.GetBandwidth(bandwidth)
    if !d.info {
-      return downloadHLS(stream, d.Base())
+      addr, err := stream.URI(res.Request.URL)
+      if err != nil {
+         return err
+      }
+      return downloadHLS(addr, d.Base())
    }
    fmt.Println(d.Content)
    for _, each := range master.Streams {
@@ -38,14 +43,14 @@ func (d downloader) HLS(bandwidth int64) error {
    return nil
 }
 
-func downloadHLS(stream *hls.Stream, base string) error {
-   fmt.Println("GET", stream.URI)
-   res, err := http.Get(stream.URI.String())
+func downloadHLS(addr *url.URL, base string) error {
+   fmt.Println("GET", addr)
+   res, err := http.Get(addr.String())
    if err != nil {
       return err
    }
    defer res.Body.Close()
-   seg, err := hls.NewScanner(res.Body).Segment(res.Request.URL)
+   seg, err := hls.NewScanner(res.Body).Segment()
    if err != nil {
       return err
    }
@@ -56,7 +61,11 @@ func downloadHLS(stream *hls.Stream, base string) error {
    defer file.Close()
    pro := format.ProgressChunks(file, len(seg.Info))
    for _, info := range seg.Info {
-      res, err := http.Get(info.URI.String())
+      addr, err := info.URI(res.Request.URL)
+      if err != nil {
+         return err
+      }
+      res, err := http.Get(addr.String())
       if err != nil {
          return err
       }

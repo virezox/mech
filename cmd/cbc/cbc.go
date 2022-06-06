@@ -36,33 +36,38 @@ func newMaster(id, address, audio string, video int64, info bool) error {
       return err
    }
    defer res.Body.Close()
-   master, err := hls.NewScanner(res.Body).Master(res.Request.URL)
+   master, err := hls.NewScanner(res.Body).Master()
    if err != nil {
       return err
    }
    if info {
       fmt.Println(asset)
-      video := master.Stream(video)
+      video := master.Streams.GetBandwidth(video)
       for _, stream := range master.Streams {
          if stream.Bandwidth == video.Bandwidth {
             fmt.Print("!")
          }
          fmt.Println(stream)
       }
-      for _, media := range master.Media {
-         fmt.Println(media)
+      for _, medium := range master.Media {
+         fmt.Println(medium)
       }
    } else {
       if audio != "" {
-         media := master.Audio(audio)
-         err := download(media.URI, asset.AppleContentID + hls.AAC)
+         addr, err := master.Media.GetName(audio).URI(res.Request.URL)
          if err != nil {
+            return err
+         }
+         if err := download(addr, asset.AppleContentID + hls.AAC); err != nil {
             return err
          }
       }
       if video >= 1 {
-         stream := master.Stream(video)
-         return download(stream.URI, asset.AppleContentID + hls.TS)
+         addr, err := master.Streams.GetBandwidth(video).URI(res.Request.URL)
+         if err != nil {
+            return err
+         }
+         return download(addr, asset.AppleContentID + hls.TS)
       }
    }
    return nil
@@ -73,8 +78,12 @@ func download(addr *url.URL, name string) error {
    if err != nil {
       return err
    }
-   fmt.Println("GET", seg.Key)
-   res, err := http.Get(seg.Key.String())
+   key, err := seg.Key(addr)
+   if err != nil {
+      return err
+   }
+   fmt.Println("GET", key)
+   res, err := http.Get(key.String())
    if err != nil {
       return err
    }
@@ -90,12 +99,16 @@ func download(addr *url.URL, name string) error {
    defer file.Close()
    pro := format.ProgressChunks(file, len(seg.Info))
    for _, info := range seg.Info {
-      res, err := http.Get(info.URI.String())
+      addr, err := info.URI(addr)
+      if err != nil {
+         return err
+      }
+      res, err := http.Get(addr.String())
       if err != nil {
          return err
       }
       pro.AddChunk(res.ContentLength)
-      if _, err := block.Copy(pro, res.Body, info.IV); err != nil {
+      if _, err := block.Copy(pro, res.Body, nil); err != nil {
          return err
       }
       if err := res.Body.Close(); err != nil {
@@ -112,7 +125,7 @@ func newSegment(addr string) (*hls.Segment, error) {
       return nil, err
    }
    defer res.Body.Close()
-   return hls.NewScanner(res.Body).Segment(res.Request.URL)
+   return hls.NewScanner(res.Body).Segment()
 }
 
 func doProfile(email, password string) error {

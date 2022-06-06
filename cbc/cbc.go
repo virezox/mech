@@ -15,9 +15,12 @@ const forwardedFor = "99.224.0.0"
 var LogLevel format.LogLevel
 
 // gem.cbc.ca/media/downton-abbey/s01e05
-func GetID(addr string) string {
-   _, after, _ := strings.Cut(addr, "/media/")
-   return after
+func GetID(input string) string {
+   _, after, found := strings.Cut(input, "/media/")
+   if found {
+      return after
+   }
+   return input
 }
 
 type Asset struct {

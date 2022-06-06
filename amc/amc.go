@@ -11,12 +11,12 @@ import (
 
 var LogLevel format.LogLevel
 
-func GetNID(addr string) (int64, error) {
-   _, nid, ok := strings.Cut(addr, "--")
-   if !ok {
-      return 0, notFound{"--"}
+func GetNID(input string) (int64, error) {
+   _, nid, found := strings.Cut(input, "--")
+   if found {
+      input = nid
    }
-   return strconv.ParseInt(nid, 10, 64)
+   return strconv.ParseInt(input, 10, 64)
 }
 
 type Playback struct {
@@ -69,17 +69,6 @@ type Source struct {
    }
    Src string
    Type string
-}
-
-type notFound struct {
-   value string
-}
-
-func (n notFound) Error() string {
-   var buf []byte
-   buf = strconv.AppendQuote(buf, n.value)
-   buf = append(buf, " is not found"...)
-   return string(buf)
 }
 
 type playbackRequest struct {

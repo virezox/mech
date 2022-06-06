@@ -13,24 +13,24 @@ import (
 )
 
 func newMaster(guid, bandwidth int64, info bool) error {
-   vod, err := nbc.NewAccessVOD(guid)
+   access, err := nbc.NewAccessVOD(guid)
    if err != nil {
       return err
    }
-   fmt.Println("GET", vod.ManifestPath)
-   res, err := http.Get(vod.ManifestPath)
+   fmt.Println("GET", access.ManifestPath)
+   res, err := http.Get(access.ManifestPath)
    if err != nil {
       return err
    }
    defer res.Body.Close()
-   master, err := hls.NewScanner(res.Body).Master(res.Request.URL)
+   master, err := hls.NewScanner(res.Body).Master()
    if err != nil {
       return err
    }
    sort.Slice(master.Streams, func(a, b int) bool {
       return master.Streams[a].Bandwidth < master.Streams[b].Bandwidth
    })
-   stream := master.Stream(bandwidth)
+   stream := master.Streams.GetBandwidth(bandwidth)
    if info {
       for _, each := range master.Streams {
          if each.Bandwidth == stream.Bandwidth {
@@ -43,19 +43,19 @@ func newMaster(guid, bandwidth int64, info bool) error {
       if err != nil {
          return err
       }
-      return download(stream, video.Base())
+      return download(stream.RawURI, video.Base())
    }
    return nil
 }
 
-func download(stream *hls.Stream, base string) error {
-   fmt.Println("GET", stream.URI)
-   res, err := http.Get(stream.URI.String())
+func download(addr, base string) error {
+   fmt.Println("GET", addr)
+   res, err := http.Get(addr)
    if err != nil {
       return err
    }
    defer res.Body.Close()
-   seg, err := hls.NewScanner(res.Body).Segment(res.Request.URL)
+   seg, err := hls.NewScanner(res.Body).Segment()
    if err != nil {
       return err
    }
@@ -66,7 +66,7 @@ func download(stream *hls.Stream, base string) error {
    defer file.Close()
    pro := format.ProgressChunks(file, len(seg.Info))
    for _, info := range seg.Info {
-      res, err := http.Get(info.URI.String())
+      res, err := http.Get(info.RawURI)
       if err != nil {
          return err
       }
