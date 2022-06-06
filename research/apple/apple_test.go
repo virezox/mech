@@ -11,13 +11,6 @@ import (
 
 const contentID = "umc.cmc.45cu44369hb2qfuwr3fihnr8e"
 
-/*
-3. URL Episode
-4. adamId Episode
-5. PSSH Episode
-1. user-token Auth
-2. bearer Environment
-*/
 func TestLicense(t *testing.T) {
    episode, err := NewEpisode(contentID)
    if err != nil {

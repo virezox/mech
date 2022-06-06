@@ -21,13 +21,6 @@ type Environment struct {
    }
 }
 
-type licenseRequest struct {
-   KeySystem string `json:"key-system"`
-   ExtraServerParameters ServerParameters `json:"extra-server-parameters"`
-   URI string `json:"uri"`
-   Challenge []byte `json:"challenge"`
-}
-
 func NewEpisode(contentID string) (*Episode, error) {
    req, err := http.NewRequest(
       "GET", "https://tv.apple.com/api/uts/v3/episodes/" + contentID, nil,
