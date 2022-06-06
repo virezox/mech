@@ -11,6 +11,39 @@ import (
    "os"
 )
 
+func (d *downloader) setKey() error {
+   privateKey, err := os.ReadFile(d.pem)
+   if err != nil {
+      return err
+   }
+   clientID, err := os.ReadFile(d.client)
+   if err != nil {
+      return err
+   }
+   kID, err := d.Protection().KID()
+   if err != nil {
+      return err
+   }
+   mod, err := widevine.NewModule(privateKey, clientID, kID)
+   if err != nil {
+      return err
+   }
+   site, err := roku.NewCrossSite()
+   if err != nil {
+      return err
+   }
+   play, err := site.Playback(d.Meta.ID)
+   if err != nil {
+      return err
+   }
+   keys, err := play.Containers(mod)
+   if err != nil {
+      return err
+   }
+   d.key = keys.Content().Key
+   return nil
+}
+
 func (d downloader) DASH(video, audio int64) error {
    if d.info {
       fmt.Println(d.Content)
@@ -94,38 +127,5 @@ func (d *downloader) download(band int64, fn dash.PeriodFunc) error {
          }
       }
    }
-   return nil
-}
-
-func (d *downloader) setKey() error {
-   privateKey, err := os.ReadFile(d.pem)
-   if err != nil {
-      return err
-   }
-   clientID, err := os.ReadFile(d.client)
-   if err != nil {
-      return err
-   }
-   kID, err := d.Protection().KID()
-   if err != nil {
-      return err
-   }
-   mod, err := widevine.NewModule(privateKey, clientID, kID)
-   if err != nil {
-      return err
-   }
-   site, err := roku.NewCrossSite()
-   if err != nil {
-      return err
-   }
-   play, err := site.Playback(d.Meta.ID)
-   if err != nil {
-      return err
-   }
-   keys, err := mod.Post(play.DRM.Widevine.LicenseServer, nil)
-   if err != nil {
-      return err
-   }
-   d.key = keys.Content().Key
    return nil
 }

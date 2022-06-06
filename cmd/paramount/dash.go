@@ -12,6 +12,35 @@ import (
    "sort"
 )
 
+func (d *downloader) setKey() error {
+   privateKey, err := os.ReadFile(d.pem)
+   if err != nil {
+      return err
+   }
+   clientID, err := os.ReadFile(d.client)
+   if err != nil {
+      return err
+   }
+   kID, err := d.Protection().KID()
+   if err != nil {
+      return err
+   }
+   mod, err := widevine.NewModule(privateKey, clientID, kID)
+   if err != nil {
+      return err
+   }
+   sess, err := paramount.NewSession(d.GUID)
+   if err != nil {
+      return err
+   }
+   keys, err := sess.Containers(mod)
+   if err != nil {
+      return err
+   }
+   d.key = keys.Content().Key
+   return nil
+}
+
 func (d *downloader) download(band int64, fn dash.PeriodFunc) error {
    if band == 0 {
       return nil
@@ -99,33 +128,4 @@ func (d downloader) DASH(video, audio int64) error {
       return err
    }
    return d.download(video, dash.Video)
-}
-
-func (d *downloader) setKey() error {
-   privateKey, err := os.ReadFile(d.pem)
-   if err != nil {
-      return err
-   }
-   clientID, err := os.ReadFile(d.client)
-   if err != nil {
-      return err
-   }
-   kID, err := d.Protection().KID()
-   if err != nil {
-      return err
-   }
-   mod, err := widevine.NewModule(privateKey, clientID, kID)
-   if err != nil {
-      return err
-   }
-   sess, err := paramount.NewSession(d.GUID)
-   if err != nil {
-      return err
-   }
-   keys, err := mod.Post(sess.URL, sess.Header())
-   if err != nil {
-      return err
-   }
-   d.key = keys.Content().Key
-   return nil
 }

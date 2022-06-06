@@ -2,12 +2,43 @@ package paramount
 // github.com/89z
 
 import (
+   "bytes"
    "encoding/json"
    "errors"
+   "io"
    "net/http"
    "net/url"
    "strings"
+   wv "github.com/89z/mech/widevine"
 )
+
+func (s Session) Containers(mod *wv.Module) (wv.Containers, error) {
+   in, err := mod.Marshal()
+   if err != nil {
+      return nil, err
+   }
+   req, err := http.NewRequest(
+      "POST", s.URL, bytes.NewReader(in),
+   )
+   if err != nil {
+      return nil, err
+   }
+   req.Header.Set("Authorization", "Bearer " + s.LS_Session)
+   LogLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return nil, errors.New(res.Status)
+   }
+   out, err := io.ReadAll(res.Body)
+   if err != nil {
+      return nil, err
+   }
+   return mod.Unmarshal(out)
+}
 
 type Session struct {
    URL string
@@ -42,10 +73,4 @@ func NewSession(contentID string) (*Session, error) {
    }
    sess.URL += contentID
    return sess, nil
-}
-
-func (s Session) Header() http.Header {
-   head := make(http.Header)
-   head.Set("Authorization", "Bearer " + s.LS_Session)
-   return head
 }
