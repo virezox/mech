@@ -11,19 +11,21 @@ import (
    "strconv"
 )
 
-type Episode struct {
-   Data struct {
-      Playables map[string]struct {
-         Assets struct {
-            FpsKeyServerQueryParameters struct {
-               AdamId string
-               SvcId string
-            }
-            FpsKeyServerUrl string
-            HlsUrl string
-         }
-      }
+type Auth struct {
+   *http.Cookie
+}
+
+type Environment struct {
+   Media_API struct {
+      Token string // authorization: Bearer eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXV...
    }
+}
+
+type licenseRequest struct {
+   KeySystem string `json:"key-system"`
+   ExtraServerParameters ServerParameters `json:"extra-server-parameters"`
+   URI string `json:"uri"`
+   Challenge []byte `json:"challenge"`
 }
 
 func NewEpisode(contentID string) (*Episode, error) {
@@ -53,10 +55,19 @@ func NewEpisode(contentID string) (*Episode, error) {
    return epi, nil
 }
 
-type Environment struct {
-   Media_API struct {
-      Token string // authorization: Bearer eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXV...
+type Episode struct {
+   Data struct {
+      Playables map[string]struct {
+         Assets Asset
+      }
    }
+}
+
+func (e Episode) Asset() *Asset {
+   for _, play := range e.Data.Playables {
+      return &play.Assets
+   }
+   return nil
 }
 
 func NewEnvironment() (*Environment, error) {
@@ -130,10 +141,6 @@ func (a Auth) Create(elem ...string) error {
 
 func OpenAuth(elem ...string) (*Auth, error) {
    return format.Open[Auth](elem...)
-}
-
-type Auth struct {
-   *http.Cookie
 }
 
 type Signin struct {

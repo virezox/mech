@@ -1,5 +1,5 @@
-github.com/89z/format v1.36.5 h1:EEvOSZDk7d7YiCcT2/YbHyBM8NPb5pc7sb1EXlLFLKU=
-github.com/89z/format v1.36.5/go.mod h1:5i+RXmUAIBpovn9TtXV3vK9AEIaFVuULs4CvA4oeic0=
+github.com/89z/format v1.36.6 h1:wrN3wq94O1MWvkNfRiQFu+Vg0oR59ss4GHCsEmIoexE=
+github.com/89z/format v1.36.6/go.mod h1:5i+RXmUAIBpovn9TtXV3vK9AEIaFVuULs4CvA4oeic0=
 github.com/chmike/cmac-go v1.1.0 h1:aF73ZAEx9N2WdQc93DOJ2fMsBDAGqUtuenjMJMb3kEI=
 github.com/chmike/cmac-go v1.1.0/go.mod h1:wcIN7NRqWSKGuORzd4dReBkoBDE9ZBqfyTVxyDxGeUw=
 github.com/edgeware/mp4ff v0.28.1-0.20220602113314-1abe9a5439ec h1:eKqGcsLaLobzihupwa1xEIgesrf/DbAwSlzsjwXamBI=
