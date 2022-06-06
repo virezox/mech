@@ -14,6 +14,45 @@ import (
    "os"
 )
 
+type downloader struct {
+   *amc.Playback
+   *dash.Period
+   *url.URL
+   client string
+   info bool
+   key []byte
+   pem string
+}
+
+func (d *downloader) setKey() error {
+   key := d.DASH().Key_Systems
+   if key == nil {
+      return nil
+   }
+   privateKey, err := os.ReadFile(d.pem)
+   if err != nil {
+      return err
+   }
+   clientID, err := os.ReadFile(d.client)
+   if err != nil {
+      return err
+   }
+   kID, err := d.Protection().KID()
+   if err != nil {
+      return err
+   }
+   mod, err := widevine.NewModule(privateKey, clientID, kID)
+   if err != nil {
+      return err
+   }
+   keys, err := mod.Post(key.Widevine.License_URL, d.Playback.Header())
+   if err != nil {
+      return err
+   }
+   d.key = keys.Content().Key
+   return nil
+}
+
 func (d *downloader) download(band int64, fn dash.PeriodFunc) error {
    if band == 0 {
       return nil
@@ -83,35 +122,6 @@ func (d *downloader) download(band int64, fn dash.PeriodFunc) error {
    return nil
 }
 
-func (d *downloader) setKey() error {
-   key := d.DASH().Key_Systems
-   if key == nil {
-      return nil
-   }
-   privateKey, err := os.ReadFile(d.pem)
-   if err != nil {
-      return err
-   }
-   clientID, err := os.ReadFile(d.client)
-   if err != nil {
-      return err
-   }
-   kID, err := d.Protection().KID()
-   if err != nil {
-      return err
-   }
-   mod, err := widevine.NewModule(privateKey, clientID, kID)
-   if err != nil {
-      return err
-   }
-   keys, err := mod.Post(key.Widevine.License_URL, d.Header())
-   if err != nil {
-      return err
-   }
-   d.key = keys.Content().Key
-   return nil
-}
-
 func doLogin(email, password string) error {
    auth, err := amc.Unauth()
    if err != nil {
@@ -173,12 +183,3 @@ func (d downloader) doDASH(address string, nid, video, audio int64) error {
    return d.download(video, dash.Video)
 }
 
-type downloader struct {
-   *amc.Playback
-   *dash.Period
-   *url.URL
-   client string
-   info bool
-   key []byte
-   pem string
-}
