@@ -1,5 +1,5 @@
-// github.com/89z
 package bandcamp
+// github.com/89z
 
 import (
    "encoding/json"

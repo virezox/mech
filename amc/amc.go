@@ -1,5 +1,5 @@
-// github.com/89z
 package amc
+// github.com/89z
 
 import (
    "github.com/89z/format"

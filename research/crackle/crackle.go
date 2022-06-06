@@ -1,4 +1,3 @@
-// github.com/89z
 package crackle
 
 import (

@@ -1,8 +1,7 @@
-// github.com/89z
 package widevine
+// github.com/89z
 
 import (
-   "bytes"
    "crypto"
    "crypto/aes"
    "crypto/cipher"
@@ -10,11 +9,8 @@ import (
    "crypto/sha1"
    "crypto/x509"
    "encoding/pem"
-   "errors"
    "github.com/89z/format/protobuf"
    "github.com/chmike/cmac-go"
-   "io"
-   "net/http"
 )
 
 type Module struct {
@@ -47,9 +43,28 @@ func NewModule(privateKey, clientID, kID []byte) (*Module, error) {
    return &mod, nil
 }
 
-func (m Module) Keys(body io.Reader) (Containers, error) {
+func (m Module) Marshal() ([]byte, error) {
+   digest := sha1.Sum(m.licenseRequest)
+   signature, err := rsa.SignPSS(
+      nopSource{},
+      m.PrivateKey,
+      crypto.SHA1,
+      digest[:],
+      &rsa.PSSOptions{SaltLength: rsa.PSSSaltLengthEqualsHash},
+   )
+   if err != nil {
+      return nil, err
+   }
+   signedRequest := protobuf.Message{
+      2: protobuf.Bytes{Raw: m.licenseRequest},
+      3: protobuf.Bytes{Raw: signature},
+   }
+   return signedRequest.Marshal(), nil
+}
+
+func (m Module) Unmarshal(response []byte) (Containers, error) {
    // key
-   signedResponse, err := protobuf.Decode(body)
+   signedResponse, err := protobuf.Unmarshal(response)
    if err != nil {
       return nil, err
    }
@@ -99,41 +114,4 @@ func (m Module) Keys(body io.Reader) (Containers, error) {
       cons = append(cons, con)
    }
    return cons, nil
-}
-
-func (m Module) Post(addr string, head http.Header) (Containers, error) {
-   digest := sha1.Sum(m.licenseRequest)
-   signature, err := rsa.SignPSS(
-      nopSource{},
-      m.PrivateKey,
-      crypto.SHA1,
-      digest[:],
-      &rsa.PSSOptions{SaltLength: rsa.PSSSaltLengthEqualsHash},
-   )
-   if err != nil {
-      return nil, err
-   }
-   signedRequest := protobuf.Message{
-      2: protobuf.Bytes{Raw: m.licenseRequest},
-      3: protobuf.Bytes{Raw: signature},
-   }
-   req, err := http.NewRequest(
-      "POST", addr, bytes.NewReader(signedRequest.Marshal()),
-   )
-   if err != nil {
-      return nil, err
-   }
-   if head != nil {
-      req.Header = head
-   }
-   LogLevel.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return nil, errors.New(res.Status)
-   }
-   return m.Keys(res.Body)
 }

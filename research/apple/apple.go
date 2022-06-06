@@ -55,7 +55,7 @@ func NewEpisode(contentID string) (*Episode, error) {
 
 type Environment struct {
    Media_API struct {
-      Token string
+      Token string // authorization: Bearer eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXV...
    }
 }
 

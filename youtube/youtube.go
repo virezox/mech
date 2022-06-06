@@ -1,5 +1,5 @@
-// github.com/89z
 package youtube
+// github.com/89z
 
 import (
    "github.com/89z/format"

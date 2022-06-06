@@ -1,5 +1,5 @@
-// github.com/89z
 package soundcloud
+// github.com/89z
 
 import (
    "encoding/json"

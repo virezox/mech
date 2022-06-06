@@ -1,5 +1,5 @@
-// github.com/89z
 package widevine
+// github.com/89z
 
 import (
    "encoding/hex"
