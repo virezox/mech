@@ -20,12 +20,6 @@ const (
 
 var LogLevel format.LogLevel
 
-type Asset struct {
-   FpsKeyServerQueryParameters ServerParameters
-   FpsKeyServerUrl string
-   HlsUrl string
-}
-
 type Auth struct {
    *http.Cookie
 }
@@ -176,6 +170,9 @@ func NewEpisode(contentID string) (*Episode, error) {
       return nil, err
    }
    defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return nil, errors.New(res.Status)
+   }
    epi := new(Episode)
    if err := json.NewDecoder(res.Body).Decode(epi); err != nil {
       return nil, err

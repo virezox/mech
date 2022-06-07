@@ -2,63 +2,43 @@ package apple
 
 import (
    "bytes"
-   "encoding/base64"
    "encoding/json"
    "errors"
    "github.com/89z/mech/widevine"
-   "io"
    "net/http"
-   "strings"
 )
 
-func (a *Auth) License(key, client []byte, pssh string) (*License, error) {
-   keyID, err := getKeyID(pssh)
+func (a *Auth) Request(key, client []byte, pssh string) (*Request, error) {
+   keyID, err := widevine.KeyID(pssh)
    if err != nil {
       return nil, err
    }
-   var lic License
-   lic.Auth = a
-   lic.Module, err = widevine.NewModule(key, client, keyID)
+   var req Request
+   req.Auth = a
+   req.Module, err = widevine.NewModule(key, client, keyID)
    if err != nil {
       return nil, err
    }
-   lic.body.Challenge, err = lic.Marshal()
+   req.body.Challenge, err = req.Marshal()
    if err != nil {
       return nil, err
    }
-   lic.body.KeySystem = "com.widevine.alpha"
-   lic.body.URI = pssh
-   return &lic, nil
+   req.body.KeySystem = "com.widevine.alpha"
+   req.body.URI = pssh
+   return &req, nil
 }
 
-func getKeyID(rawKey string) ([]byte, error) {
-   _, after, ok := strings.Cut(rawKey, "data:text/plain;base64,")
-   if ok {
-      rawKey = after
-   }
-   key, err := base64.StdEncoding.DecodeString(rawKey)
-   if err != nil {
-      return nil, err
-   }
-   return widevine.KeyID(key)
+type Asset struct {
+   FpsKeyServerQueryParameters ServerParameters
+   FpsKeyServerUrl string
+   HlsUrl string
 }
 
-type License struct {
-   *Auth
-   *widevine.Module
-   body struct {
-      Challenge []byte `json:"challenge"`
-      ExtraServerParameters ServerParameters `json:"extra-server-parameters"`
-      KeySystem string `json:"key-system"`
-      URI string `json:"uri"`
-   }
-}
-
-func (l License) Key(env *Environment, ep *Episode) ([]byte, error) {
+func (r Request) License(env *Environment, ep *Episode) (*License, error) {
    asset := ep.Asset()
-   l.body.ExtraServerParameters = asset.FpsKeyServerQueryParameters
+   r.body.ExtraServerParameters = asset.FpsKeyServerQueryParameters
    buf := new(bytes.Buffer)
-   err := json.NewEncoder(buf).Encode(l.body)
+   err := json.NewEncoder(buf).Encode(r.body)
    if err != nil {
       return nil, err
    }
@@ -69,7 +49,7 @@ func (l License) Key(env *Environment, ep *Episode) ([]byte, error) {
    req.Header = http.Header{
       "Authorization": {"Bearer " + env.Media_API.Token},
       "Content-Type": {"application/json"},
-      "X-Apple-Music-User-Token": {l.Value},
+      "X-Apple-Music-User-Token": {r.Value},
    }
    LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
@@ -80,11 +60,33 @@ func (l License) Key(env *Environment, ep *Episode) ([]byte, error) {
    if res.StatusCode != http.StatusOK {
       return nil, errors.New(res.Status)
    }
-   out, err := io.ReadAll(res.Body)
-   if err != nil {
+   lic := License{Module: r.Module}
+   if err := json.NewDecoder(res.Body).Decode(&lic.body); err != nil {
       return nil, err
    }
-   keys, err := l.Unmarshal(out)
+   return &lic, nil
+}
+
+type Request struct {
+   *Auth
+   *widevine.Module
+   body struct {
+      Challenge []byte `json:"challenge"`
+      ExtraServerParameters ServerParameters `json:"extra-server-parameters"`
+      KeySystem string `json:"key-system"`
+      URI string `json:"uri"`
+   }
+}
+
+type License struct {
+   *widevine.Module
+   body struct {
+      License []byte
+   }
+}
+
+func (l License) Key() ([]byte, error) {
+   keys, err := l.Unmarshal(l.body.License)
    if err != nil {
       return nil, err
    }

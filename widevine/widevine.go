@@ -2,11 +2,21 @@ package widevine
 // github.com/89z
 
 import (
+   "encoding/base64"
    "encoding/hex"
    "github.com/89z/format/protobuf"
+   "strings"
 )
 
-func KeyID(pssh []byte) ([]byte, error) {
+func KeyID(rawPSSH string) ([]byte, error) {
+   _, after, ok := strings.Cut(rawPSSH, "data:text/plain;base64,")
+   if ok {
+      rawPSSH = after
+   }
+   pssh, err := base64.StdEncoding.DecodeString(rawPSSH)
+   if err != nil {
+      return nil, err
+   }
    widevineCencHeader, err := protobuf.Unmarshal(pssh[32:])
    if err != nil {
       return nil, err
