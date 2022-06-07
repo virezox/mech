@@ -11,56 +11,103 @@ import (
    "strconv"
 )
 
+const (
+   sf_max = 143499
+   sf_min = 143441
+   v_max = 58
+   v_min = 50
+)
+
+var LogLevel format.LogLevel
+
+type Asset struct {
+   FpsKeyServerQueryParameters ServerParameters
+   FpsKeyServerUrl string
+   HlsUrl string
+}
+
 type Auth struct {
    *http.Cookie
 }
 
-type Environment struct {
-   Media_API struct {
-      Token string // authorization: Bearer eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXV...
+func OpenAuth(elem ...string) (*Auth, error) {
+   return format.Open[Auth](elem...)
+}
+
+func (a Auth) Create(elem ...string) error {
+   return format.Create(a, elem...)
+}
+
+type Config struct {
+   WebBag struct {
+      AppIdKey string
    }
 }
 
-func NewEpisode(contentID string) (*Episode, error) {
+func NewConfig() (*Config, error) {
    req, err := http.NewRequest(
-      "GET", "https://tv.apple.com/api/uts/v3/episodes/" + contentID, nil,
+      "GET", "https://amp-account.tv.apple.com/account/web/config", nil,
    )
    if err != nil {
       return nil, err
    }
-   req.URL.RawQuery = url.Values{
-      "caller": {"web"},
-      "locale": {"en-US"},
-      "pfm": {"web"},
-      "sf": {strconv.Itoa(sf_max)},
-      "v": {strconv.Itoa(v_max)},
-   }.Encode()
    LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
-   epi := new(Episode)
-   if err := json.NewDecoder(res.Body).Decode(epi); err != nil {
+   if res.StatusCode != http.StatusOK {
+      return nil, errors.New(res.Status)
+   }
+   con := new(Config)
+   if err := json.NewDecoder(res.Body).Decode(con); err != nil {
       return nil, err
    }
-   return epi, nil
+   return con, nil
 }
 
-type Episode struct {
-   Data struct {
-      Playables map[string]struct {
-         Assets Asset
+func (c Config) Signin(email, password string) (*Signin, error) {
+   buf := new(bytes.Buffer)
+   err := json.NewEncoder(buf).Encode(map[string]string{
+     "accountName": email,
+     "password": password,
+   })
+   if err != nil {
+      return nil, err
+   }
+   req, err := http.NewRequest(
+      "POST", "https://idmsa.apple.com/appleauth/auth/signin", buf,
+   )
+   if err != nil {
+      return nil, err
+   }
+   req.Header = http.Header{
+      "Content-Type": {"application/json"},
+      "X-Apple-Widget-Key": {c.WebBag.AppIdKey},
+   }
+   LogLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return nil, errors.New(res.Status)
+   }
+   var sign Signin
+   for _, cook := range res.Cookies() {
+      if cook.Name == "myacinfo" {
+         sign.Cookie = cook
       }
    }
+   return &sign, nil
 }
 
-func (e Episode) Asset() *Asset {
-   for _, play := range e.Data.Playables {
-      return &play.Assets
+type Environment struct {
+   Media_API struct {
+      Token string // authorization: Bearer eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXV...
    }
-   return nil
 }
 
 func NewEnvironment() (*Environment, error) {
@@ -101,6 +148,57 @@ func NewEnvironment() (*Environment, error) {
    return env, nil
 }
 
+type Episode struct {
+   Data struct {
+      Playables map[string]struct {
+         Assets Asset
+      }
+   }
+}
+
+func NewEpisode(contentID string) (*Episode, error) {
+   req, err := http.NewRequest(
+      "GET", "https://tv.apple.com/api/uts/v3/episodes/" + contentID, nil,
+   )
+   if err != nil {
+      return nil, err
+   }
+   req.URL.RawQuery = url.Values{
+      "caller": {"web"},
+      "locale": {"en-US"},
+      "pfm": {"web"},
+      "sf": {strconv.Itoa(sf_max)},
+      "v": {strconv.Itoa(v_max)},
+   }.Encode()
+   LogLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   epi := new(Episode)
+   if err := json.NewDecoder(res.Body).Decode(epi); err != nil {
+      return nil, err
+   }
+   return epi, nil
+}
+
+func (e Episode) Asset() *Asset {
+   for _, play := range e.Data.Playables {
+      return &play.Assets
+   }
+   return nil
+}
+
+type ServerParameters struct {
+   AdamId string `json:"adamId"`
+   SvcId string `json:"svcId"`
+}
+
+type Signin struct {
+   *http.Cookie
+}
+
 func (s Signin) Auth() (*Auth, error) {
    req, err := http.NewRequest(
       "POST", "https://buy.tv.apple.com/account/web/auth", nil,
@@ -127,90 +225,3 @@ func (s Signin) Auth() (*Auth, error) {
    }
    return &auth, nil
 }
-
-func (a Auth) Create(elem ...string) error {
-   return format.Create(a, elem...)
-}
-
-func OpenAuth(elem ...string) (*Auth, error) {
-   return format.Open[Auth](elem...)
-}
-
-type Signin struct {
-   *http.Cookie
-}
-
-func (c Config) Signin(email, password string) (*Signin, error) {
-   buf := new(bytes.Buffer)
-   err := json.NewEncoder(buf).Encode(map[string]string{
-     "accountName": email,
-     "password": password,
-   })
-   if err != nil {
-      return nil, err
-   }
-   req, err := http.NewRequest(
-      "POST", "https://idmsa.apple.com/appleauth/auth/signin", buf,
-   )
-   if err != nil {
-      return nil, err
-   }
-   req.Header = http.Header{
-      "Content-Type": {"application/json"},
-      "X-Apple-Widget-Key": {c.WebBag.AppIdKey},
-   }
-   LogLevel.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return nil, errors.New(res.Status)
-   }
-   var sign Signin
-   for _, cook := range res.Cookies() {
-      if cook.Name == "myacinfo" {
-         sign.Cookie = cook
-      }
-   }
-   return &sign, nil
-}
-
-type Config struct {
-   WebBag struct {
-      AppIdKey string
-   }
-}
-
-var LogLevel format.LogLevel
-
-func NewConfig() (*Config, error) {
-   req, err := http.NewRequest(
-      "GET", "https://amp-account.tv.apple.com/account/web/config", nil,
-   )
-   if err != nil {
-      return nil, err
-   }
-   LogLevel.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return nil, errors.New(res.Status)
-   }
-   con := new(Config)
-   if err := json.NewDecoder(res.Body).Decode(con); err != nil {
-      return nil, err
-   }
-   return con, nil
-}
-
-const (
-   sf_max = 143499
-   sf_min = 143441
-   v_max = 58
-   v_min = 50
-)
