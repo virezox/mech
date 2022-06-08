@@ -48,8 +48,6 @@ func (m Module) Unmarshal(response []byte) (Containers, error) {
    // .Msg.Key
    for _, message := range signedResponse.Get(2).GetMessages(3) {
       var con Container
-      // only some containers have an ID
-      con.ID, _ = message.GetBytes(1)
       iv, err := message.GetBytes(2)
       if err != nil {
          return nil, err

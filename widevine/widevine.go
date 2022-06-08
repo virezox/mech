@@ -9,17 +9,10 @@ import (
 )
 
 func (c Container) String() string {
-   var buf strings.Builder
-   buf.WriteString("ID:")
-   buf.WriteString(hex.EncodeToString(c.ID))
-   buf.WriteByte(' ')
-   buf.WriteString("Key:")
-   buf.WriteString(hex.EncodeToString(c.Key))
-   return buf.String()
+   return hex.EncodeToString(c.Key)
 }
 
 type Container struct {
-   ID []byte // 1
    Key []byte // 3
    Type uint64 // 4
 }

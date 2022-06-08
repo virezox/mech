@@ -9,7 +9,7 @@ import (
 const (
    // tv.apple.com/us/episode/biscuits/umc.cmc.45cu44369hb2qfuwr3fihnr8e
    contentID = "umc.cmc.45cu44369hb2qfuwr3fihnr8e"
-   // ID:00000000168300bb6330202020202020 Key:22bdb0063805260307ee5045c0f3835a
+   // 22bdb0063805260307ee5045c0f3835a
    pssh = "data:text/plain;base64,AAAAOHBzc2gAAAAA7e+LqXnWSs6jyCfc1R0h7QAAABgSEAAAAAAWgwC7YzAgICAgICBI88aJmwY="
 )
 
