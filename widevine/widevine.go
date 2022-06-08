@@ -8,6 +8,22 @@ import (
    "strings"
 )
 
+func (c Container) String() string {
+   var buf strings.Builder
+   buf.WriteString("ID:")
+   buf.WriteString(hex.EncodeToString(c.ID))
+   buf.WriteByte(' ')
+   buf.WriteString("Key:")
+   buf.WriteString(hex.EncodeToString(c.Key))
+   return buf.String()
+}
+
+type Container struct {
+   ID []byte // 1
+   Key []byte // 3
+   Type uint64 // 4
+}
+
 func KeyID(rawPSSH string) ([]byte, error) {
    _, after, ok := strings.Cut(rawPSSH, "data:text/plain;base64,")
    if ok {
@@ -33,15 +49,6 @@ func unpad(buf []byte) []byte {
       }
    }
    return buf
-}
-
-type Container struct {
-   Key []byte
-   Type uint64
-}
-
-func (c Container) String() string {
-   return hex.EncodeToString(c.Key)
 }
 
 type Containers []Container

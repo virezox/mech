@@ -13,6 +13,62 @@ import (
    "github.com/chmike/cmac-go"
 )
 
+func (m Module) Unmarshal(response []byte) (Containers, error) {
+   // key
+   signedResponse, err := protobuf.Unmarshal(response)
+   if err != nil {
+      return nil, err
+   }
+   sessionKey, err := signedResponse.GetBytes(4)
+   if err != nil {
+      return nil, err
+   }
+   key, err := rsa.DecryptOAEP(sha1.New(), nil, m.PrivateKey, sessionKey, nil)
+   if err != nil {
+      return nil, err
+   }
+   // message
+   var message []byte
+   message = append(message, 1)
+   message = append(message, "ENCRYPTION"...)
+   message = append(message, 0)
+   message = append(message, m.licenseRequest...)
+   message = append(message, 0, 0, 0, 0x80)
+   // CMAC
+   mac, err := cmac.New(aes.NewCipher, key)
+   if err != nil {
+      return nil, err
+   }
+   mac.Write(message)
+   block, err := aes.NewCipher(mac.Sum(nil))
+   if err != nil {
+      return nil, err
+   }
+   var cons Containers
+   // .Msg.Key
+   for _, message := range signedResponse.Get(2).GetMessages(3) {
+      var con Container
+      // only some containers have an ID
+      con.ID, _ = message.GetBytes(1)
+      iv, err := message.GetBytes(2)
+      if err != nil {
+         return nil, err
+      }
+      con.Key, err = message.GetBytes(3)
+      if err != nil {
+         return nil, err
+      }
+      con.Type, err = message.GetVarint(4)
+      if err != nil {
+         return nil, err
+      }
+      cipher.NewCBCDecrypter(block, iv).CryptBlocks(con.Key, con.Key)
+      con.Key = unpad(con.Key)
+      cons = append(cons, con)
+   }
+   return cons, nil
+}
+
 type Module struct {
    *rsa.PrivateKey
    licenseRequest []byte
@@ -60,58 +116,4 @@ func (m Module) Marshal() ([]byte, error) {
       3: protobuf.Bytes{Raw: signature},
    }
    return signedRequest.Marshal(), nil
-}
-
-func (m Module) Unmarshal(response []byte) (Containers, error) {
-   // key
-   signedResponse, err := protobuf.Unmarshal(response)
-   if err != nil {
-      return nil, err
-   }
-   sessionKey, err := signedResponse.GetBytes(4)
-   if err != nil {
-      return nil, err
-   }
-   key, err := rsa.DecryptOAEP(sha1.New(), nil, m.PrivateKey, sessionKey, nil)
-   if err != nil {
-      return nil, err
-   }
-   // message
-   var message []byte
-   message = append(message, 1)
-   message = append(message, "ENCRYPTION"...)
-   message = append(message, 0)
-   message = append(message, m.licenseRequest...)
-   message = append(message, 0, 0, 0, 0x80)
-   // CMAC
-   mac, err := cmac.New(aes.NewCipher, key)
-   if err != nil {
-      return nil, err
-   }
-   mac.Write(message)
-   block, err := aes.NewCipher(mac.Sum(nil))
-   if err != nil {
-      return nil, err
-   }
-   var cons Containers
-   // .Msg.Key
-   for _, message := range signedResponse.Get(2).GetMessages(3) {
-      var con Container
-      iv, err := message.GetBytes(2)
-      if err != nil {
-         return nil, err
-      }
-      con.Key, err = message.GetBytes(3)
-      if err != nil {
-         return nil, err
-      }
-      con.Type, err = message.GetVarint(4)
-      if err != nil {
-         return nil, err
-      }
-      cipher.NewCBCDecrypter(block, iv).CryptBlocks(con.Key, con.Key)
-      con.Key = unpad(con.Key)
-      cons = append(cons, con)
-   }
-   return cons, nil
 }

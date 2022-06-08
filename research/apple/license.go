@@ -8,6 +8,14 @@ import (
    "net/http"
 )
 
+func (l License) Content() (*widevine.Container, error) {
+   keys, err := l.Unmarshal(l.body.License)
+   if err != nil {
+      return nil, err
+   }
+   return keys.Content(), nil
+}
+
 func (a *Auth) Request(key, client []byte, pssh string) (*Request, error) {
    keyID, err := widevine.KeyID(pssh)
    if err != nil {
@@ -83,12 +91,4 @@ type License struct {
    body struct {
       License []byte
    }
-}
-
-func (l License) Key() ([]byte, error) {
-   keys, err := l.Unmarshal(l.body.License)
-   if err != nil {
-      return nil, err
-   }
-   return keys.Content().Key, nil
 }
