@@ -47,9 +47,9 @@ func unpad(buf []byte) []byte {
 type Containers []Container
 
 func (c Containers) Content() *Container {
-   for _, con := range c {
-      if con.Type == 2 {
-         return &con
+   for _, container := range c {
+      if container.Type == 2 {
+         return &container
       }
    }
    return nil

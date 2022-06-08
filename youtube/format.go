@@ -26,18 +26,18 @@ func (f Formats) Video(height int) (*Format, bool) {
       return height - f.Height
    }
    var (
-      dst *Format
       ok bool
+      output *Format
    )
-   for i, src := range f {
+   for i, input := range f {
       // since codecs are in this order avc1,vp9,av01,
       // do "<=" so we can get last one
-      if dst == nil || distance(&src) <= distance(dst) {
-         dst = &f[i]
+      if output == nil || distance(&input) <= distance(output) {
+         output = &f[i]
          ok = true
       }
    }
-   return dst, ok
+   return output, ok
 }
 
 func (f Format) Format(s fmt.State, verb rune) {
