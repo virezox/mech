@@ -1,8 +1,8 @@
 package roku
 
 import (
+   "encoding/hex"
    "github.com/89z/format/dash"
-   "github.com/89z/mech/widevine"
    "os"
    "testing"
 )
@@ -11,6 +11,14 @@ import (
 const playbackID = "597a64a4a25c5bf6af4a8c7053049a6f"
 
 func TestWidevine(t *testing.T) {
+   site, err := NewCrossSite()
+   if err != nil {
+      t.Fatal(err)
+   }
+   play, err := site.Playback(playbackID)
+   if err != nil {
+      t.Fatal(err)
+   }
    home, err := os.UserHomeDir()
    if err != nil {
       t.Fatal(err)
@@ -36,23 +44,11 @@ func TestWidevine(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   mod, err := widevine.NewModule(privateKey, clientID, kID)
+   key, err := play.Key(privateKey, clientID, kID)
    if err != nil {
       t.Fatal(err)
    }
-   site, err := NewCrossSite()
-   if err != nil {
-      t.Fatal(err)
-   }
-   play, err := site.Playback(playbackID)
-   if err != nil {
-      t.Fatal(err)
-   }
-   keys, err := mod.Post(play.DRM.Widevine.LicenseServer, nil)
-   if err != nil {
-      t.Fatal(err)
-   }
-   if keys.Content().String() != "13d7c7cf295444944b627ef0ad2c1b3c" {
-      t.Fatal(keys)
+   if hex.EncodeToString(key) != "13d7c7cf295444944b627ef0ad2c1b3c" {
+      t.Fatal(key)
    }
 }
