@@ -2,15 +2,17 @@ package roku
 
 import (
    "encoding/hex"
-   "github.com/89z/format/dash"
    "os"
    "testing"
 )
 
 // therokuchannel.roku.com/watch/597a64a4a25c5bf6af4a8c7053049a6f
-const playbackID = "597a64a4a25c5bf6af4a8c7053049a6f"
+const (
+   playbackID = "597a64a4a25c5bf6af4a8c7053049a6f"
+   rawKID = "28339AD78F734520DA24E6E0573D392E"
+)
 
-func TestWidevine(t *testing.T) {
+func TestPlayback(t *testing.T) {
    site, err := NewCrossSite()
    if err != nil {
       t.Fatal(err)
@@ -31,16 +33,7 @@ func TestWidevine(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   file, err := os.Open("ignore.mpd")
-   if err != nil {
-      t.Fatal(err)
-   }
-   defer file.Close()
-   period, err := dash.NewPeriod(file)
-   if err != nil {
-      t.Fatal(err)
-   }
-   kID, err := period.Protection().KID()
+   kID, err := hex.DecodeString(rawKID)
    if err != nil {
       t.Fatal(err)
    }

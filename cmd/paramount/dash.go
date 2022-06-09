@@ -7,9 +7,20 @@ import (
    "github.com/89z/mech"
    "github.com/89z/mech/paramount"
    "net/http"
+   "net/url"
    "os"
    "sort"
 )
+
+type downloader struct {
+   *dash.Period
+   *paramount.Preview
+   *url.URL
+   client string
+   info bool
+   key []byte
+   pem string
+}
 
 func (d *downloader) setKey() error {
    sess, err := paramount.NewSession(d.Preview.GUID)

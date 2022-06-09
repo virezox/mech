@@ -2,22 +2,10 @@ package main
 
 import (
    "flag"
-   "github.com/89z/format/dash"
    "github.com/89z/mech/paramount"
-   "net/url"
    "os"
    "path/filepath"
 )
-
-type downloader struct {
-   *dash.Period
-   *paramount.Preview
-   *url.URL
-   client string
-   info bool
-   key []byte
-   pem string
-}
 
 func main() {
    home, err := os.UserHomeDir()

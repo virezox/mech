@@ -3,11 +3,18 @@ package paramount
 import (
    "encoding/hex"
    "fmt"
-   "github.com/89z/format/dash"
    "os"
    "testing"
    "time"
 )
+
+const rawKID = "3be8be937c98483184b294173f9152af"
+
+var tests = map[testType]string{
+   {episode, dashCenc}: "eyT_RYkqNuH_6ZYrepLtxkiPO1HA7dIU",
+   {episode, streamPack}: "622520382",
+   {movie, streamPack}: "wQH9yE_y_Dt4ekDYm3yelhhY2KXvOra_",
+}
 
 func TestSession(t *testing.T) {
    sess, err := NewSession(tests[testType{episode, dashCenc}])
@@ -26,16 +33,7 @@ func TestSession(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   file, err := os.Open("ignore.mpd")
-   if err != nil {
-      t.Fatal(err)
-   }
-   defer file.Close()
-   period, err := dash.NewPeriod(file)
-   if err != nil {
-      t.Fatal(err)
-   }
-   kID, err := period.Protection().KID()
+   kID, err := hex.DecodeString(rawKID)
    if err != nil {
       t.Fatal(err)
    }
@@ -46,12 +44,6 @@ func TestSession(t *testing.T) {
    if hex.EncodeToString(key) != "44f12639c9c4a5a432338aca92e38920" {
       t.Fatal(key)
    }
-}
-
-var tests = map[testType]string{
-   {episode, dashCenc}: "eyT_RYkqNuH_6ZYrepLtxkiPO1HA7dIU",
-   {episode, streamPack}: "622520382",
-   {movie, streamPack}: "wQH9yE_y_Dt4ekDYm3yelhhY2KXvOra_",
 }
 
 const (

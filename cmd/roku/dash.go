@@ -7,8 +7,19 @@ import (
    "github.com/89z/mech"
    "github.com/89z/mech/roku"
    "net/http"
+   "net/url"
    "os"
 )
+
+type downloader struct {
+   *dash.Period
+   *roku.Content
+   *url.URL
+   client string
+   info bool
+   key []byte
+   pem string
+}
 
 func (d *downloader) setKey() error {
    site, err := roku.NewCrossSite()

@@ -2,13 +2,15 @@ package amc
 
 import (
    "encoding/hex"
-   "github.com/89z/format/dash"
    "os"
    "testing"
 )
 
-// amcplus.com/shows/orphan-black/episodes/season-1-instinct--1011152
-const nid = 1011152
+const (
+   // amcplus.com/shows/orphan-black/episodes/season-1-instinct--1011152
+   nid = 1011152
+   rawKID = "c0e598b247fa443590299d5ef47da32c"
+)
 
 func TestPlayback(t *testing.T) {
    home, err := os.UserHomeDir()
@@ -31,16 +33,7 @@ func TestPlayback(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   file, err := os.Open("amc.mpd")
-   if err != nil {
-      t.Fatal(err)
-   }
-   defer file.Close()
-   period, err := dash.NewPeriod(file)
-   if err != nil {
-      t.Fatal(err)
-   }
-   kID, err := period.Protection().KID()
+   kID, err := hex.DecodeString(rawKID)
    if err != nil {
       t.Fatal(err)
    }

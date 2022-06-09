@@ -10,7 +10,9 @@ const (
    // tv.apple.com/us/episode/biscuits/umc.cmc.45cu44369hb2qfuwr3fihnr8e
    contentID = "umc.cmc.45cu44369hb2qfuwr3fihnr8e"
    // 22bdb0063805260307ee5045c0f3835a
-   pssh = "data:text/plain;base64,AAAAOHBzc2gAAAAA7e+LqXnWSs6jyCfc1R0h7QAAABgSEAAAAAAWgwC7YzAgICAgICBI88aJmwY="
+   video = "data:text/plain;base64,AAAAOHBzc2gAAAAA7e+LqXnWSs6jyCfc1R0h7QAAABgSEAAAAAAWgwC7YzAgICAgICBI88aJmwY="
+   // 5ffd93861fa776e96cccd934898fc1c8
+   audio = "data:text/plain;base64,AAAAOHBzc2gAAAAA7e+LqXnWSs6jyCfc1R0h7QAAABgSEAAAAAAWgwC7YzYgICAgICBI88aJmwY="
 )
 
 func TestLicense(t *testing.T) {
@@ -30,7 +32,7 @@ func TestLicense(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   request, err := auth.Request(privateKey, clientID, pssh)
+   request, err := auth.Request(privateKey, clientID, video)
    if err != nil {
       t.Fatal(err)
    }
