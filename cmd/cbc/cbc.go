@@ -54,7 +54,8 @@ func newMaster(id, address, audio string, video int64, info bool) error {
       }
    } else {
       if audio != "" {
-         addr, err := master.Media.GetName(audio).URI(res.Request.URL)
+         medium := master.Media.GetName(audio)
+         addr, err := res.Request.URL.Parse(medium.RawURI)
          if err != nil {
             return err
          }
@@ -63,7 +64,8 @@ func newMaster(id, address, audio string, video int64, info bool) error {
          }
       }
       if video >= 1 {
-         addr, err := master.Streams.GetBandwidth(video).URI(res.Request.URL)
+         medium := master.Streams.GetBandwidth(video)
+         addr, err := res.Request.URL.Parse(medium.RawURI)
          if err != nil {
             return err
          }
@@ -78,7 +80,7 @@ func download(addr *url.URL, name string) error {
    if err != nil {
       return err
    }
-   key, err := seg.Key(addr)
+   key, err := addr.Parse(seg.RawKey)
    if err != nil {
       return err
    }
@@ -97,9 +99,9 @@ func download(addr *url.URL, name string) error {
       return err
    }
    defer file.Close()
-   pro := format.ProgressChunks(file, len(seg.Info))
-   for _, info := range seg.Info {
-      addr, err := info.URI(addr)
+   pro := format.ProgressChunks(file, len(seg.Protected))
+   for _, rawURL := range seg.Protected {
+      addr, err := addr.Parse(rawURL)
       if err != nil {
          return err
       }

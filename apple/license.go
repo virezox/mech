@@ -8,12 +8,10 @@ import (
    "net/http"
 )
 
-func (l License) Content() (*widevine.Container, error) {
-   keys, err := l.Unmarshal(l.body.License)
-   if err != nil {
-      return nil, err
-   }
-   return keys.Content(), nil
+type Asset struct {
+   FpsKeyServerQueryParameters ServerParameters
+   FpsKeyServerUrl string
+   HlsUrl string
 }
 
 func (a *Auth) Request(key, client []byte, pssh string) (*Request, error) {
@@ -36,10 +34,30 @@ func (a *Auth) Request(key, client []byte, pssh string) (*Request, error) {
    return &req, nil
 }
 
-type Asset struct {
-   FpsKeyServerQueryParameters ServerParameters
-   FpsKeyServerUrl string
-   HlsUrl string
+type License struct {
+   *widevine.Module
+   body struct {
+      License []byte
+   }
+}
+
+func (l License) Content() (*widevine.Container, error) {
+   keys, err := l.Unmarshal(l.body.License)
+   if err != nil {
+      return nil, err
+   }
+   return keys.Content(), nil
+}
+
+type Request struct {
+   *Auth
+   *widevine.Module
+   body struct {
+      Challenge []byte `json:"challenge"`
+      ExtraServerParameters ServerParameters `json:"extra-server-parameters"`
+      KeySystem string `json:"key-system"`
+      URI string `json:"uri"`
+   }
 }
 
 func (r Request) License(env *Environment, ep *Episode) (*License, error) {
@@ -73,22 +91,4 @@ func (r Request) License(env *Environment, ep *Episode) (*License, error) {
       return nil, err
    }
    return &lic, nil
-}
-
-type Request struct {
-   *Auth
-   *widevine.Module
-   body struct {
-      Challenge []byte `json:"challenge"`
-      ExtraServerParameters ServerParameters `json:"extra-server-parameters"`
-      KeySystem string `json:"key-system"`
-      URI string `json:"uri"`
-   }
-}
-
-type License struct {
-   *widevine.Module
-   body struct {
-      License []byte
-   }
 }

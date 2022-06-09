@@ -27,7 +27,7 @@ func (d downloader) HLS(bandwidth int64) error {
    }
    stream := master.Streams.GetBandwidth(bandwidth)
    if !d.info {
-      addr, err := stream.URI(res.Request.URL)
+      addr, err := res.Request.URL.Parse(stream.RawURI)
       if err != nil {
          return err
       }
@@ -59,9 +59,9 @@ func downloadHLS(addr *url.URL, base string) error {
       return err
    }
    defer file.Close()
-   pro := format.ProgressChunks(file, len(seg.Info))
-   for _, info := range seg.Info {
-      addr, err := info.URI(res.Request.URL)
+   pro := format.ProgressChunks(file, len(seg.Clear))
+   for _, clear := range seg.Clear {
+      addr, err := res.Request.URL.Parse(clear)
       if err != nil {
          return err
       }

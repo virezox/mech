@@ -63,9 +63,9 @@ func download(addr, base string) error {
       return err
    }
    defer file.Close()
-   pro := format.ProgressChunks(file, len(seg.Info))
-   for _, info := range seg.Info {
-      res, err := http.Get(info.RawURI)
+   pro := format.ProgressChunks(file, len(seg.Protected))
+   for _, addr := range seg.Protected {
+      res, err := http.Get(addr)
       if err != nil {
          return err
       }
