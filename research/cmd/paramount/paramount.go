@@ -13,14 +13,15 @@ import (
    "sort"
 )
 
+func setVerbose() {
+   paramount.LogLevel = 1
+}
+
 type downloader struct {
    *dash.Period
    *paramount.Preview
    *url.URL
-   client string
-   info bool
    key []byte
-   pem string
 }
 
 func (d *downloader) setKey() error {

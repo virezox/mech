@@ -7,54 +7,59 @@ import (
    "path/filepath"
 )
 
+type downloader struct {
+   clientPath string
+   info bool
+   keyPath string
+}
+
 func main() {
    home, err := os.UserHomeDir()
    if err != nil {
       panic(err)
    }
-   var down downloader
+   var d downloader
    // b
-   var guid string
-   flag.StringVar(&guid, "b", "", "GUID")
-   // c
-   down.client = filepath.Join(home, "mech/client_id.bin")
-   flag.StringVar(&down.client, "c", down.client, "client ID")
-   // d
-   var isDASH bool
-   flag.BoolVar(&isDASH, "d", false, "DASH download")
+   var mediaID string
+   flag.StringVar(&mediaID, "b", "", "media ID")
    // f
-   // paramountplus.com/shows/video/x6XrF8A_tiSDRwc4Rt349KFKnCZ8QmtY
-   var video int64
-   flag.Int64Var(&video, "f", 1611000, "video bandwidth")
+   var videoRate int64
+   flag.Int64Var(&videoRate, "f", 1611000, "video bandwidth")
    // g
-   // paramountplus.com/shows/video/x6XrF8A_tiSDRwc4Rt349KFKnCZ8QmtY
-   var audio int64
-   flag.Int64Var(&audio, "g", 999999, "audio bandwidth")
+   var audioRate int64
+   flag.Int64Var(&audioRate, "g", 999999, "audio bandwidth")
    // i
-   flag.BoolVar(&down.info, "i", false, "information")
+   flag.BoolVar(&d.info, "i", false, "information")
+   // c
+   d.clientPath = filepath.Join(home, "mech/client_id.bin")
+   flag.StringVar(&d.clientPath, "c", d.clientPath, "client ID")
    // k
-   down.pem = filepath.Join(home, "mech/private_key.pem")
-   flag.StringVar(&down.pem, "k", down.pem, "private key")
+   d.keyPath = filepath.Join(home, "mech/private_key.pem")
+   flag.StringVar(&d.keyPath, "k", d.keyPath, "private key")
    // v
    var verbose bool
    flag.BoolVar(&verbose, "v", false, "verbose")
+   // d
+   var isDASH bool
+   flag.BoolVar(&isDASH, "d", false, "DASH download")
    flag.Parse()
    if verbose {
-      paramount.LogLevel = 1
+      setVerbose()
    }
-   if guid != "" {
+   ////////////////////////////////////////////////////////
+   if mediaID != "" {
       var err error
-      down.Preview, err = paramount.NewMedia(guid).Preview()
+      d.Preview, err = paramount.NewMedia(mediaID).Preview()
       if err != nil {
          panic(err)
       }
       if isDASH {
-         err := down.DASH(video, audio)
+         err := d.DASH(videoRate, audioRate)
          if err != nil {
             panic(err)
          }
       } else {
-         err := down.HLS(video)
+         err := d.HLS(videoRate)
          if err != nil {
             panic(err)
          }
@@ -63,4 +68,3 @@ func main() {
       flag.Usage()
    }
 }
-
