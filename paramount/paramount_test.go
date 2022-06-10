@@ -8,7 +8,7 @@ import (
    "time"
 )
 
-const rawKID = "3be8be937c98483184b294173f9152af"
+const rawID = "3be8be937c98483184b294173f9152af"
 
 var tests = map[testType]string{
    {episode, dashCenc}: "eyT_RYkqNuH_6ZYrepLtxkiPO1HA7dIU",
@@ -33,11 +33,11 @@ func TestSession(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   kID, err := hex.DecodeString(rawKID)
+   keyID, err := hex.DecodeString(rawID)
    if err != nil {
       t.Fatal(err)
    }
-   key, err := sess.Key(privateKey, clientID, kID)
+   key, err := sess.Key(privateKey, clientID, keyID)
    if err != nil {
       t.Fatal(err)
    }

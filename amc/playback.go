@@ -11,9 +11,9 @@ import (
    "strings"
 )
 
-func (p Playback) Key(privateKey, clientID, kID []byte) ([]byte, error) {
+func (p Playback) Key(privateKey, clientID, keyID []byte) ([]byte, error) {
    source := p.DASH()
-   mod, err := widevine.NewModule(privateKey, clientID, kID)
+   mod, err := widevine.NewModule(privateKey, clientID, keyID)
    if err != nil {
       return nil, err
    }

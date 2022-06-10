@@ -35,11 +35,11 @@ func (d *downloader) setKey() error {
    if err != nil {
       return err
    }
-   kID, err := d.Protection().KID()
+   keyID, err := d.Protection().KeyID()
    if err != nil {
       return err
    }
-   d.key, err = sess.Key(privateKey, clientID, kID)
+   d.key, err = sess.Key(privateKey, clientID, keyID)
    if err != nil {
       return err
    }

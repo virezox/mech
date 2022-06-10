@@ -12,8 +12,8 @@ import (
    "strings"
 )
 
-func (s Session) Key(privateKey, clientID, kID []byte) ([]byte, error) {
-   mod, err := widevine.NewModule(privateKey, clientID, kID)
+func (s Session) Key(privateKey, clientID, keyID []byte) ([]byte, error) {
+   mod, err := widevine.NewModule(privateKey, clientID, keyID)
    if err != nil {
       return nil, err
    }
