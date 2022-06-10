@@ -9,11 +9,10 @@ import (
 const (
    // amcplus.com/shows/orphan-black/episodes/season-1-instinct--1011152
    nid = 1011152
-   rawKID = "c0e598b247fa443590299d5ef47da32c"
+   rawID = "c0e598b247fa443590299d5ef47da32c"
 )
 
 func TestLogin(t *testing.T) {
-   LogLevel = 1
    auth, err := Unauth()
    if err != nil {
       t.Fatal(err)
@@ -51,11 +50,11 @@ func TestPlayback(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   kID, err := hex.DecodeString(rawKID)
+   keyID, err := hex.DecodeString(rawID)
    if err != nil {
       t.Fatal(err)
    }
-   key, err := play.Key(privateKey, clientID, kID)
+   key, err := play.Key(privateKey, clientID, keyID)
    if err != nil {
       t.Fatal(err)
    }

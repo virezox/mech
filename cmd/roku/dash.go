@@ -38,11 +38,11 @@ func (d *downloader) setKey() error {
    if err != nil {
       return err
    }
-   kID, err := d.Protection().KID()
+   keyID, err := d.Protection().KeyID()
    if err != nil {
       return err
    }
-   d.key, err = play.Key(privateKey, clientID, kID)
+   d.key, err = play.Key(privateKey, clientID, keyID)
    if err != nil {
       return err
    }
@@ -110,7 +110,7 @@ func (d *downloader) download(band int64, fn dash.PeriodFunc) error {
          return err
       }
       defer res.Body.Close()
-      if _, err := file.ReadFrom(res.Body); err != nil {
+      if err := dash.DecryptInit(file, res.Body); err != nil {
          return err
       }
       media, err := rep.Media(d.URL)

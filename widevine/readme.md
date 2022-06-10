@@ -8,9 +8,8 @@
 
 ## L1
 
-- Amzn needs AndroidCDM L1 for 720P/1080P/4K
+- Amazon needs AndroidCDM L1 for 720P/1080P/4K
 - Disney+ needs Android L1 for 1080P+
-- NetFlix I think needs L1 for Main Profile & UHD
 
 ## Where did proto file come from?
 
@@ -28,9 +27,7 @@ API Level | ABI | Target
 ----------|-----|--------------------------
 24        | x86 | Android 7.0 (Google APIs)
 
-Then download [Widevine Dumper][2].
-
-Then install:
+Then download [Widevine Dumper][2]. Then install:
 
 ~~~
 pip install -r requirements.txt

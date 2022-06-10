@@ -13,11 +13,7 @@ func TestKey(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   buf, err := base64.StdEncoding.DecodeString(pssh)
-   if err != nil {
-      t.Fatal(err)
-   }
-   keyB, err := KeyID(buf)
+   keyB, err := KeyID(pssh)
    if err != nil {
       t.Fatal(err)
    }

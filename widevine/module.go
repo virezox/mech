@@ -13,6 +13,55 @@ import (
    "github.com/chmike/cmac-go"
 )
 
+type Module struct {
+   *rsa.PrivateKey
+   licenseRequest []byte
+}
+
+func NewModule(privateKey, clientID, kID []byte) (*Module, error) {
+   var (
+      err error
+      mod Module
+   )
+   // PrivateKey
+   block, _ := pem.Decode(privateKey)
+   mod.PrivateKey, err = x509.ParsePKCS1PrivateKey(block.Bytes)
+   if err != nil {
+      return nil, err
+   }
+   // licenseRequest
+   mod.licenseRequest = protobuf.Message{
+      1: protobuf.Bytes{Raw: clientID},
+      2: protobuf.Message{ // ContentId
+         1: protobuf.Message{ // CencId
+            1: protobuf.Message{ // Pssh
+               2: protobuf.Bytes{Raw: kID},
+            },
+         },
+      },
+   }.Marshal()
+   return &mod, nil
+}
+
+func (m Module) Marshal() ([]byte, error) {
+   digest := sha1.Sum(m.licenseRequest)
+   signature, err := rsa.SignPSS(
+      nopSource{},
+      m.PrivateKey,
+      crypto.SHA1,
+      digest[:],
+      &rsa.PSSOptions{SaltLength: rsa.PSSSaltLengthEqualsHash},
+   )
+   if err != nil {
+      return nil, err
+   }
+   signedRequest := protobuf.Message{
+      2: protobuf.Bytes{Raw: m.licenseRequest},
+      3: protobuf.Bytes{Raw: signature},
+   }
+   return signedRequest.Marshal(), nil
+}
+
 func (m Module) Unmarshal(response []byte) (Containers, error) {
    // key
    signedResponse, err := protobuf.Unmarshal(response)
@@ -65,53 +114,4 @@ func (m Module) Unmarshal(response []byte) (Containers, error) {
       cons = append(cons, con)
    }
    return cons, nil
-}
-
-type Module struct {
-   *rsa.PrivateKey
-   licenseRequest []byte
-}
-
-func NewModule(privateKey, clientID, kID []byte) (*Module, error) {
-   var (
-      err error
-      mod Module
-   )
-   // PrivateKey
-   block, _ := pem.Decode(privateKey)
-   mod.PrivateKey, err = x509.ParsePKCS1PrivateKey(block.Bytes)
-   if err != nil {
-      return nil, err
-   }
-   // licenseRequest
-   mod.licenseRequest = protobuf.Message{
-      1: protobuf.Bytes{Raw: clientID},
-      2: protobuf.Message{ // ContentId
-         1: protobuf.Message{ // CencId
-            1: protobuf.Message{ // Pssh
-               2: protobuf.Bytes{Raw: kID},
-            },
-         },
-      },
-   }.Marshal()
-   return &mod, nil
-}
-
-func (m Module) Marshal() ([]byte, error) {
-   digest := sha1.Sum(m.licenseRequest)
-   signature, err := rsa.SignPSS(
-      nopSource{},
-      m.PrivateKey,
-      crypto.SHA1,
-      digest[:],
-      &rsa.PSSOptions{SaltLength: rsa.PSSSaltLengthEqualsHash},
-   )
-   if err != nil {
-      return nil, err
-   }
-   signedRequest := protobuf.Message{
-      2: protobuf.Bytes{Raw: m.licenseRequest},
-      3: protobuf.Bytes{Raw: signature},
-   }
-   return signedRequest.Marshal(), nil
 }
