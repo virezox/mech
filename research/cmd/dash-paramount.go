@@ -1,65 +1,32 @@
 package main
 
 import (
-   "errors"
    "fmt"
    "github.com/89z/format"
    "github.com/89z/format/dash"
    "github.com/89z/mech"
-   "github.com/89z/mech/amc"
-   "io"
+   "github.com/89z/mech/paramount"
    "net/http"
    "net/url"
    "os"
+   "sort"
 )
 
-func (d downloader) doDASH(address string, nid, video, audio int64) error {
-   home, err := os.UserHomeDir()
-   if err != nil {
-      return err
-   }
-   auth, err := amc.OpenAuth(home, "mech/amc.json")
-   if err != nil {
-      return err
-   }
-   if err := auth.Refresh(); err != nil {
-      return err
-   }
-   if err := auth.Create(home, "mech/amc.json"); err != nil {
-      return err
-   }
-   if nid == 0 {
-      nid, err = amc.GetNID(address)
-      if err != nil {
-         return err
-      }
-   }
-   d.Playback, err = auth.Playback(nid)
-   if err != nil {
-      return err
-   }
-   source := d.Playback.DASH()
-   fmt.Println("GET", source.Src)
-   res, err := http.Get(source.Src)
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return errors.New(res.Status)
-   }
-   d.URL = res.Request.URL
-   d.Period, err = dash.NewPeriod(res.Body)
-   if err != nil {
-      return err
-   }
-   if err := d.download(audio, dash.Audio); err != nil {
-      return err
-   }
-   return d.download(video, dash.Video)
+type downloader struct {
+   *dash.Period
+   *paramount.Preview
+   *url.URL
+   client string
+   info bool
+   key []byte
+   pem string
 }
 
 func (d *downloader) setKey() error {
+   sess, err := paramount.NewSession(d.Preview.GUID)
+   if err != nil {
+      return err
+   }
    privateKey, err := os.ReadFile(d.pem)
    if err != nil {
       return err
@@ -72,21 +39,11 @@ func (d *downloader) setKey() error {
    if err != nil {
       return err
    }
-   d.key, err = d.Playback.Key(privateKey, clientID, kID)
+   d.key, err = sess.Key(privateKey, clientID, kID)
    if err != nil {
       return err
    }
    return nil
-}
-
-type downloader struct {
-   *amc.Playback
-   *dash.Period
-   *url.URL
-   client string
-   info bool
-   key []byte
-   pem string
 }
 
 func (d *downloader) download(band int64, fn dash.PeriodFunc) error {
@@ -94,6 +51,9 @@ func (d *downloader) download(band int64, fn dash.PeriodFunc) error {
       return nil
    }
    reps := d.Represents(fn)
+   sort.Slice(reps, func(a, b int) bool {
+      return reps[a].Bandwidth < reps[b].Bandwidth
+   })
    rep := reps.Represent(band)
    if d.info {
       for _, each := range reps {
@@ -103,6 +63,12 @@ func (d *downloader) download(band int64, fn dash.PeriodFunc) error {
          fmt.Println(each)
       }
    } else {
+      if d.key == nil {
+         err := d.setKey()
+         if err != nil {
+            return err
+         }
+      }
       ext, err := mech.ExtensionByType(rep.MimeType)
       if err != nil {
          return err
@@ -129,12 +95,6 @@ func (d *downloader) download(band int64, fn dash.PeriodFunc) error {
       if err != nil {
          return err
       }
-      if d.key == nil {
-         err := d.setKey()
-         if err != nil {
-            return err
-         }
-      }
       pro := format.ProgressChunks(file, len(media))
       for _, addr := range media {
          res, err := http.Get(addr.String())
@@ -142,12 +102,7 @@ func (d *downloader) download(band int64, fn dash.PeriodFunc) error {
             return err
          }
          pro.AddChunk(res.ContentLength)
-         if d.key != nil {
-            err = dash.Decrypt(pro, res.Body, d.key)
-         } else {
-            _, err = io.Copy(pro, res.Body)
-         }
-         if err != nil {
+         if err := dash.Decrypt(pro, res.Body, d.key); err != nil {
             return err
          }
          if err := res.Body.Close(); err != nil {
@@ -158,17 +113,24 @@ func (d *downloader) download(band int64, fn dash.PeriodFunc) error {
    return nil
 }
 
-func doLogin(email, password string) error {
-   auth, err := amc.Unauth()
+func (d downloader) DASH(video, audio int64) error {
+   addr, err := paramount.NewMedia(d.GUID).DASH()
    if err != nil {
       return err
    }
-   if err := auth.Login(email, password); err != nil {
-      return err
-   }
-   home, err := os.UserHomeDir()
+   fmt.Println("GET", addr)
+   res, err := http.Get(addr.String())
    if err != nil {
       return err
    }
-   return auth.Create(home, "mech/amc.json")
+   defer res.Body.Close()
+   d.URL = addr
+   d.Period, err = dash.NewPeriod(res.Body)
+   if err != nil {
+      return err
+   }
+   if err := d.download(audio, dash.Audio); err != nil {
+      return err
+   }
+   return d.download(video, dash.Video)
 }

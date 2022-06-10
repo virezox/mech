@@ -9,6 +9,28 @@ import (
    "strings"
 )
 
+func Clean(in string) string {
+   var out strings.Builder
+   for _, r := range in {
+      switch r {
+      case
+      '"',
+      '*',
+      '/',
+      ':',
+      '<',
+      '>',
+      '?',
+      '\\',
+      '|',
+      '’': // github.com/PowerShell/PowerShell/issues/16084
+      default:
+         out.WriteRune(r)
+      }
+   }
+   return out.String()
+}
+
 func ExtensionByType(typ string) (string, error) {
    media, _, err := mime.ParseMediaType(typ)
    if err != nil {
@@ -38,27 +60,6 @@ func (n notFound) Error() string {
    buf = strconv.AppendQuote(buf, n.value)
    buf = append(buf, " is not found"...)
    return string(buf)
-}
-
-func Clean(path string) string {
-   fn := func(r rune) rune {
-      switch r {
-      case
-      '"',
-      '*',
-      '/',
-      ':',
-      '<',
-      '>',
-      '?',
-      '\\',
-      '|',
-      '’': // github.com/PowerShell/PowerShell/issues/16084
-         return -1
-      }
-      return r
-   }
-   return strings.Map(fn, path)
 }
 
 func Encode[T any](value T) (*bytes.Buffer, error) {
