@@ -24,7 +24,7 @@ Cookie: session-id=134-0209150-2708545; session-id-time=2082758401l; ubid-main=1
 Content-Length: 0
 ~~~
 
-I tried removing these, but still DRM:
+I tried removing these, but still protected:
 
 ~~~
 deviceDrmOverride

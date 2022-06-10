@@ -8,11 +8,11 @@ https://play.google.com/store/apps/details?id=com.roku.remote
 
 ## Web free
 
-Plain:
+Clear:
 
 https://therokuchannel.roku.com/watch/105c41ea75775968b670fbb26978ed76
 
-DRM:
+Protected:
 
 https://therokuchannel.roku.com/watch/934102524ea6524eb7d1faa29233695a
 

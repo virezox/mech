@@ -15,7 +15,6 @@ func main() {
    // b
    var mediaID string
    flag.StringVar(&mediaID, "b", "", "media ID")
-   ///////////////////////////////////////
    var down downloader
    // a
    var address string
@@ -27,11 +26,9 @@ func main() {
    var isDASH bool
    flag.BoolVar(&isDASH, "d", false, "DASH download")
    // f
-   // therokuchannel.roku.com/watch/597a64a4a25c5bf6af4a8c7053049a6f
    var video int64
    flag.Int64Var(&video, "f", 1920832, "video bandwidth")
    // g
-   // therokuchannel.roku.com/watch/597a64a4a25c5bf6af4a8c7053049a6f
    var audio int64
    flag.Int64Var(&audio, "g", 128000, "audio bandwidth")
    // i
