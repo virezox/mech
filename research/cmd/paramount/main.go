@@ -15,8 +15,116 @@ import (
    "sort"
 )
 
+func newSegment(addr string) (*hls.Segment, error) {
+   fmt.Println("GET", addr)
+   res, err := http.Get(addr)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   return hls.NewScanner(res.Body).Segment()
+}
+
+type downloader struct {
+   base string
+   clientPath string
+   info bool
+   keyPath string
+   mediaID string
+}
+
+func main() {
+   home, err := os.UserHomeDir()
+   if err != nil {
+      panic(err)
+   }
+   var d downloader
+   // b
+   flag.StringVar(&d.mediaID, "b", "", "media ID")
+   // c
+   d.clientPath = filepath.Join(home, "mech/client_id.bin")
+   flag.StringVar(&d.clientPath, "c", d.clientPath, "client ID")
+   // d
+   var isDASH bool
+   flag.BoolVar(&isDASH, "d", false, "DASH download")
+   // f
+   var videoRate int64
+   flag.Int64Var(&videoRate, "f", 1611000, "video bandwidth")
+   // g
+   var audioRate int64
+   flag.Int64Var(&audioRate, "g", 999999, "audio bandwidth")
+   // i
+   flag.BoolVar(&d.info, "i", false, "information")
+   // k
+   d.keyPath = filepath.Join(home, "mech/private_key.pem")
+   flag.StringVar(&d.keyPath, "k", d.keyPath, "private key")
+   // v
+   var verbose bool
+   flag.BoolVar(&verbose, "v", false, "verbose")
+   flag.Parse()
+   if verbose {
+      setVerbose()
+   }
+   if d.mediaID != "" {
+      err := d.setBase()
+      if err != nil {
+         panic(err)
+      }
+      if isDASH {
+         err := d.getDASH(videoRate, audioRate)
+         if err != nil {
+            panic(err)
+         }
+      } else {
+         err := d.getHLS(videoRate)
+         if err != nil {
+            panic(err)
+         }
+      }
+   } else {
+      flag.Usage()
+   }
+}
+
+func hls_down(addr, base string) error {
+   seg, err := newSegment(addr)
+   if err != nil {
+      return err
+   }
+   fmt.Println("GET", seg.RawKey)
+   res, err := http.Get(seg.RawKey)
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   block, err := hls.NewCipher(res.Body)
+   if err != nil {
+      return err
+   }
+   file, err := os.Create(base + hls.TS)
+   if err != nil {
+      return err
+   }
+   defer file.Close()
+   pro := format.ProgressChunks(file, len(seg.Protected))
+   for _, addr := range seg.Protected {
+      res, err := http.Get(addr)
+      if err != nil {
+         return err
+      }
+      pro.AddChunk(res.ContentLength)
+      if _, err := block.Copy(pro, res.Body, nil); err != nil {
+         return err
+      }
+      if err := res.Body.Close(); err != nil {
+         return err
+      }
+   }
+   return nil
+}
+
 func (d downloader) hls_info(bandwidth int64) error {
-   addr, err := paramount.NewMedia(d.mediaID).HLS()
+   addr, err := d.hls_url()
    if err != nil {
       return err
    }
@@ -46,6 +154,8 @@ func (d downloader) hls_info(bandwidth int64) error {
    }
    return nil
 }
+
+/////////////////////////////////////////////////////////
 
 func (d *downloader) setKey() error {
    sess, err := paramount.NewSession(d.mediaID)
@@ -160,116 +270,8 @@ func (d downloader) dash_info(video, audio int64) error {
    return d.download(video, dash.Video)
 }
 
-func hls_down(addr, base string) error {
-   seg, err := newSegment(addr)
-   if err != nil {
-      return err
-   }
-   fmt.Println("GET", seg.RawKey)
-   res, err := http.Get(seg.RawKey)
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   block, err := hls.NewCipher(res.Body)
-   if err != nil {
-      return err
-   }
-   file, err := os.Create(base + hls.TS)
-   if err != nil {
-      return err
-   }
-   defer file.Close()
-   pro := format.ProgressChunks(file, len(seg.Protected))
-   for _, addr := range seg.Protected {
-      res, err := http.Get(addr)
-      if err != nil {
-         return err
-      }
-      pro.AddChunk(res.ContentLength)
-      if _, err := block.Copy(pro, res.Body, nil); err != nil {
-         return err
-      }
-      if err := res.Body.Close(); err != nil {
-         return err
-      }
-   }
-   return nil
-}
-
-func newSegment(addr string) (*hls.Segment, error) {
-   fmt.Println("GET", addr)
-   res, err := http.Get(addr)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   return hls.NewScanner(res.Body).Segment()
-}
-
 type oldDownloader struct {
    *dash.Period
    *url.URL
    key []byte
-}
-
-type downloader struct {
-   base string
-   clientPath string
-   info bool
-   keyPath string
-   mediaID string
-}
-
-func main() {
-   home, err := os.UserHomeDir()
-   if err != nil {
-      panic(err)
-   }
-   var d downloader
-   // b
-   flag.StringVar(&d.mediaID, "b", "", "media ID")
-   // c
-   d.clientPath = filepath.Join(home, "mech/client_id.bin")
-   flag.StringVar(&d.clientPath, "c", d.clientPath, "client ID")
-   // d
-   var isDASH bool
-   flag.BoolVar(&isDASH, "d", false, "DASH download")
-   // f
-   var videoRate int64
-   flag.Int64Var(&videoRate, "f", 1611000, "video bandwidth")
-   // g
-   var audioRate int64
-   flag.Int64Var(&audioRate, "g", 999999, "audio bandwidth")
-   // i
-   flag.BoolVar(&d.info, "i", false, "information")
-   // k
-   d.keyPath = filepath.Join(home, "mech/private_key.pem")
-   flag.StringVar(&d.keyPath, "k", d.keyPath, "private key")
-   // v
-   var verbose bool
-   flag.BoolVar(&verbose, "v", false, "verbose")
-   flag.Parse()
-   if verbose {
-      setVerbose()
-   }
-   if d.mediaID != "" {
-      err := d.setBase()
-      if err != nil {
-         panic(err)
-      }
-      if isDASH {
-         err := d.getDASH(videoRate, audioRate)
-         if err != nil {
-            panic(err)
-         }
-      } else {
-         err := d.getHLS(videoRate)
-         if err != nil {
-            panic(err)
-         }
-      }
-   } else {
-      flag.Usage()
-   }
 }

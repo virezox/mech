@@ -13,6 +13,10 @@ import (
    "sort"
 )
 
+func (d downloader) hls_url() (*url.URL, error) {
+   return paramount.NewMedia(d.mediaID).HLS()
+}
+
 func setVerbose() {
    paramount.LogLevel = 1
 }
