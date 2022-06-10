@@ -25,20 +25,12 @@ func newSegment(addr string) (*hls.Segment, error) {
    return hls.NewScanner(res.Body).Segment()
 }
 
-type downloader struct {
-   base string
-   clientPath string
-   info bool
-   keyPath string
-   mediaID string
-}
-
 func main() {
    home, err := os.UserHomeDir()
    if err != nil {
       panic(err)
    }
-   var d downloader
+   var d download
    // b
    flag.StringVar(&d.mediaID, "b", "", "media ID")
    // c
@@ -123,7 +115,7 @@ func hls_down(addr, base string) error {
    return nil
 }
 
-func (d downloader) hls_info(bandwidth int64) error {
+func (d download) hls_info(bandwidth int64) error {
    addr, err := d.hls_url()
    if err != nil {
       return err
@@ -155,33 +147,20 @@ func (d downloader) hls_info(bandwidth int64) error {
    return nil
 }
 
-/////////////////////////////////////////////////////////
-
-func (d *downloader) setKey() error {
-   sess, err := paramount.NewSession(d.mediaID)
-   if err != nil {
-      return err
+type download struct {
+   *dash.Period
+   *url.URL
+   base string
+   info bool
+   key []byte
+   mediaID string
+   path struct {
+      client string
+      key string
    }
-   privateKey, err := os.ReadFile(d.keyPath)
-   if err != nil {
-      return err
-   }
-   clientID, err := os.ReadFile(d.clientPath)
-   if err != nil {
-      return err
-   }
-   kID, err := d.Period.Protection().KID()
-   if err != nil {
-      return err
-   }
-   d.key, err = sess.Key(privateKey, clientID, kID)
-   if err != nil {
-      return err
-   }
-   return nil
 }
 
-func (d *downloader) dash_down(band int64, fn dash.PeriodFunc) error {
+func (d *download) dash_down(band int64, fn dash.PeriodFunc) error {
    if band == 0 {
       return nil
    }
@@ -199,8 +178,19 @@ func (d *downloader) dash_down(band int64, fn dash.PeriodFunc) error {
       }
    } else {
       if d.key == nil {
-         err := d.setKey()
+         privateKey, err := os.ReadFile(d.path.key)
          if err != nil {
+            return err
+         }
+         clientID, err := os.ReadFile(d.path.client)
+         if err != nil {
+            return err
+         }
+         kID, err := d.Period.Protection().KID()
+         if err != nil {
+            return err
+         }
+         if err := d.setKey(); err != nil {
             return err
          }
       }
@@ -248,7 +238,9 @@ func (d *downloader) dash_down(band int64, fn dash.PeriodFunc) error {
    return nil
 }
 
-func (d downloader) dash_info(video, audio int64) error {
+/////////////////////////////////////////////////////////
+
+func (d download) dash_info(video, audio int64) error {
    addr, err := paramount.NewMedia(d.mediaID).DASH()
    if err != nil {
       return err
@@ -268,10 +260,4 @@ func (d downloader) dash_info(video, audio int64) error {
       return err
    }
    return d.download(video, dash.Video)
-}
-
-type oldDownloader struct {
-   *dash.Period
-   *url.URL
-   key []byte
 }
