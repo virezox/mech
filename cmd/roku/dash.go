@@ -6,10 +6,58 @@ import (
    "github.com/89z/format/dash"
    "github.com/89z/mech"
    "github.com/89z/mech/roku"
-   "github.com/89z/mech/widevine"
    "net/http"
    "os"
 )
+
+func (d *downloader) setKey() error {
+   site, err := roku.NewCrossSite()
+   if err != nil {
+      return err
+   }
+   play, err := site.Playback(d.Meta.ID)
+   if err != nil {
+      return err
+   }
+   var client roku.Client
+   client.ID, err = os.ReadFile(d.client)
+   if err != nil {
+      return err
+   }
+   client.PrivateKey, err = os.ReadFile(d.pem)
+   if err != nil {
+      return err
+   }
+   client.RawKeyID = d.period.Protection().Default_KID
+   content, err := play.Content(client)
+   if err != nil {
+      return err
+   }
+   d.key = content.Key
+   return nil
+}
+
+func (d downloader) DASH(video, audio int64) error {
+   if d.info {
+      fmt.Println(d.Content)
+   }
+   videoDASH := d.Content.DASH()
+   fmt.Println("GET", videoDASH.URL)
+   res, err := http.Get(videoDASH.URL)
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   d.url = res.Request.URL
+   d.period, err = dash.NewPeriod(res.Body)
+   if err != nil {
+      return err
+   }
+   if err := d.download(audio, dash.Audio); err != nil {
+      return err
+   }
+   return d.download(video, dash.Video)
+}
 
 func (d *downloader) download(band int64, fn dash.PeriodFunc) error {
    if band == 0 {
@@ -73,51 +121,4 @@ func (d *downloader) download(band int64, fn dash.PeriodFunc) error {
       }
    }
    return nil
-}
-func (d *downloader) setKey() error {
-   site, err := roku.NewCrossSite()
-   if err != nil {
-      return err
-   }
-   play, err := site.Playback(d.Meta.ID)
-   if err != nil {
-      return err
-   }
-   var client widevine.Client
-   client.ID, err = os.ReadFile(d.client)
-   if err != nil {
-      return err
-   }
-   client.PrivateKey, err = os.ReadFile(d.pem)
-   if err != nil {
-      return err
-   }
-   client.RawKeyID = d.period.Protection().Default_KID
-   content, err := play.Content(client)
-   if err != nil {
-      return err
-   }
-   d.key = content.Key
-   return nil
-}
-func (d downloader) DASH(video, audio int64) error {
-   if d.info {
-      fmt.Println(d.Content)
-   }
-   videoDASH := d.Content.DASH()
-   fmt.Println("GET", videoDASH.URL)
-   res, err := http.Get(videoDASH.URL)
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   d.url = res.Request.URL
-   d.period, err = dash.NewPeriod(res.Body)
-   if err != nil {
-      return err
-   }
-   if err := d.download(audio, dash.Audio); err != nil {
-      return err
-   }
-   return d.download(video, dash.Video)
 }

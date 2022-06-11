@@ -6,7 +6,6 @@ import (
    "github.com/89z/format/dash"
    "github.com/89z/mech"
    "github.com/89z/mech/paramount"
-   "github.com/89z/mech/widevine"
    "net/http"
    "os"
    "sort"
@@ -17,7 +16,7 @@ func (d *downloader) setKey() error {
    if err != nil {
       return err
    }
-   var client widevine.Client
+   var client paramount.Client
    client.ID, err = os.ReadFile(d.client)
    if err != nil {
       return err

@@ -39,12 +39,12 @@ func (f flags) key() (widevine.Contents, error) {
    if err != nil {
       return nil, err
    }
-   in, err := module.Marshal()
+   buf, err := module.Marshal()
    if err != nil {
       return nil, err
    }
    req, err := http.NewRequest(
-      "POST", f.address, bytes.NewReader(in),
+      "POST", f.address, bytes.NewReader(buf),
    )
    if err != nil {
       return nil, err
@@ -64,9 +64,9 @@ func (f flags) key() (widevine.Contents, error) {
    if res.StatusCode != http.StatusOK {
       return nil, errors.New(res.Status)
    }
-   out, err := io.ReadAll(res.Body)
+   buf, err = io.ReadAll(res.Body)
    if err != nil {
       return nil, err
    }
-   return module.Unmarshal(out)
+   return module.Unmarshal(buf)
 }

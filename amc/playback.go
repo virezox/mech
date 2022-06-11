@@ -19,12 +19,12 @@ func (p Playback) Content(c Client) (*widevine.Content, error) {
    if err != nil {
       return nil, err
    }
-   in, err := mod.Marshal()
+   buf, err := mod.Marshal()
    if err != nil {
       return nil, err
    }
    req, err := http.NewRequest(
-      "POST", source.Key_Systems.Widevine.License_URL, bytes.NewReader(in),
+      "POST", source.Key_Systems.Widevine.License_URL, bytes.NewReader(buf),
    )
    if err != nil {
       return nil, err
@@ -39,11 +39,11 @@ func (p Playback) Content(c Client) (*widevine.Content, error) {
    if res.StatusCode != http.StatusOK {
       return nil, errors.New(res.Status)
    }
-   out, err := io.ReadAll(res.Body)
+   buf, err = io.ReadAll(res.Body)
    if err != nil {
       return nil, err
    }
-   keys, err := mod.Unmarshal(out)
+   keys, err := mod.Unmarshal(buf)
    if err != nil {
       return nil, err
    }
