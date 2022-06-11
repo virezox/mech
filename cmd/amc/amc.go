@@ -9,93 +9,14 @@ import (
    "github.com/89z/mech/amc"
    "io"
    "net/http"
-   "net/url"
    "os"
 )
-
-type downloader struct {
-   *amc.Playback
-   client string
-   info bool
-   key []byte
-   pem string
-   period *dash.Period
-   url *url.URL
-}
-
-func (d *downloader) setKey() error {
-   var (
-      client amc.Client
-      err error
-   )
-   client.ID, err = os.ReadFile(d.client)
-   if err != nil {
-      return err
-   }
-   client.PrivateKey, err = os.ReadFile(d.pem)
-   if err != nil {
-      return err
-   }
-   client.RawKeyID = d.period.Protection().Default_KID
-   content, err := d.Playback.Content(client)
-   if err != nil {
-      return err
-   }
-   d.key = content.Key
-   return nil
-}
-
-func (d downloader) doDASH(address string, nid, video, audio int64) error {
-   home, err := os.UserHomeDir()
-   if err != nil {
-      return err
-   }
-   auth, err := amc.OpenAuth(home, "mech/amc.json")
-   if err != nil {
-      return err
-   }
-   if err := auth.Refresh(); err != nil {
-      return err
-   }
-   if err := auth.Create(home, "mech/amc.json"); err != nil {
-      return err
-   }
-   if nid == 0 {
-      nid, err = amc.GetNID(address)
-      if err != nil {
-         return err
-      }
-   }
-   d.Playback, err = auth.Playback(nid)
-   if err != nil {
-      return err
-   }
-   source := d.Playback.DASH()
-   fmt.Println("GET", source.Src)
-   res, err := http.Get(source.Src)
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return errors.New(res.Status)
-   }
-   d.url = res.Request.URL
-   d.Period, err = dash.NewPeriod(res.Body)
-   if err != nil {
-      return err
-   }
-   if err := d.download(audio, dash.Audio); err != nil {
-      return err
-   }
-   return d.download(video, dash.Video)
-}
 
 func (d *downloader) download(band int64, fn dash.PeriodFunc) error {
    if band == 0 {
       return nil
    }
-   reps := d.Represents(fn)
+   reps := d.period.Represents(fn)
    rep := reps.Represent(band)
    if d.info {
       for _, each := range reps {
@@ -114,7 +35,7 @@ func (d *downloader) download(band int64, fn dash.PeriodFunc) error {
          return err
       }
       defer file.Close()
-      init, err := rep.Initialization(d.URL)
+      init, err := rep.Initialization(d.url)
       if err != nil {
          return err
       }
@@ -127,7 +48,7 @@ func (d *downloader) download(band int64, fn dash.PeriodFunc) error {
       if err := dash.DecryptInit(file, res.Body); err != nil {
          return err
       }
-      media, err := rep.Media(d.URL)
+      media, err := rep.Media(d.url)
       if err != nil {
          return err
       }
@@ -173,4 +94,71 @@ func doLogin(email, password string) error {
       return err
    }
    return auth.Create(home, "mech/amc.json")
+}
+func (d downloader) doDASH(address string, nid, video, audio int64) error {
+   home, err := os.UserHomeDir()
+   if err != nil {
+      return err
+   }
+   auth, err := amc.OpenAuth(home, "mech/amc.json")
+   if err != nil {
+      return err
+   }
+   if err := auth.Refresh(); err != nil {
+      return err
+   }
+   if err := auth.Create(home, "mech/amc.json"); err != nil {
+      return err
+   }
+   if nid == 0 {
+      nid, err = amc.GetNID(address)
+      if err != nil {
+         return err
+      }
+   }
+   d.Playback, err = auth.Playback(nid)
+   if err != nil {
+      return err
+   }
+   source := d.Playback.DASH()
+   fmt.Println("GET", source.Src)
+   res, err := http.Get(source.Src)
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return errors.New(res.Status)
+   }
+   d.url = res.Request.URL
+   d.period, err = dash.NewPeriod(res.Body)
+   if err != nil {
+      return err
+   }
+   if err := d.download(audio, dash.Audio); err != nil {
+      return err
+   }
+   return d.download(video, dash.Video)
+}
+
+func (d *downloader) setKey() error {
+   var (
+      client amc.Client
+      err error
+   )
+   client.ID, err = os.ReadFile(d.client)
+   if err != nil {
+      return err
+   }
+   client.PrivateKey, err = os.ReadFile(d.pem)
+   if err != nil {
+      return err
+   }
+   client.RawKeyID = d.period.Protection().Default_KID
+   content, err := d.Playback.Content(client)
+   if err != nil {
+      return err
+   }
+   d.key = content.Key
+   return nil
 }

@@ -7,20 +7,9 @@ import (
    "github.com/89z/mech"
    "github.com/89z/mech/paramount"
    "net/http"
-   "net/url"
    "os"
    "sort"
 )
-
-type downloader struct {
-   *dash.Period
-   *paramount.Preview
-   *url.URL
-   client string
-   info bool
-   key []byte
-   pem string
-}
 
 func (d *downloader) setKey() error {
    sess, err := paramount.NewSession(d.Preview.GUID)
@@ -35,7 +24,7 @@ func (d *downloader) setKey() error {
    if err != nil {
       return err
    }
-   keyID, err := d.Protection().KeyID()
+   keyID, err := d.period.Protection()
    if err != nil {
       return err
    }
@@ -46,11 +35,33 @@ func (d *downloader) setKey() error {
    return nil
 }
 
+func (d downloader) DASH(video, audio int64) error {
+   addr, err := paramount.NewMedia(d.GUID).DASH()
+   if err != nil {
+      return err
+   }
+   fmt.Println("GET", addr)
+   res, err := http.Get(addr.String())
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   d.url = addr
+   d.period, err = dash.NewPeriod(res.Body)
+   if err != nil {
+      return err
+   }
+   if err := d.download(audio, dash.Audio); err != nil {
+      return err
+   }
+   return d.download(video, dash.Video)
+}
+
 func (d *downloader) download(band int64, fn dash.PeriodFunc) error {
    if band == 0 {
       return nil
    }
-   reps := d.Represents(fn)
+   reps := d.period.Represents(fn)
    sort.Slice(reps, func(a, b int) bool {
       return reps[a].Bandwidth < reps[b].Bandwidth
    })
@@ -78,7 +89,7 @@ func (d *downloader) download(band int64, fn dash.PeriodFunc) error {
          return err
       }
       defer file.Close()
-      init, err := rep.Initialization(d.URL)
+      init, err := rep.Initialization(d.url)
       if err != nil {
          return err
       }
@@ -91,7 +102,7 @@ func (d *downloader) download(band int64, fn dash.PeriodFunc) error {
       if err := dash.DecryptInit(file, res.Body); err != nil {
          return err
       }
-      media, err := rep.Media(d.URL)
+      media, err := rep.Media(d.url)
       if err != nil {
          return err
       }
@@ -111,26 +122,4 @@ func (d *downloader) download(band int64, fn dash.PeriodFunc) error {
       }
    }
    return nil
-}
-
-func (d downloader) DASH(video, audio int64) error {
-   addr, err := paramount.NewMedia(d.GUID).DASH()
-   if err != nil {
-      return err
-   }
-   fmt.Println("GET", addr)
-   res, err := http.Get(addr.String())
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   d.URL = addr
-   d.Period, err = dash.NewPeriod(res.Body)
-   if err != nil {
-      return err
-   }
-   if err := d.download(audio, dash.Audio); err != nil {
-      return err
-   }
-   return d.download(video, dash.Video)
 }
