@@ -12,6 +12,33 @@ import (
    "strings"
 )
 
+var LogLevel format.LogLevel
+
+func GetNID(input string) (int64, error) {
+   _, nid, found := strings.Cut(input, "--")
+   if found {
+      input = nid
+   }
+   return strconv.ParseInt(input, 10, 64)
+}
+
+type playbackRequest struct {
+   AdTags struct {
+      Lat int `json:"lat"`
+      Mode string `json:"mode"`
+      PPID int `json:"ppid"`
+      PlayerHeight int `json:"playerHeight"`
+      PlayerWidth int `json:"playerWidth"`
+      URL string `json:"url"`
+   } `json:"adtags"`
+}
+
+type playbackResponse struct {
+   Data struct {
+      PlaybackJsonData PlaybackJsonData
+   }
+}
+
 type Auth struct {
    Data struct {
       Access_Token string
@@ -118,13 +145,13 @@ func (a *Auth) Refresh() error {
    return json.NewDecoder(res.Body).Decode(a)
 }
 
-func (a Auth) Playback(nid int64) (*Playback, error) {
+func (a Auth) Playback(nID int64) (*Playback, error) {
    var (
       addr []byte
       src playbackRequest
    )
    addr = append(addr, "https://gw.cds.amcn.com/playback-id/api/v1/playback/"...)
-   addr = strconv.AppendInt(addr, nid, 10)
+   addr = strconv.AppendInt(addr, nID, 10)
    src.AdTags.Mode = "on-demand"
    src.AdTags.URL = "!"
    buf, err := mech.Encode(src)
@@ -163,33 +190,7 @@ func (a Auth) Playback(nid int64) (*Playback, error) {
       return nil, err
    }
    play.PlaybackJsonData = dst.Data.PlaybackJsonData
-   play.BcJWT = res.Header.Get("X-AMCN-BC-JWT")
+   play.BC_JWT = res.Header.Get("X-AMCN-BC-JWT")
    return &play, nil
 }
 
-var LogLevel format.LogLevel
-
-func GetNID(input string) (int64, error) {
-   _, nid, found := strings.Cut(input, "--")
-   if found {
-      input = nid
-   }
-   return strconv.ParseInt(input, 10, 64)
-}
-
-type playbackRequest struct {
-   AdTags struct {
-      Lat int `json:"lat"`
-      Mode string `json:"mode"`
-      PPID int `json:"ppid"`
-      PlayerHeight int `json:"playerHeight"`
-      PlayerWidth int `json:"playerWidth"`
-      URL string `json:"url"`
-   } `json:"adtags"`
-}
-
-type playbackResponse struct {
-   Data struct {
-      PlaybackJsonData PlaybackJsonData
-   }
-}

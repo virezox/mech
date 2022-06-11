@@ -11,57 +11,6 @@ import (
    "strings"
 )
 
-func (p Playback) Key(privateKey, clientID, keyID []byte) ([]byte, error) {
-   source := p.DASH()
-   mod, err := widevine.NewModule(privateKey, clientID, keyID)
-   if err != nil {
-      return nil, err
-   }
-   in, err := mod.Marshal()
-   if err != nil {
-      return nil, err
-   }
-   req, err := http.NewRequest(
-      "POST", source.Key_Systems.Widevine.License_URL, bytes.NewReader(in),
-   )
-   if err != nil {
-      return nil, err
-   }
-   req.Header.Set("bcov-auth", p.BcJWT)
-   LogLevel.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return nil, errors.New(res.Status)
-   }
-   out, err := io.ReadAll(res.Body)
-   if err != nil {
-      return nil, err
-   }
-   keys, err := mod.Unmarshal(out)
-   if err != nil {
-      return nil, err
-   }
-   return keys.Content().Key, nil
-}
-
-func (p Playback) DASH() *Source {
-   for _, source := range p.PlaybackJsonData.Sources {
-      if source.Type == "application/dash+xml" {
-         return &source
-      }
-   }
-   return nil
-}
-
-type Playback struct {
-   PlaybackJsonData PlaybackJsonData
-   BcJWT string
-}
-
 func (p Playback) Base() string {
    var buf strings.Builder
    buf.WriteString(p.PlaybackJsonData.Custom_Fields.Show)
@@ -92,4 +41,54 @@ type Source struct {
    }
    Src string
    Type string
+}
+func (p Playback) DASH() *Source {
+   for _, source := range p.PlaybackJsonData.Sources {
+      if source.Type == "application/dash+xml" {
+         return &source
+      }
+   }
+   return nil
+}
+
+func (p Playback) Content(c widevine.Client) (*widevine.Content, error) {
+   source := p.DASH()
+   mod, err := c.Module()
+   if err != nil {
+      return nil, err
+   }
+   in, err := mod.Marshal()
+   if err != nil {
+      return nil, err
+   }
+   req, err := http.NewRequest(
+      "POST", source.Key_Systems.Widevine.License_URL, bytes.NewReader(in),
+   )
+   if err != nil {
+      return nil, err
+   }
+   req.Header.Set("bcov-auth", p.BC_JWT)
+   LogLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return nil, errors.New(res.Status)
+   }
+   out, err := io.ReadAll(res.Body)
+   if err != nil {
+      return nil, err
+   }
+   keys, err := mod.Unmarshal(out)
+   if err != nil {
+      return nil, err
+   }
+   return keys.Content(), nil
+}
+
+type Playback struct {
+   PlaybackJsonData PlaybackJsonData
+   BC_JWT string
 }

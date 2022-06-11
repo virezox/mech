@@ -13,34 +13,34 @@ import (
    "github.com/chmike/cmac-go"
 )
 
-type Module struct {
-   *rsa.PrivateKey
-   licenseRequest []byte
-}
-
-func NewModule(privateKey, clientID, kID []byte) (*Module, error) {
+func (c Client) Module() (*Module, error) {
    var (
       err error
       mod Module
    )
    // PrivateKey
-   block, _ := pem.Decode(privateKey)
+   block, _ := pem.Decode(c.PrivateKey)
    mod.PrivateKey, err = x509.ParsePKCS1PrivateKey(block.Bytes)
    if err != nil {
       return nil, err
    }
    // licenseRequest
    mod.licenseRequest = protobuf.Message{
-      1: protobuf.Bytes{Raw: clientID},
+      1: protobuf.Bytes{Raw: c.ID},
       2: protobuf.Message{ // ContentId
          1: protobuf.Message{ // CencId
             1: protobuf.Message{ // Pssh
-               2: protobuf.Bytes{Raw: kID},
+               2: protobuf.Bytes{Raw: c.KeyID},
             },
          },
       },
    }.Marshal()
    return &mod, nil
+}
+
+type Module struct {
+   *rsa.PrivateKey
+   licenseRequest []byte
 }
 
 func (m Module) Marshal() ([]byte, error) {
@@ -62,7 +62,7 @@ func (m Module) Marshal() ([]byte, error) {
    return signedRequest.Marshal(), nil
 }
 
-func (m Module) Unmarshal(response []byte) (Containers, error) {
+func (m Module) Unmarshal(response []byte) (Contents, error) {
    // key
    signedResponse, err := protobuf.Unmarshal(response)
    if err != nil {
@@ -93,10 +93,10 @@ func (m Module) Unmarshal(response []byte) (Containers, error) {
    if err != nil {
       return nil, err
    }
-   var cons Containers
+   var cons Contents
    // .Msg.Key
    for _, message := range signedResponse.Get(2).GetMessages(3) {
-      var con Container
+      var con Content
       iv, err := message.GetBytes(2)
       if err != nil {
          return nil, err

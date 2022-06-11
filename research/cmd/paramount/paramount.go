@@ -18,7 +18,7 @@ func (d *download) setKey(privateKey, clientID, keyID []byte) error {
    if err != nil {
       return err
    }
-   d.key, err = sess.Key(privateKey, clientID, kID)
+   d.key, err = sess.Key(privateKey, clientID, keyID)
    if err != nil {
       return err
    }

@@ -3,19 +3,9 @@ package widevine
 
 import (
    "encoding/base64"
-   "encoding/hex"
    "github.com/89z/format/protobuf"
    "strings"
 )
-
-func (c Container) String() string {
-   return hex.EncodeToString(c.Key)
-}
-
-type Container struct {
-   Key []byte // 3
-   Type uint64 // 4
-}
 
 func KeyID(rawPSSH string) ([]byte, error) {
    _, after, ok := strings.Cut(rawPSSH, "data:text/plain;base64,")
@@ -44,19 +34,30 @@ func unpad(buf []byte) []byte {
    return buf
 }
 
-type Containers []Container
-
-func (c Containers) Content() *Container {
-   for _, container := range c {
-      if container.Type == 2 {
-         return &container
-      }
-   }
-   return nil
+type Client struct {
+   ID []byte
+   KeyID []byte
+   PrivateKey []byte
 }
 
 type nopSource struct{}
 
 func (nopSource) Read(buf []byte) (int, error) {
    return len(buf), nil
+}
+
+type Content struct {
+   Key []byte
+   Type uint64
+}
+
+type Contents []Content
+
+func (c Contents) Content() *Content {
+   for _, con := range c {
+      if con.Type == 2 {
+         return &con
+      }
+   }
+   return nil
 }

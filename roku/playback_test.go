@@ -9,7 +9,7 @@ import (
 // therokuchannel.roku.com/watch/597a64a4a25c5bf6af4a8c7053049a6f
 const (
    playbackID = "597a64a4a25c5bf6af4a8c7053049a6f"
-   rawKID = "28339AD78F734520DA24E6E0573D392E"
+   rawKeyID = "28339AD78F734520DA24E6E0573D392E"
 )
 
 func TestPlayback(t *testing.T) {
@@ -33,11 +33,11 @@ func TestPlayback(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   kID, err := hex.DecodeString(rawKID)
+   keyID, err := hex.DecodeString(rawKeyID)
    if err != nil {
       t.Fatal(err)
    }
-   key, err := play.Key(privateKey, clientID, kID)
+   key, err := play.Key(privateKey, clientID, keyID)
    if err != nil {
       t.Fatal(err)
    }

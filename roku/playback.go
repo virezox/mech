@@ -9,8 +9,8 @@ import (
    "net/http"
 )
 
-func (p Playback) Key(privateKey, clientID, kID []byte) ([]byte, error) {
-   mod, err := widevine.NewModule(privateKey, clientID, kID)
+func (p Playback) Key(privateKey, clientID, keyID []byte) ([]byte, error) {
+   mod, err := widevine.NewModule(privateKey, clientID, keyID)
    if err != nil {
       return nil, err
    }

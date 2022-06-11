@@ -186,7 +186,7 @@ func (d *download) dash_down(band int64, fn dash.PeriodFunc) error {
          if err != nil {
             return err
          }
-         kID, err := d.Period.Protection().KID()
+         keyID, err := d.Period.Protection().KeyID()
          if err != nil {
             return err
          }
@@ -240,7 +240,7 @@ func (d *download) dash_down(band int64, fn dash.PeriodFunc) error {
 
 /////////////////////////////////////////////////////////
 
-func (d download) dash_info(video, audio int64) error {
+func (d download) dash_info(videoRate, audioRate int64) error {
    addr, err := paramount.NewMedia(d.mediaID).DASH()
    if err != nil {
       return err
@@ -256,8 +256,8 @@ func (d download) dash_info(video, audio int64) error {
    if err != nil {
       return err
    }
-   if err := d.download(audio, dash.Audio); err != nil {
+   if err := d.download(audioRate, dash.Audio); err != nil {
       return err
    }
-   return d.download(video, dash.Video)
+   return d.download(videoRate, dash.Video)
 }
