@@ -13,6 +13,16 @@ import (
    "os"
 )
 
+type downloader struct {
+   *amc.Playback
+   client string
+   info bool
+   key []byte
+   pem string
+   period *dash.Period
+   url *url.URL
+}
+
 func (d *downloader) setKey() error {
    var (
       client amc.Client
@@ -22,14 +32,11 @@ func (d *downloader) setKey() error {
    if err != nil {
       return err
    }
-   client.KeyID, err = d.Protection().KeyID()
-   if err != nil {
-      return err
-   }
    client.PrivateKey, err = os.ReadFile(d.pem)
    if err != nil {
       return err
    }
+   client.RawKeyID = d.period.Protection().Default_KID
    content, err := d.Playback.Content(client)
    if err != nil {
       return err
@@ -73,7 +80,7 @@ func (d downloader) doDASH(address string, nid, video, audio int64) error {
    if res.StatusCode != http.StatusOK {
       return errors.New(res.Status)
    }
-   d.URL = res.Request.URL
+   d.url = res.Request.URL
    d.Period, err = dash.NewPeriod(res.Body)
    if err != nil {
       return err
@@ -82,16 +89,6 @@ func (d downloader) doDASH(address string, nid, video, audio int64) error {
       return err
    }
    return d.download(video, dash.Video)
-}
-
-type downloader struct {
-   *amc.Playback
-   *dash.Period
-   *url.URL
-   client string
-   info bool
-   key []byte
-   pem string
 }
 
 func (d *downloader) download(band int64, fn dash.PeriodFunc) error {

@@ -32,14 +32,13 @@ type Request struct {
    }
 }
 
-func (a *Auth) Request(key, client []byte, pssh string) (*Request, error) {
-   keyID, err := widevine.KeyID(pssh)
-   if err != nil {
-      return nil, err
-   }
-   var req Request
-   req.Auth = a
-   req.Module, err = widevine.NewModule(key, client, keyID)
+func (a *Auth) Request(client widevine.Client) (*Request, error) {
+   var (
+      err error
+      req Request
+   )
+   req.auth = a
+   req.Module, err = client.Module()
    if err != nil {
       return nil, err
    }
@@ -48,11 +47,11 @@ func (a *Auth) Request(key, client []byte, pssh string) (*Request, error) {
       return nil, err
    }
    req.body.KeySystem = "com.widevine.alpha"
-   req.body.URI = pssh
+   req.body.URI = client.RawPSSH
    return &req, nil
 }
 
-func (l License) Content() (*widevine.Container, error) {
+func (l License) Content() (*widevine.Content, error) {
    keys, err := l.Unmarshal(l.body.License)
    if err != nil {
       return nil, err
@@ -75,7 +74,7 @@ func (r Request) License(env *Environment, ep *Episode) (*License, error) {
    req.Header = http.Header{
       "Authorization": {"Bearer " + env.Media_API.Token},
       "Content-Type": {"application/json"},
-      "X-Apple-Music-User-Token": {r.Value},
+      "X-Apple-Music-User-Token": {r.auth.Value},
    }
    LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
