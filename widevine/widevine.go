@@ -8,6 +8,15 @@ import (
    "strings"
 )
 
+func (c Content) String() string {
+   return hex.EncodeToString(c.Key)
+}
+
+type Content struct {
+   Key []byte
+   Type uint64
+}
+
 type Client struct {
    ID []byte
    PrivateKey []byte
@@ -49,11 +58,6 @@ type nopSource struct{}
 
 func (nopSource) Read(buf []byte) (int, error) {
    return len(buf), nil
-}
-
-type Content struct {
-   Key []byte
-   Type uint64
 }
 
 type Contents []Content

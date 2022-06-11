@@ -2,10 +2,22 @@ package main
 
 import (
    "flag"
+   "github.com/89z/format/dash"
    "github.com/89z/mech/roku"
+   "net/url"
    "os"
    "path/filepath"
 )
+
+type downloader struct {
+   *roku.Content
+   client string
+   info bool
+   key []byte
+   pem string
+   period *dash.Period
+   url *url.URL
+}
 
 func main() {
    home, err := os.UserHomeDir()

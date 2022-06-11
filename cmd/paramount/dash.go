@@ -6,6 +6,7 @@ import (
    "github.com/89z/format/dash"
    "github.com/89z/mech"
    "github.com/89z/mech/paramount"
+   "github.com/89z/mech/widevine"
    "net/http"
    "os"
    "sort"
@@ -16,22 +17,21 @@ func (d *downloader) setKey() error {
    if err != nil {
       return err
    }
-   privateKey, err := os.ReadFile(d.pem)
+   var client widevine.Client
+   client.ID, err = os.ReadFile(d.client)
    if err != nil {
       return err
    }
-   clientID, err := os.ReadFile(d.client)
+   client.PrivateKey, err = os.ReadFile(d.pem)
    if err != nil {
       return err
    }
-   keyID, err := d.period.Protection()
+   client.RawKeyID = d.period.Protection().Default_KID
+   content, err := sess.Content(client)
    if err != nil {
       return err
    }
-   d.key, err = sess.Key(privateKey, clientID, keyID)
-   if err != nil {
-      return err
-   }
+   d.key = content.Key
    return nil
 }
 
