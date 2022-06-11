@@ -14,23 +14,22 @@ import (
 )
 
 func (c Client) Module() (*Module, error) {
-   var (
-      err error
-      mod Module
-   )
-   // PrivateKey
+   keyID, err := c.KeyID()
+   if err != nil {
+      return nil, err
+   }
    block, _ := pem.Decode(c.PrivateKey)
+   var mod Module
    mod.PrivateKey, err = x509.ParsePKCS1PrivateKey(block.Bytes)
    if err != nil {
       return nil, err
    }
-   // licenseRequest
    mod.licenseRequest = protobuf.Message{
       1: protobuf.Bytes{Raw: c.ID},
       2: protobuf.Message{ // ContentId
          1: protobuf.Message{ // CencId
             1: protobuf.Message{ // Pssh
-               2: protobuf.Bytes{Raw: c.KeyID},
+               2: protobuf.Bytes{Raw: keyID},
             },
          },
       },

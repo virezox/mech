@@ -3,16 +3,28 @@ package widevine
 
 import (
    "encoding/base64"
+   "encoding/hex"
    "github.com/89z/format/protobuf"
    "strings"
 )
 
-func KeyID(rawPSSH string) ([]byte, error) {
-   _, after, ok := strings.Cut(rawPSSH, "data:text/plain;base64,")
-   if ok {
-      rawPSSH = after
+type Client struct {
+   ID []byte
+   PrivateKey []byte
+   RawKeyID string
+   RawPSSH string
+}
+
+func (c Client) KeyID() ([]byte, error) {
+   if c.RawKeyID != "" {
+      c.RawKeyID = strings.ReplaceAll(c.RawKeyID, "-", "")
+      return hex.DecodeString(c.RawKeyID)
    }
-   pssh, err := base64.StdEncoding.DecodeString(rawPSSH)
+   _, after, ok := strings.Cut(c.RawPSSH, "data:text/plain;base64,")
+   if ok {
+      c.RawPSSH = after
+   }
+   pssh, err := base64.StdEncoding.DecodeString(c.RawPSSH)
    if err != nil {
       return nil, err
    }
@@ -20,7 +32,6 @@ func KeyID(rawPSSH string) ([]byte, error) {
    if err != nil {
       return nil, err
    }
-   // key_id
    return widevineCencHeader.GetBytes(2)
 }
 
@@ -32,12 +43,6 @@ func unpad(buf []byte) []byte {
       }
    }
    return buf
-}
-
-type Client struct {
-   ID []byte
-   KeyID []byte
-   PrivateKey []byte
 }
 
 type nopSource struct{}

@@ -14,6 +14,24 @@ type Asset struct {
    HlsUrl string
 }
 
+type License struct {
+   *widevine.Module
+   body struct {
+      License []byte
+   }
+}
+
+type Request struct {
+   *widevine.Module
+   auth *Auth
+   body struct {
+      Challenge []byte `json:"challenge"`
+      ExtraServerParameters ServerParameters `json:"extra-server-parameters"`
+      KeySystem string `json:"key-system"`
+      URI string `json:"uri"`
+   }
+}
+
 func (a *Auth) Request(key, client []byte, pssh string) (*Request, error) {
    keyID, err := widevine.KeyID(pssh)
    if err != nil {
@@ -34,30 +52,12 @@ func (a *Auth) Request(key, client []byte, pssh string) (*Request, error) {
    return &req, nil
 }
 
-type License struct {
-   *widevine.Module
-   body struct {
-      License []byte
-   }
-}
-
 func (l License) Content() (*widevine.Container, error) {
    keys, err := l.Unmarshal(l.body.License)
    if err != nil {
       return nil, err
    }
    return keys.Content(), nil
-}
-
-type Request struct {
-   *Auth
-   *widevine.Module
-   body struct {
-      Challenge []byte `json:"challenge"`
-      ExtraServerParameters ServerParameters `json:"extra-server-parameters"`
-      KeySystem string `json:"key-system"`
-      URI string `json:"uri"`
-   }
 }
 
 func (r Request) License(env *Environment, ep *Episode) (*License, error) {

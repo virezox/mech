@@ -13,6 +13,31 @@ import (
    "os"
 )
 
+func (d *downloader) setKey() error {
+   var (
+      client amc.Client
+      err error
+   )
+   client.ID, err = os.ReadFile(d.client)
+   if err != nil {
+      return err
+   }
+   client.KeyID, err = d.Protection().KeyID()
+   if err != nil {
+      return err
+   }
+   client.PrivateKey, err = os.ReadFile(d.pem)
+   if err != nil {
+      return err
+   }
+   content, err := d.Playback.Content(client)
+   if err != nil {
+      return err
+   }
+   d.key = content.Key
+   return nil
+}
+
 func (d downloader) doDASH(address string, nid, video, audio int64) error {
    home, err := os.UserHomeDir()
    if err != nil {
@@ -57,26 +82,6 @@ func (d downloader) doDASH(address string, nid, video, audio int64) error {
       return err
    }
    return d.download(video, dash.Video)
-}
-
-func (d *downloader) setKey() error {
-   privateKey, err := os.ReadFile(d.pem)
-   if err != nil {
-      return err
-   }
-   clientID, err := os.ReadFile(d.client)
-   if err != nil {
-      return err
-   }
-   keyID, err := d.Protection().KeyID()
-   if err != nil {
-      return err
-   }
-   d.key, err = d.Playback.Key(privateKey, clientID, keyID)
-   if err != nil {
-      return err
-   }
-   return nil
 }
 
 type downloader struct {

@@ -12,8 +12,8 @@ import (
    "strings"
 )
 
-func (s Session) Key(privateKey, clientID, keyID []byte) ([]byte, error) {
-   mod, err := widevine.NewModule(privateKey, clientID, keyID)
+func (s Session) Content(c widevine.Client) (*widevine.Content, error) {
+   mod, err := c.Module()
    if err != nil {
       return nil, err
    }
@@ -45,7 +45,7 @@ func (s Session) Key(privateKey, clientID, keyID []byte) ([]byte, error) {
    if err != nil {
       return nil, err
    }
-   return keys.Content().Key, nil
+   return keys.Content(), nil
 }
 
 type Session struct {
