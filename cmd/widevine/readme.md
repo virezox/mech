@@ -37,3 +37,25 @@ x-dt-custom-data: eyJ1c2VySWQiOiJhbm9uaW0iLCJzZXNzaW9uSWQiOiJrRGJZZUlYeVM4VjNtNX
 
 Sometimes, only the URL is needed, in which case you can omit the header option.
 It depends on the license server.
+
+## How to get client ID and private key files?
+
+I cant host those here for legal reasons, but you should be able to download
+them from here:
+
+<https://github.com/Jnzzi/4464_L3-CDM>
+
+or you can dump your own:
+
+https://github.com/89z/mech/tree/v1.54.2/widevine#how-to-dump-l3-cdm
+
+Note that if you choose to download the files from the link above, you need to
+either rename the files to match the defaults, or you can manually set the
+paths like this:
+
+~~~
+-c string
+     client ID (default "C:\\Users\\Steven\\mech\\client_id.bin")
+-k string
+     private key (default "C:\\Users\\Steven\\mech\\private_key.pem")
+~~~

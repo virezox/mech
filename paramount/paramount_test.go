@@ -1,20 +1,19 @@
 package paramount
 
 import (
-   "encoding/hex"
    "fmt"
    "os"
    "testing"
    "time"
 )
 
-const rawID = "3be8be937c98483184b294173f9152af"
-
 var tests = map[testType]string{
    {episode, dashCenc}: "eyT_RYkqNuH_6ZYrepLtxkiPO1HA7dIU",
    {episode, streamPack}: "622520382",
    {movie, streamPack}: "wQH9yE_y_Dt4ekDYm3yelhhY2KXvOra_",
 }
+
+var client = Client{RawKeyID: "3be8be937c98483184b294173f9152af"}
 
 func TestSession(t *testing.T) {
    sess, err := NewSession(tests[testType{episode, dashCenc}])
@@ -25,24 +24,20 @@ func TestSession(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   privateKey, err := os.ReadFile(home + "/mech/private_key.pem")
+   client.ID, err = os.ReadFile(home + "/mech/client_id.bin")
    if err != nil {
       t.Fatal(err)
    }
-   clientID, err := os.ReadFile(home + "/mech/client_id.bin")
+   client.PrivateKey, err = os.ReadFile(home + "/mech/private_key.pem")
    if err != nil {
       t.Fatal(err)
    }
-   keyID, err := hex.DecodeString(rawID)
+   content, err := sess.Content(client)
    if err != nil {
       t.Fatal(err)
    }
-   key, err := sess.Key(privateKey, clientID, keyID)
-   if err != nil {
-      t.Fatal(err)
-   }
-   if hex.EncodeToString(key) != "44f12639c9c4a5a432338aca92e38920" {
-      t.Fatal(key)
+   if content.String() != "44f12639c9c4a5a432338aca92e38920" {
+      t.Fatal(content)
    }
 }
 

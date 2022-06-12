@@ -10,6 +10,33 @@ import (
    "time"
 )
 
+// Also available is "hls", but all transcodings are quality "sq".
+// Same for "api-mobile.soundcloud.com".
+func (t Track) Progressive() (*Media, error) {
+   var addr string
+   for _, code := range t.Media.Transcodings {
+      if code.Format.Protocol == "progressive" {
+         addr = code.URL
+      }
+   }
+   req, err := http.NewRequest("GET", addr, nil)
+   if err != nil {
+      return nil, err
+   }
+   req.URL.RawQuery = "client_id=" + clientID
+   LogLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   med := new(Media)
+   if err := json.NewDecoder(res.Body).Decode(med); err != nil {
+      return nil, err
+   }
+   return med, nil
+}
+
 type Track struct {
    ID int64
    Display_Date string // 2021-04-12T07:00:01Z
@@ -118,32 +145,6 @@ func (t Track) Artwork() string {
 
 func (t Track) Base() string {
    return t.User.Username + "-" + t.Title
-}
-
-// Also available is "hls", but all transcodings are quality "sq".
-// Same for "api-mobile.soundcloud.com".
-func (t Track) Progressive() (*Media, error) {
-   var addr string
-   for _, code := range t.Media.Transcodings {
-      if code.Format.Protocol == "progressive" {
-         addr = code.URL
-      }
-   }
-   req, err := http.NewRequest("GET", addr + "?client_id=" + clientID, nil)
-   if err != nil {
-      return nil, err
-   }
-   LogLevel.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   med := new(Media)
-   if err := json.NewDecoder(res.Body).Decode(med); err != nil {
-      return nil, err
-   }
-   return med, nil
 }
 
 func (t Track) String() string {

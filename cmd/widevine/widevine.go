@@ -21,7 +21,7 @@ type flags struct {
    privateKey string
 }
 
-func (f flags) key() (widevine.Contents, error) {
+func (f flags) contents() (widevine.Contents, error) {
    var (
       client widevine.Client
       err error

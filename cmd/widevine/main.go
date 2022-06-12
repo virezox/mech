@@ -33,7 +33,7 @@ func main() {
       logLevel = 1
    }
    if f.keyID != "" {
-      contents, err := f.key()
+      contents, err := f.contents()
       if err != nil {
          panic(err)
       }
