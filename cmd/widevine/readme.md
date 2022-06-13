@@ -45,6 +45,10 @@ them from here:
 
 <https://github.com/Jnzzi/4464_L3-CDM>
 
+or search:
+
+https://github.com/search?q=L3+CDM
+
 or you can dump your own:
 
 https://github.com/89z/mech/tree/v1.54.2/widevine#how-to-dump-l3-cdm
@@ -59,3 +63,7 @@ paths like this:
 -k string
      private key (default "C:\\Users\\Steven\\mech\\private_key.pem")
 ~~~
+
+## Unrecognized option cenc\_decryption\_key
+
+This option is only available with FFmpeg builds since 2022-05-16
