@@ -2,11 +2,53 @@ package youtube
 // github.com/89z
 
 import (
+   "bytes"
    "encoding/json"
    "errors"
-   "github.com/89z/mech"
    "net/http"
 )
+
+type YouTubeI struct {
+   ContentCheckOK bool `json:"contentCheckOk,omitempty"`
+   Context Context `json:"context"`
+   Query string `json:"query,omitempty"`
+   RacyCheckOK bool `json:"racyCheckOk,omitempty"`
+   VideoID string `json:"videoId,omitempty"`
+   Params []byte `json:"params,omitempty"`
+}
+
+func (y YouTubeI) Search(query string) (*Search, error) {
+   y.Query = query
+   filter := NewFilter()
+   filter.Type(Type["Video"])
+   param := NewParams()
+   param.Filter(filter)
+   var err error
+   y.Params, err = param.MarshalBinary()
+   if err != nil {
+      return nil, err
+   }
+   buf := new(bytes.Buffer)
+   if err := json.NewEncoder(buf).Encode(y); err != nil {
+      return nil, err
+   }
+   req, err := http.NewRequest("POST", origin + "/youtubei/v1/search", buf)
+   if err != nil {
+      return nil, err
+   }
+   req.Header.Set("X-Goog-Api-Key", googAPI)
+   LogLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   search := new(Search)
+   if err := json.NewDecoder(res.Body).Decode(search); err != nil {
+      return nil, err
+   }
+   return search, nil
+}
 
 const googAPI = "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8"
 
@@ -17,15 +59,6 @@ type Client struct {
 
 type Context struct {
    Client Client `json:"client"`
-}
-
-type YouTubeI struct {
-   ContentCheckOK bool `json:"contentCheckOk,omitempty"`
-   Context Context `json:"context"`
-   Params string `json:"params,omitempty"`
-   Query string `json:"query,omitempty"`
-   RacyCheckOK bool `json:"racyCheckOk,omitempty"`
-   VideoID string `json:"videoId,omitempty"`
 }
 
 // 1
@@ -67,7 +100,8 @@ var Mweb = YouTubeI{
 
 func (y YouTubeI) Exchange(id string, ex *Exchange) (*Player, error) {
    y.VideoID = id
-   buf, err := mech.Encode(y)
+   buf := new(bytes.Buffer)
+   err := json.NewEncoder(buf).Encode(y)
    if err != nil {
       return nil, err
    }
@@ -98,33 +132,4 @@ func (y YouTubeI) Exchange(id string, ex *Exchange) (*Player, error) {
 
 func (y YouTubeI) Player(id string) (*Player, error) {
    return y.Exchange(id, nil)
-}
-
-func (y YouTubeI) Search(query string) (*Search, error) {
-   y.Query = query
-   filter := NewFilter()
-   filter.Type(Type["Video"])
-   param := NewParams()
-   param.Filter(filter)
-   y.Params = param.Encode()
-   buf, err := mech.Encode(y)
-   if err != nil {
-      return nil, err
-   }
-   req, err := http.NewRequest("POST", origin + "/youtubei/v1/search", buf)
-   if err != nil {
-      return nil, err
-   }
-   req.Header.Set("X-Goog-Api-Key", googAPI)
-   LogLevel.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   search := new(Search)
-   if err := json.NewDecoder(res.Body).Decode(search); err != nil {
-      return nil, err
-   }
-   return search, nil
 }

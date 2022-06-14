@@ -1,8 +1,6 @@
 package youtube
-// github.com/89z
 
 import (
-   "encoding/base64"
    "github.com/89z/format/protobuf"
 )
 
@@ -66,11 +64,6 @@ func NewParams() Params {
    var par Params
    par.Message = make(protobuf.Message)
    return par
-}
-
-func (p Params) Encode() string {
-   buf := p.Marshal()
-   return base64.StdEncoding.EncodeToString(buf)
 }
 
 func (f Filter) Features(num protobuf.Number) {

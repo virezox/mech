@@ -24,14 +24,6 @@ type Auth struct {
    *http.Cookie
 }
 
-func OpenAuth(elem ...string) (*Auth, error) {
-   return format.Open[Auth](elem...)
-}
-
-func (a Auth) Create(elem ...string) error {
-   return format.Create(a, elem...)
-}
-
 type Config struct {
    WebBag struct {
       AppIdKey string

@@ -1,6 +1,7 @@
 package main
 
 import (
+   "encoding/xml"
    "fmt"
    "github.com/89z/format"
    "github.com/89z/format/dash"
@@ -25,7 +26,7 @@ func (d *downloader) setKey() error {
    if err != nil {
       return err
    }
-   client.RawKeyID = d.period.Protection().Default_KID
+   client.RawKeyID = d.media.Protection().Default_KID
    content, err := sess.Content(client)
    if err != nil {
       return err
@@ -46,8 +47,7 @@ func (d downloader) DASH(video, audio int64) error {
    }
    defer res.Body.Close()
    d.url = addr
-   d.period, err = dash.NewPeriod(res.Body)
-   if err != nil {
+   if err := xml.NewDecoder(res.Body).Decode(&d.media); err != nil {
       return err
    }
    if err := d.download(audio, dash.Audio); err != nil {
@@ -56,11 +56,11 @@ func (d downloader) DASH(video, audio int64) error {
    return d.download(video, dash.Video)
 }
 
-func (d *downloader) download(band int64, fn dash.PeriodFunc) error {
+func (d *downloader) download(band int64, fn dash.AdaptationFunc) error {
    if band == 0 {
       return nil
    }
-   reps := d.period.Represents(fn)
+   reps := d.media.Represents(fn)
    sort.Slice(reps, func(a, b int) bool {
       return reps[a].Bandwidth < reps[b].Bandwidth
    })

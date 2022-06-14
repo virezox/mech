@@ -1,5 +1,4 @@
 package widevine
-// github.com/89z
 
 import (
    "crypto"
@@ -24,7 +23,7 @@ func (c Client) Module() (*Module, error) {
    if err != nil {
       return nil, err
    }
-   mod.licenseRequest = protobuf.Message{
+   mod.licenseRequest, err = protobuf.Message{
       1: protobuf.Bytes{Raw: c.ID},
       2: protobuf.Message{ // ContentId
          1: protobuf.Message{ // CencId
@@ -33,7 +32,10 @@ func (c Client) Module() (*Module, error) {
             },
          },
       },
-   }.Marshal()
+   }.MarshalBinary()
+   if err != nil {
+      return nil, err
+   }
    return &mod, nil
 }
 
@@ -58,12 +60,13 @@ func (m Module) Marshal() ([]byte, error) {
       2: protobuf.Bytes{Raw: m.licenseRequest},
       3: protobuf.Bytes{Raw: signature},
    }
-   return signedRequest.Marshal(), nil
+   return signedRequest.MarshalBinary()
 }
 
 func (m Module) Unmarshal(response []byte) (Contents, error) {
    // key
-   signedResponse, err := protobuf.Unmarshal(response)
+   signedResponse := make(protobuf.Message)
+   err := signedResponse.UnmarshalBinary(response)
    if err != nil {
       return nil, err
    }

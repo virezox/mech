@@ -10,39 +10,6 @@ import (
    "sort"
 )
 
-func (d downloader) HLS(bandwidth int64) error {
-   addr, err := paramount.NewMedia(d.GUID).HLS()
-   if err != nil {
-      return err
-   }
-   fmt.Println("GET", addr)
-   res, err := http.Get(addr.String())
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   master, err := hls.NewScanner(res.Body).Master()
-   if err != nil {
-      return err
-   }
-   sort.Slice(master.Streams, func(a, b int) bool {
-      return master.Streams[a].Bandwidth < master.Streams[b].Bandwidth
-   })
-   stream := master.Streams.GetBandwidth(bandwidth)
-   if d.info {
-      fmt.Println(d.Title)
-      for _, each := range master.Streams {
-         if each.Bandwidth == stream.Bandwidth {
-            fmt.Print("!")
-         }
-         fmt.Println(each)
-      }
-   } else {
-      return download(stream.RawURI, d.Base())
-   }
-   return nil
-}
-
 func download(addr, base string) error {
    seg, err := newSegment(addr)
    if err != nil {
@@ -76,6 +43,39 @@ func download(addr, base string) error {
       if err := res.Body.Close(); err != nil {
          return err
       }
+   }
+   return nil
+}
+
+func (d downloader) HLS(bandwidth int64) error {
+   addr, err := paramount.NewMedia(d.GUID).HLS()
+   if err != nil {
+      return err
+   }
+   fmt.Println("GET", addr)
+   res, err := http.Get(addr.String())
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   master, err := hls.NewScanner(res.Body).Master()
+   if err != nil {
+      return err
+   }
+   sort.Slice(master.Streams, func(a, b int) bool {
+      return master.Streams[a].Bandwidth < master.Streams[b].Bandwidth
+   })
+   stream := master.Streams.GetBandwidth(bandwidth)
+   if d.info {
+      fmt.Println(d.Title)
+      for _, each := range master.Streams {
+         if each.Bandwidth == stream.Bandwidth {
+            fmt.Print("!")
+         }
+         fmt.Println(each)
+      }
+   } else {
+      return download(stream.RawURI, d.Base())
    }
    return nil
 }

@@ -1,5 +1,4 @@
 package widevine
-// github.com/89z
 
 import (
    "encoding/base64"
@@ -37,11 +36,11 @@ func (c Client) KeyID() ([]byte, error) {
    if err != nil {
       return nil, err
    }
-   widevineCencHeader, err := protobuf.Unmarshal(pssh[32:])
-   if err != nil {
+   cencHeader := make(protobuf.Message)
+   if err := cencHeader.UnmarshalBinary(pssh[32:]); err != nil {
       return nil, err
    }
-   return widevineCencHeader.GetBytes(2)
+   return cencHeader.GetBytes(2)
 }
 
 func unpad(buf []byte) []byte {

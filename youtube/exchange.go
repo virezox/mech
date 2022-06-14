@@ -3,7 +3,6 @@ package youtube
 
 import (
    "encoding/json"
-   "github.com/89z/format"
    "net/http"
    "net/url"
    "strings"
@@ -21,14 +20,6 @@ type Exchange struct {
    Access_Token string
    Error string
    Refresh_Token string
-}
-
-func OpenExchange(elem ...string) (*Exchange, error) {
-   return format.Open[Exchange](elem...)
-}
-
-func (x Exchange) Create(elem ...string) error {
-   return format.Create(x, elem...)
 }
 
 func (x *Exchange) Refresh() error {

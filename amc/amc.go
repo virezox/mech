@@ -46,10 +46,6 @@ type Auth struct {
    }
 }
 
-func OpenAuth(elem ...string) (*Auth, error) {
-   return format.Open[Auth](elem...)
-}
-
 func Unauth() (*Auth, error) {
    req, err := http.NewRequest(
       "POST", "https://gw.cds.amcn.com/auth-orchestration-id/api/v1/unauth", nil,
@@ -78,10 +74,6 @@ func Unauth() (*Auth, error) {
       return nil, err
    }
    return auth, nil
-}
-
-func (a Auth) Create(elem ...string) error {
-   return format.Create(a, elem...)
 }
 
 func (a *Auth) Login(email, password string) error {

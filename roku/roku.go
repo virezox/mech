@@ -38,8 +38,8 @@ func NewCrossSite() (*CrossSite, error) {
          site.cookie = cook
       }
    }
-   scan, err := json.NewScanner(res.Body)
-   if err != nil {
+   var scan json.Scanner
+   if _, err := scan.ReadFrom(res.Body); err != nil {
       return nil, err
    }
    scan.Split = []byte("\tcsrf:")
