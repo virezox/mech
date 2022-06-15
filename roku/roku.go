@@ -1,5 +1,4 @@
 package roku
-// github.com/89z
 
 import (
    "bytes"
@@ -8,6 +7,7 @@ import (
    "github.com/89z/format"
    "github.com/89z/format/json"
    "github.com/89z/mech"
+   "io"
    "net/http"
    "net/url"
    "path"
@@ -18,37 +18,6 @@ import (
 type CrossSite struct {
    cookie *http.Cookie // has own String method
    token string
-}
-
-func NewCrossSite() (*CrossSite, error) {
-   // this has smaller body than www.roku.com
-   req, err := http.NewRequest("GET", "https://therokuchannel.roku.com", nil)
-   if err != nil {
-      return nil, err
-   }
-   LogLevel.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   var site CrossSite
-   for _, cook := range res.Cookies() {
-      if cook.Name == "_csrf" {
-         site.cookie = cook
-      }
-   }
-   var scan json.Scanner
-   if _, err := scan.ReadFrom(res.Body); err != nil {
-      return nil, err
-   }
-   scan.Split = []byte("\tcsrf:")
-   scan.Scan()
-   scan.Split = nil
-   if err := scan.Decode(&site.token); err != nil {
-      return nil, err
-   }
-   return &site, nil
 }
 
 func (c CrossSite) Playback(id string) (*Playback, error) {
@@ -223,4 +192,36 @@ func (c Content) HLS() (*Video, error) {
       }
    }
    return nil, errors.New("drmAuthentication")
+}
+
+func NewCrossSite() (*CrossSite, error) {
+   // this has smaller body than www.roku.com
+   req, err := http.NewRequest("GET", "https://therokuchannel.roku.com", nil)
+   if err != nil {
+      return nil, err
+   }
+   LogLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   var site CrossSite
+   for _, cook := range res.Cookies() {
+      if cook.Name == "_csrf" {
+         site.cookie = cook
+      }
+   }
+   var scan json.Scanner
+   scan.Data, err = io.ReadAll(res.Body)
+   if err != nil {
+      return nil, err
+   }
+   scan.Sep = []byte("\tcsrf:")
+   scan.Scan()
+   scan.Sep = nil
+   if err := scan.Decode(&site.token); err != nil {
+      return nil, err
+   }
+   return &site, nil
 }

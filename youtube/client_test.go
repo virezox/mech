@@ -60,7 +60,7 @@ func TestAndroidRacy(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   change, err := OpenExchange(home, "mech/youtube.json")
+   change, err := OpenExchange(home + "/mech/youtube.json")
    if err != nil {
       t.Fatal(err)
    }
@@ -83,7 +83,7 @@ func TestAndroidContent(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   change, err := OpenExchange(home, "mech/youtube.json")
+   change, err := OpenExchange(home + "/mech/youtube.json")
    if err != nil {
       t.Fatal(err)
    }

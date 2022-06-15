@@ -62,7 +62,6 @@ func (c Config) Signin(email, password string) (*Signin, error) {
    if err != nil {
       return nil, err
    }
-   defer sign.Body.Close()
    if sign.StatusCode != http.StatusOK {
       return nil, errors.New(sign.Status)
    }
@@ -97,7 +96,6 @@ func (s Signin) Auth() (*Auth, error) {
    if err != nil {
       return nil, err
    }
-   defer auth.Body.Close()
    if auth.StatusCode != http.StatusOK {
       return nil, errors.New(auth.Status)
    }

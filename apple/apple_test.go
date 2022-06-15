@@ -16,7 +16,7 @@ func TestLicense(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   auth, err := OpenAuth(home, "mech/apple.json")
+   auth, err := OpenAuth(home + "/mech/apple.json")
    if err != nil {
       t.Fatal(err)
    }
@@ -50,26 +50,5 @@ func TestLicense(t *testing.T) {
    }
    if content.String() != "22bdb0063805260307ee5045c0f3835a" {
       t.Fatal(content)
-   }
-}
-func TestCreate(t *testing.T) {
-   con, err := NewConfig()
-   if err != nil {
-      t.Fatal(err)
-   }
-   sign, err := con.Signin(email, password)
-   if err != nil {
-      t.Fatal(err)
-   }
-   auth, err := sign.Auth()
-   if err != nil {
-      t.Fatal(err)
-   }
-   home, err := os.UserHomeDir()
-   if err != nil {
-      t.Fatal(err)
-   }
-   if err := auth.Create(home, "mech/apple.json"); err != nil {
-      t.Fatal(err)
    }
 }
