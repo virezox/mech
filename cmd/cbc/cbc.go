@@ -5,33 +5,38 @@ import (
    "github.com/89z/format"
    "github.com/89z/format/hls"
    "github.com/89z/mech/cbc"
+   "io"
    "net/http"
    "net/url"
    "os"
 )
+
+func getKey(addr string) ([]byte, error) {
+   fmt.Println("GET", addr)
+   res, err := http.Get(addr)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   return io.ReadAll(res.Body)
+}
 
 func download(addr *url.URL, name string) error {
    seg, err := newSegment(addr.String())
    if err != nil {
       return err
    }
-   key, err := addr.Parse(seg.RawKey)
+   key, err := getKey(seg.RawKey)
    if err != nil {
       return err
    }
-   fmt.Println("GET", key)
-   res, err := http.Get(key.String())
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
    file, err := os.Create(name)
    if err != nil {
       return err
    }
    defer file.Close()
    pro := format.ProgressChunks(file, len(seg.Protected))
-   block, err := hls.NewCipher(res.Body)
+   block, err := hls.NewBlock(key)
    if err != nil {
       return err
    }
@@ -45,7 +50,7 @@ func download(addr *url.URL, name string) error {
          return err
       }
       pro.AddChunk(res.ContentLength)
-      if _, err := block.Copy(pro, res.Body, nil); err != nil {
+      if _, err := io.Copy(pro, block.ModeKey(res.Body)); err != nil {
          return err
       }
       if err := res.Body.Close(); err != nil {

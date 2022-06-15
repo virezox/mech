@@ -15,7 +15,7 @@ func TestPlayback(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   auth, err := OpenAuth(home, "mech/amc.json")
+   auth, err := OpenAuth(home + "/mech/amc.json")
    if err != nil {
       t.Fatal(err)
    }
@@ -52,7 +52,7 @@ func TestLogin(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   if err := auth.Create(home, "mech/amc.json"); err != nil {
+   if err := auth.Create(home + "/mech/amc.json"); err != nil {
       t.Fatal(err)
    }
 }
@@ -62,14 +62,14 @@ func TestRefresh(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   auth, err := OpenAuth(home, "mech/amc.json")
+   auth, err := OpenAuth(home + "/mech/amc.json")
    if err != nil {
       t.Fatal(err)
    }
    if err := auth.Refresh(); err != nil {
       t.Fatal(err)
    }
-   if err := auth.Create(home, "mech/amc.json"); err != nil {
+   if err := auth.Create(home + "/mech/amc.json"); err != nil {
       t.Fatal(err)
    }
 }
