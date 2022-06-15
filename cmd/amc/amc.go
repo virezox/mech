@@ -18,14 +18,19 @@ func (d downloader) doDASH(address string, nid, video, audio int64) error {
    if err != nil {
       return err
    }
-   auth, err := amc.OpenAuth(home, "mech/amc.json")
+   auth, err := amc.OpenAuth(home + "/mech/amc.json")
    if err != nil {
       return err
    }
    if err := auth.Refresh(); err != nil {
       return err
    }
-   if err := auth.Create(home, "mech/amc.json"); err != nil {
+   file, err := format.Create(home + "/mech/amc.json")
+   if err != nil {
+      return err
+   }
+   defer file.Close()
+   if _, err := auth.WriteTo(file); err != nil {
       return err
    }
    if nid == 0 {
@@ -160,5 +165,13 @@ func doLogin(email, password string) error {
    if err != nil {
       return err
    }
-   return auth.Create(home, "mech/amc.json")
+   file, err := format.Create(home + "/mech/amc.json")
+   if err != nil {
+      return err
+   }
+   defer file.Close()
+   if _, err := auth.WriteTo(file); err != nil {
+      return err
+   }
+   return nil
 }

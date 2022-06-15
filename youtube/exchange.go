@@ -5,6 +5,7 @@ import (
    "encoding/json"
    "net/http"
    "net/url"
+   "os"
    "strings"
 )
 
@@ -15,6 +16,19 @@ const (
       ".apps.googleusercontent.com"
    clientSecret = "SboVhoG9s0rNafixCSGGKXAT"
 )
+
+func OpenExchange(name string) (*Exchange, error) {
+   file, err := os.Open(name)
+   if err != nil {
+      return nil, err
+   }
+   defer file.Close()
+   exc := new(Exchange)
+   if err := json.NewDecoder(file).Decode(exc); err != nil {
+      return nil, err
+   }
+   return exc, nil
+}
 
 type Exchange struct {
    Access_Token string

@@ -8,6 +8,7 @@ import (
    "github.com/89z/mech"
    "io"
    "net/http"
+   "os"
    "strconv"
    "strings"
 )
@@ -186,38 +187,24 @@ type Auth struct {
    }
 }
 
-type readWriter struct {
-   io.Reader
-   io.Writer
-   n int
-}
-
-func (rw *readWriter) Write(p []byte) (int, error) {
-   n, err := rw.Writer.Write(p)
-   rw.n += n
-   return n, err
-}
-
-func (rw *readWriter) Read(p []byte) (int, error) {
-   n, err := rw.Reader.Read(p)
-   rw.n += n
-   return n, err
+func OpenAuth(name string) (*Auth, error) {
+   file, err := os.Open(name)
+   if err != nil {
+      return nil, err
+   }
+   defer file.Close()
+   auth := new(Auth)
+   if err := json.NewDecoder(file).Decode(auth); err != nil {
+      return nil, err
+   }
+   return auth, nil
 }
 
 func (a Auth) WriteTo(w io.Writer) (int64, error) {
-   rw := readWriter{Writer: w}
-   err := json.NewEncoder(&rw).Encode(a)
+   wr := format.Writer{W: w}
+   err := json.NewEncoder(&wr).Encode(a)
    if err != nil {
       return 0, err
    }
-   return int64(rw.n), nil
-}
-
-func (a *Auth) ReadFrom(r io.Reader) (int64, error) {
-   rw := readWriter{Reader: r}
-   err := json.NewDecoder(&rw).Decode(a)
-   if err != nil {
-      return 0, err
-   }
-   return int64(rw.n), nil
+   return int64(wr.N), nil
 }

@@ -4,10 +4,23 @@ package cbc
 import (
    "bytes"
    "encoding/json"
-   "github.com/89z/format"
    "net/http"
    "net/url"
+   "os"
 )
+
+func OpenProfile(name string) (*Profile, error) {
+   file, err := os.Open(name)
+   if err != nil {
+      return nil, err
+   }
+   defer file.Close()
+   pro := new(Profile)
+   if err := json.NewDecoder(file).Decode(pro); err != nil {
+      return nil, err
+   }
+   return pro, nil
+}
 
 const apiKey = "3f4beddd-2061-49b0-ae80-6f1f2ed65b37"
 
@@ -99,14 +112,6 @@ func (o OverTheTop) Profile() (*Profile, error) {
 type Profile struct {
    Tier string
    ClaimsToken string
-}
-
-func OpenProfile(elem ...string) (*Profile, error) {
-   return format.Open[Profile](elem...)
-}
-
-func (p Profile) Create(elem ...string) error {
-   return format.Create(p, elem...)
 }
 
 type WebToken struct {
