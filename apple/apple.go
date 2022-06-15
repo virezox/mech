@@ -9,7 +9,81 @@ import (
    "github.com/89z/mech/widevine"
    "net/http"
    "net/url"
+   "strconv"
 )
+
+type Episode struct {
+   Data struct {
+      Playables map[string]struct {
+         Assets Asset
+      }
+   }
+}
+
+func NewEpisode(contentID string) (*Episode, error) {
+   req, err := http.NewRequest(
+      "GET", "https://tv.apple.com/api/uts/v3/episodes/" + contentID, nil,
+   )
+   if err != nil {
+      return nil, err
+   }
+   req.URL.RawQuery = url.Values{
+      "caller": {"web"},
+      "locale": {"en-US"},
+      "pfm": {"web"},
+      "sf": {strconv.Itoa(sf_max)},
+      "v": {strconv.Itoa(v_max)},
+   }.Encode()
+   LogLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return nil, errors.New(res.Status)
+   }
+   epi := new(Episode)
+   if err := json.NewDecoder(res.Body).Decode(epi); err != nil {
+      return nil, err
+   }
+   return epi, nil
+}
+
+func (e Episode) Asset() *Asset {
+   for _, play := range e.Data.Playables {
+      return &play.Assets
+   }
+   return nil
+}
+type Config struct {
+   WebBag struct {
+      AppIdKey string
+   }
+}
+
+func NewConfig() (*Config, error) {
+   req, err := http.NewRequest(
+      "GET", "https://amp-account.tv.apple.com/account/web/config", nil,
+   )
+   if err != nil {
+      return nil, err
+   }
+   LogLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return nil, errors.New(res.Status)
+   }
+   con := new(Config)
+   if err := json.NewDecoder(res.Body).Decode(con); err != nil {
+      return nil, err
+   }
+   return con, nil
+}
 
 type Asset struct {
    FpsKeyServerQueryParameters ServerParameters
@@ -33,25 +107,6 @@ type Request struct {
       KeySystem string `json:"key-system"`
       URI string `json:"uri"`
    }
-}
-
-func (a *Auth) Request(client widevine.Client) (*Request, error) {
-   var (
-      err error
-      req Request
-   )
-   req.auth = a
-   req.Module, err = client.Module()
-   if err != nil {
-      return nil, err
-   }
-   req.body.Challenge, err = req.Marshal()
-   if err != nil {
-      return nil, err
-   }
-   req.body.KeySystem = "com.widevine.alpha"
-   req.body.URI = client.RawPSSH
-   return &req, nil
 }
 
 func (l License) Content() (*widevine.Content, error) {
@@ -104,76 +159,6 @@ const (
 
 var LogLevel format.LogLevel
 
-type Auth struct {
-   *http.Cookie
-}
-
-type Config struct {
-   WebBag struct {
-      AppIdKey string
-   }
-}
-
-func NewConfig() (*Config, error) {
-   req, err := http.NewRequest(
-      "GET", "https://amp-account.tv.apple.com/account/web/config", nil,
-   )
-   if err != nil {
-      return nil, err
-   }
-   LogLevel.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return nil, errors.New(res.Status)
-   }
-   con := new(Config)
-   if err := json.NewDecoder(res.Body).Decode(con); err != nil {
-      return nil, err
-   }
-   return con, nil
-}
-
-func (c Config) Signin(email, password string) (*Signin, error) {
-   buf := new(bytes.Buffer)
-   err := json.NewEncoder(buf).Encode(map[string]string{
-     "accountName": email,
-     "password": password,
-   })
-   if err != nil {
-      return nil, err
-   }
-   req, err := http.NewRequest(
-      "POST", "https://idmsa.apple.com/appleauth/auth/signin", buf,
-   )
-   if err != nil {
-      return nil, err
-   }
-   req.Header = http.Header{
-      "Content-Type": {"application/json"},
-      "X-Apple-Widget-Key": {c.WebBag.AppIdKey},
-   }
-   LogLevel.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return nil, errors.New(res.Status)
-   }
-   var sign Signin
-   for _, cook := range res.Cookies() {
-      if cook.Name == "myacinfo" {
-         sign.Cookie = cook
-      }
-   }
-   return &sign, nil
-}
-
 type Environment struct {
    Media_API struct {
       Token string // authorization: Bearer eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXV...
@@ -223,33 +208,21 @@ type ServerParameters struct {
    SvcId string `json:"svcId"`
 }
 
-type Signin struct {
-   *http.Cookie
-}
-
-func (s Signin) Auth() (*Auth, error) {
-   req, err := http.NewRequest(
-      "POST", "https://buy.tv.apple.com/account/web/auth", nil,
+func (a *Auth) Request(client widevine.Client) (*Request, error) {
+   var (
+      err error
+      req Request
    )
+   req.auth = a
+   req.Module, err = client.Module()
    if err != nil {
       return nil, err
    }
-   req.AddCookie(s.Cookie)
-   req.Header.Set("Origin", "https://tv.apple.com")
-   LogLevel.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
+   req.body.Challenge, err = req.Marshal()
    if err != nil {
       return nil, err
    }
-   defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return nil, errors.New(res.Status)
-   }
-   var auth Auth
-   for _, cook := range res.Cookies() {
-      if cook.Name == "media-user-token" {
-         auth.Cookie = cook
-      }
-   }
-   return &auth, nil
+   req.body.KeySystem = "com.widevine.alpha"
+   req.body.URI = client.RawPSSH
+   return &req, nil
 }
