@@ -12,6 +12,39 @@ import (
    "strconv"
 )
 
+func (r Request) License(env *Environment, ep *Episode) (*License, error) {
+   asset := ep.Asset()
+   r.body.ExtraServerParameters = asset.FpsKeyServerQueryParameters
+   buf := new(bytes.Buffer)
+   err := json.NewEncoder(buf).Encode(r.body)
+   if err != nil {
+      return nil, err
+   }
+   req, err := http.NewRequest("POST", asset.FpsKeyServerUrl, buf)
+   if err != nil {
+      return nil, err
+   }
+   req.Header = http.Header{
+      "Authorization": {"Bearer " + env.Media_API.Token},
+      "Content-Type": {"application/json"},
+      "X-Apple-Music-User-Token": {r.auth.mediaUserToken().Value},
+   }
+   LogLevel.Dump(req)
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return nil, errors.New(res.Status)
+   }
+   lic := License{Module: r.Module}
+   if err := json.NewDecoder(res.Body).Decode(&lic.body); err != nil {
+      return nil, err
+   }
+   return &lic, nil
+}
+
 type Episode struct {
    Data struct {
       Playables map[string]struct {
@@ -115,39 +148,6 @@ func (l License) Content() (*widevine.Content, error) {
       return nil, err
    }
    return keys.Content(), nil
-}
-
-func (r Request) License(env *Environment, ep *Episode) (*License, error) {
-   asset := ep.Asset()
-   r.body.ExtraServerParameters = asset.FpsKeyServerQueryParameters
-   buf := new(bytes.Buffer)
-   err := json.NewEncoder(buf).Encode(r.body)
-   if err != nil {
-      return nil, err
-   }
-   req, err := http.NewRequest("POST", asset.FpsKeyServerUrl, buf)
-   if err != nil {
-      return nil, err
-   }
-   req.Header = http.Header{
-      "Authorization": {"Bearer " + env.Media_API.Token},
-      "Content-Type": {"application/json"},
-      "X-Apple-Music-User-Token": {r.auth.Value},
-   }
-   LogLevel.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return nil, errors.New(res.Status)
-   }
-   lic := License{Module: r.Module}
-   if err := json.NewDecoder(res.Body).Decode(&lic.body); err != nil {
-      return nil, err
-   }
-   return &lic, nil
 }
 
 const (
