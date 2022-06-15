@@ -2,13 +2,11 @@ package amc
 
 import (
    "bytes"
-   "encoding/json"
    "errors"
    "github.com/89z/format"
+   "github.com/89z/format/json"
    "github.com/89z/mech"
-   "io"
    "net/http"
-   "os"
    "strconv"
    "strings"
 )
@@ -188,23 +186,9 @@ type Auth struct {
 }
 
 func OpenAuth(name string) (*Auth, error) {
-   file, err := os.Open(name)
-   if err != nil {
-      return nil, err
-   }
-   defer file.Close()
-   auth := new(Auth)
-   if err := json.NewDecoder(file).Decode(auth); err != nil {
-      return nil, err
-   }
-   return auth, nil
+   return json.Open[Auth](name)
 }
 
-func (a Auth) WriteTo(w io.Writer) (int64, error) {
-   wr := format.Writer{W: w}
-   err := json.NewEncoder(&wr).Encode(a)
-   if err != nil {
-      return 0, err
-   }
-   return int64(wr.N), nil
+func (a Auth) Create(name string) error {
+   return json.Create(a, name)
 }

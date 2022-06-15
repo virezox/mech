@@ -23,7 +23,7 @@ func (v video) player() (*youtube.Player, error) {
       if err != nil {
          return nil, err
       }
-      change, err := youtube.OpenExchange(home, "mech/youtube.json")
+      change, err := youtube.OpenExchange(home + "/mech/youtube.json")
       if err != nil {
          return nil, err
       }
@@ -107,7 +107,7 @@ func doRefresh() error {
    if err != nil {
       return err
    }
-   return change.Create(home, "mech/youtube.json")
+   return change.Create(home + "/mech/youtube.json")
 }
 
 func doAccess() error {
@@ -115,12 +115,12 @@ func doAccess() error {
    if err != nil {
       return err
    }
-   change, err := youtube.OpenExchange(home, "mech/youtube.json")
+   change, err := youtube.OpenExchange(home + "/mech/youtube.json")
    if err != nil {
       return err
    }
    if err := change.Refresh(); err != nil {
       return err
    }
-   return change.Create(home, "mech/youtube.json")
+   return change.Create(home + "/mech/youtube.json")
 }

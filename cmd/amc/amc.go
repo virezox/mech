@@ -13,6 +13,21 @@ import (
    "os"
 )
 
+func doLogin(email, password string) error {
+   auth, err := amc.Unauth()
+   if err != nil {
+      return err
+   }
+   if err := auth.Login(email, password); err != nil {
+      return err
+   }
+   home, err := os.UserHomeDir()
+   if err != nil {
+      return err
+   }
+   return auth.Create(home + "/mech/amc.json")
+}
+
 func (d downloader) doDASH(address string, nid, video, audio int64) error {
    home, err := os.UserHomeDir()
    if err != nil {
@@ -25,12 +40,7 @@ func (d downloader) doDASH(address string, nid, video, audio int64) error {
    if err := auth.Refresh(); err != nil {
       return err
    }
-   file, err := format.Create(home + "/mech/amc.json")
-   if err != nil {
-      return err
-   }
-   defer file.Close()
-   if _, err := auth.WriteTo(file); err != nil {
+   if err := auth.Create(home + "/mech/amc.json"); err != nil {
       return err
    }
    if nid == 0 {
@@ -149,29 +159,6 @@ func (d *downloader) download(band int64, fn dash.AdaptationFunc) error {
             return err
          }
       }
-   }
-   return nil
-}
-
-func doLogin(email, password string) error {
-   auth, err := amc.Unauth()
-   if err != nil {
-      return err
-   }
-   if err := auth.Login(email, password); err != nil {
-      return err
-   }
-   home, err := os.UserHomeDir()
-   if err != nil {
-      return err
-   }
-   file, err := format.Create(home + "/mech/amc.json")
-   if err != nil {
-      return err
-   }
-   defer file.Close()
-   if _, err := auth.WriteTo(file); err != nil {
-      return err
    }
    return nil
 }

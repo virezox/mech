@@ -1,13 +1,19 @@
 package youtube
-// github.com/89z
 
 import (
-   "encoding/json"
+   "github.com/89z/format/json"
    "net/http"
    "net/url"
-   "os"
    "strings"
 )
+
+func (x Exchange) Create(name string) error {
+   return json.Create(x, name)
+}
+
+func OpenExchange(name string) (*Exchange, error) {
+   return json.Open[Exchange](name)
+}
 
 const (
    // YouTube on TV
@@ -16,19 +22,6 @@ const (
       ".apps.googleusercontent.com"
    clientSecret = "SboVhoG9s0rNafixCSGGKXAT"
 )
-
-func OpenExchange(name string) (*Exchange, error) {
-   file, err := os.Open(name)
-   if err != nil {
-      return nil, err
-   }
-   defer file.Close()
-   exc := new(Exchange)
-   if err := json.NewDecoder(file).Decode(exc); err != nil {
-      return nil, err
-   }
-   return exc, nil
-}
 
 type Exchange struct {
    Access_Token string
