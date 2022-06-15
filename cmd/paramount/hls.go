@@ -5,6 +5,7 @@ import (
    "github.com/89z/format"
    "github.com/89z/format/hls"
    "github.com/89z/mech/paramount"
+   "io"
    "net/http"
    "os"
    "sort"
@@ -21,23 +22,27 @@ func download(addr, base string) error {
       return err
    }
    defer res.Body.Close()
-   block, err := hls.NewCipher(res.Body)
-   if err != nil {
-      return err
-   }
    file, err := os.Create(base + hls.TS)
    if err != nil {
       return err
    }
    defer file.Close()
    pro := format.ProgressChunks(file, len(seg.Protected))
+   key, err := io.ReadAll(res.Body)
+   if err != nil {
+      return err
+   }
+   block, err := hls.NewBlock(key)
+   if err != nil {
+      return err
+   }
    for _, addr := range seg.Protected {
       res, err := http.Get(addr)
       if err != nil {
          return err
       }
       pro.AddChunk(res.ContentLength)
-      if _, err := block.Copy(pro, res.Body, nil); err != nil {
+      if _, err := io.Copy(pro, block.ModeKey(res.Body)); err != nil {
          return err
       }
       if err := res.Body.Close(); err != nil {

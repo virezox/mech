@@ -15,8 +15,8 @@ type downloader struct {
    info bool
    key []byte
    pem string
-   period *dash.Period
    url *url.URL
+   media dash.Media
 }
 
 func main() {

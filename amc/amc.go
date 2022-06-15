@@ -1,5 +1,4 @@
 package amc
-// github.com/89z
 
 import (
    "bytes"
@@ -7,6 +6,7 @@ import (
    "errors"
    "github.com/89z/format"
    "github.com/89z/mech"
+   "io"
    "net/http"
    "strconv"
    "strings"
@@ -36,13 +36,6 @@ type playbackRequest struct {
 type playbackResponse struct {
    Data struct {
       PlaybackJsonData PlaybackJsonData
-   }
-}
-
-type Auth struct {
-   Data struct {
-      Access_Token string
-      Refresh_Token string
    }
 }
 
@@ -186,3 +179,45 @@ func (a Auth) Playback(nID int64) (*Playback, error) {
    return &play, nil
 }
 
+type Auth struct {
+   Data struct {
+      Access_Token string
+      Refresh_Token string
+   }
+}
+
+type readWriter struct {
+   io.Reader
+   io.Writer
+   n int
+}
+
+func (rw *readWriter) Write(p []byte) (int, error) {
+   n, err := rw.Writer.Write(p)
+   rw.n += n
+   return n, err
+}
+
+func (rw *readWriter) Read(p []byte) (int, error) {
+   n, err := rw.Reader.Read(p)
+   rw.n += n
+   return n, err
+}
+
+func (a Auth) WriteTo(w io.Writer) (int64, error) {
+   rw := readWriter{Writer: w}
+   err := json.NewEncoder(&rw).Encode(a)
+   if err != nil {
+      return 0, err
+   }
+   return int64(rw.n), nil
+}
+
+func (a *Auth) ReadFrom(r io.Reader) (int64, error) {
+   rw := readWriter{Reader: r}
+   err := json.NewDecoder(&rw).Decode(a)
+   if err != nil {
+      return 0, err
+   }
+   return int64(rw.n), nil
+}
