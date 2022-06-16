@@ -1,10 +1,10 @@
 package bandcamp
-// github.com/89z
 
 import (
    "encoding/json"
    "github.com/89z/format"
    "github.com/89z/format/xml"
+   "io"
    "net/http"
 )
 
@@ -27,11 +27,12 @@ func NewParams(addr string) (*Params, error) {
       return nil, err
    }
    defer res.Body.Close()
-   scan, err := xml.NewScanner(res.Body)
+   var scan xml.Scanner
+   scan.Data, err = io.ReadAll(res.Body)
    if err != nil {
       return nil, err
    }
-   scan.Split = []byte(`<p id="report-account-vm"`)
+   scan.Sep = []byte(`<p id="report-account-vm"`)
    scan.Scan()
    var p struct {
       DataTouReportParams []byte `xml:"data-tou-report-params,attr"`

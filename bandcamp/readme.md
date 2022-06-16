@@ -2,7 +2,7 @@
 
 ## Android client
 
-2022-05-07
+2022-06-15
 
 ~~~
 com.bandcamp.android

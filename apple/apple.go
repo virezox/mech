@@ -7,6 +7,7 @@ import (
    "github.com/89z/format"
    "github.com/89z/format/xml"
    "github.com/89z/mech/widevine"
+   "io"
    "net/http"
    "net/url"
    "strconv"
@@ -179,13 +180,14 @@ func NewEnvironment() (*Environment, error) {
    if res.StatusCode != http.StatusOK {
       return nil, errors.New(res.Status)
    }
-   scan, err := xml.NewScanner(res.Body)
+   var scan xml.Scanner
+   scan.Data, err = io.ReadAll(res.Body)
    if err != nil {
       return nil, err
    }
-   scan.Split = []byte(`"web-tv-app/config/environment"`)
+   scan.Sep = []byte(`"web-tv-app/config/environment"`)
    scan.Scan()
-   scan.Split = []byte("<meta")
+   scan.Sep = []byte("<meta")
    var meta struct {
       Content string `xml:"content,attr"`
    }
