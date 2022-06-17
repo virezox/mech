@@ -66,4 +66,10 @@ paths like this:
 
 ## Unrecognized option cenc\_decryption\_key
 
+~~~
+ffmpeg -cenc_decryption_key 66363435386631333730396636386565 `
+-i http://vrbx507.cda.pl/3916348/3916348.mpd `
+-c copy -map 0:0 dec.mp4
+~~~
+
 This option is only available with FFmpeg builds since 2022-05-16
