@@ -17,7 +17,14 @@ https://github.com/TDenisM/widevinedump/tree/main/pywidevine/cdm/formats
 
 ## Where to download L3 CDM?
 
+I cant host those here for legal reasons, but you should be able to download
+them from here:
+
 <https://github.com/Jnzzi/4464_L3-CDM>
+
+or search:
+
+https://github.com/search?q=L3+CDM
 
 ## How to dump L3 CDM?
 

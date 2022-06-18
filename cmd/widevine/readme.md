@@ -40,22 +40,11 @@ It depends on the license server.
 
 ## How to get client ID and private key files?
 
-I cant host those here for legal reasons, but you should be able to download
-them from here:
+https://github.com/89z/mech/tree/master/widevine
 
-<https://github.com/Jnzzi/4464_L3-CDM>
-
-or search:
-
-https://github.com/search?q=L3+CDM
-
-or you can dump your own:
-
-https://github.com/89z/mech/tree/v1.54.2/widevine#how-to-dump-l3-cdm
-
-Note that if you choose to download the files from the link above, you need to
-either rename the files to match the defaults, or you can manually set the
-paths like this:
+Note that if you choose to download the files someone else has dumped, you might
+need to either rename the files to match the defaults, or you can manually set
+the paths like this:
 
 ~~~
 -c string
