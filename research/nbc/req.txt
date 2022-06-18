@@ -1,0 +1,13 @@
+POST /access/vod/nbcuniversal/9000221348 HTTP/1.1
+Host: access-cloudpath.media.nbcuni.com
+Authorization: NBC-Security key=android_nbcuniversal,version=2.4,time=1655586488008,hash=a20baa36e8d2b79f71a97d946495692679554e87d5206e42c695a934c432dc41
+Content-Type: application/json
+
+{
+ "device": "android",
+ "deviceId": "android",
+ "externalAdvertiserId": "NBC",
+ "mpx": {
+  "accountId": 2304991196
+ }
+}
