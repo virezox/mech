@@ -5,9 +5,9 @@ Content-Type: application/json
 
 {
    "device": "android",
-   "deviceId": "52966deadb9df95",
-   "externalAdvertiserId": "TELE_VOD_9000245869",
+   "deviceId": "android",
+   "externalAdvertiserId": "NBC",
    "mpx": {
-      "accountId": "2304991196"
+      "accountId": 2304991196
    }
 }
