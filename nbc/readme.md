@@ -18,7 +18,7 @@ https://nbc.com
 
 ## How to get `secretKey`?
 
-https://nbcapp.nbc.co/config/android/player/v10/prod/mobile.json
+https://nbcapp.nbc.co/config/android/player/v11/prod/mobile.json
 
 ## Why am I not getting 720p?
 

@@ -85,6 +85,9 @@ type Video struct {
          Analytics struct {
             ConvivaAssetName string
          }
+         Metadata struct {
+            MpxAccountID string
+         }
       }
    }
 }
