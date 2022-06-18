@@ -1,5 +1,4 @@
 package nbc
-// github.com/89z
 
 import (
    "crypto/hmac"

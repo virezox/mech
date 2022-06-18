@@ -3,7 +3,6 @@ package main
 import (
    "io"
    "net/http"
-   "net/http/httputil"
    "net/url"
    "bytes"
    "encoding/json"
@@ -31,7 +30,7 @@ func main() {
    var f friendship
    f.Query = string(query)
    f.Variables.App="nbc"
-   f.Variables.MpxGuid="9000245869"
+   f.Variables.MpxGuid="9000221348"
    f.Variables.OneApp=true
    f.Variables.Platform="android"
    f.Variables.TimeZone="America/Chicago"
@@ -55,9 +54,11 @@ func main() {
       panic(err)
    }
    defer res.Body.Close()
-   buf, err := httputil.DumpResponse(res, true)
+   src, err := io.ReadAll(res.Body)
    if err != nil {
       panic(err)
    }
-   os.Stdout.Write(buf)
+   dst := new(bytes.Buffer)
+   json.Indent(dst, src, "", " ")
+   os.Stdout.ReadFrom(dst)
 }
