@@ -1,17 +1,7 @@
 package nbc
 
 import (
-   "bytes"
-   "encoding/json"
    "fmt"
-   "io"
-   "net/http"
-   "net/http/httputil"
-   "net/url"
-   "os"
-   "strconv"
-   "strings"
-   "time"
    "testing"
 )
 
@@ -27,4 +17,5 @@ var videos = []int{
 }
 
 func TestNBC(t *testing.T) {
+   fmt.Println(videos)
 }
