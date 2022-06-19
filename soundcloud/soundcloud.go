@@ -20,7 +20,7 @@ func (m Media) Ext() (string, error) {
    return path.Ext(addr.Path), nil
 }
 
-const clientID = "iZIs9mchVcX5lhVRyQGGAYlNPVldzAoX"
+const client_id = "iZIs9mchVcX5lhVRyQGGAYlNPVldzAoX"
 
 var LogLevel format.LogLevel
 

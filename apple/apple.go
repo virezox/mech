@@ -139,7 +139,7 @@ type Request struct {
       Challenge []byte `json:"challenge"`
       ExtraServerParameters ServerParameters `json:"extra-server-parameters"`
       KeySystem string `json:"key-system"`
-      URI string `json:"uri"`
+      Uri string `json:"uri"`
    }
 }
 
@@ -225,6 +225,6 @@ func (a *Auth) Request(client widevine.Client) (*Request, error) {
       return nil, err
    }
    req.body.KeySystem = "com.widevine.alpha"
-   req.body.URI = client.RawPSSH
+   req.body.Uri = client.RawPssh
    return &req, nil
 }

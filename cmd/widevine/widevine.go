@@ -17,8 +17,8 @@ type flags struct {
    address string
    client string
    header string
-   keyID string
-   privateKey string
+   key_id string
+   private_key string
 }
 
 func (f flags) contents() (widevine.Contents, error) {
@@ -26,15 +26,15 @@ func (f flags) contents() (widevine.Contents, error) {
       client widevine.Client
       err error
    )
-   client.ID, err = os.ReadFile(f.client)
+   client.Id, err = os.ReadFile(f.client)
    if err != nil {
       return nil, err
    }
-   client.PrivateKey, err = os.ReadFile(f.privateKey)
+   client.PrivateKey, err = os.ReadFile(f.private_key)
    if err != nil {
       return nil, err
    }
-   client.RawKeyID = f.keyID
+   client.RawKeyId = f.key_id
    module, err := client.Module()
    if err != nil {
       return nil, err

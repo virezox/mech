@@ -16,15 +16,15 @@ func main() {
    // a
    flag.StringVar(&f.address, "a", "", "license address")
    // b
-   flag.StringVar(&f.keyID, "b", "", "key ID")
+   flag.StringVar(&f.key_id, "b", "", "key ID")
    // c
    f.client = filepath.Join(home, "mech/client_id.bin")
    flag.StringVar(&f.client, "c", f.client, "client ID")
    // h
    flag.StringVar(&f.header, "h", "", "header")
    // k
-   f.privateKey = filepath.Join(home, "mech/private_key.pem")
-   flag.StringVar(&f.privateKey, "k", f.privateKey, "private key")
+   f.private_key = filepath.Join(home, "mech/private_key.pem")
+   flag.StringVar(&f.private_key, "k", f.private_key, "private key")
    // v
    var verbose bool
    flag.BoolVar(&verbose, "v", false, "verbose")
@@ -32,7 +32,7 @@ func main() {
    if verbose {
       logLevel = 1
    }
-   if f.keyID != "" {
+   if f.key_id != "" {
       contents, err := f.contents()
       if err != nil {
          panic(err)

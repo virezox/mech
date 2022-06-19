@@ -17,10 +17,10 @@ func OpenExchange(name string) (*Exchange, error) {
 
 const (
    // YouTube on TV
-   clientID =
+   client_id =
       "861556708454-d6dlm3lh05idd8npek18k6be8ba3oc68" +
       ".apps.googleusercontent.com"
-   clientSecret = "SboVhoG9s0rNafixCSGGKXAT"
+   client_secret = "SboVhoG9s0rNafixCSGGKXAT"
 )
 
 type Exchange struct {
@@ -31,8 +31,8 @@ type Exchange struct {
 
 func (x *Exchange) Refresh() error {
    val := url.Values{
-      "client_id": {clientID},
-      "client_secret": {clientSecret},
+      "client_id": {client_id},
+      "client_secret": {client_secret},
       "grant_type": {"refresh_token"},
       "refresh_token": {x.Refresh_Token},
    }
@@ -44,15 +44,15 @@ func (x *Exchange) Refresh() error {
    return json.NewDecoder(res.Body).Decode(x)
 }
 
-type OAuth struct {
+type Oauth struct {
    Device_Code string
    User_Code string
    Verification_URL string
 }
 
-func NewOAuth() (*OAuth, error) {
+func NewOauth() (*Oauth, error) {
    val := url.Values{
-      "client_id": {clientID},
+      "client_id": {client_id},
       "scope": {"https://www.googleapis.com/auth/youtube"},
    }
    res, err := http.PostForm("https://oauth2.googleapis.com/device/code", val)
@@ -60,17 +60,17 @@ func NewOAuth() (*OAuth, error) {
       return nil, err
    }
    defer res.Body.Close()
-   oau := new(OAuth)
-   if err := json.NewDecoder(res.Body).Decode(oau); err != nil {
+   auth := new(Oauth)
+   if err := json.NewDecoder(res.Body).Decode(auth); err != nil {
       return nil, err
    }
-   return oau, nil
+   return auth, nil
 }
 
-func (o OAuth) Exchange() (*Exchange, error) {
+func (o Oauth) Exchange() (*Exchange, error) {
    val := url.Values{
-      "client_id": {clientID},
-      "client_secret": {clientSecret},
+      "client_id": {client_id},
+      "client_secret": {client_secret},
       "device_code": {o.Device_Code},
       "grant_type":  {"urn:ietf:params:oauth:grant-type:device_code"},
    }
@@ -86,7 +86,7 @@ func (o OAuth) Exchange() (*Exchange, error) {
    return exc, nil
 }
 
-func (o OAuth) String() string {
+func (o Oauth) String() string {
    var buf strings.Builder
    buf.WriteString("1. Go to\n")
    buf.WriteString(o.Verification_URL)

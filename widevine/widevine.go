@@ -17,22 +17,22 @@ type Content struct {
 }
 
 type Client struct {
-   ID []byte
+   Id []byte
    PrivateKey []byte
-   RawKeyID string
-   RawPSSH string
+   RawKeyId string
+   RawPssh string
 }
 
-func (c Client) KeyID() ([]byte, error) {
-   if c.RawKeyID != "" {
-      c.RawKeyID = strings.ReplaceAll(c.RawKeyID, "-", "")
-      return hex.DecodeString(c.RawKeyID)
+func (c Client) KeyId() ([]byte, error) {
+   if c.RawKeyId != "" {
+      c.RawKeyId = strings.ReplaceAll(c.RawKeyId, "-", "")
+      return hex.DecodeString(c.RawKeyId)
    }
-   _, after, ok := strings.Cut(c.RawPSSH, "data:text/plain;base64,")
+   _, after, ok := strings.Cut(c.RawPssh, "data:text/plain;base64,")
    if ok {
-      c.RawPSSH = after
+      c.RawPssh = after
    }
-   pssh, err := base64.StdEncoding.DecodeString(c.RawPSSH)
+   pssh, err := base64.StdEncoding.DecodeString(c.RawPssh)
    if err != nil {
       return nil, err
    }

@@ -8,8 +8,10 @@ import (
    "net/http"
 )
 
+const goog_api = "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8"
+
 func (y YouTubeI) Exchange(id string, ex *Exchange) (*Player, error) {
-   y.VideoID = id
+   y.VideoId = id
    buf, err := mech.Encode(y)
    if err != nil {
       return nil, err
@@ -21,7 +23,7 @@ func (y YouTubeI) Exchange(id string, ex *Exchange) (*Player, error) {
    if ex != nil {
       req.Header.Set("Authorization", "Bearer " + ex.Access_Token)
    } else {
-      req.Header.Set("X-Goog-Api-Key", googAPI)
+      req.Header.Set("X-Goog-Api-Key", goog_api)
    }
    LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
@@ -43,11 +45,11 @@ func (y YouTubeI) Player(id string) (*Player, error) {
    return y.Exchange(id, nil)
 }
 type YouTubeI struct {
-   ContentCheckOK bool `json:"contentCheckOk,omitempty"`
+   ContentCheckOk bool `json:"contentCheckOk,omitempty"`
    Context Context `json:"context"`
    Query string `json:"query,omitempty"`
-   RacyCheckOK bool `json:"racyCheckOk,omitempty"`
-   VideoID string `json:"videoId,omitempty"`
+   RacyCheckOk bool `json:"racyCheckOk,omitempty"`
+   VideoId string `json:"videoId,omitempty"`
    Params []byte `json:"params,omitempty"`
 }
 
@@ -70,7 +72,7 @@ func (y YouTubeI) Search(query string) (*Search, error) {
    if err != nil {
       return nil, err
    }
-   req.Header.Set("X-Goog-Api-Key", googAPI)
+   req.Header.Set("X-Goog-Api-Key", goog_api)
    LogLevel.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
@@ -83,8 +85,6 @@ func (y YouTubeI) Search(query string) (*Search, error) {
    }
    return search, nil
 }
-
-const googAPI = "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8"
 
 type Client struct {
    ClientName string `json:"clientName"`
@@ -116,7 +116,7 @@ var AndroidRacy = YouTubeI{
    Context: Context{
       Client: Client{"ANDROID", androidVersion},
    },
-   RacyCheckOK: true,
+   RacyCheckOk: true,
 }
 
 // 4
@@ -124,8 +124,8 @@ var AndroidContent = YouTubeI{
    Context: Context{
       Client: Client{"ANDROID", androidVersion},
    },
-   RacyCheckOK: true,
-   ContentCheckOK: true,
+   RacyCheckOk: true,
+   ContentCheckOk: true,
 }
 
 var Mweb = YouTubeI{

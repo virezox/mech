@@ -49,13 +49,13 @@ func NewMedia(id int64) (*Media, error) {
 type authorization struct {
    hmac string
    timestamp int64
-   partnerID int64
+   partner_id int64
 }
 
 var chunk = authorization{
    hmac: "FF",
    timestamp: 9,
-   partnerID: 117,
+   partner_id: 117,
 }
 
 func (a authorization) String() string {
@@ -64,6 +64,6 @@ func (a authorization) String() string {
    buf = append(buf, '|')
    buf = strconv.AppendInt(buf, a.timestamp, 10)
    buf = append(buf, '|')
-   buf = strconv.AppendInt(buf, a.partnerID, 10)
+   buf = strconv.AppendInt(buf, a.partner_id, 10)
    return string(buf)
 }

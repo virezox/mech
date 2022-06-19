@@ -13,7 +13,7 @@ import (
 )
 
 func (c Client) Module() (*Module, error) {
-   keyID, err := c.KeyID()
+   key_id, err := c.KeyId()
    if err != nil {
       return nil, err
    }
@@ -24,11 +24,11 @@ func (c Client) Module() (*Module, error) {
       return nil, err
    }
    mod.licenseRequest, err = protobuf.Message{
-      1: protobuf.Bytes{Raw: c.ID},
+      1: protobuf.Bytes{Raw: c.Id},
       2: protobuf.Message{ // ContentId
          1: protobuf.Message{ // CencId
             1: protobuf.Message{ // Pssh
-               2: protobuf.Bytes{Raw: keyID},
+               2: protobuf.Bytes{Raw: key_id},
             },
          },
       },

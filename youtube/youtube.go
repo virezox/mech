@@ -14,7 +14,7 @@ var LogLevel format.LogLevel
 
 // https://youtube.com/shorts/9Vsdft81Q6w
 // https://youtube.com/watch?v=XY-hOqcPGCY
-func VideoID(address string) (string, error) {
+func VideoId(address string) (string, error) {
    parse, err := url.Parse(address)
    if err != nil {
       return "", err
@@ -100,7 +100,7 @@ type Item struct {
             Text string
          }
       }
-      VideoID string
+      VideoId string
    }
 }
 

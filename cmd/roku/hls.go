@@ -10,13 +10,13 @@ import (
    "os"
 )
 
-func (d downloader) HLS(bandwidth int64) error {
-   video, err := d.Content.HLS()
+func (d downloader) Hls(bandwidth int64) error {
+   video, err := d.Content.Hls()
    if err != nil {
       return err
    }
-   fmt.Println("GET", video.URL)
-   res, err := http.Get(video.URL)
+   fmt.Println("GET", video.Url)
+   res, err := http.Get(video.Url)
    if err != nil {
       return err
    }

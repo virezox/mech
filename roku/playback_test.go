@@ -6,16 +6,16 @@ import (
 )
 
 // therokuchannel.roku.com/watch/597a64a4a25c5bf6af4a8c7053049a6f
-const playbackID = "597a64a4a25c5bf6af4a8c7053049a6f"
+const playback_id = "597a64a4a25c5bf6af4a8c7053049a6f"
 
-var client = Client{RawKeyID: "28339AD78F734520DA24E6E0573D392E"}
+var client = Client{RawKeyId: "28339AD78F734520DA24E6E0573D392E"}
 
 func TestPlayback(t *testing.T) {
    site, err := NewCrossSite()
    if err != nil {
       t.Fatal(err)
    }
-   play, err := site.Playback(playbackID)
+   play, err := site.Playback(playback_id)
    if err != nil {
       t.Fatal(err)
    }

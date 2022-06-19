@@ -72,7 +72,7 @@ func (c Content) Base() string {
 
 type Content struct {
    Meta struct {
-      ID string
+      Id string
       MediaType string
    }
    Title string
@@ -91,7 +91,7 @@ type Content struct {
    }
 }
 
-func ContentID(addr string) string {
+func ContentId(addr string) string {
    return path.Base(addr)
 }
 
@@ -138,7 +138,7 @@ func NewContent(id string) (*Content, error) {
 }
 
 func (c Content) Format(f fmt.State, verb rune) {
-   fmt.Fprintln(f, "ID:", c.Meta.ID)
+   fmt.Fprintln(f, "ID:", c.Meta.Id)
    fmt.Fprintln(f, "Type:", c.Meta.MediaType)
    fmt.Fprintln(f, "Title:", c.Title)
    if c.Meta.MediaType == "episode" {
@@ -152,7 +152,7 @@ func (c Content) Format(f fmt.State, verb rune) {
       for _, opt := range c.ViewOptions {
          fmt.Fprint(f, "\nLicense: ", opt.License)
          for _, vid := range opt.Media.Videos {
-            fmt.Fprint(f, "\nURL: ", vid.URL)
+            fmt.Fprint(f, "\nURL: ", vid.Url)
          }
       }
    }
@@ -167,7 +167,7 @@ func (c Content) Duration() time.Duration {
 type Video struct {
    DrmAuthentication *struct{}
    VideoType string
-   URL string
+   Url string
 }
 
 func (c Content) DASH() *Video {
@@ -181,7 +181,7 @@ func (c Content) DASH() *Video {
    return nil
 }
 
-func (c Content) HLS() (*Video, error) {
+func (c Content) Hls() (*Video, error) {
    for _, opt := range c.ViewOptions {
       for _, vid := range opt.Media.Videos {
          if vid.DrmAuthentication == nil {

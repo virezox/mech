@@ -10,7 +10,7 @@ import (
 func (v video) player() (*youtube.Player, error) {
    if v.id == "" {
       var err error
-      v.id, err = youtube.VideoID(v.address)
+      v.id, err = youtube.VideoId(v.address)
       if err != nil {
          return nil, err
       }
@@ -93,13 +93,13 @@ func download(form *youtube.Format, base string) error {
 }
 
 func doRefresh() error {
-   oauth, err := youtube.NewOAuth()
+   auth, err := youtube.NewOauth()
    if err != nil {
       return err
    }
-   fmt.Println(oauth)
+   fmt.Println(auth)
    fmt.Scanln()
-   change, err := oauth.Exchange()
+   change, err := auth.Exchange()
    if err != nil {
       return err
    }

@@ -1,5 +1,4 @@
 package youtube
-// github.com/89z
 
 import (
    "fmt"
@@ -30,7 +29,7 @@ func (p Player) Base() string {
 
 type Player struct {
    VideoDetails struct {
-      VideoID string
+      VideoId string
       LengthSeconds int64 `json:"lengthSeconds,string"`
       ViewCount int64 `json:"viewCount,string"`
       Author string
@@ -66,7 +65,7 @@ func (s Status) String() string {
 
 func (p Player) Format(f fmt.State, verb rune) {
    fmt.Fprintln(f, p.PlayabilityStatus)
-   fmt.Fprintln(f, "VideoID:", p.VideoDetails.VideoID)
+   fmt.Fprintln(f, "VideoId:", p.VideoDetails.VideoId)
    fmt.Fprintln(f, "Duration:", p.Duration())
    fmt.Fprintln(f, "ViewCount:", p.VideoDetails.ViewCount)
    fmt.Fprintln(f, "Author:", p.VideoDetails.Author)

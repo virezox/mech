@@ -9,15 +9,15 @@ import (
 const pssh = "AAAAOHBzc2gAAAAA7e+LqXnWSs6jyCfc1R0h7QAAABgSEAAAAAAWgwC7YzAgICAgICBI88aJmwY="
 
 func TestKey(t *testing.T) {
-   keyA, err := base64.StdEncoding.DecodeString("AAAAABaDALtjMCAgICAgIA==")
+   key_a, err := base64.StdEncoding.DecodeString("AAAAABaDALtjMCAgICAgIA==")
    if err != nil {
       t.Fatal(err)
    }
-   keyB, err := Client{RawPSSH: pssh}.KeyID()
+   key_b, err := Client{RawPssh: pssh}.KeyId()
    if err != nil {
       t.Fatal(err)
    }
-   if !bytes.Equal(keyA, keyB) {
-      t.Fatal(keyB)
+   if !bytes.Equal(key_a, key_b) {
+      t.Fatal(key_b)
    }
 }

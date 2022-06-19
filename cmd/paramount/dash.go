@@ -18,7 +18,7 @@ func (d *downloader) setKey() error {
       return err
    }
    var client paramount.Client
-   client.ID, err = os.ReadFile(d.client)
+   client.Id, err = os.ReadFile(d.client)
    if err != nil {
       return err
    }
@@ -26,7 +26,7 @@ func (d *downloader) setKey() error {
    if err != nil {
       return err
    }
-   client.RawKeyID = d.media.Protection().Default_KID
+   client.RawKeyId = d.media.Protection().Default_KID
    content, err := sess.Content(client)
    if err != nil {
       return err

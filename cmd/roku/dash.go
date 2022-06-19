@@ -16,12 +16,12 @@ func (d *downloader) setKey() error {
    if err != nil {
       return err
    }
-   play, err := site.Playback(d.Meta.ID)
+   play, err := site.Playback(d.Meta.Id)
    if err != nil {
       return err
    }
    var client roku.Client
-   client.ID, err = os.ReadFile(d.client)
+   client.Id, err = os.ReadFile(d.client)
    if err != nil {
       return err
    }
@@ -29,7 +29,7 @@ func (d *downloader) setKey() error {
    if err != nil {
       return err
    }
-   client.RawKeyID = d.media.Protection().Default_KID
+   client.RawKeyId = d.media.Protection().Default_KID
    content, err := play.Content(client)
    if err != nil {
       return err
@@ -42,9 +42,9 @@ func (d downloader) DASH(video, audio int64) error {
    if d.info {
       fmt.Println(d.Content)
    }
-   videoDASH := d.Content.DASH()
-   fmt.Println("GET", videoDASH.URL)
-   res, err := http.Get(videoDASH.URL)
+   video_dash := d.Content.DASH()
+   fmt.Println("GET", video_dash.Url)
+   res, err := http.Get(video_dash.Url)
    if err != nil {
       return err
    }

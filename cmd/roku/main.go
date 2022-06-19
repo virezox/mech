@@ -35,8 +35,8 @@ func main() {
    down.client = filepath.Join(home, "mech/client_id.bin")
    flag.StringVar(&down.client, "c", down.client, "client ID")
    // d
-   var isDASH bool
-   flag.BoolVar(&isDASH, "d", false, "DASH download")
+   var is_dash bool
+   flag.BoolVar(&is_dash, "d", false, "DASH download")
    // f
    // therokuchannel.roku.com/watch/597a64a4a25c5bf6af4a8c7053049a6f
    var video int64
@@ -59,19 +59,19 @@ func main() {
    }
    if id != "" || address != "" {
       if id == "" {
-         id = roku.ContentID(address)
+         id = roku.ContentId(address)
       }
       down.Content, err = roku.NewContent(id)
       if err != nil {
          panic(err)
       }
-      if isDASH {
+      if is_dash {
          err := down.DASH(video, audio)
          if err != nil {
             panic(err)
          }
       } else {
-         err := down.HLS(video)
+         err := down.Hls(video)
          if err != nil {
             panic(err)
          }
