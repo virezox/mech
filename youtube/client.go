@@ -10,8 +10,8 @@ import (
 
 const goog_api = "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8"
 
-func (y YouTubeI) Exchange(id string, ex *Exchange) (*Player, error) {
-   y.VideoId = id
+func (y YouTube_I) Exchange(id string, ex *Exchange) (*Player, error) {
+   y.Video_ID = id
    buf, err := mech.Encode(y)
    if err != nil {
       return nil, err
@@ -41,19 +41,19 @@ func (y YouTubeI) Exchange(id string, ex *Exchange) (*Player, error) {
    return play, nil
 }
 
-func (y YouTubeI) Player(id string) (*Player, error) {
+func (y YouTube_I) Player(id string) (*Player, error) {
    return y.Exchange(id, nil)
 }
-type YouTubeI struct {
-   ContentCheckOk bool `json:"contentCheckOk,omitempty"`
+type YouTube_I struct {
+   Content_Check_OK bool `json:"contentCheckOk,omitempty"`
    Context Context `json:"context"`
    Query string `json:"query,omitempty"`
-   RacyCheckOk bool `json:"racyCheckOk,omitempty"`
-   VideoId string `json:"videoId,omitempty"`
+   Racy_Check_OK bool `json:"racyCheckOk,omitempty"`
+   Video_ID string `json:"videoId,omitempty"`
    Params []byte `json:"params,omitempty"`
 }
 
-func (y YouTubeI) Search(query string) (*Search, error) {
+func (y YouTube_I) Search(query string) (*Search, error) {
    y.Query = query
    filter := NewFilter()
    filter.Type(Type["Video"])
@@ -95,40 +95,40 @@ type Context struct {
    Client Client `json:"client"`
 }
 
-const androidVersion = "17.23.35"
+const android_version = "17.23.35"
 
 // 1
-var Android = YouTubeI{
+var Android = YouTube_I{
    Context: Context{
-      Client: Client{"ANDROID", androidVersion},
+      Client: Client{"ANDROID", android_version},
    },
 }
 
 // 2
-var AndroidEmbed = YouTubeI{
+var Android_Embed = YouTube_I{
    Context: Context{
-      Client: Client{"ANDROID_EMBEDDED_PLAYER", androidVersion},
+      Client: Client{"ANDROID_EMBEDDED_PLAYER", android_version},
    },
 }
 
 // 3
-var AndroidRacy = YouTubeI{
+var Android_Racy = YouTube_I{
    Context: Context{
-      Client: Client{"ANDROID", androidVersion},
+      Client: Client{"ANDROID", android_version},
    },
-   RacyCheckOk: true,
+   Racy_Check_OK: true,
 }
 
 // 4
-var AndroidContent = YouTubeI{
+var Android_Content = YouTube_I{
    Context: Context{
-      Client: Client{"ANDROID", androidVersion},
+      Client: Client{"ANDROID", android_version},
    },
-   RacyCheckOk: true,
-   ContentCheckOk: true,
+   Racy_Check_OK: true,
+   Content_Check_OK: true,
 }
 
-var Mweb = YouTubeI{
+var Mweb = YouTube_I{
    Context: Context{
       Client: Client{"MWEB", "2.20220322.05.00"},
    },

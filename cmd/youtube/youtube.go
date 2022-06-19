@@ -10,27 +10,27 @@ import (
 func (v video) player() (*youtube.Player, error) {
    if v.id == "" {
       var err error
-      v.id, err = youtube.VideoId(v.address)
+      v.id, err = youtube.Video_ID(v.address)
       if err != nil {
          return nil, err
       }
    }
    if v.request == 1 {
-      return youtube.AndroidEmbed.Player(v.id)
+      return youtube.Android_Embed.Player(v.id)
    }
    if v.request >= 2 {
       home, err := os.UserHomeDir()
       if err != nil {
          return nil, err
       }
-      change, err := youtube.OpenExchange(home + "/mech/youtube.json")
+      change, err := youtube.Open_Exchange(home + "/mech/youtube.json")
       if err != nil {
          return nil, err
       }
       if v.request == 2 {
-         return youtube.AndroidRacy.Exchange(v.id, change)
+         return youtube.Android_Racy.Exchange(v.id, change)
       }
-      return youtube.AndroidContent.Exchange(v.id, change)
+      return youtube.Android_Content.Exchange(v.id, change)
    }
    return youtube.Android.Player(v.id)
 }
@@ -92,8 +92,8 @@ func download(form *youtube.Format, base string) error {
    return nil
 }
 
-func doRefresh() error {
-   auth, err := youtube.NewOauth()
+func do_refresh() error {
+   auth, err := youtube.New_OAuth()
    if err != nil {
       return err
    }
@@ -110,12 +110,12 @@ func doRefresh() error {
    return change.Create(home + "/mech/youtube.json")
 }
 
-func doAccess() error {
+func do_access() error {
    home, err := os.UserHomeDir()
    if err != nil {
       return err
    }
-   change, err := youtube.OpenExchange(home + "/mech/youtube.json")
+   change, err := youtube.Open_Exchange(home + "/mech/youtube.json")
    if err != nil {
       return err
    }

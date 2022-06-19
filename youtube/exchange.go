@@ -11,7 +11,7 @@ func (x Exchange) Create(name string) error {
    return json.Create(x, name)
 }
 
-func OpenExchange(name string) (*Exchange, error) {
+func Open_Exchange(name string) (*Exchange, error) {
    return json.Open[Exchange](name)
 }
 
@@ -44,13 +44,13 @@ func (x *Exchange) Refresh() error {
    return json.NewDecoder(res.Body).Decode(x)
 }
 
-type Oauth struct {
+type OAuth struct {
    Device_Code string
    User_Code string
    Verification_URL string
 }
 
-func NewOauth() (*Oauth, error) {
+func New_OAuth() (*OAuth, error) {
    val := url.Values{
       "client_id": {client_id},
       "scope": {"https://www.googleapis.com/auth/youtube"},
@@ -60,14 +60,14 @@ func NewOauth() (*Oauth, error) {
       return nil, err
    }
    defer res.Body.Close()
-   auth := new(Oauth)
+   auth := new(OAuth)
    if err := json.NewDecoder(res.Body).Decode(auth); err != nil {
       return nil, err
    }
    return auth, nil
 }
 
-func (o Oauth) Exchange() (*Exchange, error) {
+func (o OAuth) Exchange() (*Exchange, error) {
    val := url.Values{
       "client_id": {client_id},
       "client_secret": {client_secret},
@@ -86,7 +86,7 @@ func (o Oauth) Exchange() (*Exchange, error) {
    return exc, nil
 }
 
-func (o Oauth) String() string {
+func (o OAuth) String() string {
    var buf strings.Builder
    buf.WriteString("1. Go to\n")
    buf.WriteString(o.Verification_URL)

@@ -36,15 +36,15 @@ func main() {
    flag.BoolVar(&verbose, "v", false, "verbose")
    flag.Parse()
    if verbose {
-      youtube.LogLevel = 1
+      youtube.Log_Level = 1
    }
    if refresh {
-      err := doRefresh()
+      err := do_refresh()
       if err != nil {
          panic(err)
       }
    } else if access {
-      err := doAccess()
+      err := do_access()
       if err != nil {
          panic(err)
       }
