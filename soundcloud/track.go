@@ -24,7 +24,7 @@ func (t Track) Progressive() (*Media, error) {
       return nil, err
    }
    req.URL.RawQuery = "client_id=" + client_id
-   LogLevel.Dump(req)
+   Log_Level.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -64,7 +64,7 @@ func NewTrack(id int64) (*Track, error) {
       return nil, err
    }
    req.URL.RawQuery = "client_id=" + client_id
-   LogLevel.Dump(req)
+   Log_Level.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -88,7 +88,7 @@ func Resolve(addr string) ([]Track, error) {
       "client_id": {client_id},
       "url": {addr},
    }.Encode()
-   LogLevel.Dump(req)
+   Log_Level.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -104,11 +104,11 @@ func Resolve(addr string) ([]Track, error) {
    if solve.Kind == "track" {
       return []Track{solve.Track}, nil
    }
-   return UserTracks(solve.ID)
+   return User_Tracks(solve.ID)
 }
 
 // We can also paginate, but for now this is good enough.
-func UserTracks(id int64) ([]Track, error) {
+func User_Tracks(id int64) ([]Track, error) {
    buf := []byte("https://api-v2.soundcloud.com/users/")
    buf = strconv.AppendInt(buf, id, 10)
    buf = append(buf, "/tracks"...)
@@ -120,7 +120,7 @@ func UserTracks(id int64) ([]Track, error) {
       "client_id": {client_id},
       "limit": {"999"},
    }.Encode()
-   LogLevel.Dump(req)
+   Log_Level.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err

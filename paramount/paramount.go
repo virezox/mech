@@ -14,6 +14,13 @@ import (
    "strconv"
 )
 
+const (
+   aes_key = "302a6a0d70a7e9b967f91d39fef3e387816e3095925ae4537bce96063311f9c5"
+   tv_secret = "6c70b33080758409"
+)
+
+var Log_Level format.Log_Level
+
 func (p Preview) Base() string {
    var buf []byte
    buf = append(buf, p.Title...)
@@ -39,14 +46,7 @@ type Media struct {
    sid string
 }
 
-const (
-   aes_key = "302a6a0d70a7e9b967f91d39fef3e387816e3095925ae4537bce96063311f9c5"
-   tv_secret = "6c70b33080758409"
-)
-
-var LogLevel format.LogLevel
-
-func newToken() (string, error) {
+func new_token() (string, error) {
    key, err := hex.DecodeString(aes_key)
    if err != nil {
       return "", err
@@ -78,7 +78,7 @@ func pad(b []byte) []byte {
    return b
 }
 
-func NewMedia(guid string) Media {
+func New_Media(guid string) Media {
    return Media{sid: "dJ5BDC", aid: 2198311517, GUID: guid}
 }
 
@@ -107,7 +107,7 @@ func (m Media) Preview() (*Preview, error) {
       return nil, err
    }
    req.URL.RawQuery = "format=preview"
-   LogLevel.Dump(req)
+   Log_Level.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -132,7 +132,7 @@ func (m Media) location(formats, asset string) (*url.URL, error) {
       "assetTypes": {asset},
       "formats": {formats},
    }.Encode()
-   LogLevel.Dump(req)
+   Log_Level.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err

@@ -12,8 +12,8 @@ import (
    "sort"
 )
 
-func newMaster(guid, bandwidth int64, info bool) error {
-   page, err := nbc.NewBonanzaPage(guid)
+func new_master(guid, bandwidth int64, info bool) error {
+   page, err := nbc.New_Bonanza_Page(guid)
    if err != nil {
       return err
    }

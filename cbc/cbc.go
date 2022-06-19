@@ -1,5 +1,4 @@
 package cbc
-// github.com/89z
 
 import (
    "encoding/json"
@@ -10,9 +9,9 @@ import (
    "time"
 )
 
-const forwardedFor = "99.224.0.0"
+const forwarded_for = "99.224.0.0"
 
-var LogLevel format.LogLevel
+var Log_Level format.Log_Level
 
 // gem.cbc.ca/media/downton-abbey/s01e05
 func GetID(input string) string {
@@ -43,7 +42,7 @@ func NewAsset(id string) (*Asset, error) {
    if err != nil {
       return nil, err
    }
-   LogLevel.Dump(req)
+   Log_Level.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -87,9 +86,9 @@ func (p Profile) Media(asset *Asset) (*Media, error) {
    }
    req.Header = http.Header{
       "X-Claims-Token": {p.ClaimsToken},
-      "X-Forwarded-For": {forwardedFor},
+      "X-Forwarded-For": {forwarded_for},
    }
-   LogLevel.Dump(req)
+   Log_Level.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err

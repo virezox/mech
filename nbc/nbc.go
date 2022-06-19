@@ -35,7 +35,7 @@ func authorization() string {
    return buf.String()
 }
 
-func NewBonanzaPage(guid int64) (*BonanzaPage, error) {
+func New_Bonanza_Page(guid int64) (*Bonanza_Page, error) {
    var p page_request
    p.Extensions.Persisted_Query.SHA_256_Hash = persisted_query
    p.Variables.App = "nbc"
@@ -65,7 +65,7 @@ func NewBonanzaPage(guid int64) (*BonanzaPage, error) {
    }
    var page struct {
       Data struct {
-         BonanzaPage BonanzaPage
+         BonanzaPage Bonanza_Page
       }
    }
    if err := json.NewDecoder(res.Body).Decode(&page); err != nil {
@@ -74,11 +74,11 @@ func NewBonanzaPage(guid int64) (*BonanzaPage, error) {
    return &page.Data.BonanzaPage, nil
 }
 
-func (b BonanzaPage) Base() string {
+func (b Bonanza_Page) Base() string {
    return mech.Clean(b.Analytics.ConvivaAssetName)
 }
 
-type BonanzaPage struct {
+type Bonanza_Page struct {
    Analytics struct {
       ConvivaAssetName string
    }
@@ -88,7 +88,7 @@ type BonanzaPage struct {
    Name string
 }
 
-func (b BonanzaPage) Video() (*Video, error) {
+func (b Bonanza_Page) Video() (*Video, error) {
    var in video_request
    in.Device = "android"
    in.Device_ID = "android"
