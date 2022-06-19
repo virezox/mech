@@ -15,18 +15,25 @@ import (
    "time"
 )
 
+func authorization() string {
+   now := strconv.FormatInt(time.Now().UnixMilli(), 10)
+   buf := new(strings.Builder)
+   buf.WriteString("NBC-Security key=android_nbcuniversal,version=2.4")
+   buf.WriteString(",time=")
+   buf.WriteString(now)
+   buf.WriteString(",hash=")
+   mac := hmac.New(sha256.New, secretKey)
+   io.WriteString(mac, now)
+   hex.NewEncoder(buf).Write(mac.Sum(nil))
+   return buf.String()
+}
+
 const persistedQuery = "872a3dffc3ae6cdb3dc69fe3d9a949b539de7b579e95b2942e68d827b1a6ec62"
 
 var (
    LogLevel format.LogLevel
    secretKey = []byte("2b84a073ede61c766e4c0b3f1e656f7f")
 )
-
-func writeHash(out io.Writer, text string, key []byte) {
-   mac := hmac.New(sha256.New, key)
-   io.WriteString(mac, text)
-   hex.NewEncoder(out).Write(mac.Sum(nil))
-}
 
 func NewBonanzaPage(guid int64) (*BonanzaPage, error) {
    var p pageRequest
@@ -99,15 +106,8 @@ func (b BonanzaPage) Video() (*Video, error) {
    if err != nil {
       return nil, err
    }
-   unix := strconv.FormatInt(time.Now().UnixMilli(), 10)
-   auth := new(strings.Builder)
-   auth.WriteString("NBC-Security key=android_nbcuniversal,version=2.4")
-   auth.WriteString(",time=")
-   auth.WriteString(unix)
-   auth.WriteString(",hash=")
-   writeHash(auth, unix, secretKey)
    req.Header = http.Header{
-      "Authorization": {auth.String()},
+      "Authorization": {authorization()},
       "Content-Type": {"application/json"},
    }
    LogLevel.Dump(req)
