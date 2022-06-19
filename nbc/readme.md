@@ -8,10 +8,6 @@ com.nbcuni.nbc
 
 https://github.com/httptoolkit/frida-android-unpinning
 
-## How to get `mpxAccountId`?
-
-https://nbcapp.nbc.co/config/android/player/v10/prod/mobile.json
-
 ## How to get `persistedQuery`?
 
 https://nbc.com

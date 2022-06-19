@@ -13,12 +13,16 @@ import (
 )
 
 func newMaster(guid, bandwidth int64, info bool) error {
-   access, err := nbc.NewAccessVOD(guid)
+   page, err := nbc.NewBonanzaPage(guid)
    if err != nil {
       return err
    }
-   fmt.Println("GET", access.ManifestPath)
-   res, err := http.Get(access.ManifestPath)
+   video, err := page.Video()
+   if err != nil {
+      return err
+   }
+   fmt.Println("GET", video.ManifestPath)
+   res, err := http.Get(video.ManifestPath)
    if err != nil {
       return err
    }
@@ -39,11 +43,7 @@ func newMaster(guid, bandwidth int64, info bool) error {
          fmt.Println(each)
       }
    } else {
-      video, err := nbc.NewVideo(guid)
-      if err != nil {
-         return err
-      }
-      return download(stream.RawURI, video.Base())
+      return download(stream.RawURI, page.Base())
    }
    return nil
 }

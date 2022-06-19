@@ -95,26 +95,26 @@ type Context struct {
    Client Client `json:"client"`
 }
 
-const android = "17.23.35"
+const androidVersion = "17.23.35"
 
 // 1
 var Android = YouTubeI{
    Context: Context{
-      Client: Client{"ANDROID", android},
+      Client: Client{"ANDROID", androidVersion},
    },
 }
 
 // 2
 var AndroidEmbed = YouTubeI{
    Context: Context{
-      Client: Client{"ANDROID_EMBEDDED_PLAYER", android},
+      Client: Client{"ANDROID_EMBEDDED_PLAYER", androidVersion},
    },
 }
 
 // 3
 var AndroidRacy = YouTubeI{
    Context: Context{
-      Client: Client{"ANDROID", android},
+      Client: Client{"ANDROID", androidVersion},
    },
    RacyCheckOK: true,
 }
@@ -122,7 +122,7 @@ var AndroidRacy = YouTubeI{
 // 4
 var AndroidContent = YouTubeI{
    Context: Context{
-      Client: Client{"ANDROID", android},
+      Client: Client{"ANDROID", androidVersion},
    },
    RacyCheckOK: true,
    ContentCheckOK: true,
