@@ -1,5 +1,4 @@
 package youtube
-// github.com/89z
 
 import (
    "github.com/89z/format"
@@ -10,20 +9,20 @@ import (
 
 const origin = "https://www.youtube.com"
 
-var LogLevel format.LogLevel
+var Log_Level format.Log_Level
 
 // https://youtube.com/shorts/9Vsdft81Q6w
 // https://youtube.com/watch?v=XY-hOqcPGCY
-func VideoId(address string) (string, error) {
-   parse, err := url.Parse(address)
+func Video_ID(raw_addr string) (string, error) {
+   addr, err := url.Parse(raw_addr)
    if err != nil {
       return "", err
    }
-   v := parse.Query().Get("v")
+   v := addr.Query().Get("v")
    if v != "" {
       return v, nil
    }
-   return path.Base(parse.Path), nil
+   return path.Base(addr.Path), nil
 }
 
 type Image struct {

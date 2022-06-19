@@ -11,17 +11,17 @@ import (
    "strings"
 )
 
-var LogLevel format.LogLevel
+var Log_Level format.Log_Level
 
 func Get_NID(input string) (int64, error) {
-   _, nid, found := strings.Cut(input, "--")
+   _, nID, found := strings.Cut(input, "--")
    if found {
-      input = nid
+      input = nID
    }
    return strconv.ParseInt(input, 10, 64)
 }
 
-type playbackRequest struct {
+type playback_request struct {
    AdTags struct {
       Lat int `json:"lat"`
       Mode string `json:"mode"`
@@ -52,7 +52,7 @@ func Unauth() (*Auth, error) {
       "X-Amcn-Platform": {"web"},
       "X-Amcn-Tenant": {"amcn"},
    }
-   LogLevel.Dump(req)
+   Log_Level.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -95,7 +95,7 @@ func (a *Auth) Login(email, password string) error {
       "X-Amcn-Tenant": {"amcn"},
       "X-Ccpa-Do-Not-Sell": {"doNotPassData"},
    }
-   LogLevel.Dump(req)
+   Log_Level.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return err
@@ -117,7 +117,7 @@ func (a *Auth) Refresh() error {
       return err
    }
    req.Header.Set("Authorization", "Bearer " + a.Data.Refresh_Token)
-   LogLevel.Dump(req)
+   Log_Level.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return err
@@ -132,13 +132,13 @@ func (a *Auth) Refresh() error {
 func (a Auth) Playback(nID int64) (*Playback, error) {
    var (
       addr []byte
-      src playbackRequest
+      p playback_request
    )
    addr = append(addr, "https://gw.cds.amcn.com/playback-id/api/v1/playback/"...)
    addr = strconv.AppendInt(addr, nID, 10)
-   src.AdTags.Mode = "on-demand"
-   src.AdTags.URL = "!"
-   buf, err := mech.Encode(src)
+   p.AdTags.Mode = "on-demand"
+   p.AdTags.URL = "!"
+   buf, err := mech.Encode(p)
    if err != nil {
       return nil, err
    }
@@ -157,7 +157,7 @@ func (a Auth) Playback(nID int64) (*Playback, error) {
       "X-Amcn-Tenant": {"amcn"},
       "X-Ccpa-Do-Not-Sell": {"doNotPassData"},
    }
-   LogLevel.Dump(req)
+   Log_Level.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err

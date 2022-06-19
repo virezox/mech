@@ -34,15 +34,15 @@ func main() {
    flag.BoolVar(&verbose, "v", false, "verbose")
    flag.Parse()
    if verbose {
-      cbc.LogLevel = 1
+      cbc.Log_Level = 1
    }
    if email != "" {
-      err := doProfile(email, password)
+      err := do_profile(email, password)
       if err != nil {
          panic(err)
       }
    } else if id != "" || address != "" {
-      err := newMaster(id, address, audio, video, info)
+      err := new_master(id, address, audio, video, info)
       if err != nil {
          panic(err)
       }

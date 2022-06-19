@@ -26,7 +26,7 @@ func (p Playback) Content(c Client) (*widevine.Content, error) {
    if err != nil {
       return nil, err
    }
-   LogLevel.Dump(req)
+   Log_Level.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err

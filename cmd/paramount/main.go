@@ -52,11 +52,11 @@ func main() {
    flag.BoolVar(&verbose, "v", false, "verbose")
    flag.Parse()
    if verbose {
-      paramount.LogLevel = 1
+      paramount.Log_Level = 1
    }
    if guid != "" {
       var err error
-      down.Preview, err = paramount.NewMedia(guid).Preview()
+      down.Preview, err = paramount.New_Media(guid).Preview()
       if err != nil {
          panic(err)
       }

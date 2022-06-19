@@ -12,12 +12,12 @@ import (
 )
 
 func download(addr, base string) error {
-   seg, err := newSegment(addr)
+   seg, err := new_segment(addr)
    if err != nil {
       return err
    }
-   fmt.Println("GET", seg.RawKey)
-   res, err := http.Get(seg.RawKey)
+   fmt.Println("GET", seg.Raw_Key)
+   res, err := http.Get(seg.Raw_Key)
    if err != nil {
       return err
    }
@@ -27,12 +27,12 @@ func download(addr, base string) error {
       return err
    }
    defer file.Close()
-   pro := format.ProgressChunks(file, len(seg.Protected))
+   pro := format.Progress_Chunks(file, len(seg.Protected))
    key, err := io.ReadAll(res.Body)
    if err != nil {
       return err
    }
-   block, err := hls.NewBlock(key)
+   block, err := hls.New_Block(key)
    if err != nil {
       return err
    }
@@ -41,8 +41,8 @@ func download(addr, base string) error {
       if err != nil {
          return err
       }
-      pro.AddChunk(res.ContentLength)
-      if _, err := io.Copy(pro, block.ModeKey(res.Body)); err != nil {
+      pro.Add_Chunk(res.ContentLength)
+      if _, err := io.Copy(pro, block.Mode_Key(res.Body)); err != nil {
          return err
       }
       if err := res.Body.Close(); err != nil {
@@ -53,7 +53,7 @@ func download(addr, base string) error {
 }
 
 func (d downloader) HLS(bandwidth int64) error {
-   addr, err := paramount.NewMedia(d.GUID).HLS()
+   addr, err := paramount.New_Media(d.GUID).HLS()
    if err != nil {
       return err
    }
@@ -63,14 +63,14 @@ func (d downloader) HLS(bandwidth int64) error {
       return err
    }
    defer res.Body.Close()
-   master, err := hls.NewScanner(res.Body).Master()
+   master, err := hls.New_Scanner(res.Body).Master()
    if err != nil {
       return err
    }
    sort.Slice(master.Streams, func(a, b int) bool {
       return master.Streams[a].Bandwidth < master.Streams[b].Bandwidth
    })
-   stream := master.Streams.GetBandwidth(bandwidth)
+   stream := master.Streams.Get_Bandwidth(bandwidth)
    if d.info {
       fmt.Println(d.Title)
       for _, each := range master.Streams {
@@ -80,17 +80,17 @@ func (d downloader) HLS(bandwidth int64) error {
          fmt.Println(each)
       }
    } else {
-      return download(stream.RawURI, d.Base())
+      return download(stream.Raw_URI, d.Base())
    }
    return nil
 }
 
-func newSegment(addr string) (*hls.Segment, error) {
+func new_segment(addr string) (*hls.Segment, error) {
    fmt.Println("GET", addr)
    res, err := http.Get(addr)
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
-   return hls.NewScanner(res.Body).Segment()
+   return hls.New_Scanner(res.Body).Segment()
 }

@@ -15,6 +15,8 @@ import (
    "time"
 )
 
+var Log_Level format.Log_Level
+
 type Cross_Site struct {
    cookie *http.Cookie // has own String method
    token string
@@ -40,7 +42,7 @@ func (c Cross_Site) Playback(id string) (*Playback, error) {
       "Content-Type": {"application/json"},
    }
    req.AddCookie(c.cookie)
-   LogLevel.Dump(req)
+   Log_Level.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -121,7 +123,7 @@ func NewContent(id string) (*Content, error) {
    if err != nil {
       return nil, err
    }
-   LogLevel.Dump(req)
+   Log_Level.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -157,8 +159,6 @@ func (c Content) Format(f fmt.State, verb rune) {
       }
    }
 }
-
-var LogLevel format.LogLevel
 
 func (c Content) Duration() time.Duration {
    return time.Duration(c.RunTimeSeconds) * time.Second
@@ -200,7 +200,7 @@ func New_Cross_Site() (*Cross_Site, error) {
    if err != nil {
       return nil, err
    }
-   LogLevel.Dump(req)
+   Log_Level.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err

@@ -95,7 +95,7 @@ func (d *downloader) set_key() error {
    return nil
 }
 
-func (d *downloader) download(band int64, fn dash.AdaptationFunc) error {
+func (d *downloader) download(band int64, fn dash.Represent_Func) error {
    if band == 0 {
       return nil
    }
@@ -109,7 +109,7 @@ func (d *downloader) download(band int64, fn dash.AdaptationFunc) error {
          fmt.Println(each)
       }
    } else {
-      ext, err := mech.ExtensionByType(rep.MimeType)
+      ext, err := mech.ExtensionByType(rep.MIME_Type)
       if err != nil {
          return err
       }
@@ -128,7 +128,7 @@ func (d *downloader) download(band int64, fn dash.AdaptationFunc) error {
          return err
       }
       defer res.Body.Close()
-      if err := dash.DecryptInit(file, res.Body); err != nil {
+      if err := dash.Decrypt_Init(file, res.Body); err != nil {
          return err
       }
       media, err := rep.Media(d.url)
@@ -141,13 +141,13 @@ func (d *downloader) download(band int64, fn dash.AdaptationFunc) error {
             return err
          }
       }
-      pro := format.ProgressChunks(file, len(media))
+      pro := format.Progress_Chunks(file, len(media))
       for _, addr := range media {
          res, err := http.Get(addr.String())
          if err != nil {
             return err
          }
-         pro.AddChunk(res.ContentLength)
+         pro.Add_Chunk(res.ContentLength)
          if d.key != nil {
             err = dash.Decrypt(pro, res.Body, d.key)
          } else {

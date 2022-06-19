@@ -14,7 +14,7 @@ const forwarded_for = "99.224.0.0"
 var Log_Level format.Log_Level
 
 // gem.cbc.ca/media/downton-abbey/s01e05
-func GetID(input string) string {
+func Get_ID(input string) string {
    _, after, found := strings.Cut(input, "/media/")
    if found {
       return after
@@ -33,7 +33,7 @@ type Asset struct {
    }
 }
 
-func NewAsset(id string) (*Asset, error) {
+func New_Asset(id string) (*Asset, error) {
    req, err := http.NewRequest(
       "GET",
       "https://services.radio-canada.ca/ott/cbc-api/v2/assets/" + id,
@@ -59,18 +59,18 @@ func (a Asset) Format(f fmt.State, verb rune) {
    fmt.Fprintln(f, "ID:", a.AppleContentID)
    fmt.Fprintln(f, "Series:", a.Series)
    fmt.Fprintln(f, "Title:", a.Title)
-   fmt.Fprintln(f, "Date:", a.GetTime())
-   fmt.Fprint(f, "Duration: ", a.GetDuration())
+   fmt.Fprintln(f, "Date:", a.Get_Time())
+   fmt.Fprint(f, "Duration: ", a.Get_Duration())
    if verb == 'a' {
       fmt.Fprint(f, "\nURL: ", a.PlaySession.URL)
    }
 }
 
-func (a Asset) GetDuration() time.Duration {
+func (a Asset) Get_Duration() time.Duration {
    return time.Duration(a.Duration) * time.Second
 }
 
-func (a Asset) GetTime() time.Time {
+func (a Asset) Get_Time() time.Time {
    return time.UnixMilli(a.AirDate)
 }
 

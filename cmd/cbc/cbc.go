@@ -11,7 +11,7 @@ import (
    "os"
 )
 
-func getKey(addr string) ([]byte, error) {
+func get_key(addr string) ([]byte, error) {
    fmt.Println("GET", addr)
    res, err := http.Get(addr)
    if err != nil {
@@ -22,11 +22,11 @@ func getKey(addr string) ([]byte, error) {
 }
 
 func download(addr *url.URL, name string) error {
-   seg, err := newSegment(addr.String())
+   seg, err := new_segment(addr.String())
    if err != nil {
       return err
    }
-   key, err := getKey(seg.Raw_Key)
+   key, err := get_key(seg.Raw_Key)
    if err != nil {
       return err
    }
@@ -49,8 +49,8 @@ func download(addr *url.URL, name string) error {
       if err != nil {
          return err
       }
-      pro.AddChunk(res.ContentLength)
-      if _, err := io.Copy(pro, block.ModeKey(res.Body)); err != nil {
+      pro.Add_Chunk(res.ContentLength)
+      if _, err := io.Copy(pro, block.Mode_Key(res.Body)); err != nil {
          return err
       }
       if err := res.Body.Close(); err != nil {
@@ -60,30 +60,30 @@ func download(addr *url.URL, name string) error {
    return nil
 }
 
-func newSegment(addr string) (*hls.Segment, error) {
+func new_segment(addr string) (*hls.Segment, error) {
    fmt.Println("GET", addr)
    res, err := http.Get(addr)
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
-   return hls.NewScanner(res.Body).Segment()
+   return hls.New_Scanner(res.Body).Segment()
 }
 
-func doProfile(email, password string) error {
+func do_profile(email, password string) error {
    home, err := os.UserHomeDir()
    if err != nil {
       return err
    }
-   login, err := cbc.NewLogin(email, password)
+   login, err := cbc.New_Login(email, password)
    if err != nil {
       return err
    }
-   web, err := login.WebToken()
+   web, err := login.Web_Token()
    if err != nil {
       return err
    }
-   top, err := web.OverTheTop()
+   top, err := web.Over_The_Top()
    if err != nil {
       return err
    }
@@ -93,19 +93,20 @@ func doProfile(email, password string) error {
    }
    return profile.Create(home + "/mech/cbc.json")
 }
-func newMaster(id, address, audio string, video int64, info bool) error {
+
+func new_master(id, address, audio string, video int64, info bool) error {
    home, err := os.UserHomeDir()
    if err != nil {
       return err
    }
-   profile, err := cbc.OpenProfile(home + "/mech/cbc.json")
+   profile, err := cbc.Open_Profile(home + "/mech/cbc.json")
    if err != nil {
       return err
    }
    if id == "" {
-      id = cbc.GetID(address)
+      id = cbc.Get_ID(address)
    }
-   asset, err := cbc.NewAsset(id)
+   asset, err := cbc.New_Asset(id)
    if err != nil {
       return err
    }
@@ -119,13 +120,13 @@ func newMaster(id, address, audio string, video int64, info bool) error {
       return err
    }
    defer res.Body.Close()
-   master, err := hls.NewScanner(res.Body).Master()
+   master, err := hls.New_Scanner(res.Body).Master()
    if err != nil {
       return err
    }
    if info {
       fmt.Println(asset)
-      video := master.Streams.GetBandwidth(video)
+      video := master.Streams.Get_Bandwidth(video)
       for _, stream := range master.Streams {
          if stream.Bandwidth == video.Bandwidth {
             fmt.Print("!")
@@ -137,8 +138,8 @@ func newMaster(id, address, audio string, video int64, info bool) error {
       }
    } else {
       if audio != "" {
-         medium := master.Media.GetName(audio)
-         addr, err := res.Request.URL.Parse(medium.RawURI)
+         medium := master.Media.Get_Name(audio)
+         addr, err := res.Request.URL.Parse(medium.Raw_URI)
          if err != nil {
             return err
          }
@@ -147,8 +148,8 @@ func newMaster(id, address, audio string, video int64, info bool) error {
          }
       }
       if video >= 1 {
-         medium := master.Streams.GetBandwidth(video)
-         addr, err := res.Request.URL.Parse(medium.RawURI)
+         medium := master.Streams.Get_Bandwidth(video)
+         addr, err := res.Request.URL.Parse(medium.Raw_URI)
          if err != nil {
             return err
          }

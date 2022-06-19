@@ -1,5 +1,4 @@
 package amc
-// github.com/89z
 
 import (
    "bytes"
@@ -30,7 +29,7 @@ func (p Playback) Content(c Client) (*widevine.Content, error) {
       return nil, err
    }
    req.Header.Set("bcov-auth", p.BC_JWT)
-   LogLevel.Dump(req)
+   Log_Level.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err

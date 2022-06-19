@@ -1,5 +1,4 @@
 package youtube
-// github.com/89z
 
 import (
    "fmt"
@@ -47,8 +46,8 @@ func (f Format) Format(s fmt.State, verb rune) {
       fmt.Fprint(s, "Quality:", f.AudioQuality)
    }
    fmt.Fprint(s, " Bitrate:", f.Bitrate)
-   if f.ContentLength >= 1 { // Tq92D6wQ1mg
-      fmt.Fprint(s, " Size:", f.ContentLength)
+   if f.Content_Length >= 1 { // Tq92D6wQ1mg
+      fmt.Fprint(s, " Size:", f.Content_Length)
    }
    fmt.Fprint(s, " Codec:", f.MimeType)
    if verb == 'a' {
@@ -72,7 +71,7 @@ const chunk = 10_000_000
 type Format struct {
    AudioQuality string
    Bitrate int
-   ContentLength int64 `json:"contentLength,string"`
+   Content_Length int64 `json:"contentLength,string"`
    Height int
    MimeType string
    QualityLabel string
@@ -85,12 +84,12 @@ func (f Format) WriteTo(w io.Writer) (int64, error) {
    if err != nil {
       return 0, err
    }
-   LogLevel.Dump(req)
+   Log_Level.Dump(req)
    var (
       pos int64
-      pro = format.ProgressBytes(w, f.ContentLength)
+      pro = format.Progress_Bytes(w, f.Content_Length)
    )
-   for pos < f.ContentLength {
+   for pos < f.Content_Length {
       req.Header.Set(
          "Range", fmt.Sprintf("bytes=%v-%v", pos, pos+chunk-1),
       )
@@ -107,7 +106,7 @@ func (f Format) WriteTo(w io.Writer) (int64, error) {
       }
       pos += chunk
    }
-   return f.ContentLength, nil
+   return f.Content_Length, nil
 }
 
 type Formats []Format

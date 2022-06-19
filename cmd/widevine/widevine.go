@@ -11,7 +11,7 @@ import (
    "strings"
 )
 
-var logLevel format.LogLevel
+var log_level format.Log_Level
 
 type flags struct {
    address string
@@ -55,7 +55,7 @@ func (f flags) contents() (widevine.Contents, error) {
          req.Header.Set(key, val)
       }
    }
-   logLevel.Dump(req)
+   log_level.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err

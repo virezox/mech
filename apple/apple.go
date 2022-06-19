@@ -30,7 +30,7 @@ func (r Request) License(env *Environment, ep *Episode) (*License, error) {
       "Content-Type": {"application/json"},
       "X-Apple-Music-User-Token": {r.auth.mediaUserToken().Value},
    }
-   LogLevel.Dump(req)
+   Log_Level.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -68,7 +68,7 @@ func NewEpisode(contentID string) (*Episode, error) {
       "sf": {strconv.Itoa(sf_max)},
       "v": {strconv.Itoa(v_max)},
    }.Encode()
-   LogLevel.Dump(req)
+   Log_Level.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -103,7 +103,7 @@ func NewConfig() (*Config, error) {
    if err != nil {
       return nil, err
    }
-   LogLevel.Dump(req)
+   Log_Level.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -158,7 +158,7 @@ const (
    v_min = 50
 )
 
-var LogLevel format.LogLevel
+var Log_Level format.Log_Level
 
 type Environment struct {
    Media_API struct {
@@ -171,7 +171,7 @@ func NewEnvironment() (*Environment, error) {
    if err != nil {
       return nil, err
    }
-   LogLevel.Dump(req)
+   Log_Level.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err

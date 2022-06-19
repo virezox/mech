@@ -30,7 +30,7 @@ func (s Session) Content(c Client) (*widevine.Content, error) {
       return nil, err
    }
    req.Header.Set("Authorization", "Bearer " + s.LS_Session)
-   LogLevel.Dump(req)
+   Log_Level.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -56,7 +56,7 @@ type Session struct {
 }
 
 func New_Session(content_id string) (*Session, error) {
-   token, err := newToken()
+   token, err := new_token()
    if err != nil {
       return nil, err
    }
@@ -68,7 +68,7 @@ func New_Session(content_id string) (*Session, error) {
       return nil, err
    }
    req.URL.RawQuery = "at=" + url.QueryEscape(token)
-   LogLevel.Dump(req)
+   Log_Level.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
