@@ -27,14 +27,14 @@ func new_master(guid, bandwidth int64, info bool) error {
       return err
    }
    defer res.Body.Close()
-   master, err := hls.NewScanner(res.Body).Master()
+   master, err := hls.New_Scanner(res.Body).Master()
    if err != nil {
       return err
    }
    sort.Slice(master.Streams, func(a, b int) bool {
       return master.Streams[a].Bandwidth < master.Streams[b].Bandwidth
    })
-   stream := master.Streams.GetBandwidth(bandwidth)
+   stream := master.Streams.Get_Bandwidth(bandwidth)
    if info {
       for _, each := range master.Streams {
          if each.Bandwidth == stream.Bandwidth {
@@ -43,7 +43,7 @@ func new_master(guid, bandwidth int64, info bool) error {
          fmt.Println(each)
       }
    } else {
-      return download(stream.RawURI, page.Base())
+      return download(stream.Raw_URI, page.Base())
    }
    return nil
 }
@@ -55,7 +55,7 @@ func download(addr, base string) error {
       return err
    }
    defer res.Body.Close()
-   seg, err := hls.NewScanner(res.Body).Segment()
+   seg, err := hls.New_Scanner(res.Body).Segment()
    if err != nil {
       return err
    }
@@ -64,7 +64,7 @@ func download(addr, base string) error {
       return err
    }
    defer file.Close()
-   pro := format.ProgressChunks(file, len(seg.Clear))
+   pro := format.Progress_Chunks(file, len(seg.Clear))
    for _, clear := range seg.Clear {
       res, err := http.Get(clear)
       if err != nil {
@@ -73,7 +73,7 @@ func download(addr, base string) error {
       if res.StatusCode != http.StatusOK {
          return errors.New(res.Status)
       }
-      pro.AddChunk(res.ContentLength)
+      pro.Add_Chunk(res.ContentLength)
       if _, err := io.Copy(pro, res.Body); err != nil {
          return err
       }

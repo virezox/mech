@@ -26,7 +26,7 @@ func download(addr *url.URL, name string) error {
    if err != nil {
       return err
    }
-   key, err := getKey(seg.RawKey)
+   key, err := getKey(seg.Raw_Key)
    if err != nil {
       return err
    }
@@ -35,13 +35,13 @@ func download(addr *url.URL, name string) error {
       return err
    }
    defer file.Close()
-   pro := format.ProgressChunks(file, len(seg.Protected))
-   block, err := hls.NewBlock(key)
+   pro := format.Progress_Chunks(file, len(seg.Protected))
+   block, err := hls.New_Block(key)
    if err != nil {
       return err
    }
-   for _, rawURL := range seg.Protected {
-      addr, err := addr.Parse(rawURL)
+   for _, raw_addr := range seg.Protected {
+      addr, err := addr.Parse(raw_addr)
       if err != nil {
          return err
       }

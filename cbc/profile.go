@@ -11,18 +11,18 @@ func (p Profile) Create(name string) error {
    return json.Create(p, name)
 }
 
-func OpenProfile(name string) (*Profile, error) {
+func Open_Profile(name string) (*Profile, error) {
    return json.Open[Profile](name)
 }
 
-const apiKey = "3f4beddd-2061-49b0-ae80-6f1f2ed65b37"
+const api_key = "3f4beddd-2061-49b0-ae80-6f1f2ed65b37"
 
 type Login struct {
    Access_Token string
    Expires_In string
 }
 
-func NewLogin(email, password string) (*Login, error) {
+func New_Login(email, password string) (*Login, error) {
    buf := new(bytes.Buffer)
    err := json.NewEncoder(buf).Encode(map[string]string{
       "email": email,
@@ -38,8 +38,8 @@ func NewLogin(email, password string) (*Login, error) {
       return nil, err
    }
    req.Header.Set("Content-Type", "application/json")
-   req.URL.RawQuery = "apiKey=" + apiKey
-   LogLevel.Dump(req)
+   req.URL.RawQuery = "apiKey=" + api_key
+   Log_Level.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -52,7 +52,7 @@ func NewLogin(email, password string) (*Login, error) {
    return login, nil
 }
 
-func (l Login) WebToken() (*WebToken, error) {
+func (l Login) Web_Token() (*Web_Token, error) {
    req, err := http.NewRequest(
       "GET", "https://cloud-api.loginradius.com/sso/jwt/api/token", nil,
    )
@@ -61,27 +61,27 @@ func (l Login) WebToken() (*WebToken, error) {
    }
    req.URL.RawQuery = url.Values{
       "access_token": {l.Access_Token},
-      "apikey": {apiKey},
+      "apikey": {api_key},
       "jwtapp": {"jwt"},
    }.Encode()
-   LogLevel.Dump(req)
+   Log_Level.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
-   web := new(WebToken)
+   web := new(Web_Token)
    if err := json.NewDecoder(res.Body).Decode(web); err != nil {
       return nil, err
    }
    return web, nil
 }
 
-type OverTheTop struct {
+type Over_The_Top struct {
    AccessToken string
 }
 
-func (o OverTheTop) Profile() (*Profile, error) {
+func (o Over_The_Top) Profile() (*Profile, error) {
    req, err := http.NewRequest(
       "GET", "https://services.radio-canada.ca/ott/cbc-api/v2/profile", nil,
    )
@@ -89,7 +89,7 @@ func (o OverTheTop) Profile() (*Profile, error) {
       return nil, err
    }
    req.Header.Set("OTT-Access-Token", o.AccessToken)
-   LogLevel.Dump(req)
+   Log_Level.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -107,11 +107,11 @@ type Profile struct {
    ClaimsToken string
 }
 
-type WebToken struct {
+type Web_Token struct {
    Signature string
 }
 
-func (w WebToken) OverTheTop() (*OverTheTop, error) {
+func (w Web_Token) Over_The_Top() (*Over_The_Top, error) {
    buf := new(bytes.Buffer)
    err := json.NewEncoder(buf).Encode(map[string]string{
       "jwt": w.Signature,
@@ -125,13 +125,13 @@ func (w WebToken) OverTheTop() (*OverTheTop, error) {
    if err != nil {
       return nil, err
    }
-   LogLevel.Dump(req)
+   Log_Level.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
-   top := new(OverTheTop)
+   top := new(Over_The_Top)
    if err := json.NewDecoder(res.Body).Decode(top); err != nil {
       return nil, err
    }
