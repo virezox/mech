@@ -22,10 +22,10 @@ func main() {
    flag.BoolVar(&verbose, "v", false, "verbose")
    flag.Parse()
    if verbose {
-      nbc.LogLevel = 1
+      nbc.Log_Level = 1
    }
    if guid >= 1 {
-      err := newMaster(guid, bandwidth, info)
+      err := new_master(guid, bandwidth, info)
       if err != nil {
          panic(err)
       }

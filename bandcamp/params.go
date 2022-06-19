@@ -8,7 +8,7 @@ import (
    "net/http"
 )
 
-var LogLevel format.LogLevel
+var Log_Level format.Log_Level
 
 type Params struct {
    A_ID int
@@ -16,12 +16,12 @@ type Params struct {
    I_Type string
 }
 
-func NewParams(addr string) (*Params, error) {
+func New_Params(addr string) (*Params, error) {
    req, err := http.NewRequest("GET", addr, nil)
    if err != nil {
       return nil, err
    }
-   LogLevel.Dump(req)
+   Log_Level.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -48,7 +48,7 @@ func NewParams(addr string) (*Params, error) {
 }
 
 func (p Params) Band() (*Band, error) {
-   return newBand(p.A_ID)
+   return new_band(p.A_ID)
 }
 
 func (p Params) Tralbum() (*Tralbum, error) {

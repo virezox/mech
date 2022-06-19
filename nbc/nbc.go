@@ -15,6 +15,13 @@ import (
    "time"
 )
 
+const persisted_query = "872a3dffc3ae6cdb3dc69fe3d9a949b539de7b579e95b2942e68d827b1a6ec62"
+
+var (
+   Log_Level format.Log_Level
+   secretKey = []byte("2b84a073ede61c766e4c0b3f1e656f7f")
+)
+
 func authorization() string {
    now := strconv.FormatInt(time.Now().UnixMilli(), 10)
    buf := new(strings.Builder)
@@ -28,19 +35,12 @@ func authorization() string {
    return buf.String()
 }
 
-const persistedQuery = "872a3dffc3ae6cdb3dc69fe3d9a949b539de7b579e95b2942e68d827b1a6ec62"
-
-var (
-   LogLevel format.LogLevel
-   secretKey = []byte("2b84a073ede61c766e4c0b3f1e656f7f")
-)
-
 func NewBonanzaPage(guid int64) (*BonanzaPage, error) {
-   var p pageRequest
-   p.Extensions.PersistedQuery.Sha256Hash = persistedQuery
+   var p page_request
+   p.Extensions.Persisted_Query.SHA_256_Hash = persisted_query
    p.Variables.App = "nbc"
    p.Variables.Name = strconv.FormatInt(guid, 10)
-   p.Variables.OneApp = true
+   p.Variables.One_App = true
    p.Variables.Platform = "android"
    p.Variables.Type = "VIDEO"
    buf, err := mech.Encode(p)
@@ -54,7 +54,7 @@ func NewBonanzaPage(guid int64) (*BonanzaPage, error) {
       return nil, err
    }
    req.Header.Set("Content-Type", "application/json")
-   LogLevel.Dump(req)
+   Log_Level.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -89,11 +89,11 @@ type BonanzaPage struct {
 }
 
 func (b BonanzaPage) Video() (*Video, error) {
-   var in videoRequest
+   var in video_request
    in.Device = "android"
-   in.DeviceID = "android"
-   in.ExternalAdvertiserID = "NBC"
-   in.Mpx.AccountID = b.Metadata.MpxAccountID
+   in.Device_ID = "android"
+   in.External_Advertiser_ID = "NBC"
+   in.Mpx.Account_ID = b.Metadata.MpxAccountID
    body, err := mech.Encode(in)
    if err != nil {
       return nil, err
@@ -110,7 +110,7 @@ func (b BonanzaPage) Video() (*Video, error) {
       "Authorization": {authorization()},
       "Content-Type": {"application/json"},
    }
-   LogLevel.Dump(req)
+   Log_Level.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -130,27 +130,27 @@ type Video struct {
    ManifestPath string // this is only valid for one minute
 }
 
-type pageRequest struct {
+type page_request struct {
    Extensions struct {
-      PersistedQuery struct {
-         Sha256Hash string `json:"sha256Hash"`
+      Persisted_Query struct {
+         SHA_256_Hash string `json:"sha256Hash"`
       } `json:"persistedQuery"`
    } `json:"extensions"`
    Variables struct {
       App string `json:"app"`
       Name string `json:"name"` // String cannot represent a non string value
-      OneApp bool `json:"oneApp"`
+      One_App bool `json:"oneApp"`
       Platform string `json:"platform"`
       Type string `json:"type"`
-      UserID string `json:"userId"` // can be empty
+      User_ID string `json:"userId"` // can be empty
    } `json:"variables"`
 }
 
-type videoRequest struct {
+type video_request struct {
    Device string `json:"device"`
-   DeviceID string `json:"deviceId"`
-   ExternalAdvertiserID string `json:"externalAdvertiserId"`
+   Device_ID string `json:"deviceId"`
+   External_Advertiser_ID string `json:"externalAdvertiserId"`
    Mpx struct {
-      AccountID string `json:"accountId"`
+      Account_ID string `json:"accountId"`
    } `json:"mpx"`
 }

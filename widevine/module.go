@@ -70,7 +70,7 @@ func (m Module) Unmarshal(response []byte) (Contents, error) {
    if err != nil {
       return nil, err
    }
-   sessionKey, err := signedResponse.GetBytes(4)
+   sessionKey, err := signedResponse.Get_Bytes(4)
    if err != nil {
       return nil, err
    }
@@ -97,17 +97,17 @@ func (m Module) Unmarshal(response []byte) (Contents, error) {
    }
    var cons Contents
    // .Msg.Key
-   for _, message := range signedResponse.Get(2).GetMessages(3) {
+   for _, message := range signedResponse.Get(2).Get_Messages(3) {
       var con Content
-      iv, err := message.GetBytes(2)
+      iv, err := message.Get_Bytes(2)
       if err != nil {
          return nil, err
       }
-      con.Key, err = message.GetBytes(3)
+      con.Key, err = message.Get_Bytes(3)
       if err != nil {
          return nil, err
       }
-      con.Type, err = message.GetVarint(4)
+      con.Type, err = message.Get_Varint(4)
       if err != nil {
          return nil, err
       }

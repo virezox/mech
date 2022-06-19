@@ -1,5 +1,4 @@
 package bandcamp
-// github.com/89z
 
 import (
    "encoding/json"
@@ -20,7 +19,7 @@ type Band struct {
    Discography []Item
 }
 
-func newBand(id int) (*Band, error) {
+func new_band(id int) (*Band, error) {
    req, err := http.NewRequest(
       "GET", "http://bandcamp.com/api/mobile/24/band_details", nil,
    )
@@ -28,7 +27,7 @@ func newBand(id int) (*Band, error) {
       return nil, err
    }
    req.URL.RawQuery = "band_id=" + strconv.Itoa(id)
-   LogLevel.Dump(req)
+   Log_Level.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -96,9 +95,9 @@ var Images = []Image{
 }
 
 // Extension is optional.
-func (i Image) URL(artID int64) string {
+func (i Image) URL(art_id int64) string {
    buf := []byte("http://f4.bcbits.com/img/a")
-   buf = strconv.AppendInt(buf, artID, 10)
+   buf = strconv.AppendInt(buf, art_id, 10)
    buf = append(buf, '_')
    buf = strconv.AppendInt(buf, i.ID, 10)
    return string(buf)
@@ -111,7 +110,7 @@ type Item struct {
 }
 
 func (i Item) Band() (*Band, error) {
-   return newBand(i.Band_ID)
+   return new_band(i.Band_ID)
 }
 
 func (i Item) Tralbum() (*Tralbum, error) {
@@ -172,7 +171,7 @@ func newTralbum(typ byte, id int) (*Tralbum, error) {
       "tralbum_id": {strconv.Itoa(id)},
       "tralbum_type": {string(typ)},
    }.Encode()
-   LogLevel.Dump(req)
+   Log_Level.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err

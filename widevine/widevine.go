@@ -40,7 +40,7 @@ func (c Client) Key_ID() ([]byte, error) {
    if err := cencHeader.UnmarshalBinary(pssh[32:]); err != nil {
       return nil, err
    }
-   return cencHeader.GetBytes(2)
+   return cencHeader.Get_Bytes(2)
 }
 
 func unpad(buf []byte) []byte {

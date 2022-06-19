@@ -11,6 +11,8 @@ import (
    "strings"
 )
 
+var Log_Level format.Log_Level
+
 type Download struct {
    Width int
    Height int
@@ -56,8 +58,6 @@ func (v Video) Format(f fmt.State, verb rune) {
    }
 }
 
-var LogLevel format.LogLevel
-
 type Clip struct {
    ID int
    UnlistedHash string
@@ -91,30 +91,30 @@ func NewClip(address string) (*Clip, error) {
    return &clip, nil
 }
 
-type JsonWeb struct {
+type JSON_Web struct {
    Token string
 }
 
-func NewJsonWeb() (*JsonWeb, error) {
+func New_JSON_Web() (*JSON_Web, error) {
    req, err := http.NewRequest("GET", "https://vimeo.com/_rv/jwt", nil)
    if err != nil {
       return nil, err
    }
    req.Header.Set("X-Requested-With", "XMLHttpRequest")
-   LogLevel.Dump(req)
+   Log_Level.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
-   web := new(JsonWeb)
+   web := new(JSON_Web)
    if err := json.NewDecoder(res.Body).Decode(web); err != nil {
       return nil, err
    }
    return web, nil
 }
 
-func (w JsonWeb) Video(clip *Clip) (*Video, error) {
+func (w JSON_Web) Video(clip *Clip) (*Video, error) {
    buf := fmt.Sprint("https://api.vimeo.com/videos/", clip.ID)
    if clip.UnlistedHash != "" {
       buf = fmt.Sprint(buf, ":", clip.UnlistedHash)
@@ -125,7 +125,7 @@ func (w JsonWeb) Video(clip *Clip) (*Video, error) {
    }
    req.Header.Set("Authorization", "JWT " + w.Token)
    req.URL.RawQuery = "fields=duration,download,name,pictures,release_time,user"
-   LogLevel.Dump(req)
+   Log_Level.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err

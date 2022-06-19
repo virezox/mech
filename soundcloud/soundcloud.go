@@ -1,5 +1,4 @@
 package soundcloud
-// github.com/89z
 
 import (
    "github.com/89z/format"
@@ -22,7 +21,7 @@ func (m Media) Ext() (string, error) {
 
 const client_id = "iZIs9mchVcX5lhVRyQGGAYlNPVldzAoX"
 
-var LogLevel format.LogLevel
+var Log_Level format.Log_Level
 
 type Image struct {
    Size string

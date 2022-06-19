@@ -8,7 +8,7 @@ import (
    "strconv"
 )
 
-var LogLevel format.LogLevel
+var Log_Level format.Log_Level
 
 type Media struct {
    MediaURLs []struct {
@@ -17,7 +17,7 @@ type Media struct {
    }
 }
 
-func NewMedia(id int64) (*Media, error) {
+func New_Media(id int64) (*Media, error) {
    buf := []byte("http://web-api-us.crackle.com/Service.svc/details/media/")
    buf = strconv.AppendInt(buf, id, 10)
    buf = append(buf, "/US"...)
@@ -30,7 +30,7 @@ func NewMedia(id int64) (*Media, error) {
       "Authorization": {chunk.String()},
    }
    req.URL.RawQuery = "disableProtocols=true"
-   LogLevel.Dump(req)
+   Log_Level.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
