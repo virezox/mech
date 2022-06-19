@@ -61,12 +61,12 @@ func main() {
       amc.LogLevel = 1
    }
    if email != "" {
-      err := doLogin(email, password)
+      err := do_login(email, password)
       if err != nil {
          panic(err)
       }
    } else if nid >= 1 || address != "" {
-      err := down.doDASH(address, nid, video, audio)
+      err := down.do_DASH(address, nid, video, audio)
       if err != nil {
          panic(err)
       }

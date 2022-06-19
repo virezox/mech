@@ -13,7 +13,7 @@ import (
 
 var LogLevel format.LogLevel
 
-func GetNID(input string) (int64, error) {
+func Get_NID(input string) (int64, error) {
    _, nid, found := strings.Cut(input, "--")
    if found {
       input = nid
@@ -32,7 +32,7 @@ type playbackRequest struct {
    } `json:"adtags"`
 }
 
-type playbackResponse struct {
+type playback_response struct {
    Data struct {
       PlaybackJsonData PlaybackJsonData
    }
@@ -167,13 +167,13 @@ func (a Auth) Playback(nID int64) (*Playback, error) {
       return nil, errors.New(res.Status)
    }
    var (
-      dst playbackResponse
+      out playback_response
       play Playback
    )
-   if err := json.NewDecoder(res.Body).Decode(&dst); err != nil {
+   if err := json.NewDecoder(res.Body).Decode(&out); err != nil {
       return nil, err
    }
-   play.PlaybackJsonData = dst.Data.PlaybackJsonData
+   play.PlaybackJsonData = out.Data.PlaybackJsonData
    play.BC_JWT = res.Header.Get("X-AMCN-BC-JWT")
    return &play, nil
 }

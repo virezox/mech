@@ -15,12 +15,12 @@ import (
    "time"
 )
 
-type CrossSite struct {
+type Cross_Site struct {
    cookie *http.Cookie // has own String method
    token string
 }
 
-func (c CrossSite) Playback(id string) (*Playback, error) {
+func (c Cross_Site) Playback(id string) (*Playback, error) {
    buf := new(bytes.Buffer)
    err := json.NewEncoder(buf).Encode(map[string]string{
       "mediaFormat": "mpeg-dash",
@@ -152,7 +152,7 @@ func (c Content) Format(f fmt.State, verb rune) {
       for _, opt := range c.ViewOptions {
          fmt.Fprint(f, "\nLicense: ", opt.License)
          for _, vid := range opt.Media.Videos {
-            fmt.Fprint(f, "\nURL: ", vid.Url)
+            fmt.Fprint(f, "\nURL: ", vid.URL)
          }
       }
    }
@@ -167,7 +167,7 @@ func (c Content) Duration() time.Duration {
 type Video struct {
    DrmAuthentication *struct{}
    VideoType string
-   Url string
+   URL string
 }
 
 func (c Content) DASH() *Video {
@@ -181,7 +181,7 @@ func (c Content) DASH() *Video {
    return nil
 }
 
-func (c Content) Hls() (*Video, error) {
+func (c Content) HLS() (*Video, error) {
    for _, opt := range c.ViewOptions {
       for _, vid := range opt.Media.Videos {
          if vid.DrmAuthentication == nil {
@@ -194,7 +194,7 @@ func (c Content) Hls() (*Video, error) {
    return nil, errors.New("drmAuthentication")
 }
 
-func NewCrossSite() (*CrossSite, error) {
+func New_Cross_Site() (*Cross_Site, error) {
    // this has smaller body than www.roku.com
    req, err := http.NewRequest("GET", "https://therokuchannel.roku.com", nil)
    if err != nil {
@@ -206,7 +206,7 @@ func NewCrossSite() (*CrossSite, error) {
       return nil, err
    }
    defer res.Body.Close()
-   var site CrossSite
+   var site Cross_Site
    for _, cook := range res.Cookies() {
       if cook.Name == "_csrf" {
          site.cookie = cook

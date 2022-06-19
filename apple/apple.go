@@ -225,6 +225,6 @@ func (a *Auth) Request(client widevine.Client) (*Request, error) {
       return nil, err
    }
    req.body.KeySystem = "com.widevine.alpha"
-   req.body.Uri = client.RawPssh
+   req.body.Uri = client.Raw_PSSH
    return &req, nil
 }

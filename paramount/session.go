@@ -55,7 +55,7 @@ type Session struct {
    LS_Session string
 }
 
-func NewSession(contentID string) (*Session, error) {
+func New_Session(content_id string) (*Session, error) {
    token, err := newToken()
    if err != nil {
       return nil, err
@@ -81,6 +81,6 @@ func NewSession(contentID string) (*Session, error) {
    if err := json.NewDecoder(res.Body).Decode(sess); err != nil {
       return nil, err
    }
-   sess.URL += contentID
+   sess.URL += content_id
    return sess, nil
 }

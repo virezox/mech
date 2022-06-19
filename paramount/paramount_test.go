@@ -7,16 +7,16 @@ import (
    "time"
 )
 
-var tests = map[testType]string{
-   {episode, dashCenc}: "eyT_RYkqNuH_6ZYrepLtxkiPO1HA7dIU",
-   {episode, streamPack}: "622520382",
-   {movie, streamPack}: "wQH9yE_y_Dt4ekDYm3yelhhY2KXvOra_",
+var tests = map[test_type]string{
+   {episode, dash_cenc}: "eyT_RYkqNuH_6ZYrepLtxkiPO1HA7dIU",
+   {episode, stream_pack}: "622520382",
+   {movie, stream_pack}: "wQH9yE_y_Dt4ekDYm3yelhhY2KXvOra_",
 }
 
-var client = Client{RawKeyID: "3be8be937c98483184b294173f9152af"}
+var client = Client{Raw_Key_ID: "3be8be937c98483184b294173f9152af"}
 
-func TestSession(t *testing.T) {
-   sess, err := NewSession(tests[testType{episode, dashCenc}])
+func Test_Session(t *testing.T) {
+   sess, err := New_Session(tests[test_type{episode, dash_cenc}])
    if err != nil {
       t.Fatal(err)
    }
@@ -28,7 +28,7 @@ func TestSession(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   client.PrivateKey, err = os.ReadFile(home + "/mech/private_key.pem")
+   client.Private_Key, err = os.ReadFile(home + "/mech/private_key.pem")
    if err != nil {
       t.Fatal(err)
    }
@@ -42,14 +42,14 @@ func TestSession(t *testing.T) {
 }
 
 const (
-   dashCenc = iota
+   dash_cenc = iota
    episode
    movie
-   streamPack
+   stream_pack
 )
 
-type testType struct {
-   contentType int
+type test_type struct {
+   content_type int
    asset int
 }
 

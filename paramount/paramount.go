@@ -1,5 +1,4 @@
 package paramount
-// github.com/89z
 
 import (
    "crypto/aes"

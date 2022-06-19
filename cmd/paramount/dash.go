@@ -12,21 +12,21 @@ import (
    "sort"
 )
 
-func (d *downloader) setKey() error {
-   sess, err := paramount.NewSession(d.Preview.GUID)
+func (d *downloader) set_key() error {
+   sess, err := paramount.New_Session(d.Preview.GUID)
    if err != nil {
       return err
    }
    var client paramount.Client
-   client.Id, err = os.ReadFile(d.client)
+   client.ID, err = os.ReadFile(d.client)
    if err != nil {
       return err
    }
-   client.PrivateKey, err = os.ReadFile(d.pem)
+   client.Private_Key, err = os.ReadFile(d.pem)
    if err != nil {
       return err
    }
-   client.RawKeyId = d.media.Protection().Default_KID
+   client.Raw_Key_ID = d.media.Protection().Default_KID
    content, err := sess.Content(client)
    if err != nil {
       return err
@@ -36,7 +36,7 @@ func (d *downloader) setKey() error {
 }
 
 func (d downloader) DASH(video, audio int64) error {
-   addr, err := paramount.NewMedia(d.GUID).DASH()
+   addr, err := paramount.New_Media(d.GUID).DASH()
    if err != nil {
       return err
    }
@@ -74,7 +74,7 @@ func (d *downloader) download(band int64, fn dash.AdaptationFunc) error {
       }
    } else {
       if d.key == nil {
-         err := d.setKey()
+         err := d.set_key()
          if err != nil {
             return err
          }

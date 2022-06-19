@@ -13,7 +13,7 @@ func TestKey(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   key_b, err := Client{RawPssh: pssh}.KeyId()
+   key_b, err := Client{Raw_PSSH: pssh}.Key_ID()
    if err != nil {
       t.Fatal(err)
    }

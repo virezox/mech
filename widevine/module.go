@@ -13,18 +13,18 @@ import (
 )
 
 func (c Client) Module() (*Module, error) {
-   key_id, err := c.KeyId()
+   key_id, err := c.Key_ID()
    if err != nil {
       return nil, err
    }
-   block, _ := pem.Decode(c.PrivateKey)
+   block, _ := pem.Decode(c.Private_Key)
    var mod Module
-   mod.PrivateKey, err = x509.ParsePKCS1PrivateKey(block.Bytes)
+   mod.private_key, err = x509.ParsePKCS1PrivateKey(block.Bytes)
    if err != nil {
       return nil, err
    }
    mod.licenseRequest, err = protobuf.Message{
-      1: protobuf.Bytes{Raw: c.Id},
+      1: protobuf.Bytes{Raw: c.ID},
       2: protobuf.Message{ // ContentId
          1: protobuf.Message{ // CencId
             1: protobuf.Message{ // Pssh
@@ -40,15 +40,15 @@ func (c Client) Module() (*Module, error) {
 }
 
 type Module struct {
-   *rsa.PrivateKey
    licenseRequest []byte
+   private_key *rsa.PrivateKey
 }
 
 func (m Module) Marshal() ([]byte, error) {
    digest := sha1.Sum(m.licenseRequest)
    signature, err := rsa.SignPSS(
       nopSource{},
-      m.PrivateKey,
+      m.private_key,
       crypto.SHA1,
       digest[:],
       &rsa.PSSOptions{SaltLength: rsa.PSSSaltLengthEqualsHash},
@@ -74,7 +74,7 @@ func (m Module) Unmarshal(response []byte) (Contents, error) {
    if err != nil {
       return nil, err
    }
-   key, err := rsa.DecryptOAEP(sha1.New(), nil, m.PrivateKey, sessionKey, nil)
+   key, err := rsa.DecryptOAEP(sha1.New(), nil, m.private_key, sessionKey, nil)
    if err != nil {
       return nil, err
    }

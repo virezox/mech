@@ -8,7 +8,7 @@ import (
 // amcplus.com/shows/orphan-black/episodes/season-1-instinct--1011152
 const nID = 1011152
 
-var client = Client{RawKeyID: "c0e598b247fa443590299d5ef47da32c"}
+var client = Client{Raw_Key_ID: "c0e598b247fa443590299d5ef47da32c"}
 
 func TestPlayback(t *testing.T) {
    home, err := os.UserHomeDir()

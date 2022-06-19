@@ -26,15 +26,15 @@ func (f flags) contents() (widevine.Contents, error) {
       client widevine.Client
       err error
    )
-   client.Id, err = os.ReadFile(f.client)
+   client.ID, err = os.ReadFile(f.client)
    if err != nil {
       return nil, err
    }
-   client.PrivateKey, err = os.ReadFile(f.private_key)
+   client.Private_Key, err = os.ReadFile(f.private_key)
    if err != nil {
       return nil, err
    }
-   client.RawKeyId = f.key_id
+   client.Raw_Key_ID = f.key_id
    module, err := client.Module()
    if err != nil {
       return nil, err

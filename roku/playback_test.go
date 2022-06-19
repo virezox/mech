@@ -8,10 +8,10 @@ import (
 // therokuchannel.roku.com/watch/597a64a4a25c5bf6af4a8c7053049a6f
 const playback_id = "597a64a4a25c5bf6af4a8c7053049a6f"
 
-var client = Client{RawKeyId: "28339AD78F734520DA24E6E0573D392E"}
+var client = Client{Raw_Key_ID: "28339AD78F734520DA24E6E0573D392E"}
 
-func TestPlayback(t *testing.T) {
-   site, err := NewCrossSite()
+func Test_Playback(t *testing.T) {
+   site, err := New_Cross_Site()
    if err != nil {
       t.Fatal(err)
    }
@@ -27,7 +27,7 @@ func TestPlayback(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   client.PrivateKey, err = os.ReadFile(home + "/mech/private_key.pem")
+   client.Private_Key, err = os.ReadFile(home + "/mech/private_key.pem")
    if err != nil {
       t.Fatal(err)
    }

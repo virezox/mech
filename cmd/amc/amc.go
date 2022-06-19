@@ -13,7 +13,7 @@ import (
    "os"
 )
 
-func doLogin(email, password string) error {
+func do_login(email, password string) error {
    auth, err := amc.Unauth()
    if err != nil {
       return err
@@ -28,7 +28,7 @@ func doLogin(email, password string) error {
    return auth.Create(home + "/mech/amc.json")
 }
 
-func (d downloader) doDASH(address string, nid, video, audio int64) error {
+func (d downloader) do_DASH(address string, nid, video, audio int64) error {
    home, err := os.UserHomeDir()
    if err != nil {
       return err
@@ -44,7 +44,7 @@ func (d downloader) doDASH(address string, nid, video, audio int64) error {
       return err
    }
    if nid == 0 {
-      nid, err = amc.GetNID(address)
+      nid, err = amc.Get_NID(address)
       if err != nil {
          return err
       }
@@ -73,20 +73,20 @@ func (d downloader) doDASH(address string, nid, video, audio int64) error {
    return d.download(video, dash.Video)
 }
 
-func (d *downloader) setKey() error {
+func (d *downloader) set_key() error {
    var (
       client amc.Client
       err error
    )
-   client.Id, err = os.ReadFile(d.client)
+   client.ID, err = os.ReadFile(d.client)
    if err != nil {
       return err
    }
-   client.PrivateKey, err = os.ReadFile(d.pem)
+   client.Private_Key, err = os.ReadFile(d.pem)
    if err != nil {
       return err
    }
-   client.RawKeyId = d.media.Protection().Default_KID
+   client.Raw_Key_ID = d.media.Protection().Default_KID
    content, err := d.Playback.Content(client)
    if err != nil {
       return err
@@ -94,6 +94,7 @@ func (d *downloader) setKey() error {
    d.key = content.Key
    return nil
 }
+
 func (d *downloader) download(band int64, fn dash.AdaptationFunc) error {
    if band == 0 {
       return nil
@@ -135,7 +136,7 @@ func (d *downloader) download(band int64, fn dash.AdaptationFunc) error {
          return err
       }
       if d.key == nil {
-         err := d.setKey()
+         err := d.set_key()
          if err != nil {
             return err
          }

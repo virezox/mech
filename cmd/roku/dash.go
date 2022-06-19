@@ -12,7 +12,7 @@ import (
 )
 
 func (d *downloader) setKey() error {
-   site, err := roku.NewCrossSite()
+   site, err := roku.New_Cross_Site()
    if err != nil {
       return err
    }
