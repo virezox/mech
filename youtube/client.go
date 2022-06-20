@@ -8,11 +8,11 @@ import (
    "net/http"
 )
 
-const goog_api = "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8"
+const goog_API = "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8"
 
-func (y YouTube_I) Exchange(id string, ex *Exchange) (*Player, error) {
-   y.Video_ID = id
-   buf, err := mech.Encode(y)
+func (c Config) Exchange(id string, ex *Exchange) (*Player, error) {
+   c.Video_ID = id
+   buf, err := mech.Encode(c)
    if err != nil {
       return nil, err
    }
@@ -23,7 +23,7 @@ func (y YouTube_I) Exchange(id string, ex *Exchange) (*Player, error) {
    if ex != nil {
       req.Header.Set("Authorization", "Bearer " + ex.Access_Token)
    } else {
-      req.Header.Set("X-Goog-Api-Key", goog_api)
+      req.Header.Set("X-Goog-Api-Key", goog_API)
    }
    Log.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
@@ -41,10 +41,11 @@ func (y YouTube_I) Exchange(id string, ex *Exchange) (*Player, error) {
    return play, nil
 }
 
-func (y YouTube_I) Player(id string) (*Player, error) {
-   return y.Exchange(id, nil)
+func (c Config) Player(id string) (*Player, error) {
+   return c.Exchange(id, nil)
 }
-type YouTube_I struct {
+
+type Config struct {
    Content_Check_OK bool `json:"contentCheckOk,omitempty"`
    Context Context `json:"context"`
    Query string `json:"query,omitempty"`
@@ -53,22 +54,22 @@ type YouTube_I struct {
    Params []byte `json:"params,omitempty"`
 }
 
-func (y YouTube_I) Search(query string) (*Search, error) {
-   y.Query = query
-   filter := NewFilter()
+func (c Config) Search(query string) (*Search, error) {
+   c.Query = query
+   filter := New_Filter()
    filter.Type(Type["Video"])
-   param := NewParams()
+   param := New_Params()
    param.Filter(filter)
-   y.Params = param.Marshal()
+   c.Params = param.Marshal()
    buf := new(bytes.Buffer)
-   if err := json.NewEncoder(buf).Encode(y); err != nil {
+   if err := json.NewEncoder(buf).Encode(c); err != nil {
       return nil, err
    }
    req, err := http.NewRequest("POST", origin + "/youtubei/v1/search", buf)
    if err != nil {
       return nil, err
    }
-   req.Header.Set("X-Goog-Api-Key", goog_api)
+   req.Header.Set("X-Goog-Api-Key", goog_API)
    Log.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
@@ -83,8 +84,8 @@ func (y YouTube_I) Search(query string) (*Search, error) {
 }
 
 type Client struct {
-   ClientName string `json:"clientName"`
-   ClientVersion string `json:"clientVersion"`
+   Client_Name string `json:"clientName"`
+   Client_Version string `json:"clientVersion"`
 }
 
 type Context struct {
@@ -94,21 +95,21 @@ type Context struct {
 const android_version = "17.23.35"
 
 // 1
-var Android = YouTube_I{
+var Android = Config{
    Context: Context{
       Client: Client{"ANDROID", android_version},
    },
 }
 
 // 2
-var Android_Embed = YouTube_I{
+var Android_Embed = Config{
    Context: Context{
       Client: Client{"ANDROID_EMBEDDED_PLAYER", android_version},
    },
 }
 
 // 3
-var Android_Racy = YouTube_I{
+var Android_Racy = Config{
    Context: Context{
       Client: Client{"ANDROID", android_version},
    },
@@ -116,7 +117,7 @@ var Android_Racy = YouTube_I{
 }
 
 // 4
-var Android_Content = YouTube_I{
+var Android_Content = Config{
    Context: Context{
       Client: Client{"ANDROID", android_version},
    },
@@ -124,7 +125,7 @@ var Android_Content = YouTube_I{
    Content_Check_OK: true,
 }
 
-var Mweb = YouTube_I{
+var Mweb = Config{
    Context: Context{
       Client: Client{"MWEB", "2.20220322.05.00"},
    },

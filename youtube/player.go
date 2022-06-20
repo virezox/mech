@@ -8,7 +8,7 @@ import (
 )
 
 func (p Player) Duration() time.Duration {
-   return time.Duration(p.VideoDetails.Length_Seconds) * time.Second
+   return time.Duration(p.VideoDetails.LengthSeconds) * time.Second
 }
 
 func (p Player) Date() string {
@@ -29,12 +29,12 @@ func (p Player) Base() string {
 
 type Player struct {
    VideoDetails struct {
-      VideoId string
-      Length_Seconds int64 `json:"lengthSeconds,string"`
-      View_Count int64 `json:"viewCount,string"`
       Author string
-      Title string
+      LengthSeconds int64 `json:"lengthSeconds,string"`
       ShortDescription string
+      Title string
+      VideoId string
+      ViewCount int64 `json:"viewCount,string"`
    }
    Microformat struct {
       PlayerMicroformatRenderer struct {
@@ -67,7 +67,7 @@ func (p Player) Format(f fmt.State, verb rune) {
    fmt.Fprintln(f, p.PlayabilityStatus)
    fmt.Fprintln(f, "Video ID:", p.VideoDetails.VideoId)
    fmt.Fprintln(f, "Duration:", p.Duration())
-   fmt.Fprintln(f, "View count:", p.VideoDetails.View_Count)
+   fmt.Fprintln(f, "View count:", p.VideoDetails.ViewCount)
    fmt.Fprintln(f, "Author:", p.VideoDetails.Author)
    fmt.Fprintln(f, "Title:", p.VideoDetails.Title)
    if p.Date() != "" {

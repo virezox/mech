@@ -5,27 +5,21 @@ import (
    "testing"
 )
 
-func TestFilter(t *testing.T) {
-   filter := NewFilter()
+func Test_Filter(t *testing.T) {
+   filter := New_Filter()
    filter.Features(Features["Subtitles/CC"])
-   param := NewParams()
+   param := New_Params()
    param.Filter(filter)
-   buf, err := param.MarshalBinary()
-   if err != nil {
-      t.Fatal(err)
-   }
+   buf := param.Marshal()
    if base64.StdEncoding.EncodeToString(buf) != "EgIoAQ==" {
       t.Fatal(buf)
    }
 }
 
-func TestSort(t *testing.T) {
-   param := NewParams()
-   param.SortBy(SortBy["Rating"])
-   buf, err := param.MarshalBinary()
-   if err != nil {
-      t.Fatal(err)
-   }
+func Test_Sort(t *testing.T) {
+   param := New_Params()
+   param.Sort_By(Sort_By["Rating"])
+   buf := param.Marshal()
    if base64.StdEncoding.EncodeToString(buf) != "CAE=" {
       t.Fatal(buf)
    }

@@ -6,8 +6,8 @@ import (
    "time"
 )
 
-func TestOauth(t *testing.T) {
-   auth, err := NewOauth()
+func Test_OAuth(t *testing.T) {
+   auth, err := New_OAuth()
    if err != nil {
       t.Fatal(err)
    }
@@ -17,14 +17,14 @@ func TestOauth(t *testing.T) {
 2. Enter this code
 %v
 `, auth.Verification_URL, auth.User_Code)
-   for range [9]struct{}{} {
+   for range [9]bool{} {
       time.Sleep(9 * time.Second)
-      exc, err := auth.Exchange()
+      change, err := auth.Exchange()
       if err != nil {
          t.Fatal(err)
       }
-      fmt.Printf("%+v\n", exc)
-      if exc.Access_Token != "" {
+      fmt.Printf("%+v\n", change)
+      if change.Access_Token != "" {
          break
       }
    }

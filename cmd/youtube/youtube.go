@@ -7,6 +7,19 @@ import (
    "os"
 )
 
+func download(form *youtube.Format, base string) error {
+   ext, err := mech.Extension_By_Type(form.MimeType)
+   if err != nil {
+      return err
+   }
+   file, err := os.Create(base + ext)
+   if err != nil {
+      return err
+   }
+   defer file.Close()
+   return form.Encode(file)
+}
+
 func (v video) player() (*youtube.Player, error) {
    if v.id == "" {
       var err error
@@ -50,7 +63,7 @@ func (v video) do() error {
    }
    forms := play.StreamingData.AdaptiveFormats
    if v.info {
-      forms.MediaType()
+      forms.Media_Type()
       fmt.Println(play)
    } else {
       fmt.Println(play.PlayabilityStatus)
@@ -72,22 +85,6 @@ func (v video) do() error {
             }
          }
       }
-   }
-   return nil
-}
-
-func download(form *youtube.Format, base string) error {
-   ext, err := mech.Extension_By_Type(form.MimeType)
-   if err != nil {
-      return err
-   }
-   file, err := os.Create(base + ext)
-   if err != nil {
-      return err
-   }
-   defer file.Close()
-   if _, err := form.WriteTo(file); err != nil {
-      return err
    }
    return nil
 }

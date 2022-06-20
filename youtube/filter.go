@@ -24,7 +24,7 @@ var Features = map[string]protobuf.Number{
    "VR180": 26,
 }
 
-var SortBy = map[string]uint64{
+var Sort_By = map[string]uint64{
    "Relevance": 0,
    "Upload date": 2,
    "View count": 3,
@@ -38,7 +38,7 @@ var Type = map[string]uint64{
    "Movie": 4,
 }
 
-var UploadDate = map[string]uint64{
+var Upload_Date = map[string]uint64{
    "Last hour": 1,
    "Today": 2,
    "This week": 3,
@@ -50,7 +50,7 @@ type Filter struct {
    protobuf.Message
 }
 
-func NewFilter() Filter {
+func New_Filter() Filter {
    var filter Filter
    filter.Message = make(protobuf.Message)
    return filter
@@ -60,7 +60,7 @@ type Params struct {
    protobuf.Message
 }
 
-func NewParams() Params {
+func New_Params() Params {
    var par Params
    par.Message = make(protobuf.Message)
    return par
@@ -78,7 +78,7 @@ func (f Filter) Type(val uint64) {
    f.Message[2] = protobuf.Varint(val)
 }
 
-func (f Filter) UploadDate(val uint64) {
+func (f Filter) Upload_Date(val uint64) {
    f.Message[1] = protobuf.Varint(val)
 }
 
@@ -86,6 +86,6 @@ func (p Params) Filter(val Filter) {
    p.Message[2] = val.Message
 }
 
-func (p Params) SortBy(val uint64) {
+func (p Params) Sort_By(val uint64) {
    p.Message[1] = protobuf.Varint(val)
 }

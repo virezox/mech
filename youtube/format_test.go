@@ -6,7 +6,7 @@ import (
    "testing"
 )
 
-var mimeTypes = []string{
+var mime_types = []string{
    "audio/mp4; codecs=\"mp4a.40.2\"",
    "audio/mp4; codecs=\"mp4a.40.5\"",
    "audio/webm; codecs=\"opus\"",
@@ -27,12 +27,12 @@ var mimeTypes = []string{
    "video/webm; codecs=\"vp9\"",
 }
 
-func TestFormat(t *testing.T) {
-   for _, mimeType := range mimeTypes {
-      exts, err := mime.ExtensionsByType(mimeType)
+func Test_Format(t *testing.T) {
+   for _, mime_type := range mime_types {
+      exts, err := mime.ExtensionsByType(mime_type)
       if err != nil {
          t.Fatal(err)
       }
-      fmt.Println(mimeType, exts)
+      fmt.Println(mime_type, exts)
    }
 }

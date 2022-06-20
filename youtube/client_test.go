@@ -7,7 +7,7 @@ import (
    "time"
 )
 
-func TestSearch(t *testing.T) {
+func Test_Search(t *testing.T) {
    search, err := Mweb.Search("oneohtrix point never along")
    if err != nil {
       t.Fatal(err)
@@ -19,7 +19,7 @@ func TestSearch(t *testing.T) {
 
 const android = "zv9NimPx3Es"
 
-func TestAndroid(t *testing.T) {
+func Test_Android(t *testing.T) {
    play, err := Android.Player(android)
    if err != nil {
       t.Fatal(err)
@@ -29,14 +29,14 @@ func TestAndroid(t *testing.T) {
    }
 }
 
-var androidEmbeds = []string{
+var android_embeds = []string{
    "HtVdAasjOgU",
    "WaOKSUlf4TM",
 }
 
-func TestAndroidEmbed(t *testing.T) {
-   for _, embed := range androidEmbeds {
-      play, err := AndroidEmbed.Player(embed)
+func Test_Android_Embed(t *testing.T) {
+   for _, embed := range android_embeds {
+      play, err := Android_Embed.Player(embed)
       if err != nil {
          t.Fatal(err)
       }
@@ -47,7 +47,7 @@ func TestAndroidEmbed(t *testing.T) {
    }
 }
 
-var androidRacys = []string{
+var android_racys = []string{
    "Cr381pDsSsA",
    "HsUATh_Nc2U", // signatureCipher
    "SZJvDhaSDnc", // url
@@ -55,17 +55,17 @@ var androidRacys = []string{
    "dqRZDebPIGs", // signatureCipher
 }
 
-func TestAndroidRacy(t *testing.T) {
+func Test_Android_Racy(t *testing.T) {
    home, err := os.UserHomeDir()
    if err != nil {
       t.Fatal(err)
    }
-   change, err := OpenExchange(home + "/mech/youtube.json")
+   change, err := Open_Exchange(home + "/mech/youtube.json")
    if err != nil {
       t.Fatal(err)
    }
-   for _, racy := range androidRacys {
-      play, err := AndroidRacy.Exchange(racy, change)
+   for _, racy := range android_racys {
+      play, err := Android_Racy.Exchange(racy, change)
       if err != nil {
          t.Fatal(err)
       }
@@ -76,18 +76,18 @@ func TestAndroidRacy(t *testing.T) {
    }
 }
 
-const androidContent = "nGC3D_FkCmg"
+const android_content = "nGC3D_FkCmg"
 
-func TestAndroidContent(t *testing.T) {
+func Test_Android_Content(t *testing.T) {
    home, err := os.UserHomeDir()
    if err != nil {
       t.Fatal(err)
    }
-   change, err := OpenExchange(home + "/mech/youtube.json")
+   change, err := Open_Exchange(home + "/mech/youtube.json")
    if err != nil {
       t.Fatal(err)
    }
-   play, err := AndroidContent.Exchange(androidContent, change)
+   play, err := Android_Content.Exchange(android_content, change)
    if err != nil {
       t.Fatal(err)
    }

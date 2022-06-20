@@ -8,6 +8,38 @@ import (
    "net/http"
 )
 
+func (f Format) Encode(w io.Writer) error {
+   req, err := http.NewRequest("GET", f.URL, nil)
+   if err != nil {
+      return err
+   }
+   Log.Dump(req)
+   var (
+      pos int64
+      pro = format.Progress_Bytes(w, f.Content_Length)
+   )
+   for pos < f.Content_Length {
+      req.Header.Set(
+         "Range", fmt.Sprintf("bytes=%v-%v", pos, pos+chunk-1),
+      )
+      // this sometimes redirects, so cannot use http.Transport
+      res, err := new(http.Client).Do(req)
+      if err != nil {
+         return err
+      }
+      if _, err := io.Copy(pro, res.Body); err != nil {
+         return err
+      }
+      if err := res.Body.Close(); err != nil {
+         return err
+      }
+      pos += chunk
+   }
+   return nil
+}
+
+type Formats []Format
+
 func (f Formats) Audio(quality string) (*Format, bool) {
    for _, form := range f {
       if form.AudioQuality == quality {
@@ -55,7 +87,7 @@ func (f Format) Format(s fmt.State, verb rune) {
    }
 }
 
-func (f Formats) MediaType() error {
+func (f Formats) Media_Type() error {
    for i, form := range f {
       _, param, err := mime.ParseMediaType(form.MimeType)
       if err != nil {
@@ -78,35 +110,3 @@ type Format struct {
    URL string
    Width int
 }
-
-func (f Format) WriteTo(w io.Writer) (int64, error) {
-   req, err := http.NewRequest("GET", f.URL, nil)
-   if err != nil {
-      return 0, err
-   }
-   Log.Dump(req)
-   var (
-      pos int64
-      pro = format.Progress_Bytes(w, f.Content_Length)
-   )
-   for pos < f.Content_Length {
-      req.Header.Set(
-         "Range", fmt.Sprintf("bytes=%v-%v", pos, pos+chunk-1),
-      )
-      // this sometimes redirects, so cannot use http.Transport
-      res, err := new(http.Client).Do(req)
-      if err != nil {
-         return 0, err
-      }
-      if _, err := io.Copy(pro, res.Body); err != nil {
-         return 0, err
-      }
-      if err := res.Body.Close(); err != nil {
-         return 0, err
-      }
-      pos += chunk
-   }
-   return f.Content_Length, nil
-}
-
-type Formats []Format
