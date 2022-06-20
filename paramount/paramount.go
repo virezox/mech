@@ -19,7 +19,7 @@ const (
    tv_secret = "6c70b33080758409"
 )
 
-var Log_Level format.Log_Level
+var Log format.Log
 
 func (p Preview) Base() string {
    var buf []byte
@@ -107,7 +107,7 @@ func (m Media) Preview() (*Preview, error) {
       return nil, err
    }
    req.URL.RawQuery = "format=preview"
-   Log_Level.Dump(req)
+   Log.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -132,7 +132,7 @@ func (m Media) location(formats, asset string) (*url.URL, error) {
       "assetTypes": {asset},
       "formats": {formats},
    }.Encode()
-   Log_Level.Dump(req)
+   Log.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err

@@ -11,7 +11,7 @@ import (
    "strings"
 )
 
-var Log_Level format.Log_Level
+var Log format.Log
 
 func Get_NID(input string) (int64, error) {
    _, nID, found := strings.Cut(input, "--")
@@ -52,7 +52,7 @@ func Unauth() (*Auth, error) {
       "X-Amcn-Platform": {"web"},
       "X-Amcn-Tenant": {"amcn"},
    }
-   Log_Level.Dump(req)
+   Log.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -95,7 +95,7 @@ func (a *Auth) Login(email, password string) error {
       "X-Amcn-Tenant": {"amcn"},
       "X-Ccpa-Do-Not-Sell": {"doNotPassData"},
    }
-   Log_Level.Dump(req)
+   Log.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return err
@@ -117,7 +117,7 @@ func (a *Auth) Refresh() error {
       return err
    }
    req.Header.Set("Authorization", "Bearer " + a.Data.Refresh_Token)
-   Log_Level.Dump(req)
+   Log.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return err
@@ -157,7 +157,7 @@ func (a Auth) Playback(nID int64) (*Playback, error) {
       "X-Amcn-Tenant": {"amcn"},
       "X-Ccpa-Do-Not-Sell": {"doNotPassData"},
    }
-   Log_Level.Dump(req)
+   Log.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err

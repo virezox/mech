@@ -52,7 +52,7 @@ func main() {
    flag.BoolVar(&verbose, "v", false, "verbose")
    flag.Parse()
    if verbose {
-      paramount.Log_Level = 1
+      paramount.Log.Level = 1
    }
    if guid != "" {
       var err error

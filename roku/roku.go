@@ -15,7 +15,7 @@ import (
    "time"
 )
 
-var Log_Level format.Log_Level
+var Log format.Log
 
 type Cross_Site struct {
    cookie *http.Cookie // has own String method
@@ -42,7 +42,7 @@ func (c Cross_Site) Playback(id string) (*Playback, error) {
       "Content-Type": {"application/json"},
    }
    req.AddCookie(c.cookie)
-   Log_Level.Dump(req)
+   Log.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -74,7 +74,7 @@ func (c Content) Base() string {
 
 type Content struct {
    Meta struct {
-      Id string
+      ID string
       MediaType string
    }
    Title string
@@ -93,11 +93,11 @@ type Content struct {
    }
 }
 
-func ContentId(addr string) string {
+func Content_ID(addr string) string {
    return path.Base(addr)
 }
 
-func NewContent(id string) (*Content, error) {
+func New_Content(id string) (*Content, error) {
    var addr url.URL
    addr.Scheme = "https"
    addr.Host = "content.sr.roku.com"
@@ -123,7 +123,7 @@ func NewContent(id string) (*Content, error) {
    if err != nil {
       return nil, err
    }
-   Log_Level.Dump(req)
+   Log.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -140,7 +140,7 @@ func NewContent(id string) (*Content, error) {
 }
 
 func (c Content) Format(f fmt.State, verb rune) {
-   fmt.Fprintln(f, "ID:", c.Meta.Id)
+   fmt.Fprintln(f, "ID:", c.Meta.ID)
    fmt.Fprintln(f, "Type:", c.Meta.MediaType)
    fmt.Fprintln(f, "Title:", c.Title)
    if c.Meta.MediaType == "episode" {
@@ -200,7 +200,7 @@ func New_Cross_Site() (*Cross_Site, error) {
    if err != nil {
       return nil, err
    }
-   Log_Level.Dump(req)
+   Log.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err

@@ -16,20 +16,20 @@ func (d *downloader) setKey() error {
    if err != nil {
       return err
    }
-   play, err := site.Playback(d.Meta.Id)
+   play, err := site.Playback(d.Meta.ID)
    if err != nil {
       return err
    }
    var client roku.Client
-   client.Id, err = os.ReadFile(d.client)
+   client.ID, err = os.ReadFile(d.client)
    if err != nil {
       return err
    }
-   client.PrivateKey, err = os.ReadFile(d.pem)
+   client.Private_Key, err = os.ReadFile(d.pem)
    if err != nil {
       return err
    }
-   client.RawKeyId = d.media.Protection().Default_KID
+   client.Raw_Key_ID = d.media.Protection().Default_KID
    content, err := play.Content(client)
    if err != nil {
       return err
@@ -43,8 +43,8 @@ func (d downloader) DASH(video, audio int64) error {
       fmt.Println(d.Content)
    }
    video_dash := d.Content.DASH()
-   fmt.Println("GET", video_dash.Url)
-   res, err := http.Get(video_dash.Url)
+   fmt.Println("GET", video_dash.URL)
+   res, err := http.Get(video_dash.URL)
    if err != nil {
       return err
    }
@@ -59,7 +59,7 @@ func (d downloader) DASH(video, audio int64) error {
    return d.download(video, dash.Video)
 }
 
-func (d *downloader) download(band int64, fn dash.AdaptationFunc) error {
+func (d *downloader) download(band int64, fn dash.Represent_Func) error {
    if band == 0 {
       return nil
    }
@@ -79,7 +79,7 @@ func (d *downloader) download(band int64, fn dash.AdaptationFunc) error {
             return err
          }
       }
-      ext, err := mech.ExtensionByType(rep.MimeType)
+      ext, err := mech.ExtensionByType(rep.MIME_Type)
       if err != nil {
          return err
       }
@@ -88,7 +88,7 @@ func (d *downloader) download(band int64, fn dash.AdaptationFunc) error {
          return err
       }
       defer file.Close()
-      init, err := rep.Initialization(d.url)
+      init, err := rep.Initial(d.url)
       if err != nil {
          return err
       }
@@ -98,20 +98,20 @@ func (d *downloader) download(band int64, fn dash.AdaptationFunc) error {
          return err
       }
       defer res.Body.Close()
-      if err := dash.DecryptInit(file, res.Body); err != nil {
+      if err := dash.Decrypt_Init(file, res.Body); err != nil {
          return err
       }
       media, err := rep.Media(d.url)
       if err != nil {
          return err
       }
-      pro := format.ProgressChunks(file, len(media))
+      pro := format.Progress_Chunks(file, len(media))
       for _, addr := range media {
          res, err := http.Get(addr.String())
          if err != nil {
             return err
          }
-         pro.AddChunk(res.ContentLength)
+         pro.Add_Chunk(res.ContentLength)
          if err := dash.Decrypt(pro, res.Body, d.key); err != nil {
             return err
          }

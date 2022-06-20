@@ -55,13 +55,13 @@ func main() {
    flag.BoolVar(&verbose, "v", false, "verbose")
    flag.Parse()
    if verbose {
-      roku.LogLevel = 1
+      roku.Log.Level = 1
    }
    if id != "" || address != "" {
       if id == "" {
-         id = roku.ContentId(address)
+         id = roku.Content_ID(address)
       }
-      down.Content, err = roku.NewContent(id)
+      down.Content, err = roku.New_Content(id)
       if err != nil {
          panic(err)
       }
@@ -71,7 +71,7 @@ func main() {
             panic(err)
          }
       } else {
-         err := down.Hls(video)
+         err := down.HLS(video)
          if err != nil {
             panic(err)
          }

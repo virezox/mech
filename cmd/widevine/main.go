@@ -30,7 +30,7 @@ func main() {
    flag.BoolVar(&verbose, "v", false, "verbose")
    flag.Parse()
    if verbose {
-      log_level = 1
+      level.Level = 1
    }
    if f.key_id != "" {
       contents, err := f.contents()

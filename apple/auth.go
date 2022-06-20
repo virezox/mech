@@ -56,7 +56,7 @@ func (c Config) Signin(email, password string) (*Signin, error) {
       "Content-Type": {"application/json"},
       "X-Apple-Widget-Key": {c.WebBag.AppIdKey},
    }
-   LogLevel.Dump(req)
+   Log.Dump(req)
    var sign Signin
    sign.Response, err = new(http.Transport).RoundTrip(req)
    if err != nil {
@@ -90,7 +90,7 @@ func (s Signin) Auth() (*Auth, error) {
    }
    req.AddCookie(s.myAcInfo())
    req.Header.Set("Origin", "https://tv.apple.com")
-   LogLevel.Dump(req)
+   Log.Dump(req)
    var auth Auth
    auth.Response, err = new(http.Transport).RoundTrip(req)
    if err != nil {
@@ -102,7 +102,7 @@ func (s Signin) Auth() (*Auth, error) {
    return &auth, nil
 }
 
-func (a Auth) mediaUserToken() *http.Cookie {
+func (a Auth) media_user_token() *http.Cookie {
    for _, cook := range a.Cookies() {
       if cook.Name == "media-user-token" {
          return cook

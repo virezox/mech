@@ -34,7 +34,7 @@ func main() {
    flag.BoolVar(&verbose, "v", false, "verbose")
    flag.Parse()
    if verbose {
-      cbc.Log_Level = 1
+      cbc.Log.Level = 1
    }
    if email != "" {
       err := do_profile(email, password)

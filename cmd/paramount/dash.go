@@ -88,7 +88,7 @@ func (d *downloader) download(band int64, fn dash.Represent_Func) error {
          return err
       }
       defer file.Close()
-      init, err := rep.Initialization(d.url)
+      init, err := rep.Initial(d.url)
       if err != nil {
          return err
       }

@@ -10,24 +10,24 @@ import (
    "os"
 )
 
-func (d downloader) Hls(bandwidth int64) error {
-   video, err := d.Content.Hls()
+func (d downloader) HLS(bandwidth int64) error {
+   video, err := d.Content.HLS()
    if err != nil {
       return err
    }
-   fmt.Println("GET", video.Url)
-   res, err := http.Get(video.Url)
+   fmt.Println("GET", video.URL)
+   res, err := http.Get(video.URL)
    if err != nil {
       return err
    }
    defer res.Body.Close()
-   master, err := hls.NewScanner(res.Body).Master()
+   master, err := hls.New_Scanner(res.Body).Master()
    if err != nil {
       return err
    }
-   stream := master.Streams.GetBandwidth(bandwidth)
+   stream := master.Streams.Get_Bandwidth(bandwidth)
    if !d.info {
-      addr, err := res.Request.URL.Parse(stream.RawURI)
+      addr, err := res.Request.URL.Parse(stream.Raw_URI)
       if err != nil {
          return err
       }
@@ -50,7 +50,7 @@ func downloadHLS(addr *url.URL, base string) error {
       return err
    }
    defer res.Body.Close()
-   seg, err := hls.NewScanner(res.Body).Segment()
+   seg, err := hls.New_Scanner(res.Body).Segment()
    if err != nil {
       return err
    }
@@ -59,7 +59,7 @@ func downloadHLS(addr *url.URL, base string) error {
       return err
    }
    defer file.Close()
-   pro := format.ProgressChunks(file, len(seg.Clear))
+   pro := format.Progress_Chunks(file, len(seg.Clear))
    for _, clear := range seg.Clear {
       addr, err := res.Request.URL.Parse(clear)
       if err != nil {
@@ -69,7 +69,7 @@ func downloadHLS(addr *url.URL, base string) error {
       if err != nil {
          return err
       }
-      pro.AddChunk(res.ContentLength)
+      pro.Add_Chunk(res.ContentLength)
       if _, err := io.Copy(pro, res.Body); err != nil {
          return err
       }

@@ -25,7 +25,7 @@ func (y YouTube_I) Exchange(id string, ex *Exchange) (*Player, error) {
    } else {
       req.Header.Set("X-Goog-Api-Key", goog_api)
    }
-   Log_Level.Dump(req)
+   Log.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -73,7 +73,7 @@ func (y YouTube_I) Search(query string) (*Search, error) {
       return nil, err
    }
    req.Header.Set("X-Goog-Api-Key", goog_api)
-   Log_Level.Dump(req)
+   Log.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err

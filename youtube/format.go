@@ -84,7 +84,7 @@ func (f Format) WriteTo(w io.Writer) (int64, error) {
    if err != nil {
       return 0, err
    }
-   Log_Level.Dump(req)
+   Log.Dump(req)
    var (
       pos int64
       pro = format.Progress_Bytes(w, f.Content_Length)

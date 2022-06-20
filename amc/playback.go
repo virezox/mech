@@ -29,7 +29,7 @@ func (p Playback) Content(c Client) (*widevine.Content, error) {
       return nil, err
    }
    req.Header.Set("bcov-auth", p.BC_JWT)
-   Log_Level.Dump(req)
+   Log.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err

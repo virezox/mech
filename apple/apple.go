@@ -28,9 +28,9 @@ func (r Request) License(env *Environment, ep *Episode) (*License, error) {
    req.Header = http.Header{
       "Authorization": {"Bearer " + env.Media_API.Token},
       "Content-Type": {"application/json"},
-      "X-Apple-Music-User-Token": {r.auth.mediaUserToken().Value},
+      "X-Apple-Music-User-Token": {r.auth.media_user_token().Value},
    }
-   Log_Level.Dump(req)
+   Log.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -68,7 +68,7 @@ func NewEpisode(contentID string) (*Episode, error) {
       "sf": {strconv.Itoa(sf_max)},
       "v": {strconv.Itoa(v_max)},
    }.Encode()
-   Log_Level.Dump(req)
+   Log.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -103,7 +103,7 @@ func NewConfig() (*Config, error) {
    if err != nil {
       return nil, err
    }
-   Log_Level.Dump(req)
+   Log.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -120,7 +120,7 @@ func NewConfig() (*Config, error) {
 }
 
 type Asset struct {
-   FpsKeyServerQueryParameters ServerParameters
+   FpsKeyServerQueryParameters Server_Parameters
    FpsKeyServerUrl string
    HlsUrl string
 }
@@ -137,7 +137,7 @@ type Request struct {
    auth *Auth
    body struct {
       Challenge []byte `json:"challenge"`
-      ExtraServerParameters ServerParameters `json:"extra-server-parameters"`
+      ExtraServerParameters Server_Parameters `json:"extra-server-parameters"`
       KeySystem string `json:"key-system"`
       Uri string `json:"uri"`
    }
@@ -158,7 +158,7 @@ const (
    v_min = 50
 )
 
-var Log_Level format.Log_Level
+var Log format.Log
 
 type Environment struct {
    Media_API struct {
@@ -166,12 +166,12 @@ type Environment struct {
    }
 }
 
-func NewEnvironment() (*Environment, error) {
+func New_Environment() (*Environment, error) {
    req, err := http.NewRequest("GET", "https://tv.apple.com", nil)
    if err != nil {
       return nil, err
    }
-   Log_Level.Dump(req)
+   Log.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -205,9 +205,9 @@ func NewEnvironment() (*Environment, error) {
    return env, nil
 }
 
-type ServerParameters struct {
-   AdamId string `json:"adamId"`
-   SvcId string `json:"svcId"`
+type Server_Parameters struct {
+   Adam_ID string `json:"adamId"`
+   Svc_ID string `json:"svcId"`
 }
 
 func (a *Auth) Request(client widevine.Client) (*Request, error) {
