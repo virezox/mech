@@ -24,7 +24,7 @@ func (t Track) Progressive() (*Media, error) {
       return nil, err
    }
    req.URL.RawQuery = "client_id=" + client_id
-   Log_Level.Dump(req)
+   Log.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -64,7 +64,7 @@ func NewTrack(id int64) (*Track, error) {
       return nil, err
    }
    req.URL.RawQuery = "client_id=" + client_id
-   Log_Level.Dump(req)
+   Log.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -88,7 +88,7 @@ func Resolve(addr string) ([]Track, error) {
       "client_id": {client_id},
       "url": {addr},
    }.Encode()
-   Log_Level.Dump(req)
+   Log.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -120,7 +120,7 @@ func User_Tracks(id int64) ([]Track, error) {
       "client_id": {client_id},
       "limit": {"999"},
    }.Encode()
-   Log_Level.Dump(req)
+   Log.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err

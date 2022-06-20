@@ -8,7 +8,7 @@ import (
    "net/http"
 )
 
-var Log_Level format.Log_Level
+var Log format.Log
 
 type Params struct {
    A_ID int
@@ -21,7 +21,7 @@ func New_Params(addr string) (*Params, error) {
    if err != nil {
       return nil, err
    }
-   Log_Level.Dump(req)
+   Log.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err

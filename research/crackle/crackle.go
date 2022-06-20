@@ -8,7 +8,7 @@ import (
    "strconv"
 )
 
-var Log_Level format.Log_Level
+var Log format.Log
 
 type Media struct {
    MediaURLs []struct {
@@ -30,7 +30,7 @@ func New_Media(id int64) (*Media, error) {
       "Authorization": {chunk.String()},
    }
    req.URL.RawQuery = "disableProtocols=true"
-   Log_Level.Dump(req)
+   Log.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err

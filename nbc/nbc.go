@@ -18,8 +18,8 @@ import (
 const persisted_query = "872a3dffc3ae6cdb3dc69fe3d9a949b539de7b579e95b2942e68d827b1a6ec62"
 
 var (
-   Log_Level format.Log_Level
-   secretKey = []byte("2b84a073ede61c766e4c0b3f1e656f7f")
+   Log format.Log
+   secret_key = []byte("2b84a073ede61c766e4c0b3f1e656f7f")
 )
 
 func authorization() string {
@@ -29,7 +29,7 @@ func authorization() string {
    buf.WriteString(",time=")
    buf.WriteString(now)
    buf.WriteString(",hash=")
-   mac := hmac.New(sha256.New, secretKey)
+   mac := hmac.New(sha256.New, secret_key)
    io.WriteString(mac, now)
    hex.NewEncoder(buf).Write(mac.Sum(nil))
    return buf.String()
@@ -54,7 +54,7 @@ func New_Bonanza_Page(guid int64) (*Bonanza_Page, error) {
       return nil, err
    }
    req.Header.Set("Content-Type", "application/json")
-   Log_Level.Dump(req)
+   Log.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -110,7 +110,7 @@ func (b Bonanza_Page) Video() (*Video, error) {
       "Authorization": {authorization()},
       "Content-Type": {"application/json"},
    }
-   Log_Level.Dump(req)
+   Log.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err

@@ -1,5 +1,4 @@
 package vimeo
-// github.com/89z
 
 import (
    "encoding/json"
@@ -11,7 +10,7 @@ import (
    "strings"
 )
 
-var Log_Level format.Log_Level
+var Log format.Log
 
 type Download struct {
    Width int
@@ -101,7 +100,7 @@ func New_JSON_Web() (*JSON_Web, error) {
       return nil, err
    }
    req.Header.Set("X-Requested-With", "XMLHttpRequest")
-   Log_Level.Dump(req)
+   Log.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -125,7 +124,7 @@ func (w JSON_Web) Video(clip *Clip) (*Video, error) {
    }
    req.Header.Set("Authorization", "JWT " + w.Token)
    req.URL.RawQuery = "fields=duration,download,name,pictures,release_time,user"
-   Log_Level.Dump(req)
+   Log.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err

@@ -27,7 +27,7 @@ func new_band(id int) (*Band, error) {
       return nil, err
    }
    req.URL.RawQuery = "band_id=" + strconv.Itoa(id)
-   Log_Level.Dump(req)
+   Log.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
@@ -171,7 +171,7 @@ func newTralbum(typ byte, id int) (*Tralbum, error) {
       "tralbum_id": {strconv.Itoa(id)},
       "tralbum_type": {string(typ)},
    }.Encode()
-   Log_Level.Dump(req)
+   Log.Dump(req)
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return nil, err
