@@ -77,7 +77,7 @@ func (v video) do() error {
 }
 
 func download(form *youtube.Format, base string) error {
-   ext, err := mech.ExtensionByType(form.MimeType)
+   ext, err := mech.Extension_By_Type(form.MimeType)
    if err != nil {
       return err
    }

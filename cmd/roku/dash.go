@@ -11,7 +11,7 @@ import (
    "os"
 )
 
-func (d *downloader) setKey() error {
+func (d *downloader) set_key() error {
    site, err := roku.New_Cross_Site()
    if err != nil {
       return err
@@ -74,12 +74,12 @@ func (d *downloader) download(band int64, fn dash.Represent_Func) error {
       }
    } else {
       if d.key == nil {
-         err := d.setKey()
+         err := d.set_key()
          if err != nil {
             return err
          }
       }
-      ext, err := mech.ExtensionByType(rep.MIME_Type)
+      ext, err := mech.Extension_By_Type(rep.MIME_Type)
       if err != nil {
          return err
       }

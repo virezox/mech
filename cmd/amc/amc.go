@@ -33,7 +33,7 @@ func (d downloader) do_DASH(address string, nid, video, audio int64) error {
    if err != nil {
       return err
    }
-   auth, err := amc.OpenAuth(home + "/mech/amc.json")
+   auth, err := amc.Open_Auth(home + "/mech/amc.json")
    if err != nil {
       return err
    }
@@ -109,7 +109,7 @@ func (d *downloader) download(band int64, fn dash.Represent_Func) error {
          fmt.Println(each)
       }
    } else {
-      ext, err := mech.ExtensionByType(rep.MIME_Type)
+      ext, err := mech.Extension_By_Type(rep.MIME_Type)
       if err != nil {
          return err
       }

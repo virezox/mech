@@ -35,13 +35,13 @@ func New_Params(addr string) (*Params, error) {
    scan.Sep = []byte(`<p id="report-account-vm"`)
    scan.Scan()
    var p struct {
-      DataTouReportParams []byte `xml:"data-tou-report-params,attr"`
+      Report_Params []byte `xml:"data-tou-report-params,attr"`
    }
    if err := scan.Decode(&p); err != nil {
       return nil, err
    }
    param := new(Params)
-   if err := json.Unmarshal(p.DataTouReportParams, param); err != nil {
+   if err := json.Unmarshal(p.Report_Params, param); err != nil {
       return nil, err
    }
    return param, nil
@@ -54,9 +54,9 @@ func (p Params) Band() (*Band, error) {
 func (p Params) Tralbum() (*Tralbum, error) {
    switch p.I_Type {
    case "a":
-      return newTralbum('a', p.I_ID)
+      return new_tralbum('a', p.I_ID)
    case "t":
-      return newTralbum('t', p.I_ID)
+      return new_tralbum('t', p.I_ID)
    }
-   return nil, invalidType{p.I_Type}
+   return nil, invalid_type{p.I_Type}
 }

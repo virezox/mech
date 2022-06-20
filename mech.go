@@ -31,7 +31,7 @@ func Clean(in string) string {
    return out.String()
 }
 
-func ExtensionByType(typ string) (string, error) {
+func Extension_By_Type(typ string) (string, error) {
    media, _, err := mime.ParseMediaType(typ)
    if err != nil {
       return "", err
@@ -48,14 +48,14 @@ func ExtensionByType(typ string) (string, error) {
    case "video/webm":
       return ".webm", nil
    }
-   return "", notFound{typ}
+   return "", not_found{typ}
 }
 
-type notFound struct {
+type not_found struct {
    value string
 }
 
-func (n notFound) Error() string {
+func (n not_found) Error() string {
    var buf []byte
    buf = strconv.AppendQuote(buf, n.value)
    buf = append(buf, " is not found"...)

@@ -23,7 +23,7 @@ func (c Client) Module() (*Module, error) {
    if err != nil {
       return nil, err
    }
-   mod.licenseRequest, err = protobuf.Message{
+   mod.licenseRequest = protobuf.Message{
       1: protobuf.Bytes{Raw: c.ID},
       2: protobuf.Message{ // ContentId
          1: protobuf.Message{ // CencId
@@ -32,10 +32,7 @@ func (c Client) Module() (*Module, error) {
             },
          },
       },
-   }.MarshalBinary()
-   if err != nil {
-      return nil, err
-   }
+   }.Marshal()
    return &mod, nil
 }
 
@@ -60,17 +57,16 @@ func (m Module) Marshal() ([]byte, error) {
       2: protobuf.Bytes{Raw: m.licenseRequest},
       3: protobuf.Bytes{Raw: signature},
    }
-   return signedRequest.MarshalBinary()
+   return signedRequest.Marshal(), nil
 }
 
 func (m Module) Unmarshal(response []byte) (Contents, error) {
    // key
-   signedResponse := make(protobuf.Message)
-   err := signedResponse.UnmarshalBinary(response)
+   signed_response, err := protobuf.Unmarshal(response)
    if err != nil {
       return nil, err
    }
-   sessionKey, err := signedResponse.Get_Bytes(4)
+   sessionKey, err := signed_response.Get_Bytes(4)
    if err != nil {
       return nil, err
    }
@@ -97,7 +93,7 @@ func (m Module) Unmarshal(response []byte) (Contents, error) {
    }
    var cons Contents
    // .Msg.Key
-   for _, message := range signedResponse.Get(2).Get_Messages(3) {
+   for _, message := range signed_response.Get(2).Get_Messages(3) {
       var con Content
       iv, err := message.Get_Bytes(2)
       if err != nil {

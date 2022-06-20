@@ -10,12 +10,12 @@ const nID = 1011152
 
 var client = Client{Raw_Key_ID: "c0e598b247fa443590299d5ef47da32c"}
 
-func TestPlayback(t *testing.T) {
+func Test_Playback(t *testing.T) {
    home, err := os.UserHomeDir()
    if err != nil {
       t.Fatal(err)
    }
-   auth, err := OpenAuth(home + "/mech/amc.json")
+   auth, err := Open_Auth(home + "/mech/amc.json")
    if err != nil {
       t.Fatal(err)
    }
@@ -27,7 +27,7 @@ func TestPlayback(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   client.PrivateKey, err = os.ReadFile(home + "/mech/private_key.pem")
+   client.Private_Key, err = os.ReadFile(home + "/mech/private_key.pem")
    if err != nil {
       t.Fatal(err)
    }
@@ -40,7 +40,7 @@ func TestPlayback(t *testing.T) {
    }
 }
 
-func TestLogin(t *testing.T) {
+func Test_Login(t *testing.T) {
    auth, err := Unauth()
    if err != nil {
       t.Fatal(err)
@@ -57,12 +57,12 @@ func TestLogin(t *testing.T) {
    }
 }
 
-func TestRefresh(t *testing.T) {
+func Test_Refresh(t *testing.T) {
    home, err := os.UserHomeDir()
    if err != nil {
       t.Fatal(err)
    }
-   auth, err := OpenAuth(home + "/mech/amc.json")
+   auth, err := Open_Auth(home + "/mech/amc.json")
    if err != nil {
       t.Fatal(err)
    }

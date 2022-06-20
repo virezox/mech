@@ -116,11 +116,11 @@ func (i Item) Band() (*Band, error) {
 func (i Item) Tralbum() (*Tralbum, error) {
    switch i.Item_Type {
    case "album":
-      return newTralbum('a', i.Item_ID)
+      return new_tralbum('a', i.Item_ID)
    case "track":
-      return newTralbum('t', i.Item_ID)
+      return new_tralbum('t', i.Item_ID)
    }
-   return nil, invalidType{i.Item_Type}
+   return nil, invalid_type{i.Item_Type}
 }
 
 type Track struct {
@@ -159,7 +159,7 @@ type Tralbum struct {
    Tracks []Track
 }
 
-func newTralbum(typ byte, id int) (*Tralbum, error) {
+func new_tralbum(typ byte, id int) (*Tralbum, error) {
    req, err := http.NewRequest(
       "GET", "http://bandcamp.com/api/mobile/24/tralbum_details", nil,
    )
@@ -188,11 +188,11 @@ func (t Tralbum) Date() time.Time {
    return time.Unix(t.Release_Date, 0)
 }
 
-type invalidType struct {
+type invalid_type struct {
    value string
 }
 
-func (i invalidType) Error() string {
+func (i invalid_type) Error() string {
    var buf []byte
    buf = append(buf, "invalid type "...)
    buf = strconv.AppendQuote(buf, i.value)

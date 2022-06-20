@@ -8,16 +8,16 @@ import (
 
 const downton = "downton-abbey/s01e05"
 
-func TestMedia(t *testing.T) {
+func Test_Media(t *testing.T) {
    home, err := os.UserHomeDir()
    if err != nil {
       t.Fatal(err)
    }
-   profile, err := OpenProfile(home + "/mech/cbc.json")
+   profile, err := Open_Profile(home + "/mech/cbc.json")
    if err != nil {
       t.Fatal(err)
    }
-   asset, err := NewAsset(downton)
+   asset, err := New_Asset(downton)
    if err != nil {
       t.Fatal(err)
    }

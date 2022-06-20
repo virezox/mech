@@ -79,7 +79,7 @@ func (d *downloader) download(band int64, fn dash.Represent_Func) error {
             return err
          }
       }
-      ext, err := mech.ExtensionByType(rep.MIME_Type)
+      ext, err := mech.Extension_By_Type(rep.MIME_Type)
       if err != nil {
          return err
       }

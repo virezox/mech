@@ -50,7 +50,7 @@ func (p Playback) Content(c Client) (*widevine.Content, error) {
 }
 
 type Playback struct {
-   PlaybackJsonData PlaybackJsonData
+   PlaybackJsonData Playback_JSON_Data
    BC_JWT string
 }
 
@@ -66,7 +66,7 @@ func (p Playback) Base() string {
    return buf.String()
 }
 
-type PlaybackJsonData struct {
+type Playback_JSON_Data struct {
    Custom_Fields struct {
       Show string // 1
       Season string // 2

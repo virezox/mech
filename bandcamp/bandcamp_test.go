@@ -5,11 +5,11 @@ import (
    "testing"
 )
 
-const artID = 3809045440
+const art_ID = 3809045440
 
-func TestImage(t *testing.T) {
+func Test_Image(t *testing.T) {
    for _, img := range Images {
-      addr := img.URL(artID)
+      addr := img.URL(art_ID)
       fmt.Println(addr)
    }
 }

@@ -8,7 +8,7 @@ import (
 )
 
 func (p Player) Duration() time.Duration {
-   return time.Duration(p.VideoDetails.LengthSeconds) * time.Second
+   return time.Duration(p.VideoDetails.Length_Seconds) * time.Second
 }
 
 func (p Player) Date() string {
@@ -30,8 +30,8 @@ func (p Player) Base() string {
 type Player struct {
    VideoDetails struct {
       VideoId string
-      LengthSeconds int64 `json:"lengthSeconds,string"`
-      ViewCount int64 `json:"viewCount,string"`
+      Length_Seconds int64 `json:"lengthSeconds,string"`
+      View_Count int64 `json:"viewCount,string"`
       Author string
       Title string
       ShortDescription string
@@ -65,9 +65,9 @@ func (s Status) String() string {
 
 func (p Player) Format(f fmt.State, verb rune) {
    fmt.Fprintln(f, p.PlayabilityStatus)
-   fmt.Fprintln(f, "VideoId:", p.VideoDetails.VideoId)
+   fmt.Fprintln(f, "Video ID:", p.VideoDetails.VideoId)
    fmt.Fprintln(f, "Duration:", p.Duration())
-   fmt.Fprintln(f, "ViewCount:", p.VideoDetails.ViewCount)
+   fmt.Fprintln(f, "View count:", p.VideoDetails.View_Count)
    fmt.Fprintln(f, "Author:", p.VideoDetails.Author)
    fmt.Fprintln(f, "Title:", p.VideoDetails.Title)
    if p.Date() != "" {

@@ -5,20 +5,20 @@ import (
    "testing"
 )
 
-func TestProfile(t *testing.T) {
+func Test_Profile(t *testing.T) {
    home, err := os.UserHomeDir()
    if err != nil {
       t.Fatal(err)
    }
-   login, err := NewLogin(email, password)
+   login, err := New_Login(email, password)
    if err != nil {
       t.Fatal(err)
    }
-   web, err := login.WebToken()
+   web, err := login.Web_Token()
    if err != nil {
       t.Fatal(err)
    }
-   top, err := web.OverTheTop()
+   top, err := web.Over_The_Top()
    if err != nil {
       t.Fatal(err)
    }

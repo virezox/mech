@@ -5,8 +5,8 @@ import (
    "testing"
 )
 
-func TestCreate(t *testing.T) {
-   con, err := NewConfig()
+func Test_Create(t *testing.T) {
+   con, err := New_Config()
    if err != nil {
       t.Fatal(err)
    }

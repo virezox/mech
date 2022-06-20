@@ -32,8 +32,8 @@ func main() {
    down.client = filepath.Join(home, "mech/client_id.bin")
    flag.StringVar(&down.client, "c", down.client, "client ID")
    // d
-   var isDASH bool
-   flag.BoolVar(&isDASH, "d", false, "DASH download")
+   var is_DASH bool
+   flag.BoolVar(&is_DASH, "d", false, "DASH download")
    // f
    // paramountplus.com/shows/video/x6XrF8A_tiSDRwc4Rt349KFKnCZ8QmtY
    var video int64
@@ -60,7 +60,7 @@ func main() {
       if err != nil {
          panic(err)
       }
-      if isDASH {
+      if is_DASH {
          err := down.DASH(video, audio)
          if err != nil {
             panic(err)

@@ -59,11 +59,7 @@ func (y YouTube_I) Search(query string) (*Search, error) {
    filter.Type(Type["Video"])
    param := NewParams()
    param.Filter(filter)
-   var err error
-   y.Params, err = param.MarshalBinary()
-   if err != nil {
-      return nil, err
-   }
+   y.Params = param.Marshal()
    buf := new(bytes.Buffer)
    if err := json.NewEncoder(buf).Encode(y); err != nil {
       return nil, err

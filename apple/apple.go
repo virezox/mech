@@ -15,7 +15,7 @@ import (
 
 func (r Request) License(env *Environment, ep *Episode) (*License, error) {
    asset := ep.Asset()
-   r.body.ExtraServerParameters = asset.FpsKeyServerQueryParameters
+   r.body.Server_Parameters = asset.FpsKeyServerQueryParameters
    buf := new(bytes.Buffer)
    err := json.NewEncoder(buf).Encode(r.body)
    if err != nil {
@@ -54,7 +54,7 @@ type Episode struct {
    }
 }
 
-func NewEpisode(contentID string) (*Episode, error) {
+func New_Episode(contentID string) (*Episode, error) {
    req, err := http.NewRequest(
       "GET", "https://tv.apple.com/api/uts/v3/episodes/" + contentID, nil,
    )
@@ -90,13 +90,14 @@ func (e Episode) Asset() *Asset {
    }
    return nil
 }
+
 type Config struct {
    WebBag struct {
       AppIdKey string
    }
 }
 
-func NewConfig() (*Config, error) {
+func New_Config() (*Config, error) {
    req, err := http.NewRequest(
       "GET", "https://amp-account.tv.apple.com/account/web/config", nil,
    )
@@ -137,9 +138,9 @@ type Request struct {
    auth *Auth
    body struct {
       Challenge []byte `json:"challenge"`
-      ExtraServerParameters Server_Parameters `json:"extra-server-parameters"`
-      KeySystem string `json:"key-system"`
-      Uri string `json:"uri"`
+      Server_Parameters Server_Parameters `json:"extra-server-parameters"`
+      Key_System string `json:"key-system"`
+      URI string `json:"uri"`
    }
 }
 
@@ -224,7 +225,7 @@ func (a *Auth) Request(client widevine.Client) (*Request, error) {
    if err != nil {
       return nil, err
    }
-   req.body.KeySystem = "com.widevine.alpha"
-   req.body.Uri = client.Raw_PSSH
+   req.body.Key_System = "com.widevine.alpha"
+   req.body.URI = client.Raw_PSSH
    return &req, nil
 }

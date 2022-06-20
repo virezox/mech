@@ -31,7 +31,7 @@ func (d downloader) HLS(bandwidth int64) error {
       if err != nil {
          return err
       }
-      return downloadHLS(addr, d.Base())
+      return download_HLS(addr, d.Base())
    }
    fmt.Println(d.Content)
    for _, each := range master.Streams {
@@ -43,7 +43,7 @@ func (d downloader) HLS(bandwidth int64) error {
    return nil
 }
 
-func downloadHLS(addr *url.URL, base string) error {
+func download_HLS(addr *url.URL, base string) error {
    fmt.Println("GET", addr)
    res, err := http.Get(addr.String())
    if err != nil {

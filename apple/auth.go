@@ -23,7 +23,7 @@ type Auth struct {
    *http.Response
 }
 
-func OpenAuth(name string) (*Auth, error) {
+func Open_Auth(name string) (*Auth, error) {
    file, err := os.Open(name)
    if err != nil {
       return nil, err
@@ -72,7 +72,7 @@ type Signin struct {
    *http.Response
 }
 
-func (s Signin) myAcInfo() *http.Cookie {
+func (s Signin) my_ac_info() *http.Cookie {
    for _, cook := range s.Cookies() {
       if cook.Name == "myacinfo" {
          return cook
@@ -88,7 +88,7 @@ func (s Signin) Auth() (*Auth, error) {
    if err != nil {
       return nil, err
    }
-   req.AddCookie(s.myAcInfo())
+   req.AddCookie(s.my_ac_info())
    req.Header.Set("Origin", "https://tv.apple.com")
    Log.Dump(req)
    var auth Auth

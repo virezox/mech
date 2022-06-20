@@ -22,19 +22,19 @@ func Get_NID(input string) (int64, error) {
 }
 
 type playback_request struct {
-   AdTags struct {
+   Ad_Tags struct {
       Lat int `json:"lat"`
       Mode string `json:"mode"`
       PPID int `json:"ppid"`
-      PlayerHeight int `json:"playerHeight"`
-      PlayerWidth int `json:"playerWidth"`
+      Player_Height int `json:"playerHeight"`
+      Player_Width int `json:"playerWidth"`
       URL string `json:"url"`
    } `json:"adtags"`
 }
 
 type playback_response struct {
    Data struct {
-      PlaybackJsonData PlaybackJsonData
+      PlaybackJsonData Playback_JSON_Data
    }
 }
 
@@ -136,8 +136,8 @@ func (a Auth) Playback(nID int64) (*Playback, error) {
    )
    addr = append(addr, "https://gw.cds.amcn.com/playback-id/api/v1/playback/"...)
    addr = strconv.AppendInt(addr, nID, 10)
-   p.AdTags.Mode = "on-demand"
-   p.AdTags.URL = "!"
+   p.Ad_Tags.Mode = "on-demand"
+   p.Ad_Tags.URL = "!"
    buf, err := mech.Encode(p)
    if err != nil {
       return nil, err
@@ -185,7 +185,7 @@ type Auth struct {
    }
 }
 
-func OpenAuth(name string) (*Auth, error) {
+func Open_Auth(name string) (*Auth, error) {
    return json.Open[Auth](name)
 }
 

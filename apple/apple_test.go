@@ -7,16 +7,16 @@ import (
 )
 
 // tv.apple.com/us/episode/biscuits/umc.cmc.45cu44369hb2qfuwr3fihnr8e
-const contentID = "umc.cmc.45cu44369hb2qfuwr3fihnr8e"
+const content_ID = "umc.cmc.45cu44369hb2qfuwr3fihnr8e"
 
-var client = widevine.Client{RawPSSH: "data:text/plain;base64,AAAAOHBzc2gAAAAA7e+LqXnWSs6jyCfc1R0h7QAAABgSEAAAAAAWgwC7YzAgICAgICBI88aJmwY="}
+var client = widevine.Client{Raw_PSSH: "data:text/plain;base64,AAAAOHBzc2gAAAAA7e+LqXnWSs6jyCfc1R0h7QAAABgSEAAAAAAWgwC7YzAgICAgICBI88aJmwY="}
 
-func TestLicense(t *testing.T) {
+func Test_License(t *testing.T) {
    home, err := os.UserHomeDir()
    if err != nil {
       t.Fatal(err)
    }
-   auth, err := OpenAuth(home + "/mech/apple.json")
+   auth, err := Open_Auth(home + "/mech/apple.json")
    if err != nil {
       t.Fatal(err)
    }
@@ -24,15 +24,15 @@ func TestLicense(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   client.PrivateKey, err = os.ReadFile(home + "/mech/private_key.pem")
+   client.Private_Key, err = os.ReadFile(home + "/mech/private_key.pem")
    if err != nil {
       t.Fatal(err)
    }
-   env, err := NewEnvironment()
+   env, err := New_Environment()
    if err != nil {
       t.Fatal(err)
    }
-   episode, err := NewEpisode(contentID)
+   episode, err := New_Episode(content_ID)
    if err != nil {
       t.Fatal(err)
    }

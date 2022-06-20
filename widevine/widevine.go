@@ -36,11 +36,11 @@ func (c Client) Key_ID() ([]byte, error) {
    if err != nil {
       return nil, err
    }
-   cencHeader := make(protobuf.Message)
-   if err := cencHeader.UnmarshalBinary(pssh[32:]); err != nil {
+   cenc_header, err := protobuf.Unmarshal(pssh[32:])
+   if err != nil {
       return nil, err
    }
-   return cencHeader.Get_Bytes(2)
+   return cenc_header.Get_Bytes(2)
 }
 
 func unpad(buf []byte) []byte {
