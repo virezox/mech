@@ -23,7 +23,7 @@ func Get_ID(input string) string {
 }
 
 type Asset struct {
-   AppleContentID string
+   AppleContentId string
    Series string
    Title string
    AirDate int64
@@ -56,7 +56,7 @@ func New_Asset(id string) (*Asset, error) {
 }
 
 func (a Asset) Format(f fmt.State, verb rune) {
-   fmt.Fprintln(f, "ID:", a.AppleContentID)
+   fmt.Fprintln(f, "ID:", a.AppleContentId)
    fmt.Fprintln(f, "Series:", a.Series)
    fmt.Fprintln(f, "Title:", a.Title)
    fmt.Fprintln(f, "Date:", a.Get_Time())

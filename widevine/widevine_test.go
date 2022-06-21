@@ -8,7 +8,7 @@ import (
 
 const pssh = "AAAAOHBzc2gAAAAA7e+LqXnWSs6jyCfc1R0h7QAAABgSEAAAAAAWgwC7YzAgICAgICBI88aJmwY="
 
-func TestKey(t *testing.T) {
+func Test_Key(t *testing.T) {
    key_a, err := base64.StdEncoding.DecodeString("AAAAABaDALtjMCAgICAgIA==")
    if err != nil {
       t.Fatal(err)

@@ -17,9 +17,9 @@ var guids = []int64{
    9000221348,
 }
 
-func TestVideo(t *testing.T) {
+func Test_Video(t *testing.T) {
    for _, guid := range guids {
-      page, err := NewBonanzaPage(guid)
+      page, err := New_Bonanza_Page(guid)
       if err != nil {
          t.Fatal(err)
       }

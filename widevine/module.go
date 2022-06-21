@@ -23,7 +23,7 @@ func (c Client) Module() (*Module, error) {
    if err != nil {
       return nil, err
    }
-   mod.licenseRequest = protobuf.Message{
+   mod.license_request = protobuf.Message{
       1: protobuf.Bytes{Raw: c.ID},
       2: protobuf.Message{ // ContentId
          1: protobuf.Message{ // CencId
@@ -37,14 +37,14 @@ func (c Client) Module() (*Module, error) {
 }
 
 type Module struct {
-   licenseRequest []byte
+   license_request []byte
    private_key *rsa.PrivateKey
 }
 
 func (m Module) Marshal() ([]byte, error) {
-   digest := sha1.Sum(m.licenseRequest)
+   digest := sha1.Sum(m.license_request)
    signature, err := rsa.SignPSS(
-      nopSource{},
+      no_operation{},
       m.private_key,
       crypto.SHA1,
       digest[:],
@@ -53,11 +53,11 @@ func (m Module) Marshal() ([]byte, error) {
    if err != nil {
       return nil, err
    }
-   signedRequest := protobuf.Message{
-      2: protobuf.Bytes{Raw: m.licenseRequest},
+   signed_request := protobuf.Message{
+      2: protobuf.Bytes{Raw: m.license_request},
       3: protobuf.Bytes{Raw: signature},
    }
-   return signedRequest.Marshal(), nil
+   return signed_request.Marshal(), nil
 }
 
 func (m Module) Unmarshal(response []byte) (Contents, error) {
@@ -66,11 +66,11 @@ func (m Module) Unmarshal(response []byte) (Contents, error) {
    if err != nil {
       return nil, err
    }
-   sessionKey, err := signed_response.Get_Bytes(4)
+   session_key, err := signed_response.Get_Bytes(4)
    if err != nil {
       return nil, err
    }
-   key, err := rsa.DecryptOAEP(sha1.New(), nil, m.private_key, sessionKey, nil)
+   key, err := rsa.DecryptOAEP(sha1.New(), nil, m.private_key, session_key, nil)
    if err != nil {
       return nil, err
    }
@@ -79,7 +79,7 @@ func (m Module) Unmarshal(response []byte) (Contents, error) {
    message = append(message, 1)
    message = append(message, "ENCRYPTION"...)
    message = append(message, 0)
-   message = append(message, m.licenseRequest...)
+   message = append(message, m.license_request...)
    message = append(message, 0, 0, 0, 0x80)
    // CMAC
    mac, err := cmac.New(aes.NewCipher, key)

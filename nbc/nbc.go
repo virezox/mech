@@ -83,7 +83,7 @@ type Bonanza_Page struct {
       ConvivaAssetName string
    }
    Metadata struct {
-      MpxAccountID string
+      MpxAccountId string
    }
    Name string
 }
@@ -93,7 +93,7 @@ func (b Bonanza_Page) Video() (*Video, error) {
    in.Device = "android"
    in.Device_ID = "android"
    in.External_Advertiser_ID = "NBC"
-   in.Mpx.Account_ID = b.Metadata.MpxAccountID
+   in.Mpx.Account_ID = b.Metadata.MpxAccountId
    body, err := mech.Encode(in)
    if err != nil {
       return nil, err

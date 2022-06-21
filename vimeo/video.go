@@ -62,7 +62,7 @@ type Clip struct {
    UnlistedHash string
 }
 
-func NewClip(address string) (*Clip, error) {
+func New_Clip(address string) (*Clip, error) {
    addr, err := url.Parse(address)
    if err != nil {
       return nil, err

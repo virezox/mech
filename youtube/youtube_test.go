@@ -9,7 +9,7 @@ import (
 
 const id = "UpNXI3_ctAc"
 
-func TestImage(t *testing.T) {
+func Test_Image(t *testing.T) {
    for _, img := range Images {
       addr := img.Format(id)
       fmt.Println("HEAD", addr)

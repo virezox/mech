@@ -3,7 +3,7 @@
 - https://github.com/ytdl-org/youtube-dl/issues/29335
 - https://www.crackle.com/watch/2992/2499348
 
-## How to get `partnerID`?
+## How to get `partnerId`?
 
 Go here:
 

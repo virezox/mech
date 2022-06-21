@@ -53,9 +53,9 @@ type test_type struct {
    asset int
 }
 
-func TestPreview(t *testing.T) {
+func Test_Preview(t *testing.T) {
    for _, test := range tests {
-      preview, err := NewMedia(test).Preview()
+      preview, err := New_Media(test).Preview()
       if err != nil {
          t.Fatal(err)
       }

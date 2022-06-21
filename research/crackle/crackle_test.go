@@ -8,8 +8,8 @@ import (
 // crackle.com/watch/2992/2499348
 const id = 2499348
 
-func TestMedia(t *testing.T) {
-   media, err := NewMedia(id)
+func Test_Media(t *testing.T) {
+   media, err := New_Media(id)
    if err != nil {
       t.Fatal(err)
    }

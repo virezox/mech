@@ -56,7 +56,7 @@ type Track struct {
    }
 }
 
-func NewTrack(id int64) (*Track, error) {
+func New_Track(id int64) (*Track, error) {
    buf := []byte("https://api-v2.soundcloud.com/tracks/")
    buf = strconv.AppendInt(buf, id, 10)
    req, err := http.NewRequest("GET", string(buf), nil)

@@ -53,9 +53,9 @@ func unpad(buf []byte) []byte {
    return buf
 }
 
-type nopSource struct{}
+type no_operation struct{}
 
-func (nopSource) Read(buf []byte) (int, error) {
+func (no_operation) Read(buf []byte) (int, error) {
    return len(buf), nil
 }
 

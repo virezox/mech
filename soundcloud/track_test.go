@@ -6,17 +6,17 @@ import (
    "time"
 )
 
-type itemType struct {
+type item_type struct {
    id int64
    addr string
 }
 
-var items = []itemType{
+var items = []item_type{
    {936653761, "https://soundcloud.com/kino-scmusic/mqymd53jtwag"},
    {692707328, "https://soundcloud.com/kino-scmusic"},
 }
 
-func TestResolve(t *testing.T) {
+func Test_Resolve(t *testing.T) {
    for _, item := range items {
       tracks, err := Resolve(item.addr)
       if err != nil {
@@ -29,8 +29,8 @@ func TestResolve(t *testing.T) {
    }
 }
 
-func TestTrack(t *testing.T) {
-   track, err := NewTrack(items[0].id)
+func Test_Track(t *testing.T) {
+   track, err := New_Track(items[0].id)
    if err != nil {
       t.Fatal(err)
    }

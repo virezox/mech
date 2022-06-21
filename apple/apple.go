@@ -54,9 +54,9 @@ type Episode struct {
    }
 }
 
-func New_Episode(contentID string) (*Episode, error) {
+func New_Episode(content_ID string) (*Episode, error) {
    req, err := http.NewRequest(
-      "GET", "https://tv.apple.com/api/uts/v3/episodes/" + contentID, nil,
+      "GET", "https://tv.apple.com/api/uts/v3/episodes/" + content_ID, nil,
    )
    if err != nil {
       return nil, err

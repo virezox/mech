@@ -24,20 +24,20 @@ var Log format.Log
 func (p Preview) Base() string {
    var buf []byte
    buf = append(buf, p.Title...)
-   if p.SeasonNumber >= 1 {
+   if p.Season_Number >= 1 {
       buf = append(buf, '-')
-      buf = strconv.AppendInt(buf, p.SeasonNumber, 10)
+      buf = strconv.AppendInt(buf, p.Season_Number, 10)
       buf = append(buf, '-')
-      buf = append(buf, p.EpisodeNumber...)
+      buf = append(buf, p.Episode_Number...)
    }
    return mech.Clean(string(buf))
 }
 
 type Preview struct {
+   Episode_Number string `json:"cbs$EpisodeNumber"`
    GUID string
+   Season_Number int64 `json:"cbs$SeasonNumber"`
    Title string
-   SeasonNumber int64 `json:"cbs$SeasonNumber"`
-   EpisodeNumber string `json:"cbs$EpisodeNumber"`
 }
 
 type Media struct {
@@ -71,8 +71,8 @@ func new_token() (string, error) {
 }
 
 func pad(b []byte) []byte {
-   bLen := aes.BlockSize - len(b) % aes.BlockSize
-   for high := byte(bLen); bLen >= 1; bLen-- {
+   b_len := aes.BlockSize - len(b) % aes.BlockSize
+   for high := byte(b_len); b_len >= 1; b_len-- {
       b = append(b, high)
    }
    return b

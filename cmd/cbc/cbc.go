@@ -143,7 +143,7 @@ func new_master(id, address, audio string, video int64, info bool) error {
          if err != nil {
             return err
          }
-         if err := download(addr, asset.AppleContentID + hls.AAC); err != nil {
+         if err := download(addr, asset.AppleContentId + hls.AAC); err != nil {
             return err
          }
       }
@@ -153,7 +153,7 @@ func new_master(id, address, audio string, video int64, info bool) error {
          if err != nil {
             return err
          }
-         return download(addr, asset.AppleContentID + hls.TS)
+         return download(addr, asset.AppleContentId + hls.TS)
       }
    }
    return nil
