@@ -24,11 +24,11 @@ func (c Client) Module() (*Module, error) {
       return nil, err
    }
    mod.license_request = protobuf.Message{
-      1: protobuf.Bytes{Raw: c.ID},
+      1: protobuf.Bytes(c.ID),
       2: protobuf.Message{ // ContentId
          1: protobuf.Message{ // CencId
             1: protobuf.Message{ // Pssh
-               2: protobuf.Bytes{Raw: key_id},
+               2: protobuf.Bytes(key_id),
             },
          },
       },
@@ -54,8 +54,8 @@ func (m Module) Marshal() ([]byte, error) {
       return nil, err
    }
    signed_request := protobuf.Message{
-      2: protobuf.Bytes{Raw: m.license_request},
-      3: protobuf.Bytes{Raw: signature},
+      2: protobuf.Bytes(m.license_request),
+      3: protobuf.Bytes(signature),
    }
    return signed_request.Marshal(), nil
 }
