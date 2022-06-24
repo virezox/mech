@@ -9,7 +9,7 @@ import (
 
 const origin = "https://www.youtube.com"
 
-var Log format.Log
+var HTTP_Client format.Client
 
 // https://youtube.com/shorts/9Vsdft81Q6w
 // https://youtube.com/watch?v=XY-hOqcPGCY

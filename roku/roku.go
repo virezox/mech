@@ -15,7 +15,7 @@ import (
    "time"
 )
 
-var Log format.Log
+var Client format.Client
 
 type Cross_Site struct {
    cookie *http.Cookie // has own String method
@@ -42,15 +42,11 @@ func (c Cross_Site) Playback(id string) (*Playback, error) {
       "Content-Type": {"application/json"},
    }
    req.AddCookie(c.cookie)
-   Log.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
+   res, err := Client.Do(req)
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return nil, errors.New(res.Status)
-   }
    play := new(Playback)
    if err := json.NewDecoder(res.Body).Decode(play); err != nil {
       return nil, err
@@ -123,15 +119,11 @@ func New_Content(id string) (*Content, error) {
    if err != nil {
       return nil, err
    }
-   Log.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
+   res, err := Client.Do(req)
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return nil, errors.New(res.Status)
-   }
    con := new(Content)
    if err := json.NewDecoder(res.Body).Decode(con); err != nil {
       return nil, err
@@ -200,8 +192,7 @@ func New_Cross_Site() (*Cross_Site, error) {
    if err != nil {
       return nil, err
    }
-   Log.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
+   res, err := Client.Do(req)
    if err != nil {
       return nil, err
    }

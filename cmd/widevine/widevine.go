@@ -2,7 +2,6 @@ package main
 
 import (
    "bytes"
-   "errors"
    "github.com/89z/format"
    "github.com/89z/mech/widevine"
    "io"
@@ -11,11 +10,11 @@ import (
    "strings"
 )
 
-var level format.Log
+var client format.Client
 
 type flags struct {
    address string
-   client string
+   client_id string
    header string
    key_id string
    private_key string
@@ -23,19 +22,19 @@ type flags struct {
 
 func (f flags) contents() (widevine.Contents, error) {
    var (
-      client widevine.Client
+      w_client widevine.Client
       err error
    )
-   client.ID, err = os.ReadFile(f.client)
+   w_client.ID, err = os.ReadFile(f.client_id)
    if err != nil {
       return nil, err
    }
-   client.Private_Key, err = os.ReadFile(f.private_key)
+   w_client.Private_Key, err = os.ReadFile(f.private_key)
    if err != nil {
       return nil, err
    }
-   client.Raw_Key_ID = f.key_id
-   module, err := client.Module()
+   w_client.Raw_Key_ID = f.key_id
+   module, err := w_client.Module()
    if err != nil {
       return nil, err
    }
@@ -55,15 +54,11 @@ func (f flags) contents() (widevine.Contents, error) {
          req.Header.Set(key, val)
       }
    }
-   level.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
+   res, err := client.Do(req)
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return nil, errors.New(res.Status)
-   }
    buf, err = io.ReadAll(res.Body)
    if err != nil {
       return nil, err

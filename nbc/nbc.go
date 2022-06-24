@@ -5,7 +5,6 @@ import (
    "crypto/sha256"
    "encoding/hex"
    "encoding/json"
-   "errors"
    "github.com/89z/format"
    "github.com/89z/mech"
    "io"
@@ -18,7 +17,7 @@ import (
 const persisted_query = "872a3dffc3ae6cdb3dc69fe3d9a949b539de7b579e95b2942e68d827b1a6ec62"
 
 var (
-   Log format.Log
+   Client format.Client
    secret_key = []byte("2b84a073ede61c766e4c0b3f1e656f7f")
 )
 
@@ -54,15 +53,11 @@ func New_Bonanza_Page(guid int64) (*Bonanza_Page, error) {
       return nil, err
    }
    req.Header.Set("Content-Type", "application/json")
-   Log.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
+   res, err := Client.Do(req)
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return nil, errors.New(res.Status)
-   }
    var page struct {
       Data struct {
          BonanzaPage Bonanza_Page
@@ -110,15 +105,11 @@ func (b Bonanza_Page) Video() (*Video, error) {
       "Authorization": {authorization()},
       "Content-Type": {"application/json"},
    }
-   Log.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
+   res, err := Client.Do(req)
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return nil, errors.New(res.Status)
-   }
    out := new(Video)
    if err := json.NewDecoder(res.Body).Decode(out); err != nil {
       return nil, err

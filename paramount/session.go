@@ -1,10 +1,8 @@
 package paramount
-// github.com/89z
 
 import (
    "bytes"
    "encoding/json"
-   "errors"
    "github.com/89z/mech/widevine"
    "io"
    "net/http"
@@ -12,9 +10,7 @@ import (
    "strings"
 )
 
-type Client = widevine.Client
-
-func (s Session) Content(c Client) (*widevine.Content, error) {
+func (s Session) Content(c widevine.Client) (*widevine.Content, error) {
    mod, err := c.Module()
    if err != nil {
       return nil, err
@@ -30,15 +26,11 @@ func (s Session) Content(c Client) (*widevine.Content, error) {
       return nil, err
    }
    req.Header.Set("Authorization", "Bearer " + s.LS_Session)
-   Log.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
+   res, err := Client.Do(req)
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return nil, errors.New(res.Status)
-   }
    buf, err = io.ReadAll(res.Body)
    if err != nil {
       return nil, err
@@ -68,15 +60,11 @@ func New_Session(content_id string) (*Session, error) {
       return nil, err
    }
    req.URL.RawQuery = "at=" + url.QueryEscape(token)
-   Log.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
+   res, err := Client.Do(req)
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return nil, errors.New(res.Status)
-   }
    sess := new(Session)
    if err := json.NewDecoder(res.Body).Decode(sess); err != nil {
       return nil, err

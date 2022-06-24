@@ -2,7 +2,6 @@ package amc
 
 import (
    "bytes"
-   "errors"
    "github.com/89z/format"
    "github.com/89z/format/json"
    "github.com/89z/mech"
@@ -11,7 +10,7 @@ import (
    "strings"
 )
 
-var Log format.Log
+var Client format.Client
 
 func Get_NID(input string) (int64, error) {
    _, nID, found := strings.Cut(input, "--")
@@ -52,15 +51,11 @@ func Unauth() (*Auth, error) {
       "X-Amcn-Platform": {"web"},
       "X-Amcn-Tenant": {"amcn"},
    }
-   Log.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
+   res, err := Client.Do(req)
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return nil, errors.New(res.Status)
-   }
    auth := new(Auth)
    if err := json.NewDecoder(res.Body).Decode(auth); err != nil {
       return nil, err
@@ -95,15 +90,11 @@ func (a *Auth) Login(email, password string) error {
       "X-Amcn-Tenant": {"amcn"},
       "X-Ccpa-Do-Not-Sell": {"doNotPassData"},
    }
-   Log.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
+   res, err := Client.Do(req)
    if err != nil {
       return err
    }
    defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return errors.New(res.Status)
-   }
    return json.NewDecoder(res.Body).Decode(a)
 }
 
@@ -117,15 +108,11 @@ func (a *Auth) Refresh() error {
       return err
    }
    req.Header.Set("Authorization", "Bearer " + a.Data.Refresh_Token)
-   Log.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
+   res, err := Client.Do(req)
    if err != nil {
       return err
    }
    defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return errors.New(res.Status)
-   }
    return json.NewDecoder(res.Body).Decode(a)
 }
 
@@ -157,15 +144,11 @@ func (a Auth) Playback(nID int64) (*Playback, error) {
       "X-Amcn-Tenant": {"amcn"},
       "X-Ccpa-Do-Not-Sell": {"doNotPassData"},
    }
-   Log.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
+   res, err := Client.Do(req)
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return nil, errors.New(res.Status)
-   }
    var (
       out playback_response
       play Playback

@@ -6,7 +6,6 @@ import (
    "encoding/base64"
    "encoding/hex"
    "encoding/json"
-   "errors"
    "github.com/89z/format"
    "github.com/89z/mech"
    "net/http"
@@ -19,7 +18,7 @@ const (
    tv_secret = "6c70b33080758409"
 )
 
-var Log format.Log
+var Client format.Client
 
 func (p Preview) Base() string {
    var buf []byte
@@ -107,15 +106,11 @@ func (m Media) Preview() (*Preview, error) {
       return nil, err
    }
    req.URL.RawQuery = "format=preview"
-   Log.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
+   res, err := Client.Do(req)
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return nil, errors.New(res.Status)
-   }
    prev := new(Preview)
    if err := json.NewDecoder(res.Body).Decode(prev); err != nil {
       return nil, err
@@ -132,8 +127,7 @@ func (m Media) location(formats, asset string) (*url.URL, error) {
       "assetTypes": {asset},
       "formats": {formats},
    }.Encode()
-   Log.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
+   res, err := Client.Do(req)
    if err != nil {
       return nil, err
    }

@@ -18,8 +18,8 @@ func main() {
    // b
    flag.StringVar(&f.key_id, "b", "", "key ID")
    // c
-   f.client = filepath.Join(home, "mech/client_id.bin")
-   flag.StringVar(&f.client, "c", f.client, "client ID")
+   f.client_id = filepath.Join(home, "mech/client_id.bin")
+   flag.StringVar(&f.client_id, "c", f.client_id, "client ID")
    // h
    flag.StringVar(&f.header, "h", "", "header")
    // k
@@ -30,7 +30,7 @@ func main() {
    flag.BoolVar(&verbose, "v", false, "verbose")
    flag.Parse()
    if verbose {
-      level.Level = 1
+      client.Log_Level = 1
    }
    if f.key_id != "" {
       contents, err := f.contents()
