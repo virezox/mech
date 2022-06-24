@@ -21,7 +21,7 @@ func (m Media) Ext() (string, error) {
 
 const client_id = "iZIs9mchVcX5lhVRyQGGAYlNPVldzAoX"
 
-var Log format.Log
+var Client format.Client
 
 type Image struct {
    Size string

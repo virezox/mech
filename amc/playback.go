@@ -2,7 +2,6 @@ package amc
 
 import (
    "bytes"
-   "errors"
    "github.com/89z/mech"
    "github.com/89z/mech/widevine"
    "io"
@@ -10,9 +9,7 @@ import (
    "strings"
 )
 
-type Client = widevine.Client
-
-func (p Playback) Content(c Client) (*widevine.Content, error) {
+func (p Playback) Content(c widevine.Client) (*widevine.Content, error) {
    source := p.DASH()
    mod, err := c.Module()
    if err != nil {
@@ -29,15 +26,11 @@ func (p Playback) Content(c Client) (*widevine.Content, error) {
       return nil, err
    }
    req.Header.Set("bcov-auth", p.BC_JWT)
-   Log.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
+   res, err := Client.Do(req)
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return nil, errors.New(res.Status)
-   }
    buf, err = io.ReadAll(res.Body)
    if err != nil {
       return nil, err

@@ -10,7 +10,7 @@ import (
    "strings"
 )
 
-var Log format.Log
+var Client format.Client
 
 type Download struct {
    Width int
@@ -100,8 +100,7 @@ func New_JSON_Web() (*JSON_Web, error) {
       return nil, err
    }
    req.Header.Set("X-Requested-With", "XMLHttpRequest")
-   Log.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
+   res, err := Client.Do(req)
    if err != nil {
       return nil, err
    }
@@ -124,15 +123,11 @@ func (w JSON_Web) Video(clip *Clip) (*Video, error) {
    }
    req.Header.Set("Authorization", "JWT " + w.Token)
    req.URL.RawQuery = "fields=duration,download,name,pictures,release_time,user"
-   Log.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
+   res, err := Client.Do(req)
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return nil, errors.New(res.Status)
-   }
    vid := new(Video)
    if err := json.NewDecoder(res.Body).Decode(vid); err != nil {
       return nil, err

@@ -8,6 +8,7 @@ import (
    "github.com/89z/format/dash"
    "github.com/89z/mech"
    "github.com/89z/mech/amc"
+   "github.com/89z/mech/widevine"
    "io"
    "net/http"
    "os"
@@ -75,7 +76,7 @@ func (d downloader) do_DASH(address string, nid, video, audio int64) error {
 
 func (d *downloader) set_key() error {
    var (
-      client amc.Client
+      client widevine.Client
       err error
    )
    client.ID, err = os.ReadFile(d.client)

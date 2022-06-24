@@ -8,7 +8,7 @@ import (
    "net/http"
 )
 
-var Log format.Log
+var Client format.Client
 
 type Params struct {
    A_ID int
@@ -21,8 +21,7 @@ func New_Params(addr string) (*Params, error) {
    if err != nil {
       return nil, err
    }
-   Log.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
+   res, err := Client.Do(req)
    if err != nil {
       return nil, err
    }

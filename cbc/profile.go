@@ -39,8 +39,7 @@ func New_Login(email, password string) (*Login, error) {
    }
    req.Header.Set("Content-Type", "application/json")
    req.URL.RawQuery = "apiKey=" + api_key
-   Log.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
+   res, err := Client.Do(req)
    if err != nil {
       return nil, err
    }
@@ -64,8 +63,7 @@ func (l Login) Web_Token() (*Web_Token, error) {
       "apikey": {api_key},
       "jwtapp": {"jwt"},
    }.Encode()
-   Log.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
+   res, err := Client.Do(req)
    if err != nil {
       return nil, err
    }
@@ -89,8 +87,7 @@ func (o Over_The_Top) Profile() (*Profile, error) {
       return nil, err
    }
    req.Header.Set("OTT-Access-Token", o.AccessToken)
-   Log.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
+   res, err := Client.Do(req)
    if err != nil {
       return nil, err
    }
@@ -125,8 +122,7 @@ func (w Web_Token) Over_The_Top() (*Over_The_Top, error) {
    if err != nil {
       return nil, err
    }
-   Log.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
+   res, err := Client.Do(req)
    if err != nil {
       return nil, err
    }

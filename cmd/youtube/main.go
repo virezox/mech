@@ -36,7 +36,7 @@ func main() {
    flag.BoolVar(&verbose, "v", false, "verbose")
    flag.Parse()
    if verbose {
-      youtube.Log.Level = 1
+      youtube.HTTP_Client.Log_Level = 1
    }
    if refresh {
       err := do_refresh()

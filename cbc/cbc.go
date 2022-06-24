@@ -11,7 +11,7 @@ import (
 
 const forwarded_for = "99.224.0.0"
 
-var Log format.Log
+var Client format.Client
 
 // gem.cbc.ca/media/downton-abbey/s01e05
 func Get_ID(input string) string {
@@ -42,8 +42,7 @@ func New_Asset(id string) (*Asset, error) {
    if err != nil {
       return nil, err
    }
-   Log.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
+   res, err := Client.Do(req)
    if err != nil {
       return nil, err
    }
@@ -88,8 +87,7 @@ func (p Profile) Media(asset *Asset) (*Media, error) {
       "X-Claims-Token": {p.ClaimsToken},
       "X-Forwarded-For": {forwarded_for},
    }
-   Log.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
+   res, err := Client.Do(req)
    if err != nil {
       return nil, err
    }

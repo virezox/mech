@@ -7,6 +7,7 @@ import (
    "github.com/89z/format/dash"
    "github.com/89z/mech"
    "github.com/89z/mech/roku"
+   "github.com/89z/mech/widevine"
    "net/http"
    "os"
 )
@@ -20,7 +21,7 @@ func (d *downloader) set_key() error {
    if err != nil {
       return err
    }
-   var client roku.Client
+   var client widevine.Client
    client.ID, err = os.ReadFile(d.client)
    if err != nil {
       return err

@@ -55,7 +55,7 @@ func main() {
    flag.BoolVar(&verbose, "v", false, "verbose")
    flag.Parse()
    if verbose {
-      roku.Log.Level = 1
+      roku.Client.Log_Level = 1
    }
    if id != "" || address != "" {
       if id == "" {

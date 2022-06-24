@@ -3,7 +3,6 @@ package apple
 import (
    "bytes"
    "encoding/json"
-   "errors"
    "github.com/89z/format"
    "github.com/89z/format/xml"
    "github.com/89z/mech/widevine"
@@ -30,15 +29,11 @@ func (r Request) License(env *Environment, ep *Episode) (*License, error) {
       "Content-Type": {"application/json"},
       "X-Apple-Music-User-Token": {r.auth.media_user_token().Value},
    }
-   Log.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
+   res, err := Client.Do(req)
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return nil, errors.New(res.Status)
-   }
    lic := License{Module: r.Module}
    if err := json.NewDecoder(res.Body).Decode(&lic.body); err != nil {
       return nil, err
@@ -68,15 +63,11 @@ func New_Episode(content_ID string) (*Episode, error) {
       "sf": {strconv.Itoa(sf_max)},
       "v": {strconv.Itoa(v_max)},
    }.Encode()
-   Log.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
+   res, err := Client.Do(req)
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return nil, errors.New(res.Status)
-   }
    epi := new(Episode)
    if err := json.NewDecoder(res.Body).Decode(epi); err != nil {
       return nil, err
@@ -104,15 +95,11 @@ func New_Config() (*Config, error) {
    if err != nil {
       return nil, err
    }
-   Log.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
+   res, err := Client.Do(req)
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return nil, errors.New(res.Status)
-   }
    con := new(Config)
    if err := json.NewDecoder(res.Body).Decode(con); err != nil {
       return nil, err
@@ -159,7 +146,7 @@ const (
    v_min = 50
 )
 
-var Log format.Log
+var Client format.Client
 
 type Environment struct {
    Media_API struct {
@@ -172,15 +159,11 @@ func New_Environment() (*Environment, error) {
    if err != nil {
       return nil, err
    }
-   Log.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
+   res, err := Client.Do(req)
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return nil, errors.New(res.Status)
-   }
    var scan xml.Scanner
    scan.Data, err = io.ReadAll(res.Body)
    if err != nil {

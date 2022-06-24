@@ -1,17 +1,13 @@
 package roku
-// github.com/89z
 
 import (
    "bytes"
-   "errors"
    "github.com/89z/mech/widevine"
    "io"
    "net/http"
 )
 
-type Client = widevine.Client
-
-func (p Playback) Content(c Client) (*widevine.Content, error) {
+func (p Playback) Content(c widevine.Client) (*widevine.Content, error) {
    mod, err := c.Module()
    if err != nil {
       return nil, err
@@ -26,15 +22,11 @@ func (p Playback) Content(c Client) (*widevine.Content, error) {
    if err != nil {
       return nil, err
    }
-   Log.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
+   res, err := Client.Do(req)
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return nil, errors.New(res.Status)
-   }
    buf, err = io.ReadAll(res.Body)
    if err != nil {
       return nil, err

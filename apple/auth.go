@@ -4,7 +4,6 @@ import (
    "bufio"
    "bytes"
    "encoding/json"
-   "errors"
    "github.com/89z/format"
    "net/http"
    "os"
@@ -56,14 +55,10 @@ func (c Config) Signin(email, password string) (*Signin, error) {
       "Content-Type": {"application/json"},
       "X-Apple-Widget-Key": {c.WebBag.AppIdKey},
    }
-   Log.Dump(req)
    var sign Signin
-   sign.Response, err = new(http.Transport).RoundTrip(req)
+   sign.Response, err = Client.Do(req)
    if err != nil {
       return nil, err
-   }
-   if sign.StatusCode != http.StatusOK {
-      return nil, errors.New(sign.Status)
    }
    return &sign, nil
 }
@@ -90,14 +85,10 @@ func (s Signin) Auth() (*Auth, error) {
    }
    req.AddCookie(s.my_ac_info())
    req.Header.Set("Origin", "https://tv.apple.com")
-   Log.Dump(req)
    var auth Auth
-   auth.Response, err = new(http.Transport).RoundTrip(req)
+   auth.Response, err = Client.Do(req)
    if err != nil {
       return nil, err
-   }
-   if auth.StatusCode != http.StatusOK {
-      return nil, errors.New(auth.Status)
    }
    return &auth, nil
 }

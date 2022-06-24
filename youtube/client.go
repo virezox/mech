@@ -3,7 +3,6 @@ package youtube
 import (
    "bytes"
    "encoding/json"
-   "errors"
    "github.com/89z/mech"
    "net/http"
 )
@@ -25,15 +24,11 @@ func (c Config) Exchange(id string, ex *Exchange) (*Player, error) {
    } else {
       req.Header.Set("X-Goog-Api-Key", goog_API)
    }
-   Log.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
+   res, err := HTTP_Client.Do(req)
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return nil, errors.New(res.Status)
-   }
    play := new(Player)
    if err := json.NewDecoder(res.Body).Decode(play); err != nil {
       return nil, err
@@ -70,8 +65,7 @@ func (c Config) Search(query string) (*Search, error) {
       return nil, err
    }
    req.Header.Set("X-Goog-Api-Key", goog_API)
-   Log.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
+   res, err := HTTP_Client.Do(req)
    if err != nil {
       return nil, err
    }
