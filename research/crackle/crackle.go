@@ -2,13 +2,12 @@ package crackle
 
 import (
    "encoding/json"
-   "errors"
    "github.com/89z/format"
    "net/http"
    "strconv"
 )
 
-var Log format.Log
+var Client format.Client
 
 type Media struct {
    MediaURLs []struct {
@@ -30,15 +29,11 @@ func New_Media(id int64) (*Media, error) {
       "Authorization": {chunk.String()},
    }
    req.URL.RawQuery = "disableProtocols=true"
-   Log.Dump(req)
-   res, err := new(http.Transport).RoundTrip(req)
+   res, err := Client.Do(req)
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return nil, errors.New(res.Status)
-   }
    med := new(Media)
    if err := json.NewDecoder(res.Body).Decode(med); err != nil {
       return nil, err

@@ -2,7 +2,6 @@ package vimeo
 
 import (
    "encoding/json"
-   "errors"
    "fmt"
    "github.com/89z/format"
    "net/http"
