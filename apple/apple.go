@@ -12,6 +12,15 @@ import (
    "strconv"
 )
 
+const (
+   sf_max = 143499
+   sf_min = 143441
+   v_max = 58
+   v_min = 50
+)
+
+var Client = format.Default_Client
+
 func (r Request) License(env *Environment, ep *Episode) (*License, error) {
    asset := ep.Asset()
    r.body.Server_Parameters = asset.FpsKeyServerQueryParameters
@@ -138,15 +147,6 @@ func (l License) Content() (*widevine.Content, error) {
    }
    return keys.Content(), nil
 }
-
-const (
-   sf_max = 143499
-   sf_min = 143441
-   v_max = 58
-   v_min = 50
-)
-
-var Client format.Client
 
 type Environment struct {
    Media_API struct {

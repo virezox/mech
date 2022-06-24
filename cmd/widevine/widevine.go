@@ -10,7 +10,7 @@ import (
    "strings"
 )
 
-var client format.Client
+var client = format.Default_Client
 
 type flags struct {
    address string
@@ -48,11 +48,9 @@ func (f flags) contents() (widevine.Contents, error) {
    if err != nil {
       return nil, err
    }
-   if f.header != "" {
-      key, val, ok := strings.Cut(f.header, ":")
-      if ok {
-         req.Header.Set(key, val)
-      }
+   key, val, ok := strings.Cut(f.header, ":")
+   if ok {
+      req.Header.Set(key, val)
    }
    res, err := client.Do(req)
    if err != nil {

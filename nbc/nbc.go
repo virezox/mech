@@ -17,7 +17,7 @@ import (
 const persisted_query = "872a3dffc3ae6cdb3dc69fe3d9a949b539de7b579e95b2942e68d827b1a6ec62"
 
 var (
-   Client format.Client
+   Client = format.Default_Client
    secret_key = []byte("2b84a073ede61c766e4c0b3f1e656f7f")
 )
 

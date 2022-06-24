@@ -2,7 +2,6 @@ package main
 
 import (
    "encoding/xml"
-   "errors"
    "fmt"
    "github.com/89z/format"
    "github.com/89z/format/dash"
@@ -10,7 +9,6 @@ import (
    "github.com/89z/mech/amc"
    "github.com/89z/mech/widevine"
    "io"
-   "net/http"
    "os"
 )
 
@@ -55,15 +53,11 @@ func (d downloader) do_DASH(address string, nid, video, audio int64) error {
       return err
    }
    source := d.Playback.DASH()
-   fmt.Println("GET", source.Src)
-   res, err := http.Get(source.Src)
+   res, err := amc.Client.Get(source.Src)
    if err != nil {
       return err
    }
    defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return errors.New(res.Status)
-   }
    d.url = res.Request.URL
    if err := xml.NewDecoder(res.Body).Decode(&d.media); err != nil {
       return err
@@ -114,17 +108,16 @@ func (d *downloader) download(band int64, fn dash.Represent_Func) error {
       if err != nil {
          return err
       }
-      file, err := os.Create(d.Base()+ext)
+      file, err := format.Create(d.Base()+ext)
       if err != nil {
          return err
       }
       defer file.Close()
-      init, err := rep.Initial(d.url)
+      initial, err := rep.Initial(d.url)
       if err != nil {
          return err
       }
-      fmt.Println("GET", init)
-      res, err := http.Get(init.String())
+      res, err := amc.Client.Get(initial.String())
       if err != nil {
          return err
       }
@@ -144,7 +137,7 @@ func (d *downloader) download(band int64, fn dash.Represent_Func) error {
       }
       pro := format.Progress_Chunks(file, len(media))
       for _, addr := range media {
-         res, err := http.Get(addr.String())
+         res, err := amc.Client.WithLevel(0).Get(addr.String())
          if err != nil {
             return err
          }

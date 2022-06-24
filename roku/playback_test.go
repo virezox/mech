@@ -1,6 +1,7 @@
 package roku
 
 import (
+   "github.com/89z/mech/widevine"
    "os"
    "testing"
 )
@@ -8,7 +9,7 @@ import (
 // therokuchannel.roku.com/watch/597a64a4a25c5bf6af4a8c7053049a6f
 const playback_id = "597a64a4a25c5bf6af4a8c7053049a6f"
 
-var client = Client{Raw_Key_ID: "28339AD78F734520DA24E6E0573D392E"}
+var client = widevine.Client{Raw_Key_ID: "28339AD78F734520DA24E6E0573D392E"}
 
 func Test_Playback(t *testing.T) {
    site, err := New_Cross_Site()

@@ -8,7 +8,6 @@ import (
    "github.com/89z/mech"
    "github.com/89z/mech/roku"
    "github.com/89z/mech/widevine"
-   "net/http"
    "os"
 )
 
@@ -44,8 +43,7 @@ func (d downloader) DASH(video, audio int64) error {
       fmt.Println(d.Content)
    }
    video_dash := d.Content.DASH()
-   fmt.Println("GET", video_dash.URL)
-   res, err := http.Get(video_dash.URL)
+   res, err := roku.Client.Get(video_dash.URL)
    if err != nil {
       return err
    }
@@ -84,17 +82,16 @@ func (d *downloader) download(band int64, fn dash.Represent_Func) error {
       if err != nil {
          return err
       }
-      file, err := os.Create(d.Content.Base()+ext)
+      file, err := format.Create(d.Content.Base()+ext)
       if err != nil {
          return err
       }
       defer file.Close()
-      init, err := rep.Initial(d.url)
+      initial, err := rep.Initial(d.url)
       if err != nil {
          return err
       }
-      fmt.Println("GET", init)
-      res, err := http.Get(init.String())
+      res, err := roku.Client.Get(initial.String())
       if err != nil {
          return err
       }
@@ -108,7 +105,7 @@ func (d *downloader) download(band int64, fn dash.Represent_Func) error {
       }
       pro := format.Progress_Chunks(file, len(media))
       for _, addr := range media {
-         res, err := http.Get(addr.String())
+         res, err := roku.Client.WithLevel(0).Get(addr.String())
          if err != nil {
             return err
          }

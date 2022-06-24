@@ -4,10 +4,9 @@ import (
    "fmt"
    "github.com/89z/format"
    "github.com/89z/format/hls"
+   "github.com/89z/mech/roku"
    "io"
-   "net/http"
    "net/url"
-   "os"
 )
 
 func (d downloader) HLS(bandwidth int64) error {
@@ -15,8 +14,7 @@ func (d downloader) HLS(bandwidth int64) error {
    if err != nil {
       return err
    }
-   fmt.Println("GET", video.URL)
-   res, err := http.Get(video.URL)
+   res, err := roku.Client.Get(video.URL)
    if err != nil {
       return err
    }
@@ -44,8 +42,7 @@ func (d downloader) HLS(bandwidth int64) error {
 }
 
 func download_HLS(addr *url.URL, base string) error {
-   fmt.Println("GET", addr)
-   res, err := http.Get(addr.String())
+   res, err := roku.Client.Get(addr.String())
    if err != nil {
       return err
    }
@@ -54,7 +51,7 @@ func download_HLS(addr *url.URL, base string) error {
    if err != nil {
       return err
    }
-   file, err := os.Create(base + hls.TS)
+   file, err := format.Create(base + hls.TS)
    if err != nil {
       return err
    }
@@ -65,7 +62,7 @@ func download_HLS(addr *url.URL, base string) error {
       if err != nil {
          return err
       }
-      res, err := http.Get(addr.String())
+      res, err := roku.Client.WithLevel(0).Get(addr.String())
       if err != nil {
          return err
       }

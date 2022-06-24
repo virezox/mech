@@ -9,7 +9,7 @@ import (
    "strings"
 )
 
-var Client format.Client
+var Client = format.Default_Client
 
 type Download struct {
    Width int

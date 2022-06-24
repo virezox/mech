@@ -6,14 +6,12 @@ import (
    "github.com/89z/format/hls"
    "github.com/89z/mech/cbc"
    "io"
-   "net/http"
    "net/url"
    "os"
 )
 
 func get_key(addr string) ([]byte, error) {
-   fmt.Println("GET", addr)
-   res, err := http.Get(addr)
+   res, err := cbc.Client.Get(addr)
    if err != nil {
       return nil, err
    }
@@ -30,7 +28,7 @@ func download(addr *url.URL, name string) error {
    if err != nil {
       return err
    }
-   file, err := os.Create(name)
+   file, err := format.Create(name)
    if err != nil {
       return err
    }
@@ -45,7 +43,7 @@ func download(addr *url.URL, name string) error {
       if err != nil {
          return err
       }
-      res, err := http.Get(addr.String())
+      res, err := cbc.Client.Get(addr.String())
       if err != nil {
          return err
       }
@@ -61,8 +59,7 @@ func download(addr *url.URL, name string) error {
 }
 
 func new_segment(addr string) (*hls.Segment, error) {
-   fmt.Println("GET", addr)
-   res, err := http.Get(addr)
+   res, err := cbc.Client.Get(addr)
    if err != nil {
       return nil, err
    }
@@ -114,8 +111,7 @@ func new_master(id, address, audio string, video int64, info bool) error {
    if err != nil {
       return err
    }
-   fmt.Println("GET", media.URL)
-   res, err := http.Get(media.URL)
+   res, err := cbc.Client.Get(media.URL)
    if err != nil {
       return err
    }

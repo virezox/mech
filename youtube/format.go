@@ -13,15 +13,14 @@ func (f Format) Encode(w io.Writer) error {
    if err != nil {
       return err
    }
-   HTTP_Client.CheckRedirect = nil
+   client := HTTP_Client.WithLevel(0).WithRedirect().WithStatus(206)
    pro := format.Progress_Bytes(w, f.Content_Length)
    var pos int64
    for pos < f.Content_Length {
       req.Header.Set(
          "Range", fmt.Sprintf("bytes=%v-%v", pos, pos+chunk-1),
       )
-      // this sometimes redirects
-      res, err := HTTP_Client.Custom(req)
+      res, err := client.Do(req)
       if err != nil {
          return err
       }

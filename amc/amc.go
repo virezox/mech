@@ -10,7 +10,7 @@ import (
    "strings"
 )
 
-var Client format.Client
+var Client = format.Default_Client
 
 func Get_NID(input string) (int64, error) {
    _, nID, found := strings.Cut(input, "--")

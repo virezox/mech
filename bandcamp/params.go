@@ -8,7 +8,7 @@ import (
    "net/http"
 )
 
-var Client format.Client
+var Client = format.Default_Client
 
 type Params struct {
    A_ID int

@@ -6,8 +6,6 @@ import (
    "github.com/89z/format/hls"
    "github.com/89z/mech/paramount"
    "io"
-   "net/http"
-   "os"
    "sort"
 )
 
@@ -16,13 +14,12 @@ func download(addr, base string) error {
    if err != nil {
       return err
    }
-   fmt.Println("GET", seg.Raw_Key)
-   res, err := http.Get(seg.Raw_Key)
+   res, err := paramount.Client.Get(seg.Raw_Key)
    if err != nil {
       return err
    }
    defer res.Body.Close()
-   file, err := os.Create(base + hls.TS)
+   file, err := format.Create(base + hls.TS)
    if err != nil {
       return err
    }
@@ -37,7 +34,7 @@ func download(addr, base string) error {
       return err
    }
    for _, addr := range seg.Protected {
-      res, err := http.Get(addr)
+      res, err := paramount.Client.WithLevel(0).Get(addr)
       if err != nil {
          return err
       }
@@ -57,8 +54,7 @@ func (d downloader) HLS(bandwidth int64) error {
    if err != nil {
       return err
    }
-   fmt.Println("GET", addr)
-   res, err := http.Get(addr.String())
+   res, err := paramount.Client.Get(addr.String())
    if err != nil {
       return err
    }
@@ -86,8 +82,7 @@ func (d downloader) HLS(bandwidth int64) error {
 }
 
 func new_segment(addr string) (*hls.Segment, error) {
-   fmt.Println("GET", addr)
-   res, err := http.Get(addr)
+   res, err := paramount.Client.Get(addr)
    if err != nil {
       return nil, err
    }

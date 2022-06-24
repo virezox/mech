@@ -18,7 +18,7 @@ const (
    tv_secret = "6c70b33080758409"
 )
 
-var Client format.Client
+var Client = format.Default_Client
 
 func (p Preview) Base() string {
    var buf []byte

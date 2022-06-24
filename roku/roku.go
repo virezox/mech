@@ -15,7 +15,7 @@ import (
    "time"
 )
 
-var Client format.Client
+var Client = format.Default_Client
 
 type Cross_Site struct {
    cookie *http.Cookie // has own String method

@@ -8,7 +8,6 @@ import (
    "github.com/89z/mech"
    "github.com/89z/mech/paramount"
    "github.com/89z/mech/widevine"
-   "net/http"
    "os"
    "sort"
 )
@@ -41,8 +40,7 @@ func (d downloader) DASH(video, audio int64) error {
    if err != nil {
       return err
    }
-   fmt.Println("GET", addr)
-   res, err := http.Get(addr.String())
+   res, err := paramount.Client.Get(addr.String())
    if err != nil {
       return err
    }
@@ -84,17 +82,16 @@ func (d *downloader) download(band int64, fn dash.Represent_Func) error {
       if err != nil {
          return err
       }
-      file, err := os.Create(d.Base()+ext)
+      file, err := format.Create(d.Base()+ext)
       if err != nil {
          return err
       }
       defer file.Close()
-      init, err := rep.Initial(d.url)
+      initial, err := rep.Initial(d.url)
       if err != nil {
          return err
       }
-      fmt.Println("GET", init)
-      res, err := http.Get(init.String())
+      res, err := paramount.Client.Get(initial.String())
       if err != nil {
          return err
       }
@@ -108,7 +105,7 @@ func (d *downloader) download(band int64, fn dash.Represent_Func) error {
       }
       pro := format.Progress_Chunks(file, len(media))
       for _, addr := range media {
-         res, err := http.Get(addr.String())
+         res, err := paramount.Client.WithLevel(0).Get(addr.String())
          if err != nil {
             return err
          }

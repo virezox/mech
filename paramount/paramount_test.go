@@ -2,6 +2,7 @@ package paramount
 
 import (
    "fmt"
+   "github.com/89z/mech/widevine"
    "os"
    "testing"
    "time"
@@ -13,7 +14,7 @@ var tests = map[test_type]string{
    {movie, stream_pack}: "wQH9yE_y_Dt4ekDYm3yelhhY2KXvOra_",
 }
 
-var client = Client{Raw_Key_ID: "3be8be937c98483184b294173f9152af"}
+var client = widevine.Client{Raw_Key_ID: "3be8be937c98483184b294173f9152af"}
 
 func Test_Session(t *testing.T) {
    sess, err := New_Session(tests[test_type{episode, dash_cenc}])

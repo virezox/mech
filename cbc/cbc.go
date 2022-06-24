@@ -11,7 +11,7 @@ import (
 
 const forwarded_for = "99.224.0.0"
 
-var Client format.Client
+var Client = format.Default_Client
 
 // gem.cbc.ca/media/downton-abbey/s01e05
 func Get_ID(input string) string {

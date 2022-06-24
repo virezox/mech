@@ -1,14 +1,11 @@
 package main
 
 import (
-   "errors"
    "fmt"
    "github.com/89z/format"
    "github.com/89z/format/hls"
    "github.com/89z/mech/nbc"
    "io"
-   "net/http"
-   "os"
    "sort"
 )
 
@@ -21,8 +18,7 @@ func new_master(guid, bandwidth int64, info bool) error {
    if err != nil {
       return err
    }
-   fmt.Println("GET", video.ManifestPath)
-   res, err := http.Get(video.ManifestPath)
+   res, err := nbc.Client.Get(video.ManifestPath)
    if err != nil {
       return err
    }
@@ -49,8 +45,7 @@ func new_master(guid, bandwidth int64, info bool) error {
 }
 
 func download(addr, base string) error {
-   fmt.Println("GET", addr)
-   res, err := http.Get(addr)
+   res, err := nbc.Client.Get(addr)
    if err != nil {
       return err
    }
@@ -59,19 +54,16 @@ func download(addr, base string) error {
    if err != nil {
       return err
    }
-   file, err := os.Create(base + hls.TS)
+   file, err := format.Create(base + hls.TS)
    if err != nil {
       return err
    }
    defer file.Close()
    pro := format.Progress_Chunks(file, len(seg.Clear))
    for _, clear := range seg.Clear {
-      res, err := http.Get(clear)
+      res, err := nbc.Client.WithLevel(0).Get(clear)
       if err != nil {
          return err
-      }
-      if res.StatusCode != http.StatusOK {
-         return errors.New(res.Status)
       }
       pro.Add_Chunk(res.ContentLength)
       if _, err := io.Copy(pro, res.Body); err != nil {

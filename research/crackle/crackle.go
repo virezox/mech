@@ -7,7 +7,7 @@ import (
    "strconv"
 )
 
-var Client format.Client
+var Client = format.Default_Client
 
 type Media struct {
    MediaURLs []struct {
