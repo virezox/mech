@@ -3,13 +3,12 @@ package vimeo
 import (
    "encoding/json"
    "fmt"
-   "github.com/89z/format"
-   "net/http"
+   "github.com/89z/format/http"
    "net/url"
    "strings"
 )
 
-var Client = format.Default_Client
+var Client = http.Default_Client
 
 type Download struct {
    Width int

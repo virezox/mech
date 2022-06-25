@@ -34,7 +34,7 @@ func download(addr, base string) error {
       return err
    }
    for _, addr := range seg.Protected {
-      res, err := paramount.Client.WithLevel(0).Get(addr)
+      res, err := paramount.Client.Level(0).Get(addr)
       if err != nil {
          return err
       }

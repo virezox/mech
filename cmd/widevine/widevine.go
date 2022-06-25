@@ -2,15 +2,14 @@ package main
 
 import (
    "bytes"
-   "github.com/89z/format"
+   "github.com/89z/format/http"
    "github.com/89z/mech/widevine"
    "io"
-   "net/http"
    "os"
    "strings"
 )
 
-var client = format.Default_Client
+var client = http.Default_Client
 
 type flags struct {
    address string

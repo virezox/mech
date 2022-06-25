@@ -1,7 +1,7 @@
 package youtube
 
 import (
-   "github.com/89z/format"
+   "github.com/89z/format/http"
    "net/url"
    "path"
    "strings"
@@ -9,10 +9,8 @@ import (
 
 const origin = "https://www.youtube.com"
 
-var HTTP_Client = format.Default_Client
+var HTTP_Client = http.Default_Client
 
-// https://youtube.com/shorts/9Vsdft81Q6w
-// https://youtube.com/watch?v=XY-hOqcPGCY
 func Video_ID(raw_addr string) (string, error) {
    addr, err := url.Parse(raw_addr)
    if err != nil {

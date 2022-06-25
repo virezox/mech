@@ -2,12 +2,11 @@ package crackle
 
 import (
    "encoding/json"
-   "github.com/89z/format"
-   "net/http"
+   "github.com/89z/format/http"
    "strconv"
 )
 
-var Client = format.Default_Client
+var Client = http.Default_Client
 
 type Media struct {
    MediaURLs []struct {

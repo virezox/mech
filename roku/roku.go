@@ -4,18 +4,17 @@ import (
    "bytes"
    "errors"
    "fmt"
-   "github.com/89z/format"
+   "github.com/89z/format/http"
    "github.com/89z/format/json"
    "github.com/89z/mech"
    "io"
-   "net/http"
    "net/url"
    "path"
    "strings"
    "time"
 )
 
-var Client = format.Default_Client
+var Client = http.Default_Client
 
 type Cross_Site struct {
    cookie *http.Cookie // has own String method
@@ -115,11 +114,7 @@ func New_Content(id string) (*Content, error) {
    var buf strings.Builder
    buf.WriteString("https://therokuchannel.roku.com/api/v2/homescreen/content/")
    buf.WriteString(url.PathEscape(addr.String()))
-   req, err := http.NewRequest("GET", buf.String(), nil)
-   if err != nil {
-      return nil, err
-   }
-   res, err := Client.Do(req)
+   res, err := Client.Get(buf.String())
    if err != nil {
       return nil, err
    }
@@ -188,11 +183,7 @@ func (c Content) HLS() (*Video, error) {
 
 func New_Cross_Site() (*Cross_Site, error) {
    // this has smaller body than www.roku.com
-   req, err := http.NewRequest("GET", "https://therokuchannel.roku.com", nil)
-   if err != nil {
-      return nil, err
-   }
-   res, err := Client.Do(req)
+   res, err := Client.Get("https://therokuchannel.roku.com")
    if err != nil {
       return nil, err
    }

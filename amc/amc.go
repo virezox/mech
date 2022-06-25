@@ -2,15 +2,14 @@ package amc
 
 import (
    "bytes"
-   "github.com/89z/format"
+   "github.com/89z/format/http"
    "github.com/89z/format/json"
    "github.com/89z/mech"
-   "net/http"
    "strconv"
    "strings"
 )
 
-var Client = format.Default_Client
+var Client = http.Default_Client
 
 func Get_NID(input string) (int64, error) {
    _, nID, found := strings.Cut(input, "--")

@@ -58,7 +58,7 @@ func main() {
    flag.BoolVar(&verbose, "v", false, "verbose")
    flag.Parse()
    if verbose {
-      amc.Client.Level = 2
+      amc.Client.Log_Level = 2
    }
    if email != "" {
       err := do_login(email, password)

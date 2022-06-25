@@ -1,14 +1,13 @@
 package soundcloud
 
 import (
-   "github.com/89z/format"
+   "github.com/89z/format/http"
    "net/url"
    "path"
 )
 
 type Media struct {
-   // cf-media.sndcdn.com/QaV7QR1lxpc6.128.mp3?Policy=eyJTdGF0ZW1lbnQiOlt7IlJ...
-   URL string
+   URL string // cf-media.sndcdn.com/QaV7QR1lxpc6.128.mp3
 }
 
 func (m Media) Ext() (string, error) {
@@ -21,7 +20,7 @@ func (m Media) Ext() (string, error) {
 
 const client_id = "iZIs9mchVcX5lhVRyQGGAYlNPVldzAoX"
 
-var Client = format.Default_Client
+var Client = http.Default_Client
 
 type Image struct {
    Size string

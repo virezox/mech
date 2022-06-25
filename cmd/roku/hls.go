@@ -62,7 +62,7 @@ func download_HLS(addr *url.URL, base string) error {
       if err != nil {
          return err
       }
-      res, err := roku.Client.WithLevel(0).Get(addr.String())
+      res, err := roku.Client.Level(0).Get(addr.String())
       if err != nil {
          return err
       }

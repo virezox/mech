@@ -2,13 +2,12 @@ package bandcamp
 
 import (
    "encoding/json"
-   "github.com/89z/format"
+   "github.com/89z/format/http"
    "github.com/89z/format/xml"
    "io"
-   "net/http"
 )
 
-var Client = format.Default_Client
+var Client = http.Default_Client
 
 type Params struct {
    A_ID int
@@ -17,11 +16,7 @@ type Params struct {
 }
 
 func New_Params(addr string) (*Params, error) {
-   req, err := http.NewRequest("GET", addr, nil)
-   if err != nil {
-      return nil, err
-   }
-   res, err := Client.Do(req)
+   res, err := Client.Get(addr)
    if err != nil {
       return nil, err
    }

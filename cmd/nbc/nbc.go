@@ -61,7 +61,7 @@ func download(addr, base string) error {
    defer file.Close()
    pro := format.Progress_Chunks(file, len(seg.Clear))
    for _, clear := range seg.Clear {
-      res, err := nbc.Client.WithLevel(0).Get(clear)
+      res, err := nbc.Client.Level(0).Get(clear)
       if err != nil {
          return err
       }

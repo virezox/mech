@@ -3,7 +3,7 @@ module github.com/89z/mech
 go 1.18
 
 require (
-	github.com/89z/format v1.41.0
+	github.com/89z/format v1.41.7
 	github.com/chmike/cmac-go v1.1.0
 )
 

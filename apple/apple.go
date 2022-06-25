@@ -3,11 +3,10 @@ package apple
 import (
    "bytes"
    "encoding/json"
-   "github.com/89z/format"
+   "github.com/89z/format/http"
    "github.com/89z/format/xml"
    "github.com/89z/mech/widevine"
    "io"
-   "net/http"
    "net/url"
    "strconv"
 )
@@ -19,7 +18,7 @@ const (
    v_min = 50
 )
 
-var Client = format.Default_Client
+var Client = http.Default_Client
 
 func (r Request) License(env *Environment, ep *Episode) (*License, error) {
    asset := ep.Asset()
@@ -98,13 +97,7 @@ type Config struct {
 }
 
 func New_Config() (*Config, error) {
-   req, err := http.NewRequest(
-      "GET", "https://amp-account.tv.apple.com/account/web/config", nil,
-   )
-   if err != nil {
-      return nil, err
-   }
-   res, err := Client.Do(req)
+   res, err := Client.Get("https://amp-account.tv.apple.com/account/web/config")
    if err != nil {
       return nil, err
    }
@@ -155,11 +148,7 @@ type Environment struct {
 }
 
 func New_Environment() (*Environment, error) {
-   req, err := http.NewRequest("GET", "https://tv.apple.com", nil)
-   if err != nil {
-      return nil, err
-   }
-   res, err := Client.Do(req)
+   res, err := Client.Get("https://tv.apple.com")
    if err != nil {
       return nil, err
    }

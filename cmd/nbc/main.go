@@ -22,7 +22,7 @@ func main() {
    flag.BoolVar(&verbose, "v", false, "verbose")
    flag.Parse()
    if verbose {
-      nbc.Client.Level = 2
+      nbc.Client.Log_Level = 2
    }
    if guid >= 1 {
       err := new_master(guid, bandwidth, info)

@@ -6,9 +6,8 @@ import (
    "encoding/base64"
    "encoding/hex"
    "encoding/json"
-   "github.com/89z/format"
+   "github.com/89z/format/http"
    "github.com/89z/mech"
-   "net/http"
    "net/url"
    "strconv"
 )
@@ -18,7 +17,7 @@ const (
    tv_secret = "6c70b33080758409"
 )
 
-var Client = format.Default_Client
+var Client = http.Default_Client
 
 func (p Preview) Base() string {
    var buf []byte

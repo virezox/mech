@@ -105,7 +105,7 @@ func (d *downloader) download(band int64, fn dash.Represent_Func) error {
       }
       pro := format.Progress_Chunks(file, len(media))
       for _, addr := range media {
-         res, err := paramount.Client.WithLevel(0).Get(addr.String())
+         res, err := paramount.Client.Level(0).Get(addr.String())
          if err != nil {
             return err
          }

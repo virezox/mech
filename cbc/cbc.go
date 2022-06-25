@@ -3,15 +3,14 @@ package cbc
 import (
    "encoding/json"
    "fmt"
-   "github.com/89z/format"
-   "net/http"
+   "github.com/89z/format/http"
    "strings"
    "time"
 )
 
 const forwarded_for = "99.224.0.0"
 
-var Client = format.Default_Client
+var Client = http.Default_Client
 
 // gem.cbc.ca/media/downton-abbey/s01e05
 func Get_ID(input string) string {
@@ -34,15 +33,10 @@ type Asset struct {
 }
 
 func New_Asset(id string) (*Asset, error) {
-   req, err := http.NewRequest(
-      "GET",
-      "https://services.radio-canada.ca/ott/cbc-api/v2/assets/" + id,
-      nil,
-   )
-   if err != nil {
-      return nil, err
-   }
-   res, err := Client.Do(req)
+   var buf strings.Builder
+   buf.WriteString("https://services.radio-canada.ca/ott/cbc-api/v2/assets/")
+   buf.WriteString(id)
+   res, err := Client.Get(buf.String())
    if err != nil {
       return nil, err
    }
