@@ -11,6 +11,26 @@ import (
    "os"
 )
 
+func (d downloader) DASH(video, audio int64) error {
+   if d.info {
+      fmt.Println(d.Content)
+   }
+   video_dash := d.Content.DASH()
+   res, err := roku.Client.Redirect(nil).Get(video_dash.URL)
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   d.url = res.Request.URL
+   if err := xml.NewDecoder(res.Body).Decode(&d.media); err != nil {
+      return err
+   }
+   if err := d.download(audio, dash.Audio); err != nil {
+      return err
+   }
+   return d.download(video, dash.Video)
+}
+
 func (d *downloader) set_key() error {
    site, err := roku.New_Cross_Site()
    if err != nil {
@@ -36,26 +56,6 @@ func (d *downloader) set_key() error {
    }
    d.key = content.Key
    return nil
-}
-
-func (d downloader) DASH(video, audio int64) error {
-   if d.info {
-      fmt.Println(d.Content)
-   }
-   video_dash := d.Content.DASH()
-   res, err := roku.Client.Get(video_dash.URL)
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   d.url = res.Request.URL
-   if err := xml.NewDecoder(res.Body).Decode(&d.media); err != nil {
-      return err
-   }
-   if err := d.download(audio, dash.Audio); err != nil {
-      return err
-   }
-   return d.download(video, dash.Video)
 }
 
 func (d *downloader) download(band int64, fn dash.Represent_Func) error {

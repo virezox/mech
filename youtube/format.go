@@ -18,7 +18,7 @@ func (f Format) Encode(w io.Writer) error {
    for pos < f.Content_Length {
       bytes := fmt.Sprintf("bytes=%v-%v", pos, pos+chunk-1)
       req.Header.Set("Range", bytes)
-      res, err := HTTP_Client.Level(0).Redirect().Status(206).Do(req)
+      res, err := HTTP_Client.Level(0).Redirect(nil).Status(206).Do(req)
       if err != nil {
          return err
       }

@@ -1,39 +1,14 @@
 package apple
 
 import (
-   "bufio"
    "bytes"
    "encoding/json"
-   "github.com/89z/format"
    "net/http"
-   "os"
 )
 
-func (a Auth) Create(name string) error {
-   file, err := format.Create(name)
-   if err != nil {
-      return err
-   }
-   defer file.Close()
-   return a.Write(file)
-}
-
+// FIXME add Open and Create. Also change underlying type?
 type Auth struct {
    *http.Response
-}
-
-func Open_Auth(name string) (*Auth, error) {
-   file, err := os.Open(name)
-   if err != nil {
-      return nil, err
-   }
-   defer file.Close()
-   var auth Auth
-   auth.Response, err = http.ReadResponse(bufio.NewReader(file), nil)
-   if err != nil {
-      return nil, err
-   }
-   return &auth, nil
 }
 
 func (c Config) Signin(email, password string) (*Signin, error) {
