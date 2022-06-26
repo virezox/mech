@@ -7,6 +7,34 @@ import (
    "time"
 )
 
+func (p Player) MarshalText() ([]byte, error) {
+   var b []byte
+   b = append(b, p.PlayabilityStatus.String()...)
+   b = append(b, "\nVideo ID: "...)
+   b = append(b, p.VideoDetails.VideoId...)
+   b = append(b, "\nDuration: "...)
+   b = append(b, p.Duration().String()...)
+   b = append(b, "\nView Count: "...)
+   b = strconv.AppendInt(b, p.VideoDetails.ViewCount, 10)
+   b = append(b, "\nAuthor: "...)
+   b = append(b, p.VideoDetails.Author...)
+   b = append(b, "\nTitle: "...)
+   b = append(b, p.VideoDetails.Title...)
+   if p.PublishDate() != "" {
+      b = append(b, "\nPublish Date: "...)
+      b = append(b, p.PublishDate()...)
+   }
+   for _, form := range p.StreamingData.AdaptiveFormats {
+      b = append(b, '\n')
+      text, err := form.MarshalText()
+      if err != nil {
+         return nil, err
+      }
+      b = append(b, text...)
+   }
+   return b, nil
+}
+
 type Player struct {
    VideoDetails struct {
       Author string
@@ -30,30 +58,6 @@ type Player struct {
 type Status struct {
    Status string
    Reason string
-}
-
-func (p Player) String() string {
-   var b []byte
-   b = append(b, p.PlayabilityStatus.String()...)
-   b = append(b, "\nVideo ID: "...)
-   b = append(b, p.VideoDetails.VideoId...)
-   b = append(b, "\nDuration: "...)
-   b = append(b, p.Duration().String()...)
-   b = append(b, "\nView Count: "...)
-   b = strconv.AppendInt(b, p.VideoDetails.ViewCount, 10)
-   b = append(b, "\nAuthor: "...)
-   b = append(b, p.VideoDetails.Author...)
-   b = append(b, "\nTitle: "...)
-   b = append(b, p.VideoDetails.Title...)
-   if p.PublishDate() != "" {
-      b = append(b, "\nPublish Date: "...)
-      b = append(b, p.PublishDate()...)
-   }
-   for _, form := range p.StreamingData.AdaptiveFormats {
-      b = append(b, '\n')
-      b = append(b, form.String()...)
-   }
-   return string(b)
 }
 
 func (p Player) Duration() time.Duration {

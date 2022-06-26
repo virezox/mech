@@ -1,7 +1,6 @@
 package youtube
 
 import (
-   "fmt"
    "github.com/89z/format"
    "io"
    "mime"
@@ -9,18 +8,7 @@ import (
    "strconv"
 )
 
-type Format struct {
-   AudioQuality string
-   Bitrate int64
-   ContentLength int64 `json:"contentLength,string"`
-   Height int
-   MimeType string
-   QualityLabel string
-   URL string
-   Width int
-}
-
-func (f Format) String() string {
+func (f Format) MarshalText() ([]byte, error) {
    var b []byte
    b = append(b, "Quality:"...)
    if f.QualityLabel != "" {
@@ -34,9 +22,13 @@ func (f Format) String() string {
       b = append(b, " Size:"...)
       b = strconv.AppendInt(b, f.ContentLength, 10)
    }
-   b = append(b, " Codec:"...)
-   b = append(b, f.MimeType...)
-   return string(b)
+   b = append(b, " Codecs:"...)
+   _, param, err := mime.ParseMediaType(f.MimeType)
+   if err != nil {
+      return nil, err
+   }
+   b = append(b, param["codecs"]...)
+   return b, nil
 }
 
 func (f Format) Encode(w io.Writer) error {
@@ -47,8 +39,11 @@ func (f Format) Encode(w io.Writer) error {
    pro := format.Progress_Bytes(w, f.ContentLength)
    var pos int64
    for pos < f.ContentLength {
-      bytes := fmt.Sprintf("bytes=%v-%v", pos, pos+chunk-1)
-      req.Header.Set("Range", bytes)
+      b := []byte("bytes=")
+      b = strconv.AppendInt(b, pos, 10)
+      b = append(b, '-')
+      b = strconv.AppendInt(b, pos+chunk-1, 10)
+      req.Header.Set("Range", string(b))
       res, err := HTTP_Client.Level(0).Redirect(nil).Status(206).Do(req)
       if err != nil {
          return err
@@ -97,15 +92,15 @@ func (f Formats) Video(height int) (*Format, bool) {
    return output, ok
 }
 
-func (f Formats) Media_Type() error {
-   for i, form := range f {
-      _, param, err := mime.ParseMediaType(form.MimeType)
-      if err != nil {
-         return err
-      }
-      f[i].MimeType = param["codecs"]
-   }
-   return nil
-}
-
 const chunk = 10_000_000
+
+type Format struct {
+   AudioQuality string
+   Bitrate int64
+   ContentLength int64 `json:"contentLength,string"`
+   Height int
+   MimeType string
+   QualityLabel string
+   URL string
+   Width int
+}
