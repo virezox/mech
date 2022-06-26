@@ -39,7 +39,7 @@ Download the MPD:
 
 ~~~
 yt-dlp -o enc.mp4 -f video=100000-1 --allow-unplayable-formats `
-'https://a306avoddashs3ww-a.akamaihd.net/d/2$47ezd62yJ7jlYq1ThUxmuUIzCbE~/1@f1b4830392ef7c2bb28625d4657360f1/ondemand/iad_2/f1d5/69e5/db5d/4b7c-92a2-f2f680d5cb99/83fb35a0-d889-483f-a1da-49bb5eb09a79_corrected.mpd?custom=true&amznDtid=AOAGZA014O5RE&encoding=segmentBase'
+https://a306avoddashs3ww-a.akamaihd.net/d/2$47ezd62yJ7jlYq1ThUxmuUIzCbE~/1@f1...
 ~~~
 
 Next we need the Widevine [1] PSSH from the MPD file:
@@ -55,7 +55,7 @@ Next we need the Widevine [1] PSSH from the MPD file:
 Now go back to the video page, and you should see a request like this:
 
 ~~~
-POST /cdp/catalog/GetPlaybackResources?deviceID=92e9a8b30b18815dbbf5d10e5d62cfcf41444be0a263d9b8f3c73b43&deviceTypeID=AOAGZA014O5RE&gascEnabled=false&marketplaceID=ATVPDKIKX0DER&uxLocale=en_US&firmware=1&clientId=f22dbddb-ef2c-48c5-8876-bed0d47594fd&deviceApplicationName=Firefox64&playerType=xp&operatingSystemName=Windows&operatingSystemVersion=10.0&asin=B00TJYYKD6&consumptionType=Streaming&desiredResources=Widevine2License&resourceUsage=ImmediateConsumption&videoMaterialType=Feature&userWatchSessionId=eacbfd5a-51db-4aed-bc5f-892c2a29dd7e&deviceProtocolOverride=Https&deviceStreamingTechnologyOverride=DASH&deviceDrmOverride=CENC&deviceBitrateAdaptationsOverride=CVBR%2CCBR&deviceAdInsertionTypeOverride=SSAI&deviceHdrFormatsOverride=None&deviceVideoCodecOverride=H264&deviceVideoQualityOverride=HD&playerAttributes=%7B%22middlewareName%22%3A%22Firefox64%22%2C%22middlewareVersion%22%3A%2288.0%22%2C%22nativeApplicationName%22%3A%22Firefox64%22%2C%22nativeApplicationVersion%22%3A%2288.0%22%2C%22supportedAudioCodecs%22%3A%22AAC%22%2C%22frameRate%22%3A%22HFR%22%2C%22H264.codecLevel%22%3A%224.2%22%2C%22H265.codecLevel%22%3A%220.0%22%7D HTTP/1.1
+POST /cdp/catalog/GetPlaybackResources?deviceID=92e9a8b30b18815dbbf5... HTTP/1.1
 Host: atv-ps.amazon.com
 ~~~
 
@@ -66,7 +66,7 @@ PSSH:
 CAESEKd0rwuuV0+rvRVR2ZDUqqMaBmFtYXpvbiI1Y2lkOms0SXl6bk9VUittWDZsVkNoMTcwd0E9PSxwM1N2QzY1WFQ2dTlGVkhaa05TcW93PT0qAlNEMgA=
 
 License:
-https://atv-ps.amazon.com/cdp/catalog/GetPlaybackResources?deviceID=92e9a8b30b18815dbbf5d10e5d62cfcf41444be0a263d9b8f3c73b43&deviceTypeID=AOAGZA014O5RE&gascEnabled=false&marketplaceID=ATVPDKIKX0DER&uxLocale=en_US&firmware=1&clientId=f22dbddb-ef2c-48c5-8876-bed0d47594fd&deviceApplicationName=Firefox64&playerType=xp&operatingSystemName=Windows&operatingSystemVersion=10.0&asin=B00TJYYKD6&consumptionType=Streaming&desiredResources=Widevine2License&resourceUsage=ImmediateConsumption&videoMaterialType=Feature&userWatchSessionId=eacbfd5a-51db-4aed-bc5f-892c2a29dd7e&deviceProtocolOverride=Https&deviceStreamingTechnologyOverride=DASH&deviceDrmOverride=CENC&deviceBitrateAdaptationsOverride=CVBR%2CCBR&deviceAdInsertionTypeOverride=SSAI&deviceHdrFormatsOverride=None&deviceVideoCodecOverride=H264&deviceVideoQualityOverride=HD&playerAttributes=%7B%22middlewareName%22%3A%22Firefox64%22%2C%22middlewareVersion%22%3A%2288.0%22%2C%22nativeApplicationName%22%3A%22Firefox64%22%2C%22nativeApplicationVersion%22%3A%2288.0%22%2C%22supportedAudioCodecs%22%3A%22AAC%22%2C%22frameRate%22%3A%22HFR%22%2C%22H264.codecLevel%22%3A%224.2%22%2C%22H265.codecLevel%22%3A%220.0%22%7D
+https://atv-ps.amazon.com/cdp/catalog/GetPlaybackResources?deviceID=92e9a8b30...
 ~~~
 
 You should get a result like this:
