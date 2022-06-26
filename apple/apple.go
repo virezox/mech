@@ -11,95 +11,6 @@ import (
    "strconv"
 )
 
-func (c Config) Signin(email, password string) (*Signin, error) {
-   buf := new(bytes.Buffer)
-   err := json.NewEncoder(buf).Encode(map[string]string{
-     "accountName": email,
-     "password": password,
-   })
-   if err != nil {
-      return nil, err
-   }
-   req, err := http.NewRequest(
-      "POST", "https://idmsa.apple.com/appleauth/auth/signin", buf,
-   )
-   if err != nil {
-      return nil, err
-   }
-   req.Header = http.Header{
-      "Content-Type": {"application/json"},
-      "X-Apple-Widget-Key": {c.WebBag.AppIdKey},
-   }
-   var sign Signin
-   sign.Response, err = Client.Do(req)
-   if err != nil {
-      return nil, err
-   }
-   return &sign, nil
-}
-
-type Signin struct {
-   *http.Response
-}
-
-func (s Signin) my_ac_info() *http.Cookie {
-   for _, cook := range s.Cookies() {
-      if cook.Name == "myacinfo" {
-         return cook
-      }
-   }
-   return nil
-}
-
-// FIXME add Open and Create. Also change underlying type?
-type Auth struct {
-   *http.Response
-}
-
-func (s Signin) Auth() (*Auth, error) {
-   req, err := http.NewRequest(
-      "POST", "https://buy.tv.apple.com/account/web/auth", nil,
-   )
-   if err != nil {
-      return nil, err
-   }
-   req.AddCookie(s.my_ac_info())
-   req.Header.Set("Origin", "https://tv.apple.com")
-   var auth Auth
-   auth.Response, err = Client.Do(req)
-   if err != nil {
-      return nil, err
-   }
-   return &auth, nil
-}
-
-func (a Auth) media_user_token() *http.Cookie {
-   for _, cook := range a.Cookies() {
-      if cook.Name == "media-user-token" {
-         return cook
-      }
-   }
-   return nil
-}
-
-func (a *Auth) Request(client widevine.Client) (*Request, error) {
-   var (
-      err error
-      req Request
-   )
-   req.auth = a
-   req.Module, err = client.PSSH()
-   if err != nil {
-      return nil, err
-   }
-   req.body.Challenge, err = req.Marshal()
-   if err != nil {
-      return nil, err
-   }
-   req.body.Key_System = "com.widevine.alpha"
-   req.body.URI = client.Raw
-   return &req, nil
-}
 const (
    sf_max = 143499
    sf_min = 143441
@@ -213,7 +124,7 @@ type License struct {
 
 type Request struct {
    *widevine.Module
-   auth *Auth
+   auth Auth
    body struct {
       Challenge []byte `json:"challenge"`
       Server_Parameters Server_Parameters `json:"extra-server-parameters"`
@@ -271,3 +182,41 @@ type Server_Parameters struct {
    Adam_ID string `json:"adamId"`
    Svc_ID string `json:"svcId"`
 }
+
+func (c Config) Signin(email, password string) (Signin, error) {
+   buf := new(bytes.Buffer)
+   err := json.NewEncoder(buf).Encode(map[string]string{
+     "accountName": email,
+     "password": password,
+   })
+   if err != nil {
+      return nil, err
+   }
+   req, err := http.NewRequest(
+      "POST", "https://idmsa.apple.com/appleauth/auth/signin", buf,
+   )
+   if err != nil {
+      return nil, err
+   }
+   req.Header = http.Header{
+      "Content-Type": {"application/json"},
+      "X-Apple-Widget-Key": {c.WebBag.AppIdKey},
+   }
+   res, err := Client.Do(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   return res.Cookies(), nil
+}
+
+func (s Signin) my_ac_info() *http.Cookie {
+   for _, cookie := range s {
+      if cookie.Name == "myacinfo" {
+         return cookie
+      }
+   }
+   return nil
+}
+
+type Signin []*http.Cookie
