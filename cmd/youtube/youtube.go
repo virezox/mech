@@ -19,7 +19,7 @@ func (v video) do() error {
       if err != nil {
          return err
       }
-      fmt.Println(string(text))
+      os.Stdout.Write(text)
    } else {
       fmt.Println(play.PlayabilityStatus)
       if v.audio != "" {

@@ -1,4 +1,4 @@
-package roku
+package amc
 
 import (
    "github.com/89z/mech/widevine"
@@ -6,21 +6,21 @@ import (
    "testing"
 )
 
-// therokuchannel.roku.com/watch/597a64a4a25c5bf6af4a8c7053049a6f
-const playback_id = "597a64a4a25c5bf6af4a8c7053049a6f"
+// amcplus.com/shows/orphan-black/episodes/season-1-instinct--1011152
+const nID = 1011152
 
-var client = widevine.Client{Raw: "28339AD78F734520DA24E6E0573D392E"}
+var client = widevine.Client{Raw: "c0e598b247fa443590299d5ef47da32c"}
 
 func Test_Playback(t *testing.T) {
-   site, err := New_Cross_Site()
-   if err != nil {
-      t.Fatal(err)
-   }
-   play, err := site.Playback(playback_id)
-   if err != nil {
-      t.Fatal(err)
-   }
    home, err := os.UserHomeDir()
+   if err != nil {
+      t.Fatal(err)
+   }
+   auth, err := Open_Auth(home + "/mech/amc.json")
+   if err != nil {
+      t.Fatal(err)
+   }
+   play, err := auth.Playback(nID)
    if err != nil {
       t.Fatal(err)
    }
@@ -36,7 +36,7 @@ func Test_Playback(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   if content.String() != "13d7c7cf295444944b627ef0ad2c1b3c" {
+   if content.String() != "a66a5603545ad206c1a78e160a6710b1" {
       t.Fatal(content)
    }
 }

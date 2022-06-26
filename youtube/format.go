@@ -28,6 +28,7 @@ func (f Format) MarshalText() ([]byte, error) {
       return nil, err
    }
    b = append(b, param["codecs"]...)
+   b = append(b, '\n')
    return b, nil
 }
 

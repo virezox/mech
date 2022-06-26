@@ -8,13 +8,13 @@ import (
    "time"
 )
 
+var client = widevine.Client{Raw: "3be8be937c98483184b294173f9152af"}
+
 var tests = map[test_type]string{
    {episode, dash_cenc}: "eyT_RYkqNuH_6ZYrepLtxkiPO1HA7dIU",
    {episode, stream_pack}: "622520382",
    {movie, stream_pack}: "wQH9yE_y_Dt4ekDYm3yelhhY2KXvOra_",
 }
-
-var client = widevine.Client{Raw_Key_ID: "3be8be937c98483184b294173f9152af"}
 
 func Test_Session(t *testing.T) {
    sess, err := New_Session(tests[test_type{episode, dash_cenc}])

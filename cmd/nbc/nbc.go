@@ -39,7 +39,7 @@ func new_master(guid, bandwidth int64, info bool) error {
          fmt.Println(each)
       }
    } else {
-      return download(stream.Raw_URI, page.Base())
+      return download(stream.Raw_URI, page.Analytics.ConvivaAssetName)
    }
    return nil
 }

@@ -9,7 +9,7 @@ import (
 // tv.apple.com/us/episode/biscuits/umc.cmc.45cu44369hb2qfuwr3fihnr8e
 const content_ID = "umc.cmc.45cu44369hb2qfuwr3fihnr8e"
 
-var client = widevine.Client{Raw_PSSH: "data:text/plain;base64,AAAAOHBzc2gAAAAA7e+LqXnWSs6jyCfc1R0h7QAAABgSEAAAAAAWgwC7YzAgICAgICBI88aJmwY="}
+var client = widevine.Client{Raw: "data:text/plain;base64,AAAAOHBzc2gAAAAA7e+LqXnWSs6jyCfc1R0h7QAAABgSEAAAAAAWgwC7YzAgICAgICBI88aJmwY="}
 
 func Test_License(t *testing.T) {
    home, err := os.UserHomeDir()

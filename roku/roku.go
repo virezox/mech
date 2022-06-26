@@ -5,7 +5,6 @@ import (
    "errors"
    "github.com/89z/format/http"
    "github.com/89z/format/json"
-   "github.com/89z/mech"
    "io"
    "net/url"
    "path"
@@ -85,7 +84,7 @@ func (c Content) Base() string {
       buf.WriteString(c.EpisodeNumber)
       buf.WriteByte('-')
    }
-   buf.WriteString(mech.Clean(c.Title))
+   buf.WriteString(c.Title)
    return buf.String()
 }
 

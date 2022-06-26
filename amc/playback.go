@@ -2,7 +2,6 @@ package amc
 
 import (
    "bytes"
-   "github.com/89z/mech"
    "github.com/89z/mech/widevine"
    "io"
    "net/http"
@@ -55,7 +54,7 @@ func (p Playback) Base() string {
    buf.WriteByte('-')
    buf.WriteString(p.PlaybackJsonData.Custom_Fields.Episode)
    buf.WriteByte('-')
-   buf.WriteString(mech.Clean(p.PlaybackJsonData.Name))
+   buf.WriteString(p.PlaybackJsonData.Name)
    return buf.String()
 }
 

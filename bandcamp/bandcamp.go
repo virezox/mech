@@ -2,7 +2,6 @@ package bandcamp
 
 import (
    "encoding/json"
-   "github.com/89z/mech"
    "net/http"
    "net/url"
    "strconv"
@@ -132,7 +131,7 @@ type Track struct {
 }
 
 func (t Track) Base() string {
-   return mech.Clean(t.Band_Name + "-" + t.Title)
+   return t.Band_Name + "-" + t.Title
 }
 
 func (t Track) String() string {

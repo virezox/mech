@@ -7,7 +7,6 @@ import (
    "encoding/hex"
    "encoding/json"
    "github.com/89z/format/http"
-   "github.com/89z/mech"
    "net/url"
    "strconv"
 )
@@ -20,15 +19,15 @@ const (
 var Client = http.Default_Client
 
 func (p Preview) Base() string {
-   var buf []byte
-   buf = append(buf, p.Title...)
+   var b []byte
+   b = append(b, p.Title...)
    if p.Season_Number >= 1 {
-      buf = append(buf, '-')
-      buf = strconv.AppendInt(buf, p.Season_Number, 10)
-      buf = append(buf, '-')
-      buf = append(buf, p.Episode_Number...)
+      b = append(b, '-')
+      b = strconv.AppendInt(b, p.Season_Number, 10)
+      b = append(b, '-')
+      b = append(b, p.Episode_Number...)
    }
-   return mech.Clean(string(buf))
+   return string(b)
 }
 
 type Preview struct {
@@ -89,14 +88,14 @@ func (m Media) HLS() (*url.URL, error) {
 }
 
 func (m Media) String() string {
-   var buf []byte
-   buf = append(buf, "http://link.theplatform.com/s/"...)
-   buf = append(buf, m.sid...)
-   buf = append(buf, "/media/guid/"...)
-   buf = strconv.AppendInt(buf, m.aid, 10)
-   buf = append(buf, '/')
-   buf = append(buf, m.GUID...)
-   return string(buf)
+   var b []byte
+   b = append(b, "http://link.theplatform.com/s/"...)
+   b = append(b, m.sid...)
+   b = append(b, "/media/guid/"...)
+   b = strconv.AppendInt(b, m.aid, 10)
+   b = append(b, '/')
+   b = append(b, m.GUID...)
+   return string(b)
 }
 
 func (m Media) Preview() (*Preview, error) {

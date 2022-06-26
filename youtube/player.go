@@ -1,7 +1,6 @@
 package youtube
 
 import (
-   "github.com/89z/mech"
    "strconv"
    "strings"
    "time"
@@ -24,8 +23,8 @@ func (p Player) MarshalText() ([]byte, error) {
       b = append(b, "\nPublish Date: "...)
       b = append(b, p.PublishDate()...)
    }
+   b = append(b, '\n')
    for _, form := range p.StreamingData.AdaptiveFormats {
-      b = append(b, '\n')
       text, err := form.MarshalText()
       if err != nil {
          return nil, err
@@ -77,7 +76,7 @@ func (p Player) Base() string {
    buf.WriteString(p.VideoDetails.Author)
    buf.WriteByte('-')
    buf.WriteString(p.VideoDetails.Title)
-   return mech.Clean(buf.String())
+   return buf.String()
 }
 
 func (s Status) String() string {

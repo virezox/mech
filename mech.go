@@ -6,30 +6,7 @@ import (
    "encoding/json"
    "mime"
    "strconv"
-   "strings"
 )
-
-func Clean(in string) string {
-   var out strings.Builder
-   for _, r := range in {
-      switch r {
-      case
-      '"',
-      '*',
-      '/',
-      ':',
-      '<',
-      '>',
-      '?',
-      '\\',
-      '|',
-      '’': // github.com/PowerShell/PowerShell/issues/16084
-      default:
-         out.WriteRune(r)
-      }
-   }
-   return out.String()
-}
 
 func Extension_By_Type(typ string) (string, error) {
    media, _, err := mime.ParseMediaType(typ)

@@ -68,10 +68,6 @@ func New_Bonanza_Page(guid int64) (*Bonanza_Page, error) {
    return &page.Data.BonanzaPage, nil
 }
 
-func (b Bonanza_Page) Base() string {
-   return mech.Clean(b.Analytics.ConvivaAssetName)
-}
-
 type Bonanza_Page struct {
    Analytics struct {
       ConvivaAssetName string
