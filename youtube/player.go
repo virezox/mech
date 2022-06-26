@@ -1,31 +1,11 @@
 package youtube
 
 import (
-   "fmt"
    "github.com/89z/mech"
+   "strconv"
    "strings"
    "time"
 )
-
-func (p Player) Duration() time.Duration {
-   return time.Duration(p.VideoDetails.LengthSeconds) * time.Second
-}
-
-func (p Player) Date() string {
-   return p.Microformat.PlayerMicroformatRenderer.PublishDate
-}
-
-func (p Player) Time() (time.Time, error) {
-   return time.Parse("2006-01-02", p.Date())
-}
-
-func (p Player) Base() string {
-   var buf strings.Builder
-   buf.WriteString(p.VideoDetails.Author)
-   buf.WriteByte('-')
-   buf.WriteString(p.VideoDetails.Title)
-   return mech.Clean(buf.String())
-}
 
 type Player struct {
    VideoDetails struct {
@@ -52,6 +32,50 @@ type Status struct {
    Reason string
 }
 
+func (p Player) String() string {
+   var b []byte
+   b = append(b, p.PlayabilityStatus.String()...)
+   b = append(b, "\nVideo ID: "...)
+   b = append(b, p.VideoDetails.VideoId...)
+   b = append(b, "\nDuration: "...)
+   b = append(b, p.Duration().String()...)
+   b = append(b, "\nView Count: "...)
+   b = strconv.AppendInt(b, p.VideoDetails.ViewCount, 10)
+   b = append(b, "\nAuthor: "...)
+   b = append(b, p.VideoDetails.Author...)
+   b = append(b, "\nTitle: "...)
+   b = append(b, p.VideoDetails.Title...)
+   if p.PublishDate() != "" {
+      b = append(b, "\nPublish Date: "...)
+      b = append(b, p.PublishDate()...)
+   }
+   for _, form := range p.StreamingData.AdaptiveFormats {
+      b = append(b, '\n')
+      b = append(b, form.String()...)
+   }
+   return string(b)
+}
+
+func (p Player) Duration() time.Duration {
+   return time.Duration(p.VideoDetails.LengthSeconds) * time.Second
+}
+
+func (p Player) PublishDate() string {
+   return p.Microformat.PlayerMicroformatRenderer.PublishDate
+}
+
+func (p Player) Time() (time.Time, error) {
+   return time.Parse("2006-01-02", p.PublishDate())
+}
+
+func (p Player) Base() string {
+   var buf strings.Builder
+   buf.WriteString(p.VideoDetails.Author)
+   buf.WriteByte('-')
+   buf.WriteString(p.VideoDetails.Title)
+   return mech.Clean(buf.String())
+}
+
 func (s Status) String() string {
    var buf strings.Builder
    buf.WriteString("Status: ")
@@ -61,20 +85,4 @@ func (s Status) String() string {
       buf.WriteString(s.Reason)
    }
    return buf.String()
-}
-
-func (p Player) Format(f fmt.State, verb rune) {
-   fmt.Fprintln(f, p.PlayabilityStatus)
-   fmt.Fprintln(f, "Video ID:", p.VideoDetails.VideoId)
-   fmt.Fprintln(f, "Duration:", p.Duration())
-   fmt.Fprintln(f, "View count:", p.VideoDetails.ViewCount)
-   fmt.Fprintln(f, "Author:", p.VideoDetails.Author)
-   fmt.Fprintln(f, "Title:", p.VideoDetails.Title)
-   if p.Date() != "" {
-      fmt.Fprintln(f, "Date:", p.Date())
-   }
-   for _, form := range p.StreamingData.AdaptiveFormats {
-      fmt.Fprintln(f)
-      form.Format(f, verb)
-   }
 }

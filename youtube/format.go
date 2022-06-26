@@ -6,16 +6,47 @@ import (
    "io"
    "mime"
    "net/http"
+   "strconv"
 )
+
+type Format struct {
+   AudioQuality string
+   Bitrate int64
+   ContentLength int64 `json:"contentLength,string"`
+   Height int
+   MimeType string
+   QualityLabel string
+   URL string
+   Width int
+}
+
+func (f Format) String() string {
+   var b []byte
+   b = append(b, "Quality:"...)
+   if f.QualityLabel != "" {
+      b = append(b, f.QualityLabel...)
+   } else {
+      b = append(b, f.AudioQuality...)
+   }
+   b = append(b, " Bitrate:"...)
+   b = strconv.AppendInt(b, f.Bitrate, 10)
+   if f.ContentLength >= 1 { // Tq92D6wQ1mg
+      b = append(b, " Size:"...)
+      b = strconv.AppendInt(b, f.ContentLength, 10)
+   }
+   b = append(b, " Codec:"...)
+   b = append(b, f.MimeType...)
+   return string(b)
+}
 
 func (f Format) Encode(w io.Writer) error {
    req, err := http.NewRequest("GET", f.URL, nil)
    if err != nil {
       return err
    }
-   pro := format.Progress_Bytes(w, f.Content_Length)
+   pro := format.Progress_Bytes(w, f.ContentLength)
    var pos int64
-   for pos < f.Content_Length {
+   for pos < f.ContentLength {
       bytes := fmt.Sprintf("bytes=%v-%v", pos, pos+chunk-1)
       req.Header.Set("Range", bytes)
       res, err := HTTP_Client.Level(0).Redirect(nil).Status(206).Do(req)
@@ -66,22 +97,6 @@ func (f Formats) Video(height int) (*Format, bool) {
    return output, ok
 }
 
-func (f Format) Format(s fmt.State, verb rune) {
-   if f.QualityLabel != "" {
-      fmt.Fprint(s, "Quality:", f.QualityLabel)
-   } else {
-      fmt.Fprint(s, "Quality:", f.AudioQuality)
-   }
-   fmt.Fprint(s, " Bitrate:", f.Bitrate)
-   if f.Content_Length >= 1 { // Tq92D6wQ1mg
-      fmt.Fprint(s, " Size:", f.Content_Length)
-   }
-   fmt.Fprint(s, " Codec:", f.MimeType)
-   if verb == 'a' {
-      fmt.Fprint(s, " URL:", f.URL)
-   }
-}
-
 func (f Formats) Media_Type() error {
    for i, form := range f {
       _, param, err := mime.ParseMediaType(form.MimeType)
@@ -94,14 +109,3 @@ func (f Formats) Media_Type() error {
 }
 
 const chunk = 10_000_000
-
-type Format struct {
-   AudioQuality string
-   Bitrate int
-   Content_Length int64 `json:"contentLength,string"`
-   Height int
-   MimeType string
-   QualityLabel string
-   URL string
-   Width int
-}
