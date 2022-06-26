@@ -9,7 +9,7 @@ import (
    "strings"
 )
 
-var client = http.Default_Client
+var http_client = http.Default_Client
 
 type flags struct {
    address string
@@ -21,19 +21,19 @@ type flags struct {
 
 func (f flags) contents() (widevine.Contents, error) {
    var (
-      w_client widevine.Client
+      client widevine.Client
       err error
    )
-   w_client.ID, err = os.ReadFile(f.client_id)
+   client.ID, err = os.ReadFile(f.client_id)
    if err != nil {
       return nil, err
    }
-   w_client.Private_Key, err = os.ReadFile(f.private_key)
+   client.Private_Key, err = os.ReadFile(f.private_key)
    if err != nil {
       return nil, err
    }
-   w_client.Raw_Key_ID = f.key_id
-   module, err := w_client.Module()
+   client.Raw = f.key_id
+   module, err := client.Key_ID()
    if err != nil {
       return nil, err
    }
@@ -51,7 +51,7 @@ func (f flags) contents() (widevine.Contents, error) {
    if ok {
       req.Header.Set(key, val)
    }
-   res, err := client.Do(req)
+   res, err := http_client.Do(req)
    if err != nil {
       return nil, err
    }

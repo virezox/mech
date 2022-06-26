@@ -11,11 +11,11 @@ import (
 )
 
 func (s Session) Content(c widevine.Client) (*widevine.Content, error) {
-   mod, err := c.Module()
+   module, err := c.Key_ID()
    if err != nil {
       return nil, err
    }
-   buf, err := mod.Marshal()
+   buf, err := module.Marshal()
    if err != nil {
       return nil, err
    }
@@ -35,7 +35,7 @@ func (s Session) Content(c widevine.Client) (*widevine.Content, error) {
    if err != nil {
       return nil, err
    }
-   keys, err := mod.Unmarshal(buf)
+   keys, err := module.Unmarshal(buf)
    if err != nil {
       return nil, err
    }

@@ -12,62 +12,6 @@ import (
    "os"
 )
 
-func do_login(email, password string) error {
-   auth, err := amc.Unauth()
-   if err != nil {
-      return err
-   }
-   if err := auth.Login(email, password); err != nil {
-      return err
-   }
-   home, err := os.UserHomeDir()
-   if err != nil {
-      return err
-   }
-   return auth.Create(home + "/mech/amc.json")
-}
-
-func (d downloader) do_DASH(address string, nid, video, audio int64) error {
-   home, err := os.UserHomeDir()
-   if err != nil {
-      return err
-   }
-   auth, err := amc.Open_Auth(home + "/mech/amc.json")
-   if err != nil {
-      return err
-   }
-   if err := auth.Refresh(); err != nil {
-      return err
-   }
-   if err := auth.Create(home + "/mech/amc.json"); err != nil {
-      return err
-   }
-   if nid == 0 {
-      nid, err = amc.Get_NID(address)
-      if err != nil {
-         return err
-      }
-   }
-   d.Playback, err = auth.Playback(nid)
-   if err != nil {
-      return err
-   }
-   source := d.Playback.DASH()
-   res, err := amc.Client.Get(source.Src)
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   d.url = res.Request.URL
-   if err := xml.NewDecoder(res.Body).Decode(&d.media); err != nil {
-      return err
-   }
-   if err := d.download(audio, dash.Audio); err != nil {
-      return err
-   }
-   return d.download(video, dash.Video)
-}
-
 func (d *downloader) set_key() error {
    var (
       client widevine.Client
@@ -81,7 +25,7 @@ func (d *downloader) set_key() error {
    if err != nil {
       return err
    }
-   client.Raw_Key_ID = d.media.Protection().Default_KID
+   client.Raw = d.media.Protection().Default_KID
    content, err := d.Playback.Content(client)
    if err != nil {
       return err
@@ -117,7 +61,7 @@ func (d *downloader) download(band int64, fn dash.Represent_Func) error {
       if err != nil {
          return err
       }
-      res, err := amc.Client.Get(initial.String())
+      res, err := amc.Client.Redirect(nil).Get(initial.String())
       if err != nil {
          return err
       }
@@ -137,7 +81,7 @@ func (d *downloader) download(band int64, fn dash.Represent_Func) error {
       }
       pro := format.Progress_Chunks(file, len(media))
       for _, addr := range media {
-         res, err := amc.Client.Level(0).Get(addr.String())
+         res, err := amc.Client.Redirect(nil).Level(0).Get(addr.String())
          if err != nil {
             return err
          }
@@ -156,4 +100,59 @@ func (d *downloader) download(band int64, fn dash.Represent_Func) error {
       }
    }
    return nil
+}
+
+func do_login(email, password string) error {
+   auth, err := amc.Unauth()
+   if err != nil {
+      return err
+   }
+   if err := auth.Login(email, password); err != nil {
+      return err
+   }
+   home, err := os.UserHomeDir()
+   if err != nil {
+      return err
+   }
+   return auth.Create(home + "/mech/amc.json")
+}
+func (d downloader) do_DASH(address string, nid, video, audio int64) error {
+   home, err := os.UserHomeDir()
+   if err != nil {
+      return err
+   }
+   auth, err := amc.Open_Auth(home + "/mech/amc.json")
+   if err != nil {
+      return err
+   }
+   if err := auth.Refresh(); err != nil {
+      return err
+   }
+   if err := auth.Create(home + "/mech/amc.json"); err != nil {
+      return err
+   }
+   if nid == 0 {
+      nid, err = amc.Get_NID(address)
+      if err != nil {
+         return err
+      }
+   }
+   d.Playback, err = auth.Playback(nid)
+   if err != nil {
+      return err
+   }
+   source := d.Playback.DASH()
+   res, err := amc.Client.Redirect(nil).Get(source.Src)
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   d.url = res.Request.URL
+   if err := xml.NewDecoder(res.Body).Decode(&d.media); err != nil {
+      return err
+   }
+   if err := d.download(audio, dash.Audio); err != nil {
+      return err
+   }
+   return d.download(video, dash.Video)
 }

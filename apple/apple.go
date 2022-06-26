@@ -11,6 +11,25 @@ import (
    "strconv"
 )
 
+func (a *Auth) Request(client widevine.Client) (*Request, error) {
+   var (
+      err error
+      req Request
+   )
+   req.auth = a
+   req.Module, err = client.PSSH()
+   if err != nil {
+      return nil, err
+   }
+   req.body.Challenge, err = req.Marshal()
+   if err != nil {
+      return nil, err
+   }
+   req.body.Key_System = "com.widevine.alpha"
+   req.body.URI = client.Raw
+   return &req, nil
+}
+
 const (
    sf_max = 143499
    sf_min = 143441
@@ -181,23 +200,4 @@ func New_Environment() (*Environment, error) {
 type Server_Parameters struct {
    Adam_ID string `json:"adamId"`
    Svc_ID string `json:"svcId"`
-}
-
-func (a *Auth) Request(client widevine.Client) (*Request, error) {
-   var (
-      err error
-      req Request
-   )
-   req.auth = a
-   req.Module, err = client.Module()
-   if err != nil {
-      return nil, err
-   }
-   req.body.Challenge, err = req.Marshal()
-   if err != nil {
-      return nil, err
-   }
-   req.body.Key_System = "com.widevine.alpha"
-   req.body.URI = client.Raw_PSSH
-   return &req, nil
 }

@@ -26,7 +26,7 @@ func (d *downloader) set_key() error {
    if err != nil {
       return err
    }
-   client.Raw_Key_ID = d.media.Protection().Default_KID
+   client.Raw = d.media.Protection().Default_KID
    content, err := sess.Content(client)
    if err != nil {
       return err

@@ -30,7 +30,7 @@ func main() {
    flag.BoolVar(&verbose, "v", false, "verbose")
    flag.Parse()
    if verbose {
-      client.Log_Level = 2
+      http_client.Log_Level = 2
    }
    if f.key_id != "" {
       contents, err := f.contents()

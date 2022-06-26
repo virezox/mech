@@ -13,7 +13,7 @@ func Test_Video(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   fmt.Printf("%a\n", con)
+   fmt.Println(con)
    video, err := con.HLS()
    if err != nil {
       t.Fatal(err)

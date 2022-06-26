@@ -126,7 +126,7 @@ func (m Media) location(formats, asset string) (*url.URL, error) {
       "assetTypes": {asset},
       "formats": {formats},
    }.Encode()
-   res, err := Client.Do(req)
+   res, err := Client.Status(302).Do(req)
    if err != nil {
       return nil, err
    }
