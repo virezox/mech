@@ -6,6 +6,27 @@ import (
    "testing"
 )
 
+func Test_Create(t *testing.T) {
+   con, err := New_Config()
+   if err != nil {
+      t.Fatal(err)
+   }
+   sign, err := con.Signin(email, password)
+   if err != nil {
+      t.Fatal(err)
+   }
+   auth, err := sign.Auth()
+   if err != nil {
+      t.Fatal(err)
+   }
+   home, err := os.UserHomeDir()
+   if err != nil {
+      t.Fatal(err)
+   }
+   if err := auth.Create(home + "/mech/apple.json"); err != nil {
+      t.Fatal(err)
+   }
+}
 // tv.apple.com/us/episode/biscuits/umc.cmc.45cu44369hb2qfuwr3fihnr8e
 const content_ID = "umc.cmc.45cu44369hb2qfuwr3fihnr8e"
 
