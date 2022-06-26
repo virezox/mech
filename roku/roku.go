@@ -3,7 +3,6 @@ package roku
 import (
    "bytes"
    "errors"
-   "fmt"
    "github.com/89z/format/http"
    "github.com/89z/format/json"
    "github.com/89z/mech"
@@ -13,6 +12,29 @@ import (
    "strings"
    "time"
 )
+
+func (c Content) String() string {
+   var buf strings.Builder
+   buf.WriteString("ID: ")
+   buf.WriteString(c.Meta.ID)
+   buf.WriteString("\nType: ")
+   buf.WriteString(c.Meta.MediaType)
+   buf.WriteString("\nTitle: ")
+   buf.WriteString(c.Title)
+   if c.Meta.MediaType == "episode" {
+      buf.WriteString("\nSeries: ")
+      buf.WriteString(c.Series.Title)
+      buf.WriteString("\nSeason: ")
+      buf.WriteString(c.SeasonNumber)
+      buf.WriteString("\nEpisode: ")
+      buf.WriteString(c.EpisodeNumber)
+   }
+   buf.WriteString("\nDate: ")
+   buf.WriteString(c.ReleaseDate)
+   buf.WriteString("\nDuration: ")
+   buf.WriteString(c.Duration().String())
+   return buf.String()
+}
 
 var Client = http.Default_Client
 
@@ -67,27 +89,6 @@ func (c Content) Base() string {
    return buf.String()
 }
 
-type Content struct {
-   Meta struct {
-      ID string
-      MediaType string
-   }
-   Title string
-   Series struct {
-      Title string
-   }
-   SeasonNumber string
-   EpisodeNumber string
-   ReleaseDate string
-   RunTimeSeconds int64
-   ViewOptions []struct {
-      License string
-      Media struct {
-         Videos []Video
-      }
-   }
-}
-
 func Content_ID(addr string) string {
    return path.Base(addr)
 }
@@ -124,27 +125,6 @@ func New_Content(id string) (*Content, error) {
       return nil, err
    }
    return con, nil
-}
-
-func (c Content) Format(f fmt.State, verb rune) {
-   fmt.Fprintln(f, "ID:", c.Meta.ID)
-   fmt.Fprintln(f, "Type:", c.Meta.MediaType)
-   fmt.Fprintln(f, "Title:", c.Title)
-   if c.Meta.MediaType == "episode" {
-      fmt.Fprintln(f, "Series:", c.Series.Title)
-      fmt.Fprintln(f, "Season:", c.SeasonNumber)
-      fmt.Fprintln(f, "Episode:", c.EpisodeNumber)
-   }
-   fmt.Fprintln(f, "Date:", c.ReleaseDate)
-   fmt.Fprint(f, "Duration: ", c.Duration())
-   if verb == 'a' {
-      for _, opt := range c.ViewOptions {
-         fmt.Fprint(f, "\nLicense: ", opt.License)
-         for _, vid := range opt.Media.Videos {
-            fmt.Fprint(f, "\nURL: ", vid.URL)
-         }
-      }
-   }
 }
 
 func (c Content) Duration() time.Duration {
@@ -206,4 +186,25 @@ func New_Cross_Site() (*Cross_Site, error) {
       return nil, err
    }
    return &site, nil
+}
+
+type Content struct {
+   Meta struct {
+      ID string
+      MediaType string
+   }
+   Title string
+   Series struct {
+      Title string
+   }
+   SeasonNumber string
+   EpisodeNumber string
+   ReleaseDate string
+   RunTimeSeconds int64
+   ViewOptions []struct {
+      License string
+      Media struct {
+         Videos []Video
+      }
+   }
 }

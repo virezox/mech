@@ -2,7 +2,6 @@ package cbc
 
 import (
    "encoding/json"
-   "fmt"
    "github.com/89z/format/http"
    "strings"
    "time"
@@ -48,25 +47,6 @@ func New_Asset(id string) (*Asset, error) {
    return asset, nil
 }
 
-func (a Asset) Format(f fmt.State, verb rune) {
-   fmt.Fprintln(f, "ID:", a.AppleContentId)
-   fmt.Fprintln(f, "Series:", a.Series)
-   fmt.Fprintln(f, "Title:", a.Title)
-   fmt.Fprintln(f, "Date:", a.Get_Time())
-   fmt.Fprint(f, "Duration: ", a.Get_Duration())
-   if verb == 'a' {
-      fmt.Fprint(f, "\nURL: ", a.PlaySession.URL)
-   }
-}
-
-func (a Asset) Get_Duration() time.Duration {
-   return time.Duration(a.Duration) * time.Second
-}
-
-func (a Asset) Get_Time() time.Time {
-   return time.UnixMilli(a.AirDate)
-}
-
 type Media struct {
    Message string
    URL string
@@ -91,4 +71,27 @@ func (p Profile) Media(asset *Asset) (*Media, error) {
       return nil, err
    }
    return med, nil
+}
+
+func (a Asset) Get_Duration() time.Duration {
+   return time.Duration(a.Duration) * time.Second
+}
+
+func (a Asset) Get_Time() time.Time {
+   return time.UnixMilli(a.AirDate)
+}
+
+func (a Asset) String() string {
+   var buf strings.Builder
+   buf.WriteString("ID: ")
+   buf.WriteString(a.AppleContentId)
+   buf.WriteString("\nSeries: ")
+   buf.WriteString(a.Series)
+   buf.WriteString("\nTitle: ")
+   buf.WriteString(a.Title)
+   buf.WriteString("\nDate: ")
+   buf.WriteString(a.Get_Time().String())
+   buf.WriteString("\nDuration: ")
+   buf.WriteString(a.Get_Duration().String())
+   return buf.String()
 }
