@@ -12,14 +12,18 @@ type Playback struct {
    }
 }
 
-func (p Playback) License_URL() string {
+func (p Playback) Request_URL() string {
    return p.DRM.Widevine.LicenseServer
 }
 
-func (p Playback) Header() http.Header {
+func (p Playback) Request_Header() http.Header {
    return nil
 }
 
-func (p Playback) Body(buf []byte) []byte {
-   return buf
+func (p Playback) Request_Body(buf []byte) ([]byte, error) {
+   return buf, nil
+}
+
+func (p Playback) Response_Body(buf []byte) ([]byte, error) {
+   return buf, nil
 }

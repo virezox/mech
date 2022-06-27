@@ -5,25 +5,6 @@ import (
    "strings"
 )
 
-type Playback struct {
-   BC_JWT string
-   PlaybackJsonData Playback_JSON_Data
-}
-
-func (p Playback) License_URL() string {
-   return p.DASH().Key_Systems.Widevine.License_URL
-}
-
-func (p Playback) Header() http.Header {
-   head := make(http.Header)
-   head.Set("bcov-auth", p.BC_JWT)
-   return head
-}
-
-func (p Playback) Body(buf []byte) []byte {
-   return buf
-}
-
 func (p Playback) Base() string {
    var buf strings.Builder
    buf.WriteString(p.PlaybackJsonData.Custom_Fields.Show)
@@ -63,4 +44,27 @@ type Source struct {
    }
    Src string
    Type string
+}
+
+type Playback struct {
+   BC_JWT string
+   PlaybackJsonData Playback_JSON_Data
+}
+
+func (p Playback) Request_URL() string {
+   return p.DASH().Key_Systems.Widevine.License_URL
+}
+
+func (p Playback) Request_Header() http.Header {
+   head := make(http.Header)
+   head.Set("bcov-auth", p.BC_JWT)
+   return head
+}
+
+func (p Playback) Request_Body(buf []byte) ([]byte, error) {
+   return buf, nil
+}
+
+func (p Playback) Response_Body(buf []byte) ([]byte, error) {
+   return buf, nil
 }

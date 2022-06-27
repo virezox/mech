@@ -2,7 +2,6 @@ package apple
 
 import (
    "encoding/json"
-   "github.com/89z/format/hls"
    "net/http"
 )
 
@@ -15,7 +14,7 @@ type Poster struct {
    auth Auth // Header
    env *Environment // Header
    episode *Episode // URL, Body
-   segment *hls.Segment
+   pssh string
 }
 
 func (p Poster) Request_URL() string {
@@ -40,7 +39,7 @@ func (p Poster) Request_Body(buf []byte) ([]byte, error) {
    s.Challenge = buf
    s.Key_System = "com.widevine.alpha"
    s.Server_Parameters = p.episode.Asset().FpsKeyServerQueryParameters
-   s.URI = p.segment.Raw_Key
+   s.URI = p.pssh
    return json.Marshal(s)
 }
 

@@ -25,14 +25,17 @@ func (m Module) Request(post Poster) (Contents, error) {
    if err != nil {
       return nil, err
    }
-   body := post.Body(signed_request)
+   body, err := post.Request_Body(signed_request)
+   if err != nil {
+      return nil, err
+   }
    req, err := http.NewRequest(
-      "POST", post.License_URL(), bytes.NewReader(body),
+      "POST", post.Request_URL(), bytes.NewReader(body),
    )
    if err != nil {
       return nil, err
    }
-   if h := post.Header(); h != nil {
+   if h := post.Request_Header(); h != nil {
       req.Header = h
    }
    res, err := Client.Do(req)
@@ -41,6 +44,10 @@ func (m Module) Request(post Poster) (Contents, error) {
    }
    defer res.Body.Close()
    body, err = io.ReadAll(res.Body)
+   if err != nil {
+      return nil, err
+   }
+   body, err = post.Response_Body(body)
    if err != nil {
       return nil, err
    }
