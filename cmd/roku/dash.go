@@ -12,6 +12,22 @@ import (
 )
 
 func (d *downloader) set_key() error {
+   private_key, err := os.ReadFile(d.pem)
+   if err != nil {
+      return err
+   }
+   client_id, err := os.ReadFile(d.client)
+   if err != nil {
+      return err
+   }
+   key_id, err := widevine.Key_ID(d.media.Protection().Default_KID)
+   if err != nil {
+      return err
+   }
+   mod, err := widevine.New_Module(private_key, client_id, key_id)
+   if err != nil {
+      return err
+   }
    site, err := roku.New_Cross_Site()
    if err != nil {
       return err
@@ -20,21 +36,11 @@ func (d *downloader) set_key() error {
    if err != nil {
       return err
    }
-   var client widevine.Client
-   client.ID, err = os.ReadFile(d.client)
+   contents, err := mod.Request(play)
    if err != nil {
       return err
    }
-   client.Private_Key, err = os.ReadFile(d.pem)
-   if err != nil {
-      return err
-   }
-   client.Raw = d.media.Protection().Default_KID
-   content, err := play.Content(client)
-   if err != nil {
-      return err
-   }
-   d.key = content.Key
+   d.key = contents.Content().Key
    return nil
 }
 

@@ -13,11 +13,11 @@ import (
 )
 
 func (d *downloader) set_key() error {
-   client_id, err := os.ReadFile(d.client)
+   private_key, err := os.ReadFile(d.pem)
    if err != nil {
       return err
    }
-   private_key, err := os.ReadFile(d.pem)
+   client_id, err := os.ReadFile(d.client)
    if err != nil {
       return err
    }

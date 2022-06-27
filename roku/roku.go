@@ -5,21 +5,12 @@ import (
    "errors"
    "github.com/89z/format/http"
    "github.com/89z/format/json"
-   "github.com/89z/mech/widevine"
    "io"
    "net/url"
    "path"
    "strings"
    "time"
 )
-
-type Playback struct {
-   DRM struct {
-      Widevine struct {
-         LicenseServer string
-      }
-   }
-}
 
 func (c Content) String() string {
    var buf strings.Builder
