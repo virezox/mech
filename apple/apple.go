@@ -12,6 +12,11 @@ import (
    "strconv"
 )
 
+type Server_Parameters struct {
+   Adam_ID string `json:"adamId"`
+   Svc_ID string `json:"svcId"`
+}
+
 type Auth []*http.Cookie
 
 func (a Auth) Create(name string) error {

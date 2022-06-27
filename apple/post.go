@@ -5,11 +5,6 @@ import (
    "net/http"
 )
 
-type Server_Parameters struct {
-   Adam_ID string `json:"adamId"`
-   Svc_ID string `json:"svcId"`
-}
-
 type Poster struct {
    auth Auth // Header
    env *Environment // Header
