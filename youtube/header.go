@@ -7,12 +7,12 @@ import (
    "strings"
 )
 
-func (x Exchange) Create(name string) error {
-   return json.Create(x, name)
+func Open_Header(name string) (*Header, error) {
+   return json.Open[Header](name)
 }
 
-func Open_Exchange(name string) (*Exchange, error) {
-   return json.Open[Exchange](name)
+func (h Header) Create(name string) error {
+   return json.Create(h, name)
 }
 
 const (
@@ -23,25 +23,25 @@ const (
    client_secret = "SboVhoG9s0rNafixCSGGKXAT"
 )
 
-type Exchange struct {
+type Header struct {
    Access_Token string
    Error string
    Refresh_Token string
 }
 
-func (x *Exchange) Refresh() error {
+func (h *Header) Refresh() error {
    val := url.Values{
       "client_id": {client_ID},
       "client_secret": {client_secret},
       "grant_type": {"refresh_token"},
-      "refresh_token": {x.Refresh_Token},
+      "refresh_token": {h.Refresh_Token},
    }
    res, err := http.PostForm("https://oauth2.googleapis.com/token", val)
    if err != nil {
       return err
    }
    defer res.Body.Close()
-   return json.NewDecoder(res.Body).Decode(x)
+   return json.NewDecoder(res.Body).Decode(h)
 }
 
 type OAuth struct {
@@ -67,7 +67,7 @@ func New_OAuth() (*OAuth, error) {
    return auth, nil
 }
 
-func (o OAuth) Exchange() (*Exchange, error) {
+func (o OAuth) Header() (*Header, error) {
    val := url.Values{
       "client_id": {client_ID},
       "client_secret": {client_secret},
@@ -79,11 +79,11 @@ func (o OAuth) Exchange() (*Exchange, error) {
       return nil, err
    }
    defer res.Body.Close()
-   exc := new(Exchange)
-   if err := json.NewDecoder(res.Body).Decode(exc); err != nil {
+   head := new(Header)
+   if err := json.NewDecoder(res.Body).Decode(head); err != nil {
       return nil, err
    }
-   return exc, nil
+   return head, nil
 }
 
 func (o OAuth) String() string {

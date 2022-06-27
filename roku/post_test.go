@@ -7,9 +7,13 @@ import (
 )
 
 // therokuchannel.roku.com/watch/597a64a4a25c5bf6af4a8c7053049a6f
-const playback_ID = "597a64a4a25c5bf6af4a8c7053049a6f"
+const (
+   key = "13d7c7cf295444944b627ef0ad2c1b3c"
+   playback_ID = "597a64a4a25c5bf6af4a8c7053049a6f"
+   raw_key_ID = "28339AD78F734520DA24E6E0573D392E"
+)
 
-func Test_Playback(t *testing.T) {
+func Test_Post(t *testing.T) {
    home, err := os.UserHomeDir()
    if err != nil {
       t.Fatal(err)
@@ -22,7 +26,7 @@ func Test_Playback(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   key_ID, err := widevine.Key_ID("28339AD78F734520DA24E6E0573D392E")
+   key_ID, err := widevine.Key_ID(raw_key_ID)
    if err != nil {
       t.Fatal(err)
    }
@@ -42,7 +46,7 @@ func Test_Playback(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   if keys.Content().String() != "13d7c7cf295444944b627ef0ad2c1b3c" {
+   if keys.Content().String() != key {
       t.Fatal(keys)
    }
 }

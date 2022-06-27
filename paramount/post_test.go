@@ -6,7 +6,13 @@ import (
    "testing"
 )
 
-func Test_Session(t *testing.T) {
+// paramountplus.com/shows/video/eyT_RYkqNuH_6ZYrepLtxkiPO1HA7dIU
+const (
+   key = "44f12639c9c4a5a432338aca92e38920"
+   raw_key_ID = "3be8be937c98483184b294173f9152af"
+)
+
+func Test_Post(t *testing.T) {
    home, err := os.UserHomeDir()
    if err != nil {
       t.Fatal(err)
@@ -19,7 +25,7 @@ func Test_Session(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   key_ID, err := widevine.Key_ID("3be8be937c98483184b294173f9152af")
+   key_ID, err := widevine.Key_ID(raw_key_ID)
    if err != nil {
       t.Fatal(err)
    }
@@ -35,7 +41,7 @@ func Test_Session(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   if keys.Content().String() != "44f12639c9c4a5a432338aca92e38920" {
+   if keys.Content().String() != key {
       t.Fatal(keys)
    }
 }

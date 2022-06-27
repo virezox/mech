@@ -7,9 +7,12 @@ import (
 )
 
 // amcplus.com/shows/orphan-black/episodes/season-1-instinct--1011152
-const nID = 1011152
+const (
+   nID = 1011152
+   raw_key_ID = "c0e598b247fa443590299d5ef47da32c"
+)
 
-func Test_Playback(t *testing.T) {
+func Test_Post(t *testing.T) {
    home, err := os.UserHomeDir()
    if err != nil {
       t.Fatal(err)
@@ -22,7 +25,7 @@ func Test_Playback(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   key_ID, err := widevine.Key_ID("c0e598b247fa443590299d5ef47da32c")
+   key_ID, err := widevine.Key_ID(raw_key_ID)
    if err != nil {
       t.Fatal(err)
    }
@@ -32,6 +35,9 @@ func Test_Playback(t *testing.T) {
    }
    auth, err := Open_Auth(home + "/mech/amc.json")
    if err != nil {
+      t.Fatal(err)
+   }
+   if err := auth.Refresh(); err != nil {
       t.Fatal(err)
    }
    play, err := auth.Playback(nID)

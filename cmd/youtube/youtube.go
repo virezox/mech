@@ -8,6 +8,45 @@ import (
    "os"
 )
 
+func (v video) player() (*youtube.Player, error) {
+   if v.id == "" {
+      var err error
+      v.id, err = youtube.Video_ID(v.address)
+      if err != nil {
+         return nil, err
+      }
+   }
+   var req youtube.Request
+   if v.request == 0 {
+      req.Body = youtube.Android
+   } else if v.request == 1 {
+      req.Body = youtube.Android_Embed
+   } else {
+      home, err := os.UserHomeDir()
+      if err != nil {
+         return nil, err
+      }
+      req.Header, err = youtube.Open_Header(home + "/mech/youtube.json")
+      if err != nil {
+         return nil, err
+      }
+      if v.request == 2 {
+         req.Body = youtube.Android_Racy
+      } else {
+         req.Body = youtube.Android_Content
+      }
+   }
+   return req.Player(v.id)
+}
+
+type video struct {
+   address string
+   audio string
+   height int
+   id string
+   info bool
+   request int
+}
 func (v video) do() error {
    play, err := v.player()
    if err != nil {
@@ -43,7 +82,6 @@ func (v video) do() error {
    }
    return nil
 }
-
 func do_refresh() error {
    auth, err := youtube.New_OAuth()
    if err != nil {
@@ -51,7 +89,7 @@ func do_refresh() error {
    }
    fmt.Println(auth)
    fmt.Scanln()
-   change, err := auth.Exchange()
+   head, err := auth.Header()
    if err != nil {
       return err
    }
@@ -59,23 +97,23 @@ func do_refresh() error {
    if err != nil {
       return err
    }
-   return change.Create(home + "/mech/youtube.json")
+   return head.Create(home + "/mech/youtube.json")
 }
-
 func do_access() error {
    home, err := os.UserHomeDir()
    if err != nil {
       return err
    }
-   change, err := youtube.Open_Exchange(home + "/mech/youtube.json")
+   head, err := youtube.Open_Header(home + "/mech/youtube.json")
    if err != nil {
       return err
    }
-   if err := change.Refresh(); err != nil {
+   if err := head.Refresh(); err != nil {
       return err
    }
-   return change.Create(home + "/mech/youtube.json")
+   return head.Create(home + "/mech/youtube.json")
 }
+
 func download(form *youtube.Format, base string) error {
    ext, err := mech.Extension_By_Type(form.MimeType)
    if err != nil {
@@ -87,41 +125,4 @@ func download(form *youtube.Format, base string) error {
    }
    defer file.Close()
    return form.Encode(file)
-}
-
-func (v video) player() (*youtube.Player, error) {
-   if v.id == "" {
-      var err error
-      v.id, err = youtube.Video_ID(v.address)
-      if err != nil {
-         return nil, err
-      }
-   }
-   if v.request == 1 {
-      return youtube.Android_Embed.Player(v.id)
-   }
-   if v.request >= 2 {
-      home, err := os.UserHomeDir()
-      if err != nil {
-         return nil, err
-      }
-      change, err := youtube.Open_Exchange(home + "/mech/youtube.json")
-      if err != nil {
-         return nil, err
-      }
-      if v.request == 2 {
-         return youtube.Android_Racy.Exchange(v.id, change)
-      }
-      return youtube.Android_Content.Exchange(v.id, change)
-   }
-   return youtube.Android.Player(v.id)
-}
-
-type video struct {
-   address string
-   audio string
-   height int
-   id string
-   info bool
-   request int
 }

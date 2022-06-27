@@ -9,10 +9,11 @@ import (
 // tv.apple.com/us/episode/biscuits/umc.cmc.45cu44369hb2qfuwr3fihnr8e
 const (
    content_ID = "umc.cmc.45cu44369hb2qfuwr3fihnr8e"
+   key = "22bdb0063805260307ee5045c0f3835a"
    pssh = "data:text/plain;base64,AAAAOHBzc2gAAAAA7e+LqXnWSs6jyCfc1R0h7QAAABgSEAAAAAAWgwC7YzAgICAgICBI88aJmwY="
 )
 
-func Test_License(t *testing.T) {
+func Test_Post(t *testing.T) {
    home, err := os.UserHomeDir()
    if err != nil {
       t.Fatal(err)
@@ -49,7 +50,7 @@ func Test_License(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   if keys.Content().String() != "22bdb0063805260307ee5045c0f3835a" {
+   if keys.Content().String() != key {
       t.Fatal(keys)
    }
 }
