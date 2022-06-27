@@ -1,12 +1,7 @@
 package amc
 
 import (
-   "bytes"
-   "github.com/89z/format/http"
-   "github.com/89z/format/json"
-   "github.com/89z/mech"
-   "io"
-   "strconv"
+   "net/http"
    "strings"
 )
 
