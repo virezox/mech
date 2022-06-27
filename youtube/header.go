@@ -8,11 +8,16 @@ import (
 )
 
 func Open_Header(name string) (*Header, error) {
-   return json.Open[Header](name)
+   head := new(Header)
+   err := json.Decode(name, head)
+   if err != nil {
+      return nil, err
+   }
+   return head, nil
 }
 
 func (h Header) Create(name string) error {
-   return json.Create(h, name)
+   return json.Encode(name, h)
 }
 
 const (

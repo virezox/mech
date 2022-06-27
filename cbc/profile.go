@@ -7,12 +7,17 @@ import (
    "net/url"
 )
 
-func (p Profile) Create(name string) error {
-   return json.Create(p, name)
+func Open_Profile(name string) (*Profile, error) {
+   pro := new(Profile)
+   err := json.Decode(name, pro)
+   if err != nil {
+      return nil, err
+   }
+   return pro, nil
 }
 
-func Open_Profile(name string) (*Profile, error) {
-   return json.Open[Profile](name)
+func (p Profile) Create(name string) error {
+   return json.Encode(name, p)
 }
 
 const api_key = "3f4beddd-2061-49b0-ae80-6f1f2ed65b37"
