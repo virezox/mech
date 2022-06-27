@@ -14,9 +14,10 @@ import (
 )
 
 type Poster interface {
-   License_URL() string
-   Header() http.Header
-   Body([]byte) ([]byte, error)
+   Request_URL() string
+   Request_Header() http.Header
+   Request_Body([]byte) ([]byte, error)
+   Response_Body([]byte) ([]byte, error)
 }
 
 func (m Module) Request(post Poster) (Contents, error) {
