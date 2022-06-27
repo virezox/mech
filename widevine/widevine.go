@@ -11,6 +11,15 @@ import (
    "strings"
 )
 
+func (c Container) String() string {
+   return hex.EncodeToString(c.Key)
+}
+
+type Container struct {
+   Key []byte
+   Type uint64
+}
+
 func New_Module(private_key, client_id, key_id []byte) (*Module, error) {
    block, _ := pem.Decode(private_key)
    var (
@@ -50,20 +59,6 @@ func unpad(buf []byte) []byte {
    return buf
 }
 
-type Content struct {
-   Key []byte
-   Type uint64
-}
-
-func (c Contents) Content() *Content {
-   for _, con := range c {
-      if con.Type == 2 {
-         return &con
-      }
-   }
-   return nil
-}
-
 func Key_ID(raw string) ([]byte, error) {
    raw = strings.ReplaceAll(raw, "-", "")
    return hex.DecodeString(raw)
@@ -85,11 +80,20 @@ func PSSH_Key_ID(raw string) ([]byte, error) {
    return cenc_header.Get_Bytes(2)
 }
 
-type Contents []Content
-
 type Module struct {
    license_request []byte
    private_key *rsa.PrivateKey
 }
 
 var Client = http.Default_Client
+
+type Containers []Container
+
+func (c Containers) Content() *Container {
+   for _, container := range c {
+      if container.Type == 2 {
+         return &container
+      }
+   }
+   return nil
+}

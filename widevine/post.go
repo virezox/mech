@@ -20,7 +20,7 @@ type Poster interface {
    Response_Body([]byte) ([]byte, error)
 }
 
-func (m Module) Request(post Poster) (Contents, error) {
+func (m Module) Post(post Poster) (Containers, error) {
    signed_request, err := m.signed_request()
    if err != nil {
       return nil, err
@@ -51,10 +51,10 @@ func (m Module) Request(post Poster) (Contents, error) {
    if err != nil {
       return nil, err
    }
-   return m.contents(body)
+   return m.signed_response(body)
 }
 
-func (m Module) contents(response []byte) (Contents, error) {
+func (m Module) signed_response(response []byte) (Containers, error) {
    // key
    signed_response, err := protobuf.Unmarshal(response)
    if err != nil {
@@ -85,10 +85,10 @@ func (m Module) contents(response []byte) (Contents, error) {
    if err != nil {
       return nil, err
    }
-   var cons Contents
+   var cons Containers
    // .Msg.Key
    for _, message := range signed_response.Get(2).Get_Messages(3) {
-      var con Content
+      var con Container
       iv, err := message.Get_Bytes(2)
       if err != nil {
          return nil, err

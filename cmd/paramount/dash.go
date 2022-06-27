@@ -33,11 +33,11 @@ func (d *downloader) set_key() error {
    if err != nil {
       return err
    }
-   contents, err := mod.Request(session)
+   keys, err := mod.Post(session)
    if err != nil {
       return err
    }
-   d.key = contents.Content().Key
+   d.key = keys.Content().Key
    return nil
 }
 
