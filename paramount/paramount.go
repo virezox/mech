@@ -12,7 +12,7 @@ import (
    "strings"
 )
 
-func New_Session(content_id string) (*Session, error) {
+func New_Session(content_ID string) (*Session, error) {
    token, err := new_token()
    if err != nil {
       return nil, err
@@ -34,7 +34,7 @@ func New_Session(content_id string) (*Session, error) {
    if err := json.NewDecoder(res.Body).Decode(sess); err != nil {
       return nil, err
    }
-   sess.URL += content_id
+   sess.URL += content_ID
    return sess, nil
 }
 const (

@@ -17,7 +17,7 @@ func Open_Exchange(name string) (*Exchange, error) {
 
 const (
    // YouTube on TV
-   client_id =
+   client_ID =
       "861556708454-d6dlm3lh05idd8npek18k6be8ba3oc68" +
       ".apps.googleusercontent.com"
    client_secret = "SboVhoG9s0rNafixCSGGKXAT"
@@ -31,7 +31,7 @@ type Exchange struct {
 
 func (x *Exchange) Refresh() error {
    val := url.Values{
-      "client_id": {client_id},
+      "client_id": {client_ID},
       "client_secret": {client_secret},
       "grant_type": {"refresh_token"},
       "refresh_token": {x.Refresh_Token},
@@ -52,7 +52,7 @@ type OAuth struct {
 
 func New_OAuth() (*OAuth, error) {
    val := url.Values{
-      "client_id": {client_id},
+      "client_id": {client_ID},
       "scope": {"https://www.googleapis.com/auth/youtube"},
    }
    res, err := http.PostForm("https://oauth2.googleapis.com/device/code", val)
@@ -69,7 +69,7 @@ func New_OAuth() (*OAuth, error) {
 
 func (o OAuth) Exchange() (*Exchange, error) {
    val := url.Values{
-      "client_id": {client_id},
+      "client_id": {client_ID},
       "client_secret": {client_secret},
       "device_code": {o.Device_Code},
       "grant_type":  {"urn:ietf:params:oauth:grant-type:device_code"},

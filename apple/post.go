@@ -43,7 +43,7 @@ func (p Poster) Request_Body(buf []byte) ([]byte, error) {
    return json.Marshal(s)
 }
 
-func (p Poster) Response_Body(buf []byte) ([]byte, error) {
+func (Poster) Response_Body(buf []byte) ([]byte, error) {
    var s struct {
       License []byte
    }

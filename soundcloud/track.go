@@ -23,7 +23,7 @@ func (t Track) Progressive() (*Media, error) {
    if err != nil {
       return nil, err
    }
-   req.URL.RawQuery = "client_id=" + client_id
+   req.URL.RawQuery = "client_id=" + client_ID
    res, err := Client.Do(req)
    if err != nil {
       return nil, err
@@ -62,7 +62,7 @@ func New_Track(id int64) (*Track, error) {
    if err != nil {
       return nil, err
    }
-   req.URL.RawQuery = "client_id=" + client_id
+   req.URL.RawQuery = "client_id=" + client_ID
    res, err := Client.Do(req)
    if err != nil {
       return nil, err
@@ -83,7 +83,7 @@ func Resolve(addr string) ([]Track, error) {
       return nil, err
    }
    req.URL.RawQuery = url.Values{
-      "client_id": {client_id},
+      "client_id": {client_ID},
       "url": {addr},
    }.Encode()
    res, err := Client.Do(req)
@@ -114,7 +114,7 @@ func User_Tracks(id int64) ([]Track, error) {
       return nil, err
    }
    req.URL.RawQuery = url.Values{
-      "client_id": {client_id},
+      "client_id": {client_ID},
       "limit": {"999"},
    }.Encode()
    res, err := Client.Do(req)

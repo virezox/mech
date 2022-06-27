@@ -19,10 +19,10 @@ func (s Session) Request_Header() http.Header {
    return head
 }
 
-func (s Session) Request_Body(buf []byte) ([]byte, error) {
+func (Session) Request_Body(buf []byte) ([]byte, error) {
    return buf, nil
 }
 
-func (s Session) Response_Body(buf []byte) ([]byte, error) {
+func (Session) Response_Body(buf []byte) ([]byte, error) {
    return buf, nil
 }

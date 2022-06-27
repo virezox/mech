@@ -61,10 +61,10 @@ func (p Playback) Request_Header() http.Header {
    return head
 }
 
-func (p Playback) Request_Body(buf []byte) ([]byte, error) {
+func (Playback) Request_Body(buf []byte) ([]byte, error) {
    return buf, nil
 }
 
-func (p Playback) Response_Body(buf []byte) ([]byte, error) {
+func (Playback) Response_Body(buf []byte) ([]byte, error) {
    return buf, nil
 }

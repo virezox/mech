@@ -2,8 +2,6 @@ package paramount
 
 import (
    "fmt"
-   "github.com/89z/mech/widevine"
-   "os"
    "testing"
    "time"
 )

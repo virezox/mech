@@ -20,7 +20,7 @@ type Container struct {
    Type uint64
 }
 
-func New_Module(private_key, client_id, key_id []byte) (*Module, error) {
+func New_Module(private_key, client_ID, key_ID []byte) (*Module, error) {
    block, _ := pem.Decode(private_key)
    var (
       err error
@@ -31,11 +31,11 @@ func New_Module(private_key, client_id, key_id []byte) (*Module, error) {
       return nil, err
    }
    mod.license_request = protobuf.Message{
-      1: protobuf.Bytes(client_id),
+      1: protobuf.Bytes(client_ID),
       2: protobuf.Message{ // ContentId
          1: protobuf.Message{ // CencId
             1: protobuf.Message{ // Pssh
-               2: protobuf.Bytes(key_id),
+               2: protobuf.Bytes(key_ID),
             },
          },
       },

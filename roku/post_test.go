@@ -7,7 +7,7 @@ import (
 )
 
 // therokuchannel.roku.com/watch/597a64a4a25c5bf6af4a8c7053049a6f
-const playback_id = "597a64a4a25c5bf6af4a8c7053049a6f"
+const playback_ID = "597a64a4a25c5bf6af4a8c7053049a6f"
 
 func Test_Playback(t *testing.T) {
    home, err := os.UserHomeDir()
@@ -34,7 +34,7 @@ func Test_Playback(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   play, err := site.Playback(playback_id)
+   play, err := site.Playback(playback_ID)
    if err != nil {
       t.Fatal(err)
    }

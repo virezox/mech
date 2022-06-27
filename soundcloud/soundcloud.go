@@ -18,7 +18,7 @@ func (m Media) Ext() (string, error) {
    return path.Ext(addr.Path), nil
 }
 
-const client_id = "iZIs9mchVcX5lhVRyQGGAYlNPVldzAoX"
+const client_ID = "iZIs9mchVcX5lhVRyQGGAYlNPVldzAoX"
 
 var Client = http.Default_Client
 

@@ -16,15 +16,15 @@ func (d *downloader) set_key() error {
    if err != nil {
       return err
    }
-   client_id, err := os.ReadFile(d.client)
+   client_ID, err := os.ReadFile(d.client)
    if err != nil {
       return err
    }
-   key_id, err := widevine.Key_ID(d.media.Protection().Default_KID)
+   key_ID, err := widevine.Key_ID(d.media.Protection().Default_KID)
    if err != nil {
       return err
    }
-   mod, err := widevine.New_Module(private_key, client_id, key_id)
+   mod, err := widevine.New_Module(private_key, client_ID, key_ID)
    if err != nil {
       return err
    }

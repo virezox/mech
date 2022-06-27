@@ -1,4 +1,4 @@
-package paramount
+package amc
 
 import (
    "github.com/89z/mech/widevine"
@@ -6,7 +6,10 @@ import (
    "testing"
 )
 
-func Test_Session(t *testing.T) {
+// amcplus.com/shows/orphan-black/episodes/season-1-instinct--1011152
+const nID = 1011152
+
+func Test_Playback(t *testing.T) {
    home, err := os.UserHomeDir()
    if err != nil {
       t.Fatal(err)
@@ -19,7 +22,7 @@ func Test_Session(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   key_ID, err := widevine.Key_ID("3be8be937c98483184b294173f9152af")
+   key_ID, err := widevine.Key_ID("c0e598b247fa443590299d5ef47da32c")
    if err != nil {
       t.Fatal(err)
    }
@@ -27,15 +30,19 @@ func Test_Session(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   sess, err := New_Session(tests[test_type{episode, dash_cenc}])
+   auth, err := Open_Auth(home + "/mech/amc.json")
    if err != nil {
       t.Fatal(err)
    }
-   keys, err := mod.Post(sess)
+   play, err := auth.Playback(nID)
    if err != nil {
       t.Fatal(err)
    }
-   if keys.Content().String() != "44f12639c9c4a5a432338aca92e38920" {
+   keys, err := mod.Post(play)
+   if err != nil {
+      t.Fatal(err)
+   }
+   if keys.Content().String() != "a66a5603545ad206c1a78e160a6710b1" {
       t.Fatal(keys)
    }
 }
