@@ -6,12 +6,85 @@ import (
    "github.com/89z/format"
    "github.com/89z/format/http"
    "github.com/89z/format/xml"
-   "github.com/89z/mech/widevine"
    "io"
    "net/url"
    "os"
    "strconv"
 )
+
+func (a Auth) Request(client widevine.Client) (*Request, error) {
+   var (
+      err error
+      req Request
+   )
+   req.auth = a
+   req.Module, err = client.PSSH()
+   if err != nil {
+      return nil, err
+   }
+   req.body.Challenge, err = req.Marshal()
+   if err != nil {
+      return nil, err
+   }
+   req.body.Key_System = "com.widevine.alpha"
+   req.body.URI = client.Raw
+   return &req, nil
+}
+
+type Request struct {
+   *widevine.Module
+   auth Auth
+   body struct {
+      Challenge []byte `json:"challenge"`
+      Server_Parameters Server_Parameters `json:"extra-server-parameters"`
+      Key_System string `json:"key-system"`
+      URI string `json:"uri"`
+   }
+}
+
+func (r Request) License(env *Environment, ep *Episode) (*License, error) {
+   asset := ep.Asset()
+   r.body.Server_Parameters = asset.FpsKeyServerQueryParameters
+   buf := new(bytes.Buffer)
+   err := json.NewEncoder(buf).Encode(r.body)
+   if err != nil {
+      return nil, err
+   }
+   req, err := http.NewRequest("POST", asset.FpsKeyServerUrl, buf)
+   if err != nil {
+      return nil, err
+   }
+   req.Header = http.Header{
+      "Authorization": {"Bearer " + env.Media_API.Token},
+      "Content-Type": {"application/json"},
+      "X-Apple-Music-User-Token": {r.auth.media_user_token().Value},
+   }
+   res, err := Client.Do(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   lic := License{Module: r.Module}
+   if err := json.NewDecoder(res.Body).Decode(&lic.body); err != nil {
+      return nil, err
+   }
+   return &lic, nil
+}
+
+type License struct {
+   module *widevine.Module
+   body struct {
+      License []byte
+   }
+}
+
+func (l License) Content() (*widevine.Content, error) {
+   keys, err := l.module.Unmarshal(l.body.License)
+   if err != nil {
+      return nil, err
+   }
+   return keys.Content(), nil
+}
 
 type Auth []*http.Cookie
 
@@ -63,24 +136,6 @@ func (a Auth) media_user_token() *http.Cookie {
    return nil
 }
 
-func (a Auth) Request(client widevine.Client) (*Request, error) {
-   var (
-      err error
-      req Request
-   )
-   req.auth = a
-   req.Module, err = client.PSSH()
-   if err != nil {
-      return nil, err
-   }
-   req.body.Challenge, err = req.Marshal()
-   if err != nil {
-      return nil, err
-   }
-   req.body.Key_System = "com.widevine.alpha"
-   req.body.URI = client.Raw
-   return &req, nil
-}
 const (
    sf_max = 143499
    sf_min = 143441
@@ -89,35 +144,6 @@ const (
 )
 
 var Client = http.Default_Client
-
-func (r Request) License(env *Environment, ep *Episode) (*License, error) {
-   asset := ep.Asset()
-   r.body.Server_Parameters = asset.FpsKeyServerQueryParameters
-   buf := new(bytes.Buffer)
-   err := json.NewEncoder(buf).Encode(r.body)
-   if err != nil {
-      return nil, err
-   }
-   req, err := http.NewRequest("POST", asset.FpsKeyServerUrl, buf)
-   if err != nil {
-      return nil, err
-   }
-   req.Header = http.Header{
-      "Authorization": {"Bearer " + env.Media_API.Token},
-      "Content-Type": {"application/json"},
-      "X-Apple-Music-User-Token": {r.auth.media_user_token().Value},
-   }
-   res, err := Client.Do(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   lic := License{Module: r.Module}
-   if err := json.NewDecoder(res.Body).Decode(&lic.body); err != nil {
-      return nil, err
-   }
-   return &lic, nil
-}
 
 type Episode struct {
    Data struct {
@@ -185,32 +211,6 @@ type Asset struct {
    HlsUrl string
 }
 
-type License struct {
-   module *widevine.Module
-   body struct {
-      License []byte
-   }
-}
-
-type Request struct {
-   *widevine.Module
-   auth Auth
-   body struct {
-      Challenge []byte `json:"challenge"`
-      Server_Parameters Server_Parameters `json:"extra-server-parameters"`
-      Key_System string `json:"key-system"`
-      URI string `json:"uri"`
-   }
-}
-
-func (l License) Content() (*widevine.Content, error) {
-   keys, err := l.module.Unmarshal(l.body.License)
-   if err != nil {
-      return nil, err
-   }
-   return keys.Content(), nil
-}
-
 type Environment struct {
    Media_API struct {
       Token string // authorization: Bearer eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXV...
@@ -246,11 +246,6 @@ func New_Environment() (*Environment, error) {
       return nil, err
    }
    return env, nil
-}
-
-type Server_Parameters struct {
-   Adam_ID string `json:"adamId"`
-   Svc_ID string `json:"svcId"`
 }
 
 func (c Config) Signin(email, password string) (Signin, error) {

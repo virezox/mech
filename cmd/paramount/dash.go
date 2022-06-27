@@ -13,25 +13,31 @@ import (
 )
 
 func (d *downloader) set_key() error {
-   sess, err := paramount.New_Session(d.Preview.GUID)
+   private_key, err := os.ReadFile(d.pem)
    if err != nil {
       return err
    }
-   var client widevine.Client
-   client.ID, err = os.ReadFile(d.client)
+   client_id, err := os.ReadFile(d.client)
    if err != nil {
       return err
    }
-   client.Private_Key, err = os.ReadFile(d.pem)
+   key_id, err := widevine.Key_ID(d.media.Protection().Default_KID)
    if err != nil {
       return err
    }
-   client.Raw = d.media.Protection().Default_KID
-   content, err := sess.Content(client)
+   mod, err := widevine.New_Module(private_key, client_id, key_id)
    if err != nil {
       return err
    }
-   d.key = content.Key
+   session, err := paramount.New_Session(d.Preview.GUID)
+   if err != nil {
+      return err
+   }
+   contents, err := mod.Request(session)
+   if err != nil {
+      return err
+   }
+   d.key = contents.Content().Key
    return nil
 }
 

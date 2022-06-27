@@ -12,7 +12,7 @@ type Playback struct {
    }
 }
 
-func (p Playback) URL() string {
+func (p Playback) License_URL() string {
    return p.DRM.Widevine.LicenseServer
 }
 
