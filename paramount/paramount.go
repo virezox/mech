@@ -1,16 +1,82 @@
 package paramount
 
 import (
+   "bytes"
    "crypto/aes"
    "crypto/cipher"
    "encoding/base64"
    "encoding/hex"
    "encoding/json"
    "github.com/89z/format/http"
+   "github.com/89z/mech/widevine"
+   "io"
    "net/url"
    "strconv"
+   "strings"
 )
 
+func (s Session) Content(c widevine.Client) (*widevine.Content, error) {
+   module, err := c.Key_ID()
+   if err != nil {
+      return nil, err
+   }
+   buf, err := module.Marshal()
+   if err != nil {
+      return nil, err
+   }
+   req, err := http.NewRequest(
+      "POST", s.URL, bytes.NewReader(buf),
+   )
+   if err != nil {
+      return nil, err
+   }
+   req.Header.Set("Authorization", "Bearer " + s.LS_Session)
+   res, err := Client.Do(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   buf, err = io.ReadAll(res.Body)
+   if err != nil {
+      return nil, err
+   }
+   keys, err := module.Unmarshal(buf)
+   if err != nil {
+      return nil, err
+   }
+   return keys.Content(), nil
+}
+
+type Session struct {
+   URL string
+   LS_Session string
+}
+
+func New_Session(content_id string) (*Session, error) {
+   token, err := new_token()
+   if err != nil {
+      return nil, err
+   }
+   var buf strings.Builder
+   buf.WriteString("https://www.paramountplus.com/apps-api/v3.0/androidphone")
+   buf.WriteString("/irdeto-control/anonymous-session-token.json")
+   req, err := http.NewRequest("GET", buf.String(), nil)
+   if err != nil {
+      return nil, err
+   }
+   req.URL.RawQuery = "at=" + url.QueryEscape(token)
+   res, err := Client.Do(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   sess := new(Session)
+   if err := json.NewDecoder(res.Body).Decode(sess); err != nil {
+      return nil, err
+   }
+   sess.URL += content_id
+   return sess, nil
+}
 const (
    aes_key = "302a6a0d70a7e9b967f91d39fef3e387816e3095925ae4537bce96063311f9c5"
    tv_secret = "6c70b33080758409"

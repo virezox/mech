@@ -29,8 +29,8 @@ func (m Module) Request(post Poster) (Contents, error) {
    if err != nil {
       return nil, err
    }
-   if post.Header() != nil {
-      req.Header = post.Header()
+   if h := post.Header(); h != nil {
+      req.Header = h
    }
    res, err := Client.Do(req)
    if err != nil {
