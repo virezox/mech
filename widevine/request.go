@@ -13,24 +13,24 @@ import (
    "io"
 )
 
-type Requester interface {
+type Poster interface {
    URL() string
    Header() http.Header
    Body([]byte) []byte
 }
 
-func (m Module) Request(r Requester) (Contents, error) {
+func (m Module) Request(post Poster) (Contents, error) {
    signed_request, err := m.signed_request()
    if err != nil {
       return nil, err
    }
-   body := r.Body(signed_request)
-   req, err := http.NewRequest("POST", r.URL(), bytes.NewReader(body))
+   body := post.Body(signed_request)
+   req, err := http.NewRequest("POST", post.URL(), bytes.NewReader(body))
    if err != nil {
       return nil, err
    }
-   if r.Header() != nil {
-      req.Header = r.Header()
+   if post.Header() != nil {
+      req.Header = post.Header()
    }
    res, err := Client.Do(req)
    if err != nil {
