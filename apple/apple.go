@@ -116,7 +116,7 @@ type Asset struct {
 }
 
 type License struct {
-   *widevine.Module
+   module *widevine.Module
    body struct {
       License []byte
    }
@@ -134,7 +134,7 @@ type Request struct {
 }
 
 func (l License) Content() (*widevine.Content, error) {
-   keys, err := l.Unmarshal(l.body.License)
+   keys, err := l.module.Unmarshal(l.body.License)
    if err != nil {
       return nil, err
    }
