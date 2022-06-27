@@ -14,7 +14,7 @@ import (
 )
 
 type Poster interface {
-   URL() string
+   License_URL() string
    Header() http.Header
    Body([]byte) []byte
 }
@@ -25,7 +25,9 @@ func (m Module) Request(post Poster) (Contents, error) {
       return nil, err
    }
    body := post.Body(signed_request)
-   req, err := http.NewRequest("POST", post.URL(), bytes.NewReader(body))
+   req, err := http.NewRequest(
+      "POST", post.License_URL(), bytes.NewReader(body),
+   )
    if err != nil {
       return nil, err
    }

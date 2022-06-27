@@ -10,7 +10,7 @@ type Playback struct {
    PlaybackJsonData Playback_JSON_Data
 }
 
-func (p Playback) URL() string {
+func (p Playback) License_URL() string {
    return p.DASH().Key_Systems.Widevine.License_URL
 }
 

@@ -12,11 +12,6 @@ import (
    "strings"
 )
 
-type Session struct {
-   URL string
-   LS_Session string
-}
-
 func New_Session(content_id string) (*Session, error) {
    token, err := new_token()
    if err != nil {
