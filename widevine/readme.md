@@ -55,8 +55,8 @@ adb shell chmod +x /data/frida-server
 adb shell /data/frida-server
 ~~~
 
-Then start Android Chrome and visit [Bitmovin demo][4]. If you receive this
-prompt:
+Then start Android Chrome and visit [Shaka Player][4]. Click the green play
+button. If you receive this prompt:
 
 > bitmovin.com wants to play protected content. Your device’s identity will be
 > verified by Google.
@@ -64,11 +64,12 @@ prompt:
 Click ALLOW. Then start dumper:
 
 ~~~
+$env:PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION = 'python'
 python dump_keys.py
 ~~~
 
-Once you see "Hooks completed", go back to Chrome, scroll down and click LOAD.
-Result:
+Once you see "Hooks completed", go back to Chrome and click the green play
+button again. Result:
 
 ~~~
 2022-05-21 02:10:52 PM - Helpers.Scanner - 49 - INFO - Key pairs saved at
@@ -78,4 +79,4 @@ key_dumps\Android Emulator 5554/private_keys/4464/2770936375
 [1]://developer.android.com/studio
 [2]://github.com/wvdumper/dumper
 [3]://github.com/frida/frida/releases
-[4]://bitmovin.com/demos/drm
+[4]://integration.widevine.com/player
