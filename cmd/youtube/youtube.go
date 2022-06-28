@@ -18,10 +18,15 @@ func (v video) player() (*youtube.Player, error) {
    }
    var req youtube.Request
    if v.request == 0 {
-      req.Body = youtube.Android
+      req = youtube.Android()
    } else if v.request == 1 {
-      req.Body = youtube.Android_Embed
+      req = youtube.Android_Embed()
    } else {
+      if v.request == 2 {
+         req = youtube.Android_Racy()
+      } else {
+         req = youtube.Android_Content()
+      }
       home, err := os.UserHomeDir()
       if err != nil {
          return nil, err
@@ -29,11 +34,6 @@ func (v video) player() (*youtube.Player, error) {
       req.Header, err = youtube.Open_Header(home + "/mech/youtube.json")
       if err != nil {
          return nil, err
-      }
-      if v.request == 2 {
-         req.Body = youtube.Android_Racy
-      } else {
-         req.Body = youtube.Android_Content
       }
    }
    return req.Player(v.id)
