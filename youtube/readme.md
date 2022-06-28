@@ -11,7 +11,7 @@ https://android.stackexchange.com/a/245551
 - https://datatracker.ietf.org/doc/html/rfc8628
 - https://developers.google.com/identity/sign-in/devices
 
-## How to get X-Goog-Api-Key
+## How to get X-Goog-API-Key
 
 Make a request like this:
 

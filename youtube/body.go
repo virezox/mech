@@ -63,7 +63,7 @@ func (r Request) Search(query string) (*Search, error) {
    if err != nil {
       return nil, err
    }
-   req.Header.Set("X-Goog-Api-Key", goog_API)
+   req.Header.Set("X-Goog-API-Key", goog_API)
    res, err := HTTP_Client.Do(req)
    if err != nil {
       return nil, err
@@ -107,7 +107,7 @@ func (r Request) Player(id string) (*Player, error) {
    if r.Header != nil {
       req.Header.Set("Authorization", "Bearer " + r.Header.Access_Token)
    } else {
-      req.Header.Set("X-Goog-Api-Key", goog_API)
+      req.Header.Set("X-Goog-API-Key", goog_API)
    }
    res, err := HTTP_Client.Do(req)
    if err != nil {
