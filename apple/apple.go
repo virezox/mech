@@ -2,15 +2,26 @@ package apple
 
 import (
    "bytes"
-   "encoding/json"
-   "github.com/89z/format"
    "github.com/89z/format/http"
+   "github.com/89z/format/json"
    "github.com/89z/format/xml"
    "io"
    "net/url"
-   "os"
    "strconv"
 )
+
+func Open_Auth(name string) (Auth, error) {
+   var auth Auth
+   err := json.Decode(name, &auth)
+   if err != nil {
+      return nil, err
+   }
+   return auth, nil
+}
+
+func (a Auth) Create(name string) error {
+   return json.Encode(name, a)
+}
 
 type Server_Parameters struct {
    Adam_ID string `json:"adamId"`
@@ -18,30 +29,6 @@ type Server_Parameters struct {
 }
 
 type Auth []*http.Cookie
-
-func (a Auth) Create(name string) error {
-   file, err := format.Create(name)
-   if err != nil {
-      return err
-   }
-   defer file.Close()
-   enc := json.NewEncoder(file)
-   enc.SetIndent("", " ")
-   return enc.Encode(a)
-}
-
-func Open_Auth(name string) (Auth, error) {
-   file, err := os.Open(name)
-   if err != nil {
-      return nil, err
-   }
-   defer file.Close()
-   var auth Auth
-   if err := json.NewDecoder(file).Decode(&auth); err != nil {
-      return nil, err
-   }
-   return auth, nil
-}
 
 func (s Signin) Auth() (Auth, error) {
    req, err := http.NewRequest(
