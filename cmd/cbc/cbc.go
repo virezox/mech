@@ -43,7 +43,7 @@ func download(addr *url.URL, name string) error {
       if err != nil {
          return err
       }
-      res, err := cbc.Client.Get(addr.String())
+      res, err := cbc.Client.Level(0).Get(addr.String())
       if err != nil {
          return err
       }
