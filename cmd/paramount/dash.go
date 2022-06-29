@@ -3,12 +3,12 @@ package main
 import (
    "encoding/xml"
    "fmt"
-   "github.com/89z/format"
    "github.com/89z/format/dash"
    "github.com/89z/format/mp4"
-   "github.com/89z/mech"
    "github.com/89z/mech/paramount"
    "github.com/89z/mech/widevine"
+   "github.com/89z/format"
+   "github.com/89z/mech"
    "os"
    "sort"
 )

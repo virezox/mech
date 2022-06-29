@@ -2,10 +2,40 @@ package cbc
 
 import (
    "encoding/json"
+   "errors"
    "github.com/89z/format/http"
    "strings"
    "time"
 )
+
+type Media struct {
+   Message *string
+   URL *string
+}
+
+func (p Profile) Media(asset *Asset) (*Media, error) {
+   req, err := http.NewRequest("GET", asset.PlaySession.URL, nil)
+   if err != nil {
+      return nil, err
+   }
+   req.Header = http.Header{
+      "X-Claims-Token": {p.ClaimsToken},
+      "X-Forwarded-For": {forwarded_for},
+   }
+   res, err := Client.Do(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   med := new(Media)
+   if err := json.NewDecoder(res.Body).Decode(med); err != nil {
+      return nil, err
+   }
+   if med.Message != nil {
+      return nil, errors.New(*med.Message)
+   }
+   return med, nil
+}
 
 const forwarded_for = "99.224.0.0"
 
@@ -45,32 +75,6 @@ func New_Asset(id string) (*Asset, error) {
       return nil, err
    }
    return asset, nil
-}
-
-type Media struct {
-   Message string
-   URL string
-}
-
-func (p Profile) Media(asset *Asset) (*Media, error) {
-   req, err := http.NewRequest("GET", asset.PlaySession.URL, nil)
-   if err != nil {
-      return nil, err
-   }
-   req.Header = http.Header{
-      "X-Claims-Token": {p.ClaimsToken},
-      "X-Forwarded-For": {forwarded_for},
-   }
-   res, err := Client.Do(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   med := new(Media)
-   if err := json.NewDecoder(res.Body).Decode(med); err != nil {
-      return nil, err
-   }
-   return med, nil
 }
 
 func (a Asset) Get_Duration() time.Duration {

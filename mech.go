@@ -39,7 +39,7 @@ func (n not_found) Error() string {
    return string(buf)
 }
 
-func Encode[T any](value T) (*bytes.Buffer, error) {
+func Encode(value any) (*bytes.Buffer, error) {
    buf := new(bytes.Buffer)
    enc := json.NewEncoder(buf)
    enc.SetIndent("", " ")
