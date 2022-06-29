@@ -5,37 +5,13 @@ import (
    "fmt"
    "github.com/89z/format"
    "github.com/89z/format/dash"
+   "github.com/89z/format/mp4"
    "github.com/89z/mech"
    "github.com/89z/mech/amc"
    "github.com/89z/mech/widevine"
    "io"
    "os"
 )
-
-func (d *downloader) set_key() error {
-   private_key, err := os.ReadFile(d.pem)
-   if err != nil {
-      return err
-   }
-   client_ID, err := os.ReadFile(d.client)
-   if err != nil {
-      return err
-   }
-   key_ID, err := widevine.Key_ID(d.media.Protection().Default_KID)
-   if err != nil {
-      return err
-   }
-   mod, err := widevine.New_Module(private_key, client_ID, key_ID)
-   if err != nil {
-      return err
-   }
-   keys, err := mod.Post(d.Playback)
-   if err != nil {
-      return err
-   }
-   d.key = keys.Content().Key
-   return nil
-}
 
 func (d *downloader) download(band int64, fn dash.Represent_Func) error {
    if band == 0 {
@@ -69,9 +45,6 @@ func (d *downloader) download(band int64, fn dash.Represent_Func) error {
          return err
       }
       defer res.Body.Close()
-      if err := dash.Decrypt_Init(file, res.Body); err != nil {
-         return err
-      }
       media, err := rep.Media(d.url)
       if err != nil {
          return err
@@ -83,6 +56,10 @@ func (d *downloader) download(band int64, fn dash.Represent_Func) error {
          }
       }
       pro := format.Progress_Chunks(file, len(media))
+      dec := mp4.New_Decrypt(pro)
+      if err := dec.Init(res.Body); err != nil {
+         return err
+      }
       for _, addr := range media {
          res, err := amc.Client.Redirect(nil).Level(0).Get(addr.String())
          if err != nil {
@@ -90,7 +67,7 @@ func (d *downloader) download(band int64, fn dash.Represent_Func) error {
          }
          pro.Add_Chunk(res.ContentLength)
          if d.key != nil {
-            err = dash.Decrypt(pro, res.Body, d.key)
+            err = dec.Segment(res.Body, d.key)
          } else {
             _, err = io.Copy(pro, res.Body)
          }
@@ -158,4 +135,28 @@ func (d downloader) do_DASH(address string, nid, video, audio int64) error {
       return err
    }
    return d.download(video, dash.Video)
+}
+func (d *downloader) set_key() error {
+   private_key, err := os.ReadFile(d.pem)
+   if err != nil {
+      return err
+   }
+   client_ID, err := os.ReadFile(d.client)
+   if err != nil {
+      return err
+   }
+   key_ID, err := widevine.Key_ID(d.media.Protection().Default_KID)
+   if err != nil {
+      return err
+   }
+   mod, err := widevine.New_Module(private_key, client_ID, key_ID)
+   if err != nil {
+      return err
+   }
+   keys, err := mod.Post(d.Playback)
+   if err != nil {
+      return err
+   }
+   d.key = keys.Content().Key
+   return nil
 }

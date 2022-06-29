@@ -1,9 +1,9 @@
 package amc
 
 import (
-   "bytes"
-   "github.com/89z/format/http"
-   "github.com/89z/format/json"
+   "encoding/json"
+   "github.com/89z/mech"
+   "net/http"
    "strconv"
    "strings"
 )
@@ -14,8 +14,7 @@ func (a Auth) Playback(nID int64) (*Playback, error) {
    var in playback_request
    in.Ad_Tags.Mode = "on-demand"
    in.Ad_Tags.URL = "!"
-   body := new(bytes.Buffer)
-   err := json.NewEncoder(body).Encode(in)
+   body, err := mech.Encode(in)
    if err != nil {
       return nil, err
    }

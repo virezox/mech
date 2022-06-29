@@ -12,55 +12,6 @@ import (
    "sort"
 )
 
-func (d *downloader) set_key() error {
-   private_key, err := os.ReadFile(d.pem)
-   if err != nil {
-      return err
-   }
-   client_ID, err := os.ReadFile(d.client)
-   if err != nil {
-      return err
-   }
-   key_ID, err := widevine.Key_ID(d.media.Protection().Default_KID)
-   if err != nil {
-      return err
-   }
-   mod, err := widevine.New_Module(private_key, client_ID, key_ID)
-   if err != nil {
-      return err
-   }
-   session, err := paramount.New_Session(d.Preview.GUID)
-   if err != nil {
-      return err
-   }
-   keys, err := mod.Post(session)
-   if err != nil {
-      return err
-   }
-   d.key = keys.Content().Key
-   return nil
-}
-
-func (d downloader) DASH(video, audio int64) error {
-   addr, err := paramount.New_Media(d.GUID).DASH()
-   if err != nil {
-      return err
-   }
-   res, err := paramount.Client.Get(addr.String())
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   d.url = addr
-   if err := xml.NewDecoder(res.Body).Decode(&d.media); err != nil {
-      return err
-   }
-   if err := d.download(audio, dash.Audio); err != nil {
-      return err
-   }
-   return d.download(video, dash.Video)
-}
-
 func (d *downloader) download(band int64, fn dash.Represent_Func) error {
    if band == 0 {
       return nil
@@ -125,4 +76,52 @@ func (d *downloader) download(band int64, fn dash.Represent_Func) error {
       }
    }
    return nil
+}
+func (d *downloader) set_key() error {
+   private_key, err := os.ReadFile(d.pem)
+   if err != nil {
+      return err
+   }
+   client_ID, err := os.ReadFile(d.client)
+   if err != nil {
+      return err
+   }
+   key_ID, err := widevine.Key_ID(d.media.Protection().Default_KID)
+   if err != nil {
+      return err
+   }
+   mod, err := widevine.New_Module(private_key, client_ID, key_ID)
+   if err != nil {
+      return err
+   }
+   session, err := paramount.New_Session(d.Preview.GUID)
+   if err != nil {
+      return err
+   }
+   keys, err := mod.Post(session)
+   if err != nil {
+      return err
+   }
+   d.key = keys.Content().Key
+   return nil
+}
+
+func (d downloader) DASH(video, audio int64) error {
+   addr, err := paramount.New_Media(d.GUID).DASH()
+   if err != nil {
+      return err
+   }
+   res, err := paramount.Client.Get(addr.String())
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   d.url = addr
+   if err := xml.NewDecoder(res.Body).Decode(&d.media); err != nil {
+      return err
+   }
+   if err := d.download(audio, dash.Audio); err != nil {
+      return err
+   }
+   return d.download(video, dash.Video)
 }
