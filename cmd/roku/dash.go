@@ -12,6 +12,28 @@ import (
    "os"
 )
 
+func (d downloader) DASH(video, audio int64) error {
+   if d.info {
+      fmt.Println(d.Content)
+   }
+   video_dash := d.Content.DASH()
+   res, err := roku.Client.Redirect(nil).Get(video_dash.URL)
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   d.url = res.Request.URL
+   if err := xml.NewDecoder(res.Body).Decode(&d.media); err != nil {
+      return err
+   }
+   reps := d.media.Representations().Codecs("mp4a")
+   if err := d.download(audio, reps); err != nil {
+      return err
+   }
+   reps = d.media.Representations().Codecs("avc1")
+   return d.download(video, reps)
+}
+
 func (d *downloader) set_key() error {
    private_key, err := os.ReadFile(d.pem)
    if err != nil {
@@ -21,7 +43,8 @@ func (d *downloader) set_key() error {
    if err != nil {
       return err
    }
-   key_ID, err := widevine.Key_ID(d.media.Protection().Default_KID)
+   raw_key_id := d.media.Representations()[0].ContentProtection.Default_KID
+   key_ID, err := widevine.Key_ID(raw_key_id)
    if err != nil {
       return err
    }
@@ -44,6 +67,7 @@ func (d *downloader) set_key() error {
    d.key = keys.Content().Key
    return nil
 }
+
 func (d *downloader) download(bandwidth int64, r dash.Representations) error {
    if bandwidth == 0 {
       return nil
@@ -106,24 +130,4 @@ func (d *downloader) download(bandwidth int64, r dash.Representations) error {
       }
    }
    return nil
-}
-
-func (d downloader) DASH(video, audio int64) error {
-   if d.info {
-      fmt.Println(d.Content)
-   }
-   video_dash := d.Content.DASH()
-   res, err := roku.Client.Redirect(nil).Get(video_dash.URL)
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   d.url = res.Request.URL
-   if err := xml.NewDecoder(res.Body).Decode(&d.media); err != nil {
-      return err
-   }
-   if err := d.download(audio, dash.Audio); err != nil {
-      return err
-   }
-   return d.download(video, dash.Video)
 }

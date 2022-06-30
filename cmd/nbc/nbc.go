@@ -19,7 +19,7 @@ func download(addr, base string) error {
    if err != nil {
       return err
    }
-   file, err := format.Create(base + hls.TS)
+   file, err := format.Create(base + ".ts")
    if err != nil {
       return err
    }
@@ -70,7 +70,7 @@ func new_master(guid, bandwidth int64, info bool) error {
          fmt.Println(each)
       }
    } else {
-      return download(stream.Raw_URI, page.Analytics.ConvivaAssetName)
+      return download(stream.URI, page.Analytics.ConvivaAssetName)
    }
    return nil
 }

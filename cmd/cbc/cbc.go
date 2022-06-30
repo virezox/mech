@@ -15,7 +15,7 @@ func download(addr *url.URL, name string) error {
    if err != nil {
       return err
    }
-   key, err := get_key(seg.Raw_Key)
+   key, err := get_key(seg.Key)
    if err != nil {
       return err
    }
@@ -125,21 +125,21 @@ func new_master(id, address, audio string, video int64, info bool) error {
    } else {
       if audio != "" {
          medium := master.Media.Get_Name(audio)
-         addr, err := res.Request.URL.Parse(medium.Raw_URI)
+         addr, err := res.Request.URL.Parse(medium.URI)
          if err != nil {
             return err
          }
-         if err := download(addr, asset.AppleContentId + hls.AAC); err != nil {
+         if err := download(addr, asset.AppleContentId + ".mts"); err != nil {
             return err
          }
       }
       if video >= 1 {
          medium := master.Streams.Get_Bandwidth(video)
-         addr, err := res.Request.URL.Parse(medium.Raw_URI)
+         addr, err := res.Request.URL.Parse(medium.URI)
          if err != nil {
             return err
          }
-         return download(addr, asset.AppleContentId + hls.TS)
+         return download(addr, asset.AppleContentId + ".ts")
       }
    }
    return nil
