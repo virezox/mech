@@ -134,21 +134,6 @@ func (t Track) Base() string {
    return t.Band_Name + "-" + t.Title
 }
 
-func (t Track) String() string {
-   var buf []byte
-   buf = append(buf, "Num:"...)
-   buf = strconv.AppendInt(buf, t.Track_Num, 10)
-   buf = append(buf, " Title:"...)
-   buf = append(buf, t.Title...)
-   buf = append(buf, " Band:"...)
-   buf = append(buf, t.Band_Name...)
-   if t.Streaming_URL != nil {
-      buf = append(buf, " URL:"...)
-      buf = append(buf, t.Streaming_URL.MP3_128...)
-   }
-   return string(buf)
-}
-
 type Tralbum struct {
    Art_ID int64
    Release_Date int64
