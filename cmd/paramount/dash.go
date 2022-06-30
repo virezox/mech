@@ -8,7 +8,6 @@ import (
    "github.com/89z/mech/paramount"
    "github.com/89z/mech/widevine"
    "github.com/89z/format"
-   "github.com/89z/mech"
    "os"
 )
 
@@ -83,11 +82,7 @@ func (d *downloader) download(bandwidth int64, r dash.Representations) error {
             return err
          }
       }
-      ext, err := mech.Extension_By_Type(*rep.MimeType)
-      if err != nil {
-         return err
-      }
-      file, err := format.Create(d.Base()+ext)
+      file, err := format.Create(d.Base()+rep.Ext())
       if err != nil {
          return err
       }

@@ -3,7 +3,6 @@ package main
 import (
    "fmt"
    "github.com/89z/format"
-   "github.com/89z/mech"
    "github.com/89z/mech/youtube"
    "os"
 )
@@ -76,7 +75,7 @@ func do_access() error {
 }
 
 func download(form *youtube.Format, base string) error {
-   ext, err := mech.Extension_By_Type(form.MimeType)
+   ext, err := youtube.Extension_By_Type(form.MimeType)
    if err != nil {
       return err
    }

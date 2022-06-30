@@ -6,12 +6,37 @@ import (
    "github.com/89z/format"
    "github.com/89z/format/dash"
    "github.com/89z/format/mp4"
-   "github.com/89z/mech"
    "github.com/89z/mech/amc"
    "github.com/89z/mech/widevine"
    "io"
    "os"
 )
+
+func (d *downloader) set_key() error {
+   private_key, err := os.ReadFile(d.pem)
+   if err != nil {
+      return err
+   }
+   client_ID, err := os.ReadFile(d.client)
+   if err != nil {
+      return err
+   }
+   raw_key_id := d.media.Representations()[0].ContentProtection.Default_KID
+   key_ID, err := widevine.Key_ID(raw_key_id)
+   if err != nil {
+      return err
+   }
+   mod, err := widevine.New_Module(private_key, client_ID, key_ID)
+   if err != nil {
+      return err
+   }
+   keys, err := mod.Post(d.Playback)
+   if err != nil {
+      return err
+   }
+   d.key = keys.Content().Key
+   return nil
+}
 
 func (d downloader) do_DASH(address string, nid, video, audio int64) error {
    home, err := os.UserHomeDir()
@@ -56,30 +81,6 @@ func (d downloader) do_DASH(address string, nid, video, audio int64) error {
    return d.download(video, reps)
 }
 
-func (d *downloader) set_key() error {
-   private_key, err := os.ReadFile(d.pem)
-   if err != nil {
-      return err
-   }
-   client_ID, err := os.ReadFile(d.client)
-   if err != nil {
-      return err
-   }
-   key_ID, err := widevine.Key_ID(d.media.Protection().Default_KID)
-   if err != nil {
-      return err
-   }
-   mod, err := widevine.New_Module(private_key, client_ID, key_ID)
-   if err != nil {
-      return err
-   }
-   keys, err := mod.Post(d.Playback)
-   if err != nil {
-      return err
-   }
-   d.key = keys.Content().Key
-   return nil
-}
 func (d *downloader) download(bandwidth int64, r dash.Representations) error {
    if bandwidth == 0 {
       return nil
@@ -93,11 +94,7 @@ func (d *downloader) download(bandwidth int64, r dash.Representations) error {
          fmt.Println(each)
       }
    } else {
-      ext, err := mech.Extension_By_Type(*rep.MimeType)
-      if err != nil {
-         return err
-      }
-      file, err := format.Create(d.Base()+ext)
+      file, err := format.Create(d.Base()+rep.Ext())
       if err != nil {
          return err
       }

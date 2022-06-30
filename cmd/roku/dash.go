@@ -6,7 +6,6 @@ import (
    "github.com/89z/format"
    "github.com/89z/format/dash"
    "github.com/89z/format/mp4"
-   "github.com/89z/mech"
    "github.com/89z/mech/roku"
    "github.com/89z/mech/widevine"
    "os"
@@ -87,11 +86,7 @@ func (d *downloader) download(bandwidth int64, r dash.Representations) error {
             return err
          }
       }
-      ext, err := mech.Extension_By_Type(*rep.MimeType)
-      if err != nil {
-         return err
-      }
-      file, err := format.Create(d.Content.Base()+ext)
+      file, err := format.Create(d.Content.Base()+rep.Ext())
       if err != nil {
          return err
       }
