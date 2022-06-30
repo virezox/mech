@@ -8,35 +8,6 @@ import (
    "time"
 )
 
-type Media struct {
-   Message *string
-   URL *string
-}
-
-func (p Profile) Media(asset *Asset) (*Media, error) {
-   req, err := http.NewRequest("GET", asset.PlaySession.URL, nil)
-   if err != nil {
-      return nil, err
-   }
-   req.Header = http.Header{
-      "X-Claims-Token": {p.ClaimsToken},
-      "X-Forwarded-For": {forwarded_for},
-   }
-   res, err := Client.Do(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   med := new(Media)
-   if err := json.NewDecoder(res.Body).Decode(med); err != nil {
-      return nil, err
-   }
-   if med.Message != nil {
-      return nil, errors.New(*med.Message)
-   }
-   return med, nil
-}
-
 const forwarded_for = "99.224.0.0"
 
 var Client = http.Default_Client
@@ -98,4 +69,33 @@ func (a Asset) String() string {
    buf.WriteString("\nDuration: ")
    buf.WriteString(a.Get_Duration().String())
    return buf.String()
+}
+
+type Media struct {
+   Message *string
+   URL *string
+}
+
+func (p Profile) Media(asset *Asset) (*Media, error) {
+   req, err := http.NewRequest("GET", asset.PlaySession.URL, nil)
+   if err != nil {
+      return nil, err
+   }
+   req.Header = http.Header{
+      "X-Claims-Token": {p.ClaimsToken},
+      "X-Forwarded-For": {forwarded_for},
+   }
+   res, err := Client.Do(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   med := new(Media)
+   if err := json.NewDecoder(res.Body).Decode(med); err != nil {
+      return nil, err
+   }
+   if med.Message != nil {
+      return nil, errors.New(*med.Message)
+   }
+   return med, nil
 }

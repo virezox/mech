@@ -1,9 +1,19 @@
 package apple
 
 import (
+   "fmt"
    "os"
    "testing"
 )
+
+func Test_Asset(t *testing.T) {
+   episode, err := New_Episode(content_ID)
+   if err != nil {
+      t.Fatal(err)
+   }
+   asset := episode.Asset()
+   fmt.Printf("%+v\n", asset)
+}
 
 func Test_Create(t *testing.T) {
    con, err := New_Config()
