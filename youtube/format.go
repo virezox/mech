@@ -3,7 +3,6 @@ package youtube
 import (
    "github.com/89z/format"
    "io"
-   "mime"
    "net/http"
    "strconv"
 )
@@ -19,17 +18,26 @@ func (f Format) MarshalText() ([]byte, error) {
    b = append(b, " Bitrate:"...)
    b = strconv.AppendInt(b, f.Bitrate, 10)
    if f.ContentLength >= 1 { // Tq92D6wQ1mg
-      b = append(b, " Size:"...)
+      b = append(b, " ContentLength:"...)
       b = strconv.AppendInt(b, f.ContentLength, 10)
    }
-   b = append(b, " Codecs:"...)
-   _, param, err := mime.ParseMediaType(f.MimeType)
-   if err != nil {
-      return nil, err
-   }
-   b = append(b, param["codecs"]...)
+   b = append(b, "\n\tMimeType:"...)
+   b = append(b, f.MimeType...)
    b = append(b, '\n')
    return b, nil
+}
+
+type Formats []Format
+
+type Format struct {
+   AudioQuality string
+   QualityLabel string
+   Width int
+   Height int
+   Bitrate int64
+   ContentLength int64 `json:"contentLength,string"`
+   MimeType string
+   URL string
 }
 
 func (f Format) Encode(w io.Writer) error {
@@ -59,8 +67,6 @@ func (f Format) Encode(w io.Writer) error {
    }
    return nil
 }
-
-type Formats []Format
 
 func (f Formats) Audio(quality string) (*Format, bool) {
    for _, form := range f {
@@ -94,14 +100,3 @@ func (f Formats) Video(height int) (*Format, bool) {
 }
 
 const chunk = 10_000_000
-
-type Format struct {
-   AudioQuality string
-   Bitrate int64
-   ContentLength int64 `json:"contentLength,string"`
-   Height int
-   MimeType string
-   QualityLabel string
-   URL string
-   Width int
-}

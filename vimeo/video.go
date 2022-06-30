@@ -21,42 +21,12 @@ type Video struct {
    Download []Download
 }
 
-func (v Video) String() string {
-   var buf []byte
-   buf = append(buf, "Name: "...)
-   buf = append(buf, v.Name...)
-   buf = append(buf, "\nUser: "...)
-   buf = append(buf, v.User.Name...)
-   buf = append(buf, "\nDuration: "...)
-   buf = strconv.AppendInt(buf, v.Duration, 10)
-   buf = append(buf, "\nRelease: "...)
-   buf = append(buf, v.Release_Time...)
-   for _, down := range v.Download {
-      buf = append(buf, '\n')
-      buf = append(buf, down.String()...)
-   }
-   return string(buf)
-}
-
 type Download struct {
    Width int64
    Height int64
    Quality string
    Size_Short string
    Link string
-}
-
-func (d Download) String() string {
-   var buf []byte
-   buf = append(buf, "Width:"...)
-   buf = strconv.AppendInt(buf, d.Width, 10)
-   buf = append(buf, " Height:"...)
-   buf = strconv.AppendInt(buf, d.Height, 10)
-   buf = append(buf, " Quality:"...)
-   buf = append(buf, d.Quality...)
-   buf = append(buf, " Size:"...)
-   buf = append(buf, d.Size_Short...)
-   return string(buf)
 }
 
 var Client = http.Default_Client

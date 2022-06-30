@@ -25,11 +25,11 @@ func (p Player) MarshalText() ([]byte, error) {
    }
    b = append(b, '\n')
    for _, form := range p.StreamingData.AdaptiveFormats {
-      text, err := form.MarshalText()
+      t, err := form.MarshalText()
       if err != nil {
          return nil, err
       }
-      b = append(b, text...)
+      b = append(b, t...)
    }
    return b, nil
 }
