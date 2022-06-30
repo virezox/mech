@@ -9,6 +9,7 @@ import (
 var tests = map[test_type]string{
    {episode, dash_cenc}: "eyT_RYkqNuH_6ZYrepLtxkiPO1HA7dIU",
    {episode, stream_pack}: "622520382",
+   {movie, dash_cenc}: "tQk_Qooh5wUlxQqzj_4LiBO2m4iMrcPD",
    {movie, stream_pack}: "wQH9yE_y_Dt4ekDYm3yelhhY2KXvOra_",
 }
 

@@ -9,6 +9,37 @@ import (
    "sort"
 )
 
+func download(addr, base string) error {
+   res, err := nbc.Client.Get(addr)
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   seg, err := hls.New_Scanner(res.Body).Segment()
+   if err != nil {
+      return err
+   }
+   file, err := format.Create(base + hls.TS)
+   if err != nil {
+      return err
+   }
+   defer file.Close()
+   pro := format.Progress_Chunks(file, len(seg.Clear))
+   for _, clear := range seg.Clear {
+      res, err := nbc.Client.Level(0).Redirect(nil).Get(clear)
+      if err != nil {
+         return err
+      }
+      pro.Add_Chunk(res.ContentLength)
+      if _, err := io.Copy(pro, res.Body); err != nil {
+         return err
+      }
+      if err := res.Body.Close(); err != nil {
+         return err
+      }
+   }
+   return nil
+}
 func new_master(guid, bandwidth int64, info bool) error {
    page, err := nbc.New_Bonanza_Page(guid)
    if err != nil {
@@ -40,38 +71,6 @@ func new_master(guid, bandwidth int64, info bool) error {
       }
    } else {
       return download(stream.Raw_URI, page.Analytics.ConvivaAssetName)
-   }
-   return nil
-}
-
-func download(addr, base string) error {
-   res, err := nbc.Client.Get(addr)
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   seg, err := hls.New_Scanner(res.Body).Segment()
-   if err != nil {
-      return err
-   }
-   file, err := format.Create(base + hls.TS)
-   if err != nil {
-      return err
-   }
-   defer file.Close()
-   pro := format.Progress_Chunks(file, len(seg.Clear))
-   for _, clear := range seg.Clear {
-      res, err := nbc.Client.Level(0).Get(clear)
-      if err != nil {
-         return err
-      }
-      pro.Add_Chunk(res.ContentLength)
-      if _, err := io.Copy(pro, res.Body); err != nil {
-         return err
-      }
-      if err := res.Body.Close(); err != nil {
-         return err
-      }
    }
    return nil
 }

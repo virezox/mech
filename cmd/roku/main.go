@@ -4,6 +4,7 @@ import (
    "flag"
    "github.com/89z/format/dash"
    "github.com/89z/mech/roku"
+   "github.com/89z/mech/widevine"
    "net/url"
    "os"
    "path/filepath"
@@ -56,6 +57,7 @@ func main() {
    flag.Parse()
    if verbose {
       roku.Client.Log_Level = 2
+      widevine.Client.Log_Level = 2
    }
    if id != "" || address != "" {
       if id == "" {
