@@ -19,7 +19,7 @@ func download_HLS(addr *url.URL, base string) error {
    if err != nil {
       return err
    }
-   file, err := format.Create(base + hls.TS)
+   file, err := format.Create(base + ".ts")
    if err != nil {
       return err
    }
@@ -60,7 +60,7 @@ func (d downloader) HLS(bandwidth int64) error {
    }
    stream := master.Streams.Get_Bandwidth(bandwidth)
    if !d.info {
-      addr, err := res.Request.URL.Parse(stream.Raw_URI)
+      addr, err := res.Request.URL.Parse(stream.URI)
       if err != nil {
          return err
       }

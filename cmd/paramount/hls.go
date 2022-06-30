@@ -6,7 +6,6 @@ import (
    "github.com/89z/format/hls"
    "github.com/89z/mech/paramount"
    "io"
-   "sort"
 )
 
 func download(addr, base string) error {
@@ -14,12 +13,12 @@ func download(addr, base string) error {
    if err != nil {
       return err
    }
-   res, err := paramount.Client.Get(seg.Raw_Key)
+   res, err := paramount.Client.Get(seg.Key)
    if err != nil {
       return err
    }
    defer res.Body.Close()
-   file, err := format.Create(base + hls.TS)
+   file, err := format.Create(base + ".ts")
    if err != nil {
       return err
    }
@@ -63,9 +62,6 @@ func (d downloader) HLS(bandwidth int64) error {
    if err != nil {
       return err
    }
-   sort.Slice(master.Streams, func(a, b int) bool {
-      return master.Streams[a].Bandwidth < master.Streams[b].Bandwidth
-   })
    stream := master.Streams.Get_Bandwidth(bandwidth)
    if d.info {
       fmt.Println(d.Title)
@@ -76,7 +72,7 @@ func (d downloader) HLS(bandwidth int64) error {
          fmt.Println(each)
       }
    } else {
-      return download(stream.Raw_URI, d.Base())
+      return download(stream.URI, d.Base())
    }
    return nil
 }
