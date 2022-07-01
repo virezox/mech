@@ -2,20 +2,37 @@ package amc
 
 import (
    "bytes"
+   "encoding/json"
    "github.com/89z/std/http"
-   "github.com/89z/std/json"
+   "github.com/89z/std/os"
    "strconv"
    "strings"
 )
 
+type Auth struct {
+   Data struct {
+      Access_Token string
+      Refresh_Token string
+   }
+}
+
 func (a Auth) Create(name string) error {
-   return json.Encode(name, a)
+   file, err := os.Create(name)
+   if err != nil {
+      return err
+   }
+   defer file.Close()
+   return json.NewEncoder(file).Encode(a)
 }
 
 func Open_Auth(name string) (*Auth, error) {
-   auth := new(Auth)
-   err := json.Decode(name, auth)
+   file, err := os.Open(name)
    if err != nil {
+      return nil, err
+   }
+   defer file.Close()
+   auth := new(Auth)
+   if err := json.NewDecoder(file).Decode(auth); err != nil {
       return nil, err
    }
    return auth, nil
@@ -119,13 +136,6 @@ func (a *Auth) Refresh() error {
    }
    defer res.Body.Close()
    return json.NewDecoder(res.Body).Decode(a)
-}
-
-type Auth struct {
-   Data struct {
-      Access_Token string
-      Refresh_Token string
-   }
 }
 
 type Source struct {

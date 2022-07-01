@@ -3,10 +3,10 @@ package main
 import (
    "fmt"
    "github.com/89z/std/hls"
+   "github.com/89z/std/os"
    "github.com/89z/mech/cbc"
    "io"
    "net/url"
-   "os"
 )
 
 func download(addr *url.URL, name string) error {

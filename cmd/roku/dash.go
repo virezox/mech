@@ -3,11 +3,11 @@ package main
 import (
    "encoding/xml"
    "fmt"
+   "github.com/89z/mech/roku"
+   "github.com/89z/mech/widevine"
    "github.com/89z/std/dash"
    "github.com/89z/std/mp4"
    "github.com/89z/std/os"
-   "github.com/89z/mech/roku"
-   "github.com/89z/mech/widevine"
 )
 
 func (d downloader) DASH(video, audio int64) error {
