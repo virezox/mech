@@ -7,6 +7,26 @@ import (
    "path/filepath"
 )
 
+type stream struct {
+   bandwidth int
+   base string
+   dash.Representations
+   key []byte
+}
+
+type flags struct {
+   address string
+   audio_bandwidth int
+   client_ID string
+   email string
+   info bool
+   nid int64
+   password string
+   private_key string
+   verbose bool
+   video_bandwidth int
+}
+
 func (f flags) login() error {
    auth, err := amc.Unauth()
    if err != nil {
@@ -20,19 +40,6 @@ func (f flags) login() error {
       return err
    }
    return auth.Create(home + "/mech/amc.json")
-}
-
-type flags struct {
-   address string
-   audio_bandwidth int64
-   client_ID string
-   email string
-   info bool
-   nid int64
-   password string
-   private_key string
-   verbose bool
-   video_bandwidth int64
 }
 
 func new_flags() (*flags, error) {
@@ -55,8 +62,8 @@ func main() {
    flag.Int64Var(&f.nid, "b", 0, "NID")
    flag.StringVar(&f.client_ID, "c", f.client_ID, "client ID")
    flag.StringVar(&f.email, "e", "", "email")
-   flag.Int64Var(&f.video_bandwidth, "f", 1_999_999, "video bandwidth")
-   flag.Int64Var(&f.audio_bandwidth, "g", 127_000, "audio bandwidth")
+   flag.IntVar(&f.video_bandwidth, "f", 1_999_999, "video bandwidth")
+   flag.IntVar(&f.audio_bandwidth, "g", 127_000, "audio bandwidth")
    flag.BoolVar(&f.info, "i", false, "information")
    flag.StringVar(&f.private_key, "k", f.private_key, "private key")
    flag.StringVar(&f.password, "p", "", "password")

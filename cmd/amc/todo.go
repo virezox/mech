@@ -11,7 +11,7 @@ import (
    "io"
 )
 
-func (d downloader) do_DASH(address string, nid, video, audio int64) error {
+func (f flags) DASH() error {
    home, err := os.UserHomeDir()
    if err != nil {
       return err
@@ -26,67 +26,96 @@ func (d downloader) do_DASH(address string, nid, video, audio int64) error {
    if err := auth.Create(home + "/mech/amc.json"); err != nil {
       return err
    }
-   if nid == 0 {
-      nid, err = amc.Get_NID(address)
+   if f.nid == 0 {
+      f.nid, err = amc.Get_NID(f.address)
       if err != nil {
          return err
       }
    }
-   d.Playback, err = auth.Playback(nid)
+   play, err = auth.Playback(nid)
    if err != nil {
       return err
    }
-   source := d.Playback.DASH()
-   res, err := amc.Client.Redirect(nil).Get(source.Src)
+   key := play.Source().Key_Systems
+   if key == nil {
+      // no key
+      return nil
+   }
+   res, err := amc.Client.Redirect(nil).Get(play.DASH().Src)
    if err != nil {
       return err
    }
    defer res.Body.Close()
-   d.url = res.Request.URL
-   if err := xml.NewDecoder(res.Body).Decode(&d.media); err != nil {
+   // Media
+   var media dash.Media
+   if err := xml.NewDecoder(res.Body).Decode(&media); err != nil {
       return err
    }
-   reps := d.media.Representations().Codecs("mp4a")
-   if err := d.download(audio, reps); err != nil {
+   reps := media.Representations()
+   // stream
+   var str stream
+   str.base = play.Base()
+   // audio
+   str.Representations = reps.Audio()
+   str.bandwidth = f.audio_bandwidth
+   if err := f.download(str); err != nil {
       return err
    }
-   reps = d.media.Representations().Codecs("avc1")
-   return d.download(video, reps)
+   // video
+   str.Representations = reps.Video()
+   str.bandwidth = f.video_bandwidth
+   return f.download(str)
 }
 
-func (d *downloader) download(bandwidth int64, r dash.Representations) error {
-   if bandwidth == 0 {
+func (f *flags) set_key() error {
+   private_key, err := os.ReadFile(f.private_key)
+   if err != nil {
+      return err
+   }
+   client_ID, err := os.ReadFile(f.client_ID)
+   if err != nil {
+      return err
+   }
+   raw_key_id := f.media.Representations()[0].ContentProtection.Default_KID
+   key_ID, err := widevine.Key_ID(raw_key_id)
+   if err != nil {
+      return err
+   }
+   mod, err := widevine.New_Module(private_key, client_ID, key_ID)
+   if err != nil {
+      return err
+   }
+   keys, err := mod.Post(f.Playback)
+   if err != nil {
+      return err
+   }
+   f.key = keys.Content().Key
+   return nil
+}
+
+func (f *flags) download(str stream) error {
+   if str.bandwidth == 0 {
       return nil
    }
-   rep := r.Get_Bandwidth(bandwidth)
-   if d.info {
-      for _, each := range r {
+   rep := reps.Get_Bandwidth(str.bandwidth)
+   if f.info {
+      for _, each := range reps {
          if each.Bandwidth == rep.Bandwidth {
             fmt.Print("!")
          }
          fmt.Println(each)
       }
    } else {
-      file, err := os.Create(d.Base()+rep.Ext())
+      file, err := os.Create(str.base + rep.Ext())
       if err != nil {
          return err
       }
       defer file.Close()
-      initial, err := d.url.Parse(rep.Initialization())
-      if err != nil {
-         return err
-      }
-      res, err := amc.Client.Redirect(nil).Get(initial.String())
+      res, err := amc.Client.Redirect(nil).Get(rep.Initialization())
       if err != nil {
          return err
       }
       defer res.Body.Close()
-      if d.key == nil {
-         err := d.set_key()
-         if err != nil {
-            return err
-         }
-      }
       media := rep.Media()
       pro := os.Progress_Chunks(file, len(media))
       dec := mp4.New_Decrypt(pro)
@@ -94,7 +123,7 @@ func (d *downloader) download(bandwidth int64, r dash.Representations) error {
          return err
       }
       for _, raw := range media {
-         addr, err := d.url.Parse(raw)
+         addr, err := f.url.Parse(raw)
          if err != nil {
             return err
          }
@@ -103,8 +132,8 @@ func (d *downloader) download(bandwidth int64, r dash.Representations) error {
             return err
          }
          pro.Add_Chunk(res.ContentLength)
-         if d.key != nil {
-            err = dec.Segment(res.Body, d.key)
+         if f.key != nil {
+            err = dec.Segment(res.Body, f.key)
          } else {
             _, err = io.Copy(pro, res.Body)
          }
@@ -118,28 +147,4 @@ func (d *downloader) download(bandwidth int64, r dash.Representations) error {
    }
    return nil
 }
-func (d *downloader) set_key() error {
-   private_key, err := os.ReadFile(d.private_key)
-   if err != nil {
-      return err
-   }
-   client_ID, err := os.ReadFile(d.client_ID)
-   if err != nil {
-      return err
-   }
-   raw_key_id := d.media.Representations()[0].ContentProtection.Default_KID
-   key_ID, err := widevine.Key_ID(raw_key_id)
-   if err != nil {
-      return err
-   }
-   mod, err := widevine.New_Module(private_key, client_ID, key_ID)
-   if err != nil {
-      return err
-   }
-   keys, err := mod.Post(d.Playback)
-   if err != nil {
-      return err
-   }
-   d.key = keys.Content().Key
-   return nil
-}
+

@@ -8,6 +8,45 @@ import (
    "strings"
 )
 
+func (p Playback) Source() *Source {
+   for _, source := range p.body.Data.PlaybackJsonData.Sources {
+      if source.Type == "application/dash+xml" {
+         return &source
+      }
+   }
+   return nil
+}
+
+type Playback struct {
+   header http.Header
+   body struct {
+      Data struct {
+         PlaybackJsonData struct {
+            Custom_Fields struct {
+               Show string // 1
+               Season string // 2
+               Episode string // 3
+            }
+            Name string // 4
+            Sources []Source
+         }
+      }
+   }
+}
+
+func (p Playback) Base() string {
+   data := p.body.Data.PlaybackJsonData
+   var buf strings.Builder
+   buf.WriteString(data.Custom_Fields.Show)
+   buf.WriteByte('-')
+   buf.WriteString(data.Custom_Fields.Season)
+   buf.WriteByte('-')
+   buf.WriteString(data.Custom_Fields.Episode)
+   buf.WriteByte('-')
+   buf.WriteString(data.Name)
+   return buf.String()
+}
+
 func (a Auth) Playback(nID int64) (*Playback, error) {
    addr := []byte("https://gw.cds.amcn.com/playback-id/api/v1/playback/")
    addr = strconv.AppendInt(addr, nID, 10)
@@ -64,43 +103,3 @@ func (Playback) Request_Body(buf []byte) ([]byte, error) {
 func (Playback) Response_Body(buf []byte) ([]byte, error) {
    return buf, nil
 }
-
-func (p Playback) DASH() *Source {
-   for _, source := range p.body.Data.PlaybackJsonData.Sources {
-      if source.Type == "application/dash+xml" {
-         return &source
-      }
-   }
-   return nil
-}
-
-type Playback struct {
-   header http.Header
-   body struct {
-      Data struct {
-         PlaybackJsonData struct {
-            Custom_Fields struct {
-               Show string // 1
-               Season string // 2
-               Episode string // 3
-            }
-            Name string // 4
-            Sources []Source
-         }
-      }
-   }
-}
-
-func (p Playback) Base() string {
-   data := p.body.Data.PlaybackJsonData
-   var buf strings.Builder
-   buf.WriteString(data.Custom_Fields.Show)
-   buf.WriteByte('-')
-   buf.WriteString(data.Custom_Fields.Season)
-   buf.WriteByte('-')
-   buf.WriteString(data.Custom_Fields.Episode)
-   buf.WriteByte('-')
-   buf.WriteString(data.Name)
-   return buf.String()
-}
-
