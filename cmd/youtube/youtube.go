@@ -59,6 +59,7 @@ func do_refresh() error {
    }
    return head.Create(home + "/mech/youtube.json")
 }
+
 func do_access() error {
    home, err := os.UserHomeDir()
    if err != nil {
@@ -75,7 +76,7 @@ func do_access() error {
 }
 
 func download(form *youtube.Format, base string) error {
-   ext, err := youtube.Extension_By_Type(form.MimeType)
+   ext, err := form.Ext()
    if err != nil {
       return err
    }
@@ -86,6 +87,7 @@ func download(form *youtube.Format, base string) error {
    defer file.Close()
    return form.Encode(file)
 }
+
 func (v video) player() (*youtube.Player, error) {
    if v.id == "" {
       var err error

@@ -1,6 +1,7 @@
 package youtube
 
 import (
+   "errors"
    "github.com/89z/format"
    "io"
    "mime"
@@ -8,14 +9,12 @@ import (
    "strconv"
 )
 
-func Extension_By_Type(typ string) (string, error) {
-   media, _, err := mime.ParseMediaType(typ)
+func (f Format) Ext() (string, error) {
+   media, _, err := mime.ParseMediaType(f.MimeType)
    if err != nil {
       return "", err
    }
    switch media {
-   case "audio/mpeg":
-      return ".mp3", nil
    case "audio/mp4":
       return ".m4a", nil
    case "audio/webm":
@@ -25,18 +24,18 @@ func Extension_By_Type(typ string) (string, error) {
    case "video/webm":
       return ".webm", nil
    }
-   return "", not_found{typ}
+   return "", errors.New(f.MimeType)
 }
 
-type not_found struct {
-   value string
-}
-
-func (n not_found) Error() string {
-   var buf []byte
-   buf = strconv.AppendQuote(buf, n.value)
-   buf = append(buf, " is not found"...)
-   return string(buf)
+type Format struct {
+   AudioQuality string
+   QualityLabel string
+   Width int
+   Height int
+   Bitrate int64
+   ContentLength int64 `json:"contentLength,string"`
+   MimeType string
+   URL string
 }
 
 func (f Format) MarshalText() ([]byte, error) {
@@ -60,17 +59,6 @@ func (f Format) MarshalText() ([]byte, error) {
 }
 
 type Formats []Format
-
-type Format struct {
-   AudioQuality string
-   QualityLabel string
-   Width int
-   Height int
-   Bitrate int64
-   ContentLength int64 `json:"contentLength,string"`
-   MimeType string
-   URL string
-}
 
 func (f Format) Encode(w io.Writer) error {
    req, err := http.NewRequest("GET", f.URL, nil)

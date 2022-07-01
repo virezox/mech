@@ -1,12 +1,12 @@
 package nbc
 
 import (
+   "bytes"
    "crypto/hmac"
    "crypto/sha256"
    "encoding/hex"
    "encoding/json"
    "github.com/89z/format/http"
-   "github.com/89z/mech"
    "io"
    "strconv"
    "strings"
@@ -41,12 +41,12 @@ func New_Bonanza_Page(guid int64) (*Bonanza_Page, error) {
    p.Variables.One_App = true
    p.Variables.Platform = "android"
    p.Variables.Type = "VIDEO"
-   buf, err := mech.Encode(p)
+   buf, err := json.MarshalIndent(p, "", " ")
    if err != nil {
       return nil, err
    }
    req, err := http.NewRequest(
-      "POST", "https://friendship.nbc.co/v2/graphql", buf,
+      "POST", "https://friendship.nbc.co/v2/graphql", bytes.NewReader(buf),
    )
    if err != nil {
       return nil, err
@@ -84,7 +84,7 @@ func (b Bonanza_Page) Video() (*Video, error) {
    in.Device_ID = "android"
    in.External_Advertiser_ID = "NBC"
    in.Mpx.Account_ID = b.Metadata.MpxAccountId
-   body, err := mech.Encode(in)
+   body, err := json.MarshalIndent(in, "", " ")
    if err != nil {
       return nil, err
    }
@@ -92,7 +92,7 @@ func (b Bonanza_Page) Video() (*Video, error) {
    addr.WriteString("http://access-cloudpath.media.nbcuni.com")
    addr.WriteString("/access/vod/nbcuniversal/")
    addr.WriteString(b.Name)
-   req, err := http.NewRequest("POST", addr.String(), body)
+   req, err := http.NewRequest("POST", addr.String(), bytes.NewReader(body))
    if err != nil {
       return nil, err
    }

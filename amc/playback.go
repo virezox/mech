@@ -1,8 +1,8 @@
 package amc
 
 import (
+   "bytes"
    "encoding/json"
-   "github.com/89z/mech"
    "net/http"
    "strconv"
    "strings"
@@ -14,11 +14,11 @@ func (a Auth) Playback(nID int64) (*Playback, error) {
    var in playback_request
    in.Ad_Tags.Mode = "on-demand"
    in.Ad_Tags.URL = "!"
-   body, err := mech.Encode(in)
+   body, err := json.MarshalIndent(in, "", " ")
    if err != nil {
       return nil, err
    }
-   req, err := http.NewRequest("POST", string(addr), body)
+   req, err := http.NewRequest("POST", string(addr), bytes.NewReader(body))
    if err != nil {
       return nil, err
    }
