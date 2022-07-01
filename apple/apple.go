@@ -2,25 +2,35 @@ package apple
 
 import (
    "bytes"
-   "github.com/89z/format/http"
-   "github.com/89z/format/json"
-   "github.com/89z/format/xml"
+   "encoding/json"
+   "github.com/89z/std/http"
+   "github.com/89z/std/os"
+   "github.com/89z/std/xml"
    "io"
    "net/url"
    "strconv"
 )
 
+func (a Auth) Create(name string) error {
+   file, err := os.Create(name)
+   if err != nil {
+      return err
+   }
+   defer file.Close()
+   return json.NewEncoder(file).Encode(a)
+}
+
 func Open_Auth(name string) (Auth, error) {
-   var auth Auth
-   err := json.Decode(name, &auth)
+   file, err := os.Open(name)
    if err != nil {
       return nil, err
    }
+   defer file.Close()
+   var auth Auth
+   if err := json.NewDecoder(file).Decode(&auth); err != nil {
+      return nil, err
+   }
    return auth, nil
-}
-
-func (a Auth) Create(name string) error {
-   return json.Encode(name, a)
 }
 
 type Server_Parameters struct {

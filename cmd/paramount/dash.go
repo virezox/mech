@@ -3,12 +3,11 @@ package main
 import (
    "encoding/xml"
    "fmt"
-   "github.com/89z/format/dash"
-   "github.com/89z/format/mp4"
+   "github.com/89z/std/dash"
+   "github.com/89z/std/mp4"
+   "github.com/89z/std/os"
    "github.com/89z/mech/paramount"
    "github.com/89z/mech/widevine"
-   "github.com/89z/format"
-   "os"
 )
 
 func (d *downloader) set_key() error {
@@ -82,7 +81,7 @@ func (d *downloader) download(bandwidth int64, r dash.Representations) error {
             return err
          }
       }
-      file, err := format.Create(d.Base()+rep.Ext())
+      file, err := os.Create(d.Base()+rep.Ext())
       if err != nil {
          return err
       }
@@ -97,7 +96,7 @@ func (d *downloader) download(bandwidth int64, r dash.Representations) error {
       }
       defer res.Body.Close()
       media := rep.Media()
-      pro := format.Progress_Chunks(file, len(media))
+      pro := os.Progress_Chunks(file, len(media))
       dec := mp4.New_Decrypt(pro)
       if err := dec.Init(res.Body); err != nil {
          return err

@@ -6,7 +6,7 @@ import (
    "crypto/sha256"
    "encoding/hex"
    "encoding/json"
-   "github.com/89z/format/http"
+   "github.com/89z/std/http"
    "io"
    "strconv"
    "strings"

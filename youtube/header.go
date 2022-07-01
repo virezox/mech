@@ -1,23 +1,33 @@
 package youtube
 
 import (
-   "github.com/89z/format/json"
+   "encoding/json"
+   "github.com/89z/std/os"
    "net/http"
    "net/url"
    "strings"
 )
 
+func (h Header) Create(name string) error {
+   file, err := os.Create(name)
+   if err != nil {
+      return err
+   }
+   defer file.Close()
+   return json.NewEncoder(file).Encode(h)
+}
+
 func Open_Header(name string) (*Header, error) {
-   head := new(Header)
-   err := json.Decode(name, head)
+   file, err := os.Open(name)
    if err != nil {
       return nil, err
    }
+   defer file.Close()
+   head := new(Header)
+   if err := json.NewDecoder(file).Decode(head); err != nil {
+      return nil, err
+   }
    return head, nil
-}
-
-func (h Header) Create(name string) error {
-   return json.Encode(name, h)
 }
 
 const (

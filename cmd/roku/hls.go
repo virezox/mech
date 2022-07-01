@@ -2,8 +2,8 @@ package main
 
 import (
    "fmt"
-   "github.com/89z/format"
-   "github.com/89z/format/hls"
+   "github.com/89z/std/hls"
+   "github.com/89z/std/os"
    "github.com/89z/mech/roku"
    "io"
    "net/url"
@@ -19,12 +19,12 @@ func download_HLS(addr *url.URL, base string) error {
    if err != nil {
       return err
    }
-   file, err := format.Create(base + ".ts")
+   file, err := os.Create(base + ".ts")
    if err != nil {
       return err
    }
    defer file.Close()
-   pro := format.Progress_Chunks(file, len(seg.Clear))
+   pro := os.Progress_Chunks(file, len(seg.Clear))
    for _, clear := range seg.Clear {
       addr, err := res.Request.URL.Parse(clear)
       if err != nil {

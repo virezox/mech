@@ -2,22 +2,32 @@ package cbc
 
 import (
    "bytes"
-   "github.com/89z/format/json"
+   "encoding/json"
+   "github.com/89z/std/os"
    "net/http"
    "net/url"
 )
 
 func Open_Profile(name string) (*Profile, error) {
-   pro := new(Profile)
-   err := json.Decode(name, pro)
+   file, err := os.Open(name)
    if err != nil {
+      return nil, err
+   }
+   defer file.Close()
+   pro := new(Profile)
+   if err := json.NewDecoder(file).Decode(pro); err != nil {
       return nil, err
    }
    return pro, nil
 }
 
 func (p Profile) Create(name string) error {
-   return json.Encode(name, p)
+   file, err := os.Create(name)
+   if err != nil {
+      return err
+   }
+   defer file.Close()
+   return json.NewEncoder(file).Encode(p)
 }
 
 const api_key = "3f4beddd-2061-49b0-ae80-6f1f2ed65b37"

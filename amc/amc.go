@@ -2,8 +2,8 @@ package amc
 
 import (
    "bytes"
-   "github.com/89z/format/http"
-   "github.com/89z/format/json"
+   "github.com/89z/std/http"
+   "github.com/89z/std/json"
    "strconv"
    "strings"
 )

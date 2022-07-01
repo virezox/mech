@@ -7,8 +7,8 @@ import (
    "crypto/cipher"
    "crypto/rsa"
    "crypto/sha1"
-   "github.com/89z/format/http"
-   "github.com/89z/format/protobuf"
+   "github.com/89z/std/http"
+   "github.com/89z/std/protobuf"
    "github.com/chmike/cmac-go"
    "io"
 )

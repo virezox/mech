@@ -2,9 +2,9 @@ package main
 
 import (
    "fmt"
-   "github.com/89z/format"
-   "github.com/89z/format/hls"
    "github.com/89z/mech/paramount"
+   "github.com/89z/std/hls"
+   "github.com/89z/std/os"
    "io"
 )
 
@@ -18,12 +18,12 @@ func download(addr, base string) error {
       return err
    }
    defer res.Body.Close()
-   file, err := format.Create(base + ".ts")
+   file, err := os.Create(base + ".ts")
    if err != nil {
       return err
    }
    defer file.Close()
-   pro := format.Progress_Chunks(file, len(seg.Protected))
+   pro := os.Progress_Chunks(file, len(seg.Protected))
    key, err := io.ReadAll(res.Body)
    if err != nil {
       return err

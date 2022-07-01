@@ -2,7 +2,6 @@ package main
 
 import (
    "fmt"
-   "github.com/89z/format"
    "github.com/89z/mech/youtube"
    "os"
 )
@@ -80,7 +79,7 @@ func download(form *youtube.Format, base string) error {
    if err != nil {
       return err
    }
-   file, err := format.Create(base + ext)
+   file, err := os.Create(base + ext)
    if err != nil {
       return err
    }

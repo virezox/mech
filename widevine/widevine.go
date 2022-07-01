@@ -6,8 +6,8 @@ import (
    "encoding/base64"
    "encoding/hex"
    "encoding/pem"
-   "github.com/89z/format/http"
-   "github.com/89z/format/protobuf"
+   "github.com/89z/std/http"
+   "github.com/89z/std/protobuf"
    "strings"
 )
 
