@@ -3,19 +3,9 @@ package main
 import (
    "flag"
    "github.com/89z/mech"
-   "github.com/89z/mech/amc"
-   "github.com/89z/std/dash"
-   "net/url"
    "os"
    "path/filepath"
 )
-
-type flags struct {
-   mech.Flags
-   email string
-   nid int64
-   password string
-}
 
 func main() {
    home, err := os.UserHomeDir()
@@ -55,4 +45,11 @@ func main() {
    } else {
       flag.Usage()
    }
+}
+
+type flags struct {
+   mech.Flags
+   email string
+   nid int64
+   password string
 }

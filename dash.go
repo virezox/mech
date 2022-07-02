@@ -14,16 +14,16 @@ import (
 var client = http.Default_Client
 
 type Flags struct {
+   Address string
    Bandwidth_Audio int
    Bandwidth_Video int
    Client_ID string
    Info bool
    Private_Key string
-   address string
 }
 
 func (f Flags) Decode(base string, post widevine.Poster) error {
-   res, err := client.Redirect(nil).Get(f.address)
+   res, err := client.Redirect(nil).Get(f.Address)
    if err != nil {
       return err
    }
