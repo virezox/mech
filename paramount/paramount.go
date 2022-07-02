@@ -12,7 +12,7 @@ import (
    "strings"
 )
 
-func New_Session(content_ID string) (*Session, error) {
+func New_Session(guid string) (*Session, error) {
    token, err := new_token()
    if err != nil {
       return nil, err
@@ -34,9 +34,10 @@ func New_Session(content_ID string) (*Session, error) {
    if err := json.NewDecoder(res.Body).Decode(sess); err != nil {
       return nil, err
    }
-   sess.URL += content_ID
+   sess.URL += guid
    return sess, nil
 }
+
 const (
    aes_key = "302a6a0d70a7e9b967f91d39fef3e387816e3095925ae4537bce96063311f9c5"
    tv_secret = "6c70b33080758409"

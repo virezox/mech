@@ -2,53 +2,53 @@ package main
 
 import (
    "flag"
-   "github.com/89z/std/dash"
+   "github.com/89z/mech"
    "github.com/89z/mech/paramount"
-   "net/url"
    "os"
    "path/filepath"
 )
+
+type flags struct {
+   dash bool
+   guid string
+   mech.Flags
+}
 
 func main() {
    home, err := os.UserHomeDir()
    if err != nil {
       panic(err)
    }
-   var down downloader
+   var f flags
    // b
-   var guid string
-   flag.StringVar(&guid, "b", "", "GUID")
+   flag.StringVar(&f.guid, "b", "", "GUID")
    // c
-   down.client = filepath.Join(home, "mech/client_id.bin")
-   flag.StringVar(&down.client, "c", down.client, "client ID")
+   f.Client_ID = filepath.Join(home, "mech/client_id.bin")
+   flag.StringVar(&f.Client_ID, "c", f.Client_ID, "client ID")
    // d
-   var is_DASH bool
-   flag.BoolVar(&is_DASH, "d", false, "DASH download")
+   flag.BoolVar(&f.dash, "d", false, "DASH download")
    // f
-   var video int64
-   flag.Int64Var(&video, "f", 1611000, "video bandwidth")
+   flag.IntVar(&f.Bandwidth_Video, "f", 1611000, "video bandwidth")
    // g
-   var audio int64
-   flag.Int64Var(&audio, "g", 999999, "audio bandwidth")
+   flag.IntVar(&f.Bandwidth_Audio, "g", 999999, "audio bandwidth")
    // i
-   flag.BoolVar(&down.info, "i", false, "information")
+   flag.BoolVar(&f.Info, "i", false, "information")
    // k
-   down.pem = filepath.Join(home, "mech/private_key.pem")
-   flag.StringVar(&down.pem, "k", down.pem, "private key")
+   f.Private_Key = filepath.Join(home, "mech/private_key.pem")
+   flag.StringVar(&f.Private_Key, "k", f.Private_Key, "private key")
    flag.Parse()
-   if guid != "" {
-      var err error
-      down.Preview, err = paramount.New_Media(guid).Preview()
+   if f.guid != "" {
+      preview, err := paramount.New_Media(f.guid).Preview()
       if err != nil {
          panic(err)
       }
-      if is_DASH {
-         err := down.DASH(video, audio)
+      if f.dash {
+         err := f.DASH(preview)
          if err != nil {
             panic(err)
          }
       } else {
-         err := down.HLS(video)
+         err := f.HLS(preview)
          if err != nil {
             panic(err)
          }
