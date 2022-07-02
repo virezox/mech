@@ -86,7 +86,7 @@ func (a Auth) Playback(nID int64) (*Playback, error) {
 }
 
 func (p Playback) Request_URL() string {
-   return p.DASH().Key_Systems.Widevine.License_URL
+   return p.Source().Key_Systems.Widevine.License_URL
 }
 
 func (p Playback) Request_Header() http.Header {
