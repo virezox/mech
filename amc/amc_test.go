@@ -8,6 +8,7 @@ import (
 
 // amcplus.com/shows/orphan-black/episodes/season-1-instinct--1011152
 const (
+   key = "a66a5603545ad206c1a78e160a6710b1"
    nID = 1011152
    raw_key_ID = "c0e598b247fa443590299d5ef47da32c"
 )
@@ -48,7 +49,7 @@ func Test_Post(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   if keys.Content().String() != "a66a5603545ad206c1a78e160a6710b1" {
+   if keys.Content().String() != key {
       t.Fatal(keys)
    }
 }
