@@ -9,16 +9,6 @@ import (
    "path/filepath"
 )
 
-type downloader struct {
-   *paramount.Preview
-   client string
-   info bool
-   key []byte
-   pem string
-   url *url.URL
-   media dash.Media
-}
-
 func main() {
    home, err := os.UserHomeDir()
    if err != nil {
@@ -35,11 +25,9 @@ func main() {
    var is_DASH bool
    flag.BoolVar(&is_DASH, "d", false, "DASH download")
    // f
-   // paramountplus.com/shows/video/x6XrF8A_tiSDRwc4Rt349KFKnCZ8QmtY
    var video int64
    flag.Int64Var(&video, "f", 1611000, "video bandwidth")
    // g
-   // paramountplus.com/shows/video/x6XrF8A_tiSDRwc4Rt349KFKnCZ8QmtY
    var audio int64
    flag.Int64Var(&audio, "g", 999999, "audio bandwidth")
    // i
@@ -47,13 +35,7 @@ func main() {
    // k
    down.pem = filepath.Join(home, "mech/private_key.pem")
    flag.StringVar(&down.pem, "k", down.pem, "private key")
-   // v
-   var verbose bool
-   flag.BoolVar(&verbose, "v", false, "verbose")
    flag.Parse()
-   if verbose {
-      paramount.Client.Log_Level = 2
-   }
    if guid != "" {
       var err error
       down.Preview, err = paramount.New_Media(guid).Preview()
