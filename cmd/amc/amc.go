@@ -11,33 +11,6 @@ import (
    "io"
 )
 
-func (d *downloader) set_key() error {
-   private_key, err := os.ReadFile(d.pem)
-   if err != nil {
-      return err
-   }
-   client_ID, err := os.ReadFile(d.client)
-   if err != nil {
-      return err
-   }
-   raw_key_id := d.media.Representations()[0].ContentProtection.Default_KID
-   key_ID, err := widevine.Key_ID(raw_key_id)
-   if err != nil {
-      return err
-   }
-   mod, err := widevine.New_Module(private_key, client_ID, key_ID)
-   if err != nil {
-      return err
-   }
-   keys, err := mod.Post(d.Playback)
-   if err != nil {
-      return err
-   }
-   d.key = keys.Content().Key
-   fmt.Println(keys.Content())
-   return nil
-}
-
 func (d downloader) do_DASH(address string, nid int64, video, audio int) error {
    home, err := os.UserHomeDir()
    if err != nil {

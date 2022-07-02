@@ -2,6 +2,7 @@ package main
 
 import (
    "flag"
+   "github.com/89z/mech"
    "github.com/89z/mech/amc"
    "github.com/89z/std/dash"
    "net/url"
@@ -9,14 +10,11 @@ import (
    "path/filepath"
 )
 
-type downloader struct {
-   *amc.Playback
-   client string
-   info bool
-   key []byte
-   pem string
-   url *url.URL
-   media dash.Media
+type flags struct {
+   mech.Flags
+   email string
+   nid int64
+   password string
 }
 
 func main() {
@@ -24,49 +22,33 @@ func main() {
    if err != nil {
       panic(err)
    }
-   var down downloader
-   // a
-   var address string
-   flag.StringVar(&address, "a", "", "address")
+   var f flags
    // b
-   var nid int64
-   flag.Int64Var(&nid, "b", 0, "NID")
+   flag.Int64Var(&f.nid, "b", 0, "NID")
    // c
-   down.client = filepath.Join(home, "mech/client_id.bin")
-   flag.StringVar(&down.client, "c", down.client, "client ID")
+   f.Client_ID = filepath.Join(home, "mech/client_id.bin")
+   flag.StringVar(&f.Client_ID, "c", f.Client_ID, "client ID")
    // e
-   var email string
-   flag.StringVar(&email, "e", "", "email")
+   flag.StringVar(&f.email, "e", "", "email")
    // f
-   // amcplus.com/shows/orphan-black/episodes/season-1-natural-selection--1011153
-   var video int
-   flag.IntVar(&video, "f", 1_999_999, "video bandwidth")
+   flag.IntVar(&f.Bandwidth_Video, "f", 1_999_999, "video bandwidth")
    // g
-   // amcplus.com/shows/orphan-black/episodes/season-1-natural-selection--1011153
-   var audio int
-   flag.IntVar(&audio, "g", 127_000, "audio bandwidth")
+   flag.IntVar(&f.Bandwidth_Audio, "g", 127_000, "audio bandwidth")
    // i
-   flag.BoolVar(&down.info, "i", false, "information")
+   flag.BoolVar(&f.Info, "i", false, "information")
    // k
-   down.pem = filepath.Join(home, "mech/private_key.pem")
-   flag.StringVar(&down.pem, "k", down.pem, "private key")
+   f.Private_Key = filepath.Join(home, "mech/private_key.pem")
+   flag.StringVar(&f.Private_Key, "k", f.Private_Key, "private key")
    // p
-   var password string
-   flag.StringVar(&password, "p", "", "password")
-   // v
-   var verbose bool
-   flag.BoolVar(&verbose, "v", false, "verbose")
+   flag.StringVar(&f.password, "p", "", "password")
    flag.Parse()
-   if verbose {
-      amc.Client.Log_Level = 2
-   }
-   if email != "" {
-      err := do_login(email, password)
+   if f.email != "" {
+      err := f.login()
       if err != nil {
          panic(err)
       }
-   } else if nid >= 1 || address != "" {
-      err := down.do_DASH(address, nid, video, audio)
+   } else if f.nid >= 1 {
+      err := f.download()
       if err != nil {
          panic(err)
       }
