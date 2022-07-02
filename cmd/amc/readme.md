@@ -1,5 +1,20 @@
 # AMC
 
+function dash:
+
+1. get widevine.Poster
+2. get dash.Representations
+
+function information:
+
+3. get dash.Representation
+4. information
+
+function download:
+
+5. get key
+6. download
+
 ## Clear
 
 ~~~
