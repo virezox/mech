@@ -2,47 +2,39 @@ package main
 
 import (
    "flag"
-   "github.com/89z/mech/cbc"
 )
 
+type flags struct {
+   audio_name string
+   email string
+   id string
+   info bool
+   password string
+   video_bandwidth int
+}
+
 func main() {
-   // a
-   var address string
-   flag.StringVar(&address, "a", "", "address")
+   var f flags
    // b
-   var id string
-   flag.StringVar(&id, "b", "", "ID")
+   flag.StringVar(&f.id, "b", "", "ID")
    // e
-   var email string
-   flag.StringVar(&email, "e", "", "email")
+   flag.StringVar(&f.email, "e", "", "email")
    // f
-   // gem.cbc.ca/media/downton-abbey/s02e03
-   var video int64
-   flag.Int64Var(&video, "f", 2052370, "video bandwidth")
+   flag.IntVar(&f.video_bandwidth, "f", 2052370, "video bandwidth")
    // g
-   // gem.cbc.ca/media/downton-abbey/s02e03
-   var audio string
-   flag.StringVar(&audio, "g", "English", "audio name")
+   flag.StringVar(&f.audio_name, "g", "English", "audio name")
    // i
-   var info bool
-   flag.BoolVar(&info, "i", false, "information")
+   flag.BoolVar(&f.info, "i", false, "information")
    // p
-   var password string
-   flag.StringVar(&password, "p", "", "password")
-   // v
-   var verbose bool
-   flag.BoolVar(&verbose, "v", false, "verbose")
+   flag.StringVar(&f.password, "p", "", "password")
    flag.Parse()
-   if verbose {
-      cbc.Client.Log_Level = 2
-   }
-   if email != "" {
-      err := do_profile(email, password)
+   if f.email != "" {
+      err := f.profile()
       if err != nil {
          panic(err)
       }
-   } else if id != "" || address != "" {
-      err := new_master(id, address, audio, video, info)
+   } else if id != "" {
+      err := f.master()
       if err != nil {
          panic(err)
       }

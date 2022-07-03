@@ -16,8 +16,8 @@ var client = http.Default_Client
 
 type Flags struct {
    Address string
-   Bandwidth_Audio int64
-   Bandwidth_Video int64
+   Bandwidth_Audio int
+   Bandwidth_Video int
    Client_ID string
    Info bool
    Private_Key string
@@ -55,11 +55,11 @@ type stream_DASH struct {
    post widevine.Poster
 }
 
-func (s stream_DASH) download(bandwidth int64) error {
+func (s stream_DASH) download(bandwidth int) error {
    if bandwidth <= 0 {
       return nil
    }
-   rep := s.Get_Bandwidth(bandwidth)
+   rep := s.Bandwidth(bandwidth)
    if s.flag.Info {
       for _, each := range s.Representations {
          if each.Bandwidth == rep.Bandwidth {

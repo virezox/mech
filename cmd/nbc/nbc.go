@@ -6,7 +6,6 @@ import (
    "github.com/89z/std/os"
    "github.com/89z/mech/nbc"
    "io"
-   "sort"
 )
 
 func download(addr, base string) error {
@@ -24,9 +23,9 @@ func download(addr, base string) error {
       return err
    }
    defer file.Close()
-   pro := os.Progress_Chunks(file, len(seg.Clear))
-   for _, clear := range seg.Clear {
-      res, err := nbc.Client.Level(0).Redirect(nil).Get(clear)
+   pro := os.Progress_Chunks(file, len(seg.URI))
+   for _, addr := range seg.URI {
+      res, err := nbc.Client.Level(0).Redirect(nil).Get(addr)
       if err != nil {
          return err
       }
@@ -40,7 +39,8 @@ func download(addr, base string) error {
    }
    return nil
 }
-func new_master(guid, bandwidth int64, info bool) error {
+
+func new_master(guid int64, bandwidth int, info bool) error {
    page, err := nbc.New_Bonanza_Page(guid)
    if err != nil {
       return err
@@ -58,10 +58,7 @@ func new_master(guid, bandwidth int64, info bool) error {
    if err != nil {
       return err
    }
-   sort.Slice(master.Streams, func(a, b int) bool {
-      return master.Streams[a].Bandwidth < master.Streams[b].Bandwidth
-   })
-   stream := master.Streams.Get_Bandwidth(bandwidth)
+   stream := master.Streams.Bandwidth(bandwidth)
    if info {
       for _, each := range master.Streams {
          if each.Bandwidth == stream.Bandwidth {

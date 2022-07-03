@@ -12,7 +12,7 @@ func (s stream_HLS) download() error {
    if s.flag.Bandwidth_Video <= 0 {
       return nil
    }
-   stream := s.Get_Bandwidth(s.flag.Bandwidth_Video)
+   stream := s.Bandwidth(s.flag.Bandwidth_Video)
    if s.flag.Info {
       for _, each := range s.Streams {
          if each.Bandwidth == stream.Bandwidth {
@@ -30,10 +30,7 @@ func (s stream_HLS) download() error {
    if err != nil {
       return err
    }
-   var (
-      raws []string
-      block *hls.Block
-   )
+   var block *hls.Block
    if seg.Key != "" {
       res, err := client.Get(seg.Key)
       if err != nil {
@@ -48,17 +45,14 @@ func (s stream_HLS) download() error {
       if err != nil {
          return err
       }
-      raws = seg.Protected
-   } else {
-      raws = seg.Clear
    }
    file, err := os.Create(s.basename + ".ts")
    if err != nil {
       return err
    }
    defer file.Close()
-   pro := os.Progress_Chunks(file, len(raws))
-   for _, raw := range raws {
+   pro := os.Progress_Chunks(file, len(seg.URI))
+   for _, raw := range seg.URI {
       addr, err := base.Parse(raw)
       if err != nil {
          return err
@@ -69,12 +63,19 @@ func (s stream_HLS) download() error {
       }
       pro.Add_Chunk(res.ContentLength)
       if block != nil {
-         _, err = io.Copy(pro, block.Mode_Key(res.Body))
+         text, err := io.ReadAll(res.Body)
+         if err != nil {
+            return err
+         }
+         text = block.Decrypt_Key(text)
+         if _, err := pro.Write(text); err != nil {
+            return err
+         }
       } else {
-         _, err = io.Copy(pro, res.Body)
-      }
-      if err != nil {
-         return err
+         _, err := io.Copy(pro, res.Body)
+         if err != nil {
+            return err
+         }
       }
       if err := res.Body.Close(); err != nil {
          return err
@@ -82,6 +83,7 @@ func (s stream_HLS) download() error {
    }
    return nil
 }
+
 type stream_HLS struct {
    base *url.URL
    basename string
