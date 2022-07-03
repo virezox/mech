@@ -23,6 +23,30 @@ type Flags struct {
    Private_Key string
 }
 
+func (f Flags) DASH(base string, post widevine.Poster) error {
+   res, err := client.Redirect(nil).Get(f.Address)
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   var media dash.Media
+   if err := xml.NewDecoder(res.Body).Decode(&media); err != nil {
+      return err
+   }
+   reps := media.Representations()
+   var str stream_DASH
+   str.base = res.Request.URL
+   str.basename = base
+   str.flag = f
+   str.post = post
+   str.Representations = reps.Audio()
+   if err := str.download(f.Bandwidth_Audio); err != nil {
+      return err
+   }
+   str.Representations = reps.Video()
+   return str.download(f.Bandwidth_Video)
+}
+
 type stream_DASH struct {
    base *url.URL
    basename string
@@ -117,28 +141,4 @@ func (s stream_DASH) download(bandwidth int64) error {
       }
    }
    return nil
-}
-
-func (f Flags) DASH(base string, post widevine.Poster) error {
-   res, err := client.Redirect(nil).Get(f.Address)
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   var media dash.Media
-   if err := xml.NewDecoder(res.Body).Decode(&media); err != nil {
-      return err
-   }
-   reps := media.Representations()
-   var str stream_DASH
-   str.base = res.Request.URL
-   str.basename = base
-   str.flag = f
-   str.post = post
-   str.Representations = reps.Audio()
-   if err := str.download(f.Bandwidth_Audio); err != nil {
-      return err
-   }
-   str.Representations = reps.Video()
-   return str.download(f.Bandwidth_Video)
 }

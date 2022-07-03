@@ -1,13 +1,7 @@
 package main
 
 import (
-   "encoding/xml"
-   "fmt"
    "github.com/89z/mech/roku"
-   "github.com/89z/mech/widevine"
-   "github.com/89z/std/dash"
-   "github.com/89z/std/mp4"
-   "github.com/89z/std/os"
 )
 
 func (f flags) do_DASH(content *roku.Content) error {
@@ -21,4 +15,13 @@ func (f flags) do_DASH(content *roku.Content) error {
       return err
    }
    return f.DASH(content.Base(), play)
+}
+
+func (f flags) do_HLS(content *roku.Content) error {
+   video, err := content.HLS()
+   if err != nil {
+      return err
+   }
+   f.Address = video.URL
+   return f.HLS(content.Base())
 }

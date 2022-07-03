@@ -2,10 +2,8 @@ package main
 
 import (
    "flag"
-   "github.com/89z/std/dash"
    "github.com/89z/mech/roku"
-   "github.com/89z/mech/widevine"
-   "net/url"
+   "github.com/89z/mech"
    "os"
    "path/filepath"
 )

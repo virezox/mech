@@ -16,3 +16,12 @@ func (f flags) do_DASH(preview *paramount.Preview) error {
    }
    return f.DASH(preview.Base(), session)
 }
+
+func (f flags) do_HLS(preview *paramount.Preview) error {
+   addr, err := paramount.New_Media(f.guid).HLS()
+   if err != nil {
+      return err
+   }
+   f.Address = addr.String()
+   return f.HLS(preview.Base())
+}

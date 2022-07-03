@@ -5,15 +5,14 @@ import (
    "github.com/89z/std/hls"
    "github.com/89z/std/os"
    "io"
+   "net/url"
 )
 
-func new_segment(addr string) (*hls.Segment, error) {
-   res, err := client.Get(addr)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   return hls.New_Scanner(res.Body).Segment()
+type stream_HLS struct {
+   base *url.URL
+   basename string
+   flag Flags
+   hls.Streams
 }
 
 func (f Flags) HLS(base string) error {
@@ -28,15 +27,19 @@ func (f Flags) HLS(base string) error {
    }
    var str stream_HLS
    str.Streams = master.Streams
-   str.base = base
+   str.base = res.Request.URL
+   str.basename = base
    str.flag = f
    return str.download()
 }
 
-type stream_HLS struct {
-   base string
-   hls.Streams
-   flag Flags
+func new_segment(addr string) (*hls.Segment, error) {
+   res, err := client.Get(addr)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   return hls.New_Scanner(res.Body).Segment()
 }
 
 func (s stream_HLS) download() error {
@@ -62,7 +65,7 @@ func (s stream_HLS) download() error {
       return err
    }
    defer res.Body.Close()
-   file, err := os.Create(s.base + ".ts")
+   file, err := os.Create(s.basename + ".ts")
    if err != nil {
       return err
    }
