@@ -10,14 +10,10 @@ import (
    "path/filepath"
 )
 
-type downloader struct {
-   *roku.Content
-   client string
-   info bool
-   key []byte
-   pem string
-   url *url.URL
-   media dash.Media
+type flags struct {
+   dash bool
+   id string
+   mech.Flags
 }
 
 func main() {
@@ -25,55 +21,36 @@ func main() {
    if err != nil {
       panic(err)
    }
-   var down downloader
-   // a
-   var address string
-   flag.StringVar(&address, "a", "", "address")
+   var f flags
    // b
-   var id string
-   flag.StringVar(&id, "b", "", "ID")
+   flag.StringVar(&f.id, "b", "", "ID")
    // c
-   down.client = filepath.Join(home, "mech/client_id.bin")
-   flag.StringVar(&down.client, "c", down.client, "client ID")
+   f.Client_ID = filepath.Join(home, "mech/client_id.bin")
+   flag.StringVar(&f.Client_ID, "c", f.Client_ID, "client ID")
    // d
-   var is_dash bool
-   flag.BoolVar(&is_dash, "d", false, "DASH download")
+   flag.BoolVar(&f.dash, "d", false, "DASH download")
    // f
-   // therokuchannel.roku.com/watch/597a64a4a25c5bf6af4a8c7053049a6f
-   var video int64
-   flag.Int64Var(&video, "f", 1920832, "video bandwidth")
+   flag.Int64Var(&f.Bandwidth_Video, "f", 1920832, "video bandwidth")
    // g
-   // therokuchannel.roku.com/watch/597a64a4a25c5bf6af4a8c7053049a6f
-   var audio int64
-   flag.Int64Var(&audio, "g", 128000, "audio bandwidth")
+   flag.Int64Var(&f.Bandwidth_Audio, "g", 128000, "audio bandwidth")
    // i
-   flag.BoolVar(&down.info, "i", false, "information")
+   flag.BoolVar(&f.Info, "i", false, "information")
    // k
-   down.pem = filepath.Join(home, "mech/private_key.pem")
-   flag.StringVar(&down.pem, "k", down.pem, "private key")
-   // v
-   var verbose bool
-   flag.BoolVar(&verbose, "v", false, "verbose")
+   f.Private_Key = filepath.Join(home, "mech/private_key.pem")
+   flag.StringVar(&f.Private_Key, "k", f.Private_Key, "private key")
    flag.Parse()
-   if verbose {
-      roku.Client.Log_Level = 2
-      widevine.Client.Log_Level = 2
-   }
-   if id != "" || address != "" {
-      if id == "" {
-         id = roku.Content_ID(address)
-      }
-      down.Content, err = roku.New_Content(id)
+   if f.id != "" {
+      content, err := roku.New_Content(f.id)
       if err != nil {
          panic(err)
       }
-      if is_dash {
-         err := down.DASH(video, audio)
+      if f.dash {
+         err := f.do_DASH(content)
          if err != nil {
             panic(err)
          }
       } else {
-         err := down.HLS(video)
+         err := f.do_HLS(content)
          if err != nil {
             panic(err)
          }

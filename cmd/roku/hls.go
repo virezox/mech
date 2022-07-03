@@ -9,41 +9,6 @@ import (
    "net/url"
 )
 
-func download_HLS(addr *url.URL, base string) error {
-   res, err := roku.Client.Get(addr.String())
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   seg, err := hls.New_Scanner(res.Body).Segment()
-   if err != nil {
-      return err
-   }
-   file, err := os.Create(base + ".ts")
-   if err != nil {
-      return err
-   }
-   defer file.Close()
-   pro := os.Progress_Chunks(file, len(seg.Clear))
-   for _, clear := range seg.Clear {
-      addr, err := res.Request.URL.Parse(clear)
-      if err != nil {
-         return err
-      }
-      res, err := roku.Client.Level(0).Get(addr.String())
-      if err != nil {
-         return err
-      }
-      pro.Add_Chunk(res.ContentLength)
-      if _, err := io.Copy(pro, res.Body); err != nil {
-         return err
-      }
-      if err := res.Body.Close(); err != nil {
-         return err
-      }
-   }
-   return nil
-}
 func (d downloader) HLS(bandwidth int64) error {
    video, err := d.Content.HLS()
    if err != nil {
@@ -65,13 +30,6 @@ func (d downloader) HLS(bandwidth int64) error {
          return err
       }
       return download_HLS(addr, d.Base())
-   }
-   fmt.Println(d.Content)
-   for _, each := range master.Streams {
-      if each.Bandwidth == stream.Bandwidth {
-         fmt.Print("!")
-      }
-      fmt.Println(each)
    }
    return nil
 }
