@@ -8,6 +8,80 @@ import (
    "net/url"
 )
 
+func (s stream_HLS) download() error {
+   if s.flag.Bandwidth_Video <= 0 {
+      return nil
+   }
+   stream := s.Get_Bandwidth(s.flag.Bandwidth_Video)
+   if s.flag.Info {
+      for _, each := range s.Streams {
+         if each.Bandwidth == stream.Bandwidth {
+            fmt.Print("!")
+         }
+         fmt.Println(each)
+      }
+      return nil
+   }
+   base, err := s.base.Parse(stream.URI)
+   if err != nil {
+      return err
+   }
+   seg, err := new_segment(base.String())
+   if err != nil {
+      return err
+   }
+   var (
+      raws []string
+      block *hls.Block
+   )
+   if seg.Key != "" {
+      res, err := client.Get(seg.Key)
+      if err != nil {
+         return err
+      }
+      defer res.Body.Close()
+      key, err := io.ReadAll(res.Body)
+      if err != nil {
+         return err
+      }
+      block, err = hls.New_Block(key)
+      if err != nil {
+         return err
+      }
+      raws = seg.Protected
+   } else {
+      raws = seg.Clear
+   }
+   file, err := os.Create(s.basename + ".ts")
+   if err != nil {
+      return err
+   }
+   defer file.Close()
+   pro := os.Progress_Chunks(file, len(raws))
+   for _, raw := range raws {
+      addr, err := base.Parse(raw)
+      if err != nil {
+         return err
+      }
+      res, err := client.Level(0).Get(addr.String())
+      if err != nil {
+         return err
+      }
+      pro.Add_Chunk(res.ContentLength)
+      if block != nil {
+         _, err = io.Copy(pro, block.Mode_Key(res.Body))
+      } else {
+         _, err = io.Copy(pro, res.Body)
+      }
+      if err != nil {
+         return err
+      }
+      if err := res.Body.Close(); err != nil {
+         return err
+      }
+   }
+   return nil
+}
 type stream_HLS struct {
    base *url.URL
    basename string
@@ -40,57 +114,4 @@ func new_segment(addr string) (*hls.Segment, error) {
    }
    defer res.Body.Close()
    return hls.New_Scanner(res.Body).Segment()
-}
-
-func (s stream_HLS) download() error {
-   if s.flag.Bandwidth_Video <= 0 {
-      return nil
-   }
-   stream := s.Get_Bandwidth(s.flag.Bandwidth_Video)
-   if s.flag.Info {
-      for _, each := range s.Streams {
-         if each.Bandwidth == stream.Bandwidth {
-            fmt.Print("!")
-         }
-         fmt.Println(each)
-      }
-      return nil
-   }
-   seg, err := new_segment(stream.URI)
-   if err != nil {
-      return err
-   }
-   res, err := client.Get(seg.Key)
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   file, err := os.Create(s.basename + ".ts")
-   if err != nil {
-      return err
-   }
-   defer file.Close()
-   pro := os.Progress_Chunks(file, len(seg.Protected))
-   key, err := io.ReadAll(res.Body)
-   if err != nil {
-      return err
-   }
-   block, err := hls.New_Block(key)
-   if err != nil {
-      return err
-   }
-   for _, addr := range seg.Protected {
-      res, err := client.Level(0).Get(addr)
-      if err != nil {
-         return err
-      }
-      pro.Add_Chunk(res.ContentLength)
-      if _, err := io.Copy(pro, block.Mode_Key(res.Body)); err != nil {
-         return err
-      }
-      if err := res.Body.Close(); err != nil {
-         return err
-      }
-   }
-   return nil
 }
