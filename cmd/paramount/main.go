@@ -28,9 +28,9 @@ func main() {
    // d
    flag.BoolVar(&f.dash, "d", false, "DASH download")
    // f
-   flag.IntVar(&f.Bandwidth_Video, "f", 1611000, "video bandwidth")
+   flag.Int64Var(&f.Bandwidth_Video, "f", 1611000, "video bandwidth")
    // g
-   flag.IntVar(&f.Bandwidth_Audio, "g", 999999, "audio bandwidth")
+   flag.Int64Var(&f.Bandwidth_Audio, "g", 999999, "audio bandwidth")
    // i
    flag.BoolVar(&f.Info, "i", false, "information")
    // k
@@ -43,12 +43,12 @@ func main() {
          panic(err)
       }
       if f.dash {
-         err := f.DASH(preview)
+         err := f.do_DASH(preview)
          if err != nil {
             panic(err)
          }
       } else {
-         err := f.HLS(preview)
+         err := f.do_HLS(preview)
          if err != nil {
             panic(err)
          }
