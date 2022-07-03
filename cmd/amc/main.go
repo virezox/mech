@@ -21,9 +21,9 @@ func main() {
    // e
    flag.StringVar(&f.email, "e", "", "email")
    // f
-   flag.IntVar(&f.Bandwidth_Video, "f", 1_999_999, "video bandwidth")
+   flag.Int64Var(&f.Bandwidth_Video, "f", 1_999_999, "video bandwidth")
    // g
-   flag.IntVar(&f.Bandwidth_Audio, "g", 127_000, "audio bandwidth")
+   flag.Int64Var(&f.Bandwidth_Audio, "g", 127_000, "audio bandwidth")
    // i
    flag.BoolVar(&f.Info, "i", false, "information")
    // k

@@ -15,14 +15,14 @@ var client = http.Default_Client
 
 type Flags struct {
    Address string
-   Bandwidth_Audio int
-   Bandwidth_Video int
+   Bandwidth_Audio int64
+   Bandwidth_Video int64
    Client_ID string
    Info bool
    Private_Key string
 }
 
-func (f Flags) Decode(base string, post widevine.Poster) error {
+func (f Flags) DASH(base string, post widevine.Poster) error {
    res, err := client.Redirect(nil).Get(f.Address)
    if err != nil {
       return err
@@ -33,26 +33,32 @@ func (f Flags) Decode(base string, post widevine.Poster) error {
       return err
    }
    reps := media.Representations()
-   var str stream
+   var str stream_DASH
    str.base = base
+   str.flag = f
    str.post = post
    str.Representations = reps.Audio()
-   str.bandwidth = f.Bandwidth_Audio
-   if err := f.download(str); err != nil {
+   if err := str.download(f.Bandwidth_Audio); err != nil {
       return err
    }
    str.Representations = reps.Video()
-   str.bandwidth = f.Bandwidth_Video
-   return f.download(str)
+   return str.download(f.Bandwidth_Video)
 }
 
-func (f Flags) download(str stream) error {
-   if str.bandwidth <= 0 {
+type stream_DASH struct {
+   base string
+   dash.Representations
+   flag Flags
+   post widevine.Poster
+}
+
+func (s stream_DASH) download(bandwidth int64) error {
+   if bandwidth <= 0 {
       return nil
    }
-   rep := str.Get_Bandwidth(str.bandwidth)
-   if f.Info {
-      for _, each := range str.Representations {
+   rep := s.Get_Bandwidth(bandwidth)
+   if s.flag.Info {
+      for _, each := range s.Representations {
          if each.Bandwidth == rep.Bandwidth {
             fmt.Print("!")
          }
@@ -60,7 +66,7 @@ func (f Flags) download(str stream) error {
       }
       return nil
    }
-   file, err := os.Create(str.base + rep.Ext())
+   file, err := os.Create(s.base + rep.Ext())
    if err != nil {
       return err
    }
@@ -75,11 +81,11 @@ func (f Flags) download(str stream) error {
    dec := mp4.New_Decrypt(pro)
    var key []byte
    if rep.ContentProtection != nil {
-      private_key, err := os.ReadFile(f.Private_Key)
+      private_key, err := os.ReadFile(s.flag.Private_Key)
       if err != nil {
          return err
       }
-      client_ID, err := os.ReadFile(f.Client_ID)
+      client_ID, err := os.ReadFile(s.flag.Client_ID)
       if err != nil {
          return err
       }
@@ -91,7 +97,7 @@ func (f Flags) download(str stream) error {
       if err != nil {
          return err
       }
-      keys, err := mod.Post(str.post)
+      keys, err := mod.Post(s.post)
       if err != nil {
          return err
       }
@@ -124,11 +130,4 @@ func (f Flags) download(str stream) error {
       }
    }
    return nil
-}
-
-type stream struct {
-   bandwidth int
-   base string
-   dash.Representations
-   post widevine.Poster
 }
