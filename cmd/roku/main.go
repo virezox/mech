@@ -28,9 +28,9 @@ func main() {
    // d
    flag.BoolVar(&f.dash, "d", false, "DASH download")
    // f
-   flag.IntVar(&f.Bandwidth_Video, "f", 1920832, "video bandwidth")
+   flag.IntVar(&f.Video_Bandwidth, "f", 1920832, "video bandwidth")
    // g
-   flag.IntVar(&f.Bandwidth_Audio, "g", 128000, "audio bandwidth")
+   flag.IntVar(&f.Audio_Bandwidth, "g", 128000, "audio bandwidth")
    // i
    flag.BoolVar(&f.Info, "i", false, "information")
    // k

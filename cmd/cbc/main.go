@@ -33,7 +33,7 @@ func main() {
       if err != nil {
          panic(err)
       }
-   } else if id != "" {
+   } else if f.id != "" {
       err := f.master()
       if err != nil {
          panic(err)

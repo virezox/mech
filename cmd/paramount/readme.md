@@ -3,7 +3,7 @@
 ## episode, stream pack
 
 ~~~
-go run . -b 622520382 -f 499000
+go run . -b 622520382 -f 1 -i
 ~~~
 
 ## episode, dash cenc

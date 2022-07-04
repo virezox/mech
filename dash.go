@@ -16,11 +16,12 @@ var client = http.Default_Client
 
 type Flags struct {
    Address string
-   Bandwidth_Audio int
-   Bandwidth_Video int
+   Audio_Bandwidth int
+   Audio_Name string
    Client_ID string
    Info bool
    Private_Key string
+   Video_Bandwidth int
 }
 
 func (f Flags) DASH(base string, post widevine.Poster) error {
@@ -40,11 +41,11 @@ func (f Flags) DASH(base string, post widevine.Poster) error {
    str.flag = f
    str.post = post
    str.Representations = reps.Audio()
-   if err := str.download(f.Bandwidth_Audio); err != nil {
+   if err := str.download(f.Audio_Bandwidth); err != nil {
       return err
    }
    str.Representations = reps.Video()
-   return str.download(f.Bandwidth_Video)
+   return str.download(f.Video_Bandwidth)
 }
 
 type stream_DASH struct {

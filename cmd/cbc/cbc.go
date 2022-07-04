@@ -22,11 +22,11 @@ func (f flags) master() error {
    if err != nil {
       return err
    }
-   media, err := profile.Media(asset)
+   asset_media, err := profile.Media(asset)
    if err != nil {
       return err
    }
-   res, err := cbc.Client.Get(*media.URL)
+   res, err := cbc.Client.Get(*asset_media.URL)
    if err != nil {
       return err
    }
@@ -35,36 +35,39 @@ func (f flags) master() error {
    if err != nil {
       return err
    }
+   streams := master.Streams.Video()
+   stream := streams.Bandwidth(f.video_bandwidth)
+   media := master.Media.Audio()
+   medium := media.Get_Name(f.audio_name)
    if f.info {
-      fmt.Println(asset)
-      video := master.Streams.Bandwidth(video)
-      for _, stream := range master.Streams {
-         if stream.Bandwidth == video.Bandwidth {
+      for _, elem := range streams {
+         if elem.Bandwidth == stream.Bandwidth {
             fmt.Print("!")
          }
-         fmt.Println(stream)
+         fmt.Println(elem)
       }
-      for _, medium := range master.Media {
-         fmt.Println(medium)
+      for _, elem := range media {
+         if elem.Name == medium.Name {
+            fmt.Print("!")
+         }
+         fmt.Println(elem)
       }
    } else {
-      if audio != "" {
-         medium := master.Media.Get_Name(audio)
+      if f.audio_name != "" {
          addr, err := res.Request.URL.Parse(medium.URI)
          if err != nil {
             return err
          }
-         if err := download(addr, asset.AppleContentId + ".mts"); err != nil {
+         if err := download(addr, asset.AppleContentId + medium.Ext()); err != nil {
             return err
          }
       }
-      if video >= 1 {
-         medium := master.Streams.Bandwidth(video)
-         addr, err := res.Request.URL.Parse(medium.URI)
+      if f.video_bandwidth >= 1 {
+         addr, err := res.Request.URL.Parse(stream.URI)
          if err != nil {
             return err
          }
-         return download(addr, asset.AppleContentId + ".ts")
+         return download(addr, asset.AppleContentId + stream.Ext())
       }
    }
    return nil
@@ -78,6 +81,7 @@ func get_key(addr string) ([]byte, error) {
    defer res.Body.Close()
    return io.ReadAll(res.Body)
 }
+
 func (f flags) profile() error {
    home, err := os.UserHomeDir()
    if err != nil {

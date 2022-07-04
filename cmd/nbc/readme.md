@@ -1,7 +1,7 @@
 # NBC
 
 ~~~
-go run . -b 9000199358
+go run . -b 9000199358 -f 1
 ~~~
 
 - https://github.com/ytdl-org/youtube-dl/issues/29191

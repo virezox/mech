@@ -8,17 +8,52 @@ import (
    "net/url"
 )
 
+func (f Flags) HLS(base string) error {
+   res, err := client.Get(f.Address)
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   master, err := hls.New_Scanner(res.Body).Master()
+   if err != nil {
+      return err
+   }
+   var str stream_HLS
+   str.base = res.Request.URL
+   str.basename = base
+   str.flag = f
+   str.Streams = master.Streams
+   return str.download()
+}
+
+type stream_HLS struct {
+   base *url.URL
+   basename string
+   flag Flags
+   hls.Streams
+}
+
+func new_segment(addr string) (*hls.Segment, error) {
+   res, err := client.Get(addr)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   return hls.New_Scanner(res.Body).Segment()
+}
+
 func (s stream_HLS) download() error {
-   if s.flag.Bandwidth_Video <= 0 {
+   if s.flag.Video_Bandwidth <= 0 {
       return nil
    }
-   stream := s.Bandwidth(s.flag.Bandwidth_Video)
+   s.Streams = s.Streams.Video()
+   stream := s.Bandwidth(s.flag.Video_Bandwidth)
    if s.flag.Info {
-      for _, each := range s.Streams {
-         if each.Bandwidth == stream.Bandwidth {
+      for _, elem := range s.Streams {
+         if elem.Bandwidth == stream.Bandwidth {
             fmt.Print("!")
          }
-         fmt.Println(each)
+         fmt.Println(elem)
       }
       return nil
    }
@@ -84,36 +119,3 @@ func (s stream_HLS) download() error {
    return nil
 }
 
-type stream_HLS struct {
-   base *url.URL
-   basename string
-   flag Flags
-   hls.Streams
-}
-
-func (f Flags) HLS(base string) error {
-   res, err := client.Get(f.Address)
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   master, err := hls.New_Scanner(res.Body).Master()
-   if err != nil {
-      return err
-   }
-   var str stream_HLS
-   str.Streams = master.Streams
-   str.base = res.Request.URL
-   str.basename = base
-   str.flag = f
-   return str.download()
-}
-
-func new_segment(addr string) (*hls.Segment, error) {
-   res, err := client.Get(addr)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   return hls.New_Scanner(res.Body).Segment()
-}
