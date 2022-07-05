@@ -19,18 +19,18 @@ func (f Flags) HLS(base string) error {
       return err
    }
    var str stream_HLS
-   str.base = res.Request.URL
-   str.basename = base
+   str.URL = res.Request.URL
+   str.base = base
    str.flag = f
-   str.Streams = master.Streams
+   str.stream = master.Streams
    return str.download()
 }
 
 type stream_HLS struct {
-   base *url.URL
-   basename string
+   *url.URL
+   base string
    flag Flags
-   hls.Streams
+   stream hls.Streams
 }
 
 func new_segment(addr string) (*hls.Segment, error) {
@@ -46,10 +46,10 @@ func (s stream_HLS) download() error {
    if s.flag.Video_Bandwidth <= 0 {
       return nil
    }
-   s.Streams = s.Streams.Video()
-   stream := s.Bandwidth(s.flag.Video_Bandwidth)
+   s.stream = s.stream.Video()
+   stream := s.stream.Bandwidth(s.flag.Video_Bandwidth)
    if s.flag.Info {
-      for _, elem := range s.Streams {
+      for _, elem := range s.stream {
          if elem.Bandwidth == stream.Bandwidth {
             fmt.Print("!")
          }
@@ -57,7 +57,7 @@ func (s stream_HLS) download() error {
       }
       return nil
    }
-   base, err := s.base.Parse(stream.URI)
+   base, err := s.Parse(stream.URI)
    if err != nil {
       return err
    }
@@ -81,7 +81,7 @@ func (s stream_HLS) download() error {
          return err
       }
    }
-   file, err := os.Create(s.basename + ".ts")
+   file, err := os.Create(s.base + stream.Ext())
    if err != nil {
       return err
    }
