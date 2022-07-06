@@ -2,8 +2,8 @@ package mech
 
 import (
    "fmt"
-   "github.com/89z/std/hls"
-   "github.com/89z/std/os"
+   "github.com/89z/rosso/hls"
+   "github.com/89z/rosso/os"
    "io"
    "net/url"
 )

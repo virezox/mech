@@ -3,8 +3,8 @@ package amc
 import (
    "bytes"
    "encoding/json"
-   "github.com/89z/std/http"
-   "github.com/89z/std/os"
+   "github.com/89z/rosso/http"
+   "github.com/89z/rosso/os"
    "strconv"
    "strings"
 )

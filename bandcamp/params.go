@@ -2,8 +2,8 @@ package bandcamp
 
 import (
    "encoding/json"
-   "github.com/89z/std/http"
-   "github.com/89z/std/xml"
+   "github.com/89z/rosso/http"
+   "github.com/89z/rosso/xml"
    "io"
 )
 

@@ -3,9 +3,9 @@ package apple
 import (
    "bytes"
    "encoding/json"
-   "github.com/89z/std/http"
-   "github.com/89z/std/os"
-   "github.com/89z/std/xml"
+   "github.com/89z/rosso/http"
+   "github.com/89z/rosso/os"
+   "github.com/89z/rosso/xml"
    "io"
    "net/url"
    "strconv"

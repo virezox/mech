@@ -3,7 +3,7 @@ package cbc
 import (
    "bytes"
    "encoding/json"
-   "github.com/89z/std/os"
+   "github.com/89z/rosso/os"
    "net/http"
    "net/url"
 )

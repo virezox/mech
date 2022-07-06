@@ -3,6 +3,7 @@ module github.com/89z/mech
 go 1.18
 
 require (
+	github.com/89z/rosso v1.45.5
 	github.com/chmike/cmac-go v1.1.0
 )
 
