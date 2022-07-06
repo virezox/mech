@@ -1,7 +1,7 @@
 package soundcloud
 
 import (
-   "github.com/89z/std/http"
+   "github.com/89z/rosso/http"
    "net/url"
    "path"
 )

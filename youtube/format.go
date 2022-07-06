@@ -2,7 +2,7 @@ package youtube
 
 import (
    "errors"
-   "github.com/89z/std/os"
+   "github.com/89z/rosso/os"
    "io"
    "mime"
    "net/http"

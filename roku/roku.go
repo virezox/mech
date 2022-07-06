@@ -3,8 +3,8 @@ package roku
 import (
    "bytes"
    "errors"
-   "github.com/89z/std/http"
-   "github.com/89z/std/json"
+   "github.com/89z/rosso/http"
+   "github.com/89z/rosso/json"
    "io"
    "net/url"
    "path"
