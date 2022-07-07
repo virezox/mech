@@ -28,11 +28,11 @@ func new_master(guid int64, bandwidth int, info bool) error {
    }
    stream := master.Stream.Reduce(hls.Bandwidth(bandwidth))
    if info {
-      for _, elem := range master.Stream {
-         if elem.Bandwidth == stream.Bandwidth {
+      for _, item := range master.Stream {
+         if item.Bandwidth == stream.Bandwidth {
             fmt.Print("!")
          }
-         fmt.Println(elem)
+         fmt.Println(item)
       }
    } else {
       return download(stream.URI, page.Analytics.ConvivaAssetName)

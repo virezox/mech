@@ -45,17 +45,17 @@ func (f flags) master() error {
    })
    medium := media.Reduce(hls.Name(f.audio_name))
    if f.info {
-      for _, elem := range streams {
-         if elem.Bandwidth == stream.Bandwidth {
+      for _, item := range streams {
+         if item.Bandwidth == stream.Bandwidth {
             fmt.Print("!")
          }
-         fmt.Println(elem)
+         fmt.Println(item)
       }
-      for _, elem := range media {
-         if elem.Name == medium.Name {
+      for _, item := range media {
+         if item.Name == medium.Name {
             fmt.Print("!")
          }
-         fmt.Println(elem)
+         fmt.Println(item)
       }
    } else {
       if f.audio_name != "" {

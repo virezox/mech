@@ -9,39 +9,6 @@ import (
    "strings"
 )
 
-func (f Flags) HLS(base string) error {
-   res, err := client.Get(f.Address)
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   master, err := hls.New_Scanner(res.Body).Master()
-   if err != nil {
-      return err
-   }
-   var str stream_HLS
-   str.URL = res.Request.URL
-   str.base = base
-   str.flag = f
-   str.stream = master.Stream
-   return str.download()
-}
-
-type stream_HLS struct {
-   *url.URL
-   base string
-   flag Flags
-   stream hls.Slice[hls.Stream]
-}
-
-func new_segment(addr string) (*hls.Segment, error) {
-   res, err := client.Get(addr)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   return hls.New_Scanner(res.Body).Segment()
-}
 func (s stream_HLS) download() error {
    if s.flag.Video_Bandwidth <= 0 {
       return nil
@@ -49,13 +16,16 @@ func (s stream_HLS) download() error {
    s.stream = s.stream.Filter(func(s hls.Stream) bool {
       return strings.Contains(s.Codecs, "avc1.")
    })
-   stream := s.stream.Reduce(hls.Bandwidth(s.flag.Video_Bandwidth))
+   distance := hls.Bandwidth(s.flag.Video_Bandwidth)
+   stream := s.stream.Reduce(func(carry, item hls.Stream) bool {
+      return distance(item) < distance(carry)
+   })
    if s.flag.Info {
-      for _, elem := range s.stream {
-         if elem.Bandwidth == stream.Bandwidth {
+      for _, item := range s.stream {
+         if item.Bandwidth == stream.Bandwidth {
             fmt.Print("!")
          }
-         fmt.Println(elem)
+         fmt.Println(item)
       }
       return nil
    }
@@ -119,4 +89,37 @@ func (s stream_HLS) download() error {
       }
    }
    return nil
+}
+func (f Flags) HLS(base string) error {
+   res, err := client.Get(f.Address)
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   master, err := hls.New_Scanner(res.Body).Master()
+   if err != nil {
+      return err
+   }
+   var str stream_HLS
+   str.URL = res.Request.URL
+   str.base = base
+   str.flag = f
+   str.stream = master.Stream
+   return str.download()
+}
+
+type stream_HLS struct {
+   *url.URL
+   base string
+   flag Flags
+   stream hls.Slice[hls.Stream]
+}
+
+func new_segment(addr string) (*hls.Segment, error) {
+   res, err := client.Get(addr)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   return hls.New_Scanner(res.Body).Segment()
 }
