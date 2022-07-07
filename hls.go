@@ -6,6 +6,7 @@ import (
    "github.com/89z/rosso/os"
    "io"
    "net/url"
+   "strings"
 )
 
 func (f Flags) HLS(base string) error {
@@ -22,7 +23,7 @@ func (f Flags) HLS(base string) error {
    str.URL = res.Request.URL
    str.base = base
    str.flag = f
-   str.stream = master.Streams
+   str.stream = master.Stream
    return str.download()
 }
 
@@ -30,7 +31,7 @@ type stream_HLS struct {
    *url.URL
    base string
    flag Flags
-   stream hls.Streams
+   stream hls.Slice[hls.Stream]
 }
 
 func new_segment(addr string) (*hls.Segment, error) {
@@ -41,13 +42,14 @@ func new_segment(addr string) (*hls.Segment, error) {
    defer res.Body.Close()
    return hls.New_Scanner(res.Body).Segment()
 }
-
 func (s stream_HLS) download() error {
    if s.flag.Video_Bandwidth <= 0 {
       return nil
    }
-   s.stream = s.stream.Video()
-   stream := s.stream.Bandwidth(s.flag.Video_Bandwidth)
+   s.stream = s.stream.Filter(func(s hls.Stream) bool {
+      return strings.Contains(s.Codecs, "avc1.")
+   })
+   stream := s.stream.Reduce(hls.Bandwidth(s.flag.Video_Bandwidth))
    if s.flag.Info {
       for _, elem := range s.stream {
          if elem.Bandwidth == stream.Bandwidth {
@@ -118,4 +120,3 @@ func (s stream_HLS) download() error {
    }
    return nil
 }
-

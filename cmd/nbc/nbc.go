@@ -8,6 +8,38 @@ import (
    "io"
 )
 
+func new_master(guid int64, bandwidth int, info bool) error {
+   page, err := nbc.New_Bonanza_Page(guid)
+   if err != nil {
+      return err
+   }
+   video, err := page.Video()
+   if err != nil {
+      return err
+   }
+   res, err := nbc.Client.Get(video.ManifestPath)
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   master, err := hls.New_Scanner(res.Body).Master()
+   if err != nil {
+      return err
+   }
+   stream := master.Stream.Reduce(hls.Bandwidth(bandwidth))
+   if info {
+      for _, elem := range master.Stream {
+         if elem.Bandwidth == stream.Bandwidth {
+            fmt.Print("!")
+         }
+         fmt.Println(elem)
+      }
+   } else {
+      return download(stream.URI, page.Analytics.ConvivaAssetName)
+   }
+   return nil
+}
+
 func download(addr, base string) error {
    res, err := nbc.Client.Get(addr)
    if err != nil {
@@ -36,38 +68,6 @@ func download(addr, base string) error {
       if err := res.Body.Close(); err != nil {
          return err
       }
-   }
-   return nil
-}
-
-func new_master(guid int64, bandwidth int, info bool) error {
-   page, err := nbc.New_Bonanza_Page(guid)
-   if err != nil {
-      return err
-   }
-   video, err := page.Video()
-   if err != nil {
-      return err
-   }
-   res, err := nbc.Client.Get(video.ManifestPath)
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   master, err := hls.New_Scanner(res.Body).Master()
-   if err != nil {
-      return err
-   }
-   stream := master.Streams.Bandwidth(bandwidth)
-   if info {
-      for _, each := range master.Streams {
-         if each.Bandwidth == stream.Bandwidth {
-            fmt.Print("!")
-         }
-         fmt.Println(each)
-      }
-   } else {
-      return download(stream.URI, page.Analytics.ConvivaAssetName)
    }
    return nil
 }

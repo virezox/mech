@@ -7,6 +7,7 @@ import (
    "github.com/89z/mech/cbc"
    "io"
    "net/url"
+   "strings"
 )
 
 func (f flags) master() error {
@@ -35,10 +36,14 @@ func (f flags) master() error {
    if err != nil {
       return err
    }
-   streams := master.Streams.Video()
-   stream := streams.Bandwidth(f.video_bandwidth)
-   media := master.Media.Audio()
-   medium := media.Get_Name(f.audio_name)
+   streams := master.Stream.Filter(func(s hls.Stream) bool {
+      return strings.HasPrefix(s.Codecs, "avc1.")
+   })
+   stream := streams.Reduce(hls.Bandwidth(f.video_bandwidth))
+   media := master.Media.Filter(func(m hls.Media) bool {
+      return m.Type == "AUDIO"
+   })
+   medium := media.Reduce(hls.Name(f.audio_name))
    if f.info {
       for _, elem := range streams {
          if elem.Bandwidth == stream.Bandwidth {
