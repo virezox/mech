@@ -12,24 +12,58 @@ import (
    "net/url"
 )
 
-func (s stream_DASH) download(bandwidth int) error {
-   if bandwidth <= 0 {
-      return nil
+var client = http.Default_Client
+
+type Flag_DASH struct {
+   Address string
+   Audio dash.Reduce
+   Base string
+   Client_ID string
+   Info bool
+   Private_Key string
+   Video dash.Reduce
+   widevine.Poster
+}
+
+func (f Flag_DASH) DASH() error {
+   res, err := client.Redirect(nil).Get(f.Address)
+   if err != nil {
+      return err
    }
-   distance := dash.Bandwidth(bandwidth)
-   rep := s.Reduce(func(carry, item dash.Representation) bool {
-      return distance(item) < distance(carry)
-   })
-   if s.flag.Info {
-      for _, item := range s.Representations {
-         if item.Bandwidth == rep.Bandwidth {
+   defer res.Body.Close()
+   var media dash.Media
+   if err := xml.NewDecoder(res.Body).Decode(&media); err != nil {
+      return err
+   }
+   var str stream_DASH
+   str.Flag_DASH = f
+   str.base = res.Request.URL
+   str.reps = media.Representations()
+   if err := str.download(dash.Audio, f.Audio); err != nil {
+      return err
+   }
+   return str.download(dash.Video, f.Video)
+}
+
+type stream_DASH struct {
+   Flag_DASH
+   base *url.URL
+   reps dash.Representations
+}
+
+func (s stream_DASH) download(f dash.Filter, r dash.Reduce) error {
+   s.reps = s.reps.Filter(f)
+   rep := s.reps.Reduce(r)
+   if s.Info {
+      for _, item := range s.reps {
+         if item == *rep {
             fmt.Print("!")
          }
          fmt.Println(item)
       }
       return nil
    }
-   file, err := os.Create(s.basename + rep.Ext())
+   file, err := os.Create(s.Base + rep.Ext())
    if err != nil {
       return err
    }
@@ -48,11 +82,11 @@ func (s stream_DASH) download(bandwidth int) error {
    dec := mp4.New_Decrypt(pro)
    var key []byte
    if rep.ContentProtection != nil {
-      private_key, err := os.ReadFile(s.flag.Private_Key)
+      private_key, err := os.ReadFile(s.Private_Key)
       if err != nil {
          return err
       }
-      client_ID, err := os.ReadFile(s.flag.Client_ID)
+      client_ID, err := os.ReadFile(s.Client_ID)
       if err != nil {
          return err
       }
@@ -64,7 +98,7 @@ func (s stream_DASH) download(bandwidth int) error {
       if err != nil {
          return err
       }
-      keys, err := mod.Post(s.post)
+      keys, err := mod.Post(s)
       if err != nil {
          return err
       }
@@ -101,46 +135,4 @@ func (s stream_DASH) download(bandwidth int) error {
       }
    }
    return nil
-}
-var client = http.Default_Client
-
-type Flags struct {
-   Address string
-   Audio_Bandwidth int
-   Audio_Name string
-   Client_ID string
-   Info bool
-   Private_Key string
-   Video_Bandwidth int
-}
-func (f Flags) DASH(base string, post widevine.Poster) error {
-   res, err := client.Redirect(nil).Get(f.Address)
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   var media dash.Media
-   if err := xml.NewDecoder(res.Body).Decode(&media); err != nil {
-      return err
-   }
-   reps := media.Representations()
-   var str stream_DASH
-   str.base = res.Request.URL
-   str.basename = base
-   str.flag = f
-   str.post = post
-   str.Representations = reps.Filter(dash.Audio)
-   if err := str.download(f.Audio_Bandwidth); err != nil {
-      return err
-   }
-   str.Representations = reps.Filter(dash.Video)
-   return str.download(f.Video_Bandwidth)
-}
-
-type stream_DASH struct {
-   base *url.URL
-   basename string
-   dash.Representations
-   flag Flags
-   post widevine.Poster
 }

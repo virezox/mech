@@ -2,34 +2,70 @@ package mech
 
 import (
    "fmt"
+   "github.com/89z/mech/widevine"
    "github.com/89z/rosso/hls"
    "github.com/89z/rosso/os"
    "io"
    "net/url"
-   "strings"
 )
 
-func (s stream_HLS) download() error {
-   if s.flag.Video_Bandwidth <= 0 {
-      return nil
+func new_segment(addr string) (*hls.Segment, error) {
+   res, err := client.Get(addr)
+   if err != nil {
+      return nil, err
    }
-   s.stream = s.stream.Filter(func(s hls.Stream) bool {
-      return strings.Contains(s.Codecs, "avc1.")
-   })
-   distance := hls.Bandwidth(s.flag.Video_Bandwidth)
-   stream := s.stream.Reduce(func(carry, item hls.Stream) bool {
-      return distance(item) < distance(carry)
-   })
-   if s.flag.Info {
+   defer res.Body.Close()
+   return hls.New_Scanner(res.Body).Segment()
+}
+
+type Flag_HLS struct {
+   Address string
+   Base string
+   Client_ID string
+   Info bool
+   Private_Key string
+   widevine.Poster
+   Audio hls.Reduce[hls.Media]
+   Video hls.Reduce[hls.Stream]
+}
+
+func (f Flag_HLS) HLS(base string) error {
+   res, err := client.Get(f.Address)
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   master, err := hls.New_Scanner(res.Body).Master()
+   if err != nil {
+      return err
+   }
+   var str stream_HLS
+   str.URL = res.Request.URL
+   str.base = base
+   str.flag = f
+   str.stream = master.Stream
+   return str.download()
+}
+
+type stream_HLS[T hls.Element] struct {
+   Flag_HLS
+   base *url.URL
+   stream hls.Slice[T]
+}
+
+func (s stream_HLS[T]) download(f hls.Filter[T], r hls.Reduce[T]) error {
+   s.stream = s.stream.Filter(f)
+   stream := s.stream.Reduce(r)
+   if s.Info {
       for _, item := range s.stream {
-         if item.Bandwidth == stream.Bandwidth {
+         if item == *stream {
             fmt.Print("!")
          }
          fmt.Println(item)
       }
       return nil
    }
-   base, err := s.Parse(stream.URI)
+   base, err := s.base.Parse(stream.URI)
    if err != nil {
       return err
    }
@@ -90,36 +126,4 @@ func (s stream_HLS) download() error {
    }
    return nil
 }
-func (f Flags) HLS(base string) error {
-   res, err := client.Get(f.Address)
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   master, err := hls.New_Scanner(res.Body).Master()
-   if err != nil {
-      return err
-   }
-   var str stream_HLS
-   str.URL = res.Request.URL
-   str.base = base
-   str.flag = f
-   str.stream = master.Stream
-   return str.download()
-}
 
-type stream_HLS struct {
-   *url.URL
-   base string
-   flag Flags
-   stream hls.Slice[hls.Stream]
-}
-
-func new_segment(addr string) (*hls.Segment, error) {
-   res, err := client.Get(addr)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   return hls.New_Scanner(res.Body).Segment()
-}

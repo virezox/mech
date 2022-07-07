@@ -26,7 +26,10 @@ func new_master(guid int64, bandwidth int, info bool) error {
    if err != nil {
       return err
    }
-   stream := master.Stream.Reduce(hls.Bandwidth(bandwidth))
+   distance := hls.Bandwidth(bandwidth)
+   stream := master.Stream.Reduce(func(carry, item hls.Stream) bool {
+      return distance(item) < distance(carry)
+   })
    if info {
       for _, item := range master.Stream {
          if item.Bandwidth == stream.Bandwidth {

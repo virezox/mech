@@ -39,11 +39,16 @@ func (f flags) master() error {
    streams := master.Stream.Filter(func(s hls.Stream) bool {
       return strings.HasPrefix(s.Codecs, "avc1.")
    })
-   stream := streams.Reduce(hls.Bandwidth(f.video_bandwidth))
+   stream := streams.Reduce(func(carry, item hls.Stream) bool {
+      distance := hls.Bandwidth(f.video_bandwidth)
+      return distance(item) < distance(carry)
+   })
    media := master.Media.Filter(func(m hls.Media) bool {
       return m.Type == "AUDIO"
    })
-   medium := media.Reduce(hls.Name(f.audio_name))
+   medium := media.Reduce(func(carry, item hls.Media) bool {
+      return item.Name == f.audio_name
+   })
    if f.info {
       for _, item := range streams {
          if item.Bandwidth == stream.Bandwidth {

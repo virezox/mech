@@ -25,7 +25,9 @@ func (f flags) download() error {
       return err
    }
    f.Address = play.Source().Src
-   return f.DASH(play.Base(), play)
+   f.Base = play.Base()
+   f.Poster = play
+   return f.DASH()
 }
 
 func (f flags) login() error {
