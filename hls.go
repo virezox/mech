@@ -2,11 +2,9 @@ package mech
 
 import (
    "fmt"
-   "github.com/89z/mech/widevine"
    "github.com/89z/rosso/hls"
    "github.com/89z/rosso/os"
    "io"
-   "net/url"
 )
 
 func new_segment(addr string) (*hls.Segment, error) {
@@ -18,18 +16,20 @@ func new_segment(addr string) (*hls.Segment, error) {
    return hls.New_Scanner(res.Body).Segment()
 }
 
-type Flag_HLS struct {
-   Address string
-   Base string
-   Client_ID string
-   Info bool
-   Private_Key string
-   widevine.Poster
-   Audio hls.Reduce[hls.Media]
-   Video hls.Reduce[hls.Stream]
+type one[T hls.Item] struct {
+   hls.Filter[T]
+   hls.Reduce[T]
 }
 
-func (f Flag_HLS) HLS(base string) error {
+type two struct {
+   Address string
+   Base string
+   Info bool
+   media one[hls.Media]
+   stream one[hls.Stream]
+}
+
+func (t two) do() error {
    res, err := client.Get(f.Address)
    if err != nil {
       return err
@@ -39,33 +39,25 @@ func (f Flag_HLS) HLS(base string) error {
    if err != nil {
       return err
    }
-   var str stream_HLS
-   str.URL = res.Request.URL
-   str.base = base
-   str.flag = f
-   str.stream = master.Stream
-   return str.download()
+   if err := three(master.Media, t.media); err != nil {
+      return err
+   }
+   return three(master.Stream, t.stream)
 }
 
-type stream_HLS[T hls.Element] struct {
-   Flag_HLS
-   base *url.URL
-   stream hls.Slice[T]
-}
-
-func (s stream_HLS[T]) download(f hls.Filter[T], r hls.Reduce[T]) error {
-   s.stream = s.stream.Filter(f)
-   stream := s.stream.Reduce(r)
-   if s.Info {
-      for _, item := range s.stream {
-         if item == *stream {
+func three[T hls.Item](slice hls.Slice[T], callback one[T]) error {
+   items := slice.Filter(callback.Filter)
+   target := items.Reduce(callback.Reduce)
+   if f.Info {
+      for _, item := range items {
+         if item == *target {
             fmt.Print("!")
          }
          fmt.Println(item)
       }
       return nil
    }
-   base, err := s.base.Parse(stream.URI)
+   base, err := res.Request.URL.Parse(target.URI)
    if err != nil {
       return err
    }
@@ -89,7 +81,7 @@ func (s stream_HLS[T]) download(f hls.Filter[T], r hls.Reduce[T]) error {
          return err
       }
    }
-   file, err := os.Create(s.base + stream.Ext())
+   file, err := os.Create(f.Base + target.Ext())
    if err != nil {
       return err
    }
@@ -126,4 +118,3 @@ func (s stream_HLS[T]) download(f hls.Filter[T], r hls.Reduce[T]) error {
    }
    return nil
 }
-
