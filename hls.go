@@ -5,63 +5,62 @@ import (
    "github.com/89z/rosso/hls"
    "github.com/89z/rosso/os"
    "io"
+   "net/url"
 )
 
-func new_segment(addr string) (*hls.Segment, error) {
-   res, err := client.Get(addr)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   return hls.New_Scanner(res.Body).Segment()
-}
-
-type one[T hls.Item] struct {
-   hls.Filter[T]
-   hls.Reduce[T]
-}
-
-type two struct {
+type Flag_HLS struct {
    Address string
-   Base string
+   Name string
    Info bool
-   media one[hls.Media]
-   stream one[hls.Stream]
+   base *url.URL
+   master *hls.Master
 }
 
-func (t two) do() error {
+func (f *Flag_HLS) Master() error {
    res, err := client.Get(f.Address)
    if err != nil {
       return err
    }
    defer res.Body.Close()
-   master, err := hls.New_Scanner(res.Body).Master()
+   f.base = res.Request.URL
+   f.master, err = hls.New_Scanner(res.Body).Master()
    if err != nil {
       return err
    }
-   if err := three(master.Media, t.media); err != nil {
-      return err
-   }
-   return three(master.Stream, t.stream)
+   return nil
 }
 
-func three[T hls.Item](slice hls.Slice[T], callback one[T]) error {
-   items := slice.Filter(callback.Filter)
-   target := items.Reduce(callback.Reduce)
+func (f Flag_HLS) Stream(a hls.Filter[hls.Stream], b hls.Index[hls.Stream]) error {
+   return download(f, a, b, f.master.Stream)
+}
+
+func (f Flag_HLS) Media(a hls.Filter[hls.Media], b hls.Index[hls.Media]) error {
+   return download(f, a, b, f.master.Media)
+}
+
+func download[T hls.Mixed](f Flag_HLS, a hls.Filter[T], b hls.Index[T], s hls.Slice[T]) error {
+   items := s.Filter(a)
+   target := items.Index(b)
    if f.Info {
-      for _, item := range items {
-         if item == *target {
+      for i, item := range items {
+         if i == target {
             fmt.Print("!")
          }
          fmt.Println(item)
       }
       return nil
    }
-   base, err := res.Request.URL.Parse(target.URI)
+   item := items[target]
+   seg_addr, err := f.base.Parse(item.URI())
    if err != nil {
       return err
    }
-   seg, err := new_segment(base.String())
+   res, err := client.Get(seg_addr.String())
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   seg, err := hls.New_Scanner(res.Body).Segment()
    if err != nil {
       return err
    }
@@ -81,14 +80,14 @@ func three[T hls.Item](slice hls.Slice[T], callback one[T]) error {
          return err
       }
    }
-   file, err := os.Create(f.Base + target.Ext())
+   file, err := os.Create(f.Name + item.Ext())
    if err != nil {
       return err
    }
    defer file.Close()
    pro := os.Progress_Chunks(file, len(seg.URI))
    for _, raw := range seg.URI {
-      addr, err := base.Parse(raw)
+      addr, err := seg_addr.Parse(raw)
       if err != nil {
          return err
       }

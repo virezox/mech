@@ -16,16 +16,16 @@ var client = http.Default_Client
 
 type Flag_DASH struct {
    Address string
-   Audio dash.Reduce
-   Base string
    Client_ID string
    Info bool
+   Name string
+   Poster widevine.Poster
    Private_Key string
-   Video dash.Reduce
-   widevine.Poster
+   base *url.URL
+   items dash.Representations
 }
 
-func (f Flag_DASH) DASH() error {
+func (f *Flag_DASH) Decode() error {
    res, err := client.Redirect(nil).Get(f.Address)
    if err != nil {
       return err
@@ -35,40 +35,30 @@ func (f Flag_DASH) DASH() error {
    if err := xml.NewDecoder(res.Body).Decode(&media); err != nil {
       return err
    }
-   var str stream_DASH
-   str.Flag_DASH = f
-   str.base = res.Request.URL
-   str.reps = media.Representations()
-   if err := str.download(dash.Audio, f.Audio); err != nil {
-      return err
-   }
-   return str.download(dash.Video, f.Video)
+   f.base = res.Request.URL
+   f.items = media.Representation()
+   return nil
 }
 
-type stream_DASH struct {
-   Flag_DASH
-   base *url.URL
-   reps dash.Representations
-}
-
-func (s stream_DASH) download(f dash.Filter, r dash.Reduce) error {
-   s.reps = s.reps.Filter(f)
-   rep := s.reps.Reduce(r)
-   if s.Info {
-      for _, item := range s.reps {
-         if item == *rep {
+func (f Flag_DASH) Download(filter dash.Filter, index dash.Index) error {
+   f.items = f.items.Filter(filter)
+   target := f.items.Index(index)
+   if f.Info {
+      for i, item := range f.items {
+         if i == target {
             fmt.Print("!")
          }
          fmt.Println(item)
       }
       return nil
    }
-   file, err := os.Create(s.Base + rep.Ext())
+   item := f.items[target]
+   file, err := os.Create(f.Name + item.Ext())
    if err != nil {
       return err
    }
    defer file.Close()
-   addr, err := s.base.Parse(rep.Initialization())
+   addr, err := f.base.Parse(item.Initialization())
    if err != nil {
       return err
    }
@@ -77,20 +67,20 @@ func (s stream_DASH) download(f dash.Filter, r dash.Reduce) error {
       return err
    }
    defer res.Body.Close()
-   media := rep.Media()
-   pro := os.Progress_Chunks(file, len(media))
+   addrs := item.Media()
+   pro := os.Progress_Chunks(file, len(addrs))
    dec := mp4.New_Decrypt(pro)
    var key []byte
-   if rep.ContentProtection != nil {
-      private_key, err := os.ReadFile(s.Private_Key)
+   if item.ContentProtection != nil {
+      private_key, err := os.ReadFile(f.Private_Key)
       if err != nil {
          return err
       }
-      client_ID, err := os.ReadFile(s.Client_ID)
+      client_ID, err := os.ReadFile(f.Client_ID)
       if err != nil {
          return err
       }
-      key_ID, err := widevine.Key_ID(rep.ContentProtection.Default_KID)
+      key_ID, err := widevine.Key_ID(item.ContentProtection.Default_KID)
       if err != nil {
          return err
       }
@@ -98,7 +88,7 @@ func (s stream_DASH) download(f dash.Filter, r dash.Reduce) error {
       if err != nil {
          return err
       }
-      keys, err := mod.Post(s)
+      keys, err := mod.Post(f.Poster)
       if err != nil {
          return err
       }
@@ -112,8 +102,8 @@ func (s stream_DASH) download(f dash.Filter, r dash.Reduce) error {
          return err
       }
    }
-   for _, medium := range media {
-      addr, err := s.base.Parse(medium)
+   for _, raw := range addrs {
+      addr, err := f.base.Parse(raw)
       if err != nil {
          return err
       }
@@ -122,7 +112,7 @@ func (s stream_DASH) download(f dash.Filter, r dash.Reduce) error {
          return err
       }
       pro.Add_Chunk(res.ContentLength)
-      if rep.ContentProtection != nil {
+      if item.ContentProtection != nil {
          err = dec.Segment(res.Body, key)
       } else {
          _, err = io.Copy(pro, res.Body)
