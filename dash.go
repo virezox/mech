@@ -37,7 +37,7 @@ func (f *Flag) DASH(addr, base string) (dash.Representations, error) {
    return pres.Representation(), nil
 }
 
-func (f Flag) DASH_Get(items []dash.Representation, index int) error {
+func (f Flag) DASH_Get(items dash.Representations, index int) error {
    if f.Info {
       for i, item := range items {
          if i == index {
