@@ -15,27 +15,26 @@ import (
 var client = http.Default_Client
 
 type Flag struct {
-   Address string
    Client_ID string
    Info bool
-   Name string
    Poster widevine.Poster
    Private_Key string
-   base *url.URL
+   base string
+   url *url.URL
 }
 
-func (f *Flag) Presentation() (*dash.Presentation, error) {
-   res, err := client.Redirect(nil).Get(f.Address)
+func (f *Flag) Representation(addr, base string) (dash.Representations, error) {
+   res, err := client.Redirect(nil).Get(addr)
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
-   pre := new(dash.Presentation)
-   if err := xml.NewDecoder(res.Body).Decode(pre); err != nil {
+   var pre dash.Presentation
+   if err := xml.NewDecoder(res.Body).Decode(&pre); err != nil {
       return nil, err
    }
-   f.base = res.Request.URL
-   return pre, nil
+   f.url = res.Request.URL
+   return pre.Representation(), nil
 }
 
 func (f Flag) DASH(items []dash.Representation, index int) error {
@@ -49,12 +48,12 @@ func (f Flag) DASH(items []dash.Representation, index int) error {
       return nil
    }
    item := items[index]
-   file, err := os.Create(f.Name + item.Ext())
+   file, err := os.Create(f.base + item.Ext())
    if err != nil {
       return err
    }
    defer file.Close()
-   addr, err := f.base.Parse(item.Initialization())
+   addr, err := f.url.Parse(item.Initialization())
    if err != nil {
       return err
    }
@@ -63,8 +62,8 @@ func (f Flag) DASH(items []dash.Representation, index int) error {
       return err
    }
    defer res.Body.Close()
-   addrs := item.Media()
-   pro := os.Progress_Chunks(file, len(addrs))
+   media := item.Media()
+   pro := os.Progress_Chunks(file, len(media))
    dec := mp4.New_Decrypt(pro)
    var key []byte
    if item.ContentProtection != nil {
@@ -98,8 +97,8 @@ func (f Flag) DASH(items []dash.Representation, index int) error {
          return err
       }
    }
-   for _, raw := range addrs {
-      addr, err := f.base.Parse(raw)
+   for _, medium := range media {
+      addr, err := f.url.Parse(medium)
       if err != nil {
          return err
       }

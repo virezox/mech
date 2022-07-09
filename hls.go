@@ -7,13 +7,14 @@ import (
    "io"
 )
 
-func (f *Flag) Master() (*hls.Master, error) {
-   res, err := client.Get(f.Address)
+func (f *Flag) Master(addr, base string) (*hls.Master, error) {
+   res, err := client.Get(addr)
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
-   f.base = res.Request.URL
+   f.base = base
+   f.url = res.Request.URL
    return hls.New_Scanner(res.Body).Master()
 }
 
@@ -28,7 +29,7 @@ func (f Flag) HLS(items []hls.Mixed, index int) error {
       return nil
    }
    item := items[index]
-   seg_addr, err := f.base.Parse(item.URI())
+   seg_addr, err := f.url.Parse(item.URI())
    if err != nil {
       return err
    }
@@ -57,7 +58,7 @@ func (f Flag) HLS(items []hls.Mixed, index int) error {
          return err
       }
    }
-   file, err := os.Create(f.Name + item.Ext())
+   file, err := os.Create(f.base + item.Ext())
    if err != nil {
       return err
    }

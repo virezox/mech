@@ -2,15 +2,21 @@ package main
 
 import (
    "flag"
+   "fmt"
+   "github.com/89z/mech/cbc"
+   "github.com/89z/rosso/hls"
+   "github.com/89z/rosso/os"
+   "io"
+   "net/url"
+   "strings"
 )
 
 type flags struct {
-   audio_name string
+   bandwidth int
    email string
    id string
-   info bool
+   mech.Flag
    password string
-   video_bandwidth int
 }
 
 func main() {
@@ -20,11 +26,9 @@ func main() {
    // e
    flag.StringVar(&f.email, "e", "", "email")
    // f
-   flag.IntVar(&f.video_bandwidth, "f", 2052370, "video bandwidth")
-   // g
-   flag.StringVar(&f.audio_name, "g", "English", "audio name")
+   flag.IntVar(&f.bandwidth, "f", 2052370, "video bandwidth")
    // i
-   flag.BoolVar(&f.info, "i", false, "information")
+   flag.BoolVar(&f.Info, "i", false, "information")
    // p
    flag.StringVar(&f.password, "p", "", "password")
    flag.Parse()
@@ -34,7 +38,7 @@ func main() {
          panic(err)
       }
    } else if f.id != "" {
-      err := f.master()
+      err := f.download()
       if err != nil {
          panic(err)
       }

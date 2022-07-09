@@ -2,6 +2,7 @@ package main
 
 import (
    "flag"
+   "github.com/89z/mech"
    "github.com/89z/mech/amc"
    "os"
    "path/filepath"
@@ -10,7 +11,6 @@ import (
 type flags struct {
    bandwidth int
    email string
-   info bool
    mech.Flag
    nid int64
    password string
@@ -32,7 +32,7 @@ func main() {
    // f
    flag.IntVar(&f.bandwidth, "f", 1_999_999, "video bandwidth")
    // i
-   flag.BoolVar(&f.info, "i", false, "information")
+   flag.BoolVar(&f.Info, "i", false, "information")
    // k
    f.Private_Key = filepath.Join(home, "mech/private_key.pem")
    flag.StringVar(&f.Private_Key, "k", f.Private_Key, "private key")
@@ -52,4 +52,19 @@ func main() {
    } else {
       flag.Usage()
    }
+}
+
+func (f flags) login() error {
+   auth, err := amc.Unauth()
+   if err != nil {
+      return err
+   }
+   if err := auth.Login(f.email, f.password); err != nil {
+      return err
+   }
+   home, err := os.UserHomeDir()
+   if err != nil {
+      return err
+   }
+   return auth.Create(home + "/mech/amc.json")
 }
