@@ -7,7 +7,7 @@ import (
    "io"
 )
 
-func (f *Flag) Master(addr, base string) (*hls.Master, error) {
+func (f *Flag) HLS(addr, base string) (*hls.Master, error) {
    res, err := client.Get(addr)
    if err != nil {
       return nil, err
@@ -18,7 +18,15 @@ func (f *Flag) Master(addr, base string) (*hls.Master, error) {
    return hls.New_Scanner(res.Body).Master()
 }
 
-func (f Flag) HLS(items []hls.Mixed, index int) error {
+func (f Flag) HLS_Stream(items hls.Streams, index int) error {
+   return hls_get(f, items, index)
+}
+
+func (f Flag) HLS_Media(items hls.Media, index int) error {
+   return hls_get(f, items, index)
+}
+
+func hls_get[T hls.Mixed](f Flag, items []T, index int) error {
    if f.Info {
       for i, item := range items {
          if i == index {
@@ -95,3 +103,4 @@ func (f Flag) HLS(items []hls.Mixed, index int) error {
    }
    return nil
 }
+

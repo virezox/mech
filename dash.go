@@ -23,21 +23,21 @@ type Flag struct {
    url *url.URL
 }
 
-func (f *Flag) Representation(addr, base string) (dash.Representations, error) {
+func (f *Flag) DASH(addr, base string) (dash.Representations, error) {
    res, err := client.Redirect(nil).Get(addr)
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
-   var pre dash.Presentation
-   if err := xml.NewDecoder(res.Body).Decode(&pre); err != nil {
+   var pres dash.Presentation
+   if err := xml.NewDecoder(res.Body).Decode(&pres); err != nil {
       return nil, err
    }
    f.url = res.Request.URL
-   return pre.Representation(), nil
+   return pres.Representation(), nil
 }
 
-func (f Flag) DASH(items []dash.Representation, index int) error {
+func (f Flag) DASH_Get(items []dash.Representation, index int) error {
    if f.Info {
       for i, item := range items {
          if i == index {
