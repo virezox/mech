@@ -46,3 +46,27 @@ func main() {
       flag.Usage()
    }
 }
+
+func (f flags) profile() error {
+   home, err := os.UserHomeDir()
+   if err != nil {
+      return err
+   }
+   login, err := cbc.New_Login(f.email, f.password)
+   if err != nil {
+      return err
+   }
+   web, err := login.Web_Token()
+   if err != nil {
+      return err
+   }
+   top, err := web.Over_The_Top()
+   if err != nil {
+      return err
+   }
+   profile, err := top.Profile()
+   if err != nil {
+      return err
+   }
+   return profile.Create(home + "/mech/cbc.json")
+}
