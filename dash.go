@@ -14,7 +14,7 @@ import (
 
 var client = http.Default_Client
 
-type Flag_DASH struct {
+type Presentation struct {
    Address string
    Client_ID string
    Info bool
@@ -22,43 +22,39 @@ type Flag_DASH struct {
    Poster widevine.Poster
    Private_Key string
    base *url.URL
-   items dash.Representations
+   dash.Presentation
 }
 
-func (f *Flag_DASH) Decode() error {
-   res, err := client.Redirect(nil).Get(f.Address)
+func (p *Presentation) Decode() error {
+   res, err := client.Redirect(nil).Get(p.Address)
    if err != nil {
       return err
    }
    defer res.Body.Close()
-   var media dash.Media
-   if err := xml.NewDecoder(res.Body).Decode(&media); err != nil {
+   if err := xml.NewDecoder(res.Body).Decode(&p.Presentation); err != nil {
       return err
    }
-   f.base = res.Request.URL
-   f.items = media.Representation()
+   p.base = res.Request.URL
    return nil
 }
 
-func (f Flag_DASH) Download(filter dash.Filter, index dash.Index) error {
-   f.items = f.items.Filter(filter)
-   target := f.items.Index(index)
-   if f.Info {
-      for i, item := range f.items {
-         if i == target {
+func (p Presentation) Do(items []dash.Representation, index int) error {
+   if p.Info {
+      for i, item := range items {
+         if i == index {
             fmt.Print("!")
          }
          fmt.Println(item)
       }
       return nil
    }
-   item := f.items[target]
-   file, err := os.Create(f.Name + item.Ext())
+   item := items[index]
+   file, err := os.Create(p.Name + item.Ext())
    if err != nil {
       return err
    }
    defer file.Close()
-   addr, err := f.base.Parse(item.Initialization())
+   addr, err := p.base.Parse(item.Initialization())
    if err != nil {
       return err
    }
@@ -72,11 +68,11 @@ func (f Flag_DASH) Download(filter dash.Filter, index dash.Index) error {
    dec := mp4.New_Decrypt(pro)
    var key []byte
    if item.ContentProtection != nil {
-      private_key, err := os.ReadFile(f.Private_Key)
+      private_key, err := os.ReadFile(p.Private_Key)
       if err != nil {
          return err
       }
-      client_ID, err := os.ReadFile(f.Client_ID)
+      client_ID, err := os.ReadFile(p.Client_ID)
       if err != nil {
          return err
       }
@@ -88,7 +84,7 @@ func (f Flag_DASH) Download(filter dash.Filter, index dash.Index) error {
       if err != nil {
          return err
       }
-      keys, err := mod.Post(f.Poster)
+      keys, err := mod.Post(p.Poster)
       if err != nil {
          return err
       }
@@ -103,7 +99,7 @@ func (f Flag_DASH) Download(filter dash.Filter, index dash.Index) error {
       }
    }
    for _, raw := range addrs {
-      addr, err := f.base.Parse(raw)
+      addr, err := p.base.Parse(raw)
       if err != nil {
          return err
       }
