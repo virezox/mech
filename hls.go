@@ -5,33 +5,20 @@ import (
    "github.com/89z/rosso/hls"
    "github.com/89z/rosso/os"
    "io"
-   "net/url"
 )
 
-type Master struct {
-   Address string
-   Info bool
-   Name string
-   base *url.URL
-   *hls.Master
-}
-
-func (m *Master) Scan() error {
-   res, err := client.Get(m.Address)
+func (f *Flag) Master() (*hls.Master, error) {
+   res, err := client.Get(f.Address)
    if err != nil {
-      return err
+      return nil, err
    }
    defer res.Body.Close()
-   m.base = res.Request.URL
-   m.Master, err = hls.New_Scanner(res.Body).Master()
-   if err != nil {
-      return err
-   }
-   return nil
+   f.base = res.Request.URL
+   return hls.New_Scanner(res.Body).Master()
 }
 
-func (m Master) Do(items []hls.Mixed, index int) error {
-   if m.Info {
+func (f Flag) HLS(items []hls.Mixed, index int) error {
+   if f.Info {
       for i, item := range items {
          if i == index {
             fmt.Print("!")
@@ -41,7 +28,7 @@ func (m Master) Do(items []hls.Mixed, index int) error {
       return nil
    }
    item := items[index]
-   seg_addr, err := m.base.Parse(item.URI())
+   seg_addr, err := f.base.Parse(item.URI())
    if err != nil {
       return err
    }
@@ -70,7 +57,7 @@ func (m Master) Do(items []hls.Mixed, index int) error {
          return err
       }
    }
-   file, err := os.Create(m.Name + item.Ext())
+   file, err := os.Create(f.Name + item.Ext())
    if err != nil {
       return err
    }

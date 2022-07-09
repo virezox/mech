@@ -14,7 +14,7 @@ import (
 
 var client = http.Default_Client
 
-type Presentation struct {
+type Flag struct {
    Address string
    Client_ID string
    Info bool
@@ -22,24 +22,24 @@ type Presentation struct {
    Poster widevine.Poster
    Private_Key string
    base *url.URL
-   dash.Presentation
 }
 
-func (p *Presentation) Decode() error {
-   res, err := client.Redirect(nil).Get(p.Address)
+func (f *Flag) Presentation() (*dash.Presentation, error) {
+   res, err := client.Redirect(nil).Get(f.Address)
    if err != nil {
-      return err
+      return nil, err
    }
    defer res.Body.Close()
-   if err := xml.NewDecoder(res.Body).Decode(&p.Presentation); err != nil {
-      return err
+   pre := new(dash.Presentation)
+   if err := xml.NewDecoder(res.Body).Decode(pre); err != nil {
+      return nil, err
    }
-   p.base = res.Request.URL
-   return nil
+   f.base = res.Request.URL
+   return pre, nil
 }
 
-func (p Presentation) Do(items []dash.Representation, index int) error {
-   if p.Info {
+func (f Flag) DASH(items []dash.Representation, index int) error {
+   if f.Info {
       for i, item := range items {
          if i == index {
             fmt.Print("!")
@@ -49,12 +49,12 @@ func (p Presentation) Do(items []dash.Representation, index int) error {
       return nil
    }
    item := items[index]
-   file, err := os.Create(p.Name + item.Ext())
+   file, err := os.Create(f.Name + item.Ext())
    if err != nil {
       return err
    }
    defer file.Close()
-   addr, err := p.base.Parse(item.Initialization())
+   addr, err := f.base.Parse(item.Initialization())
    if err != nil {
       return err
    }
@@ -68,11 +68,11 @@ func (p Presentation) Do(items []dash.Representation, index int) error {
    dec := mp4.New_Decrypt(pro)
    var key []byte
    if item.ContentProtection != nil {
-      private_key, err := os.ReadFile(p.Private_Key)
+      private_key, err := os.ReadFile(f.Private_Key)
       if err != nil {
          return err
       }
-      client_ID, err := os.ReadFile(p.Client_ID)
+      client_ID, err := os.ReadFile(f.Client_ID)
       if err != nil {
          return err
       }
@@ -84,7 +84,7 @@ func (p Presentation) Do(items []dash.Representation, index int) error {
       if err != nil {
          return err
       }
-      keys, err := mod.Post(p.Poster)
+      keys, err := mod.Post(f.Poster)
       if err != nil {
          return err
       }
@@ -99,7 +99,7 @@ func (p Presentation) Do(items []dash.Representation, index int) error {
       }
    }
    for _, raw := range addrs {
-      addr, err := p.base.Parse(raw)
+      addr, err := f.base.Parse(raw)
       if err != nil {
          return err
       }
