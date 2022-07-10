@@ -2,21 +2,11 @@ package main
 
 import (
    "github.com/89z/mech/roku"
+   "github.com/89z/rosso/dash"
+   "strings"
 )
 
-func (f flags) do_HLS(content *roku.Content) error {
-   video, err := content.HLS()
-   if err != nil {
-      return err
-   }
-   master, err := f.HLS(video.URL, content.Base())
-   if err != nil {
-      return err
-   }
-   return f.HLS_Streams(master.Streams, 0)
-}
-
-func (f flags) do_DASH(content *roku.Content) error {
+func (f flags) DASH(content *roku.Content) error {
    site, err := roku.New_Cross_Site()
    if err != nil {
       return err
@@ -25,9 +15,30 @@ func (f flags) do_DASH(content *roku.Content) error {
    if err != nil {
       return err
    }
-   reps, err := f.DASH(content.DASH().URL, content.Base())
+   reps, err := f.Flag.DASH(content.DASH().URL, content.Base())
    if err != nil {
       return err
    }
-   return f.DASH_Get(reps, 0)
+   audio := reps.Audio()
+   index := audio.Index(func(a, b dash.Representation) bool {
+      return strings.Contains(b.Codecs, f.codec)
+   })
+   if err := f.DASH_Get(audio, index); err != nil {
+      return err
+   }
+   video := reps.Video()
+   return f.DASH_Get(video, video.Bandwidth(f.bandwidth))
+}
+
+func (f flags) HLS(content *roku.Content) error {
+   video, err := content.HLS()
+   if err != nil {
+      return err
+   }
+   master, err := f.Flag.HLS(video.URL, content.Base())
+   if err != nil {
+      return err
+   }
+   streams := master.Streams
+   return f.HLS_Streams(streams, streams.Bandwidth(f.bandwidth))
 }

@@ -10,12 +10,11 @@ import (
 
 type flags struct {
    bandwidth int
+   codecs string
    dash bool
    guid string
-   mech.Flag
-   
-   codecs string
    lang string
+   mech.Flag
 }
 
 func main() {
