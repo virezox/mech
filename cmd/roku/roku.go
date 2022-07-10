@@ -13,7 +13,7 @@ func (f flags) do_HLS(content *roku.Content) error {
    if err != nil {
       return err
    }
-   return f.HLS_Stream(master.Streams, 0)
+   return f.HLS_Streams(master.Streams, 0)
 }
 
 func (f flags) do_DASH(content *roku.Content) error {

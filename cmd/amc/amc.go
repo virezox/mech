@@ -24,14 +24,14 @@ func (f flags) download() error {
    if err != nil {
       return err
    }
-   rep, err := f.DASH(play.Source().Src, play.Base())
+   reps, err := f.DASH(play.Source().Src, play.Base())
    if err != nil {
       return err
    }
    f.Poster = play
-   if err := f.DASH_Get(rep.Audio(), 0); err != nil {
+   if err := f.DASH_Get(reps.Audio(), 0); err != nil {
       return err
    }
-   video := rep.Video()
+   video := reps.Video()
    return f.DASH_Get(video, video.Bandwidth(f.bandwidth))
 }

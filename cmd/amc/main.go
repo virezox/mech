@@ -14,6 +14,7 @@ type flags struct {
    mech.Flag
    nid int64
    password string
+   verbose bool
 }
 
 func main() {
@@ -38,7 +39,12 @@ func main() {
    flag.StringVar(&f.Private_Key, "k", f.Private_Key, "private key")
    // p
    flag.StringVar(&f.password, "p", "", "password")
+   // v
+   flag.BoolVar(&f.verbose, "v", false, "verbose")
    flag.Parse()
+   if f.verbose {
+      amc.Client.Log_Level = 2
+   }
    if f.email != "" {
       err := f.login()
       if err != nil {

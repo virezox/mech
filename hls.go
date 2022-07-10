@@ -18,7 +18,7 @@ func (f *Flag) HLS(addr, base string) (*hls.Master, error) {
    return hls.New_Scanner(res.Body).Master()
 }
 
-func (f Flag) HLS_Stream(items hls.Streams, index int) error {
+func (f Flag) HLS_Streams(items hls.Streams, index int) error {
    return hls_get(f, items, index)
 }
 
@@ -37,11 +37,11 @@ func hls_get[T hls.Mixed](f Flag, items []T, index int) error {
       return nil
    }
    item := items[index]
-   seg_addr, err := f.url.Parse(item.URI())
+   raw_seg, err := f.url.Parse(item.URI())
    if err != nil {
       return err
    }
-   res, err := client.Get(seg_addr.String())
+   res, err := client.Get(raw_seg.String())
    if err != nil {
       return err
    }
@@ -73,11 +73,11 @@ func hls_get[T hls.Mixed](f Flag, items []T, index int) error {
    defer file.Close()
    pro := os.Progress_Chunks(file, len(seg.URI))
    for _, raw := range seg.URI {
-      addr, err := seg_addr.Parse(raw)
+      addr, err := raw_seg.Parse(raw)
       if err != nil {
          return err
       }
-      res, err := client.Level(0).Get(addr.String())
+      res, err := client.Level(0).Redirect(nil).Get(addr.String())
       if err != nil {
          return err
       }

@@ -13,6 +13,9 @@ type flags struct {
    dash bool
    guid string
    mech.Flag
+   
+   codecs string
+   lang string
 }
 
 func main() {
@@ -30,6 +33,10 @@ func main() {
    flag.BoolVar(&f.dash, "d", false, "DASH download")
    // f
    flag.IntVar(&f.bandwidth, "f", 1611000, "video bandwidth")
+   // g
+   flag.StringVar(&f.codecs, "g", "mp4a", "audio codec")
+   // h
+   flag.StringVar(&f.lang, "h", "en", "audio lang")
    // i
    flag.BoolVar(&f.Info, "i", false, "information")
    // k
@@ -42,12 +49,12 @@ func main() {
          panic(err)
       }
       if f.dash {
-         err := f.do_DASH(preview)
+         err := f.DASH(preview)
          if err != nil {
             panic(err)
          }
       } else {
-         err := f.do_HLS(preview)
+         err := f.HLS(preview)
          if err != nil {
             panic(err)
          }

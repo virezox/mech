@@ -10,6 +10,7 @@ type flags struct {
    email string
    id string
    mech.Flag
+   name string
    password string
 }
 
@@ -21,6 +22,8 @@ func main() {
    flag.StringVar(&f.email, "e", "", "email")
    // f
    flag.IntVar(&f.bandwidth, "f", 2052370, "video bandwidth")
+   // g
+   flag.StringVar(&f.name, "g", "English", "audio name")
    // i
    flag.BoolVar(&f.Info, "i", false, "information")
    // p

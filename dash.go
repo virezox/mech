@@ -33,6 +33,7 @@ func (f *Flag) DASH(addr, base string) (dash.Representations, error) {
    if err := xml.NewDecoder(res.Body).Decode(&pres); err != nil {
       return nil, err
    }
+   f.base = base
    f.url = res.Request.URL
    return pres.Representation(), nil
 }

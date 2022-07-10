@@ -2,34 +2,48 @@ package main
 
 import (
    "github.com/89z/mech/cbc"
+   "github.com/89z/rosso/hls"
    "os"
 )
 
 func (f flags) download() error {
-   home, err := os.UserHomeDir()
+   master, err := f.master()
    if err != nil {
       return err
+   }
+   media := master.Media.Filter(func(m hls.Medium) bool {
+      return m.Type == "AUDIO"
+   })
+   index := media.Index(func(a, b hls.Medium) bool {
+      return b.Name == f.name
+   })
+   if err := f.HLS_Media(media, index); err != nil {
+      return err
+   }
+   streams := master.Streams.Filter(func(s hls.Stream) bool {
+      return s.Resolution != ""
+   })
+   return f.HLS_Streams(streams, streams.Bandwidth(f.bandwidth))
+}
+
+func (f *flags) master() (*hls.Master, error) {
+   home, err := os.UserHomeDir()
+   if err != nil {
+      return nil, err
    }
    profile, err := cbc.Open_Profile(home + "/mech/cbc.json")
    if err != nil {
-      return err
+      return nil, err
    }
    asset, err := cbc.New_Asset(f.id)
    if err != nil {
-      return err
+      return nil, err
    }
-   asset_media, err := profile.Media(asset)
+   media, err := profile.Media(asset)
    if err != nil {
-      return err
+      return nil, err
    }
-   master, err := f.HLS(*asset_media.URL, asset.AppleContentId)
-   if err != nil {
-      return err
-   }
-   if err := f.HLS_Media(master.Media, 0); err != nil {
-      return err
-   }
-   return f.HLS_Stream(master.Streams, 0)
+   return f.HLS(*media.URL, asset.AppleContentId)
 }
 
 func (f flags) profile() error {

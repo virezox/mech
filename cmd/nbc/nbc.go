@@ -19,7 +19,8 @@ func (f flags) download() error {
    if err != nil {
       return err
    }
-   return f.HLS_Stream(master.Streams, 0)
+   streams := master.Streams
+   return f.HLS_Streams(streams, streams.Bandwidth(f.bandwidth))
 }
 
 type flags struct {
