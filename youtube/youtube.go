@@ -7,21 +7,21 @@ import (
    "strings"
 )
 
+func Video_ID(data string, v *string) error {
+   address, err := url.Parse(data)
+   if err != nil {
+      return err
+   }
+   *v = address.Query().Get("v")
+   if *v == "" {
+      *v = path.Base(address.Path)
+   }
+   return nil
+}
+
 const origin = "https://www.youtube.com"
 
 var HTTP_Client = http.Default_Client
-
-func Video_ID(raw_addr string) (string, error) {
-   addr, err := url.Parse(raw_addr)
-   if err != nil {
-      return "", err
-   }
-   v := addr.Query().Get("v")
-   if v != "" {
-      return v, nil
-   }
-   return path.Base(addr.Path), nil
-}
 
 type Image struct {
    Width int

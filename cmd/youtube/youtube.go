@@ -6,13 +6,13 @@ import (
    "os"
 )
 
-func (v video) do() error {
-   play, err := v.player()
+func (f flags) download() error {
+   play, err := f.player()
    if err != nil {
       return err
    }
    forms := play.StreamingData.AdaptiveFormats
-   if v.info {
+   if f.info {
       text, err := play.MarshalText()
       if err != nil {
          return err
@@ -20,8 +20,8 @@ func (v video) do() error {
       os.Stdout.Write(text)
    } else {
       fmt.Println(play.PlayabilityStatus)
-      if v.audio != "" {
-         form, ok := forms.Audio(v.audio)
+      if f.audio != "" {
+         form, ok := forms.Audio(f.audio)
          if ok {
             err := download(form, play.Base())
             if err != nil {
@@ -29,8 +29,8 @@ func (v video) do() error {
             }
          }
       }
-      if v.height >= 1 {
-         form, ok := forms.Video(v.height)
+      if f.height >= 1 {
+         form, ok := forms.Video(f.height)
          if ok {
             err := download(form, play.Base())
             if err != nil {
@@ -41,7 +41,8 @@ func (v video) do() error {
    }
    return nil
 }
-func do_refresh() error {
+
+func refresh() error {
    auth, err := youtube.New_OAuth()
    if err != nil {
       return err
@@ -59,7 +60,7 @@ func do_refresh() error {
    return head.Create(home + "/mech/youtube.json")
 }
 
-func do_access() error {
+func access() error {
    home, err := os.UserHomeDir()
    if err != nil {
       return err
@@ -87,21 +88,14 @@ func download(form *youtube.Format, base string) error {
    return form.Encode(file)
 }
 
-func (v video) player() (*youtube.Player, error) {
-   if v.id == "" {
-      var err error
-      v.id, err = youtube.Video_ID(v.address)
-      if err != nil {
-         return nil, err
-      }
-   }
+func (f flags) player() (*youtube.Player, error) {
    var req youtube.Request
-   if v.request == 0 {
+   if f.request == 0 {
       req = youtube.Android()
-   } else if v.request == 1 {
+   } else if f.request == 1 {
       req = youtube.Android_Embed()
    } else {
-      if v.request == 2 {
+      if f.request == 2 {
          req = youtube.Android_Racy()
       } else {
          req = youtube.Android_Content()
@@ -115,16 +109,5 @@ func (v video) player() (*youtube.Player, error) {
          return nil, err
       }
    }
-   return req.Player(v.id)
+   return req.Player(f.video_ID)
 }
-
-type video struct {
-   address string
-   audio string
-   height int
-   id string
-   info bool
-   request int
-}
-
-

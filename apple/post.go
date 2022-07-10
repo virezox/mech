@@ -35,7 +35,7 @@ func (p Poster) Request_Body(buf []byte) ([]byte, error) {
    s.Key_System = "com.widevine.alpha"
    s.Server_Parameters = p.episode.Asset().FpsKeyServerQueryParameters
    s.URI = p.pssh
-   return json.Marshal(s)
+   return json.MarshalIndent(s, "", " ")
 }
 
 func (Poster) Response_Body(buf []byte) ([]byte, error) {

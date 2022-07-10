@@ -14,7 +14,8 @@ var id_tests = []string{
 
 func Test_ID(t *testing.T) {
    for _, test := range id_tests {
-      id, err := Video_ID(test)
+      var id string
+      err := Video_ID(test, &id)
       if err != nil {
          t.Fatal(err)
       }

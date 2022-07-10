@@ -46,6 +46,7 @@ func Test_Post(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
+   widevine.Client.Log_Level = 2
    keys, err := mod.Post(Poster{auth, env, episode, pssh})
    if err != nil {
       t.Fatal(err)
