@@ -15,7 +15,8 @@ func (f flags) download() error {
    if err != nil {
       return err
    }
-   master, err := f.HLS(video.ManifestPath, page.Analytics.ConvivaAssetName)
+   f.Base = page.Analytics.ConvivaAssetName
+   master, err := f.HLS(video.ManifestPath)
    if err != nil {
       return err
    }
@@ -26,7 +27,7 @@ func (f flags) download() error {
 type flags struct {
    bandwidth int
    guid int64
-   mech.Flag
+   mech.Stream
 }
 
 func main() {

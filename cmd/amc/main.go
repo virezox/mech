@@ -11,7 +11,7 @@ import (
 type flags struct {
    bandwidth int
    email string
-   mech.Flag
+   mech.Stream
    nid int64
    password string
    verbose bool

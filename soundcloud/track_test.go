@@ -8,7 +8,7 @@ import (
 
 type item_type struct {
    id int64
-   addr string
+   address string
 }
 
 var items = []item_type{
@@ -18,7 +18,7 @@ var items = []item_type{
 
 func Test_Resolve(t *testing.T) {
    for _, item := range items {
-      tracks, err := Resolve(item.addr)
+      tracks, err := Resolve(item.address)
       if err != nil {
          t.Fatal(err)
       }

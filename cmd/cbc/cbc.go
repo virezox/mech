@@ -43,7 +43,8 @@ func (f *flags) master() (*hls.Master, error) {
    if err != nil {
       return nil, err
    }
-   return f.HLS(*media.URL, asset.AppleContentId)
+   f.Base = asset.AppleContentId
+   return f.HLS(*media.URL)
 }
 
 func (f flags) profile() error {

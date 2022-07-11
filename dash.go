@@ -14,16 +14,16 @@ import (
 
 var client = http.Default_Client
 
-type Flag struct {
+type Stream struct {
    Client_ID string
    Info bool
-   Poster widevine.Poster
    Private_Key string
-   base string
+   Poster widevine.Poster
+   Base string
    url *url.URL
 }
 
-func (f *Flag) DASH(addr, base string) (dash.Representations, error) {
+func (s *Stream) DASH(addr string) (dash.Representations, error) {
    res, err := client.Redirect(nil).Get(addr)
    if err != nil {
       return nil, err
@@ -33,13 +33,12 @@ func (f *Flag) DASH(addr, base string) (dash.Representations, error) {
    if err := xml.NewDecoder(res.Body).Decode(&pres); err != nil {
       return nil, err
    }
-   f.base = base
-   f.url = res.Request.URL
+   s.url = res.Request.URL
    return pres.Representation(), nil
 }
 
-func (f Flag) DASH_Get(items dash.Representations, index int) error {
-   if f.Info {
+func (s Stream) DASH_Get(items dash.Representations, index int) error {
+   if s.Info {
       for i, item := range items {
          if i == index {
             fmt.Print("!")
@@ -49,12 +48,12 @@ func (f Flag) DASH_Get(items dash.Representations, index int) error {
       return nil
    }
    item := items[index]
-   file, err := os.Create(f.base + item.Ext())
+   file, err := os.Create(s.Base + item.Ext())
    if err != nil {
       return err
    }
    defer file.Close()
-   addr, err := f.url.Parse(item.Initialization())
+   addr, err := s.url.Parse(item.Initialization())
    if err != nil {
       return err
    }
@@ -68,11 +67,11 @@ func (f Flag) DASH_Get(items dash.Representations, index int) error {
    dec := mp4.New_Decrypt(pro)
    var key []byte
    if item.ContentProtection != nil {
-      private_key, err := os.ReadFile(f.Private_Key)
+      private_key, err := os.ReadFile(s.Private_Key)
       if err != nil {
          return err
       }
-      client_ID, err := os.ReadFile(f.Client_ID)
+      client_ID, err := os.ReadFile(s.Client_ID)
       if err != nil {
          return err
       }
@@ -84,7 +83,7 @@ func (f Flag) DASH_Get(items dash.Representations, index int) error {
       if err != nil {
          return err
       }
-      keys, err := mod.Post(f.Poster)
+      keys, err := mod.Post(s.Poster)
       if err != nil {
          return err
       }
@@ -99,7 +98,7 @@ func (f Flag) DASH_Get(items dash.Representations, index int) error {
       }
    }
    for _, medium := range media {
-      addr, err := f.url.Parse(medium)
+      addr, err := s.url.Parse(medium)
       if err != nil {
          return err
       }

@@ -13,7 +13,7 @@ type flags struct {
    codec string
    dash bool
    id string
-   mech.Flag
+   mech.Stream
 }
 
 func main() {

@@ -3,7 +3,7 @@ package main
 import (
    "fmt"
    "github.com/89z/mech/youtube"
-   "os"
+   "github.com/89z/rosso/os"
 )
 
 func (f flags) download() error {

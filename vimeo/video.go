@@ -36,12 +36,12 @@ type Clip struct {
    Unlisted_Hash string
 }
 
-func New_Clip(address string) (*Clip, error) {
-   addr, err := url.Parse(address)
+func New_Clip(raw string) (*Clip, error) {
+   address, err := url.Parse(raw)
    if err != nil {
       return nil, err
    }
-   fields := strings.FieldsFunc(addr.Path, func(r rune) bool {
+   fields := strings.FieldsFunc(address.Path, func(r rune) bool {
       return r == '/'
    })
    var clip Clip
@@ -56,7 +56,7 @@ func New_Clip(address string) (*Clip, error) {
       }
    }
    for _, key := range []string{"h", "unlisted_hash"} {
-      hash := addr.Query().Get(key)
+      hash := address.Query().Get(key)
       if hash != "" {
          clip.Unlisted_Hash = hash
       }

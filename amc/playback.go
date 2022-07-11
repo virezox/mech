@@ -35,16 +35,16 @@ type Playback struct {
 }
 
 func (p Playback) Base() string {
-   data := p.body.Data.PlaybackJsonData
-   var buf strings.Builder
-   buf.WriteString(data.Custom_Fields.Show)
-   buf.WriteByte('-')
-   buf.WriteString(data.Custom_Fields.Season)
-   buf.WriteByte('-')
-   buf.WriteString(data.Custom_Fields.Episode)
-   buf.WriteByte('-')
-   buf.WriteString(data.Name)
-   return buf.String()
+   d := p.body.Data.PlaybackJsonData
+   var b strings.Builder
+   b.WriteString(d.Custom_Fields.Show)
+   b.WriteByte('-')
+   b.WriteString(d.Custom_Fields.Season)
+   b.WriteByte('-')
+   b.WriteString(d.Custom_Fields.Episode)
+   b.WriteByte('-')
+   b.WriteString(d.Name)
+   return b.String()
 }
 
 func (a Auth) Playback(nID int64) (*Playback, error) {

@@ -14,7 +14,7 @@ type flags struct {
    dash bool
    guid string
    lang string
-   mech.Flag
+   mech.Stream
 }
 
 func main() {

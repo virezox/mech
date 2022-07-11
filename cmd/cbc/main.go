@@ -9,7 +9,7 @@ type flags struct {
    bandwidth int
    email string
    id string
-   mech.Flag
+   mech.Stream
    name string
    password string
 }

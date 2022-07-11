@@ -16,7 +16,8 @@ func (f flags) DASH(preview *paramount.Preview) error {
    if err != nil {
       return err
    }
-   reps, err := f.Flag.DASH(addr.String(), preview.Base())
+   f.Base = preview.Base()
+   reps, err := f.Stream.DASH(addr.String())
    if err != nil {
       return err
    }
@@ -50,7 +51,8 @@ func (f flags) HLS(preview *paramount.Preview) error {
    if err != nil {
       return err
    }
-   master, err := f.Flag.HLS(addr.String(), preview.Base())
+   f.Base = preview.Base()
+   master, err := f.Stream.HLS(addr.String())
    if err != nil {
       return err
    }

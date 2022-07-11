@@ -24,7 +24,8 @@ func (f flags) download() error {
    if err != nil {
       return err
    }
-   reps, err := f.DASH(play.Source().Src, play.Base())
+   f.Base = play.Base()
+   reps, err := f.DASH(play.Source().Src)
    if err != nil {
       return err
    }

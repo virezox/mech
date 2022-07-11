@@ -75,29 +75,29 @@ func (c Cross_Site) Playback(id string) (*Playback, error) {
 }
 
 func (c Content) Base() string {
-   var buf strings.Builder
+   var b strings.Builder
    if c.Meta.MediaType == "episode" {
-      buf.WriteString(c.Series.Title)
-      buf.WriteByte('-')
-      buf.WriteString(c.SeasonNumber)
-      buf.WriteByte('-')
-      buf.WriteString(c.EpisodeNumber)
-      buf.WriteByte('-')
+      b.WriteString(c.Series.Title)
+      b.WriteByte('-')
+      b.WriteString(c.SeasonNumber)
+      b.WriteByte('-')
+      b.WriteString(c.EpisodeNumber)
+      b.WriteByte('-')
    }
-   buf.WriteString(c.Title)
-   return buf.String()
+   b.WriteString(c.Title)
+   return b.String()
 }
 
-func Content_ID(addr string) string {
-   return path.Base(addr)
+func Content_ID(address string) string {
+   return path.Base(address)
 }
 
 func New_Content(id string) (*Content, error) {
-   var addr url.URL
-   addr.Scheme = "https"
-   addr.Host = "content.sr.roku.com"
-   addr.Path = "/content/v1/roku-trc/" + id
-   addr.RawQuery = url.Values{
+   var a url.URL
+   a.Scheme = "https"
+   a.Host = "content.sr.roku.com"
+   a.Path = "/content/v1/roku-trc/" + id
+   a.RawQuery = url.Values{
       "expand": {"series"},
       "include": {strings.Join([]string{
          "episodeNumber",
@@ -111,10 +111,10 @@ func New_Content(id string) (*Content, error) {
          "viewOptions",
       }, ",")},
    }.Encode()
-   var buf strings.Builder
-   buf.WriteString("https://therokuchannel.roku.com/api/v2/homescreen/content/")
-   buf.WriteString(url.PathEscape(addr.String()))
-   res, err := Client.Get(buf.String())
+   var b strings.Builder
+   b.WriteString("https://therokuchannel.roku.com/api/v2/homescreen/content/")
+   b.WriteString(url.PathEscape(a.String()))
+   res, err := Client.Get(b.String())
    if err != nil {
       return nil, err
    }
