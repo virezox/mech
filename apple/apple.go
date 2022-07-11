@@ -179,8 +179,7 @@ func New_Environment() (*Environment, error) {
 }
 
 func (c Config) Signin(email, password string) (Signin, error) {
-   buf := new(bytes.Buffer)
-   err := json.NewEncoder(buf).Encode(map[string]string{
+   buf, err := json.Marshal(map[string]string{
      "accountName": email,
      "password": password,
    })
@@ -188,7 +187,8 @@ func (c Config) Signin(email, password string) (Signin, error) {
       return nil, err
    }
    req, err := http.NewRequest(
-      "POST", "https://idmsa.apple.com/appleauth/auth/signin", buf,
+      "POST", "https://idmsa.apple.com/appleauth/auth/signin",
+      bytes.NewReader(buf),
    )
    if err != nil {
       return nil, err

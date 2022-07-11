@@ -8,16 +8,14 @@ import (
 )
 
 func (f flags) DASH(preview *paramount.Preview) error {
-   address, err := paramount.New_Media(f.guid).DASH()
-   if err != nil {
-      return err
-   }
+   var err error
    f.Poster, err = paramount.New_Session(f.guid)
    if err != nil {
       return err
    }
    f.Base = preview.Base()
-   reps, err := f.Stream.DASH(address.String())
+   address := paramount.DASH(f.guid).String()
+   reps, err := f.Stream.DASH(address)
    if err != nil {
       return err
    }
@@ -47,12 +45,9 @@ func (f flags) DASH(preview *paramount.Preview) error {
 }
 
 func (f flags) HLS(preview *paramount.Preview) error {
-   address, err := paramount.New_Media(f.guid).HLS()
-   if err != nil {
-      return err
-   }
    f.Base = preview.Base()
-   master, err := f.Stream.HLS(address.String())
+   address := paramount.HLS(f.guid).String()
+   master, err := f.Stream.HLS(address)
    if err != nil {
       return err
    }

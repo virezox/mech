@@ -86,8 +86,7 @@ func Unauth() (*Auth, error) {
 }
 
 func (a *Auth) Login(email, password string) error {
-   buf := new(bytes.Buffer)
-   err := json.NewEncoder(buf).Encode(map[string]string{
+   buf, err := json.Marshal(map[string]string{
       "email": email,
       "password": password,
    })
@@ -95,7 +94,8 @@ func (a *Auth) Login(email, password string) error {
       return err
    }
    req, err := http.NewRequest(
-      "POST", "https://gw.cds.amcn.com/auth-orchestration-id/api/v1/login", buf,
+      "POST", "https://gw.cds.amcn.com/auth-orchestration-id/api/v1/login",
+      bytes.NewReader(buf),
    )
    if err != nil {
       return err

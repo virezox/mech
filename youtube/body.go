@@ -55,11 +55,13 @@ func (r Request) Search(query string) (*Search, error) {
    param.Filter(filter)
    r.body.Params = param.Marshal()
    r.body.Query = query
-   buf := new(bytes.Buffer)
-   if err := json.NewEncoder(buf).Encode(r.body); err != nil {
+   buf, err := json.Marshal(r.body)
+   if err != nil {
       return nil, err
    }
-   req, err := http.NewRequest("POST", origin + "/youtubei/v1/search", buf)
+   req, err := http.NewRequest(
+      "POST", origin + "/youtubei/v1/search", bytes.NewReader(buf),
+   )
    if err != nil {
       return nil, err
    }
@@ -95,12 +97,13 @@ type Request struct {
 
 func (r Request) Player(id string) (*Player, error) {
    r.body.Video_ID = id
-   buf := new(bytes.Buffer)
-   err := json.NewEncoder(buf).Encode(r.body)
+   buf, err := json.Marshal(r.body)
    if err != nil {
       return nil, err
    }
-   req, err := http.NewRequest("POST", origin + "/youtubei/v1/player", buf)
+   req, err := http.NewRequest(
+      "POST", origin + "/youtubei/v1/player", bytes.NewReader(buf),
+   )
    if err != nil {
       return nil, err
    }

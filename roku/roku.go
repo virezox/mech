@@ -13,26 +13,26 @@ import (
 )
 
 func (c Content) String() string {
-   var buf strings.Builder
-   buf.WriteString("ID: ")
-   buf.WriteString(c.Meta.ID)
-   buf.WriteString("\nType: ")
-   buf.WriteString(c.Meta.MediaType)
-   buf.WriteString("\nTitle: ")
-   buf.WriteString(c.Title)
+   var b strings.Builder
+   b.WriteString("ID: ")
+   b.WriteString(c.Meta.ID)
+   b.WriteString("\nType: ")
+   b.WriteString(c.Meta.MediaType)
+   b.WriteString("\nTitle: ")
+   b.WriteString(c.Title)
    if c.Meta.MediaType == "episode" {
-      buf.WriteString("\nSeries: ")
-      buf.WriteString(c.Series.Title)
-      buf.WriteString("\nSeason: ")
-      buf.WriteString(c.SeasonNumber)
-      buf.WriteString("\nEpisode: ")
-      buf.WriteString(c.EpisodeNumber)
+      b.WriteString("\nSeries: ")
+      b.WriteString(c.Series.Title)
+      b.WriteString("\nSeason: ")
+      b.WriteString(c.SeasonNumber)
+      b.WriteString("\nEpisode: ")
+      b.WriteString(c.EpisodeNumber)
    }
-   buf.WriteString("\nDate: ")
-   buf.WriteString(c.ReleaseDate)
-   buf.WriteString("\nDuration: ")
-   buf.WriteString(c.Duration().String())
-   return buf.String()
+   b.WriteString("\nDate: ")
+   b.WriteString(c.ReleaseDate)
+   b.WriteString("\nDuration: ")
+   b.WriteString(c.Duration().String())
+   return b.String()
 }
 
 var Client = http.Default_Client
@@ -43,8 +43,7 @@ type Cross_Site struct {
 }
 
 func (c Cross_Site) Playback(id string) (*Playback, error) {
-   buf := new(bytes.Buffer)
-   err := json.NewEncoder(buf).Encode(map[string]string{
+   buf, err := json.Marshal(map[string]string{
       "mediaFormat": "mpeg-dash",
       "rokuId": id,
    })
@@ -52,7 +51,8 @@ func (c Cross_Site) Playback(id string) (*Playback, error) {
       return nil, err
    }
    req, err := http.NewRequest(
-      "POST", "https://therokuchannel.roku.com/api/v3/playback", buf,
+      "POST", "https://therokuchannel.roku.com/api/v3/playback",
+      bytes.NewReader(buf),
    )
    if err != nil {
       return nil, err

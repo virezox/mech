@@ -43,7 +43,7 @@ func main() {
    flag.StringVar(&f.Private_Key, "k", f.Private_Key, "private key")
    flag.Parse()
    if f.guid != "" {
-      preview, err := paramount.New_Media(f.guid).Preview()
+      preview, err := paramount.New_Preview(f.guid)
       if err != nil {
          panic(err)
       }

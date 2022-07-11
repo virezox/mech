@@ -38,8 +38,7 @@ type Login struct {
 }
 
 func New_Login(email, password string) (*Login, error) {
-   buf := new(bytes.Buffer)
-   err := json.NewEncoder(buf).Encode(map[string]string{
+   buf, err := json.Marshal(map[string]string{
       "email": email,
       "password": password,
    })
@@ -47,7 +46,8 @@ func New_Login(email, password string) (*Login, error) {
       return nil, err
    }
    req, err := http.NewRequest(
-      "POST", "https://api.loginradius.com/identity/v2/auth/login", buf,
+      "POST", "https://api.loginradius.com/identity/v2/auth/login",
+      bytes.NewReader(buf),
    )
    if err != nil {
       return nil, err
@@ -124,15 +124,15 @@ type Web_Token struct {
 }
 
 func (w Web_Token) Over_The_Top() (*Over_The_Top, error) {
-   buf := new(bytes.Buffer)
-   err := json.NewEncoder(buf).Encode(map[string]string{
+   buf, err := json.Marshal(map[string]string{
       "jwt": w.Signature,
    })
    if err != nil {
       return nil, err
    }
    req, err := http.NewRequest(
-      "POST", "https://services.radio-canada.ca/ott/cbc-api/v2/token", buf,
+      "POST", "https://services.radio-canada.ca/ott/cbc-api/v2/token",
+      bytes.NewReader(buf),
    )
    if err != nil {
       return nil, err

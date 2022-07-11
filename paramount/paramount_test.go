@@ -27,7 +27,7 @@ type test_type struct {
 
 func Test_Preview(t *testing.T) {
    for _, test := range tests {
-      preview, err := New_Media(test).Preview()
+      preview, err := New_Preview(test)
       if err != nil {
          t.Fatal(err)
       }

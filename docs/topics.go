@@ -42,12 +42,10 @@ func userinfo() (*url.Userinfo, error) {
 }
 
 func main() {
-   src := map[string][]string{"names": names}
-   dst := new(bytes.Buffer)
-   if err := json.NewEncoder(dst).Encode(src); err != nil {
-      panic(err)
-   }
-   req, err := http.NewRequest("PUT", addr, dst)
+   buf, err := json.Marshal(map[string][]string{
+      "names": names,
+   })
+   req, err := http.NewRequest("PUT", addr, bytes.NewReader(buf))
    if err != nil {
       panic(err)
    }
