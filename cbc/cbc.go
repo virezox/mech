@@ -33,10 +33,10 @@ type Asset struct {
 }
 
 func New_Asset(id string) (*Asset, error) {
-   var buf strings.Builder
-   buf.WriteString("https://services.radio-canada.ca/ott/cbc-api/v2/assets/")
-   buf.WriteString(id)
-   res, err := Client.Get(buf.String())
+   var b strings.Builder
+   b.WriteString("https://services.radio-canada.ca/ott/cbc-api/v2/assets/")
+   b.WriteString(id)
+   res, err := Client.Get(b.String())
    if err != nil {
       return nil, err
    }
@@ -57,18 +57,18 @@ func (a Asset) Get_Time() time.Time {
 }
 
 func (a Asset) String() string {
-   var buf strings.Builder
-   buf.WriteString("ID: ")
-   buf.WriteString(a.AppleContentId)
-   buf.WriteString("\nSeries: ")
-   buf.WriteString(a.Series)
-   buf.WriteString("\nTitle: ")
-   buf.WriteString(a.Title)
-   buf.WriteString("\nDate: ")
-   buf.WriteString(a.Get_Time().String())
-   buf.WriteString("\nDuration: ")
-   buf.WriteString(a.Get_Duration().String())
-   return buf.String()
+   var b strings.Builder
+   b.WriteString("ID: ")
+   b.WriteString(a.AppleContentId)
+   b.WriteString("\nSeries: ")
+   b.WriteString(a.Series)
+   b.WriteString("\nTitle: ")
+   b.WriteString(a.Title)
+   b.WriteString("\nDate: ")
+   b.WriteString(a.Get_Time().String())
+   b.WriteString("\nDuration: ")
+   b.WriteString(a.Get_Duration().String())
+   return b.String()
 }
 
 type Media struct {

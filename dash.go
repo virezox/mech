@@ -23,8 +23,8 @@ type Stream struct {
    url *url.URL
 }
 
-func (s *Stream) DASH(addr string) (dash.Representations, error) {
-   res, err := client.Redirect(nil).Get(addr)
+func (s *Stream) DASH(address string) (dash.Representations, error) {
+   res, err := client.Redirect(nil).Get(address)
    if err != nil {
       return nil, err
    }
@@ -53,11 +53,11 @@ func (s Stream) DASH_Get(items dash.Representations, index int) error {
       return err
    }
    defer file.Close()
-   addr, err := s.url.Parse(item.Initialization())
+   address, err := s.url.Parse(item.Initialization())
    if err != nil {
       return err
    }
-   res, err := client.Redirect(nil).Get(addr.String())
+   res, err := client.Redirect(nil).Get(address.String())
    if err != nil {
       return err
    }
@@ -98,11 +98,11 @@ func (s Stream) DASH_Get(items dash.Representations, index int) error {
       }
    }
    for _, medium := range media {
-      addr, err := s.url.Parse(medium)
+      address, err := s.url.Parse(medium)
       if err != nil {
          return err
       }
-      res, err := client.Redirect(nil).Level(0).Get(addr.String())
+      res, err := client.Redirect(nil).Level(0).Get(address.String())
       if err != nil {
          return err
       }
