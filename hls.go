@@ -8,12 +8,12 @@ import (
 )
 
 func (s *Stream) HLS(address string) (*hls.Master, error) {
-   res, err := client.Get(address)
+   res, err := client.Redirect(nil).Get(address)
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
-   s.url = res.Request.URL
+   s.req = res.Request
    return hls.New_Scanner(res.Body).Master()
 }
 
@@ -36,11 +36,16 @@ func hls_get[T hls.Mixed](s Stream, items []T, index int) error {
       return nil
    }
    item := items[index]
-   raw_seg, err := s.url.Parse(item.URI())
+   file, err := os.Create(s.Base + item.Ext())
    if err != nil {
       return err
    }
-   res, err := client.Get(raw_seg.String())
+   defer file.Close()
+   s.req.URL, err = s.req.URL.Parse(item.URI())
+   if err != nil {
+      return err
+   }
+   res, err := client.Do(s.req)
    if err != nil {
       return err
    }
@@ -65,18 +70,13 @@ func hls_get[T hls.Mixed](s Stream, items []T, index int) error {
          return err
       }
    }
-   file, err := os.Create(s.Base + item.Ext())
-   if err != nil {
-      return err
-   }
-   defer file.Close()
    pro := os.Progress_Chunks(file, len(seg.URI))
-   for _, raw := range seg.URI {
-      address, err := raw_seg.Parse(raw)
+   for _, address := range seg.URI {
+      s.req.URL, err = s.req.URL.Parse(address)
       if err != nil {
          return err
       }
-      res, err := client.Level(0).Redirect(nil).Get(address.String())
+      res, err := client.Level(0).Redirect(nil).Do(s.req)
       if err != nil {
          return err
       }

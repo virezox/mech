@@ -14,7 +14,7 @@ func (f flags) DASH(preview *paramount.Preview) error {
       return err
    }
    f.Base = preview.Base()
-   address := paramount.DASH(f.guid).String()
+   address := paramount.DASH(f.guid)
    reps, err := f.Stream.DASH(address)
    if err != nil {
       return err
@@ -46,7 +46,7 @@ func (f flags) DASH(preview *paramount.Preview) error {
 
 func (f flags) HLS(preview *paramount.Preview) error {
    f.Base = preview.Base()
-   address := paramount.HLS(f.guid).String()
+   address := paramount.HLS(f.guid)
    master, err := f.Stream.HLS(address)
    if err != nil {
       return err

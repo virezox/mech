@@ -101,25 +101,22 @@ const (
    sid = "dJ5BDC"
 )
 
-func new_media(guid string) *url.URL {
+func media(guid string) string {
    var b []byte
-   b = append(b, "/s/"...)
+   b = append(b, "http://link.theplatform.com/s/"...)
    b = append(b, sid...)
    b = append(b, "/media/guid/"...)
    b = strconv.AppendInt(b, aid, 10)
    b = append(b, '/')
    b = append(b, guid...)
-   var a url.URL
-   a.Scheme = "http"
-   a.Host = "link.theplatform.com"
-   a.Path = string(b)
-   return &a
+   return string(b)
 }
 
 func New_Preview(guid string) (*Preview, error) {
-   req := new(http.Request)
-   req.Header = make(http.Header)
-   req.URL = new_media(guid)
+   req, err := http.NewRequest("GET", media(guid), nil)
+   if err != nil {
+      return nil, err
+   }
    req.URL.RawQuery = "format=preview"
    res, err := Client.Do(req)
    if err != nil {
@@ -133,20 +130,22 @@ func New_Preview(guid string) (*Preview, error) {
    return prev, nil
 }
 
-func DASH(guid string) *url.URL {
-   media := new_media(guid)
-   media.RawQuery = url.Values{
-      "assetTypes": {"DASH_CENC"},
-      "formats": {"MPEG-DASH"},
-   }.Encode()
-   return media
+func DASH(guid string) string {
+   var b strings.Builder
+   b.WriteString(media(guid))
+   b.WriteByte('?')
+   b.WriteString("assetTypes=DASH_CENC")
+   b.WriteByte('&')
+   b.WriteString("formats=MPEG-DASH")
+   return b.String()
 }
 
-func HLS(guid string) *url.URL {
-   media := new_media(guid)
-   media.RawQuery = url.Values{
-      "assetTypes": {"StreamPack"},
-      "formats": {"MPEG4,M3U"},
-   }.Encode()
-   return media
+func HLS(guid string) string {
+   var b strings.Builder
+   b.WriteString(media(guid))
+   b.WriteByte('?')
+   b.WriteString("assetTypes=StreamPack")
+   b.WriteByte('&')
+   b.WriteString("formats=MPEG4,M3U")
+   return b.String()
 }
