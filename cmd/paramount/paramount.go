@@ -23,16 +23,16 @@ func (f flags) DASH(preview *paramount.Preview) error {
       if r.MimeType != "audio/mp4" {
          return false
       }
-      if r.Role() != "" {
+      if r.Role() == "decription" {
          return false
       }
       return true
    })
    index := audio.Index(func(a, b dash.Representation) bool {
-      if !strings.Contains(b.Codecs, f.codecs) {
+      if !strings.HasPrefix(b.Adaptation.Lang, f.lang) {
          return false
       }
-      if b.Adaptation.Lang != f.lang {
+      if !strings.HasPrefix(b.Codecs, f.codecs) {
          return false
       }
       return true

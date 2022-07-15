@@ -4,6 +4,7 @@ import (
    "flag"
    "github.com/89z/mech"
    "github.com/89z/mech/paramount"
+   "github.com/89z/mech/widevine"
    "os"
    "path/filepath"
 )
@@ -15,6 +16,7 @@ type flags struct {
    guid string
    lang string
    mech.Stream
+   verbose bool
 }
 
 func main() {
@@ -41,7 +43,12 @@ func main() {
    // k
    f.Private_Key = filepath.Join(home, "mech/private_key.pem")
    flag.StringVar(&f.Private_Key, "k", f.Private_Key, "private key")
+   // v
+   flag.BoolVar(&f.verbose, "v", false, "verbose")
    flag.Parse()
+   if f.verbose {
+      widevine.Client.Log_Level = 2
+   }
    if f.guid != "" {
       preview, err := paramount.New_Preview(f.guid)
       if err != nil {
