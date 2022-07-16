@@ -12,19 +12,19 @@ type Poster struct {
    pssh string
 }
 
-func (p Poster) Request_URL() string {
-   return p.episode.Asset().FpsKeyServerUrl
+func (self Poster) Request_URL() string {
+   return self.episode.Asset().FpsKeyServerUrl
 }
 
-func (p Poster) Request_Header() http.Header {
+func (self Poster) Request_Header() http.Header {
    head := make(http.Header)
-   head.Set("Authorization", "Bearer " + p.env.Media_API.Token)
+   head.Set("Authorization", "Bearer " + self.env.Media_API.Token)
    head.Set("Content-Type", "application/json")
-   head.Set("X-Apple-Music-User-Token", p.auth.media_user_token().Value)
+   head.Set("X-Apple-Music-User-Token", self.auth.media_user_token().Value)
    return head
 }
 
-func (p Poster) Request_Body(buf []byte) ([]byte, error) {
+func (self Poster) Request_Body(buf []byte) ([]byte, error) {
    var s struct {
       Challenge []byte `json:"challenge"`
       Key_System string `json:"key-system"`
@@ -33,8 +33,8 @@ func (p Poster) Request_Body(buf []byte) ([]byte, error) {
    }
    s.Challenge = buf
    s.Key_System = "com.widevine.alpha"
-   s.Server_Parameters = p.episode.Asset().FpsKeyServerQueryParameters
-   s.URI = p.pssh
+   s.Server_Parameters = self.episode.Asset().FpsKeyServerQueryParameters
+   s.URI = self.pssh
    return json.MarshalIndent(s, "", " ")
 }
 

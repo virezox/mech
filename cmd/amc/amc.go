@@ -24,8 +24,9 @@ func (self flags) download() error {
    if err != nil {
       return err
    }
-   self.Base = play.Base()
-   reps, err := self.DASH(play.Source().Src)
+   data := play.Data()
+   self.Base = data.Base()
+   reps, err := self.DASH(data.Source().Src)
    if err != nil {
       return err
    }
@@ -37,12 +38,12 @@ func (self flags) download() error {
    return self.DASH_Get(video, video.Bandwidth(self.bandwidth))
 }
 
-func (f flags) login() error {
+func (self flags) login() error {
    auth, err := amc.Unauth()
    if err != nil {
       return err
    }
-   if err := auth.Login(f.email, f.password); err != nil {
+   if err := auth.Login(self.email, self.password); err != nil {
       return err
    }
    home, err := os.UserHomeDir()

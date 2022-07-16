@@ -41,16 +41,16 @@ func New_Params(addr string) (*Params, error) {
    return param, nil
 }
 
-func (p Params) Band() (*Band, error) {
-   return new_band(p.A_ID)
+func (self Params) Band() (*Band, error) {
+   return new_band(self.A_ID)
 }
 
-func (p Params) Tralbum() (*Tralbum, error) {
-   switch p.I_Type {
+func (self Params) Tralbum() (*Tralbum, error) {
+   switch self.I_Type {
    case "a":
-      return new_tralbum('a', p.I_ID)
+      return new_tralbum('a', self.I_ID)
    case "t":
-      return new_tralbum('t', p.I_ID)
+      return new_tralbum('t', self.I_ID)
    }
-   return nil, invalid_type{p.I_Type}
+   return nil, invalid_type{self.I_Type}
 }

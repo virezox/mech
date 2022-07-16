@@ -16,13 +16,13 @@ type Auth struct {
    }
 }
 
-func (a Auth) Create(name string) error {
+func (self Auth) Create(name string) error {
    file, err := os.Create(name)
    if err != nil {
       return err
    }
    defer file.Close()
-   return json.NewEncoder(file).Encode(a)
+   return json.NewEncoder(file).Encode(self)
 }
 
 func Open_Auth(name string) (*Auth, error) {
@@ -46,17 +46,6 @@ func Get_NID(input string) (int64, error) {
       input = nID
    }
    return strconv.ParseInt(input, 10, 64)
-}
-
-type playback_request struct {
-   Ad_Tags struct {
-      Lat int `json:"lat"`
-      Mode string `json:"mode"`
-      PPID int `json:"ppid"`
-      Player_Height int `json:"playerHeight"`
-      Player_Width int `json:"playerWidth"`
-      URL string `json:"url"`
-   } `json:"adtags"`
 }
 
 func Unauth() (*Auth, error) {
@@ -85,7 +74,7 @@ func Unauth() (*Auth, error) {
    return auth, nil
 }
 
-func (a *Auth) Login(email, password string) error {
+func (self *Auth) Login(email, password string) error {
    buf, err := json.Marshal(map[string]string{
       "email": email,
       "password": password,
@@ -101,7 +90,7 @@ func (a *Auth) Login(email, password string) error {
       return err
    }
    req.Header = http.Header{
-      "Authorization": {"Bearer " + a.Data.Access_Token},
+      "Authorization": {"Bearer " + self.Data.Access_Token},
       "Content-Type": {"application/json"},
       "X-Amcn-Device-Ad-Id": {"!"},
       "X-Amcn-Language": {"en"},
@@ -117,10 +106,10 @@ func (a *Auth) Login(email, password string) error {
       return err
    }
    defer res.Body.Close()
-   return json.NewDecoder(res.Body).Decode(a)
+   return json.NewDecoder(res.Body).Decode(self)
 }
 
-func (a *Auth) Refresh() error {
+func (self *Auth) Refresh() error {
    req, err := http.NewRequest(
       "POST",
       "https://gw.cds.amcn.com/auth-orchestration-id/api/v1/refresh",
@@ -129,21 +118,11 @@ func (a *Auth) Refresh() error {
    if err != nil {
       return err
    }
-   req.Header.Set("Authorization", "Bearer " + a.Data.Refresh_Token)
+   req.Header.Set("Authorization", "Bearer " + self.Data.Refresh_Token)
    res, err := Client.Do(req)
    if err != nil {
       return err
    }
    defer res.Body.Close()
-   return json.NewDecoder(res.Body).Decode(a)
-}
-
-type Source struct {
-   Key_Systems *struct {
-      Widevine struct {
-         License_URL string
-      } `json:"com.widevine.alpha"`
-   }
-   Src string
-   Type string
+   return json.NewDecoder(res.Body).Decode(self)
 }

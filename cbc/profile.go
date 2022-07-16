@@ -21,13 +21,13 @@ func Open_Profile(name string) (*Profile, error) {
    return pro, nil
 }
 
-func (p Profile) Create(name string) error {
+func (self Profile) Create(name string) error {
    file, err := os.Create(name)
    if err != nil {
       return err
    }
    defer file.Close()
-   return json.NewEncoder(file).Encode(p)
+   return json.NewEncoder(file).Encode(self)
 }
 
 const api_key = "3f4beddd-2061-49b0-ae80-6f1f2ed65b37"
@@ -66,7 +66,7 @@ func New_Login(email, password string) (*Login, error) {
    return login, nil
 }
 
-func (l Login) Web_Token() (*Web_Token, error) {
+func (self Login) Web_Token() (*Web_Token, error) {
    req, err := http.NewRequest(
       "GET", "https://cloud-api.loginradius.com/sso/jwt/api/token", nil,
    )
@@ -74,7 +74,7 @@ func (l Login) Web_Token() (*Web_Token, error) {
       return nil, err
    }
    req.URL.RawQuery = url.Values{
-      "access_token": {l.Access_Token},
+      "access_token": {self.Access_Token},
       "apikey": {api_key},
       "jwtapp": {"jwt"},
    }.Encode()
@@ -94,14 +94,14 @@ type Over_The_Top struct {
    AccessToken string
 }
 
-func (o Over_The_Top) Profile() (*Profile, error) {
+func (self Over_The_Top) Profile() (*Profile, error) {
    req, err := http.NewRequest(
       "GET", "https://services.radio-canada.ca/ott/cbc-api/v2/profile", nil,
    )
    if err != nil {
       return nil, err
    }
-   req.Header.Set("OTT-Access-Token", o.AccessToken)
+   req.Header.Set("OTT-Access-Token", self.AccessToken)
    res, err := Client.Do(req)
    if err != nil {
       return nil, err
@@ -123,9 +123,9 @@ type Web_Token struct {
    Signature string
 }
 
-func (w Web_Token) Over_The_Top() (*Over_The_Top, error) {
+func (self Web_Token) Over_The_Top() (*Over_The_Top, error) {
    buf, err := json.Marshal(map[string]string{
-      "jwt": w.Signature,
+      "jwt": self.Signature,
    })
    if err != nil {
       return nil, err

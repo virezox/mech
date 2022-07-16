@@ -48,26 +48,26 @@ func New_Asset(id string) (*Asset, error) {
    return asset, nil
 }
 
-func (a Asset) Get_Duration() time.Duration {
-   return time.Duration(a.Duration) * time.Second
+func (self Asset) Get_Duration() time.Duration {
+   return time.Duration(self.Duration) * time.Second
 }
 
-func (a Asset) Get_Time() time.Time {
-   return time.UnixMilli(a.AirDate)
+func (self Asset) Get_Time() time.Time {
+   return time.UnixMilli(self.AirDate)
 }
 
-func (a Asset) String() string {
+func (self Asset) String() string {
    var b strings.Builder
    b.WriteString("ID: ")
-   b.WriteString(a.AppleContentId)
+   b.WriteString(self.AppleContentId)
    b.WriteString("\nSeries: ")
-   b.WriteString(a.Series)
+   b.WriteString(self.Series)
    b.WriteString("\nTitle: ")
-   b.WriteString(a.Title)
+   b.WriteString(self.Title)
    b.WriteString("\nDate: ")
-   b.WriteString(a.Get_Time().String())
+   b.WriteString(self.Get_Time().String())
    b.WriteString("\nDuration: ")
-   b.WriteString(a.Get_Duration().String())
+   b.WriteString(self.Get_Duration().String())
    return b.String()
 }
 
@@ -76,13 +76,13 @@ type Media struct {
    URL *string
 }
 
-func (p Profile) Media(asset *Asset) (*Media, error) {
+func (self Profile) Media(asset *Asset) (*Media, error) {
    req, err := http.NewRequest("GET", asset.PlaySession.URL, nil)
    if err != nil {
       return nil, err
    }
    req.Header = http.Header{
-      "X-Claims-Token": {p.ClaimsToken},
+      "X-Claims-Token": {self.ClaimsToken},
       "X-Forwarded-For": {forwarded_for},
    }
    res, err := Client.Do(req)
