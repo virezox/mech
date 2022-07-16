@@ -15,8 +15,8 @@ type Params struct {
    I_Type string
 }
 
-func New_Params(addr string) (*Params, error) {
-   res, err := Client.Get(addr)
+func New_Params(ref string) (*Params, error) {
+   res, err := Client.Get(ref)
    if err != nil {
       return nil, err
    }

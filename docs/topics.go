@@ -9,7 +9,7 @@ import (
    "os"
 )
 
-const addr = "https://api.github.com/repos/89z/mech/topics"
+const topics = "https://api.github.com/repos/89z/mech/topics"
 
 var names = []string{
    "youtube",
@@ -34,18 +34,18 @@ func userinfo() (*url.Userinfo, error) {
    if err != nil {
       return nil, err
    }
-   var addr url.URL
-   if err := addr.UnmarshalBinary(bytes.TrimSpace(buf)); err != nil {
+   var ref url.URL
+   if err := ref.UnmarshalBinary(bytes.TrimSpace(buf)); err != nil {
       return nil, err
    }
-   return addr.User, nil
+   return ref.User, nil
 }
 
 func main() {
    buf, err := json.Marshal(map[string][]string{
       "names": names,
    })
-   req, err := http.NewRequest("PUT", addr, bytes.NewReader(buf))
+   req, err := http.NewRequest("PUT", topics, bytes.NewReader(buf))
    if err != nil {
       panic(err)
    }

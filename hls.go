@@ -7,8 +7,8 @@ import (
    "io"
 )
 
-func (self *Stream) HLS(address string) (*hls.Master, error) {
-   res, err := client.Redirect(nil).Get(address)
+func (self *Stream) HLS(ref string) (*hls.Master, error) {
+   res, err := client.Redirect(nil).Get(ref)
    if err != nil {
       return nil, err
    }
@@ -41,11 +41,11 @@ func hls_get[T hls.Mixed](str Stream, items []T, index int) error {
       return err
    }
    defer file.Close()
-   address, err := str.url.Parse(item.URI())
+   ref, err := str.url.Parse(item.URI())
    if err != nil {
       return err
    }
-   res, err := client.Get(address.String())
+   res, err := client.Get(ref.String())
    if err != nil {
       return err
    }
@@ -72,11 +72,11 @@ func hls_get[T hls.Mixed](str Stream, items []T, index int) error {
    }
    pro := os.Progress_Chunks(file, len(seg.URI))
    for _, raw := range seg.URI {
-      address, err := str.url.Parse(raw)
+      ref, err := str.url.Parse(raw)
       if err != nil {
          return err
       }
-      res, err := client.Level(0).Redirect(nil).Get(address.String())
+      res, err := client.Level(0).Redirect(nil).Get(ref.String())
       if err != nil {
          return err
       }

@@ -14,8 +14,7 @@ func (self flags) DASH(preview *paramount.Preview) error {
       return err
    }
    self.Base = preview.Base()
-   address := paramount.DASH(self.guid)
-   reps, err := self.Stream.DASH(address)
+   reps, err := self.Stream.DASH(paramount.DASH(self.guid))
    if err != nil {
       return err
    }
@@ -46,8 +45,7 @@ func (self flags) DASH(preview *paramount.Preview) error {
 
 func (self flags) HLS(preview *paramount.Preview) error {
    self.Base = preview.Base()
-   address := paramount.HLS(self.guid)
-   master, err := self.Stream.HLS(address)
+   master, err := self.Stream.HLS(paramount.HLS(self.guid))
    if err != nil {
       return err
    }

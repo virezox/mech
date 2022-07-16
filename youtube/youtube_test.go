@@ -27,9 +27,9 @@ const image_test = "UpNXI3_ctAc"
 
 func Test_Image(t *testing.T) {
    for _, img := range Images {
-      address := img.Format(image_test)
-      fmt.Println("HEAD", address)
-      res, err := http.Head(address)
+      ref := img.Address(image_test)
+      fmt.Println("HEAD", ref)
+      res, err := http.Head(ref)
       if err != nil {
          t.Fatal(err)
       }

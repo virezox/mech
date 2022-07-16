@@ -11,11 +11,11 @@ type Media struct {
 }
 
 func (self Media) Ext() (string, error) {
-   address, err := url.Parse(self.URL)
+   ref, err := url.Parse(self.URL)
    if err != nil {
       return "", err
    }
-   return path.Ext(address.Path), nil
+   return path.Ext(ref.Path), nil
 }
 
 const client_ID = "iZIs9mchVcX5lhVRyQGGAYlNPVldzAoX"

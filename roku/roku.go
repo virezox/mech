@@ -7,7 +7,6 @@ import (
    "github.com/89z/rosso/json"
    "io"
    "net/url"
-   "path"
    "strings"
    "time"
 )
@@ -86,10 +85,6 @@ func (self Content) Base() string {
    }
    b.WriteString(self.Title)
    return b.String()
-}
-
-func Content_ID(address string) string {
-   return path.Base(address)
 }
 
 func New_Content(id string) (*Content, error) {

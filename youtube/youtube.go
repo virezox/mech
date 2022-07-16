@@ -8,13 +8,13 @@ import (
 )
 
 func Video_ID(data string, v *string) error {
-   address, err := url.Parse(data)
+   ref, err := url.Parse(data)
    if err != nil {
       return err
    }
-   *v = address.Query().Get("v")
+   *v = ref.Query().Get("v")
    if *v == "" {
-      *v = path.Base(address.Path)
+      *v = path.Base(ref.Path)
    }
    return nil
 }
@@ -77,17 +77,17 @@ var Images = []Image{
    {Width:1280, Height:720, Base:"maxres3.webp"},
 }
 
-func (self Image) Format(id string) string {
-   var b strings.Builder
-   b.WriteString("http://i.ytimg.com/vi")
-   if strings.HasSuffix(self.Base, ".webp") {
-      b.WriteString("_webp")
+func (i Image) Address(id string) string {
+   var buf strings.Builder
+   buf.WriteString("http://i.ytimg.com/vi")
+   if strings.HasSuffix(i.Base, ".webp") {
+      buf.WriteString("_webp")
    }
-   b.WriteByte('/')
-   b.WriteString(id)
-   b.WriteByte('/')
-   b.WriteString(self.Base)
-   return b.String()
+   buf.WriteByte('/')
+   buf.WriteString(id)
+   buf.WriteByte('/')
+   buf.WriteString(i.Base)
+   return buf.String()
 }
 
 type Item struct {
@@ -113,9 +113,9 @@ type Search struct {
    }
 }
 
-func (self Search) Items() []Item {
+func (s Search) Items() []Item {
    var items []Item
-   for _, sect := range self.Contents.SectionListRenderer.Contents {
+   for _, sect := range s.Contents.SectionListRenderer.Contents {
       if sect.ItemSectionRenderer != nil {
          for _, item := range sect.ItemSectionRenderer.Contents {
             if item.CompactVideoRenderer != nil {

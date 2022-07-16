@@ -13,13 +13,13 @@ import (
 // Also available is "hls", but all transcodings are quality "sq".
 // Same for "api-mobile.soundcloud.com".
 func (self Track) Progressive() (*Media, error) {
-   var address string
+   var ref string
    for _, code := range self.Media.Transcodings {
       if code.Format.Protocol == "progressive" {
-         address = code.URL
+         ref = code.URL
       }
    }
-   req, err := http.NewRequest("GET", address, nil)
+   req, err := http.NewRequest("GET", ref, nil)
    if err != nil {
       return nil, err
    }
@@ -76,7 +76,7 @@ func New_Track(id int64) (*Track, error) {
    return tra, nil
 }
 
-func Resolve(address string) ([]Track, error) {
+func Resolve(ref string) ([]Track, error) {
    req, err := http.NewRequest(
       "GET", "https://api-v2.soundcloud.com/resolve", nil,
    )
@@ -85,7 +85,7 @@ func Resolve(address string) ([]Track, error) {
    }
    req.URL.RawQuery = url.Values{
       "client_id": {client_ID},
-      "url": {address},
+      "url": {ref},
    }.Encode()
    res, err := Client.Do(req)
    if err != nil {
@@ -138,7 +138,7 @@ func (self Track) Artwork() string {
    if self.Artwork_URL == "" {
       self.Artwork_URL = self.User.Avatar_URL
    }
-   return strings.Replace(self.Artwork_URL, "large", "t500x", 1)
+   return strings.Replace(self.Artwork_URL, "large", "t500x500", 1)
 }
 
 func (self Track) Base() string {

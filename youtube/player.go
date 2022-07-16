@@ -6,32 +6,32 @@ import (
    "time"
 )
 
-func (self Player) MarshalText() ([]byte, error) {
-   var b []byte
-   b = append(b, self.PlayabilityStatus.String()...)
-   b = append(b, "\nVideo ID: "...)
-   b = append(b, self.VideoDetails.VideoId...)
-   b = append(b, "\nDuration: "...)
-   b = append(b, self.Duration().String()...)
-   b = append(b, "\nView Count: "...)
-   b = strconv.AppendInt(b, self.VideoDetails.ViewCount, 10)
-   b = append(b, "\nAuthor: "...)
-   b = append(b, self.VideoDetails.Author...)
-   b = append(b, "\nTitle: "...)
-   b = append(b, self.VideoDetails.Title...)
-   if self.PublishDate() != "" {
-      b = append(b, "\nPublish Date: "...)
-      b = append(b, self.PublishDate()...)
+func (p Player) MarshalText() ([]byte, error) {
+   var buf []byte
+   buf = append(buf, p.PlayabilityStatus.String()...)
+   buf = append(buf, "\nVideo ID: "...)
+   buf = append(buf, p.VideoDetails.VideoId...)
+   buf = append(buf, "\nDuration: "...)
+   buf = append(buf, p.Duration().String()...)
+   buf = append(buf, "\nView Count: "...)
+   buf = strconv.AppendInt(buf, p.VideoDetails.ViewCount, 10)
+   buf = append(buf, "\nAuthor: "...)
+   buf = append(buf, p.VideoDetails.Author...)
+   buf = append(buf, "\nTitle: "...)
+   buf = append(buf, p.VideoDetails.Title...)
+   if p.PublishDate() != "" {
+      buf = append(buf, "\nPublish Date: "...)
+      buf = append(buf, p.PublishDate()...)
    }
-   b = append(b, '\n')
-   for _, form := range self.StreamingData.AdaptiveFormats {
+   buf = append(buf, '\n')
+   for _, form := range p.StreamingData.AdaptiveFormats {
       t, err := form.MarshalText()
       if err != nil {
          return nil, err
       }
-      b = append(b, t...)
+      buf = append(buf, t...)
    }
-   return b, nil
+   return buf, nil
 }
 
 type Player struct {
@@ -59,33 +59,33 @@ type Status struct {
    Reason string
 }
 
-func (self Player) Duration() time.Duration {
-   return time.Duration(self.VideoDetails.LengthSeconds) * time.Second
+func (p Player) Duration() time.Duration {
+   return time.Duration(p.VideoDetails.LengthSeconds) * time.Second
 }
 
-func (self Player) PublishDate() string {
-   return self.Microformat.PlayerMicroformatRenderer.PublishDate
+func (p Player) PublishDate() string {
+   return p.Microformat.PlayerMicroformatRenderer.PublishDate
 }
 
-func (self Player) Time() (time.Time, error) {
-   return time.Parse("2006-01-02", self.PublishDate())
+func (p Player) Time() (time.Time, error) {
+   return time.Parse("2006-01-02", p.PublishDate())
 }
 
-func (self Player) Base() string {
+func (p Player) Base() string {
    var buf strings.Builder
-   buf.WriteString(self.VideoDetails.Author)
+   buf.WriteString(p.VideoDetails.Author)
    buf.WriteByte('-')
-   buf.WriteString(self.VideoDetails.Title)
+   buf.WriteString(p.VideoDetails.Title)
    return buf.String()
 }
 
-func (self Status) String() string {
+func (p Status) String() string {
    var buf strings.Builder
    buf.WriteString("Status: ")
-   buf.WriteString(self.Status)
-   if self.Reason != "" {
+   buf.WriteString(p.Status)
+   if p.Reason != "" {
       buf.WriteString("\nReason: ")
-      buf.WriteString(self.Reason)
+      buf.WriteString(p.Reason)
    }
    return buf.String()
 }
