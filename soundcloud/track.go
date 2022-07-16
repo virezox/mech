@@ -12,9 +12,9 @@ import (
 
 // Also available is "hls", but all transcodings are quality "sq".
 // Same for "api-mobile.soundcloud.com".
-func (t Track) Progressive() (*Media, error) {
+func (self Track) Progressive() (*Media, error) {
    var address string
-   for _, code := range t.Media.Transcodings {
+   for _, code := range self.Media.Transcodings {
       if code.Format.Protocol == "progressive" {
          address = code.URL
       }
@@ -56,9 +56,10 @@ type Track struct {
 }
 
 func New_Track(id int64) (*Track, error) {
-   buf := []byte("https://api-v2.soundcloud.com/tracks/")
-   buf = strconv.AppendInt(buf, id, 10)
-   req, err := http.NewRequest("GET", string(buf), nil)
+   var b []byte
+   b = append(b, "https://api-v2.soundcloud.com/tracks/"...)
+   b = strconv.AppendInt(b, id, 10)
+   req, err := http.NewRequest("GET", string(b), nil)
    if err != nil {
       return nil, err
    }
@@ -106,10 +107,11 @@ func Resolve(address string) ([]Track, error) {
 
 // We can also paginate, but for now this is good enough.
 func User_Tracks(id int64) ([]Track, error) {
-   buf := []byte("https://api-v2.soundcloud.com/users/")
-   buf = strconv.AppendInt(buf, id, 10)
-   buf = append(buf, "/tracks"...)
-   req, err := http.NewRequest("GET", string(buf), nil)
+   var b []byte
+   b = append(b, "https://api-v2.soundcloud.com/users/"...)
+   b = strconv.AppendInt(b, id, 10)
+   b = append(b, "/tracks"...)
+   req, err := http.NewRequest("GET", string(b), nil)
    if err != nil {
       return nil, err
    }
@@ -132,42 +134,42 @@ func User_Tracks(id int64) ([]Track, error) {
 }
 
 // i1.sndcdn.com/artworks-000308141235-7ep8lo-large.jpg
-func (t Track) Artwork() string {
-   if t.Artwork_URL == "" {
-      t.Artwork_URL = t.User.Avatar_URL
+func (self Track) Artwork() string {
+   if self.Artwork_URL == "" {
+      self.Artwork_URL = self.User.Avatar_URL
    }
-   return strings.Replace(t.Artwork_URL, "large", "t500x", 1)
+   return strings.Replace(self.Artwork_URL, "large", "t500x", 1)
 }
 
-func (t Track) Base() string {
-   return t.User.Username + "-" + t.Title
+func (self Track) Base() string {
+   return self.User.Username + "-" + self.Title
 }
 
-func (t Track) String() string {
-   var buf []byte
-   buf = append(buf, "ID: "...)
-   buf = strconv.AppendInt(buf, t.ID, 10)
-   buf = append(buf, "\nDate: "...)
-   buf = append(buf, t.Display_Date...)
-   buf = append(buf, "\nUser: "...)
-   buf = append(buf, t.User.Username...)
-   buf = append(buf, "\nAvatar: "...)
-   buf = append(buf, t.User.Avatar_URL...)
-   buf = append(buf, "\nTitle: "...)
-   buf = append(buf, t.Title...)
-   if t.Artwork_URL != "" {
-      buf = append(buf, "\nArtwork: "...)
-      buf = append(buf, t.Artwork_URL...)
+func (self Track) String() string {
+   var b []byte
+   b = append(b, "ID: "...)
+   b = strconv.AppendInt(b, self.ID, 10)
+   b = append(b, "\nDate: "...)
+   b = append(b, self.Display_Date...)
+   b = append(b, "\nUser: "...)
+   b = append(b, self.User.Username...)
+   b = append(b, "\nAvatar: "...)
+   b = append(b, self.User.Avatar_URL...)
+   b = append(b, "\nTitle: "...)
+   b = append(b, self.Title...)
+   if self.Artwork_URL != "" {
+      b = append(b, "\nArtwork: "...)
+      b = append(b, self.Artwork_URL...)
    }
-   for _, coding := range t.Media.Transcodings {
-      buf = append(buf, "\nFormat: "...)
-      buf = append(buf, coding.Format.Protocol...)
-      buf = append(buf, "\nURL: "...)
-      buf = append(buf, coding.URL...)
+   for _, coding := range self.Media.Transcodings {
+      b = append(b, "\nFormat: "...)
+      b = append(b, coding.Format.Protocol...)
+      b = append(b, "\nURL: "...)
+      b = append(b, coding.URL...)
    }
-   return string(buf)
+   return string(b)
 }
 
-func (t Track) Time() (time.Time, error) {
-   return time.Parse(time.RFC3339, t.Display_Date)
+func (self Track) Time() (time.Time, error) {
+   return time.Parse(time.RFC3339, self.Display_Date)
 }

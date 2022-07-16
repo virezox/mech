@@ -86,7 +86,7 @@ func New_JSON_Web() (*JSON_Web, error) {
    return web, nil
 }
 
-func (w JSON_Web) Video(clip *Clip) (*Video, error) {
+func (self JSON_Web) Video(clip *Clip) (*Video, error) {
    buf := []byte("https://api.vimeo.com/videos/")
    buf = strconv.AppendInt(buf, clip.ID, 10)
    if clip.Unlisted_Hash != "" {
@@ -97,7 +97,7 @@ func (w JSON_Web) Video(clip *Clip) (*Video, error) {
    if err != nil {
       return nil, err
    }
-   req.Header.Set("Authorization", "JWT " + w.Token)
+   req.Header.Set("Authorization", "JWT " + self.Token)
    req.URL.RawQuery = "fields=duration,download,name,pictures,release_time,user"
    res, err := Client.Do(req)
    if err != nil {

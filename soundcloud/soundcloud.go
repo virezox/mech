@@ -10,8 +10,8 @@ type Media struct {
    URL string // cf-media.sndcdn.com/QaV7QR1lxpc6.128.mp3
 }
 
-func (m Media) Ext() (string, error) {
-   address, err := url.Parse(m.URL)
+func (self Media) Ext() (string, error) {
+   address, err := url.Parse(self.URL)
    if err != nil {
       return "", err
    }

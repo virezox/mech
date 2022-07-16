@@ -12,8 +12,8 @@ type Playback struct {
    }
 }
 
-func (p Playback) Request_URL() string {
-   return p.DRM.Widevine.LicenseServer
+func (self Playback) Request_URL() string {
+   return self.DRM.Widevine.LicenseServer
 }
 
 func (Playback) Request_Header() http.Header {

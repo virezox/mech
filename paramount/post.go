@@ -9,13 +9,13 @@ type Session struct {
    LS_Session string
 }
 
-func (s Session) Request_URL() string {
-   return s.URL
+func (self Session) Request_URL() string {
+   return self.URL
 }
 
-func (s Session) Request_Header() http.Header {
+func (self Session) Request_Header() http.Header {
    head := make(http.Header)
-   head.Set("Authorization", "Bearer " + s.LS_Session)
+   head.Set("Authorization", "Bearer " + self.LS_Session)
    return head
 }
 
