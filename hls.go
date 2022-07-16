@@ -7,26 +7,26 @@ import (
    "io"
 )
 
-func (s *Stream) HLS(address string) (*hls.Master, error) {
+func (self *Stream) HLS(address string) (*hls.Master, error) {
    res, err := client.Redirect(nil).Get(address)
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
-   s.url = res.Request.URL
+   self.url = res.Request.URL
    return hls.New_Scanner(res.Body).Master()
 }
 
-func (s Stream) HLS_Streams(items hls.Streams, index int) error {
-   return hls_get(s, items, index)
+func (self Stream) HLS_Streams(items hls.Streams, index int) error {
+   return hls_get(self, items, index)
 }
 
-func (s Stream) HLS_Media(items hls.Media, index int) error {
-   return hls_get(s, items, index)
+func (self Stream) HLS_Media(items hls.Media, index int) error {
+   return hls_get(self, items, index)
 }
 
-func hls_get[T hls.Mixed](s Stream, items []T, index int) error {
-   if s.Info {
+func hls_get[T hls.Mixed](str Stream, items []T, index int) error {
+   if str.Info {
       for i, item := range items {
          if i == index {
             fmt.Print("!")
@@ -36,12 +36,12 @@ func hls_get[T hls.Mixed](s Stream, items []T, index int) error {
       return nil
    }
    item := items[index]
-   file, err := os.Create(s.Base + item.Ext())
+   file, err := os.Create(str.Base + item.Ext())
    if err != nil {
       return err
    }
    defer file.Close()
-   address, err := s.url.Parse(item.URI())
+   address, err := str.url.Parse(item.URI())
    if err != nil {
       return err
    }
@@ -72,7 +72,7 @@ func hls_get[T hls.Mixed](s Stream, items []T, index int) error {
    }
    pro := os.Progress_Chunks(file, len(seg.URI))
    for _, raw := range seg.URI {
-      address, err := s.url.Parse(raw)
+      address, err := str.url.Parse(raw)
       if err != nil {
          return err
       }

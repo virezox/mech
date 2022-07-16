@@ -6,8 +6,8 @@ import (
    "os"
 )
 
-func (f flags) download() error {
-   master, err := f.master()
+func (self flags) download() error {
+   master, err := self.master()
    if err != nil {
       return err
    }
@@ -15,18 +15,18 @@ func (f flags) download() error {
       return m.Type == "AUDIO"
    })
    index := media.Index(func(a, b hls.Medium) bool {
-      return b.Name == f.name
+      return b.Name == self.name
    })
-   if err := f.HLS_Media(media, index); err != nil {
+   if err := self.HLS_Media(media, index); err != nil {
       return err
    }
    streams := master.Streams.Filter(func(s hls.Stream) bool {
       return s.Resolution != ""
    })
-   return f.HLS_Streams(streams, streams.Bandwidth(f.bandwidth))
+   return self.HLS_Streams(streams, streams.Bandwidth(self.bandwidth))
 }
 
-func (f *flags) master() (*hls.Master, error) {
+func (self *flags) master() (*hls.Master, error) {
    home, err := os.UserHomeDir()
    if err != nil {
       return nil, err
@@ -35,7 +35,7 @@ func (f *flags) master() (*hls.Master, error) {
    if err != nil {
       return nil, err
    }
-   asset, err := cbc.New_Asset(f.id)
+   asset, err := cbc.New_Asset(self.id)
    if err != nil {
       return nil, err
    }
@@ -43,16 +43,16 @@ func (f *flags) master() (*hls.Master, error) {
    if err != nil {
       return nil, err
    }
-   f.Base = asset.AppleContentId
-   return f.HLS(*media.URL)
+   self.Base = asset.AppleContentId
+   return self.HLS(*media.URL)
 }
 
-func (f flags) profile() error {
+func (self flags) profile() error {
    home, err := os.UserHomeDir()
    if err != nil {
       return err
    }
-   login, err := cbc.New_Login(f.email, f.password)
+   login, err := cbc.New_Login(self.email, self.password)
    if err != nil {
       return err
    }

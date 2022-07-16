@@ -6,8 +6,8 @@ import (
    "github.com/89z/mech/nbc"
 )
 
-func (f flags) download() error {
-   page, err := nbc.New_Bonanza_Page(f.guid)
+func (self flags) download() error {
+   page, err := nbc.New_Bonanza_Page(self.guid)
    if err != nil {
       return err
    }
@@ -15,13 +15,13 @@ func (f flags) download() error {
    if err != nil {
       return err
    }
-   f.Base = page.Analytics.ConvivaAssetName
-   master, err := f.HLS(video.ManifestPath)
+   self.Base = page.Analytics.ConvivaAssetName
+   master, err := self.HLS(video.ManifestPath)
    if err != nil {
       return err
    }
    streams := master.Streams
-   return f.HLS_Streams(streams, streams.Bandwidth(f.bandwidth))
+   return self.HLS_Streams(streams, streams.Bandwidth(self.bandwidth))
 }
 
 type flags struct {

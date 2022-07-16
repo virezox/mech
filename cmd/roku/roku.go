@@ -6,41 +6,41 @@ import (
    "strings"
 )
 
-func (f flags) DASH(content *roku.Content) error {
+func (self flags) DASH(content *roku.Content) error {
    site, err := roku.New_Cross_Site()
    if err != nil {
       return err
    }
-   f.Poster, err = site.Playback(f.id)
+   self.Poster, err = site.Playback(self.id)
    if err != nil {
       return err
    }
-   f.Base = content.Base()
-   reps, err := f.Stream.DASH(content.DASH().URL)
+   self.Base = content.Base()
+   reps, err := self.Stream.DASH(content.DASH().URL)
    if err != nil {
       return err
    }
    audio := reps.Audio()
    index := audio.Index(func(a, b dash.Representation) bool {
-      return strings.Contains(b.Codecs, f.codec)
+      return strings.Contains(b.Codecs, self.codec)
    })
-   if err := f.DASH_Get(audio, index); err != nil {
+   if err := self.DASH_Get(audio, index); err != nil {
       return err
    }
    video := reps.Video()
-   return f.DASH_Get(video, video.Bandwidth(f.bandwidth))
+   return self.DASH_Get(video, video.Bandwidth(self.bandwidth))
 }
 
-func (f flags) HLS(content *roku.Content) error {
+func (self flags) HLS(content *roku.Content) error {
    video, err := content.HLS()
    if err != nil {
       return err
    }
-   f.Base = content.Base()
-   master, err := f.Stream.HLS(video.URL)
+   self.Base = content.Base()
+   master, err := self.Stream.HLS(video.URL)
    if err != nil {
       return err
    }
    streams := master.Streams
-   return f.HLS_Streams(streams, streams.Bandwidth(f.bandwidth))
+   return self.HLS_Streams(streams, streams.Bandwidth(self.bandwidth))
 }

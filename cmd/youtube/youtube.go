@@ -6,13 +6,13 @@ import (
    "github.com/89z/rosso/os"
 )
 
-func (f flags) download() error {
-   play, err := f.player()
+func (self flags) download() error {
+   play, err := self.player()
    if err != nil {
       return err
    }
    forms := play.StreamingData.AdaptiveFormats
-   if f.info {
+   if self.info {
       text, err := play.MarshalText()
       if err != nil {
          return err
@@ -20,8 +20,8 @@ func (f flags) download() error {
       os.Stdout.Write(text)
    } else {
       fmt.Println(play.PlayabilityStatus)
-      if f.audio != "" {
-         form, ok := forms.Audio(f.audio)
+      if self.audio != "" {
+         form, ok := forms.Audio(self.audio)
          if ok {
             err := download(form, play.Base())
             if err != nil {
@@ -29,8 +29,8 @@ func (f flags) download() error {
             }
          }
       }
-      if f.height >= 1 {
-         form, ok := forms.Video(f.height)
+      if self.height >= 1 {
+         form, ok := forms.Video(self.height)
          if ok {
             err := download(form, play.Base())
             if err != nil {
@@ -88,14 +88,14 @@ func download(form *youtube.Format, base string) error {
    return form.Encode(file)
 }
 
-func (f flags) player() (*youtube.Player, error) {
+func (self flags) player() (*youtube.Player, error) {
    var req youtube.Request
-   if f.request == 0 {
+   if self.request == 0 {
       req = youtube.Android()
-   } else if f.request == 1 {
+   } else if self.request == 1 {
       req = youtube.Android_Embed()
    } else {
-      if f.request == 2 {
+      if self.request == 2 {
          req = youtube.Android_Racy()
       } else {
          req = youtube.Android_Content()
@@ -109,5 +109,5 @@ func (f flags) player() (*youtube.Player, error) {
          return nil, err
       }
    }
-   return req.Player(f.video_ID)
+   return req.Player(self.video_ID)
 }

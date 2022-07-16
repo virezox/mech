@@ -60,17 +60,3 @@ func main() {
    }
 }
 
-func (f flags) login() error {
-   auth, err := amc.Unauth()
-   if err != nil {
-      return err
-   }
-   if err := auth.Login(f.email, f.password); err != nil {
-      return err
-   }
-   home, err := os.UserHomeDir()
-   if err != nil {
-      return err
-   }
-   return auth.Create(home + "/mech/amc.json")
-}

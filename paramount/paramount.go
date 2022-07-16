@@ -19,14 +19,14 @@ const (
 
 var Client = http.Default_Client
 
-func (p Preview) Base() string {
+func (self Preview) Base() string {
    var b []byte
-   b = append(b, p.Title...)
-   if p.Season_Number >= 1 {
+   b = append(b, self.Title...)
+   if self.Season_Number >= 1 {
       b = append(b, '-')
-      b = strconv.AppendInt(b, p.Season_Number, 10)
+      b = strconv.AppendInt(b, self.Season_Number, 10)
       b = append(b, '-')
-      b = append(b, p.Episode_Number...)
+      b = append(b, self.Episode_Number...)
    }
    return string(b)
 }
