@@ -13,21 +13,21 @@ import (
    "time"
 )
 
-func (self Bonanza_Page) Video() (*Video, error) {
+func (b Bonanza_Page) Video() (*Video, error) {
    var v video_request
    v.Device = "android"
    v.Device_ID = "android"
    v.External_Advertiser_ID = "NBC"
-   v.Mpx.Account_ID = self.Metadata.MpxAccountId
+   v.Mpx.Account_ID = b.Metadata.MpxAccountId
    body, err := json.MarshalIndent(v, "", " ")
    if err != nil {
       return nil, err
    }
-   var a strings.Builder
-   a.WriteString("http://access-cloudpath.media.nbcuni.com")
-   a.WriteString("/access/vod/nbcuniversal/")
-   a.WriteString(self.Name)
-   req, err := http.NewRequest("POST", a.String(), bytes.NewReader(body))
+   var buf strings.Builder
+   buf.WriteString("http://access-cloudpath.media.nbcuni.com")
+   buf.WriteString("/access/vod/nbcuniversal/")
+   buf.WriteString(b.Name)
+   req, err := http.NewRequest("POST", buf.String(), bytes.NewReader(body))
    if err != nil {
       return nil, err
    }

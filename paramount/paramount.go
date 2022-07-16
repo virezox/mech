@@ -19,16 +19,16 @@ const (
 
 var Client = http.Default_Client
 
-func (self Preview) Base() string {
-   var b []byte
-   b = append(b, self.Title...)
-   if self.Season_Number >= 1 {
-      b = append(b, '-')
-      b = strconv.AppendInt(b, self.Season_Number, 10)
-      b = append(b, '-')
-      b = append(b, self.Episode_Number...)
+func (p Preview) Base() string {
+   var buf []byte
+   buf = append(buf, p.Title...)
+   if p.Season_Number >= 1 {
+      buf = append(buf, '-')
+      buf = strconv.AppendInt(buf, p.Season_Number, 10)
+      buf = append(buf, '-')
+      buf = append(buf, p.Episode_Number...)
    }
-   return string(b)
+   return string(buf)
 }
 
 type Preview struct {

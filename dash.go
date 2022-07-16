@@ -23,7 +23,7 @@ type Stream struct {
    url *url.URL
 }
 
-func (self *Stream) DASH(ref string) (dash.Representations, error) {
+func (s *Stream) DASH(ref string) (dash.Representations, error) {
    res, err := client.Redirect(nil).Get(ref)
    if err != nil {
       return nil, err
@@ -33,12 +33,12 @@ func (self *Stream) DASH(ref string) (dash.Representations, error) {
    if err := xml.NewDecoder(res.Body).Decode(&pres); err != nil {
       return nil, err
    }
-   self.url = res.Request.URL
+   s.url = res.Request.URL
    return pres.Representation(), nil
 }
 
-func (self Stream) DASH_Get(items dash.Representations, index int) error {
-   if self.Info {
+func (s Stream) DASH_Get(items dash.Representations, index int) error {
+   if s.Info {
       for i, item := range items {
          if i == index {
             fmt.Print("!")
@@ -48,12 +48,12 @@ func (self Stream) DASH_Get(items dash.Representations, index int) error {
       return nil
    }
    item := items[index]
-   file, err := os.Create(self.Base + item.Ext())
+   file, err := os.Create(s.Base + item.Ext())
    if err != nil {
       return err
    }
    defer file.Close()
-   ref, err := self.url.Parse(item.Initialization())
+   ref, err := s.url.Parse(item.Initialization())
    if err != nil {
       return err
    }
@@ -67,11 +67,11 @@ func (self Stream) DASH_Get(items dash.Representations, index int) error {
    dec := mp4.New_Decrypt(pro)
    var key []byte
    if item.ContentProtection != nil {
-      private_key, err := os.ReadFile(self.Private_Key)
+      private_key, err := os.ReadFile(s.Private_Key)
       if err != nil {
          return err
       }
-      client_ID, err := os.ReadFile(self.Client_ID)
+      client_ID, err := os.ReadFile(s.Client_ID)
       if err != nil {
          return err
       }
@@ -83,7 +83,7 @@ func (self Stream) DASH_Get(items dash.Representations, index int) error {
       if err != nil {
          return err
       }
-      keys, err := mod.Post(self.Poster)
+      keys, err := mod.Post(s.Poster)
       if err != nil {
          return err
       }
@@ -98,7 +98,7 @@ func (self Stream) DASH_Get(items dash.Representations, index int) error {
       }
    }
    for _, medium := range media {
-      ref, err := self.url.Parse(medium)
+      ref, err := s.url.Parse(medium)
       if err != nil {
          return err
       }

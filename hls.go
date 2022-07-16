@@ -7,22 +7,22 @@ import (
    "io"
 )
 
-func (self *Stream) HLS(ref string) (*hls.Master, error) {
+func (s *Stream) HLS(ref string) (*hls.Master, error) {
    res, err := client.Redirect(nil).Get(ref)
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
-   self.url = res.Request.URL
+   s.url = res.Request.URL
    return hls.New_Scanner(res.Body).Master()
 }
 
-func (self Stream) HLS_Streams(items hls.Streams, index int) error {
-   return hls_get(self, items, index)
+func (s Stream) HLS_Streams(items hls.Streams, index int) error {
+   return hls_get(s, items, index)
 }
 
-func (self Stream) HLS_Media(items hls.Media, index int) error {
-   return hls_get(self, items, index)
+func (s Stream) HLS_Media(items hls.Media, index int) error {
+   return hls_get(s, items, index)
 }
 
 func hls_get[T hls.Mixed](str Stream, items []T, index int) error {

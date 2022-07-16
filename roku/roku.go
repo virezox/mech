@@ -11,27 +11,30 @@ import (
    "time"
 )
 
-func (self Content) String() string {
-   var b strings.Builder
-   b.WriteString("ID: ")
-   b.WriteString(self.Meta.ID)
-   b.WriteString("\nType: ")
-   b.WriteString(self.Meta.MediaType)
-   b.WriteString("\nTitle: ")
-   b.WriteString(self.Title)
-   if self.Meta.MediaType == "episode" {
-      b.WriteString("\nSeries: ")
-      b.WriteString(self.Series.Title)
-      b.WriteString("\nSeason: ")
-      b.WriteString(self.SeasonNumber)
-      b.WriteString("\nEpisode: ")
-      b.WriteString(self.EpisodeNumber)
+func (c Content) String() string {
+   var buf strings.Builder
+   write := func(str string) {
+      buf.WriteString(str)
    }
-   b.WriteString("\nDate: ")
-   b.WriteString(self.ReleaseDate)
-   b.WriteString("\nDuration: ")
-   b.WriteString(self.Duration().String())
-   return b.String()
+   write("ID: ")
+   write(c.Meta.ID)
+   write("\nType: ")
+   write(c.Meta.MediaType)
+   write("\nTitle: ")
+   write(c.Title)
+   if c.Meta.MediaType == "episode" {
+      write("\nSeries: ")
+      write(c.Series.Title)
+      write("\nSeason: ")
+      write(c.SeasonNumber)
+      write("\nEpisode: ")
+      write(c.EpisodeNumber)
+   }
+   write("\nDate: ")
+   write(c.ReleaseDate)
+   write("\nDuration: ")
+   write(c.Duration().String())
+   return buf.String()
 }
 
 var Client = http.Default_Client
@@ -41,7 +44,7 @@ type Cross_Site struct {
    token string
 }
 
-func (self Cross_Site) Playback(id string) (*Playback, error) {
+func (c Cross_Site) Playback(id string) (*Playback, error) {
    buf, err := json.Marshal(map[string]string{
       "mediaFormat": "mpeg-dash",
       "rokuId": id,
@@ -57,10 +60,10 @@ func (self Cross_Site) Playback(id string) (*Playback, error) {
       return nil, err
    }
    req.Header = http.Header{
-      "CSRF-Token": {self.token},
+      "CSRF-Token": {c.token},
       "Content-Type": {"application/json"},
    }
-   req.AddCookie(self.cookie)
+   req.AddCookie(c.cookie)
    res, err := Client.Do(req)
    if err != nil {
       return nil, err
@@ -73,18 +76,18 @@ func (self Cross_Site) Playback(id string) (*Playback, error) {
    return play, nil
 }
 
-func (self Content) Base() string {
-   var b strings.Builder
-   if self.Meta.MediaType == "episode" {
-      b.WriteString(self.Series.Title)
-      b.WriteByte('-')
-      b.WriteString(self.SeasonNumber)
-      b.WriteByte('-')
-      b.WriteString(self.EpisodeNumber)
-      b.WriteByte('-')
+func (c Content) Base() string {
+   var buf strings.Builder
+   if c.Meta.MediaType == "episode" {
+      buf.WriteString(c.Series.Title)
+      buf.WriteByte('-')
+      buf.WriteString(c.SeasonNumber)
+      buf.WriteByte('-')
+      buf.WriteString(c.EpisodeNumber)
+      buf.WriteByte('-')
    }
-   b.WriteString(self.Title)
-   return b.String()
+   buf.WriteString(c.Title)
+   return buf.String()
 }
 
 func New_Content(id string) (*Content, error) {
@@ -121,8 +124,8 @@ func New_Content(id string) (*Content, error) {
    return con, nil
 }
 
-func (self Content) Duration() time.Duration {
-   return time.Duration(self.RunTimeSeconds) * time.Second
+func (c Content) Duration() time.Duration {
+   return time.Duration(c.RunTimeSeconds) * time.Second
 }
 
 type Video struct {
@@ -131,8 +134,8 @@ type Video struct {
    URL string
 }
 
-func (self Content) DASH() *Video {
-   for _, opt := range self.ViewOptions {
+func (c Content) DASH() *Video {
+   for _, opt := range c.ViewOptions {
       for _, vid := range opt.Media.Videos {
          if vid.VideoType == "DASH" {
             return &vid
@@ -142,8 +145,8 @@ func (self Content) DASH() *Video {
    return nil
 }
 
-func (self Content) HLS() (*Video, error) {
-   for _, opt := range self.ViewOptions {
+func (c Content) HLS() (*Video, error) {
+   for _, opt := range c.ViewOptions {
       for _, vid := range opt.Media.Videos {
          if vid.DrmAuthentication == nil {
             if vid.VideoType == "HLS" {
