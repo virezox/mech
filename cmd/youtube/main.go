@@ -13,6 +13,7 @@ type flags struct {
    info bool
    refresh bool
    request int
+   verbose bool
    video_ID string
 }
 
@@ -41,7 +42,12 @@ func main() {
    flag.Func("a", "address", func(s string) error {
       return youtube.Video_ID(s, &f.video_ID)
    })
+   // v
+   flag.BoolVar(&f.verbose, "v", false, "verbose")
    flag.Parse()
+   if f.verbose {
+      youtube.HTTP_Client.Log_Level = 2
+   }
    if f.refresh {
       err := refresh()
       if err != nil {

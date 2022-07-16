@@ -8,13 +8,13 @@ import (
    "strings"
 )
 
-func (h Header) Create(name string) error {
+func (self Header) Create(name string) error {
    file, err := os.Create(name)
    if err != nil {
       return err
    }
    defer file.Close()
-   return json.NewEncoder(file).Encode(h)
+   return json.NewEncoder(file).Encode(self)
 }
 
 func Open_Header(name string) (*Header, error) {
@@ -44,19 +44,19 @@ type Header struct {
    Refresh_Token string
 }
 
-func (h *Header) Refresh() error {
+func (self *Header) Refresh() error {
    val := url.Values{
       "client_id": {client_ID},
       "client_secret": {client_secret},
       "grant_type": {"refresh_token"},
-      "refresh_token": {h.Refresh_Token},
+      "refresh_token": {self.Refresh_Token},
    }
    res, err := http.PostForm("https://oauth2.googleapis.com/token", val)
    if err != nil {
       return err
    }
    defer res.Body.Close()
-   return json.NewDecoder(res.Body).Decode(h)
+   return json.NewDecoder(res.Body).Decode(self)
 }
 
 type OAuth struct {
@@ -82,11 +82,11 @@ func New_OAuth() (*OAuth, error) {
    return auth, nil
 }
 
-func (o OAuth) Header() (*Header, error) {
+func (self OAuth) Header() (*Header, error) {
    val := url.Values{
       "client_id": {client_ID},
       "client_secret": {client_secret},
-      "device_code": {o.Device_Code},
+      "device_code": {self.Device_Code},
       "grant_type":  {"urn:ietf:params:oauth:grant-type:device_code"},
    }
    res, err := http.PostForm("https://oauth2.googleapis.com/token", val)
@@ -101,12 +101,12 @@ func (o OAuth) Header() (*Header, error) {
    return head, nil
 }
 
-func (o OAuth) String() string {
-   var buf strings.Builder
-   buf.WriteString("1. Go to\n")
-   buf.WriteString(o.Verification_URL)
-   buf.WriteString("\n\n2. Enter this code\n")
-   buf.WriteString(o.User_Code)
-   buf.WriteString("\n\n3. Press Enter to continue")
-   return buf.String()
+func (self OAuth) String() string {
+   var b strings.Builder
+   b.WriteString("1. Go to\n")
+   b.WriteString(self.Verification_URL)
+   b.WriteString("\n\n2. Enter this code\n")
+   b.WriteString(self.User_Code)
+   b.WriteString("\n\n3. Press Enter to continue")
+   return b.String()
 }
