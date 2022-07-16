@@ -1,4 +1,4 @@
-package mech
+package fail
 
 import (
    "encoding/xml"
@@ -8,23 +8,21 @@ import (
    "github.com/89z/rosso/http"
    "github.com/89z/rosso/mp4"
    "github.com/89z/rosso/os"
-   "io"
-   "net/url"
 )
 
 var client = http.Default_Client
 
-type Flag struct {
+type Stream struct {
    Client_ID string
    Info bool
-   Poster widevine.Poster
    Private_Key string
-   base string
-   url *url.URL
+   Poster widevine.Poster
+   Base string
+   req *http.Request
 }
 
-func (f *Flag) DASH(addr, base string) (dash.Representations, error) {
-   res, err := client.Redirect(nil).Get(addr)
+func (s *Stream) DASH(address string) (dash.Representations, error) {
+   res, err := client.Redirect(nil).Get(address)
    if err != nil {
       return nil, err
    }
@@ -33,13 +31,12 @@ func (f *Flag) DASH(addr, base string) (dash.Representations, error) {
    if err := xml.NewDecoder(res.Body).Decode(&pres); err != nil {
       return nil, err
    }
-   f.base = base
-   f.url = res.Request.URL
+   s.req = res.Request
    return pres.Representation(), nil
 }
 
-func (f Flag) DASH_Get(items dash.Representations, index int) error {
-   if f.Info {
+func (s Stream) DASH_Get(items dash.Representations, index int) error {
+   if s.Info {
       for i, item := range items {
          if i == index {
             fmt.Print("!")
@@ -49,16 +46,16 @@ func (f Flag) DASH_Get(items dash.Representations, index int) error {
       return nil
    }
    item := items[index]
-   file, err := os.Create(f.base + item.Ext())
+   file, err := os.Create(s.Base + item.Ext())
    if err != nil {
       return err
    }
    defer file.Close()
-   addr, err := f.url.Parse(item.Initialization())
+   s.req.URL, err = s.req.URL.Parse(item.Initialization())
    if err != nil {
       return err
    }
-   res, err := client.Redirect(nil).Get(addr.String())
+   res, err := client.Redirect(nil).Do(s.req)
    if err != nil {
       return err
    }
@@ -66,13 +63,12 @@ func (f Flag) DASH_Get(items dash.Representations, index int) error {
    media := item.Media()
    pro := os.Progress_Chunks(file, len(media))
    dec := mp4.New_Decrypt(pro)
-   var key []byte
    if item.ContentProtection != nil {
-      private_key, err := os.ReadFile(f.Private_Key)
+      private_key, err := os.ReadFile(s.Private_Key)
       if err != nil {
          return err
       }
-      client_ID, err := os.ReadFile(f.Client_ID)
+      client_ID, err := os.ReadFile(s.Client_ID)
       if err != nil {
          return err
       }
@@ -84,39 +80,10 @@ func (f Flag) DASH_Get(items dash.Representations, index int) error {
       if err != nil {
          return err
       }
-      keys, err := mod.Post(f.Poster)
-      if err != nil {
+      if _, err := mod.Post(s.Poster); err != nil {
          return err
       }
-      key = keys.Content().Key
       if err := dec.Init(res.Body); err != nil {
-         return err
-      }
-   } else {
-      _, err := io.Copy(pro, res.Body)
-      if err != nil {
-         return err
-      }
-   }
-   for _, medium := range media {
-      addr, err := f.url.Parse(medium)
-      if err != nil {
-         return err
-      }
-      res, err := client.Redirect(nil).Level(0).Get(addr.String())
-      if err != nil {
-         return err
-      }
-      pro.Add_Chunk(res.ContentLength)
-      if item.ContentProtection != nil {
-         err = dec.Segment(res.Body, key)
-      } else {
-         _, err = io.Copy(pro, res.Body)
-      }
-      if err != nil {
-         return err
-      }
-      if err := res.Body.Close(); err != nil {
          return err
       }
    }
