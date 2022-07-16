@@ -97,6 +97,7 @@ func (s Stream) DASH_Get(items dash.Representations, index int) error {
       }
    }
    for _, medium := range media {
+      // THIS IS WRONG
       s.req.URL, err = s.req.URL.Parse(medium)
       if err != nil {
          return err
