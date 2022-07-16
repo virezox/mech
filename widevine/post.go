@@ -20,8 +20,8 @@ type Poster interface {
    Response_Body([]byte) ([]byte, error)
 }
 
-func (self Module) Post(post Poster) (Containers, error) {
-   signed_request, err := self.signed_request()
+func (m Module) Post(post Poster) (Containers, error) {
+   signed_request, err := m.signed_request()
    if err != nil {
       return nil, err
    }
@@ -51,10 +51,10 @@ func (self Module) Post(post Poster) (Containers, error) {
    if err != nil {
       return nil, err
    }
-   return self.signed_response(body)
+   return m.signed_response(body)
 }
 
-func (self Module) signed_response(response []byte) (Containers, error) {
+func (m Module) signed_response(response []byte) (Containers, error) {
    // key
    signed_response, err := protobuf.Unmarshal(response)
    if err != nil {
@@ -64,25 +64,23 @@ func (self Module) signed_response(response []byte) (Containers, error) {
    if err != nil {
       return nil, err
    }
-   key, err := rsa.DecryptOAEP(
-      sha1.New(), nil, self.private_key, session_key, nil,
-   )
+   key, err := rsa.DecryptOAEP(sha1.New(), nil, m.private_key, session_key, nil)
    if err != nil {
       return nil, err
    }
    // message
-   var b []byte
-   b = append(b, 1)
-   b = append(b, "ENCRYPTION"...)
-   b = append(b, 0)
-   b = append(b, self.license_request...)
-   b = append(b, 0, 0, 0, 0x80)
+   var buf []byte
+   buf = append(buf, 1)
+   buf = append(buf, "ENCRYPTION"...)
+   buf = append(buf, 0)
+   buf = append(buf, m.license_request...)
+   buf = append(buf, 0, 0, 0, 0x80)
    // CMAC
    mac, err := cmac.New(aes.NewCipher, key)
    if err != nil {
       return nil, err
    }
-   mac.Write(b)
+   mac.Write(buf)
    block, err := aes.NewCipher(mac.Sum(nil))
    if err != nil {
       return nil, err
@@ -110,11 +108,11 @@ func (self Module) signed_response(response []byte) (Containers, error) {
    return cons, nil
 }
 
-func (self Module) signed_request() ([]byte, error) {
-   digest := sha1.Sum(self.license_request)
+func (m Module) signed_request() ([]byte, error) {
+   digest := sha1.Sum(m.license_request)
    signature, err := rsa.SignPSS(
       no_operation{},
-      self.private_key,
+      m.private_key,
       crypto.SHA1,
       digest[:],
       &rsa.PSSOptions{SaltLength: rsa.PSSSaltLengthEqualsHash},
@@ -123,7 +121,7 @@ func (self Module) signed_request() ([]byte, error) {
       return nil, err
    }
    signed_request := protobuf.Message{
-      2: protobuf.Bytes(self.license_request),
+      2: protobuf.Bytes(m.license_request),
       3: protobuf.Bytes(signature),
    }
    return signed_request.Marshal(), nil

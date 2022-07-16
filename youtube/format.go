@@ -9,8 +9,8 @@ import (
    "strconv"
 )
 
-func (self Format) Ext() (string, error) {
-   media, _, err := mime.ParseMediaType(self.MimeType)
+func (f Format) Ext() (string, error) {
+   media, _, err := mime.ParseMediaType(f.MimeType)
    if err != nil {
       return "", err
    }
@@ -24,7 +24,7 @@ func (self Format) Ext() (string, error) {
    case "video/webm":
       return ".webm", nil
    }
-   return "", errors.New(self.MimeType)
+   return "", errors.New(f.MimeType)
 }
 
 type Format struct {
@@ -38,41 +38,41 @@ type Format struct {
    URL string
 }
 
-func (self Format) MarshalText() ([]byte, error) {
-   var b []byte
-   b = append(b, "Quality:"...)
-   if self.QualityLabel != "" {
-      b = append(b, self.QualityLabel...)
+func (f Format) MarshalText() ([]byte, error) {
+   var buf []byte
+   buf = append(buf, "Quality:"...)
+   if f.QualityLabel != "" {
+      buf = append(buf, f.QualityLabel...)
    } else {
-      b = append(b, self.AudioQuality...)
+      buf = append(buf, f.AudioQuality...)
    }
-   b = append(b, " Bitrate:"...)
-   b = strconv.AppendInt(b, self.Bitrate, 10)
-   if self.ContentLength >= 1 { // Tq92D6wQ1mg
-      b = append(b, " ContentLength:"...)
-      b = strconv.AppendInt(b, self.ContentLength, 10)
+   buf = append(buf, " Bitrate:"...)
+   buf = strconv.AppendInt(buf, f.Bitrate, 10)
+   if f.ContentLength >= 1 { // Tq92D6wQ1mg
+      buf = append(buf, " ContentLength:"...)
+      buf = strconv.AppendInt(buf, f.ContentLength, 10)
    }
-   b = append(b, "\n\tMimeType:"...)
-   b = append(b, self.MimeType...)
-   b = append(b, '\n')
-   return b, nil
+   buf = append(buf, "\n\tMimeType:"...)
+   buf = append(buf, f.MimeType...)
+   buf = append(buf, '\n')
+   return buf, nil
 }
 
 type Formats []Format
 
-func (self Format) Encode(w io.Writer) error {
-   req, err := http.NewRequest("GET", self.URL, nil)
+func (f Format) Encode(w io.Writer) error {
+   req, err := http.NewRequest("GET", f.URL, nil)
    if err != nil {
       return err
    }
-   pro := os.Progress_Bytes(w, self.ContentLength)
+   pro := os.Progress_Bytes(w, f.ContentLength)
    var pos int64
-   for pos < self.ContentLength {
-      b := []byte("bytes=")
-      b = strconv.AppendInt(b, pos, 10)
-      b = append(b, '-')
-      b = strconv.AppendInt(b, pos+chunk-1, 10)
-      req.Header.Set("Range", string(b))
+   for pos < f.ContentLength {
+      buf := []byte("bytes=")
+      buf = strconv.AppendInt(buf, pos, 10)
+      buf = append(buf, '-')
+      buf = strconv.AppendInt(buf, pos+chunk-1, 10)
+      req.Header.Set("Range", string(buf))
       res, err := HTTP_Client.Level(0).Redirect(nil).Status(206).Do(req)
       if err != nil {
          return err
@@ -88,8 +88,8 @@ func (self Format) Encode(w io.Writer) error {
    return nil
 }
 
-func (self Formats) Audio(quality string) (*Format, bool) {
-   for _, form := range self {
+func (f Formats) Audio(quality string) (*Format, bool) {
+   for _, form := range f {
       if form.AudioQuality == quality {
          return &form, true
       }
@@ -97,22 +97,22 @@ func (self Formats) Audio(quality string) (*Format, bool) {
    return nil, false
 }
 
-func (self Formats) Video(height int) (*Format, bool) {
-   distance := func(self *Format) int {
-      if self.Height > height {
-         return self.Height - height
+func (f Formats) Video(height int) (*Format, bool) {
+   distance := func(f *Format) int {
+      if f.Height > height {
+         return f.Height - height
       }
-      return height - self.Height
+      return height - f.Height
    }
    var (
       ok bool
       output *Format
    )
-   for i, input := range self {
+   for i, input := range f {
       // since codecs are in this order avc1,vp9,av01,
       // do "<=" so we can get last one
       if output == nil || distance(&input) <= distance(output) {
-         output = &self[i]
+         output = &f[i]
          ok = true
       }
    }

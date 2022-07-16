@@ -66,26 +66,26 @@ func New_Params() Params {
    return par
 }
 
-func (self Filter) Features(num protobuf.Number) {
-   self.Message[num] = protobuf.Varint(1)
+func (f Filter) Features(num protobuf.Number) {
+   f.Message[num] = protobuf.Varint(1)
 }
 
-func (self Filter) Duration(val uint64) {
-   self.Message[3] = protobuf.Varint(val)
+func (f Filter) Duration(val uint64) {
+   f.Message[3] = protobuf.Varint(val)
 }
 
-func (self Filter) Type(val uint64) {
-   self.Message[2] = protobuf.Varint(val)
+func (f Filter) Type(val uint64) {
+   f.Message[2] = protobuf.Varint(val)
 }
 
-func (self Filter) Upload_Date(val uint64) {
-   self.Message[1] = protobuf.Varint(val)
+func (f Filter) Upload_Date(val uint64) {
+   f.Message[1] = protobuf.Varint(val)
 }
 
-func (self Params) Filter(val Filter) {
-   self.Message[2] = val.Message
+func (p Params) Filter(val Filter) {
+   p.Message[2] = val.Message
 }
 
-func (self Params) Sort_By(val uint64) {
-   self.Message[1] = protobuf.Varint(val)
+func (p Params) Sort_By(val uint64) {
+   p.Message[1] = protobuf.Varint(val)
 }

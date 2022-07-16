@@ -48,14 +48,14 @@ func Android_Content() Request {
    return r
 }
 
-func (self Request) Search(query string) (*Search, error) {
+func (r Request) Search(query string) (*Search, error) {
    filter := New_Filter()
    filter.Type(Type["Video"])
    param := New_Params()
    param.Filter(filter)
-   self.body.Params = param.Marshal()
-   self.body.Query = query
-   buf, err := json.Marshal(self.body)
+   r.body.Params = param.Marshal()
+   r.body.Query = query
+   buf, err := json.Marshal(r.body)
    if err != nil {
       return nil, err
    }
@@ -95,9 +95,9 @@ type Request struct {
    }
 }
 
-func (self Request) Player(id string) (*Player, error) {
-   self.body.Video_ID = id
-   buf, err := json.MarshalIndent(self.body, "", " ")
+func (r Request) Player(id string) (*Player, error) {
+   r.body.Video_ID = id
+   buf, err := json.MarshalIndent(r.body, "", " ")
    if err != nil {
       return nil, err
    }
@@ -107,8 +107,8 @@ func (self Request) Player(id string) (*Player, error) {
    if err != nil {
       return nil, err
    }
-   if self.Header != nil {
-      req.Header.Set("Authorization", "Bearer " + self.Header.Access_Token)
+   if r.Header != nil {
+      req.Header.Set("Authorization", "Bearer " + r.Header.Access_Token)
    } else {
       req.Header.Set("X-Goog-API-Key", goog_API)
    }

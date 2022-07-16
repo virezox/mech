@@ -11,8 +11,8 @@ import (
    "strings"
 )
 
-func (self Container) String() string {
-   return hex.EncodeToString(self.Key)
+func (c Container) String() string {
+   return hex.EncodeToString(c.Key)
 }
 
 type Container struct {
@@ -89,8 +89,8 @@ var Client = http.Default_Client
 
 type Containers []Container
 
-func (self Containers) Content() *Container {
-   for _, container := range self {
+func (c Containers) Content() *Container {
+   for _, container := range c {
       if container.Type == 2 {
          return &container
       }
