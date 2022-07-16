@@ -62,12 +62,12 @@ func new_token() (string, error) {
    return base64.StdEncoding.EncodeToString(dst), nil
 }
 
-func pad(b []byte) []byte {
-   b_len := aes.BlockSize - len(b) % aes.BlockSize
+func pad(buf []byte) []byte {
+   b_len := aes.BlockSize - len(buf) % aes.BlockSize
    for high := byte(b_len); b_len >= 1; b_len-- {
-      b = append(b, high)
+      buf = append(buf, high)
    }
-   return b
+   return buf
 }
 
 func New_Session(guid string) (*Session, error) {
@@ -75,10 +75,10 @@ func New_Session(guid string) (*Session, error) {
    if err != nil {
       return nil, err
    }
-   var b strings.Builder
-   b.WriteString("https://www.paramountplus.com/apps-api/v3.0/androidphone")
-   b.WriteString("/irdeto-control/anonymous-session-token.json")
-   req, err := http.NewRequest("GET", b.String(), nil)
+   var buf strings.Builder
+   buf.WriteString("https://www.paramountplus.com/apps-api/v3.0/androidphone")
+   buf.WriteString("/irdeto-control/anonymous-session-token.json")
+   req, err := http.NewRequest("GET", buf.String(), nil)
    if err != nil {
       return nil, err
    }
@@ -102,14 +102,14 @@ const (
 )
 
 func media(guid string) string {
-   var b []byte
-   b = append(b, "http://link.theplatform.com/s/"...)
-   b = append(b, sid...)
-   b = append(b, "/media/guid/"...)
-   b = strconv.AppendInt(b, aid, 10)
-   b = append(b, '/')
-   b = append(b, guid...)
-   return string(b)
+   var buf []byte
+   buf = append(buf, "http://link.theplatform.com/s/"...)
+   buf = append(buf, sid...)
+   buf = append(buf, "/media/guid/"...)
+   buf = strconv.AppendInt(buf, aid, 10)
+   buf = append(buf, '/')
+   buf = append(buf, guid...)
+   return string(buf)
 }
 
 func New_Preview(guid string) (*Preview, error) {
@@ -131,21 +131,21 @@ func New_Preview(guid string) (*Preview, error) {
 }
 
 func DASH(guid string) string {
-   var b strings.Builder
-   b.WriteString(media(guid))
-   b.WriteByte('?')
-   b.WriteString("assetTypes=DASH_CENC")
-   b.WriteByte('&')
-   b.WriteString("formats=MPEG-DASH")
-   return b.String()
+   var buf strings.Builder
+   buf.WriteString(media(guid))
+   buf.WriteByte('?')
+   buf.WriteString("assetTypes=DASH_CENC")
+   buf.WriteByte('&')
+   buf.WriteString("formats=MPEG-DASH")
+   return buf.String()
 }
 
 func HLS(guid string) string {
-   var b strings.Builder
-   b.WriteString(media(guid))
-   b.WriteByte('?')
-   b.WriteString("assetTypes=StreamPack")
-   b.WriteByte('&')
-   b.WriteString("formats=MPEG4,M3U")
-   return b.String()
+   var buf strings.Builder
+   buf.WriteString(media(guid))
+   buf.WriteByte('?')
+   buf.WriteString("assetTypes=StreamPack")
+   buf.WriteByte('&')
+   buf.WriteString("formats=MPEG4,M3U")
+   return buf.String()
 }

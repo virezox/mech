@@ -91,11 +91,11 @@ func (c Content) Base() string {
 }
 
 func New_Content(id string) (*Content, error) {
-   var a url.URL
-   a.Scheme = "https"
-   a.Host = "content.sr.roku.com"
-   a.Path = "/content/v1/roku-trc/" + id
-   a.RawQuery = url.Values{
+   var ref url.URL
+   ref.Scheme = "https"
+   ref.Host = "content.sr.roku.com"
+   ref.Path = "/content/v1/roku-trc/" + id
+   ref.RawQuery = url.Values{
       "expand": {"series"},
       "include": {strings.Join([]string{
          "episodeNumber",
@@ -109,10 +109,10 @@ func New_Content(id string) (*Content, error) {
          "viewOptions",
       }, ",")},
    }.Encode()
-   var b strings.Builder
-   b.WriteString("https://therokuchannel.roku.com/api/v2/homescreen/content/")
-   b.WriteString(url.PathEscape(a.String()))
-   res, err := Client.Get(b.String())
+   var buf strings.Builder
+   buf.WriteString("https://therokuchannel.roku.com/api/v2/homescreen/content/")
+   buf.WriteString(url.PathEscape(ref.String()))
+   res, err := Client.Get(buf.String())
    if err != nil {
       return nil, err
    }

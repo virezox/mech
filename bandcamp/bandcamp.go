@@ -93,13 +93,13 @@ var Images = []Image{
 }
 
 // Extension is optional.
-func (self Image) URL(art_ID int64) string {
-   var b []byte
-   b = append(b, "http://f4.bcbits.com/img/a"...)
-   b = strconv.AppendInt(b, art_ID, 10)
-   b = append(b, '_')
-   b = strconv.AppendInt(b, self.ID, 10)
-   return string(b)
+func (i Image) URL(art_ID int64) string {
+   var buf []byte
+   buf = append(buf, "http://f4.bcbits.com/img/a"...)
+   buf = strconv.AppendInt(buf, art_ID, 10)
+   buf = append(buf, '_')
+   buf = strconv.AppendInt(buf, i.ID, 10)
+   return string(buf)
 }
 
 type Item struct {
@@ -108,18 +108,18 @@ type Item struct {
    Item_Type string
 }
 
-func (self Item) Band() (*Band, error) {
-   return new_band(self.Band_ID)
+func (i Item) Band() (*Band, error) {
+   return new_band(i.Band_ID)
 }
 
-func (self Item) Tralbum() (*Tralbum, error) {
-   switch self.Item_Type {
+func (i Item) Tralbum() (*Tralbum, error) {
+   switch i.Item_Type {
    case "album":
-      return new_tralbum('a', self.Item_ID)
+      return new_tralbum('a', i.Item_ID)
    case "track":
-      return new_tralbum('t', self.Item_ID)
+      return new_tralbum('t', i.Item_ID)
    }
-   return nil, invalid_type{self.Item_Type}
+   return nil, invalid_type{i.Item_Type}
 }
 
 type Track struct {
@@ -131,8 +131,8 @@ type Track struct {
    }
 }
 
-func (self Track) Base() string {
-   return self.Band_Name + "-" + self.Title
+func (t Track) Base() string {
+   return t.Band_Name + "-" + t.Title
 }
 
 type Tralbum struct {
@@ -167,17 +167,17 @@ func new_tralbum(typ byte, id int) (*Tralbum, error) {
    return tralb, nil
 }
 
-func (self Tralbum) Date() time.Time {
-   return time.Unix(self.Release_Date, 0)
+func (t Tralbum) Date() time.Time {
+   return time.Unix(t.Release_Date, 0)
 }
 
 type invalid_type struct {
    value string
 }
 
-func (self invalid_type) Error() string {
-   var b []byte
-   b = append(b, "invalid type "...)
-   b = strconv.AppendQuote(b, self.value)
-   return string(b)
+func (i invalid_type) Error() string {
+   var buf []byte
+   buf = append(buf, "invalid type "...)
+   buf = strconv.AppendQuote(buf, i.value)
+   return string(buf)
 }

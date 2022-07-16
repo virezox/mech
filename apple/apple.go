@@ -11,13 +11,13 @@ import (
    "strconv"
 )
 
-func (self Auth) Create(name string) error {
+func (a Auth) Create(name string) error {
    file, err := os.Create(name)
    if err != nil {
       return err
    }
    defer file.Close()
-   return json.NewEncoder(file).Encode(self)
+   return json.NewEncoder(file).Encode(a)
 }
 
 func Open_Auth(name string) (Auth, error) {
@@ -40,14 +40,14 @@ type Server_Parameters struct {
 
 type Auth []*http.Cookie
 
-func (self Signin) Auth() (Auth, error) {
+func (s Signin) Auth() (Auth, error) {
    req, err := http.NewRequest(
       "POST", "https://buy.tv.apple.com/account/web/auth", nil,
    )
    if err != nil {
       return nil, err
    }
-   req.AddCookie(self.my_ac_info())
+   req.AddCookie(s.my_ac_info())
    req.Header.Set("Origin", "https://tv.apple.com")
    res, err := Client.Do(req)
    if err != nil {
@@ -57,8 +57,8 @@ func (self Signin) Auth() (Auth, error) {
    return res.Cookies(), nil
 }
 
-func (self Auth) media_user_token() *http.Cookie {
-   for _, cookie := range self {
+func (a Auth) media_user_token() *http.Cookie {
+   for _, cookie := range a {
       if cookie.Name == "media-user-token" {
          return cookie
       }
@@ -109,8 +109,8 @@ func New_Episode(content_ID string) (*Episode, error) {
    return epi, nil
 }
 
-func (self Episode) Asset() *Asset {
-   for _, play := range self.Data.Playables {
+func (e Episode) Asset() *Asset {
+   for _, play := range e.Data.Playables {
       return &play.Assets
    }
    return nil
@@ -178,7 +178,7 @@ func New_Environment() (*Environment, error) {
    return env, nil
 }
 
-func (self Config) Signin(email, password string) (Signin, error) {
+func (c Config) Signin(email, password string) (Signin, error) {
    buf, err := json.Marshal(map[string]string{
      "accountName": email,
      "password": password,
@@ -195,7 +195,7 @@ func (self Config) Signin(email, password string) (Signin, error) {
    }
    req.Header = http.Header{
       "Content-Type": {"application/json"},
-      "X-Apple-Widget-Key": {self.WebBag.AppIdKey},
+      "X-Apple-Widget-Key": {c.WebBag.AppIdKey},
    }
    res, err := Client.Do(req)
    if err != nil {
@@ -205,8 +205,8 @@ func (self Config) Signin(email, password string) (Signin, error) {
    return res.Cookies(), nil
 }
 
-func (self Signin) my_ac_info() *http.Cookie {
-   for _, cookie := range self {
+func (s Signin) my_ac_info() *http.Cookie {
+   for _, cookie := range s {
       if cookie.Name == "myacinfo" {
          return cookie
       }

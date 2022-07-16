@@ -33,10 +33,10 @@ type Asset struct {
 }
 
 func New_Asset(id string) (*Asset, error) {
-   var b strings.Builder
-   b.WriteString("https://services.radio-canada.ca/ott/cbc-api/v2/assets/")
-   b.WriteString(id)
-   res, err := Client.Get(b.String())
+   var buf strings.Builder
+   buf.WriteString("https://services.radio-canada.ca/ott/cbc-api/v2/assets/")
+   buf.WriteString(id)
+   res, err := Client.Get(buf.String())
    if err != nil {
       return nil, err
    }

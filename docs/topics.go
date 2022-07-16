@@ -45,6 +45,9 @@ func main() {
    buf, err := json.Marshal(map[string][]string{
       "names": names,
    })
+   if err != nil {
+      panic(err)
+   }
    req, err := http.NewRequest("PUT", topics, bytes.NewReader(buf))
    if err != nil {
       panic(err)
