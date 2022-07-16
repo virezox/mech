@@ -9,6 +9,7 @@ import (
    "github.com/89z/rosso/mp4"
    "github.com/89z/rosso/os"
    "io"
+   "net/url"
 )
 
 var client = http.Default_Client
@@ -19,7 +20,7 @@ type Stream struct {
    Private_Key string
    Poster widevine.Poster
    Base string
-   req *http.Request
+   url *url.URL
 }
 
 func (s *Stream) DASH(address string) (dash.Representations, error) {
@@ -32,7 +33,7 @@ func (s *Stream) DASH(address string) (dash.Representations, error) {
    if err := xml.NewDecoder(res.Body).Decode(&pres); err != nil {
       return nil, err
    }
-   s.req = res.Request
+   s.url = res.Request.URL
    return pres.Representation(), nil
 }
 
@@ -52,11 +53,11 @@ func (s Stream) DASH_Get(items dash.Representations, index int) error {
       return err
    }
    defer file.Close()
-   s.req.URL, err = s.req.URL.Parse(item.Initialization())
+   address, err := s.url.Parse(item.Initialization())
    if err != nil {
       return err
    }
-   res, err := client.Redirect(nil).Do(s.req)
+   res, err := client.Redirect(nil).Get(address.String())
    if err != nil {
       return err
    }
@@ -97,12 +98,11 @@ func (s Stream) DASH_Get(items dash.Representations, index int) error {
       }
    }
    for _, medium := range media {
-      // THIS IS WRONG
-      s.req.URL, err = s.req.URL.Parse(medium)
+      address, err := s.url.Parse(medium)
       if err != nil {
          return err
       }
-      res, err := client.Redirect(nil).Level(0).Do(s.req)
+      res, err := client.Redirect(nil).Level(0).Get(address.String())
       if err != nil {
          return err
       }
