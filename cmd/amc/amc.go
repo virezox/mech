@@ -5,7 +5,7 @@ import (
    "os"
 )
 
-func (self flags) download() error {
+func (f flags) download() error {
    home, err := os.UserHomeDir()
    if err != nil {
       return err
@@ -20,30 +20,30 @@ func (self flags) download() error {
    if err := auth.Create(home + "/mech/amc.json"); err != nil {
       return err
    }
-   play, err := auth.Playback(self.nid)
+   play, err := auth.Playback(f.nid)
    if err != nil {
       return err
    }
    data := play.Data()
-   self.Base = data.Base()
-   reps, err := self.DASH(data.Source().Src)
+   f.Base = data.Base()
+   reps, err := f.DASH(data.Source().Src)
    if err != nil {
       return err
    }
-   self.Poster = play
-   if err := self.DASH_Get(reps.Audio(), 0); err != nil {
+   f.Poster = play
+   if err := f.DASH_Get(reps.Audio(), 0); err != nil {
       return err
    }
    video := reps.Video()
-   return self.DASH_Get(video, video.Bandwidth(self.bandwidth))
+   return f.DASH_Get(video, video.Bandwidth(f.bandwidth))
 }
 
-func (self flags) login() error {
+func (f flags) login() error {
    auth, err := amc.Unauth()
    if err != nil {
       return err
    }
-   if err := auth.Login(self.email, self.password); err != nil {
+   if err := auth.Login(f.email, f.password); err != nil {
       return err
    }
    home, err := os.UserHomeDir()

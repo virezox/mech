@@ -48,27 +48,30 @@ func New_Asset(id string) (*Asset, error) {
    return asset, nil
 }
 
-func (self Asset) Get_Duration() time.Duration {
-   return time.Duration(self.Duration) * time.Second
+func (a Asset) Get_Duration() time.Duration {
+   return time.Duration(a.Duration) * time.Second
 }
 
-func (self Asset) Get_Time() time.Time {
-   return time.UnixMilli(self.AirDate)
+func (a Asset) Get_Time() time.Time {
+   return time.UnixMilli(a.AirDate)
 }
 
-func (self Asset) String() string {
-   var b strings.Builder
-   b.WriteString("ID: ")
-   b.WriteString(self.AppleContentId)
-   b.WriteString("\nSeries: ")
-   b.WriteString(self.Series)
-   b.WriteString("\nTitle: ")
-   b.WriteString(self.Title)
-   b.WriteString("\nDate: ")
-   b.WriteString(self.Get_Time().String())
-   b.WriteString("\nDuration: ")
-   b.WriteString(self.Get_Duration().String())
-   return b.String()
+func (a Asset) String() string {
+   var buf strings.Builder
+   write := func(str string) {
+      buf.WriteString(str)
+   }
+   write("ID: ")
+   write(a.AppleContentId)
+   write("\nSeries: ")
+   write(a.Series)
+   write("\nTitle: ")
+   write(a.Title)
+   write("\nDate: ")
+   write(a.Get_Time().String())
+   write("\nDuration: ")
+   write(a.Get_Duration().String())
+   return buf.String()
 }
 
 type Media struct {
@@ -76,13 +79,13 @@ type Media struct {
    URL *string
 }
 
-func (self Profile) Media(asset *Asset) (*Media, error) {
+func (p Profile) Media(asset *Asset) (*Media, error) {
    req, err := http.NewRequest("GET", asset.PlaySession.URL, nil)
    if err != nil {
       return nil, err
    }
    req.Header = http.Header{
-      "X-Claims-Token": {self.ClaimsToken},
+      "X-Claims-Token": {p.ClaimsToken},
       "X-Forwarded-For": {forwarded_for},
    }
    res, err := Client.Do(req)

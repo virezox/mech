@@ -16,13 +16,13 @@ type Auth struct {
    }
 }
 
-func (self Auth) Create(name string) error {
+func (a Auth) Create(name string) error {
    file, err := os.Create(name)
    if err != nil {
       return err
    }
    defer file.Close()
-   return json.NewEncoder(file).Encode(self)
+   return json.NewEncoder(file).Encode(a)
 }
 
 func Open_Auth(name string) (*Auth, error) {
@@ -74,7 +74,7 @@ func Unauth() (*Auth, error) {
    return auth, nil
 }
 
-func (self *Auth) Login(email, password string) error {
+func (a *Auth) Login(email, password string) error {
    buf, err := json.Marshal(map[string]string{
       "email": email,
       "password": password,
@@ -90,7 +90,7 @@ func (self *Auth) Login(email, password string) error {
       return err
    }
    req.Header = http.Header{
-      "Authorization": {"Bearer " + self.Data.Access_Token},
+      "Authorization": {"Bearer " + a.Data.Access_Token},
       "Content-Type": {"application/json"},
       "X-Amcn-Device-Ad-Id": {"!"},
       "X-Amcn-Language": {"en"},
@@ -106,10 +106,10 @@ func (self *Auth) Login(email, password string) error {
       return err
    }
    defer res.Body.Close()
-   return json.NewDecoder(res.Body).Decode(self)
+   return json.NewDecoder(res.Body).Decode(a)
 }
 
-func (self *Auth) Refresh() error {
+func (a *Auth) Refresh() error {
    req, err := http.NewRequest(
       "POST",
       "https://gw.cds.amcn.com/auth-orchestration-id/api/v1/refresh",
@@ -118,11 +118,11 @@ func (self *Auth) Refresh() error {
    if err != nil {
       return err
    }
-   req.Header.Set("Authorization", "Bearer " + self.Data.Refresh_Token)
+   req.Header.Set("Authorization", "Bearer " + a.Data.Refresh_Token)
    res, err := Client.Do(req)
    if err != nil {
       return err
    }
    defer res.Body.Close()
-   return json.NewDecoder(res.Body).Decode(self)
+   return json.NewDecoder(res.Body).Decode(a)
 }

@@ -7,14 +7,14 @@ import (
    "strings"
 )
 
-func (self flags) DASH(preview *paramount.Preview) error {
+func (f flags) DASH(preview *paramount.Preview) error {
    var err error
-   self.Poster, err = paramount.New_Session(self.guid)
+   f.Poster, err = paramount.New_Session(f.guid)
    if err != nil {
       return err
    }
-   self.Base = preview.Base()
-   reps, err := self.Stream.DASH(paramount.DASH(self.guid))
+   f.Base = preview.Base()
+   reps, err := f.Stream.DASH(paramount.DASH(f.guid))
    if err != nil {
       return err
    }
@@ -28,29 +28,29 @@ func (self flags) DASH(preview *paramount.Preview) error {
       return true
    })
    index := audio.Index(func(a, b dash.Representation) bool {
-      if !strings.HasPrefix(b.Adaptation.Lang, self.lang) {
+      if !strings.HasPrefix(b.Adaptation.Lang, f.lang) {
          return false
       }
-      if !strings.HasPrefix(b.Codecs, self.codecs) {
+      if !strings.HasPrefix(b.Codecs, f.codecs) {
          return false
       }
       return true
    })
-   if err := self.DASH_Get(audio, index); err != nil {
+   if err := f.DASH_Get(audio, index); err != nil {
       return err
    }
    video := reps.Video()
-   return self.DASH_Get(video, video.Bandwidth(self.bandwidth))
+   return f.DASH_Get(video, video.Bandwidth(f.bandwidth))
 }
 
-func (self flags) HLS(preview *paramount.Preview) error {
-   self.Base = preview.Base()
-   master, err := self.Stream.HLS(paramount.HLS(self.guid))
+func (f flags) HLS(preview *paramount.Preview) error {
+   f.Base = preview.Base()
+   master, err := f.Stream.HLS(paramount.HLS(f.guid))
    if err != nil {
       return err
    }
    streams := master.Streams.Filter(func(s hls.Stream) bool {
       return s.Resolution != ""
    })
-   return self.HLS_Streams(streams, streams.Bandwidth(self.bandwidth))
+   return f.HLS_Streams(streams, streams.Bandwidth(f.bandwidth))
 }

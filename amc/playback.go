@@ -37,8 +37,8 @@ func (Playback) Response_Body(b []byte) ([]byte, error) {
    return b, nil
 }
 
-func (self Data) Source() *Source {
-   for _, item := range self.Sources {
+func (d Data) Source() *Source {
+   for _, item := range d.Sources {
       if item.Type == "application/dash+xml" {
          return &item
       }
@@ -46,8 +46,8 @@ func (self Data) Source() *Source {
    return nil
 }
 
-func (self Playback) Request_Header() http.Header {
-   token := self.head.Get("X-AMCN-BC-JWT")
+func (p Playback) Request_Header() http.Header {
+   token := p.head.Get("X-AMCN-BC-JWT")
    head := make(http.Header)
    head.Set("bcov-auth", token)
    return head
@@ -63,22 +63,22 @@ type Data struct {
    Sources []Source
 }
 
-func (self Data) Base() string {
-   var b strings.Builder
-   b.WriteString(self.Custom_Fields.Show)
-   b.WriteByte('-')
-   b.WriteString(self.Custom_Fields.Season)
-   b.WriteByte('-')
-   b.WriteString(self.Custom_Fields.Episode)
-   b.WriteByte('-')
-   b.WriteString(self.Name)
-   return b.String()
+func (d Data) Base() string {
+   var buf strings.Builder
+   buf.WriteString(d.Custom_Fields.Show)
+   buf.WriteByte('-')
+   buf.WriteString(d.Custom_Fields.Season)
+   buf.WriteByte('-')
+   buf.WriteString(d.Custom_Fields.Episode)
+   buf.WriteByte('-')
+   buf.WriteString(d.Name)
+   return buf.String()
 }
 
-func (self Auth) Playback(nID int64) (*Playback, error) {
-   var b []byte
-   b = append(b, "https://gw.cds.amcn.com/playback-id/api/v1/playback/"...)
-   b = strconv.AppendInt(b, nID, 10)
+func (a Auth) Playback(nID int64) (*Playback, error) {
+   var buf []byte
+   buf = append(buf, "https://gw.cds.amcn.com/playback-id/api/v1/playback/"...)
+   buf = strconv.AppendInt(buf, nID, 10)
    var p playback_request
    p.Ad_Tags.Mode = "on-demand"
    p.Ad_Tags.URL = "!"
@@ -86,12 +86,12 @@ func (self Auth) Playback(nID int64) (*Playback, error) {
    if err != nil {
       return nil, err
    }
-   req, err := http.NewRequest("POST", string(b), bytes.NewReader(body))
+   req, err := http.NewRequest("POST", string(buf), bytes.NewReader(body))
    if err != nil {
       return nil, err
    }
    req.Header = http.Header{
-      "Authorization": {"Bearer " + self.Data.Access_Token},
+      "Authorization": {"Bearer " + a.Data.Access_Token},
       "Content-Type": {"application/json"},
       "X-Amcn-Device-Ad-Id": {"!"},
       "X-Amcn-Language": {"en"},
@@ -123,10 +123,10 @@ type Playback struct {
    }
 }
 
-func (self Playback) Data() Data {
-   return self.body.Data.PlaybackJsonData
+func (p Playback) Data() Data {
+   return p.body.Data.PlaybackJsonData
 }
 
-func (self Playback) Request_URL() string {
-   return self.Data().Source().Key_Systems.Widevine.License_URL
+func (p Playback) Request_URL() string {
+   return p.Data().Source().Key_Systems.Widevine.License_URL
 }
