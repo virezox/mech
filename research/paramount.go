@@ -1,22 +1,70 @@
 package main
 
 import (
-   "github.com/89z/mech/research/paramount"
+   "flag"
+   "github.com/89z/mech/research/mech"
+   "github.com/89z/mech/paramount"
    "github.com/89z/rosso/dash"
-   "github.com/89z/rosso/hls"
+   "os"
+   "path/filepath"
    "strings"
 )
 
-func (f flags) DASH(preview *paramount.Preview) error {
-   addr, err := paramount.New_Media(f.guid).DASH()
+type flags struct {
+   bandwidth int
+   codecs string
+   dash bool
+   guid string
+   lang string
+   mech.Flag
+}
+
+func main() {
+   home, err := os.UserHomeDir()
    if err != nil {
-      return err
+      panic(err)
    }
+   var f flags
+   // b
+   flag.StringVar(&f.guid, "b", "", "GUID")
+   // c
+   f.Client_ID = filepath.Join(home, "mech/client_id.bin")
+   flag.StringVar(&f.Client_ID, "c", f.Client_ID, "client ID")
+   // d
+   flag.BoolVar(&f.dash, "d", false, "DASH download")
+   // f
+   flag.IntVar(&f.bandwidth, "f", 1611000, "video bandwidth")
+   // g
+   flag.StringVar(&f.codecs, "g", "mp4a", "audio codec")
+   // h
+   flag.StringVar(&f.lang, "h", "en", "audio lang")
+   // i
+   flag.BoolVar(&f.Info, "i", false, "information")
+   // k
+   f.Private_Key = filepath.Join(home, "mech/private_key.pem")
+   flag.StringVar(&f.Private_Key, "k", f.Private_Key, "private key")
+   flag.Parse()
+   if f.guid != "" {
+      preview, err := paramount.New_Preview(f.guid)
+      if err != nil {
+         panic(err)
+      }
+      if err := f.DASH(preview); err != nil {
+         panic(err)
+      }
+   } else {
+      flag.Usage()
+   }
+}
+
+func (f flags) DASH(preview *paramount.Preview) error {
+   address := paramount.DASH(f.guid)
+   var err error
    f.Poster, err = paramount.New_Session(f.guid)
    if err != nil {
       return err
    }
-   reps, err := f.Flag.DASH(addr.String(), preview.Base())
+   reps, err := f.Flag.DASH(address, preview.Base())
    if err != nil {
       return err
    }
@@ -43,19 +91,4 @@ func (f flags) DASH(preview *paramount.Preview) error {
    }
    video := reps.Video()
    return f.DASH_Get(video, video.Bandwidth(f.bandwidth))
-}
-
-func (f flags) HLS(preview *paramount.Preview) error {
-   addr, err := paramount.New_Media(f.guid).HLS()
-   if err != nil {
-      return err
-   }
-   master, err := f.Flag.HLS(addr.String(), preview.Base())
-   if err != nil {
-      return err
-   }
-   streams := master.Streams.Filter(func(s hls.Stream) bool {
-      return s.Resolution != ""
-   })
-   return f.HLS_Streams(streams, streams.Bandwidth(f.bandwidth))
 }
