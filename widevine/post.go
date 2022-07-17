@@ -35,8 +35,8 @@ func (m Module) Post(post Poster) (Containers, error) {
    if err != nil {
       return nil, err
    }
-   if h := post.Request_Header(); h != nil {
-      req.Header = h
+   if head := post.Request_Header(); head != nil {
+      req.Header = head
    }
    res, err := Client.Do(req)
    if err != nil {

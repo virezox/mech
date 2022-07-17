@@ -84,15 +84,15 @@ var (
 
 func authorization() string {
    now := strconv.FormatInt(time.Now().UnixMilli(), 10)
-   b := new(strings.Builder)
-   b.WriteString("NBC-Security key=android_nbcuniversal,version=2.4")
-   b.WriteString(",time=")
-   b.WriteString(now)
-   b.WriteString(",hash=")
+   buf := new(strings.Builder)
+   buf.WriteString("NBC-Security key=android_nbcuniversal,version=2.4")
+   buf.WriteString(",time=")
+   buf.WriteString(now)
+   buf.WriteString(",hash=")
    mac := hmac.New(sha256.New, secret_key)
    io.WriteString(mac, now)
-   hex.NewEncoder(b).Write(mac.Sum(nil))
-   return b.String()
+   hex.NewEncoder(buf).Write(mac.Sum(nil))
+   return buf.String()
 }
 
 func New_Bonanza_Page(guid int64) (*Bonanza_Page, error) {
