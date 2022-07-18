@@ -1,64 +1,67 @@
 package main
 
 import (
-   "bytes"
-   "github.com/89z/format/http"
+   "flag"
+   "fmt"
    "github.com/89z/mech/widevine"
-   "io"
+   "github.com/89z/rosso/http"
    "os"
-   "strings"
+   "path/filepath"
 )
+
+func main() {
+   home, err := os.UserHomeDir()
+   if err != nil {
+      panic(err)
+   }
+   var f flags
+   // a
+   flag.StringVar(&f.address, "a", "", "license address")
+   // b
+   flag.StringVar(&f.key_ID, "b", "", "key ID")
+   // c
+   f.client_ID = filepath.Join(home, "mech/client_id.bin")
+   flag.StringVar(&f.client_ID, "c", f.client_ID, "client ID")
+   // h
+   flag.StringVar(&f.header, "h", "", "header")
+   // k
+   f.private_key = filepath.Join(home, "mech/private_key.pem")
+   flag.StringVar(&f.private_key, "k", f.private_key, "private key")
+   // v
+   flag.BoolVar(&f.verbose, "v", false, "verbose")
+   flag.Parse()
+   if f.verbose {
+      widevine.Client.Log_Level = 2
+   }
+   if f.key_ID != "" {
+      contents, err := f.contents()
+      if err != nil {
+         panic(err)
+      }
+      fmt.Println(contents.Content())
+   } else {
+      flag.Usage()
+   }
+}
 
 var http_client = http.Default_Client
 
-type flags struct {
-   address string
-   client_id string
-   header string
-   key_id string
-   private_key string
-}
-
-func (f flags) contents() (widevine.Contents, error) {
-   var (
-      client widevine.Client
-      err error
-   )
-   client.ID, err = os.ReadFile(f.client_id)
+func (f flags) contents() (widevine.Containers, error) {
+   private_key, err := os.ReadFile(f.private_key)
    if err != nil {
       return nil, err
    }
-   client.Private_Key, err = os.ReadFile(f.private_key)
+   client_ID, err := os.ReadFile(f.client_ID)
    if err != nil {
       return nil, err
    }
-   client.Raw = f.key_id
-   module, err := client.Key_ID()
+   key_ID, err := widevine.Key_ID(f.key_ID)
    if err != nil {
       return nil, err
    }
-   buf, err := module.Marshal()
+   module, err := widevine.New_Module(private_key, client_ID, key_ID)
    if err != nil {
       return nil, err
    }
-   req, err := http.NewRequest(
-      "POST", f.address, bytes.NewReader(buf),
-   )
-   if err != nil {
-      return nil, err
-   }
-   key, val, ok := strings.Cut(f.header, ":")
-   if ok {
-      req.Header.Set(key, val)
-   }
-   res, err := http_client.Do(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   buf, err = io.ReadAll(res.Body)
-   if err != nil {
-      return nil, err
-   }
-   return module.Unmarshal(buf)
+   return module.Post(f)
 }
