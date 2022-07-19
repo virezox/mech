@@ -56,10 +56,9 @@ type Track struct {
 }
 
 func New_Track(id int64) (*Track, error) {
-   var buf []byte
-   buf = append(buf, "https://api-v2.soundcloud.com/tracks/"...)
-   buf = strconv.AppendInt(buf, id, 10)
-   req, err := http.NewRequest("GET", string(buf), nil)
+   b := []byte("https://api-v2.soundcloud.com/tracks/")
+   b = strconv.AppendInt(b, id, 10)
+   req, err := http.NewRequest("GET", string(b), nil)
    if err != nil {
       return nil, err
    }
@@ -107,11 +106,10 @@ func Resolve(ref string) ([]Track, error) {
 
 // We can also paginate, but for now this is good enough.
 func User_Tracks(id int64) ([]Track, error) {
-   var buf []byte
-   buf = append(buf, "https://api-v2.soundcloud.com/users/"...)
-   buf = strconv.AppendInt(buf, id, 10)
-   buf = append(buf, "/tracks"...)
-   req, err := http.NewRequest("GET", string(buf), nil)
+   b := []byte("https://api-v2.soundcloud.com/users/")
+   b = strconv.AppendInt(b, id, 10)
+   b = append(b, "/tracks"...)
+   req, err := http.NewRequest("GET", string(b), nil)
    if err != nil {
       return nil, err
    }
@@ -146,28 +144,27 @@ func (t Track) Base() string {
 }
 
 func (t Track) String() string {
-   var buf []byte
-   buf = append(buf, "ID: "...)
-   buf = strconv.AppendInt(buf, t.ID, 10)
-   buf = append(buf, "\nDate: "...)
-   buf = append(buf, t.Display_Date...)
-   buf = append(buf, "\nUser: "...)
-   buf = append(buf, t.User.Username...)
-   buf = append(buf, "\nAvatar: "...)
-   buf = append(buf, t.User.Avatar_URL...)
-   buf = append(buf, "\nTitle: "...)
-   buf = append(buf, t.Title...)
+   b := []byte("ID: ")
+   b = strconv.AppendInt(b, t.ID, 10)
+   b = append(b, "\nDate: "...)
+   b = append(b, t.Display_Date...)
+   b = append(b, "\nUser: "...)
+   b = append(b, t.User.Username...)
+   b = append(b, "\nAvatar: "...)
+   b = append(b, t.User.Avatar_URL...)
+   b = append(b, "\nTitle: "...)
+   b = append(b, t.Title...)
    if t.Artwork_URL != "" {
-      buf = append(buf, "\nArtwork: "...)
-      buf = append(buf, t.Artwork_URL...)
+      b = append(b, "\nArtwork: "...)
+      b = append(b, t.Artwork_URL...)
    }
    for _, coding := range t.Media.Transcodings {
-      buf = append(buf, "\nFormat: "...)
-      buf = append(buf, coding.Format.Protocol...)
-      buf = append(buf, "\nURL: "...)
-      buf = append(buf, coding.URL...)
+      b = append(b, "\nFormat: "...)
+      b = append(b, coding.Format.Protocol...)
+      b = append(b, "\nURL: "...)
+      b = append(b, coding.URL...)
    }
-   return string(buf)
+   return string(b)
 }
 
 func (t Track) Time() (time.Time, error) {

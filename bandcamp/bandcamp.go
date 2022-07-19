@@ -94,12 +94,11 @@ var Images = []Image{
 
 // Extension is optional.
 func (i Image) URL(art_ID int64) string {
-   var buf []byte
-   buf = append(buf, "http://f4.bcbits.com/img/a"...)
-   buf = strconv.AppendInt(buf, art_ID, 10)
-   buf = append(buf, '_')
-   buf = strconv.AppendInt(buf, i.ID, 10)
-   return string(buf)
+   b := []byte("http://f4.bcbits.com/img/a")
+   b = strconv.AppendInt(b, art_ID, 10)
+   b = append(b, '_')
+   b = strconv.AppendInt(b, i.ID, 10)
+   return string(b)
 }
 
 type Item struct {
@@ -176,8 +175,7 @@ type invalid_type struct {
 }
 
 func (i invalid_type) Error() string {
-   var buf []byte
-   buf = append(buf, "invalid type "...)
-   buf = strconv.AppendQuote(buf, i.value)
-   return string(buf)
+   b := []byte("invalid type ")
+   b = strconv.AppendQuote(b, i.value)
+   return string(b)
 }

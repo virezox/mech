@@ -39,23 +39,21 @@ type Format struct {
 }
 
 func (f Format) MarshalText() ([]byte, error) {
-   var buf []byte
-   buf = append(buf, "Quality:"...)
+   b := []byte("Quality:")
    if f.QualityLabel != "" {
-      buf = append(buf, f.QualityLabel...)
+      b = append(b, f.QualityLabel...)
    } else {
-      buf = append(buf, f.AudioQuality...)
+      b = append(b, f.AudioQuality...)
    }
-   buf = append(buf, " Bitrate:"...)
-   buf = strconv.AppendInt(buf, f.Bitrate, 10)
+   b = append(b, " Bitrate:"...)
+   b = strconv.AppendInt(b, f.Bitrate, 10)
    if f.ContentLength >= 1 { // Tq92D6wQ1mg
-      buf = append(buf, " ContentLength:"...)
-      buf = strconv.AppendInt(buf, f.ContentLength, 10)
+      b = append(b, " ContentLength:"...)
+      b = strconv.AppendInt(b, f.ContentLength, 10)
    }
-   buf = append(buf, "\n\tMimeType:"...)
-   buf = append(buf, f.MimeType...)
-   buf = append(buf, '\n')
-   return buf, nil
+   b = append(b, "\n\tMimeType:"...)
+   b = append(b, f.MimeType...)
+   return append(b, '\n'), nil
 }
 
 type Formats []Format
@@ -68,11 +66,11 @@ func (f Format) Encode(w io.Writer) error {
    pro := os.Progress_Bytes(w, f.ContentLength)
    var pos int64
    for pos < f.ContentLength {
-      buf := []byte("bytes=")
-      buf = strconv.AppendInt(buf, pos, 10)
-      buf = append(buf, '-')
-      buf = strconv.AppendInt(buf, pos+chunk-1, 10)
-      req.Header.Set("Range", string(buf))
+      b := []byte("bytes=")
+      b = strconv.AppendInt(b, pos, 10)
+      b = append(b, '-')
+      b = strconv.AppendInt(b, pos+chunk-1, 10)
+      req.Header.Set("Range", string(b))
       res, err := HTTP_Client.Level(0).Redirect(nil).Status(206).Do(req)
       if err != nil {
          return err

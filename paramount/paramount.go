@@ -20,15 +20,14 @@ const (
 var Client = http.Default_Client
 
 func (p Preview) Base() string {
-   var buf []byte
-   buf = append(buf, p.Title...)
+   b := []byte(p.Title)
    if p.Season_Number >= 1 {
-      buf = append(buf, '-')
-      buf = strconv.AppendInt(buf, p.Season_Number, 10)
-      buf = append(buf, '-')
-      buf = append(buf, p.Episode_Number...)
+      b = append(b, '-')
+      b = strconv.AppendInt(b, p.Season_Number, 10)
+      b = append(b, '-')
+      b = append(b, p.Episode_Number...)
    }
-   return string(buf)
+   return string(b)
 }
 
 type Preview struct {
@@ -62,12 +61,12 @@ func new_token() (string, error) {
    return base64.StdEncoding.EncodeToString(dst), nil
 }
 
-func pad(buf []byte) []byte {
-   b_len := aes.BlockSize - len(buf) % aes.BlockSize
-   for high := byte(b_len); b_len >= 1; b_len-- {
-      buf = append(buf, high)
+func pad(b []byte) []byte {
+   length := aes.BlockSize - len(b) % aes.BlockSize
+   for high := byte(length); length >= 1; length-- {
+      b = append(b, high)
    }
-   return buf
+   return b
 }
 
 func New_Session(guid string) (*Session, error) {
@@ -102,14 +101,13 @@ const (
 )
 
 func media(guid string) string {
-   var buf []byte
-   buf = append(buf, "http://link.theplatform.com/s/"...)
-   buf = append(buf, sid...)
-   buf = append(buf, "/media/guid/"...)
-   buf = strconv.AppendInt(buf, aid, 10)
-   buf = append(buf, '/')
-   buf = append(buf, guid...)
-   return string(buf)
+   b := []byte("http://link.theplatform.com/s/")
+   b = append(b, sid...)
+   b = append(b, "/media/guid/"...)
+   b = strconv.AppendInt(b, aid, 10)
+   b = append(b, '/')
+   b = append(b, guid...)
+   return string(b)
 }
 
 func New_Preview(guid string) (*Preview, error) {

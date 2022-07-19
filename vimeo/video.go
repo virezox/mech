@@ -87,13 +87,13 @@ func New_JSON_Web() (*JSON_Web, error) {
 }
 
 func (w JSON_Web) Video(clip *Clip) (*Video, error) {
-   buf := []byte("https://api.vimeo.com/videos/")
-   buf = strconv.AppendInt(buf, clip.ID, 10)
+   b := []byte("https://api.vimeo.com/videos/")
+   b = strconv.AppendInt(b, clip.ID, 10)
    if clip.Unlisted_Hash != "" {
-      buf = append(buf, ':')
-      buf = append(buf, clip.Unlisted_Hash...)
+      b = append(b, ':')
+      b = append(b, clip.Unlisted_Hash...)
    }
-   req, err := http.NewRequest("GET", string(buf), nil)
+   req, err := http.NewRequest("GET", string(b), nil)
    if err != nil {
       return nil, err
    }

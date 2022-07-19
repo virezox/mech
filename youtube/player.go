@@ -7,31 +7,30 @@ import (
 )
 
 func (p Player) MarshalText() ([]byte, error) {
-   var buf []byte
-   buf = append(buf, p.PlayabilityStatus.String()...)
-   buf = append(buf, "\nVideo ID: "...)
-   buf = append(buf, p.VideoDetails.VideoId...)
-   buf = append(buf, "\nDuration: "...)
-   buf = append(buf, p.Duration().String()...)
-   buf = append(buf, "\nView Count: "...)
-   buf = strconv.AppendInt(buf, p.VideoDetails.ViewCount, 10)
-   buf = append(buf, "\nAuthor: "...)
-   buf = append(buf, p.VideoDetails.Author...)
-   buf = append(buf, "\nTitle: "...)
-   buf = append(buf, p.VideoDetails.Title...)
+   b := []byte(p.PlayabilityStatus.String())
+   b = append(b, "\nVideo ID: "...)
+   b = append(b, p.VideoDetails.VideoId...)
+   b = append(b, "\nDuration: "...)
+   b = append(b, p.Duration().String()...)
+   b = append(b, "\nView Count: "...)
+   b = strconv.AppendInt(b, p.VideoDetails.ViewCount, 10)
+   b = append(b, "\nAuthor: "...)
+   b = append(b, p.VideoDetails.Author...)
+   b = append(b, "\nTitle: "...)
+   b = append(b, p.VideoDetails.Title...)
    if p.PublishDate() != "" {
-      buf = append(buf, "\nPublish Date: "...)
-      buf = append(buf, p.PublishDate()...)
+      b = append(b, "\nPublish Date: "...)
+      b = append(b, p.PublishDate()...)
    }
-   buf = append(buf, '\n')
+   b = append(b, '\n')
    for _, form := range p.StreamingData.AdaptiveFormats {
       t, err := form.MarshalText()
       if err != nil {
          return nil, err
       }
-      buf = append(buf, t...)
+      b = append(b, t...)
    }
-   return buf, nil
+   return b, nil
 }
 
 type Player struct {

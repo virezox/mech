@@ -29,12 +29,12 @@ type Source struct {
    Type string
 }
 
-func (Playback) Request_Body(b []byte) ([]byte, error) {
-   return b, nil
+func (Playback) Request_Body(buf []byte) ([]byte, error) {
+   return buf, nil
 }
 
-func (Playback) Response_Body(b []byte) ([]byte, error) {
-   return b, nil
+func (Playback) Response_Body(buf []byte) ([]byte, error) {
+   return buf, nil
 }
 
 func (d Data) Source() *Source {
@@ -76,9 +76,9 @@ func (d Data) Base() string {
 }
 
 func (a Auth) Playback(nID int64) (*Playback, error) {
-   var buf []byte
-   buf = append(buf, "https://gw.cds.amcn.com/playback-id/api/v1/playback/"...)
-   buf = strconv.AppendInt(buf, nID, 10)
+   var b []byte
+   b = append(b, "https://gw.cds.amcn.com/playback-id/api/v1/playback/"...)
+   b = strconv.AppendInt(b, nID, 10)
    var p playback_request
    p.Ad_Tags.Mode = "on-demand"
    p.Ad_Tags.URL = "!"
@@ -86,7 +86,7 @@ func (a Auth) Playback(nID int64) (*Playback, error) {
    if err != nil {
       return nil, err
    }
-   req, err := http.NewRequest("POST", string(buf), bytes.NewReader(body))
+   req, err := http.NewRequest("POST", string(b), bytes.NewReader(body))
    if err != nil {
       return nil, err
    }
