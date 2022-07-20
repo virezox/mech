@@ -22,7 +22,7 @@ func (f flags) DASH(preview *paramount.Preview) error {
       if r.MimeType != "audio/mp4" {
          return false
       }
-      if r.Role() == "decription" {
+      if r.Role() == "description" {
          return false
       }
       return true
