@@ -8,7 +8,7 @@ import (
 
 const goog_API = "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8"
 
-const android_version = "17.24.34"
+const android_version = "17.28.34"
 
 func Mobile_Web() Request {
    var r Request
