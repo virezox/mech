@@ -15,7 +15,7 @@ func (f flags) download() error {
    if err != nil {
       return err
    }
-   f.Base = page.Analytics.ConvivaAssetName
+   f.Name = page.Analytics.ConvivaAssetName
    master, err := f.HLS(video.ManifestPath)
    if err != nil {
       return err
@@ -25,7 +25,7 @@ func (f flags) download() error {
 }
 
 type flags struct {
-   bandwidth int
+   bandwidth int64
    guid int64
    mech.Stream
 }
@@ -35,7 +35,7 @@ func main() {
    // b
    flag.Int64Var(&f.guid, "b", 0, "GUID")
    // f
-   flag.IntVar(&f.bandwidth, "f", 3_000_000, "target bandwidth")
+   flag.Int64Var(&f.bandwidth, "f", 3_000_000, "target bandwidth")
    // i
    flag.BoolVar(&f.Info, "i", false, "information")
    flag.Parse()

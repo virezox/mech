@@ -13,7 +13,7 @@ func (s *Stream) HLS(ref string) (*hls.Master, error) {
       return nil, err
    }
    defer res.Body.Close()
-   s.url = res.Request.URL
+   s.base = res.Request.URL
    return hls.New_Scanner(res.Body).Master()
 }
 
@@ -36,12 +36,12 @@ func hls_get[T hls.Mixed](str Stream, items []T, index int) error {
       return nil
    }
    item := items[index]
-   file, err := os.Create(str.Base + item.Ext())
+   file, err := os.Create(str.Name + item.Ext())
    if err != nil {
       return err
    }
    defer file.Close()
-   ref, err := str.url.Parse(item.URI())
+   ref, err := str.base.Parse(item.URI())
    if err != nil {
       return err
    }
@@ -72,7 +72,7 @@ func hls_get[T hls.Mixed](str Stream, items []T, index int) error {
    }
    pro := os.Progress_Chunks(file, len(seg.URI))
    for _, raw := range seg.URI {
-      ref, err := str.url.Parse(raw)
+      ref, err := str.base.Parse(raw)
       if err != nil {
          return err
       }

@@ -76,7 +76,7 @@ func (c Cross_Site) Playback(id string) (*Playback, error) {
    return play, nil
 }
 
-func (c Content) Base() string {
+func (c Content) Name() string {
    var buf strings.Builder
    if c.Meta.MediaType == "episode" {
       buf.WriteString(c.Series.Title)

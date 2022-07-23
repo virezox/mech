@@ -139,7 +139,7 @@ func (t Track) Artwork() string {
    return strings.Replace(t.Artwork_URL, "large", "t500x500", 1)
 }
 
-func (t Track) Base() string {
+func (t Track) Name() string {
    return t.User.Username + "-" + t.Title
 }
 

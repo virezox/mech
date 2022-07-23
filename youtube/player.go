@@ -70,7 +70,7 @@ func (p Player) Time() (time.Time, error) {
    return time.Parse("2006-01-02", p.PublishDate())
 }
 
-func (p Player) Base() string {
+func (p Player) Name() string {
    var buf strings.Builder
    buf.WriteString(p.VideoDetails.Author)
    buf.WriteByte('-')

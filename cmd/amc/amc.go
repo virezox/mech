@@ -25,7 +25,7 @@ func (f flags) download() error {
       return err
    }
    data := play.Data()
-   f.Base = data.Base()
+   f.Name = data.Get_Name()
    reps, err := f.DASH(data.Source().Src)
    if err != nil {
       return err

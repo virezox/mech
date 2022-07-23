@@ -19,8 +19,8 @@ type Stream struct {
    Info bool
    Private_Key string
    Poster widevine.Poster
-   Base string
-   url *url.URL
+   Name string
+   base *url.URL
 }
 
 func (s *Stream) DASH(ref string) (dash.Representations, error) {
@@ -33,7 +33,7 @@ func (s *Stream) DASH(ref string) (dash.Representations, error) {
    if err := xml.NewDecoder(res.Body).Decode(&pres); err != nil {
       return nil, err
    }
-   s.url = res.Request.URL
+   s.base = res.Request.URL
    return pres.Representation(), nil
 }
 
@@ -48,12 +48,12 @@ func (s Stream) DASH_Get(items dash.Representations, index int) error {
       return nil
    }
    item := items[index]
-   file, err := os.Create(s.Base + item.Ext())
+   file, err := os.Create(s.Name + item.Ext())
    if err != nil {
       return err
    }
    defer file.Close()
-   ref, err := s.url.Parse(item.Initialization())
+   ref, err := item.Initialization(s.base)
    if err != nil {
       return err
    }
@@ -62,7 +62,10 @@ func (s Stream) DASH_Get(items dash.Representations, index int) error {
       return err
    }
    defer res.Body.Close()
-   media := item.Media()
+   media, err := item.Media(s.base)
+   if err != nil {
+      return err
+   }
    pro := os.Progress_Chunks(file, len(media))
    dec := mp4.New_Decrypt(pro)
    var key []byte
@@ -98,11 +101,7 @@ func (s Stream) DASH_Get(items dash.Representations, index int) error {
       }
    }
    for _, medium := range media {
-      ref, err := s.url.Parse(medium)
-      if err != nil {
-         return err
-      }
-      res, err := client.Redirect(nil).Level(0).Get(ref.String())
+      res, err := client.Redirect(nil).Level(0).Get(medium.String())
       if err != nil {
          return err
       }

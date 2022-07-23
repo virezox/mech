@@ -63,7 +63,7 @@ type Data struct {
    Sources []Source
 }
 
-func (d Data) Base() string {
+func (d Data) Get_Name() string {
    var buf strings.Builder
    buf.WriteString(d.Custom_Fields.Show)
    buf.WriteByte('-')

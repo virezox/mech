@@ -9,7 +9,7 @@ import (
 )
 
 type flags struct {
-   bandwidth int
+   bandwidth int64
    codec string
    dash bool
    id string
@@ -30,7 +30,7 @@ func main() {
    // d
    flag.BoolVar(&f.dash, "d", false, "DASH download")
    // f
-   flag.IntVar(&f.bandwidth, "f", 1920832, "video bandwidth")
+   flag.Int64Var(&f.bandwidth, "f", 1920832, "video bandwidth")
    // g
    flag.StringVar(&f.codec, "g", "mp4a", "audio codec")
    // i

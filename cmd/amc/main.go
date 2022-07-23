@@ -9,7 +9,7 @@ import (
 )
 
 type flags struct {
-   bandwidth int
+   bandwidth int64
    email string
    mech.Stream
    nid int64
@@ -31,7 +31,7 @@ func main() {
    // e
    flag.StringVar(&f.email, "e", "", "email")
    // f
-   flag.IntVar(&f.bandwidth, "f", 1_999_999, "video bandwidth")
+   flag.Int64Var(&f.bandwidth, "f", 1_999_999, "video bandwidth")
    // i
    flag.BoolVar(&f.Info, "i", false, "information")
    // k

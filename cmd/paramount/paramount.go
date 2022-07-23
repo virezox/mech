@@ -13,7 +13,7 @@ func (f flags) DASH(preview *paramount.Preview) error {
    if err != nil {
       return err
    }
-   f.Base = preview.Base()
+   f.Name = preview.Name()
    reps, err := f.Stream.DASH(paramount.DASH(f.guid))
    if err != nil {
       return err
@@ -44,7 +44,7 @@ func (f flags) DASH(preview *paramount.Preview) error {
 }
 
 func (f flags) HLS(preview *paramount.Preview) error {
-   f.Base = preview.Base()
+   f.Name = preview.Name()
    master, err := f.Stream.HLS(paramount.HLS(f.guid))
    if err != nil {
       return err

@@ -130,7 +130,7 @@ type Track struct {
    }
 }
 
-func (t Track) Base() string {
+func (t Track) Name() string {
    return t.Band_Name + "-" + t.Title
 }
 

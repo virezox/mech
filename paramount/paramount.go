@@ -19,7 +19,7 @@ const (
 
 var Client = http.Default_Client
 
-func (p Preview) Base() string {
+func (p Preview) Name() string {
    b := []byte(p.Title)
    if p.Season_Number >= 1 {
       b = append(b, '-')

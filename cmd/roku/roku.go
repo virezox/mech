@@ -15,7 +15,7 @@ func (f flags) DASH(content *roku.Content) error {
    if err != nil {
       return err
    }
-   f.Base = content.Base()
+   f.Name = content.Name()
    reps, err := f.Stream.DASH(content.DASH().URL)
    if err != nil {
       return err
@@ -36,7 +36,7 @@ func (f flags) HLS(content *roku.Content) error {
    if err != nil {
       return err
    }
-   f.Base = content.Base()
+   f.Name = content.Name()
    master, err := f.Stream.HLS(video.URL)
    if err != nil {
       return err

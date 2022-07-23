@@ -6,6 +6,19 @@ import (
    "github.com/89z/rosso/os"
 )
 
+func download(form *youtube.Format, name string) error {
+   ext, err := form.Ext()
+   if err != nil {
+      return err
+   }
+   file, err := os.Clean("", name + ext).Create()
+   if err != nil {
+      return err
+   }
+   defer file.Close()
+   return form.Encode(file)
+}
+
 func (f flags) download() error {
    play, err := f.player()
    if err != nil {
@@ -23,7 +36,7 @@ func (f flags) download() error {
       if f.audio != "" {
          form, ok := forms.Audio(f.audio)
          if ok {
-            err := download(form, play.Base())
+            err := download(form, play.Name())
             if err != nil {
                return err
             }
@@ -32,7 +45,7 @@ func (f flags) download() error {
       if f.height >= 1 {
          form, ok := forms.Video(f.height)
          if ok {
-            err := download(form, play.Base())
+            err := download(form, play.Name())
             if err != nil {
                return err
             }
@@ -73,19 +86,6 @@ func access() error {
       return err
    }
    return head.Create(home + "/mech/youtube.json")
-}
-
-func download(form *youtube.Format, base string) error {
-   ext, err := form.Ext()
-   if err != nil {
-      return err
-   }
-   file, err := os.Create(base + ext)
-   if err != nil {
-      return err
-   }
-   defer file.Close()
-   return form.Encode(file)
 }
 
 func (f flags) player() (*youtube.Player, error) {
