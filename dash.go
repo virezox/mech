@@ -53,19 +53,17 @@ func (s Stream) DASH_Get(items dash.Representations, index int) error {
       return err
    }
    defer file.Close()
-   ref, err := item.Initialization(s.base)
+   req, err := http.NewRequest("GET", item.Initialization(), nil)
    if err != nil {
       return err
    }
-   res, err := client.Redirect(nil).Get(ref.String())
+   req.URL = s.base.ResolveReference(req.URL)
+   res, err := client.Redirect(nil).Do(req)
    if err != nil {
       return err
    }
    defer res.Body.Close()
-   media, err := item.Media(s.base)
-   if err != nil {
-      return err
-   }
+   media := item.Media()
    pro := os.Progress_Chunks(file, len(media))
    dec := mp4.New_Decrypt(pro)
    var key []byte
@@ -101,7 +99,12 @@ func (s Stream) DASH_Get(items dash.Representations, index int) error {
       }
    }
    for _, medium := range media {
-      res, err := client.Redirect(nil).Level(0).Get(medium.String())
+      req, err := http.NewRequest("GET", medium, nil)
+      if err != nil {
+         return err
+      }
+      req.URL = s.base.ResolveReference(req.URL)
+      res, err := client.Redirect(nil).Level(0).Do(req)
       if err != nil {
          return err
       }
