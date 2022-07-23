@@ -5,6 +5,7 @@ import (
    "github.com/89z/rosso/hls"
    "github.com/89z/rosso/os"
    "io"
+   "net/http"
 )
 
 func (s *Stream) HLS(ref string) (*hls.Master, error) {
@@ -41,11 +42,12 @@ func hls_get[T hls.Mixed](str Stream, items []T, index int) error {
       return err
    }
    defer file.Close()
-   ref, err := str.base.Parse(item.URI())
+   req, err := http.NewRequest("GET", item.URI(), nil)
    if err != nil {
       return err
    }
-   res, err := client.Get(ref.String())
+   req.URL = str.base.ResolveReference(req.URL)
+   res, err := client.Do(req)
    if err != nil {
       return err
    }
@@ -71,12 +73,13 @@ func hls_get[T hls.Mixed](str Stream, items []T, index int) error {
       }
    }
    pro := os.Progress_Chunks(file, len(seg.URI))
-   for _, raw := range seg.URI {
-      ref, err := str.base.Parse(raw)
+   for _, ref := range seg.URI {
+      req, err := http.NewRequest("GET", ref, nil)
       if err != nil {
          return err
       }
-      res, err := client.Level(0).Redirect(nil).Get(ref.String())
+      req.URL = str.base.ResolveReference(req.URL)
+      res, err := client.Level(0).Redirect(nil).Do(req)
       if err != nil {
          return err
       }
