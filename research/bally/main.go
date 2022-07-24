@@ -4,7 +4,6 @@ import (
    "flag"
    "github.com/89z/mech/widevine"
    "github.com/89z/rosso/http"
-   "net/url"
 )
 
 var client = http.Default_Client
@@ -17,9 +16,9 @@ type flags struct {
    Private_Key string
    address string
    bandwidth int64
-   base *url.URL
    codec string
    key string
+   base string
 }
 
 func main() {
