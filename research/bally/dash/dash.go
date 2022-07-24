@@ -5,38 +5,42 @@ import (
    "strings"
 )
 
-func (r Representation) Initialization() string {
-   return r.replace_ID(r.SegmentTemplate.Initialization)
+type SegmentTemplate struct {
+   Initialization string `xml:"initialization,attr"`
+   Media string `xml:"media,attr"`
+   SegmentTimeline struct {
+      S []Segment
+   }
+   PresentationTimeOffset *int `xml:"presentationTimeOffset,attr"`
 }
 
 func (r Representation) Media() []string {
    var start int
-   if r.SegmentTemplate.StartNumber != nil {
-      start = *r.SegmentTemplate.StartNumber
-   }
    var refs []string
-   for _, seg := range r.SegmentTemplate.SegmentTimeline.S {
-      for seg.T = start; seg.R >= 0; seg.R-- {
+   for i, seg := range r.SegmentTemplate.SegmentTimeline.S {
+      if i == 0 {
+         start = seg.T
+      }
+      for seg.R >= 0 {
          ref := r.replace_ID(r.SegmentTemplate.Media)
-         if r.SegmentTemplate.StartNumber != nil {
-            ref = strings.Replace(ref, "$Number$", seg.Time(), 1)
-            seg.T++
-            start++
-         } else {
-            ref = strings.Replace(ref, "$Time$", seg.Time(), 1)
-            seg.T += seg.D
-            start += seg.D
-         }
+         ref = strings.Replace(ref, "$Time$", strconv.Itoa(start), 1)
          refs = append(refs, ref)
+         seg.R--
+         start += seg.D
       }
    }
    return refs
 }
+
 type Presentation struct {
    Period struct {
       AdaptationSet []Adaptation
       BaseURL string
    }
+}
+
+func (r Representation) Initialization() string {
+   return r.replace_ID(r.SegmentTemplate.Initialization)
 }
 
 func (r Representations) Filter(f func(Representation) bool) Representations {
@@ -128,15 +132,6 @@ type Segment struct {
 
 func (s Segment) Time() string {
    return strconv.Itoa(s.T)
-}
-
-type SegmentTemplate struct {
-   Initialization string `xml:"initialization,attr"`
-   Media string `xml:"media,attr"`
-   SegmentTimeline struct {
-      S []Segment
-   }
-   StartNumber *int `xml:"startNumber,attr"`
 }
 
 type Representations []Representation
