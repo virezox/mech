@@ -3,8 +3,8 @@ package mech
 import (
    "encoding/xml"
    "fmt"
-   "github.com/89z/mech/research/dash"
    "github.com/89z/mech/widevine"
+   "github.com/89z/rosso/dash"
    "github.com/89z/rosso/http"
    "github.com/89z/rosso/mp4"
    "github.com/89z/rosso/os"
