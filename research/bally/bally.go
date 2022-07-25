@@ -68,7 +68,7 @@ func (f flags) DASH_Get(items dash.Representations, index int, file *os.File) er
       return nil
    }
    item := items[index]
-   media := item.Media()
+   media := item.Media(&f.position)
    pro := os.Progress_Chunks(file, len(media))
    dec := mp4.New_Decrypt(pro)
    if !f.init {
@@ -90,6 +90,7 @@ func (f flags) DASH_Get(items dash.Representations, index int, file *os.File) er
       return err
    }
    for _, ref := range media {
+      fmt.Println(ref)
       req, err := http.NewRequest("GET", f.base + ref, nil)
       if err != nil {
          return err

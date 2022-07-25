@@ -1,9 +1,46 @@
 package dash
 
 import (
+   "fmt"
    "strconv"
    "strings"
 )
+
+func (r Representation) Initialization() string {
+   fmt.Println(r.SegmentTemplate.Initialization)
+   return r.replace_ID(r.SegmentTemplate.Initialization)
+}
+
+func (r Representation) Media(position *int) []string {
+   var start int
+   var refs []string
+   for i, seg := range r.SegmentTemplate.SegmentTimeline.S {
+      if i == 0 {
+         start = seg.T
+      }
+      for seg.R >= 0 {
+         ref := r.replace_ID(r.SegmentTemplate.Media)
+         ref = strings.Replace(ref, "$Time$", strconv.Itoa(start), 1)
+         seg.R--
+         if start > *position {
+            refs = append(refs, ref)
+            *position = start
+            fmt.Print("new ")
+         } else {
+            fmt.Print("old ")
+         }
+         fmt.Println(start)
+         start += seg.D
+      }
+   }
+   return refs
+}
+
+type Segment struct {
+   D int `xml:"d,attr"` // duration
+   R int `xml:"r,attr"` // repeat
+   T int `xml:"t,attr"` // time
+}
 
 type SegmentTemplate struct {
    Initialization string `xml:"initialization,attr"`
@@ -14,33 +51,11 @@ type SegmentTemplate struct {
    PresentationTimeOffset *int `xml:"presentationTimeOffset,attr"`
 }
 
-func (r Representation) Media() []string {
-   var start int
-   var refs []string
-   for i, seg := range r.SegmentTemplate.SegmentTimeline.S {
-      if i == 0 {
-         start = seg.T
-      }
-      for seg.R >= 0 {
-         ref := r.replace_ID(r.SegmentTemplate.Media)
-         ref = strings.Replace(ref, "$Time$", strconv.Itoa(start), 1)
-         refs = append(refs, ref)
-         seg.R--
-         start += seg.D
-      }
-   }
-   return refs
-}
-
 type Presentation struct {
    Period struct {
       AdaptationSet []Adaptation
       BaseURL string
    }
-}
-
-func (r Representation) Initialization() string {
-   return r.replace_ID(r.SegmentTemplate.Initialization)
 }
 
 func (r Representations) Filter(f func(Representation) bool) Representations {
@@ -122,12 +137,6 @@ func (r Representation) String() string {
       b = append(b, r.Adaptation.Role.Value...)
    }
    return string(b)
-}
-
-type Segment struct {
-   D int `xml:"d,attr"` // duration
-   R int `xml:"r,attr"` // repeat
-   T int `xml:"t,attr"` // time
 }
 
 func (s Segment) Time() string {
