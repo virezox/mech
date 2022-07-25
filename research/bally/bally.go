@@ -99,7 +99,7 @@ func (f flags) DASH_Get(items dash.Representations, index int, file *os.File, po
       if err != nil {
          return err
       }
-      res, err := client.Redirect(nil).Level(0).Do(req)
+      res, err := client.Redirect(nil).Do(req)
       if err != nil {
          return err
       }

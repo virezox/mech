@@ -6,6 +6,8 @@ import (
    "strings"
 )
 
+var verbose bool
+
 func (r Representation) Media(position *int) []string {
    var start int
    var refs []string
@@ -17,14 +19,17 @@ func (r Representation) Media(position *int) []string {
          ref := r.replace_ID(r.SegmentTemplate.Media)
          ref = strings.Replace(ref, "$Time$", strconv.Itoa(start), 1)
          seg.R--
+         var status string
          if start > *position {
             refs = append(refs, ref)
             *position = start
-            fmt.Print("new ")
+            status = "new"
          } else {
-            fmt.Print("old ")
+            status = "old"
          }
-         fmt.Println(start)
+         if verbose {
+            fmt.Println(status, start)
+         }
          start += seg.D
       }
    }
