@@ -23,7 +23,9 @@ type flags struct {
    video *os.File
    audio *os.File
    init bool
-   position int
+   
+   vpos int
+   apos int
 }
 
 func main() {

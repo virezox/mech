@@ -26,6 +26,7 @@ func (f flags) DASH() error {
       }
       defer f.video.Close()
    }
+   var i int
    for {
       res, err := client.Redirect(nil).Get(f.address)
       if err != nil {
@@ -36,28 +37,32 @@ func (f flags) DASH() error {
       if err := xml.NewDecoder(res.Body).Decode(&pre); err != nil {
          return err
       }
-      f.base = pre.Period.BaseURL
       reps := pre.Representation()
+      f.base = reps[0].BaseURL
+      fmt.Println("audio", i)
       audio := reps.Audio()
       index := audio.Index(func(a, b dash.Representation) bool {
          return strings.Contains(b.Codecs, f.codec)
       })
-      if err := f.DASH_Get(audio, index, f.audio); err != nil {
+      if err := f.DASH_Get(audio, index, f.audio, &f.apos); err != nil {
          return err
       }
+      fmt.Println("video", i)
       video := reps.Video()
-      if err := f.DASH_Get(video, video.Bandwidth(f.bandwidth), f.video); err != nil {
+      if err := f.DASH_Get(video, video.Bandwidth(f.bandwidth), f.video, &f.vpos); err != nil {
          return err
       }
       if f.Info {
          return nil
       }
       f.init = true
+      fmt.Println("Sleep")
       time.Sleep(9 * time.Second)
+      i++
    }
 }
 
-func (f flags) DASH_Get(items dash.Representations, index int, file *os.File) error {
+func (f flags) DASH_Get(items dash.Representations, index int, file *os.File, pos *int) error {
    if f.Info {
       for i, item := range items {
          if i == index {
@@ -68,7 +73,7 @@ func (f flags) DASH_Get(items dash.Representations, index int, file *os.File) er
       return nil
    }
    item := items[index]
-   media := item.Media(&f.position)
+   media := item.Media(pos)
    pro := os.Progress_Chunks(file, len(media))
    dec := mp4.New_Decrypt(pro)
    if !f.init {
@@ -90,7 +95,6 @@ func (f flags) DASH_Get(items dash.Representations, index int, file *os.File) er
       return err
    }
    for _, ref := range media {
-      fmt.Println(ref)
       req, err := http.NewRequest("GET", f.base + ref, nil)
       if err != nil {
          return err
