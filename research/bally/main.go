@@ -4,7 +4,7 @@ import (
    "flag"
    "github.com/89z/mech/widevine"
    "github.com/89z/rosso/http"
-   "os"
+   "github.com/89z/rosso/mp4"
 )
 
 var client = http.Default_Client
@@ -20,12 +20,11 @@ type flags struct {
    codec string
    key string
    base string
-   video *os.File
-   audio *os.File
    init bool
-   
    vpos int
    apos int
+   video mp4.Decrypt
+   audio mp4.Decrypt
 }
 
 func main() {

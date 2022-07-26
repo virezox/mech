@@ -6,6 +6,34 @@ import (
    "strings"
 )
 
+func (p Presentation) Representation() Representations {
+   var reps []Representation
+   for i, per := range p.Period {
+      if strings.HasPrefix(per.ID, "src") {
+         for j, ada := range per.AdaptationSet {
+            for _, rep := range ada.Representation {
+               rep.Adaptation = &p.Period[i].AdaptationSet[j]
+               if rep.Codecs == "" {
+                  rep.Codecs = ada.Codecs
+               }
+               if rep.ContentProtection == nil {
+                  rep.ContentProtection = ada.ContentProtection
+               }
+               if rep.MimeType == "" {
+                  rep.MimeType = ada.MimeType
+               }
+               if rep.SegmentTemplate == nil {
+                  rep.SegmentTemplate = ada.SegmentTemplate
+               }
+               rep.BaseURL = per.BaseURL
+               reps = append(reps, rep)
+            }
+         }
+      }
+   }
+   return reps
+}
+
 var verbose bool
 
 func (r Representation) Media(position *int) []string {
@@ -47,34 +75,6 @@ type Representation struct {
    SegmentTemplate *SegmentTemplate
    Width int64 `xml:"width,attr"`
    BaseURL string
-}
-
-func (p Presentation) Representation() Representations {
-   var reps []Representation
-   for i, per := range p.Period {
-      if strings.HasPrefix(per.ID, "src") {
-         for j, ada := range per.AdaptationSet {
-            for _, rep := range ada.Representation {
-               rep.Adaptation = &p.Period[i].AdaptationSet[j]
-               if rep.Codecs == "" {
-                  rep.Codecs = ada.Codecs
-               }
-               if rep.ContentProtection == nil {
-                  rep.ContentProtection = ada.ContentProtection
-               }
-               if rep.MimeType == "" {
-                  rep.MimeType = ada.MimeType
-               }
-               if rep.SegmentTemplate == nil {
-                  rep.SegmentTemplate = ada.SegmentTemplate
-               }
-               rep.BaseURL = per.BaseURL
-               reps = append(reps, rep)
-            }
-         }
-      }
-   }
-   return reps
 }
 
 type Presentation struct {

@@ -14,17 +14,18 @@ import (
 
 func (f flags) DASH() error {
    if !f.Info {
-      var err error
-      f.audio, err = os.Create(f.Name + ".m4a")
+      audio, err := os.Create(f.Name + ".m4a")
       if err != nil {
          return err
       }
-      defer f.audio.Close()
-      f.video, err = os.Create(f.Name + ".m4v")
+      defer audio.Close()
+      f.audio = mp4.New_Decrypt(audio)
+      video, err := os.Create(f.Name + ".m4v")
       if err != nil {
          return err
       }
-      defer f.video.Close()
+      defer video.Close()
+      f.video = mp4.New_Decrypt(video)
    }
    var i int
    for {
@@ -38,31 +39,33 @@ func (f flags) DASH() error {
          return err
       }
       reps := pre.Representation()
-      f.base = reps[0].BaseURL
-      fmt.Println("audio", i)
-      audio := reps.Audio()
-      index := audio.Index(func(a, b dash.Representation) bool {
-         return strings.Contains(b.Codecs, f.codec)
-      })
-      if err := f.DASH_Get(audio, index, f.audio, &f.apos); err != nil {
-         return err
-      }
-      fmt.Println("video", i)
-      video := reps.Video()
-      if err := f.DASH_Get(video, video.Bandwidth(f.bandwidth), f.video, &f.vpos); err != nil {
-         return err
+      if len(reps) >= 1 {
+         f.base = reps[0].BaseURL
+         fmt.Println("audio", i)
+         audio := reps.Audio()
+         index := audio.Index(func(a, b dash.Representation) bool {
+            return strings.Contains(b.Codecs, f.codec)
+         })
+         if err := f.DASH_Get(audio, index, f.audio, &f.apos); err != nil {
+            return err
+         }
+         fmt.Println("video", i)
+         video := reps.Video()
+         if err := f.DASH_Get(video, video.Bandwidth(f.bandwidth), f.video, &f.vpos); err != nil {
+            return err
+         }
       }
       if f.Info {
          return nil
       }
       f.init = true
-      fmt.Println("Sleep")
+      fmt.Println("Sleep", i)
       time.Sleep(9 * time.Second)
       i++
    }
 }
 
-func (f flags) DASH_Get(items dash.Representations, index int, file *os.File, pos *int) error {
+func (f flags) DASH_Get(items dash.Representations, index int, dec mp4.Decrypt, pos *int) error {
    if f.Info {
       for i, item := range items {
          if i == index {
@@ -73,9 +76,6 @@ func (f flags) DASH_Get(items dash.Representations, index int, file *os.File, po
       return nil
    }
    item := items[index]
-   media := item.Media(pos)
-   pro := os.Progress_Chunks(file, len(media))
-   dec := mp4.New_Decrypt(pro)
    if !f.init {
       req, err := http.NewRequest("GET", f.base + item.Initialization(), nil)
       if err != nil {
@@ -94,6 +94,7 @@ func (f flags) DASH_Get(items dash.Representations, index int, file *os.File, po
    if err != nil {
       return err
    }
+   media := item.Media(pos)
    for _, ref := range media {
       req, err := http.NewRequest("GET", f.base + ref, nil)
       if err != nil {
@@ -103,7 +104,6 @@ func (f flags) DASH_Get(items dash.Representations, index int, file *os.File, po
       if err != nil {
          return err
       }
-      pro.Add_Chunk(res.ContentLength)
       if err := dec.Segment(res.Body, key); err != nil {
          return err
       }

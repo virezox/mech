@@ -1,8 +1,9 @@
 package dash
 
 import (
-   "encoding/xml"
-   "fmt"
+   "encoding/hex"
+   "github.com/89z/rosso/mp4"
+   "github.com/89z/rosso/http"
    "os"
    "testing"
 )
@@ -50,78 +51,38 @@ var refs = []string{
    "https://live-d-02-ballysports.akamaized.net/Content/DASH_DASH/Live/channel(sinc-fs-prime-ticket-2042)/1658775954314item-01item_Segment-103173680460.m4v",
 }
 
+var client = http.Default_Client
+
 func Test_DASH(t *testing.T) {
-   file, err := os.Create(s.Name + item.Ext())
+   file, err := os.Create(".mp4")
    if err != nil {
-      return err
+      t.Fatal(err)
    }
    defer file.Close()
-   req, err := http.NewRequest("GET", item.Initialization(), nil)
+   dec := mp4.New_Decrypt(file)
+   key, err := hex.DecodeString("f4a5865c0f0f4523e0f055b66fb3b285")
    if err != nil {
-      return err
+      t.Fatal(err)
    }
-   req.URL = s.base.ResolveReference(req.URL)
-   res, err := client.Redirect(nil).Do(req)
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   media := item.Media()
-   pro := os.Progress_Chunks(file, len(media))
-   dec := mp4.New_Decrypt(pro)
-   var key []byte
-   if item.ContentProtection != nil {
-      private_key, err := os.ReadFile(s.Private_Key)
-      if err != nil {
-         return err
-      }
-      client_ID, err := os.ReadFile(s.Client_ID)
-      if err != nil {
-         return err
-      }
-      key_ID, err := widevine.Key_ID(item.ContentProtection.Default_KID)
-      if err != nil {
-         return err
-      }
-      mod, err := widevine.New_Module(private_key, client_ID, key_ID)
-      if err != nil {
-         return err
-      }
-      keys, err := mod.Post(s.Poster)
-      if err != nil {
-         return err
-      }
-      key = keys.Content().Key
-      if err := dec.Init(res.Body); err != nil {
-         return err
-      }
-   } else {
-      _, err := io.Copy(pro, res.Body)
-      if err != nil {
-         return err
-      }
-   }
-   for _, ref := range media {
+   for i, ref := range refs {
       req, err := http.NewRequest("GET", ref, nil)
       if err != nil {
-         return err
+         t.Fatal(err)
       }
-      req.URL = s.base.ResolveReference(req.URL)
-      res, err := client.Redirect(nil).Level(0).Do(req)
+      res, err := client.Redirect(nil).Do(req)
       if err != nil {
-         return err
+         t.Fatal(err)
       }
-      pro.Add_Chunk(res.ContentLength)
-      if item.ContentProtection != nil {
-         err = dec.Segment(res.Body, key)
+      if i == 0 {
+         err = dec.Init(res.Body)
       } else {
-         _, err = io.Copy(pro, res.Body)
+         err = dec.Segment(res.Body, key)
       }
       if err != nil {
-         return err
+         t.Fatal(err)
       }
       if err := res.Body.Close(); err != nil {
-         return err
+         t.Fatal(err)
       }
    }
 }
