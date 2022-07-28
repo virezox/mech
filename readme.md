@@ -12,8 +12,8 @@ Download media or send API requests
 ## Issues
 
 During this time I am trying to support myself, so I am requiring payment for
-all issues. That might change at a later date. Any issue without payment of at
-least 9 USD will be closed immediately. Payment can be made to one of:
+all issues. Any issue without payment of at least 9 USD will be closed
+immediately. Payment can be made to one of:
 
 - https://github.com/sponsors/89z
 - <https://paypal.com/donate?hosted_button_id=UEJBQQTU3VYDY>
@@ -22,6 +22,10 @@ For business opportunities, contact me:
 
 - srpen6@gmail.com
 - Discord srpen6#6983
+
+## Discord server
+
+https://discord.gg/WWq6rFb8Rf
 
 ## How to install?
 
