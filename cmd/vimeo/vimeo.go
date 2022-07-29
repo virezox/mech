@@ -2,28 +2,13 @@ package main
 
 import (
    "fmt"
-   "github.com/89z/format"
    "github.com/89z/mech/vimeo"
+   "github.com/89z/rosso/os"
+   "io"
    "net/http"
    "net/url"
-   "os"
    "path"
 )
-
-func doAuth(clip *vimeo.Clip, password string, height int, info bool) error {
-   check, err := clip.Check(password)
-   if err != nil {
-      return err
-   }
-   for _, prog := range check.Request.Files.Progressive {
-      if info {
-         fmt.Println(prog)
-      } else if prog.Height == height {
-         return download(prog.URL)
-      }
-   }
-   return nil
-}
 
 func download(address string) error {
    fmt.Println("GET", address)
@@ -41,15 +26,15 @@ func download(address string) error {
       return err
    }
    defer file.Close()
-   pro := format.NewProgress(res)
-   if _, err := file.ReadFrom(pro); err != nil {
+   pro := os.Progress_Bytes(file, res.ContentLength)
+   if _, err := io.Copy(pro, res.Body); err != nil {
       return err
    }
    return nil
 }
 
-func doAnon(clip *vimeo.Clip, height int, info bool) error {
-   web, err := vimeo.NewJsonWeb()
+func (f flags) anon(clip *vimeo.Clip) error {
+   web, err := vimeo.New_JSON_Web()
    if err != nil {
       return err
    }
@@ -57,13 +42,28 @@ func doAnon(clip *vimeo.Clip, height int, info bool) error {
    if err != nil {
       return err
    }
-   if info {
+   if f.info {
       fmt.Println(video)
    } else {
       for _, down := range video.Download {
-         if down.Height == height {
+         if down.Height == f.height {
             return download(down.Link)
          }
+      }
+   }
+   return nil
+}
+
+func (f flags) auth(clip *vimeo.Clip) error {
+   check, err := clip.Check(f.password)
+   if err != nil {
+      return err
+   }
+   for _, prog := range check.Request.Files.Progressive {
+      if f.info {
+         fmt.Println(prog)
+      } else if prog.Height == f.height {
+         return download(prog.URL)
       }
    }
    return nil

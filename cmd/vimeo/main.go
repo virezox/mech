@@ -5,38 +5,42 @@ import (
    "github.com/89z/mech/vimeo"
 )
 
+type flags struct {
+   address string
+   height int64
+   info bool
+   password string
+   verbose bool
+}
+
 func main() {
+   var f flags
    // a
-   var address string
-   flag.StringVar(&address, "a", "", "address")
+   flag.StringVar(&f.address, "a", "", "address")
    // f
-   var height int
-   flag.IntVar(&height, "f", 720, "target height")
+   flag.Int64Var(&f.height, "f", 720, "target height")
    // i
-   var info bool
-   flag.BoolVar(&info, "i", false, "info only")
+   flag.BoolVar(&f.info, "i", false, "info only")
    // p
-   var password string
-   flag.StringVar(&password, "p", "", "password")
+   flag.StringVar(&f.password, "p", "", "password")
    // v
-   var verbose bool
-   flag.BoolVar(&verbose, "v", false, "verbose")
+   flag.BoolVar(&f.verbose, "v", false, "verbose")
    flag.Parse()
-   if verbose {
-      vimeo.LogLevel = 1
+   if f.verbose {
+      vimeo.Client.Log_Level = 2
    }
-   if address != "" {
-      clip, err := vimeo.NewClip(address)
+   if f.address != "" {
+      clip, err := vimeo.New_Clip(f.address)
       if err != nil {
          panic(err)
       }
-      if password != "" {
-         err := doAuth(clip, password, height, info)
+      if f.password != "" {
+         err := f.auth(clip)
          if err != nil {
             panic(err)
          }
       } else {
-         err := doAnon(clip, height, info)
+         err := f.anon(clip)
          if err != nil {
             panic(err)
          }

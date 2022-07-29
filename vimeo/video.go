@@ -8,6 +8,24 @@ import (
    "strings"
 )
 
+func New_JSON_Web() (*JSON_Web, error) {
+   req, err := http.NewRequest("GET", "https://vimeo.com/_next/jwt", nil)
+   if err != nil {
+      return nil, err
+   }
+   req.Header.Set("X-Requested-With", "XMLHttpRequest")
+   res, err := Client.Do(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   web := new(JSON_Web)
+   if err := json.NewDecoder(res.Body).Decode(web); err != nil {
+      return nil, err
+   }
+   return web, nil
+}
+
 type Video struct {
    Name string
    User struct {
@@ -66,24 +84,6 @@ func New_Clip(reference string) (*Clip, error) {
 
 type JSON_Web struct {
    Token string
-}
-
-func New_JSON_Web() (*JSON_Web, error) {
-   req, err := http.NewRequest("GET", "https://vimeo.com/_rv/jwt", nil)
-   if err != nil {
-      return nil, err
-   }
-   req.Header.Set("X-Requested-With", "XMLHttpRequest")
-   res, err := Client.Do(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   web := new(JSON_Web)
-   if err := json.NewDecoder(res.Body).Decode(web); err != nil {
-      return nil, err
-   }
-   return web, nil
 }
 
 func (w JSON_Web) Video(clip *Clip) (*Video, error) {
