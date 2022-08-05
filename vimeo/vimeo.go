@@ -3,9 +3,7 @@ package vimeo
 import (
    "encoding/json"
    "github.com/89z/rosso/http"
-   "net/url"
    "strconv"
-   "strings"
 )
 
 func New_JSON_Web() (*JSON_Web, error) {
@@ -49,39 +47,6 @@ type Download struct {
 
 var Client = http.Default_Client
 
-type Clip struct {
-   ID int64
-   Unlisted_Hash string
-}
-
-func New_Clip(reference string) (*Clip, error) {
-   ref, err := url.Parse(reference)
-   if err != nil {
-      return nil, err
-   }
-   fields := strings.FieldsFunc(ref.Path, func(r rune) bool {
-      return r == '/'
-   })
-   var clip Clip
-   for _, field := range fields {
-      if clip.ID >= 1 {
-         clip.Unlisted_Hash = field
-      } else if field != "video" {
-         clip.ID, err = strconv.ParseInt(field, 10, 64)
-         if err != nil {
-            return nil, err
-         }
-      }
-   }
-   for _, key := range []string{"h", "unlisted_hash"} {
-      hash := ref.Query().Get(key)
-      if hash != "" {
-         clip.Unlisted_Hash = hash
-      }
-   }
-   return &clip, nil
-}
-
 type JSON_Web struct {
    Token string
 }
@@ -109,4 +74,36 @@ func (w JSON_Web) Video(clip *Clip) (*Video, error) {
       return nil, err
    }
    return vid, nil
+}
+
+func (p Progressive) String() string {
+   b := []byte("Width:")
+   b = strconv.AppendInt(b, p.Width, 10)
+   b = append(b, " Height:"...)
+   b = strconv.AppendInt(b, p.Height, 10)
+   b = append(b, " FPS:"...)
+   b = strconv.AppendInt(b, p.FPS, 10)
+   return string(b)
+}
+
+type Check struct {
+   Request struct {
+      Files struct {
+         Progressive []Progressive
+      }
+   }
+}
+
+type Progressive struct {
+   Width int64
+   Height int64
+   FPS int64
+   URL string
+}
+
+func (p Progressive) Height_Distance(v int64) int64 {
+   if p.Height > v {
+      return p.Height - v
+   }
+   return v - p.Height
 }
