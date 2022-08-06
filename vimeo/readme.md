@@ -5,6 +5,8 @@
 - https://github.com/httptoolkit/frida-android-unpinning
 - https://play.google.com/store/apps/details?id=com.vimeo.android.videoapp
 
+Requires SDK version 26
+
 ## Images
 
 https://stackoverflow.com/questions/1361149
