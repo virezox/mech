@@ -12,3 +12,9 @@ authorization: Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6ImQ2YmZlZmMzNGIyNTdhYTE4Y2E2ND
 ~~~
 
 how to get authorization? Or, can we just use current API for this stuff?
+
+~~~
+GET /videos/734070695:6c6748c562?fields=duration,download,name,pictures,release_time,user HTTP/1.1
+Host: api.vimeo.com
+Authorization: JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NTk3OTc0NjAsInVzZXJfaWQiOm51bGwsImFwcF9pZCI6NTg0NzksInNjb3BlcyI6InB1YmxpYyIsInRlYW1fdXNlcl9pZCI6bnVsbH0.m-iKGfBYV08KHM55Q9yG_AwYREfztzlDe9bN5zf4ELo
+~~~
