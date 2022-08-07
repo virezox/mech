@@ -1,5 +1,19 @@
 # Vimeo
 
+If we use the VHX API, we get these videos:
+
+~~~
+https://api.vhx.tv/videos/28599/files?codec=h264&format=mp4&quality=360p
+https://api.vhx.tv/videos/28599/files?codec=h264&format=mp4&quality=540p
+https://api.vhx.tv/videos/28599/files?codec=h264&format=mp4&quality=720p
+https://api.vhx.tv/videos/28599/files?codec=h264&format=m3u8&quality=adaptive
+https://api.vhx.tv/videos/28599/files?codec=h264&format=mpd&quality=adaptive
+~~~
+
+Is 720p the highest?
+
+## HTML
+
 pass:
 
 ~~~

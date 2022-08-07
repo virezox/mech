@@ -7,9 +7,10 @@ import (
 )
 
 var tests = []string{
-   "https://embed.vhx.tv/subscriptions/28599?vimeo=1",
-   "https://embed.vhx.tv/videos/1264265?vimeo=1",
-   "https://embed.vhx.tv/videos/28599?vimeo=1",
+   // 1080p
+   "http://embed.vhx.tv/videos/17901?vimeo=1",
+   // 1080p
+   "http://embed.vhx.tv/subscriptions/17901?vimeo=1",
 }
 
 func Test_Embed(t *testing.T) {

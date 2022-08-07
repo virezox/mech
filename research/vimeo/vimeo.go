@@ -9,6 +9,9 @@ import (
 var Client = http.Default_Client
 
 type Embed struct {
+   API_Data struct {
+      API_Token string
+   }
    Config_URL string
 }
 
