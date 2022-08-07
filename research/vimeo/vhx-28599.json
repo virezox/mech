@@ -1,49 +1,242 @@
 {
-  "api_data": {
-    "api_host": "https://api.vhx.tv",
-    "api_token": "eyJhbGciOiJSUzI1NiIsImtpZCI6ImQ2YmZlZmMzNGIyNTdhYTE4Y2E2NDUzNDE2ZTlmZmRjNjk4MDAxMDdhZTQ2ZWJhODg0YTU2ZDBjOGQ4NTYzMzgifQ.eyJhcHBfaWQiOjI3LCJleHAiOjE2NTk4MzkzNTEsIm5vbmNlIjoiZDFmZmRjZjg3NmEyY2JlZiIsInNjb3BlcyI6W10sInNlc3Npb25faWQiOiJnTGhQUHJVSDZFVmJIYTAzTTAxK0x3PT0ifQ.IngDMeNFi6VJudYJCOpx06-zNAMOzhqlsXBf0TRS85WOcwa5Y5A2BXsv2yCfnjJmgpbnNTyJHXpDu2gboicDwWN7D8BkApfFXqNJnjyyjxdpTA-nbU1Zfc3cSjuOpWp6CgSSzOSoEMgXseBwKRAmisL-1BxPOJ-dRuBHDAw7WLtacxpH0_r5a15rkQFkNly8tizHrwbOYCI_Y6qY5wpxlWo75gUafIsddxQWLh8jE7epoz33t5vDVWxflASCfzTyDBoZ3ONcORFV1_94kbWILkf5nD_H3GO9wADZU7LfAUCRITOgFh0LsKYoapqCzWcpYFKzRG9NCLPLacG_jYK767pVgnIgU8sd-AbRJsjyKupCEzxqEI0CbRJybn3RHe1rk3-gq3gLERsvpn9wYUsZpvXwh7Zzz4H-SnRzjCWAFbzIXeo8TZCVitVpwha5nfArnZL-BsNxb2mtryWoo5MyEhwSepF91gH-zr5-K1nTG04qWRMen9HNLXadqQLDb5FEN3WFQmBjtpajgev09cYTF-Svq1vIBFIlodLqWp7mY-UDVBQ0uF3i2X3wtWAPZzPglMiOqPZKAHIwq-o2f4qjDB9cPU2d4z_01x-7QeZiuqS3_pPjLoAo3cz0pP7L7lspTKJE_NN7E-dARuVD8Yu8gQJUh64dFC8jfQm-V2RxiY4",
-    "user_auth_token": {
-      "session": "BAh7CEkiD3Nlc3Npb25faWQGOgZFVEkiJTliODE5YjhiNjU1NjIzZjhjNDE4NDYxYmUyMGExYjM2BjsAVEkiEF9jc3JmX3Rva2VuBjsARkkiMTh6WUNidTBVYTM0d0Z3REtDZWdlYVBiU25OYTdVT1NUYW9ySjJSby91R0k9BjsARkkiDnJldHVybl90bwY7AEZJInxodHRwczovL3d3dy52aHgudHYvYWN0aXZhdGUvY2xvdWRzP2NsaWVudF9pZD04NWM4OWUxZjVhMzg2YjU0ZGJhZDI5YTYwYmUwNGQ2NGI0NWRmZWI2ZmU3MTBmNDA4ZTU1YjBjNmYxZGVkZGRjJmNvZGU9RkhDRgY7AFQ=--fe397db8e7d4e1e8f13d99b1b211c11878d4f95f"
+  "_embedded": {
+    "files": [
+      {
+        "_links": {
+          "self": {
+            "href": "https://api.vhx.tv/videos/28599/files?codec=h264&format=m3u8&quality=adaptive"
+          },
+          "video": {
+            "href": "https://api.vhx.tv/videos/28599"
+          },
+          "site": {
+            "href": "https://api.vhx.tv/sites/12189"
+          }
+        },
+        "size": {
+          "bytes": 0,
+          "formatted": "0 Bytes"
+        },
+        "quality": "adaptive",
+        "format": "m3u8",
+        "method": "hls",
+        "codec": "h264",
+        "mime_type": "application/x-mpegURL",
+        "created_at": "2015-06-17T18:33:41Z",
+        "updated_at": "2019-03-15T18:32:43Z",
+        "id": null
+      },
+      {
+        "_links": {
+          "self": {
+            "href": "https://api.vhx.tv/videos/28599/files?codec=h264&format=mpd&quality=adaptive"
+          },
+          "video": {
+            "href": "https://api.vhx.tv/videos/28599"
+          },
+          "site": {
+            "href": "https://api.vhx.tv/sites/12189"
+          }
+        },
+        "size": {
+          "bytes": 0,
+          "formatted": "0 Bytes"
+        },
+        "quality": "adaptive",
+        "format": "mpd",
+        "method": "dash",
+        "codec": "h264",
+        "mime_type": "application/dash+xml",
+        "created_at": "2015-06-17T18:33:41Z",
+        "updated_at": "2019-03-15T18:32:43Z",
+        "id": null
+      },
+      {
+        "_links": {
+          "self": {
+            "href": "https://api.vhx.tv/videos/28599/files?codec=h264&format=mp4&quality=720p"
+          },
+          "video": {
+            "href": "https://api.vhx.tv/videos/28599"
+          },
+          "site": {
+            "href": "https://api.vhx.tv/sites/12189"
+          }
+        },
+        "size": {
+          "bytes": 42672517,
+          "formatted": "40.7 MB"
+        },
+        "quality": "720p",
+        "format": "mp4",
+        "method": "progressive",
+        "codec": "h264",
+        "mime_type": "video/mp4",
+        "created_at": "2019-03-13T00:30:57Z",
+        "updated_at": "2019-03-15T18:32:43Z",
+        "id": 1056597
+      },
+      {
+        "_links": {
+          "self": {
+            "href": "https://api.vhx.tv/videos/28599/files?codec=h264&format=mp4&quality=540p"
+          },
+          "video": {
+            "href": "https://api.vhx.tv/videos/28599"
+          },
+          "site": {
+            "href": "https://api.vhx.tv/sites/12189"
+          }
+        },
+        "size": {
+          "bytes": 28268647,
+          "formatted": "27 MB"
+        },
+        "quality": "540p",
+        "format": "mp4",
+        "method": "progressive",
+        "codec": "h264",
+        "mime_type": "video/mp4",
+        "created_at": "2019-03-13T00:30:57Z",
+        "updated_at": "2019-03-15T18:26:31Z",
+        "id": 1056595
+      },
+      {
+        "_links": {
+          "self": {
+            "href": "https://api.vhx.tv/videos/28599/files?codec=h264&format=mp4&quality=360p"
+          },
+          "video": {
+            "href": "https://api.vhx.tv/videos/28599"
+          },
+          "site": {
+            "href": "https://api.vhx.tv/sites/12189"
+          }
+        },
+        "size": {
+          "bytes": 14030000,
+          "formatted": "13.4 MB"
+        },
+        "quality": "360p",
+        "format": "mp4",
+        "method": "progressive",
+        "codec": "h264",
+        "mime_type": "video/mp4",
+        "created_at": "2019-03-13T00:30:57Z",
+        "updated_at": "2019-03-15T18:08:27Z",
+        "id": 1056596
+      }
+    ],
+    "site": {
+      "_links": {
+        "self": {
+          "href": "https://api.vhx.tv/sites/12189"
+        },
+        "home_page": {
+          "href": "http://karaoke.vhx.tv"
+        }
+      },
+      "id": 12189,
+      "subdomain": "karaoke",
+      "color": "#4467a1",
+      "twitter_name": "TheKaraokeCloud",
+      "created_at": "2015-06-02T13:45:19Z",
+      "updated_at": "2022-04-20T04:05:54Z"
+    },
+    "subtitles": []
+  },
+  "_links": {
+    "comments": {
+      "href": "https://api.vhx.tv/comments?video=https%3A%2F%2Fapi.vhx.tv%2Fvideos%2F28599"
+    },
+    "files": {
+      "href": "https://api.vhx.tv/videos/28599/files"
+    },
+    "self": {
+      "href": "https://api.vhx.tv/videos/28599"
+    },
+    "site": {
+      "href": "https://api.vhx.tv/sites/12189"
+    },
+    "video_page": {
+      "href": "https://karaoke.vhx.tv/videos/traditional-christmas-we-three-kings"
     }
   },
-  "buy_button": {
-    "label": null,
-    "url": null
+  "advertising": null,
+  "capabilities": [
+    "inline_resolution_data",
+    "skyfire_delivery"
+  ],
+  "created_at": "2015-06-17T18:33:41Z",
+  "description": null,
+  "short_description": null,
+  "drm": null,
+  "duration": {
+    "seconds": 0,
+    "formatted": "00:00:00"
   },
-  "collection": {
-    "id": null
+  "id": 28599,
+  "is_commenting_enabled": true,
+  "site_comments_optin": 1,
+  "is_free": true,
+  "metadata": {
+    "media_id": "C03100-C"
   },
-  "product": {
-    "id": null
+  "name": "Traditional Christmas - We Three Kings",
+  "status": "complete",
+  "thumbnail": {
+    "small": "https://vhx.imgix.net/karaoke/thumbnails3/C03100-T.jpg?auto=format%2Ccompress&fit=crop&h=135&q=20&w=240",
+    "medium": "https://vhx.imgix.net/karaoke/thumbnails3/C03100-T.jpg?auto=format%2Ccompress&fit=crop&h=360&q=70&w=640",
+    "large": "https://vhx.imgix.net/karaoke/thumbnails3/C03100-T.jpg?auto=format%2Ccompress&fit=crop&h=720&q=75&w=1280",
+    "source": "https://vhx.imgix.net/karaoke/thumbnails3/C03100-T.jpg",
+    "blurred": "https://vhx.imgix.net/karaoke/thumbnails3/C03100-T.jpg?blur=180"
   },
-  "redirect_button": {
-    "label": null,
-    "url": null
+  "title": "Traditional Christmas - We Three Kings",
+  "tracks": {
+    "subtitles": []
   },
-  "site": {
-    "id": 12189,
-    "subdomain": "karaoke",
-    "twitter_name": "TheKaraokeCloud"
+  "type": "video",
+  "updated_at": "2019-03-15T18:32:43Z",
+  "plans": [
+    "public",
+    "standard"
+  ],
+  "geo_available": "",
+  "geo_unavailable": "",
+  "time_available": null,
+  "time_unavailable": null,
+  "is_available": true,
+  "live_video": false,
+  "live_status": "pending",
+  "scheduled_at": null,
+  "slido_link": null,
+  "url": "traditional-christmas-we-three-kings",
+  "product_ids": [
+    8388
+  ],
+  "canonical_collection": null,
+  "canonical_collection_id": null,
+  "use_vimeo_player": true,
+  "additional_images": {
+    "aspect_ratio_1_1": {
+      "small": "https://vhx.imgix.net/karaoke/thumbnails3/C03100-T.jpg?blur=500&fill=blur&fit=fill&h=240&mark-align=middle%2Ccenter&mark-w=0.9&mark=https%3A%2F%2Fvhx.imgix.net%2Fkaraoke%2Fthumbnails3%2FC03100-T.jpg%3Fauto%3Dformat%252Ccompress%26fit%3Dcrop%26h%3D135%26q%3D20%26w%3D240&w=240",
+      "medium": "https://vhx.imgix.net/karaoke/thumbnails3/C03100-T.jpg?blur=500&fill=blur&fit=fill&h=640&mark-align=middle%2Ccenter&mark-w=0.9&mark=https%3A%2F%2Fvhx.imgix.net%2Fkaraoke%2Fthumbnails3%2FC03100-T.jpg%3Fauto%3Dformat%252Ccompress%26fit%3Dcrop%26h%3D360%26q%3D70%26w%3D640&w=640",
+      "large": "https://vhx.imgix.net/karaoke/thumbnails3/C03100-T.jpg?blur=500&fill=blur&fit=fill&h=1280&mark-align=middle%2Ccenter&mark-w=0.9&mark=https%3A%2F%2Fvhx.imgix.net%2Fkaraoke%2Fthumbnails3%2FC03100-T.jpg%3Fauto%3Dformat%252Ccompress%26fit%3Dcrop%26h%3D720%26q%3D75%26w%3D1280&w=1280",
+      "blurred": "https://vhx.imgix.net/karaoke/thumbnails3/C03100-T.jpg?blur=180",
+      "source": "https://vhx.imgix.net/karaoke/thumbnails3/C03100-T.jpg"
+    },
+    "aspect_ratio_2_3": {
+      "small": "https://vhx.imgix.net/karaoke/thumbnails3/C03100-T.jpg?blur=500&fill=blur&fit=fill&h=360&mark-align=middle%2Ccenter&mark-w=0.9&mark=https%3A%2F%2Fvhx.imgix.net%2Fkaraoke%2Fthumbnails3%2FC03100-T.jpg%3Fauto%3Dformat%252Ccompress%26fit%3Dcrop%26h%3D135%26q%3D20%26w%3D240&w=240",
+      "medium": "https://vhx.imgix.net/karaoke/thumbnails3/C03100-T.jpg?blur=500&fill=blur&fit=fill&h=960&mark-align=middle%2Ccenter&mark-w=0.9&mark=https%3A%2F%2Fvhx.imgix.net%2Fkaraoke%2Fthumbnails3%2FC03100-T.jpg%3Fauto%3Dformat%252Ccompress%26fit%3Dcrop%26h%3D360%26q%3D70%26w%3D640&w=640",
+      "large": "https://vhx.imgix.net/karaoke/thumbnails3/C03100-T.jpg?blur=500&fill=blur&fit=fill&h=1920&mark-align=middle%2Ccenter&mark-w=0.9&mark=https%3A%2F%2Fvhx.imgix.net%2Fkaraoke%2Fthumbnails3%2FC03100-T.jpg%3Fauto%3Dformat%252Ccompress%26fit%3Dcrop%26h%3D720%26q%3D75%26w%3D1280&w=1280",
+      "blurred": "https://vhx.imgix.net/karaoke/thumbnails3/C03100-T.jpg?blur=180",
+      "source": "https://vhx.imgix.net/karaoke/thumbnails3/C03100-T.jpg"
+    },
+    "aspect_ratio_16_6": null,
+    "aspect_ratio_16_14": null
   },
-  "video": {
-    "duration": 0,
-    "id": 28599,
-    "is_trailer": false,
-    "title": "Traditional Christmas - We Three Kings",
-    "url": "https://karaoke.vhx.tv/videos/traditional-christmas-we-three-kings",
-    "is_live_video": false,
-    "live_event_id": null
-  },
-  "config_url": "https://player.vimeo.com/video/323329898/config?color=22b9b0&speed=1&token=eyJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2NTk4MzQ0NjIsImV4cCI6MTY1OTgzNzE2MiwiY2xpcF9pZCI6MzIzMzI5ODk4LCJkcm0iOmZhbHNlfQ.eSXM1ik7heEI0RTSoOoh7Kuol8QhUByEgamKaXgnkh4&trick_play=1",
-  "google_cast_app_id": "BA42D416",
-  "hide_chrome": null,
-  "initial_time": null,
-  "js_api_enabled": null,
-  "locale": "en",
-  "show_share_actions": null,
-  "user": {
-    "id": null,
-    "email": null
-  },
-  "analytics_url": "https://collector.vhx.tv/events.gif"
+  "live_event_id": null,
+  "arena_chat_id": null,
+  "arena_chat_position": null,
+  "media_type": null
 }
