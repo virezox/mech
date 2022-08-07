@@ -69,6 +69,7 @@ func (c Clip) Check(password string) (*Check, error) {
    }
    return check, nil
 }
+
 func New_JSON_Web() (*JSON_Web, error) {
    req, err := http.NewRequest("GET", "https://vimeo.com/_next/jwt", nil)
    if err != nil {
@@ -162,11 +163,4 @@ type Progressive struct {
    Height int64
    FPS int64
    URL string
-}
-
-func (p Progressive) Height_Distance(v int64) int64 {
-   if p.Height > v {
-      return p.Height - v
-   }
-   return v - p.Height
 }
