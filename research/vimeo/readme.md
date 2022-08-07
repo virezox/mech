@@ -3,11 +3,11 @@
 If we use the VHX API, we get these videos:
 
 ~~~
-https://api.vhx.tv/videos/28599/files?codec=h264&format=mp4&quality=360p
-https://api.vhx.tv/videos/28599/files?codec=h264&format=mp4&quality=540p
-https://api.vhx.tv/videos/28599/files?codec=h264&format=mp4&quality=720p
-https://api.vhx.tv/videos/28599/files?codec=h264&format=m3u8&quality=adaptive
-https://api.vhx.tv/videos/28599/files?codec=h264&format=mpd&quality=adaptive
+https://api.vhx.tv/videos/17901/files?codec=h264&format=mp4&quality=360p
+https://api.vhx.tv/videos/17901/files?codec=h264&format=mp4&quality=540p
+https://api.vhx.tv/videos/17901/files?codec=h264&format=mp4&quality=720p
+https://api.vhx.tv/videos/17901/files?codec=h264&format=m3u8&quality=adaptive
+https://api.vhx.tv/videos/17901/files?codec=h264&format=mpd&quality=adaptive
 ~~~
 
 Is 720p the highest?
@@ -17,16 +17,18 @@ Is 720p the highest?
 pass:
 
 ~~~
-GET /videos/1264265?vimeo=1 HTTP/1.1
+GET /videos/17901?vimeo=1 HTTP/1.1
 Host: embed.vhx.tv
 user-agent: curl/7.78.0
 accept: */*
 
-GET /videos/1264265 HTTP/1.1
+GET /videos/17901 HTTP/1.1
 Host: api.vhx.tv
 authorization: Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6ImQ2YmZlZmMzNGIyNTdhYTE4Y2E...
 
-HTTP/2.0 200 OK
+GET /products/17901 HTTP/1.1
+Host: api.vhx.tv
+authorization: Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6ImQ2YmZlZmMzNGIyNTdhYTE4Y2E...
 ~~~
 
 JWT fails:
@@ -36,7 +38,7 @@ GET /_next/jwt HTTP/1.1
 Host: vimeo.com
 X-Requested-With: XMLHttpRequest
 
-GET /videos/1264265 HTTP/1.1
+GET /videos/17901 HTTP/1.1
 Host: api.vhx.tv
 authorization: JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NTk4MjY5O...
 
@@ -50,7 +52,7 @@ GET /_next/jwt HTTP/1.1
 Host: vimeo.com
 X-Requested-With: XMLHttpRequest
 
-GET /videos/1264265?fields=duration,download,name,pictures,release_time,user HTTP/1.1
+GET /videos/17901?fields=duration,download,name,pictures,release_time,user HTTP/1.1
 Host: api.vimeo.com
 Authorization: JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NTk4MjcxN...
 
@@ -75,7 +77,7 @@ accept-encoding: identity
   "scope": "read write"
 }
 
-GET https://api.vhx.tv/videos/1264265 HTTP/2.0
+GET https://api.vhx.tv/videos/17901 HTTP/2.0
 user-agent: Moonflix/7.206.2(Google Android SDK built for x86, Android 7.0 (API 24))
 authorization: Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6ImQ2YmZlZmMzNGIyNTdhYTE4Y2E...
 x-ott-agent: android site/40903 android-app/7.206.1
@@ -103,7 +105,7 @@ accept-encoding: identity
   "scope": "public"
 }
 
-GET https://api.vhx.tv/videos/1264265 HTTP/2.0
+GET https://api.vhx.tv/videos/17901 HTTP/2.0
 user-agent: Moonflix/7.206.2(Google Android SDK built for x86, Android 7.0 (API 24))
 authorization: Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6ImQ2YmZlZmMzNGIyNTdhYTE4Y2E...
 x-ott-agent: android site/40903 android-app/7.206.1

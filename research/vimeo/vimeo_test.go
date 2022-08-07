@@ -8,8 +8,10 @@ import (
 
 var tests = []string{
    // 1080p
+   // Villa Touma - clip #1
    "http://embed.vhx.tv/videos/17901?vimeo=1",
    // 1080p
+   // Now That You're Married Trailer
    "http://embed.vhx.tv/subscriptions/17901?vimeo=1",
 }
 
