@@ -1,5 +1,18 @@
 # Vimeo
 
+~~~
+embed.vhx.tv/videos/17901?vimeo=1
+embed-vhx-17901.json
+
+api.vhx.tv/videos/17901
+api-vhx-17901.json
+
+player.vimeo.com/video/322402891/config
+player-vimeo-322402891.json
+~~~
+
+## HTML
+
 pass:
 
 ~~~

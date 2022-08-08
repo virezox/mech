@@ -1,0 +1,47 @@
+{
+  "api_data": {
+    "api_host": "https://api.vhx.tv",
+    "api_token": "eyJhbGciOiJSUzI1NiIsImtpZCI6ImQ2YmZlZmMzNGIyNTdhYTE4Y2E2NDUzNDE2ZTlmZmRjNjk4MDAxMDdhZTQ2ZWJhODg0YTU2ZDBjOGQ4NTYzMzgifQ.eyJhcHBfaWQiOjI3LCJleHAiOjE2NTk5MjU0NDAsIm5vbmNlIjoiNjc0OWExMjVjMzRjNzJiZCIsInNjb3BlcyI6W10sInNlc3Npb25faWQiOiJsK09rem9HaVowUFdlWHFpUzRKclp3PT0ifQ.h6z92-S1fMSjVylshZWztzDyMN6xWKXIHVpMu5FvBelHTdL1_v9xQVG9-OXKXkZxIhr8PppuefCp62yvfSgLNwZMC9lKtckX8P7fHlcTB1P8TLzcS4yxfiGORjj-08Nmkku1HCeVGCORG2XgHHMLVjU2tANT7IB50JjBMhxHPIdDnSEYQvwZGduSf-wg8ocOY-EFYiy1LVBtjaUnQ44WeZ33PkGYo1xnYW9oCSBIjRDsZ_ZvLhPHW2mkfgkjbO1WZk3DgnuNqkHJGpanImhdbf-bT38TvGuNlVHCZd0LWjiWecGLtHQW8SZTdboc-3es3U7eanDCAS8GDL56M5VZZdPpYM2PO3E6Np8QlzlZ_1UO0Qax8J61x1IIZal8-I-ZbJbcZnGNCnxNuELJIiKTrDAC8HwdSa0ePsE91UXBWT83ZTt52K5fex0x_Ud0AAf29f7DWeh4cTzD0WTbJb4cHib3o4-C36tgcpJ4L-lZ5jY1RIzVBZFhjBA2m8RgcKMOOKlgRjida41ZeOGF6ixIAHhBe7y0V7yVY5P9LgRXuxQQBPlB_jj7ZcvKGDMu03tsjK-WuNCMAM5Aq0I9-3f4DG-7nm0P2WOWcEUXKu6q9iyucu3Xw7fzdloiTNzZBAeDhixikRMGpUXQ8yVRXm8BwPdGzjHojFL5L3If3r1aznU",
+    "user_auth_token": {}
+  },
+  "buy_button": {
+    "label": null,
+    "url": null
+  },
+  "collection": {
+    "id": null
+  },
+  "product": {
+    "id": null
+  },
+  "redirect_button": {
+    "label": null,
+    "url": null
+  },
+  "site": {
+    "id": 9901,
+    "subdomain": "villatouma",
+    "twitter_name": null
+  },
+  "video": {
+    "duration": 148,
+    "id": 17901,
+    "is_trailer": false,
+    "title": "Villa Touma - clip #1",
+    "url": "https://villatouma.vhx.tv/videos/villa-touma-clip-1",
+    "is_live_video": false,
+    "live_event_id": null
+  },
+  "config_url": "https://player.vimeo.com/video/322402891/config?color=22b9b0&speed=1&token=eyJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2NTk5MTgzOTIsImV4cCI6MTY1OTkxODQ1MiwiY2xpcF9pZCI6MzIyNDAyODkxLCJkcm0iOmZhbHNlfQ.fMVNlu1sgqEf2wogrOcmKldfzmaZd5ZcnhhyCocwxiQ&trick_play=1",
+  "google_cast_app_id": "BA42D416",
+  "hide_chrome": null,
+  "initial_time": null,
+  "js_api_enabled": null,
+  "locale": "en",
+  "show_share_actions": null,
+  "user": {
+    "id": null,
+    "email": null
+  },
+  "analytics_url": "https://collector.vhx.tv/events.gif"
+}

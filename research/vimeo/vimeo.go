@@ -13,6 +13,9 @@ type Embed struct {
       API_Token string
    }
    Config_URL string
+   Video struct {
+      ID int64
+   }
 }
 
 func New_Embed(ref string) (*Embed, error) {
