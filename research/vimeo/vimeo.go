@@ -4,19 +4,71 @@ import (
    "github.com/89z/rosso/http"
    "github.com/89z/rosso/json"
    "io"
+   "strconv"
 )
 
-var Client = http.Default_Client
-
-type Embed struct {
-   API_Data struct {
-      API_Token string
+func (c Config) String() string {
+   b := []byte("ID: ")
+   b = strconv.AppendInt(b, c.Video.ID, 10)
+   b = append(b, "\nTitle: "...)
+   b = append(b, c.Video.Title...)
+   b = append(b, "\nDate: "...)
+   b = append(b, c.SEO.Upload_Date...)
+   for _, pro := range c.Request.Files.Progressive {
+      b = append(b, '\n')
+      b = append(b, pro.String()...)
    }
-   Config_URL string
+   return string(b)
+}
+
+type Config struct {
    Video struct {
       ID int64
+      Title string
+   }
+   SEO struct {
+      Upload_Date string
+      Thumbnail string
+   }
+   Request struct {
+      Files struct {
+         Progressive []Progressive
+      }
    }
 }
+
+func (p Progressive) String() string {
+   b := []byte("Width:")
+   b = strconv.AppendInt(b, p.Width, 10)
+   b = append(b, " Height:"...)
+   b = strconv.AppendInt(b, p.Height, 10)
+   return string(b)
+}
+
+type Progressive struct {
+   Width int64
+   Height int64
+   URL string
+}
+
+func (e Embed) Config() (*Config, error) {
+   res, err := Client.Get(e.Config_URL)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   con := new(Config)
+   if err := json.NewDecoder(res.Body).Decode(con); err != nil {
+      return nil, err
+   }
+   return con, nil
+}
+
+type Embed struct {
+   Config_URL string
+}
+
+var Client = http.Default_Client
 
 func New_Embed(ref string) (*Embed, error) {
    res, err := Client.Get(ref)

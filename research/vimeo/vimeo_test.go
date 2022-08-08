@@ -7,12 +7,8 @@ import (
 )
 
 var tests = []string{
-   // 1080p
-   // Villa Touma - clip #1
-   "http://embed.vhx.tv/videos/17901?vimeo=1",
-   // 1080p
-   // Now That You're Married Trailer
    "http://embed.vhx.tv/subscriptions/17901?vimeo=1",
+   "http://embed.vhx.tv/videos/17901?vimeo=1",
 }
 
 func Test_Embed(t *testing.T) {
@@ -21,7 +17,11 @@ func Test_Embed(t *testing.T) {
       if err != nil {
          t.Fatal(err)
       }
-      fmt.Printf("%+v\n", emb)
+      con, err := emb.Config()
+      if err != nil {
+         t.Fatal(err)
+      }
+      fmt.Println(con)
       time.Sleep(time.Second)
    }
 }
