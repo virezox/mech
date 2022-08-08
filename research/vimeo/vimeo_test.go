@@ -25,7 +25,3 @@ func Test_Embed(t *testing.T) {
       time.Sleep(time.Second)
    }
 }
-
-videos-17901.json
-
-subscriptions-17901.json
