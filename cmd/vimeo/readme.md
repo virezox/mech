@@ -1,11 +1,8 @@
 # Vimeo
 
 ~~~
-go run . -a vimeo.com/477957994/2282452868 -i
-go run . -a player.vimeo.com/video/412573977?h=f7f2d6fcb7 -p butter
-
-go run . -a https://player.vimeo.com/video/734070695?h=6c6748c562
+go run . -a https://vimeo.com/534685752 -i
+go run . -a https://vimeo.com/477957994/2282452868 -i
+go run . -a https://embed.vhx.tv/videos/18432?vimeo=1 -i
+go run . -a https://embed.vhx.tv/subscriptions/18432?vimeo=1 -i
 ~~~
-
-- https://github.com/ytdl-org/youtube-dl/issues/30622
-- https://vimeo.com/660408476

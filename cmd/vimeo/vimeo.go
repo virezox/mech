@@ -35,6 +35,27 @@ func (f flags) vimeo() error {
    return nil
 }
 
+func (f flags) vhx() error {
+   embed, err := vimeo.New_Embed(f.address)
+   if err != nil {
+      return err
+   }
+   config, err := embed.Config()
+   if err != nil {
+      return err
+   }
+   if f.info {
+      fmt.Println(config)
+   } else {
+      for _, pro := range config.Request.Files.Progressive {
+         if pro.Height == f.height {
+            return download(pro.URL)
+         }
+      }
+   }
+   return nil
+}
+
 func download(address string) error {
    fmt.Println("GET", address)
    res, err := http.Get(address)

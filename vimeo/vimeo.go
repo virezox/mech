@@ -1,30 +1,56 @@
 package vimeo
 
 import (
-   "bytes"
-   "encoding/base64"
    "encoding/json"
    "github.com/89z/rosso/http"
-   "io"
    "net/url"
    "strconv"
    "strings"
+   "time"
 )
 
-type Progressive struct {
-   Width int64
-   Height int64
-   FPS int64
-   URL string
+func (v Video) Get_Duration() time.Duration {
+   return time.Duration(v.Duration) * time.Second
 }
 
-func (p Progressive) String() string {
-   b := []byte("Width:")
-   b = strconv.AppendInt(b, p.Width, 10)
-   b = append(b, " Height:"...)
-   b = strconv.AppendInt(b, p.Height, 10)
-   b = append(b, " FPS:"...)
-   b = strconv.AppendInt(b, p.FPS, 10)
+type Video struct {
+   Duration int64
+   Name string
+   Pictures struct {
+      Base_Link string
+   }
+   Release_Time string
+   User struct {
+      Name string
+   }
+   Download []struct {
+      Width int64
+      Height int64
+      Link string
+      Quality string
+      Size_Short string
+   }
+}
+
+func (v Video) String() string {
+   b := []byte("Duration: ")
+   b = append(b, v.Get_Duration().String()...)
+   b = append(b, "\nName: "...)
+   b = append(b, v.Name...)
+   b = append(b, "\nRelease: "...)
+   b = append(b, v.Release_Time...)
+   b = append(b, "\nUser: "...)
+   b = append(b, v.User.Name...)
+   for _, d := range v.Download {
+      b = append(b, "\nWidth:"...)
+      b = strconv.AppendInt(b, d.Width, 10)
+      b = append(b, " Height:"...)
+      b = strconv.AppendInt(b, d.Height, 10)
+      b = append(b, " Quality:"...)
+      b = append(b, d.Quality...)
+      b = append(b, " Size:"...)
+      b = append(b, d.Size_Short...)
+   }
    return string(b)
 }
 
@@ -61,32 +87,6 @@ func New_Clip(reference string) (*Clip, error) {
    return &clip, nil
 }
 
-func (c Clip) Check(password string) (*Check, error) {
-   // URL
-   ref := []byte("https://player.vimeo.com/video/")
-   ref = strconv.AppendInt(ref, c.ID, 10)
-   ref = append(ref, "/check-password"...)
-   // body
-   body := new(bytes.Buffer)
-   body.WriteString("password=")
-   io.WriteString(base64.NewEncoder(base64.StdEncoding, body), password)
-   req, err := http.NewRequest("POST", string(ref), body)
-   if err != nil {
-      return nil, err
-   }
-   req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-   res, err := Client.Do(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   check := new(Check)
-   if err := json.NewDecoder(res.Body).Decode(check); err != nil {
-      return nil, err
-   }
-   return check, nil
-}
-
 func New_JSON_Web() (*JSON_Web, error) {
    req, err := http.NewRequest("GET", "https://vimeo.com/_next/jwt", nil)
    if err != nil {
@@ -103,27 +103,6 @@ func New_JSON_Web() (*JSON_Web, error) {
       return nil, err
    }
    return web, nil
-}
-
-type Video struct {
-   Name string
-   User struct {
-      Name string
-   }
-   Duration int64
-   Release_Time string
-   Pictures struct {
-      Base_Link string
-   }
-   Download []Download
-}
-
-type Download struct {
-   Width int64
-   Height int64
-   Quality string
-   Size_Short string
-   Link string
 }
 
 var Client = http.Default_Client
@@ -156,12 +135,3 @@ func (w JSON_Web) Video(clip *Clip) (*Video, error) {
    }
    return vid, nil
 }
-
-type Check struct {
-   Request struct {
-      Files struct {
-         Progressive []Progressive
-      }
-   }
-}
-

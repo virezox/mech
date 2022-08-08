@@ -26,6 +26,10 @@ func main() {
          panic(err)
       }
    } else if strings.Contains(f.address, "vhx.tv/") {
+      err := f.vhx()
+      if err != nil {
+         panic(err)
+      }
    } else {
       flag.Usage()
    }

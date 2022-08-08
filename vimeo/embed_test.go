@@ -7,8 +7,8 @@ import (
 )
 
 var embed_refs = []string{
-   "http://embed.vhx.tv/subscriptions/18432?vimeo=1",
-   "http://embed.vhx.tv/videos/18432?vimeo=1",
+   "https://embed.vhx.tv/subscriptions/18432?vimeo=1",
+   "https://embed.vhx.tv/videos/18432?vimeo=1",
 }
 
 func Test_Embed(t *testing.T) {

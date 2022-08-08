@@ -4,34 +4,51 @@ import (
    "github.com/89z/rosso/json"
    "io"
    "strconv"
+   "time"
 )
 
 func (c Config) String() string {
-   b := []byte("ID: ")
+   b := []byte("Date: ")
+   b = append(b, c.SEO.Upload_Date...)
+   b = append(b, "\nDuration: "...)
+   b = append(b, c.Duration().String()...)
+   b = append(b, "\nID: "...)
    b = strconv.AppendInt(b, c.Video.ID, 10)
    b = append(b, "\nTitle: "...)
    b = append(b, c.Video.Title...)
-   b = append(b, "\nDate: "...)
-   b = append(b, c.SEO.Upload_Date...)
-   for _, pro := range c.Request.Files.Progressive {
-      b = append(b, '\n')
-      b = append(b, pro.String()...)
+   for _, p := range c.Request.Files.Progressive {
+      b = append(b, "\nWidth:"...)
+      b = strconv.AppendInt(b, p.Width, 10)
+      b = append(b, " Height:"...)
+      b = strconv.AppendInt(b, p.Height, 10)
+      b = append(b, " FPS:"...)
+      b = strconv.AppendInt(b, p.FPS, 10)
    }
    return string(b)
 }
 
+func (c Config) Duration() time.Duration {
+   return time.Duration(c.Video.Duration) * time.Second
+}
+
 type Config struct {
+   SEO struct {
+      Thumbnail string
+      Upload_Date string
+   }
    Video struct {
+      Duration int64
       ID int64
       Title string
    }
-   SEO struct {
-      Upload_Date string
-      Thumbnail string
-   }
    Request struct {
       Files struct {
-         Progressive []Progressive
+         Progressive []struct {
+            Width int64
+            Height int64
+            FPS int64
+            URL string
+         }
       }
    }
 }
