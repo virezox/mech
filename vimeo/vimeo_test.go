@@ -25,7 +25,8 @@ func Test_Clip(t *testing.T) {
       time.Sleep(time.Second)
    }
 }
-var videos = []string{
+
+var clip_refs = []string{
    "https://vimeo.com/477957994/2282452868",
    "https://player.vimeo.com/video/412573977?h=f7f2d6fcb7",
    "https://player.vimeo.com/video/412573977?unlisted_hash=f7f2d6fcb7",
@@ -34,8 +35,8 @@ var videos = []string{
 }
 
 func Test_Vimeo(t *testing.T) {
-   for _, video := range videos {
-      clip, err := New_Clip(video)
+   for _, ref := range clip_refs {
+      clip, err := New_Clip(ref)
       if err != nil {
          t.Fatal(err)
       }

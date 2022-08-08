@@ -10,6 +10,31 @@ import (
    "path"
 )
 
+func (f flags) vimeo() error {
+   web, err := vimeo.New_JSON_Web()
+   if err != nil {
+      return err
+   }
+   clip, err := vimeo.New_Clip(f.address)
+   if err != nil {
+      panic(err)
+   }
+   video, err := web.Video(clip)
+   if err != nil {
+      return err
+   }
+   if f.info {
+      fmt.Println(video)
+   } else {
+      for _, down := range video.Download {
+         if down.Height == f.height {
+            return download(down.Link)
+         }
+      }
+   }
+   return nil
+}
+
 func download(address string) error {
    fmt.Println("GET", address)
    res, err := http.Get(address)
@@ -29,42 +54,6 @@ func download(address string) error {
    pro := os.Progress_Bytes(file, res.ContentLength)
    if _, err := io.Copy(pro, res.Body); err != nil {
       return err
-   }
-   return nil
-}
-
-func (f flags) anon(clip *vimeo.Clip) error {
-   web, err := vimeo.New_JSON_Web()
-   if err != nil {
-      return err
-   }
-   video, err := web.Video(clip)
-   if err != nil {
-      return err
-   }
-   if f.info {
-      fmt.Println(video)
-   } else {
-      for _, down := range video.Download {
-         if down.Height == f.height {
-            return download(down.Link)
-         }
-      }
-   }
-   return nil
-}
-
-func (f flags) auth(clip *vimeo.Clip) error {
-   check, err := clip.Check(f.password)
-   if err != nil {
-      return err
-   }
-   for _, prog := range check.Request.Files.Progressive {
-      if f.info {
-         fmt.Println(prog)
-      } else if prog.Height == f.height {
-         return download(prog.URL)
-      }
    }
    return nil
 }

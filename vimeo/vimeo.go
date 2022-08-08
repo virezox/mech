@@ -11,6 +11,23 @@ import (
    "strings"
 )
 
+type Progressive struct {
+   Width int64
+   Height int64
+   FPS int64
+   URL string
+}
+
+func (p Progressive) String() string {
+   b := []byte("Width:")
+   b = strconv.AppendInt(b, p.Width, 10)
+   b = append(b, " Height:"...)
+   b = strconv.AppendInt(b, p.Height, 10)
+   b = append(b, " FPS:"...)
+   b = strconv.AppendInt(b, p.FPS, 10)
+   return string(b)
+}
+
 type Clip struct {
    ID int64
    Unlisted_Hash string
@@ -140,16 +157,6 @@ func (w JSON_Web) Video(clip *Clip) (*Video, error) {
    return vid, nil
 }
 
-func (p Progressive) String() string {
-   b := []byte("Width:")
-   b = strconv.AppendInt(b, p.Width, 10)
-   b = append(b, " Height:"...)
-   b = strconv.AppendInt(b, p.Height, 10)
-   b = append(b, " FPS:"...)
-   b = strconv.AppendInt(b, p.FPS, 10)
-   return string(b)
-}
-
 type Check struct {
    Request struct {
       Files struct {
@@ -158,9 +165,3 @@ type Check struct {
    }
 }
 
-type Progressive struct {
-   Width int64
-   Height int64
-   FPS int64
-   URL string
-}

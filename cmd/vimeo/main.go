@@ -2,15 +2,13 @@ package main
 
 import (
    "flag"
-   "github.com/89z/mech/vimeo"
+   "strings"
 )
 
 type flags struct {
    address string
    height int64
    info bool
-   password string
-   verbose bool
 }
 
 func main() {
@@ -21,30 +19,13 @@ func main() {
    flag.Int64Var(&f.height, "f", 720, "target height")
    // i
    flag.BoolVar(&f.info, "i", false, "info only")
-   // p
-   flag.StringVar(&f.password, "p", "", "password")
-   // v
-   flag.BoolVar(&f.verbose, "v", false, "verbose")
    flag.Parse()
-   if f.verbose {
-      vimeo.Client.Log_Level = 2
-   }
-   if f.address != "" {
-      clip, err := vimeo.New_Clip(f.address)
+   if strings.Contains(f.address, "vimeo.com/") {
+      err := f.vimeo()
       if err != nil {
          panic(err)
       }
-      if f.password != "" {
-         err := f.auth(clip)
-         if err != nil {
-            panic(err)
-         }
-      } else {
-         err := f.anon(clip)
-         if err != nil {
-            panic(err)
-         }
-      }
+   } else if strings.Contains(f.address, "vhx.tv/") {
    } else {
       flag.Usage()
    }

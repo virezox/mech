@@ -1,7 +1,6 @@
 package vimeo
 
 import (
-   "github.com/89z/rosso/http"
    "github.com/89z/rosso/json"
    "io"
    "strconv"
@@ -37,20 +36,6 @@ type Config struct {
    }
 }
 
-func (p Progressive) String() string {
-   b := []byte("Width:")
-   b = strconv.AppendInt(b, p.Width, 10)
-   b = append(b, " Height:"...)
-   b = strconv.AppendInt(b, p.Height, 10)
-   return string(b)
-}
-
-type Progressive struct {
-   Width int64
-   Height int64
-   URL string
-}
-
 func (e Embed) Config() (*Config, error) {
    res, err := Client.Get(e.Config_URL)
    if err != nil {
@@ -67,8 +52,6 @@ func (e Embed) Config() (*Config, error) {
 type Embed struct {
    Config_URL string
 }
-
-var Client = http.Default_Client
 
 func New_Embed(ref string) (*Embed, error) {
    res, err := Client.Get(ref)
