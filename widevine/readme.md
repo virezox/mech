@@ -43,7 +43,7 @@ pip install -r requirements.txt
 Then download [Frida server][3], example file:
 
 ~~~
-frida-server-15.1.22-android-x86.xz
+frida-server-15.1.17-android-x86.xz
 ~~~
 
 Then start Frida server:
