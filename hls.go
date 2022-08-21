@@ -78,7 +78,7 @@ func hls_get[T hls.Mixed](str Stream, items []T, index int) error {
       if err != nil {
          return err
       }
-      req.URL = str.base.ResolveReference(req.URL)
+      req.URL = res.Request.URL.ResolveReference(req.URL)
       res, err := client.Level(0).Redirect(nil).Do(req)
       if err != nil {
          return err
