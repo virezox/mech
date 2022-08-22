@@ -37,7 +37,7 @@ func hls_get[T hls.Mixed](str Stream, items []T, index int) error {
       return nil
    }
    item := items[index]
-   file, err := os.Create(str.Name + item.Ext())
+   file, err := os.Clean("", str.Name + item.Ext()).Create()
    if err != nil {
       return err
    }
