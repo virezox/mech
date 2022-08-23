@@ -48,7 +48,7 @@ func (s Stream) DASH_Get(items dash.Representations, index int) error {
       return nil
    }
    item := items[index]
-   file, err := os.Create(s.Name + item.Ext())
+   file, err := os.Clean("", s.Name + item.Ext()).Create()
    if err != nil {
       return err
    }

@@ -93,6 +93,7 @@ func (a *Auth) Login(email, password string) error {
       "Authorization": {"Bearer " + a.Data.Access_Token},
       "Content-Type": {"application/json"},
       "X-Amcn-Device-Ad-Id": {"!"},
+      "X-Amcn-Device-Id": {"!"},
       "X-Amcn-Language": {"en"},
       "X-Amcn-Network": {"amcplus"},
       "X-Amcn-Platform": {"web"},
