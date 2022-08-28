@@ -6,61 +6,15 @@ import (
    "net/url"
    "strconv"
    "strings"
-   "time"
 )
-
-func (v Video) Get_Duration() time.Duration {
-   return time.Duration(v.Duration) * time.Second
-}
-
-type Video struct {
-   Duration int64
-   Name string
-   Pictures struct {
-      Base_Link string
-   }
-   Release_Time string
-   User struct {
-      Name string
-   }
-   Download []struct {
-      Width int64
-      Height int64
-      Link string
-      Quality string
-      Size_Short string
-   }
-}
-
-func (v Video) String() string {
-   b := []byte("Duration: ")
-   b = append(b, v.Get_Duration().String()...)
-   b = append(b, "\nName: "...)
-   b = append(b, v.Name...)
-   b = append(b, "\nRelease: "...)
-   b = append(b, v.Release_Time...)
-   b = append(b, "\nUser: "...)
-   b = append(b, v.User.Name...)
-   for _, d := range v.Download {
-      b = append(b, "\nWidth:"...)
-      b = strconv.AppendInt(b, d.Width, 10)
-      b = append(b, " Height:"...)
-      b = strconv.AppendInt(b, d.Height, 10)
-      b = append(b, " Quality:"...)
-      b = append(b, d.Quality...)
-      b = append(b, " Size:"...)
-      b = append(b, d.Size_Short...)
-   }
-   return string(b)
-}
 
 type Clip struct {
    ID int64
    Unlisted_Hash string
 }
 
-func New_Clip(reference string) (*Clip, error) {
-   ref, err := url.Parse(reference)
+func New_Clip(address string) (*Clip, error) {
+   ref, err := url.Parse(address)
    if err != nil {
       return nil, err
    }
@@ -85,6 +39,25 @@ func New_Clip(reference string) (*Clip, error) {
       }
    }
    return &clip, nil
+}
+
+type Video struct {
+   Duration int64
+   Name string
+   Pictures struct {
+      Base_Link string
+   }
+   Release_Time string
+   User struct {
+      Name string
+   }
+   Download []struct {
+      Width int64
+      Height int64
+      Link string
+      Quality string
+      Size_Short string
+   }
 }
 
 func New_JSON_Web() (*JSON_Web, error) {
