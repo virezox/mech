@@ -9,18 +9,18 @@
 
 Download media or send API requests
 
-## Donate
-
-If this software if helpful, please consider donating using one of these links:
-
-- https://github.com/sponsors/89z
-- <https://paypal.com/donate?hosted_button_id=UEJBQQTU3VYDY>
+## Money
 
 Software is not licensed for commercial use. If you wish to purchase a
 commercial license, or for other business questions, contact me:
 
 - srpen6@gmail.com
 - Discord srpen6#6983
+
+If this software if helpful, please consider donating using one of these links:
+
+- https://github.com/sponsors/89z
+- <https://paypal.com/donate?hosted_button_id=UEJBQQTU3VYDY>
 
 ## Discord server
 
