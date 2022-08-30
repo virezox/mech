@@ -10,14 +10,5 @@ strip = true
 
 [dependencies]
 
-#16
-#urlparse = "0.7.3"
-
-#85
-#url = "2.2.2"
-
-# 90
-#url_serde = "0.2.0"
-
-#51
-#url-parse = "0.5.7"
+# 32
+#uriparse = "0.6.4"
