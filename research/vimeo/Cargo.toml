@@ -1,7 +1,0 @@
-[package]
-name = "vimeo"
-version = "0.1.0"
-edition = "2021"
-[dependencies]
-attohttpc = "0.22.0"
-tinyjson = "2.3.0"
