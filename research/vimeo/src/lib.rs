@@ -1,29 +1,39 @@
-use {
-   oxhttp::Client,
-   oxhttp::model::Method,
-   oxhttp::model::Request,
-   tinyjson::JsonValue
-};
+use tinyjson::JsonValue;
 
 #[derive(Debug)]
 pub struct JsonWeb(JsonValue);
 
 impl JsonWeb {
-   pub fn new() -> Self {
-      let next = "https://vimeo.com/_next/jwt".parse().unwrap();
-      let req = Request::builder(Method::GET, next).
-         with_header("X-Requested-With".parse().unwrap(), "XMLHttpRequest").
-         unwrap().build();
-      let res = Client::new().request(req).unwrap();
-      let body = res.into_body().to_string().unwrap();
-      let value: JsonValue = body.parse().unwrap();
-      Self(value)
+   pub fn token(self) -> String {
+      self.0["token"].clone().try_into().unwrap_or_default()
    }
 }
 
-#[test]
-fn test_web() {
-   let web = JsonWeb::new();
-   let token = web.0["token"].is_string();
-   assert!(token);
+#[derive(Debug)]
+pub enum Error {
+   HTTP(attohttpc::Error),
+   JSON(tinyjson::JsonParseError)
+}
+
+impl From<attohttpc::Error> for Error {
+   fn from(err: attohttpc::Error) -> Self {
+      Self::HTTP(err)
+   }
+}
+
+impl From<tinyjson::JsonParseError> for Error {
+   fn from(err: tinyjson::JsonParseError) -> Self {
+      Self::JSON(err)
+   }
+}
+
+impl JsonWeb {
+   pub fn new() -> Result<Self, Error> {
+      let res = attohttpc::get("https://vimeo.com/_next/jwt").
+         header("X-Requested-With", "XMLHttpRequest").
+         send()?;
+      let body = res.text()?;
+      let value: JsonValue = body.parse()?;
+      Ok(Self(value))
+   }
 }
