@@ -4,8 +4,15 @@ import (
    "github.com/89z/rosso/json"
    "io"
    "strconv"
+   "strings"
    "time"
 )
+
+// https://embed.criterionchannel.com
+// https://embed.vhx.tv
+func Is_Embed(s string) bool {
+   return strings.HasPrefix(s, "https://embed.")
+}
 
 func (c Config) String() string {
    b := []byte("Date: ")
