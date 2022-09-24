@@ -11,7 +11,8 @@ Download media or send API requests
 
 ## Money
 
-If this software if helpful, please consider donating using one of these links:
+I only provide paid support for issues. Any issue without payment of at least
+9 USD will be closed immediately. Payment can be made to one of:
 
 - https://github.com/sponsors/89z
 - <https://paypal.com/donate?hosted_button_id=UEJBQQTU3VYDY>
