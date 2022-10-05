@@ -47,6 +47,7 @@ func main() {
    flag.BoolVar(&f.verbose, "v", false, "verbose")
    flag.Parse()
    if f.verbose {
+      paramount.Client.Log_Level = 2
       widevine.Client.Log_Level = 2
    }
    if f.guid != "" {
