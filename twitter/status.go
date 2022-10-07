@@ -2,7 +2,7 @@ package twitter
 
 import (
    "encoding/json"
-   "net/http"
+   "github.com/89z/rosso/http"
    "net/url"
    "path"
    "strconv"
@@ -11,6 +11,8 @@ import (
 const bearer =
    "AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs=" +
    "1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA"
+
+var Client = http.Default_Client
 
 type Guest struct {
    Guest_Token string
@@ -24,7 +26,7 @@ func NewGuest() (*Guest, error) {
       return nil, err
    }
    req.Header.Set("Authorization", "Bearer " + bearer)
-   res, err := new(http.Transport).RoundTrip(req)
+   res, err := Client.Do(req)
    if err != nil {
       return nil, err
    }
@@ -48,7 +50,7 @@ func (g Guest) Status(id int64) (*Status, error) {
       "Authorization": {"Bearer " + bearer},
       "X-Guest-Token": {g.Guest_Token},
    }
-   res, err := new(http.Transport).RoundTrip(req)
+   res, err := Client.Do(req)
    if err != nil {
       return nil, err
    }
