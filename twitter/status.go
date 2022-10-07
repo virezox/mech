@@ -18,7 +18,7 @@ type Guest struct {
    Guest_Token string
 }
 
-func NewGuest() (*Guest, error) {
+func New_Guest() (*Guest, error) {
    req, err := http.NewRequest(
       "POST", "https://api.twitter.com/1.1/guest/activate.json", nil,
    )
