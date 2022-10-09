@@ -2,7 +2,7 @@ package twitter
 
 import (
    "encoding/json"
-   "net/http"
+   "github.com/89z/rosso/http"
    "net/url"
    "path"
    "strings"
@@ -13,11 +13,13 @@ const bearer =
    "AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs=" +
    "1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA"
 
+var Client = http.Default_Client
+
 type Guest struct {
    Guest_Token string
 }
 
-func NewGuest() (*Guest, error) {
+func New_Guest() (*Guest, error) {
    req, err := http.NewRequest(
       "POST", "https://api.twitter.com/1.1/guest/activate.json", nil,
    )
@@ -25,7 +27,7 @@ func NewGuest() (*Guest, error) {
       return nil, err
    }
    req.Header.Set("Authorization", "Bearer " + bearer)
-   res, err := new(http.Transport).RoundTrip(req)
+   res, err := Client.Do(req)
    if err != nil {
       return nil, err
    }
@@ -37,7 +39,7 @@ func NewGuest() (*Guest, error) {
    return guest, nil
 }
 
-func (a AudioSpace) Duration() time.Duration {
+func (a Audio_Space) Duration() time.Duration {
    meta := a.Metadata
    if meta.Ended_At == 0 {
       return 0
@@ -51,7 +53,7 @@ func (e errorString) Error() string {
    return string(e)
 }
 
-type AudioSpace struct {
+type Audio_Space struct {
    Metadata struct {
       Media_Key string
       Title string
@@ -77,11 +79,11 @@ func SpaceID(addr string) (string, error) {
 
 const spacePersistedQuery = "lFpix9BgFDhAMjn9CrW6jQ"
 
-func (a AudioSpace) Time() time.Time {
+func (a Audio_Space) Time() time.Time {
    return time.UnixMilli(a.Metadata.Started_At)
 }
 
-func (g Guest) AudioSpace(id string) (*AudioSpace, error) {
+func (g Guest) Audio_Space(id string) (*Audio_Space, error) {
    var str strings.Builder
    str.WriteString("https://twitter.com/i/api/graphql/")
    str.WriteString(spacePersistedQuery)
@@ -99,17 +101,14 @@ func (g Guest) AudioSpace(id string) (*AudioSpace, error) {
       return nil, err
    }
    req.URL.RawQuery = "variables=" + url.QueryEscape(string(buf))
-   res, err := new(http.Transport).RoundTrip(req)
+   res, err := Client.Do(req)
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return nil, errorString(res.Status)
-   }
    var space struct {
       Data struct {
-         AudioSpace AudioSpace
+         AudioSpace Audio_Space
       }
    }
    if err := json.NewDecoder(res.Body).Decode(&space); err != nil {
@@ -118,7 +117,7 @@ func (g Guest) AudioSpace(id string) (*AudioSpace, error) {
    return &space.Data.AudioSpace, nil
 }
 
-func (g Guest) Source(space *AudioSpace) (*Source, error) {
+func (g Guest) Source(space *Audio_Space) (*Source, error) {
    var str strings.Builder
    str.WriteString("https://twitter.com/i/api/1.1/live_video_stream/status/")
    str.WriteString(space.Metadata.Media_Key)
@@ -130,14 +129,11 @@ func (g Guest) Source(space *AudioSpace) (*Source, error) {
       "Authorization": {"Bearer " + bearer},
       "X-Guest-Token": {g.Guest_Token},
    }
-   res, err := new(http.Transport).RoundTrip(req)
+   res, err := Client.Do(req)
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return nil, errorString(res.Status)
-   }
    var video struct {
       Source Source
    }
@@ -164,7 +160,7 @@ type spaceRequest struct {
    WithSuperFollowsUserFields bool `json:"withSuperFollowsUserFields"`
 }
 
-func (a AudioSpace) String() string {
+func (a Audio_Space) String() string {
    var buf strings.Builder
    buf.WriteString("Key: ")
    buf.WriteString(a.Metadata.Media_Key)
@@ -187,7 +183,7 @@ func (a AudioSpace) String() string {
    return buf.String()
 }
 
-func (a AudioSpace) Base() string {
+func (a Audio_Space) Base() string {
    var buf strings.Builder
    for _, admin := range a.Participants.Admins {
       buf.WriteString(admin.Display_Name)
