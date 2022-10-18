@@ -28,3 +28,5 @@ version | result
 
 1. We couldn't find a match for this email and password.
 2. Sorry, this version of Peacock is no longer supported.
+
+<https://ragingrock.com/AndroidAppRE/reversing_native_libs>
