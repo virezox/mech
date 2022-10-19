@@ -33,7 +33,7 @@ func main() {
    // d
    flag.BoolVar(&f.dash, "d", false, "DASH download")
    // f
-   flag.Int64Var(&f.bandwidth, "f", 1611000, "video bandwidth")
+   flag.Int64Var(&f.bandwidth, "f", 1_999_999, "video bandwidth")
    // g
    flag.StringVar(&f.codecs, "g", "mp4a", "audio codec")
    // h
