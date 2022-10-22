@@ -1,5 +1,9 @@
 # Methods
 
+## anti\_vm
+
+https://github.com/rednaga/APKiD
+
 ## iOS
 
 https://github.com/TrungNguyen1909/qemu-t8030/issues/52
