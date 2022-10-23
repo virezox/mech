@@ -19,14 +19,5 @@ password:
 
 ## Android client
 
-https://play.google.com/store/apps/details?id=com.peacocktv.peacockandroid
-
-version | result
---------|-------
-2.11.6  | [1]
-2.10.22 | [2]
-
-1. We couldn't find a match for this email and password.
-2. Sorry, this version of Peacock is no longer supported.
-
-<https://ragingrock.com/AndroidAppRE/reversing_native_libs>
+- <https://ragingrock.com/AndroidAppRE/reversing_native_libs>
+- https://play.google.com/store/apps/details?id=com.peacocktv.peacockandroid
