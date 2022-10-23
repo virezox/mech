@@ -130,10 +130,10 @@ deep link.
 First download the package [1]. Start the program, and click "More Actions",
 "AVD Manager", "Create Virtual Device". On the "Select Hardware" screen, click
 "Next". On the "System Image" screen, click "x86 Images". If the APK you are
-using supports "x86", then you can use lower versions down to API 24. Once you
-have chosen, click "Download". Then click "Next". On the "Android Virtual
-Device" screen, click "Finish". On the "Your Virtual Devices" screen, click
-"Launch this AVD in the emulator".
+using supports "x86", then you can use versions down to API 23. Once you have
+chosen, click "Download". Then click "Next". On the "Android Virtual Device"
+screen, click "Finish". On the "Your Virtual Devices" screen, click "Launch
+this AVD in the emulator".
 
 1. https://developer.android.com/studio#downloads
 
