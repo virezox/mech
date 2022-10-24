@@ -1,6 +1,5 @@
 # Paramount+
 
-
 ## Android client
 
 ~~~
@@ -9,12 +8,26 @@ com.cbs.app
 
 Install system certificate.
 
-## Bearer
+## How to get aid?
+
+In the response to the same request, you should see something like this:
+
+~~~xml
+<param name="trackingData" value="aid=2198311517|b=1000|bc=CBSI-NEW|ci=1|cid=1...
+~~~
+
+## How to get app\_secret?
 
 ~~~
 com\cbs\app\dagger\DataLayerModule.java
 dataSourceConfiguration.setCbsAppSecret("6c70b33080758409");
+~~~
 
+https://github.com/matthuisman/slyguy.addons/issues/136
+
+## How to get secret\_key?
+
+~~~
 com\cbs\app\androiddata\retrofit\util\RetrofitUtil.java
 SecretKeySpec secretKeySpec = new SecretKeySpec(b("302a6a0d70a7e9b967f91d39fef3e387816e3095925ae4537bce96063311f9c5"), "AES");
 ~~~
@@ -35,14 +48,6 @@ User-Agent: Dalvik/2.1.0 (Linux; U; Android 7.0; Android SDK built for x86 Bui..
 Connection: Keep-Alive
 Accept-Encoding: gzip
 content-length: 0
-~~~
-
-## How to get aid?
-
-In the response to the same request, you should see something like this:
-
-~~~xml
-<param name="trackingData" value="aid=2198311517|b=1000|bc=CBSI-NEW|ci=1|cid=1...
 ~~~
 
 ## Why DASH and HLS?
@@ -66,9 +71,3 @@ https://vod-gcs-cedexis.cbsaavideo.com/intl_vms/2020/05/07/1735196227871/2367_ce
 ~~~
 
 but no StreamPack DASH.
-
-## Why does this exist?
-
-June 2 2022
-
-<https://paramountplus.com/shows/melrose_place>

@@ -13,8 +13,8 @@ import (
 )
 
 const (
-   aes_key = "302a6a0d70a7e9b967f91d39fef3e387816e3095925ae4537bce96063311f9c5"
-   tv_secret = "6c70b33080758409"
+   app_secret = "6c70b33080758409"
+   secret_key = "302a6a0d70a7e9b967f91d39fef3e387816e3095925ae4537bce96063311f9c5"
 )
 
 var Client = http.Default_Client
@@ -38,7 +38,7 @@ type Preview struct {
 }
 
 func new_token() (string, error) {
-   key, err := hex.DecodeString(aes_key)
+   key, err := hex.DecodeString(secret_key)
    if err != nil {
       return "", err
    }
@@ -52,7 +52,7 @@ func new_token() (string, error) {
       src []byte
    )
    src = append(src, '|')
-   src = append(src, tv_secret...)
+   src = append(src, app_secret...)
    src = pad(src)
    cipher.NewCBCEncrypter(block, iv[:]).CryptBlocks(src, src)
    dst = append(dst, 0, aes.BlockSize)
