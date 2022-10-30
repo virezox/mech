@@ -1,5 +1,12 @@
 # AMC
 
+> Take a couple breaths of air.\
+> This is the same air that my family is breathing.\
+> This is the same air that they’re breathing in every part of the planet.\
+> Lets take care of this.
+>
+> [Nightmares on Wax (2018)](//youtube.com/watch?v=Vc-XzhnwpVc)
+
 ## Android client
 
 https://play.google.com/store/apps/details?id=com.amcplus.amcfullepisodes
@@ -16,10 +23,3 @@ com.amcplus.amcfullepisodes
 4. Subscription
 5. CANCEL
 6. NO THANKS, CANCEL AMC+
-
-## Why does this exist?
-
-June 2 2022
-
-- https://amcplus.com/shows/orphan-black/episodes/season-1-instinct--1011152
-- https://github.com/89z/mech/issues/76
