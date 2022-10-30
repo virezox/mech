@@ -19,7 +19,7 @@ https://github.com/httptoolkit/frida-android-unpinning
 
 ## How to get `persistedQuery`?
 
-https://nbc.com
+https://www.nbc.com
 
 ## How to get `secretKey`?
 

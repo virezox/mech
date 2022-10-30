@@ -13,7 +13,7 @@ import (
    "time"
 )
 
-const persisted_query = "872a3dffc3ae6cdb3dc69fe3d9a949b539de7b579e95b2942e68d827b1a6ec62"
+const persisted_query = "6ea2e204ad35f81db0e2fdfd5a32844ceff1bdd38e0e7d2b15c5e46b7df1b0cc"
 
 var (
    Client = http.Default_Client
