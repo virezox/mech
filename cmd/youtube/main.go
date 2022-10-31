@@ -22,7 +22,7 @@ func main() {
    // b
    flag.StringVar(&f.video_ID, "b", "", "video ID")
    // f
-   flag.IntVar(&f.height, "f", 720, "target video height")
+   flag.IntVar(&f.height, "f", 1080, "target video height")
    // g
    flag.StringVar(&f.audio, "g", "AUDIO_QUALITY_MEDIUM", "target audio")
    // i
