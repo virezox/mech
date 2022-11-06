@@ -65,7 +65,9 @@ query bonanzaPage(
     analytics {
       ...brandLandingPageAnalyticsAttributes
       ...pageAnalyticsAttributes
-      ...videoPageAnalyticsAttributes
+      ... on VideoPageAnalyticsAttributes {
+        convivaAssetName
+      }
       ...titlePageAnalyticsAttributes
       ...titleV2PageAnalyticsAttributes
     }
@@ -95,24 +97,6 @@ fragment section on Section {
   deepLinkHandle
 }
 
-fragment overlayData on OverlayData {
-  content {
-    ...descriptionSection
-  }
-}
-fragment overlay on Overlay {
-  ...component
-  data {
-    ...overlayData
-  }
-}
-fragment descriptionSection on DescriptionSection {
-  ...component
-  data {
-    ...descriptionData
-  }
-}
-
 fragment slideshow on Slideshow {
   ...component
   ...section
@@ -132,9 +116,6 @@ fragment hero on Hero {
 fragment ctaHero on CTAHero {
   ...component
   ...section
-  data {
-    ...ctaHeroData
-  }
 }
 
 fragment hypermediaLink on HypermediaLink {
@@ -148,49 +129,6 @@ fragment hypermediaLink on HypermediaLink {
       name
       value
     }
-  }
-}
-fragment ctaLink on CTALink {
-  ...component
-  data {
-    ...ctaData
-  }
-  analytics {
-    smartDynamicCTA
-    smartTileLabel
-    smartTileLogic
-    editorialLogic
-    smartTileScenario
-    ctaTitle
-    destinationType
-    destination
-    brand {
-      title
-    }
-    series
-    movie
-    isMovie
-    videoTitle
-    locked
-    programmingType
-    seasonNumber
-    episodeNumber
-    mpxGuid
-    duration
-    isPlaylist
-    playlistMachineName
-    playlistTitle
-    isLive
-    sponsorName
-    isSponsoredTitle
-    isTrailer
-    liveEntitlement
-    isVote
-    isSportVideo
-    language
-    league
-    event
-    sport
   }
 }
 
@@ -232,67 +170,11 @@ fragment smartTile on SmartTile {
     smartTileScenario
   }
 }
-fragment ctaSmartTile on CTASmartTile {
-  ...component
-  data {
-    ...ctaSmartTileData
-  }
-  analytics {
-    brand {
-      title
-    }
-    title
-    programmingType
-    episodeNumber
-    seasonNumber
-    mpxGuid
-    locked
-    duration
-    movie
-    series
-    genre
-    smartTileLabel
-    smartTileLogic
-    editorialLogic
-    smartTileScenario
-    sponsorName
-    isSponsoredTitle
-  }
-}
 
 fragment componentData on ComponentData {
   instanceID
 }
 
-fragment ctaData on CTAData {
-  ...componentData
-  color
-  gradientStart
-  gradientEnd
-  text
-  destinationType
-  destination
-  endCardMpxGuid
-  endCardTagLine
-  playlistMachineName
-  playlistCount
-  urlAlias
-  isLive
-  isPlaylist
-  title
-  secondaryTitle
-  secondaryTitleTag
-  isTrailer
-}
-
-fragment descriptionData on DescriptionData {
-  ...componentData
-  optionalTitle
-  description
-  image
-  shortTitle
-  gradientStart
-}
 fragment brandLandingPageAnalyticsAttributes on BrandLandingPageAnalyticsAttributes {
   brand {
     title
@@ -336,9 +218,6 @@ fragment titleV2PageAnalyticsAttributes on TitleV2PageAnalyticsAttributes {
   v4ID
   listOfGenres
 }
-fragment videoPageAnalyticsAttributes on VideoPageAnalyticsAttributes {
-  convivaAssetName
-}
 fragment videoPageData on VideoPageData {
   mpxAccountId
 }
@@ -354,6 +233,7 @@ fragment brandLandingPageMetadata on BrandLandingPageMetadata {
   brandLandingBackgroundImage
   brandLandingBackgroundPreview
 }
+
 fragment titleV2HomepagePageData on TitleV2HomepagePageData {
   pageType
   isEmpty
@@ -460,6 +340,7 @@ fragment seriesHomepagePageData on SeriesHomepagePageData {
   canonicalUrl
   titleLogo
 }
+
 fragment heroData on HeroData {
   ...componentData
   title
@@ -479,55 +360,6 @@ fragment heroData on HeroData {
     ...smartTile
   }
 }
-fragment ctaHeroData on CTAHeroData {
-  ...componentData
-  title
-  titleLogo {
-    ...image
-  }
-  gradientStart
-  gradientEnd
-  description
-  secondaryDescription
-  heroImage: image {
-    ...image
-  }
-  heroCompactImage: compactImage {
-    ...image
-  }
-  favoriteInteraction {
-    default {
-      ...hypermediaLink
-    }
-    undo {
-      ...hypermediaLink
-    }
-  }
-  sponsorLogo {
-    ...image
-  }
-  sponsorLogoAltText
-  sponsorName
-  brandDisplayTitle
-  colorBrandLogo {
-    ...image
-  }
-  whiteBrandLogo {
-    ...image
-  }
-  smartTileCTA {
-    ...ctaSmartTile
-  }
-  aboutOverlay {
-    ...overlay
-  }
-  primaryCTA {
-    ...ctaLink
-  }
-  secondaryCTA {
-    ...ctaLink
-  }
-}
 
 fragment smartTileData on SmartTileData {
   ...componentData
@@ -535,10 +367,6 @@ fragment smartTileData on SmartTileData {
   tile {
     ...videoTile
   }
-}
-
-fragment ctaSmartTileData on CTASmartTileData {
-  mpxAccountId
 }
 
 fragment videoItem on VideoItem {
