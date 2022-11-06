@@ -71,13 +71,6 @@ query bonanzaPage(
       ...titlePageAnalyticsAttributes
       ...titleV2PageAnalyticsAttributes
     }
-    data {
-      featured {
-        ...slideshow
-        ...hero
-        ...ctaHero
-      }
-    }
   }
 }
 
@@ -85,94 +78,6 @@ fragment image on Image {
   path
   width
   height
-}
-fragment component on Component {
-  component
-  meta
-  treatments
-}
-
-fragment section on Section {
-  logicName
-  deepLinkHandle
-}
-
-fragment slideshow on Slideshow {
-  ...component
-  ...section
-  analytics {
-    itemsList
-    machineName
-    listTitle
-  }
-}
-fragment hero on Hero {
-  ...component
-  ...section
-  data {
-    ...heroData
-  }
-}
-fragment ctaHero on CTAHero {
-  ...component
-  ...section
-}
-
-fragment hypermediaLink on HypermediaLink {
-  linkTitle
-  rel
-  request {
-    location
-    method
-    body
-    headers {
-      name
-      value
-    }
-  }
-}
-
-fragment videoTile on VideoTile {
-  ...component
-  data {
-    ...videoItem
-  }
-  analytics {
-    brand {
-      title
-    }
-    series
-    title
-    programmingType
-    episodeNumber
-    seasonNumber
-    mpxGuid
-    locked
-    duration
-    movie
-    genre
-    sport
-    league
-    language
-    event
-  }
-}
-
-fragment smartTile on SmartTile {
-  ...component
-  data {
-    ...smartTileData
-  }
-  analytics {
-    smartTileLabel
-    smartTileLogic
-    editorialLogic
-    smartTileScenario
-  }
-}
-
-fragment componentData on ComponentData {
-  instanceID
 }
 
 fragment brandLandingPageAnalyticsAttributes on BrandLandingPageAnalyticsAttributes {
@@ -339,37 +244,5 @@ fragment seriesHomepagePageData on SeriesHomepagePageData {
   brandDisplayTitle
   canonicalUrl
   titleLogo
-}
-
-fragment heroData on HeroData {
-  ...componentData
-  title
-  secondaryTitle
-  image
-  compactImage
-  favoriteID
-  favoriteInteraction {
-    default {
-      ...hypermediaLink
-    }
-    undo {
-      ...hypermediaLink
-    }
-  }
-  smartTile {
-    ...smartTile
-  }
-}
-
-fragment smartTileData on SmartTileData {
-  ...componentData
-  label
-  tile {
-    ...videoTile
-  }
-}
-
-fragment videoItem on VideoItem {
-  mpxAccountId
 }
 `
