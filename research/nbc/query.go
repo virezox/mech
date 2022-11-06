@@ -82,12 +82,8 @@ query bonanzaPage(
         ...notification
       }
       sections {
-         
-         
-         ...dateTabsSelectableGroup
          ...error
-         ...expiredVideo
-         ...groupedContinuousScroll
+         
          ...guide
          ...marketingModule
          ...message
@@ -192,23 +188,6 @@ fragment descriptionSection on DescriptionSection {
     ...descriptionData
   }
 }
-fragment continuousScroll on ContinuousScroll {
-  ...component
-  ...section
-  data {
-    ...continuousScrollData
-  }
-}
-fragment groupedContinuousScroll on GroupedContinuousScroll {
-  ...component
-  ...section
-  data {
-    ...groupedContinuousScrollData
-  }
-  analytics {
-    itemLabels
-  }
-}
 fragment shelf on Shelf {
   ...component
   ...section
@@ -284,13 +263,6 @@ fragment lazyGrid on LazyGrid {
   ...section
   ...lazyComponent
 }
-fragment potentialSchedule on PotentialSchedule {
-  ...component
-  ...potentialComponent
-  data {
-    ...potentialComponentData
-  }
-}
 fragment message on Message {
   ...component
   ...section
@@ -339,13 +311,6 @@ fragment tabsSelectableGroup on TabsSelectableGroup {
   ...section
   data {
     ...stringSelectableComponentList
-  }
-}
-fragment dateTabsSelectableGroup on DateTabsSelectableGroup {
-  ...component
-  ...section
-  data {
-    ...dateSelectableComponentList
   }
 }
 fragment slideshow on Slideshow {
@@ -399,19 +364,6 @@ fragment navigationMenu on NavigationMenu {
           isCoppaCompliant
         }
       }
-    }
-  }
-}
-fragment expiredVideo on VideoDetailsExpired {
-  ...component
-  ...section
-  data {
-    ...componentData
-    videoMeta {
-      title
-      secondaryTitle
-      description
-      image
     }
   }
 }
@@ -857,12 +809,6 @@ fragment ctaSmartTile on CTASmartTile {
     isSponsoredTitle
   }
 }
-fragment scheduleListing on ScheduleListing {
-  ...component
-  data {
-    ...scheduleListingData
-  }
-}
 fragment guide on Guide {
   ...component
   data {
@@ -980,38 +926,6 @@ fragment potentialComponentData on PotentialComponentData {
   link
   path
 }
-fragment continuousScrollData on ContinuousScrollData {
-  ...componentData
-  title
-  initialItem
-  items {
-    groupId
-    item {
-      ...videoTile
-    }
-  }
-  previous {
-    ...lazyComponent
-  }
-  next {
-    ...lazyComponent
-  }
-}
-fragment groupedContinuousScrollData on GroupedContinuousScrollData {
-  ...componentData
-  title
-  groups {
-    id
-    title
-    itemCount
-    jumpToGroup {
-      ...lazyComponent
-    }
-  }
-  continuousScroll {
-    ...continuousScroll
-  }
-}
 fragment stringSelectableComponentList on StringSelectableComponentList {
   ...componentData
   initiallySelected
@@ -1026,25 +940,6 @@ fragment stringSelectableComponentList on StringSelectableComponentList {
     ...potentialShelfGroup
     ...lazyShelfGroup
     ...grid
-  }
-}
-fragment dateSelectableComponentList on DateSelectableComponentList {
-  ...componentData
-  initiallySelected
-  dateItemLabels {
-    day
-    date
-  }
-  title
-  items {
-    ...schedule
-    ...potentialSchedule
-  }
-}
-fragment schedule on Schedule {
-  ...component
-  data {
-    ...scheduleListingList
   }
 }
 fragment ctaData on CTAData {
@@ -1757,19 +1652,6 @@ fragment upcomingLiveSlideData on UpcomingLiveSlideData {
     ...notification
   }
 }
-fragment scheduleListingData on ScheduleListingData {
-  ...componentData
-  v4ID
-  programTitle
-  programDescription
-  ratingWithAdvisories
-  startTime
-  endTime
-  audioDescription
-  isNew
-  lastModified
-  seriesUrlAlias
-}
 fragment guideData on GuideData {
   ...componentData
   slotDuration
@@ -1897,12 +1779,6 @@ fragment shelfList on ShelfList {
   listTitle
   items {
     ...shelf
-  }
-}
-fragment scheduleListingList on ScheduleListingList {
-  ...componentData
-  items {
-    ...scheduleListing
   }
 }
 fragment ldExperiment on LdExperiment {
