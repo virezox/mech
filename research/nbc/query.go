@@ -302,36 +302,8 @@ fragment ctaLink on CTALink {
 }
 
 
-fragment videoTile on VideoTile {
-  ...component
-  data {
-    ...videoItem
-  }
-  analytics {
-    brand {
-      title
-    }
-    series
-    title
-    programmingType
-    episodeNumber
-    seasonNumber
-    mpxGuid
-    locked
-    duration
-    movie
-    genre
-    sport
-    league
-    language
-    event
-  }
-}
 fragment smartTile on SmartTile {
   ...component
-  data {
-    ...smartTileData
-  }
   analytics {
     smartTileLabel
     smartTileLogic
@@ -341,9 +313,6 @@ fragment smartTile on SmartTile {
 }
 fragment ctaSmartTile on CTASmartTile {
   ...component
-  data {
-    ...ctaSmartTileData
-  }
   analytics {
     brand {
       title
@@ -728,80 +697,6 @@ fragment ctaHeroData on CTAHeroData {
     ...ctaLink
   }
 }
-fragment smartTileData on SmartTileData {
-  ...componentData
-  label
-  tile {
-    ...videoTile
-  }
-}
-fragment ctaSmartTileData on CTASmartTileData {
-  ...componentData
-  label
-  title
-  secondaryTitle
-  secondaryTitleTag
-  description
-  locked
-  labelBadge
-  mpxGuid
-  permalink
-  gradientStart
-  gradientEnd
-  programmingType
-  percentViewed
-  lastWatched
-  mpxAccountId
-  mpxAdPolicy
-  resourceId
-  channelId
-  externalAdvertiserId
-}
-fragment item on Item {
-  v4ID
-  title
-  secondaryTitle
-  tertiaryTitle
-  description
-  gradientStart
-  gradientEnd
-  labelBadge
-  lastModified
-}
-fragment videoItem on VideoItem {
-  ...componentData
-  ...item
-  secondaryTitleTag
-  locked
-  mpxGuid
-  programmingType
-  episodeNumber
-  seasonNumber
-  airDate
-  percentViewed
-  permalink
-  lastWatched
-  duration
-  genre
-  rating
-  lightPrimaryColor
-  darkPrimaryColor
-  seriesShortTitle
-  movieShortTitle
-  whiteBrandLogo
-  colorBrandLogo
-  brandDisplayTitle
-  mpxAccountId
-  mpxAdPolicy
-  resourceId
-  channelId
-  rating
-  externalAdvertiserId
-  ariaLabel
-  longDescription
-  ctaText
-  ctaTextColor
-  brandMachineName
-  durationBadge
-}
+
+
 `
