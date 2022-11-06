@@ -75,9 +75,6 @@ query bonanzaPage(
         ...hero
         ...ctaHero
       }
-      notification {
-        ...notification
-      }
     }
   }
 }
@@ -119,9 +116,6 @@ fragment descriptionSection on DescriptionSection {
 fragment slideshow on Slideshow {
   ...component
   ...section
-  data {
-    ...slideList
-  }
   analytics {
     itemsList
     machineName
@@ -197,70 +191,6 @@ fragment ctaLink on CTALink {
     league
     event
     sport
-  }
-}
-
-fragment upcomingModal on UpcomingModal {
-  ...component
-  data {
-    ...upcomingModalData
-  }
-  analytics {
-    modalName
-    modalType
-    dismissText
-    programTitle
-    brand {
-      title
-    }
-  }
-}
-
-fragment slide on Slide {
-  ...component
-  data {
-    ...slideItem
-  }
-  analytics {
-    entityTitle
-    isSponsoredSlide
-    sponsorName
-    dynamicallyGenerated
-    dynamicGenerationLogic
-  }
-}
-
-fragment upcomingLiveSlide on UpcomingLiveSlide {
-  ...component
-  data {
-    ...upcomingLiveSlideData
-  }
-  analytics {
-    analyticsType
-    ctaLiveTitle
-    ctaUpcomingTitle
-    ctaNotInPackageTitle
-    isLiveCallout
-    isSponsoredSlide
-    sponsorName
-    programType
-    genre
-    secondaryGenre
-    listOfGenres
-    title
-    secondaryTitle
-    liveEntitlement
-    league
-    sport
-    videoBroadcast
-    nielsenClientId
-    nielsenChannel
-    nielsenSfCode
-    isOlympics
-    adobeVideoResearchTitle
-    brand {
-      title
-    }
   }
 }
 
@@ -611,155 +541,7 @@ fragment ctaSmartTileData on CTASmartTileData {
   mpxAccountId
 }
 
-fragment item on Item {
-  v4ID
-  title
-  secondaryTitle
-  tertiaryTitle
-  description
-  image
-  gradientStart
-  gradientEnd
-  labelBadge
-  lastModified
-}
-
 fragment videoItem on VideoItem {
   mpxAccountId
-}
-
-fragment upcomingModalData on UpcomingModalData {
-  machineName
-  title
-  description
-  ctaText
-  dismissText
-  lastMinuteModalLifespan
-  countdownDayLabel
-  countdownHourLabel
-  countdownMinLabel
-  startTime
-  backgroundImage
-  backgroundVideo
-  resourceId
-  channelId
-  streamAccessName
-}
-
-fragment slideItem on SlideItem {
-  ...componentData
-  ...item
-  titleColor
-  secondaryTitleColor
-  description
-  descriptionColor
-  compactImage
-  videoTitle
-  percentViewed
-  episodeNumber
-  seasonNumber
-  seriesShortTitle
-  programmingType
-  portraitPreview
-  landscapePreview
-  titleLogo
-  brandDisplayTitle
-  whiteBrandLogo
-  colorBrandLogo
-  tuneIn
-  rating
-  locked
-  airDate
-  sponsorLogo
-  sponsorLogoAltText
-  sponsorName
-  externalAdvertiserId
-  ariaLabel
-  playlistBadge
-  cta {
-    ...ctaLink
-    ...smartTile
-  }
-}
-fragment upcomingLiveSlideData on UpcomingLiveSlideData {
-  ...componentData
-  v4ID
-  title
-  secondaryTitle
-  description
-  image
-  gradientStart
-  gradientEnd
-  lastModified
-  liveTuneIn
-  upcomingTuneIn
-  liveBadge
-  titleColor
-  secondaryTitleColor
-  descriptionColor
-  compactImage
-  landscapePreview
-  titleLogo
-  brandDisplayTitle
-  whiteBrandLogo
-  colorBrandLogo
-  sponsorLogo
-  sponsorLogoAltText
-  sponsorName
-  startTime
-  endTime
-  liveAriaLabel
-  upcomingAriaLabel
-  liveCtaColor
-  upcomingCtaColor
-  liveCtaText
-  upcomingCtaText
-  notInPackageCtaText
-  resourceId
-  channelId
-  machineName
-  streamAccessName
-  directToLiveThreshold
-  upcomingModal {
-    ...upcomingModal
-  }
-  notification {
-    ...notification
-  }
-}
-
-fragment slideList on SlideList {
-  ...componentData
-  lastModified
-  items {
-    ...slide
-    ...upcomingLiveSlide
-  }
-}
-
-fragment notification on Notification {
-  ...component
-  data {
-    ...componentData
-    v4ID
-    machineName
-    headline
-    headlineColor
-    message
-    messageColor
-    logo
-    logoAltText
-    portraitImage
-    landscapeImage
-    cta {
-      ...ctaLink
-    }
-    dismissText
-  }
-  analytics {
-    entityTitle
-    dismissText
-    placement
-  }
 }
 `
