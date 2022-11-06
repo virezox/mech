@@ -86,13 +86,24 @@ query bonanzaPage(
 }
 `
 
+func graphQL_compact(s string) string {
+   old_new := []string{
+      "\n", "",
+      strings.Repeat(" ", 12), " ",
+      strings.Repeat(" ", 9), " ",
+      strings.Repeat(" ", 6), " ",
+      strings.Repeat(" ", 3), " ",
+   }
+   return strings.NewReplacer(old_new...).Replace(s)
+}
+
 func New_Bonanza_Page(guid int64) (*Bonanza_Page, error) {
    var p page_request
    p.Variables.App = "nbc"
    p.Variables.Name = strconv.FormatInt(guid, 10)
    p.Variables.Platform = "android"
    p.Variables.Type = "VIDEO"
-   p.Query = strings.ReplaceAll(query, "\n", "")
+   p.Query = graphQL_compact(query)
    body, err := json.MarshalIndent(p, "", " ")
    if err != nil {
       return nil, err
