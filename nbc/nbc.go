@@ -13,6 +13,70 @@ import (
    "time"
 )
 
+const query = `
+query bonanzaPage(
+   $app: NBCUBrands!
+   $name: String!
+   $oneApp: Boolean
+   $platform: SupportedPlatforms!
+   $type: EntityPageType!
+   $userId: String!
+) {
+   bonanzaPage(
+      app: $app
+      name: $name
+      oneApp: $oneApp
+      platform: $platform
+      type: $type
+      userId: $userId
+   ) {
+      metadata {
+         ... on VideoPageData {
+            mpxAccountId
+            mpxGuid
+            secondaryTitle
+            seriesShortTitle
+         }
+      }
+   }
+}
+`
+
+func New_Bonanza_Page(guid int64) (*Bonanza_Page, error) {
+   var p page_request
+   p.Query = graphQL_compact(query)
+   p.Variables.App = "nbc"
+   p.Variables.Name = strconv.FormatInt(guid, 10)
+   p.Variables.One_App = true
+   p.Variables.Platform = "android"
+   p.Variables.Type = "VIDEO"
+   body, err := json.MarshalIndent(p, "", " ")
+   if err != nil {
+      return nil, err
+   }
+   req, err := http.NewRequest(
+      "POST", "https://friendship.nbc.co/v2/graphql", bytes.NewReader(body),
+   )
+   if err != nil {
+      return nil, err
+   }
+   req.Header.Set("Content-Type", "application/json")
+   res, err := Client.Do(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   var page struct {
+      Data struct {
+         BonanzaPage Bonanza_Page
+      }
+   }
+   if err := json.NewDecoder(res.Body).Decode(&page); err != nil {
+      return nil, err
+   }
+   return &page.Data.BonanzaPage, nil
+}
+
 type Bonanza_Page struct {
    Metadata struct {
       MPX_Account_ID string `json:"mpxAccountId"`
@@ -48,44 +112,6 @@ func authorization() string {
    return str.String()
 }
 
-type page_request struct {
-   Query string `json:"query"`
-   Variables struct {
-      App string `json:"app"`
-      Name string `json:"name"` // String cannot represent a non string value
-      Platform string `json:"platform"`
-      Type string `json:"type"`
-      User_ID string `json:"userId"` // can be empty
-   } `json:"variables"`
-}
-
-const query = `
-query bonanzaPage(
-   $app: NBCUBrands!
-   $name: String!
-   $platform: SupportedPlatforms!
-   $type: EntityPageType!
-   $userId: String!
-) {
-   bonanzaPage(
-      app: $app
-      name: $name
-      platform: $platform
-      type: $type
-      userId: $userId
-   ) {
-      metadata {
-         ... on VideoPageData {
-            mpxAccountId
-            mpxGuid
-            secondaryTitle
-            seriesShortTitle
-         }
-      }
-   }
-}
-`
-
 func graphQL_compact(s string) string {
    old_new := []string{
       "\n", "",
@@ -95,40 +121,6 @@ func graphQL_compact(s string) string {
       strings.Repeat(" ", 3), " ",
    }
    return strings.NewReplacer(old_new...).Replace(s)
-}
-
-func New_Bonanza_Page(guid int64) (*Bonanza_Page, error) {
-   var p page_request
-   p.Variables.App = "nbc"
-   p.Variables.Name = strconv.FormatInt(guid, 10)
-   p.Variables.Platform = "android"
-   p.Variables.Type = "VIDEO"
-   p.Query = graphQL_compact(query)
-   body, err := json.MarshalIndent(p, "", " ")
-   if err != nil {
-      return nil, err
-   }
-   req, err := http.NewRequest(
-      "POST", "https://friendship.nbc.co/v2/graphql", bytes.NewReader(body),
-   )
-   if err != nil {
-      return nil, err
-   }
-   req.Header.Set("Content-Type", "application/json")
-   res, err := Client.Do(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   var page struct {
-      Data struct {
-         BonanzaPage Bonanza_Page
-      }
-   }
-   if err := json.NewDecoder(res.Body).Decode(&page); err != nil {
-      return nil, err
-   }
-   return &page.Data.BonanzaPage, nil
 }
 
 type Video struct {
@@ -176,4 +168,16 @@ func (b Bonanza_Page) Video() (*Video, error) {
       return nil, err
    }
    return vid, nil
+}
+
+type page_request struct {
+   Query string `json:"query"`
+   Variables struct {
+      App string `json:"app"` // String cannot represent a non string value
+      Name string `json:"name"`
+      One_App bool `json:"oneApp"`
+      Platform string `json:"platform"`
+      Type string `json:"type"` // can be empty
+      User_ID string `json:"userId"`
+   } `json:"variables"`
 }

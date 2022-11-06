@@ -7,12 +7,8 @@ import (
 )
 
 var guids = []int64{
-   // nbc.com/botched/video/seeing-double/3049418
-   3049418,
-   // nbc.com/la-brea/video/pilot/9000194212
-   9000194212,
-   // nbc.com/saturday-night-live/video/april-2-jerrod-carmichael/9000199373
-   9000199373,
+   // nbc.com/saturday-night-live/video/november-5-amy-schumer/9000258300
+   9000258300,
    // nbc.com/pasion-de-gavilanes/video/la-valentia-de-norma/9000221348
    9000221348,
 }

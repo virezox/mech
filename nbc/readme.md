@@ -17,10 +17,6 @@ com.nbcuni.nbc
 
 https://github.com/httptoolkit/frida-android-unpinning
 
-## How to get `persistedQuery`?
-
-https://www.nbc.com
-
 ## How to get `secretKey`?
 
 https://nbcapp.nbc.co/config/android/player/v11/prod/mobile.json
