@@ -84,10 +84,6 @@ query bonanzaPage(
       sections {
          ...error
          
-         ...marketingModule
-         ...message
-         ...navigationMenu
-         ...onAirNowShelf
          ...premiumShelf
          ...stack
          ...tabsSelectableGroup
@@ -120,55 +116,6 @@ fragment potentialComponent on PotentialComponent {
 fragment section on Section {
   logicName
   deepLinkHandle
-}
-
-fragment marketingModule on MarketingModule {
-  ...component
-  ...section
-  marketingModuleData: data {
-    v4ID
-    machineName
-    description
-    descriptionColor
-    logo {
-      ...image
-    }
-    logoAltText
-    isSponsored
-    sponsorName
-    sponsorLogo {
-      ...image
-    }
-    sponsorLogoAltText
-    mainPreview
-    mainImage {
-      ...image
-    }
-    backgroundPreview
-    backgroundFallbackImage {
-      ...image
-    }
-    locked
-    externalAdvertiserId
-    badge
-    gradientStart
-    gradientEnd
-    primaryCTA {
-      ...ctaLink
-    }
-    secondaryCTA {
-      ...ctaLink
-    }
-    ariaLabel
-  }
-  analytics {
-    itemsList
-    listTitle
-    sponsorName
-    machineName
-    isSponsoredMarketingModule
-    entityTitle
-  }
 }
 fragment overlayData on OverlayData {
   content {
@@ -232,18 +179,6 @@ fragment stack on Stack {
     sponsorName
   }
 }
-fragment onAirNowShelf on OnAirNowShelf {
-  ...component
-  ...section
-  data {
-    ...onAirNowList
-  }
-  analytics {
-    itemsList
-    machineName
-    listTitle
-  }
-}
 fragment potentialShelf on PotentialShelf {
   ...component
   ...potentialComponent
@@ -261,13 +196,6 @@ fragment lazyGrid on LazyGrid {
   ...component
   ...section
   ...lazyComponent
-}
-fragment message on Message {
-  ...component
-  ...section
-  data {
-    ...messageData
-  }
 }
 fragment grid on Grid {
   ...component
@@ -336,34 +264,6 @@ fragment ctaHero on CTAHero {
   ...section
   data {
     ...ctaHeroData
-  }
-}
-fragment navigationMenu on NavigationMenu {
-  ...component
-  ...section
-  data {
-    ...componentData
-    favoriteInteraction {
-      default {
-        ...hypermediaLink
-      }
-      undo {
-        ...hypermediaLink
-      }
-    }
-    shortTitle
-    tuneIn
-    links {
-      ...component
-      data {
-        ...componentData
-        items {
-          title
-          href
-          isCoppaCompliant
-        }
-      }
-    }
   }
 }
 fragment videoPlayer on VideoPlayer {
@@ -851,11 +751,6 @@ fragment ctaData on CTAData {
   secondaryTitle
   secondaryTitleTag
   isTrailer
-}
-fragment messageData on MessageData {
-  ...componentData
-  textRow1
-  textRow2
 }
 fragment descriptionData on DescriptionData {
   ...componentData
@@ -1590,14 +1485,6 @@ fragment premiumTileList on PremiumTileList {
   ariaLabel
   items {
     ...premiumTile
-  }
-}
-fragment onAirNowList on OnAirNowList {
-  ...componentData
-  listTitle
-  lastModified
-  items {
-    ...onAirNowTile
   }
 }
 fragment shelfList on ShelfList {
