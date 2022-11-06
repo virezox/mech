@@ -21,7 +21,7 @@ func (f flags) download() error {
    if err != nil {
       return err
    }
-   f.Name = page.Analytics.ConvivaAssetName
+   f.Name = page.Name()
    master, err := f.HLS(video.ManifestPath)
    if err != nil {
       return err
