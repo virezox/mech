@@ -1,6 +1,8 @@
 package main
 
 import (
+   "bytes"
+   "encoding/json"
    "fmt"
    "io"
    "net/http"
@@ -36,8 +38,10 @@ func main() {
    if err != nil {
       panic(err)
    }
+   var dst bytes.Buffer
+   json.Indent(&dst, raw_body, "", " ")
+   fmt.Println(dst.String())
    body := string(raw_body)
-   fmt.Println(body)
    if strings.Contains(body, `"convivaAssetName"`) {
       fmt.Println("pass")
    } else {
