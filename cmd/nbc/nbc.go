@@ -13,15 +13,15 @@ type flags struct {
 }
 
 func (f flags) download() error {
-   page, err := nbc.New_Bonanza_Page(f.guid)
+   meta, err := nbc.New_Metadata(f.guid)
    if err != nil {
       return err
    }
-   video, err := page.Video()
+   video, err := meta.Video()
    if err != nil {
       return err
    }
-   f.Name = page.Name()
+   f.Name = meta.Name()
    master, err := f.HLS(video.ManifestPath)
    if err != nil {
       return err

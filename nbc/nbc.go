@@ -42,58 +42,6 @@ query bonanzaPage(
 }
 `
 
-func New_Bonanza_Page(guid int64) (*Bonanza_Page, error) {
-   var p page_request
-   p.Query = graphQL_compact(query)
-   p.Variables.App = "nbc"
-   p.Variables.Name = strconv.FormatInt(guid, 10)
-   p.Variables.One_App = true
-   p.Variables.Platform = "android"
-   p.Variables.Type = "VIDEO"
-   body, err := json.MarshalIndent(p, "", " ")
-   if err != nil {
-      return nil, err
-   }
-   req, err := http.NewRequest(
-      "POST", "https://friendship.nbc.co/v2/graphql", bytes.NewReader(body),
-   )
-   if err != nil {
-      return nil, err
-   }
-   req.Header.Set("Content-Type", "application/json")
-   res, err := Client.Do(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   var page struct {
-      Data struct {
-         BonanzaPage Bonanza_Page
-      }
-   }
-   if err := json.NewDecoder(res.Body).Decode(&page); err != nil {
-      return nil, err
-   }
-   return &page.Data.BonanzaPage, nil
-}
-
-type Bonanza_Page struct {
-   Metadata struct {
-      MPX_Account_ID string `json:"mpxAccountId"`
-      MPX_GUID string `json:"mpxGuid"`
-      Series_Short_Title string `json:"seriesShortTitle"`
-      Secondary_Title string `json:"secondaryTitle"`
-   }
-}
-
-func (b Bonanza_Page) Name() string {
-   var s strings.Builder
-   s.WriteString(b.Metadata.Series_Short_Title)
-   s.WriteByte('-')
-   s.WriteString(b.Metadata.Secondary_Title)
-   return s.String()
-}
-
 var (
    Client = http.Default_Client
    secret_key = []byte("2b84a073ede61c766e4c0b3f1e656f7f")
@@ -123,25 +71,64 @@ func graphQL_compact(s string) string {
    return strings.NewReplacer(old_new...).Replace(s)
 }
 
-type Video struct {
-   ManifestPath string // this is only valid for one minute
+type Metadata struct {
+   MPX_Account_ID string `json:"mpxAccountId"`
+   MPX_GUID string `json:"mpxGuid"`
+   Series_Short_Title string `json:"seriesShortTitle"`
+   Secondary_Title string `json:"secondaryTitle"`
 }
 
-type video_request struct {
-   Device string `json:"device"`
-   Device_ID string `json:"deviceId"`
-   External_Advertiser_ID string `json:"externalAdvertiserId"`
-   MPX struct {
-      Account_ID string `json:"accountId"`
-   } `json:"mpx"`
+func New_Metadata(guid int64) (*Metadata, error) {
+   var p page_request
+   p.Query = graphQL_compact(query)
+   p.Variables.App = "nbc"
+   p.Variables.Name = strconv.FormatInt(guid, 10)
+   p.Variables.One_App = true
+   p.Variables.Platform = "android"
+   p.Variables.Type = "VIDEO"
+   body, err := json.MarshalIndent(p, "", " ")
+   if err != nil {
+      return nil, err
+   }
+   req, err := http.NewRequest(
+      "POST", "https://friendship.nbc.co/v2/graphql", bytes.NewReader(body),
+   )
+   if err != nil {
+      return nil, err
+   }
+   req.Header.Set("Content-Type", "application/json")
+   res, err := Client.Do(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   var page struct {
+      Data struct {
+         Bonanza_Page struct {
+            Metadata Metadata
+         } `json:"bonanzaPage"`
+      }
+   }
+   if err := json.NewDecoder(res.Body).Decode(&page); err != nil {
+      return nil, err
+   }
+   return &page.Data.Bonanza_Page.Metadata, nil
 }
 
-func (b Bonanza_Page) Video() (*Video, error) {
+func (m Metadata) Name() string {
+   var b strings.Builder
+   b.WriteString(m.Series_Short_Title)
+   b.WriteByte('-')
+   b.WriteString(m.Secondary_Title)
+   return b.String()
+}
+
+func (m Metadata) Video() (*Video, error) {
    var v video_request
    v.Device = "android"
    v.Device_ID = "android"
    v.External_Advertiser_ID = "NBC"
-   v.MPX.Account_ID = b.Metadata.MPX_Account_ID
+   v.MPX.Account_ID = m.MPX_Account_ID
    body, err := json.MarshalIndent(v, "", " ")
    if err != nil {
       return nil, err
@@ -149,7 +136,7 @@ func (b Bonanza_Page) Video() (*Video, error) {
    var str strings.Builder
    str.WriteString("http://access-cloudpath.media.nbcuni.com")
    str.WriteString("/access/vod/nbcuniversal/")
-   str.WriteString(b.Metadata.MPX_GUID)
+   str.WriteString(m.MPX_GUID)
    req, err := http.NewRequest("POST", str.String(), bytes.NewReader(body))
    if err != nil {
       return nil, err
@@ -170,6 +157,10 @@ func (b Bonanza_Page) Video() (*Video, error) {
    return vid, nil
 }
 
+type Video struct {
+   ManifestPath string // this is only valid for one minute
+}
+
 type page_request struct {
    Query string `json:"query"`
    Variables struct {
@@ -180,4 +171,13 @@ type page_request struct {
       Type string `json:"type"` // can be empty
       User_ID string `json:"userId"`
    } `json:"variables"`
+}
+
+type video_request struct {
+   Device string `json:"device"`
+   Device_ID string `json:"deviceId"`
+   External_Advertiser_ID string `json:"externalAdvertiserId"`
+   MPX struct {
+      Account_ID string `json:"accountId"`
+   } `json:"mpx"`
 }
