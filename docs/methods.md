@@ -1,8 +1,13 @@
 # Methods
 
-## anti\_vm
+## APK to Java
 
-https://github.com/rednaga/APKiD
+~~~
+jadx.bat --show-bad-code com.google.android.youtube-1528288704.apk
+jadx-gui.bat com.pinterest-10098030.apk
+~~~
+
+https://github.com/skylot/jadx
 
 ## iOS
 
@@ -69,15 +74,6 @@ set modify_headers '/~q/X-Forwarded-For/25.0.0.0'
 ~~~
 
 https://docs.mitmproxy.org/stable/overview-features
-
-## APK to Java
-
-~~~
-jadx-gui.bat com.pinterest-10098030.apk
-jadx.bat com.google.android.youtube-1528288704.apk
-~~~
-
-https://github.com/skylot/jadx
 
 ## APK
 
