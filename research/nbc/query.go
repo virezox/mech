@@ -84,7 +84,6 @@ query bonanzaPage(
       sections {
          ...error
          
-         ...guide
          ...marketingModule
          ...message
          ...navigationMenu
@@ -807,115 +806,6 @@ fragment ctaSmartTile on CTASmartTile {
     smartTileScenario
     sponsorName
     isSponsoredTitle
-  }
-}
-fragment guide on Guide {
-  ...component
-  data {
-    ...guideData
-  }
-}
-fragment guideSchedule on GuideSchedule {
-  ...component
-  data {
-    ...guideScheduleData
-  }
-}
-fragment guideStream on GuideStream {
-  ...component
-  data {
-    ...guideStreamData
-  }
-  analytics {
-    brand {
-      title
-    }
-    callSign
-    xyFallback
-  }
-}
-fragment guideProgram on GuideProgram {
-  ...component
-  guideProgramData: data {
-    ...guideProgramData
-  }
-  analytics {
-    brand {
-      title
-    }
-    currentVideo {
-      tmsId
-      mpxGuid
-      rating
-      relativePath
-      programmingType
-      seasonNumber
-      episodeNumber
-      duration
-      videoTitle
-      series
-      movie
-      locked
-      callSign
-      ottPlatform
-      airDate
-      webBrandDomain
-      programTitle
-      isFullEpisode
-      durationInMilliseconds
-      genre
-      secondaryGenre
-      externalAdvertiserId
-      titleTmsId
-      dayPart
-      videoType
-      clipCategory
-      adobeVideoPlatform
-      adobeContentType
-      adobeBrand
-      playerUrl
-      liveEntitlement
-      listOfGenres
-      ratingWithAdvisories
-      nielsenClientId
-      nielsenSfCode
-      nielsenProgen
-      nielsenBrand
-      nielsenChannel
-      isOlympics
-      adobeVideoResearchTitle
-      sport
-      league
-      comscoreCallSign
-      videoBroadCast
-      brand {
-        title
-      }
-    }
-    nextVideo {
-      tmsId
-      mpxGuid
-      relativePath
-      programmingType
-      seasonNumber
-      episodeNumber
-      duration
-      videoTitle
-      series
-      movie
-      locked
-      brand {
-        title
-      }
-    }
-    titlePage {
-      series
-      movie
-      isMovie
-      brand {
-        title
-      }
-    }
   }
 }
 fragment componentData on ComponentData {
@@ -1648,70 +1538,6 @@ fragment upcomingLiveSlideData on UpcomingLiveSlideData {
   upcomingModal {
     ...upcomingModal
   }
-  notification {
-    ...notification
-  }
-}
-fragment guideData on GuideData {
-  ...componentData
-  slotDuration
-  slots
-  start
-  schedules {
-    ...guideSchedule
-  }
-  streams {
-    ...guideStream
-  }
-}
-fragment guideScheduleData on GuideScheduleData {
-  ...componentData
-  programs {
-    ...guideProgram
-  }
-}
-fragment guideStreamData on GuideStreamData {
-  ...componentData
-  lightPrimaryColor
-  darkPrimaryColor
-  brandDisplayTitle
-  machineName
-  secondaryTitle
-  colorBrandLogo
-  whiteBrandLogo
-  resourceId
-  channelId
-  v4ID
-  streamAccessName
-  xyFallback
-}
-fragment guideProgramData on GuideProgramData {
-  ...componentData
-  v4ID
-  startSlot
-  endSlot
-  slotSpan
-  image
-  episodeNumber
-  seasonNumber
-  episodeTitle
-  programTitle
-  programDescription
-  ratingWithAdvisories
-  startTime
-  endTime
-  audioDescription
-  isNew
-  seriesUrlAlias
-  backgroundGradientStart
-  backgroundGradientEnd
-  resourceId
-  channelId
-  streamAccessName
-  tmsId
-  whiteBrandLogo
-  machineName
-  brandV4ID
   notification {
     ...notification
   }
