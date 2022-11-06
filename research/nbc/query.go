@@ -56,18 +56,12 @@ query bonanzaPage(
     name
     metadata {
       __typename
-      ...videoPageData
       ...seriesHomepagePageData
       ...movieHomepagePageData
       ...brandLandingPageMetadata
       ...titleV2HomepagePageData
     }
     data {
-      featured {
-        ...slideshow
-        ...hero
-        ...ctaHero
-      }
       sections {
          ...error
          ...videoPlayer
@@ -75,46 +69,13 @@ query bonanzaPage(
     }
   }
 }
+
 fragment error on Error {
   error
 }
 
-
-fragment component on Component {
-  component
-  meta
-  treatments
-}
-fragment section on Section {
-  logicName
-  deepLinkHandle
-}
-
-fragment slideshow on Slideshow {
-  ...component
-  ...section
-  analytics {
-    itemsList
-    machineName
-    listTitle
-  }
-}
-fragment hero on Hero {
-  ...component
-  ...section
-  data {
-    ...heroData
-  }
-}
-fragment ctaHero on CTAHero {
-  ...component
-  ...section
-}
 fragment videoPlayer on VideoPlayer {
-  ...component
-  ...section
   data {
-    ...componentData
     player {
       v4ID
       mpxGuid
@@ -213,112 +174,8 @@ fragment videoPlayer on VideoPlayer {
   }
 }
 
-fragment hypermediaLink on HypermediaLink {
-  linkTitle
-  rel
-  request {
-    location
-    method
-    body
-    headers {
-      name
-      value
-    }
-  }
-}
+###########################################################
 
-fragment smartTile on SmartTile {
-  ...component
-  analytics {
-    smartTileLabel
-    smartTileLogic
-    editorialLogic
-    smartTileScenario
-  }
-}
-
-fragment componentData on ComponentData {
-  instanceID
-}
-
-fragment videoPageData on VideoPageData {
-  title
-  secondaryTitle
-  tertiaryTitle
-  playlistTitle
-  playlistImage {
-    path
-    width
-    height
-  }
-  description
-  shortDescription
-  gradientStart
-  gradientEnd
-  lightPrimaryColor
-  brandLightPrimaryColor
-  brandDarkPrimaryColor
-  seasonNumber
-  episodeNumber
-  airDate
-  rating
-  copyright
-  locked
-  programmingType
-  genre
-  duration
-  permalink
-  percentViewed
-  labelBadge
-  mpxGuid
-  authEnds
-  externalAdvertiserId
-  mpxEntitlementWindows {
-    availStartDateTime
-    availEndDateTime
-    entitlement
-    device
-  }
-  tveEntitlementWindows {
-    availStartDateTime
-    availEndDateTime
-    entitlement
-    device
-  }
-  cast {
-    characterFirstName
-    characterLastName
-    talentFirstName
-    talentLastName
-  }
-  v4ID
-  seriesShortTitle
-  seriesShortDescription
-  multiPlatformLargeImage
-  multiPlatformSmallImage
-  urlAlias
-  dartTag
-  seriesType
-  dayPart
-  sunrise
-  sunset
-  ratingAdvisories
-  width
-  height
-  selectedCountries
-  keywords
-  watchId
-  referenceUrl
-  numberOfEpisodes
-  numberOfSeasons
-  channelId
-  resourceId
-  mpxAccountId
-  mpxAdPolicy
-  brandDisplayTitle
-  colorBrandLogo
-  whiteBrandLogo
-}
 fragment brandLandingPageMetadata on BrandLandingPageMetadata {
   whiteBrandLogo
   colorBrandLogo
@@ -434,22 +291,5 @@ fragment seriesHomepagePageData on SeriesHomepagePageData {
   canonicalUrl
   titleLogo
 }
-fragment heroData on HeroData {
-  ...componentData
-  title
-  secondaryTitle
-  compactImage
-  favoriteID
-  favoriteInteraction {
-    default {
-      ...hypermediaLink
-    }
-    undo {
-      ...hypermediaLink
-    }
-  }
-  smartTile {
-    ...smartTile
-  }
-}
+
 `
