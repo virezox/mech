@@ -96,23 +96,7 @@ fragment section on Section {
   logicName
   deepLinkHandle
 }
-fragment overlayData on OverlayData {
-  content {
-    ...descriptionSection
-  }
-}
-fragment overlay on Overlay {
-  ...component
-  data {
-    ...overlayData
-  }
-}
-fragment descriptionSection on DescriptionSection {
-  ...component
-  data {
-    ...descriptionData
-  }
-}
+
 fragment slideshow on Slideshow {
   ...component
   ...section
@@ -132,9 +116,6 @@ fragment hero on Hero {
 fragment ctaHero on CTAHero {
   ...component
   ...section
-  data {
-    ...ctaHeroData
-  }
 }
 fragment videoPlayer on VideoPlayer {
   ...component
@@ -257,50 +238,6 @@ fragment hypermediaLink on HypermediaLink {
     }
   }
 }
-fragment ctaLink on CTALink {
-  ...component
-  data {
-    ...ctaData
-  }
-  analytics {
-    smartDynamicCTA
-    smartTileLabel
-    smartTileLogic
-    editorialLogic
-    smartTileScenario
-    ctaTitle
-    destinationType
-    destination
-    brand {
-      title
-    }
-    series
-    movie
-    isMovie
-    videoTitle
-    locked
-    programmingType
-    seasonNumber
-    episodeNumber
-    mpxGuid
-    duration
-    isPlaylist
-    playlistMachineName
-    playlistTitle
-    isLive
-    sponsorName
-    isSponsoredTitle
-    isTrailer
-    liveEntitlement
-    isVote
-    isSportVideo
-    language
-    league
-    event
-    sport
-  }
-}
-
 
 fragment smartTile on SmartTile {
   ...component
@@ -311,60 +248,11 @@ fragment smartTile on SmartTile {
     smartTileScenario
   }
 }
-fragment ctaSmartTile on CTASmartTile {
-  ...component
-  analytics {
-    brand {
-      title
-    }
-    title
-    programmingType
-    episodeNumber
-    seasonNumber
-    mpxGuid
-    locked
-    duration
-    movie
-    series
-    genre
-    smartTileLabel
-    smartTileLogic
-    editorialLogic
-    smartTileScenario
-    sponsorName
-    isSponsoredTitle
-  }
-}
+
 fragment componentData on ComponentData {
   instanceID
 }
-fragment ctaData on CTAData {
-  ...componentData
-  color
-  gradientStart
-  gradientEnd
-  text
-  destinationType
-  destination
-  endCardMpxGuid
-  endCardTagLine
-  playlistMachineName
-  playlistCount
-  urlAlias
-  isLive
-  isPlaylist
-  title
-  secondaryTitle
-  secondaryTitleTag
-  isTrailer
-}
-fragment descriptionData on DescriptionData {
-  ...componentData
-  optionalTitle
-  description
-  shortTitle
-  gradientStart
-}
+
 fragment brandLandingPageAnalyticsAttributes on BrandLandingPageAnalyticsAttributes {
   brand {
     title
@@ -666,37 +554,4 @@ fragment heroData on HeroData {
     ...smartTile
   }
 }
-fragment ctaHeroData on CTAHeroData {
-  ...componentData
-  title
-  gradientStart
-  gradientEnd
-  description
-  secondaryDescription
-  favoriteInteraction {
-    default {
-      ...hypermediaLink
-    }
-    undo {
-      ...hypermediaLink
-    }
-  }
-  sponsorLogoAltText
-  sponsorName
-  brandDisplayTitle
-  smartTileCTA {
-    ...ctaSmartTile
-  }
-  aboutOverlay {
-    ...overlay
-  }
-  primaryCTA {
-    ...ctaLink
-  }
-  secondaryCTA {
-    ...ctaLink
-  }
-}
-
-
 `
