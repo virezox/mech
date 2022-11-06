@@ -78,27 +78,17 @@ query bonanzaPage(
         ...hero
         ...ctaHero
       }
-      notification {
-        ...notification
-      }
       sections {
          ...error
-         
          ...videoPlayer
       }
     }
   }
 }
-
 fragment error on Error {
   error
 }
 
-fragment image on Image {
-  path
-  width
-  height
-}
 
 fragment component on Component {
   component
@@ -177,7 +167,6 @@ fragment videoPlayer on VideoPlayer {
       description
       shortDescription
       sunset
-      image
       keywords
       permalink
       rating
@@ -473,7 +462,6 @@ fragment descriptionData on DescriptionData {
   ...componentData
   optionalTitle
   description
-  image
   shortTitle
   gradientStart
 }
@@ -595,7 +583,6 @@ fragment videoPageData on VideoPageData {
   duration
   permalink
   percentViewed
-  image
   labelBadge
   mpxGuid
   authEnds
@@ -671,9 +658,6 @@ fragment titleV2HomepagePageData on TitleV2HomepagePageData {
   shortTitle
   isCoppaCompliant
   schemaType
-  titleArt {
-    ...image
-  }
   numberOfEpisodes
   numberOfSeasons
   brandDisplayTitle
@@ -768,7 +752,6 @@ fragment heroData on HeroData {
   ...componentData
   title
   secondaryTitle
-  image
   compactImage
   favoriteID
   favoriteInteraction {
@@ -786,19 +769,10 @@ fragment heroData on HeroData {
 fragment ctaHeroData on CTAHeroData {
   ...componentData
   title
-  titleLogo {
-    ...image
-  }
   gradientStart
   gradientEnd
   description
   secondaryDescription
-  heroImage: image {
-    ...image
-  }
-  heroCompactImage: compactImage {
-    ...image
-  }
   favoriteInteraction {
     default {
       ...hypermediaLink
@@ -807,18 +781,9 @@ fragment ctaHeroData on CTAHeroData {
       ...hypermediaLink
     }
   }
-  sponsorLogo {
-    ...image
-  }
   sponsorLogoAltText
   sponsorName
   brandDisplayTitle
-  colorBrandLogo {
-    ...image
-  }
-  whiteBrandLogo {
-    ...image
-  }
   smartTileCTA {
     ...ctaSmartTile
   }
@@ -867,7 +832,6 @@ fragment item on Item {
   secondaryTitle
   tertiaryTitle
   description
-  image
   gradientStart
   gradientEnd
   labelBadge
@@ -971,7 +935,6 @@ fragment upcomingLiveSlideData on UpcomingLiveSlideData {
   title
   secondaryTitle
   description
-  image
   gradientStart
   gradientEnd
   lastModified
@@ -1007,9 +970,6 @@ fragment upcomingLiveSlideData on UpcomingLiveSlideData {
   upcomingModal {
     ...upcomingModal
   }
-  notification {
-    ...notification
-  }
 }
 fragment slideList on SlideList {
   ...componentData
@@ -1038,70 +998,6 @@ fragment lazyComponent on LazyComponent {
 fragment lazyComponentData on LazyComponentData {
   ...componentData
   queryName
-  variables {
-    ...brandSeriesGroupedByCategoryQueryVariables
-    ...endCardQueryVariables
-    ...videoSectionQueryVariables
-  }
   path
-}
-fragment brandSeriesGroupedByCategoryQueryVariables on BrandSeriesGroupedByCategoryQueryVariables {
-  brand
-  userId
-  platform
-  timeZone
-  ld
-  profile
-  oneApp
-  app
-}
-fragment endCardQueryVariables on EndCardQueryVariables {
-  type
-  mpxGuid
-  userId
-  platform
-  timeZone
-  ld
-  profile
-  oneApp
-  app
-}
-fragment videoSectionQueryVariables on VideosSectionQueryVariables {
-  userId
-  platform
-  profile
-  seriesName
-  seasonNumber
-  programmingType
-  currentMpxGuid
-  oneApp
-  app
-}
-
-
-fragment notification on Notification {
-  ...component
-  data {
-    ...componentData
-    v4ID
-    machineName
-    headline
-    headlineColor
-    message
-    messageColor
-    logo
-    logoAltText
-    portraitImage
-    landscapeImage
-    cta {
-      ...ctaLink
-    }
-    dismissText
-  }
-  analytics {
-    entityTitle
-    dismissText
-    placement
-  }
 }
 `
