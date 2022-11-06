@@ -84,9 +84,6 @@ query bonanzaPage(
       sections {
          ...error
          
-         ...premiumShelf
-         ...stack
-         ...tabsSelectableGroup
          ...videoPlayer
       }
     }
@@ -108,11 +105,6 @@ fragment component on Component {
   meta
   treatments
 }
-
-fragment potentialComponent on PotentialComponent {
-  targetComponent
-}
-
 fragment section on Section {
   logicName
   deepLinkHandle
@@ -132,112 +124,6 @@ fragment descriptionSection on DescriptionSection {
   ...component
   data {
     ...descriptionData
-  }
-}
-fragment shelf on Shelf {
-  ...component
-  ...section
-  data {
-    ...tileList
-  }
-  analytics {
-    isPlaylist
-    playlistMachineName
-    listTitle
-    isSponsoredContent
-    sponsorName
-    isMixedTiles
-    machineName
-    itemsList
-  }
-}
-fragment premiumShelf on PremiumShelf {
-  ...component
-  ...section
-  data {
-    ...premiumTileList
-  }
-  analytics {
-    itemsList
-    machineName
-    listTitle
-    isSponsoredContent
-    sponsorName
-    shelfType
-  }
-}
-fragment stack on Stack {
-  ...component
-  ...section
-  data {
-    ...tileList
-  }
-  analytics {
-    playlistMachineName
-    listTitle
-    isSponsoredContent
-    sponsorName
-  }
-}
-fragment potentialShelf on PotentialShelf {
-  ...component
-  ...potentialComponent
-  ...section
-  data {
-    ...potentialComponentData
-  }
-}
-fragment lazyShelf on LazyShelf {
-  ...component
-  ...section
-  ...lazyComponent
-}
-fragment lazyGrid on LazyGrid {
-  ...component
-  ...section
-  ...lazyComponent
-}
-fragment grid on Grid {
-  ...component
-  ...section
-  data {
-    ...tileList
-  }
-  analytics {
-    listTitle
-    playlistMachineName
-    isSponsoredContent
-    sponsorName
-  }
-}
-fragment shelfGroup on ShelfGroup {
-  ...component
-  ...section
-  data {
-    ...shelfList
-  }
-}
-fragment potentialShelfGroup on PotentialShelfGroup {
-  ...component
-  ...potentialComponent
-  ...section
-  data {
-    ...potentialComponentData
-  }
-}
-fragment lazyShelfGroup on LazyShelfGroup {
-  ...component
-  ...lazyComponent
-  ...section
-  data {
-    ...lazyComponentData
-  }
-}
-fragment tabsSelectableGroup on TabsSelectableGroup {
-  ...component
-  ...section
-  data {
-    ...stringSelectableComponentList
   }
 }
 fragment slideshow on Slideshow {
@@ -435,82 +321,6 @@ fragment ctaLink on CTALink {
     sport
   }
 }
-fragment seriesTile on SeriesTile {
-  ...component
-  data {
-    ...seriesItem
-  }
-  analytics {
-    series
-    brand {
-      title
-    }
-  }
-}
-fragment movieTile on MovieTile {
-  ...component
-  data {
-    ...movieItem
-  }
-  analytics {
-    movie
-    brand {
-      title
-    }
-  }
-}
-fragment onAirNowTile on OnAirNowTile {
-  ...component
-  onAirNowTileData: data {
-    ...onAirNowItem
-  }
-  analytics {
-    isLive
-    episodeNumber
-    seasonNumber
-    programTitle
-    episodeTitle
-    tmsId
-    liveEntitlement
-    adobeVideoResearchTitle
-    league
-    isOlympics
-    sport
-    nielsenSfCode
-    nielsenChannel
-    nielsenClientId
-    videoBroadcast
-    brand {
-      title
-    }
-  }
-}
-fragment upcomingLiveTile on UpcomingLiveTile {
-  ...component
-  data {
-    ...upcomingLiveItem
-  }
-  analytics {
-    programType
-    genre
-    secondaryGenre
-    listOfGenres
-    title
-    secondaryTitle
-    liveEntitlement
-    league
-    sport
-    videoBroadcast
-    nielsenClientId
-    nielsenSfCode
-    nielsenChannel
-    adobeVideoResearchTitle
-    isOlympics
-    brand {
-      title
-    }
-  }
-}
 fragment upcomingModal on UpcomingModal {
   ...component
   data {
@@ -526,31 +336,7 @@ fragment upcomingModal on UpcomingModal {
     }
   }
 }
-fragment brandTile on BrandTile {
-  ...component
-  data {
-    ...brandItem
-  }
-  analytics {
-    brand {
-      title
-    }
-  }
-}
 fragment slide on Slide {
-  ...component
-  data {
-    ...slideItem
-  }
-  analytics {
-    entityTitle
-    isSponsoredSlide
-    sponsorName
-    dynamicallyGenerated
-    dynamicGenerationLogic
-  }
-}
-fragment slideTile on SlideTile {
   ...component
   data {
     ...slideItem
@@ -596,15 +382,6 @@ fragment upcomingLiveSlide on UpcomingLiveSlide {
     }
   }
 }
-fragment premiumTile on PremiumTile {
-  ...component
-  data {
-    ...premiumItem
-  }
-  analytics {
-    entityTitle
-  }
-}
 fragment videoTile on VideoTile {
   ...component
   data {
@@ -628,45 +405,6 @@ fragment videoTile on VideoTile {
     league
     language
     event
-  }
-}
-fragment featureTile on FeatureTile {
-  ...component
-  data {
-    ...featureItem
-  }
-  analytics {
-    series
-    brand {
-      title
-    }
-    playlistMachineName
-    listTitle
-  }
-}
-fragment playlistTile on PlaylistTile {
-  ...component
-  data {
-    ...playlistItem
-  }
-  analytics {
-    brand {
-      title
-    }
-    playlistMachineName
-    listTitle
-  }
-}
-fragment marketingBand on MarketingBand {
-  ...component
-  data {
-    ...marketingBandData
-  }
-  analytics {
-    series
-    brand {
-      title
-    }
   }
 }
 fragment smartTile on SmartTile {
@@ -710,27 +448,6 @@ fragment ctaSmartTile on CTASmartTile {
 }
 fragment componentData on ComponentData {
   instanceID
-}
-fragment potentialComponentData on PotentialComponentData {
-  ...componentData
-  link
-  path
-}
-fragment stringSelectableComponentList on StringSelectableComponentList {
-  ...componentData
-  initiallySelected
-  itemLabels
-  itemLabelsTitle
-  optionalTitle: title
-  items {
-    ...shelf
-    ...potentialShelf
-    ...lazyShelf
-    ...shelfGroup
-    ...potentialShelfGroup
-    ...lazyShelfGroup
-    ...grid
-  }
 }
 fragment ctaData on CTAData {
   ...componentData
@@ -1192,139 +909,8 @@ fragment videoItem on VideoItem {
   brandMachineName
   durationBadge
 }
-fragment featureItem on FeatureItem {
-  ...componentData
-  ...item
-  title
-  secondaryTitle
-  seriesShortTitle
-  image
-  link
-  brandDisplayTitle
-  whiteBrandLogo
-  colorBrandLogo
-  destinationType
-  destination
-  playlistMachineName
-  ariaLabel
-}
-fragment playlistItem on PlaylistItem {
-  ...componentData
-  ...item
-  brandDisplayTitle
-  whiteBrandLogo
-  colorBrandLogo
-  destination
-  destType: destinationType
-  playlistMachineName
-  externalAdvertiserId
-  ariaLabel
-}
-fragment marketingBandData on MarketingBandData {
-  ...componentData
-  v4ID
-  primaryImage
-  compactImage
-  link
-  seriesShortTitle
-  lastModified
-  brandDisplayTitle
-  whiteBrandLogo
-  colorBrandLogo
-  ariaLabel
-}
-fragment seriesItem on SeriesItem {
-  ...componentData
-  ...item
-  seriesName
-  shortTitle
-  urlAlias
-  favoritedOn
-  favoriteID
-  posterImage
-  lightPrimaryColor
-  darkPrimaryColor
-  whiteBrandLogo
-  colorBrandLogo
-  brandDisplayTitle
-  landscapePreview
-  portraitPreview
-  ariaLabel
-}
-fragment movieItem on MovieItem {
-  ...componentData
-  ...item
-  urlAlias
-  favoritedOn
-  favoriteID
-  posterImage
-  lightPrimaryColor
-  darkPrimaryColor
-  whiteBrandLogo
-  colorBrandLogo
-  brandDisplayTitle
-  landscapePreview
-  portraitPreview
-  rating
-  ariaLabel
-}
-fragment onAirNowItem on OnAirNowItem {
-  ...componentData
-  v4ID
-  image
-  title
-  secondaryTitle
-  startTime
-  endTime
-  machineName
-  whiteBrandLogo
-  brandDisplayTitle
-  brandLightPrimary
-  brandDarkPrimary
-  isNew
-  audioDescription
-  ratingWithAdvisories
-  resourceId
-  channelId
-  badge
-  resourceId
-  channelId
-  watchTagline
-  ariaLabel
-  notification {
-    ...notification
-  }
-}
-fragment upcomingLiveItem on UpcomingLiveItem {
-  instanceID
-  v4ID
-  machineName
-  title
-  secondaryTitle
-  shortDescription
-  liveBadge
-  upcomingBadge
-  image
-  startTime
-  endTime
-  brandV4ID
-  whiteBrandLogo
-  brandDisplayTitle
-  brandLightPrimary
-  brandDarkPrimary
-  liveAriaLabel
-  upcomingAriaLabel
-  upcomingModal {
-    ...upcomingModal
-  }
-  resourceId
-  channelId
-  streamAccessName
-  directToLiveThreshold
-  notification {
-    ...notification
-  }
-}
+
+
 fragment upcomingModalData on UpcomingModalData {
   machineName
   title
@@ -1342,20 +928,8 @@ fragment upcomingModalData on UpcomingModalData {
   channelId
   streamAccessName
 }
-fragment brandItem on BrandItem {
-  ...componentData
-  v4ID
-  lastModified
-  displayTitle
-  machineName
-  lightPrimaryColor
-  darkPrimaryColor
-  colorBrandLogo
-  whiteBrandLogo
-  horizontalPreview
-  staticPreviewImage
-  ariaLabel
-}
+
+
 fragment slideItem on SlideItem {
   ...componentData
   ...item
@@ -1445,55 +1019,8 @@ fragment slideList on SlideList {
     ...upcomingLiveSlide
   }
 }
-fragment tileList on TileList {
-  ...componentData
-  playlistMachineName
-  listTitle
-  ariaLabel
-  listTitleImage
-  sponsorLogo
-  sponsorName
-  sponsorLogoAltText
-  lastModified
-  items {
-    ...videoTile
-    ...videoStoryTile
-    ...seriesTile
-    ...movieTile
-    ...brandTile
-    ...featureTile
-    ...playlistTile
-    ...marketingBand
-    ...slideTile
-    ...smartTile
-    ...onAirNowTile
-    ...upcomingLiveTile
-  }
-  moreItems {
-    ...lazyShelf
-    ...lazyGrid
-  }
-}
-fragment premiumTileList on PremiumTileList {
-  ...componentData
-  listTitle
-  listTitleImage
-  sponsorLogo
-  sponsorLogoAltText
-  sponsorName
-  lastModified
-  ariaLabel
-  items {
-    ...premiumTile
-  }
-}
-fragment shelfList on ShelfList {
-  ...componentData
-  listTitle
-  items {
-    ...shelf
-  }
-}
+
+
 fragment ldExperiment on LdExperiment {
   name
   bucket
@@ -1550,80 +1077,8 @@ fragment videoSectionQueryVariables on VideosSectionQueryVariables {
   oneApp
   app
 }
-fragment videoStoryTile on VideoStoryTile {
-  ...component
-  data {
-    ...videoStoryItem
-  }
-  analytics {
-    series
-    brand {
-      title
-    }
-    programmingType
-    episodeNumber
-    seasonNumber
-    mpxGuid
-    locked
-    duration
-  }
-}
-fragment premiumItem on PremiumItem {
-  ...componentData
-  v4ID
-  description
-  descriptionColor
-  logo {
-    ...image
-  }
-  logoAltText
-  popOutImage {
-    ...image
-  }
-  previewStaticImage {
-    ...image
-  }
-  fallbackImage {
-    ...image
-  }
-  backgroundImage {
-    ...image
-  }
-  mainPreview
-  locked
-  externalAdvertiserId
-  gradientStart
-  gradientEnd
-  ariaLabel
-  cta {
-    ...ctaLink
-    ...smartTile
-  }
-}
-fragment videoStoryItem on VideoStoryItem {
-  ...componentData
-  v4ID
-  playablePublicUrl
-  videoID
-  titleLogo
-  gradientStart
-  gradientEnd
-  lightPrimaryColor
-  darkPrimaryColor
-  colorBrandLogo
-  whiteBrandLogo
-  brandDisplayTitle
-  titleKeyArt
-  title
-  secondaryTitle
-  lastModified
-  watched
-  ariaLabel
-  onClickAriaLabel
-  cta {
-    ...ctaLink
-  }
-}
+
+
 fragment notification on Notification {
   ...component
   data {
