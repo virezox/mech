@@ -62,13 +62,6 @@ query bonanzaPage(
       ...brandLandingPageMetadata
       ...titleV2HomepagePageData
     }
-    analytics {
-      ...brandLandingPageAnalyticsAttributes
-      ...pageAnalyticsAttributes
-      ...videoPageAnalyticsAttributes
-      ...titlePageAnalyticsAttributes
-      ...titleV2PageAnalyticsAttributes
-    }
     data {
       featured {
         ...slideshow
@@ -173,9 +166,6 @@ fragment videoPlayer on VideoPlayer {
       allowSkipButtons
       skipButtonsDuration
     }
-    endCard {
-      ...lazyEndCard
-    }
   }
   analytics {
     tmsId
@@ -222,9 +212,7 @@ fragment videoPlayer on VideoPlayer {
     }
   }
 }
-fragment lazyEndCard on LazyEndCard {
-  ...component
-}
+
 fragment hypermediaLink on HypermediaLink {
   linkTitle
   rel
@@ -253,96 +241,6 @@ fragment componentData on ComponentData {
   instanceID
 }
 
-fragment brandLandingPageAnalyticsAttributes on BrandLandingPageAnalyticsAttributes {
-  brand {
-    title
-  }
-}
-fragment pageAnalyticsAttributes on PageAnalyticsAttributes {
-  series
-  favoritedSeries
-  brand {
-    title
-  }
-}
-fragment titlePageAnalyticsAttributes on TitlePageAnalyticsAttributes {
-  series
-  movie
-  favoritedSeries
-  brand {
-    title
-  }
-}
-fragment titleV2PageAnalyticsAttributes on TitleV2PageAnalyticsAttributes {
-  series
-  movie
-  favoritedSeries
-  genre
-  secondaryGenres
-  isTitleHub
-  titleHub
-  isSponsoredTitle
-  sponsorName
-  hasTrailerCTA
-  pageType
-  brand {
-    title
-  }
-  emptyStateErrorDescription
-  isEmpty
-  category
-  seriesType
-  dartTag
-  v4ID
-  listOfGenres
-}
-fragment videoPageAnalyticsAttributes on VideoPageAnalyticsAttributes {
-  series
-  favoritedSeries
-  brand {
-    title
-  }
-  title
-  movie
-  programmingType
-  episodeNumber
-  seasonNumber
-  mpxGuid
-  locked
-  entitlement
-  duration
-  playlistTitle
-  playlistPosition
-  tmsId
-  isLongFormContent
-  durationInMilliseconds
-  airDate
-  dayPart
-  webBrandDomain
-  permalink
-  genre
-  secondaryGenre
-  titleTmsId
-  clipCategory
-  adobeVideoPlatform
-  adobeContentType
-  adobeBrand
-  convivaAssetName
-  videoBroadcast
-  isOlympics
-  listOfGenres
-  rating
-  ratingAdvisories
-  nielsenProgen
-  nielsenBrand
-  nielsenSfCode
-  nielsenClientId
-  nielsenChannel
-  sport
-  event
-  league
-  language
-}
 fragment videoPageData on VideoPageData {
   title
   secondaryTitle
