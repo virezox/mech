@@ -58,33 +58,17 @@ query bonanzaPage(
       __typename
       ...videoPageData
       ...seriesHomepagePageData
-      ...movieHomepagePageData
-      ...brandLandingPageMetadata
       ...titleV2HomepagePageData
     }
     analytics {
-      ...brandLandingPageAnalyticsAttributes
       ...pageAnalyticsAttributes
       ... on VideoPageAnalyticsAttributes {
         convivaAssetName
       }
-      ...titlePageAnalyticsAttributes
-      ...titleV2PageAnalyticsAttributes
     }
   }
 }
 
-fragment image on Image {
-  path
-  width
-  height
-}
-
-fragment brandLandingPageAnalyticsAttributes on BrandLandingPageAnalyticsAttributes {
-  brand {
-    title
-  }
-}
 fragment pageAnalyticsAttributes on PageAnalyticsAttributes {
   series
   favoritedSeries
@@ -92,51 +76,9 @@ fragment pageAnalyticsAttributes on PageAnalyticsAttributes {
     title
   }
 }
-fragment titlePageAnalyticsAttributes on TitlePageAnalyticsAttributes {
-  series
-  movie
-  favoritedSeries
-  brand {
-    title
-  }
-}
-fragment titleV2PageAnalyticsAttributes on TitleV2PageAnalyticsAttributes {
-  series
-  movie
-  favoritedSeries
-  genre
-  secondaryGenres
-  isTitleHub
-  titleHub
-  isSponsoredTitle
-  sponsorName
-  hasTrailerCTA
-  pageType
-  brand {
-    title
-  }
-  emptyStateErrorDescription
-  isEmpty
-  category
-  seriesType
-  dartTag
-  v4ID
-  listOfGenres
-}
+
 fragment videoPageData on VideoPageData {
   mpxAccountId
-}
-fragment brandLandingPageMetadata on BrandLandingPageMetadata {
-  whiteBrandLogo
-  colorBrandLogo
-  brandDisplayTitle
-  lightPrimaryColor
-  darkPrimaryColor
-  brandLandingHeadline
-  brandLandingDescription
-  brandLandingLogo
-  brandLandingBackgroundImage
-  brandLandingBackgroundPreview
 }
 
 fragment titleV2HomepagePageData on TitleV2HomepagePageData {
@@ -152,54 +94,11 @@ fragment titleV2HomepagePageData on TitleV2HomepagePageData {
   shortTitle
   isCoppaCompliant
   schemaType
-  titleArt {
-    ...image
-  }
   numberOfEpisodes
   numberOfSeasons
   brandDisplayTitle
 }
-fragment movieHomepagePageData on MovieHomepagePageData {
-  gradientStart
-  gradientEnd
-  lightPrimaryColor
-  darkPrimaryColor
-  brandLightPrimaryColor
-  brandDarkPrimaryColor
-  genres
-  category
-  socialMedia {
-    name
-    url
-    handle
-  }
-  dartTag
-  referenceUrl
-  description
-  shortDescription
-  shortTitle
-  isCoppaCompliant
-  schemaType
-  v4ID
-  titleArt {
-    path
-    width
-    height
-  }
-  multiPlatformLargeImage
-  multiPlatformSmallImage
-  credits {
-    personFirstName
-    personLastName
-    characterFirstName
-    characterLastName
-  }
-  whiteBrandLogo
-  colorBrandLogo
-  brandDisplayTitle
-  canonicalUrl
-  titleLogo
-}
+
 fragment seriesHomepagePageData on SeriesHomepagePageData {
   gradientStart
   gradientEnd
