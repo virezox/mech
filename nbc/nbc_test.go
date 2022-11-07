@@ -15,11 +15,11 @@ var guids = []int64{
 
 func Test_Video(t *testing.T) {
    for _, guid := range guids {
-      page, err := New_Bonanza_Page(guid)
+      meta, err := New_Metadata(guid)
       if err != nil {
          t.Fatal(err)
       }
-      vid, err := page.Video()
+      vid, err := meta.Video()
       if err != nil {
          t.Fatal(err)
       }
