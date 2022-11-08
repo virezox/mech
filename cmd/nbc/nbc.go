@@ -22,7 +22,7 @@ func (f flags) download() error {
       return err
    }
    f.Name = meta.Name()
-   master, err := f.HLS(video.ManifestPath)
+   master, err := f.HLS(video.Manifest_Path)
    if err != nil {
       return err
    }

@@ -158,7 +158,8 @@ func (m Metadata) Video() (*Video, error) {
 }
 
 type Video struct {
-   ManifestPath string // this is only valid for one minute
+   // this is only valid for one minute
+   Manifest_Path string `json:"manifestPath"`
 }
 
 type page_request struct {
