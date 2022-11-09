@@ -4,10 +4,10 @@ import (
    "bytes"
    "encoding/json"
    "github.com/89z/rosso/http"
-   "github.com/89z/rosso/os"
    "github.com/89z/rosso/xml"
    "io"
    "net/url"
+   "os"
    "strconv"
 )
 

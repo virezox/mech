@@ -7,9 +7,9 @@ import (
    "github.com/89z/rosso/dash"
    "github.com/89z/rosso/http"
    "github.com/89z/rosso/mp4"
-   "github.com/89z/rosso/os"
    "io"
    "net/url"
+   "os"
 )
 
 var client = http.Default_Client
@@ -33,6 +33,7 @@ func (s *Stream) DASH(ref string) (dash.Representations, error) {
    if err := xml.NewDecoder(res.Body).Decode(&pres); err != nil {
       return nil, err
    }
+   s.Name = Clean(s.Name)
    s.base = res.Request.URL
    return pres.Representation(), nil
 }
@@ -48,7 +49,7 @@ func (s Stream) DASH_Get(items dash.Representations, index int) error {
       return nil
    }
    item := items[index]
-   file, err := os.Clean("", s.Name + item.Ext()).Create()
+   file, err := os.Create(s.Name + item.Ext())
    if err != nil {
       return err
    }
@@ -64,7 +65,7 @@ func (s Stream) DASH_Get(items dash.Representations, index int) error {
    }
    defer res.Body.Close()
    media := item.Media()
-   pro := os.Progress_Chunks(file, len(media))
+   pro := http.Progress_Chunks(file, len(media))
    dec := mp4.New_Decrypt(pro)
    var key []byte
    if item.ContentProtection != nil {

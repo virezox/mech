@@ -3,9 +3,9 @@ package cbc
 import (
    "bytes"
    "encoding/json"
-   "github.com/89z/rosso/os"
    "net/http"
    "net/url"
+   "os"
 )
 
 func Open_Profile(name string) (*Profile, error) {

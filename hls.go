@@ -3,20 +3,10 @@ package mech
 import (
    "fmt"
    "github.com/89z/rosso/hls"
-   "github.com/89z/rosso/os"
+   "github.com/89z/rosso/http"
    "io"
-   "net/http"
+   "os"
 )
-
-func (s *Stream) HLS(ref string) (*hls.Master, error) {
-   res, err := client.Redirect(nil).Get(ref)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   s.base = res.Request.URL
-   return hls.New_Scanner(res.Body).Master()
-}
 
 func (s Stream) HLS_Streams(items hls.Streams, index int) error {
    return hls_get(s, items, index)
@@ -24,6 +14,17 @@ func (s Stream) HLS_Streams(items hls.Streams, index int) error {
 
 func (s Stream) HLS_Media(items hls.Media, index int) error {
    return hls_get(s, items, index)
+}
+
+func (s *Stream) HLS(ref string) (*hls.Master, error) {
+   res, err := client.Redirect(nil).Get(ref)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   s.Name = Clean(s.Name)
+   s.base = res.Request.URL
+   return hls.New_Scanner(res.Body).Master()
 }
 
 func hls_get[T hls.Mixed](str Stream, items []T, index int) error {
@@ -37,7 +38,7 @@ func hls_get[T hls.Mixed](str Stream, items []T, index int) error {
       return nil
    }
    item := items[index]
-   file, err := os.Clean("", str.Name + item.Ext()).Create()
+   file, err := os.Create(str.Name + item.Ext())
    if err != nil {
       return err
    }
@@ -72,7 +73,7 @@ func hls_get[T hls.Mixed](str Stream, items []T, index int) error {
          return err
       }
    }
-   pro := os.Progress_Chunks(file, len(seg.URI))
+   pro := http.Progress_Chunks(file, len(seg.URI))
    for _, ref := range seg.URI {
       req, err := http.NewRequest("GET", ref, nil)
       if err != nil {

@@ -2,10 +2,9 @@ package youtube
 
 import (
    "errors"
-   "github.com/89z/rosso/os"
+   "github.com/89z/rosso/http"
    "io"
    "mime"
-   "net/http"
    "strconv"
 )
 
@@ -63,7 +62,7 @@ func (f Format) Encode(w io.Writer) error {
    if err != nil {
       return err
    }
-   pro := os.Progress_Bytes(w, f.ContentLength)
+   pro := http.Progress_Bytes(w, f.ContentLength)
    var pos int64
    for pos < f.ContentLength {
       b := []byte("bytes=")

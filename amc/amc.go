@@ -4,7 +4,7 @@ import (
    "bytes"
    "encoding/json"
    "github.com/89z/rosso/http"
-   "github.com/89z/rosso/os"
+   "os"
    "strconv"
    "strings"
 )

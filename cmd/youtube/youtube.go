@@ -2,8 +2,9 @@ package main
 
 import (
    "fmt"
+   "github.com/89z/mech"
    "github.com/89z/mech/youtube"
-   "github.com/89z/rosso/os"
+   "os"
 )
 
 func download(form *youtube.Format, name string) error {
@@ -11,7 +12,8 @@ func download(form *youtube.Format, name string) error {
    if err != nil {
       return err
    }
-   file, err := os.Clean("", name + ext).Create()
+   name = mech.Clean(name)
+   file, err := os.Create(name + ext)
    if err != nil {
       return err
    }

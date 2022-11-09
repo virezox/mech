@@ -2,9 +2,9 @@ package youtube
 
 import (
    "encoding/json"
-   "github.com/89z/rosso/os"
    "net/http"
    "net/url"
+   "os"
    "strings"
 )
 
