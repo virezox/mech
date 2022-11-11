@@ -32,12 +32,6 @@ go build
 
 ## Money
 
-I only provide paid support for issues. Any issue without payment of at least
-9 USD will be closed immediately. Payment can be made to one of:
-
-- https://github.com/sponsors/89z
-- <https://paypal.com/donate?hosted_button_id=UEJBQQTU3VYDY>
-
 Software is not licensed for commercial use. If you wish to purchase a
 commercial license, or for other business questions, contact me:
 
