@@ -5,6 +5,7 @@ import (
    "github.com/89z/rosso/dash"
    "github.com/89z/rosso/hls"
    "strings"
+   "strconv"
 )
 
 func (f flags) DASH(preview *paramount.Preview) error {
@@ -40,7 +41,10 @@ func (f flags) DASH(preview *paramount.Preview) error {
       return err
    }
    video := reps.Video()
-   return f.DASH_Get(video, video.Bandwidth(f.bandwidth))
+   index = video.Index(func(a, b dash.Representation) bool {
+      return b.Height == f.height
+   })
+   return f.DASH_Get(video, index)
 }
 
 func (f flags) HLS(preview *paramount.Preview) error {
@@ -52,5 +56,8 @@ func (f flags) HLS(preview *paramount.Preview) error {
    streams := master.Streams.Filter(func(s hls.Stream) bool {
       return s.Resolution != ""
    })
-   return f.HLS_Streams(streams, streams.Bandwidth(f.bandwidth))
+   index := streams.Index(func(a, b hls.Stream) bool {
+      return strings.HasSuffix(b.Resolution, strconv.FormatInt(f.height, 10))
+   })
+   return f.HLS_Streams(streams, index)
 }
