@@ -11,6 +11,16 @@
 - Amazon needs AndroidCDM L1 for 720P/1080P/4K
 - Disney+ needs Android L1 for 1080P+
 
+## What is a CDM?
+
+The way it works, is you need a key to decrypt the media. To get that key, you
+make a request to a license server, and they give you the key back. However the
+key returned from the license server, is **itself encrypted**, so before you can
+use the key, you have to decrypt it. Thats what the CDM is for. Without the
+CDM, you cant decrypt the key, and you cant then use the decrypted key to
+decrypt some media. theres **a lot** more detail to it, but thats the high
+level view of whats going on.
+
 ## Where did proto file come from?
 
 https://github.com/TDenisM/widevinedump/tree/main/pywidevine/cdm/formats
