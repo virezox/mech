@@ -7,10 +7,10 @@ import (
    "crypto/cipher"
    "crypto/rsa"
    "crypto/sha1"
-   "github.com/89z/rosso/http"
    "github.com/89z/rosso/protobuf"
    "github.com/chmike/cmac-go"
    "io"
+   "net/http"
 )
 
 type Poster interface {
